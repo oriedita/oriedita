@@ -5,7 +5,7 @@ import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import org.tinylog.Logger;
 import oriedita.editor.Canvas;
-import oriedita.editor.action.MouseHandlerModifyCalculatedShape;
+import oriedita.editor.action.FoldedFigureOperationMode;
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.databinding.*;
@@ -200,7 +200,7 @@ public class BottomPanel {
             }
         });
         oriagari_sousaButton.addActionListener(e -> {
-            canvasModel.setFoldedFigureOperationMode(MouseHandlerModifyCalculatedShape.FoldedFigureOperationMode.MODE_1);
+            canvasModel.setFoldedFigureOperationMode(FoldedFigureOperationMode.MODE_1);
             FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();
 
             if (selectedFigure != null) {
@@ -211,7 +211,7 @@ public class BottomPanel {
             canvasModel.setMouseMode(MouseMode.MODIFY_CALCULATED_SHAPE_101);
         });
         oriagari_sousa_2Button.addActionListener(e -> {
-            canvasModel.setFoldedFigureOperationMode(MouseHandlerModifyCalculatedShape.FoldedFigureOperationMode.MODE_2);
+            canvasModel.setFoldedFigureOperationMode(FoldedFigureOperationMode.MODE_2);
             FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();
 
             if (selectedFigure != null) {
@@ -427,8 +427,8 @@ public class BottomPanel {
             MouseMode m = data.getMouseMode();
 
             foldedFigureMoveButton.setSelected(m == MouseMode.MOVE_CALCULATED_SHAPE_102);
-            oriagari_sousaButton.setSelected(data.getFoldedFigureOperationMode() == MouseHandlerModifyCalculatedShape.FoldedFigureOperationMode.MODE_1 && m == MouseMode.MODIFY_CALCULATED_SHAPE_101);
-            oriagari_sousa_2Button.setSelected(data.getFoldedFigureOperationMode() == MouseHandlerModifyCalculatedShape.FoldedFigureOperationMode.MODE_2 && m == MouseMode.MODIFY_CALCULATED_SHAPE_101);
+            oriagari_sousaButton.setSelected(data.getFoldedFigureOperationMode() == FoldedFigureOperationMode.MODE_1 && m == MouseMode.MODIFY_CALCULATED_SHAPE_101);
+            oriagari_sousa_2Button.setSelected(data.getFoldedFigureOperationMode() == FoldedFigureOperationMode.MODE_2 && m == MouseMode.MODIFY_CALCULATED_SHAPE_101);
         }
     }
 

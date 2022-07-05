@@ -16,6 +16,7 @@ import oriedita.editor.service.FoldingService;
 import oriedita.editor.service.HistoryState;
 import oriedita.editor.swing.component.ColorIcon;
 import oriedita.editor.swing.component.UndoRedo;
+import oriedita.editor.tools.LookAndFeelUtil;
 import oriedita.editor.tools.StringOp;
 import origami.crease_pattern.element.LineColor;
 import origami.folding.FoldedFigure;
@@ -1032,7 +1033,7 @@ public class LeftPanel {
 
         if (e.getPropertyName() == null || e.getPropertyName().equals("laf")) {
             // The look and feel is not set yet, so it must be read from the applicationModel
-            boolean isDark = data.determineLafDark();
+            boolean isDark = LookAndFeelUtil.determineLafDark(data.getLaf());
 
             for (JButton button : Arrays.asList(colBlackButton, colRedButton, colBlueButton, colCyanButton, toMountainButton, toValleyButton, toAuxButton, toEdgeButton, senbun_henkan2Button)) {
                 button.setForeground(Colors.restore(button.getForeground(), isDark));

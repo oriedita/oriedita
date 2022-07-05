@@ -15,7 +15,14 @@ public abstract class CameraFactory {
     @Named("creasePatternCamera")
     public static Camera creasePatternCamera(CameraModel cameraModel) {
         Camera creasePatternCamera = new Camera();
-        cameraModel.addPropertyChangeListener(e -> creasePatternCamera.setData(cameraModel));
+
+        cameraModel.addPropertyChangeListener(e -> {
+            creasePatternCamera.setCameraAngle(cameraModel.getRotation());
+            creasePatternCamera.setCameraZoomX(cameraModel.getScale());
+            creasePatternCamera.setCameraZoomY(cameraModel.getScale());
+        });
+
+
         return creasePatternCamera;
     }
 

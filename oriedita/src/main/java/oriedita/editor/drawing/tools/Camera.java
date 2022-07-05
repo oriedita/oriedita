@@ -1,6 +1,5 @@
 package oriedita.editor.drawing.tools;
 
-import oriedita.editor.databinding.CameraModel;
 import origami.crease_pattern.element.Circle;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
@@ -250,11 +249,5 @@ public class Camera implements Serializable { // Mediation between actual coordi
     public void camera_position_specify_from_TV(Point p) {
         setCameraPosition(TV2object(p));
         setDisplayPosition(p);
-    }
-
-    public void setData(CameraModel cameraModel) {
-        setCameraAngle(cameraModel.getRotation());
-        setCameraZoomX(cameraModel.getScale());
-        setCameraZoomY(cameraModel.getScale());
     }
 }

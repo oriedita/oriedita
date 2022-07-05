@@ -8,6 +8,8 @@
         <outputRelativeToContentRoot value="true" />
         <module name="origami" />
         <module name="fold" />
+        <module name="oriedita-common" />
+        <module name="oriedita-data" />
       </profile>
       <profile name="Annotation profile for root" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
@@ -44,11 +46,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="fold" target="11" />
-      <module name="oriedita" target="11" />
       <module name="oriedita (1)" target="11" />
-      <module name="origami" target="11" />
-      <module name="root" target="11" />
     </bytecodeTargetLevel>
   </component>
 </project>

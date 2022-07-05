@@ -4,10 +4,10 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.tinylog.Logger;
+import oriedita.editor.canvas.MouseWheelTarget;
 import oriedita.editor.service.FoldedFigureCanvasSelectService;
 import origami.crease_pattern.element.Point;
 import origami.folding.FoldedFigure;
-import oriedita.editor.Canvas;
 import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.databinding.FoldedFigureModel;
 import oriedita.editor.databinding.FoldedFiguresList;
@@ -26,7 +26,7 @@ public class FoldedFigureCanvasSelectServiceImpl implements FoldedFigureCanvasSe
         this.canvasModel = canvasModel;
     }
 
-    @Override public Canvas.MouseWheelTarget pointInCreasePatternOrFoldedFigure(Point p) {//A function that determines which of the development and folding views the Ten obtained with the mouse points to.
+    @Override public MouseWheelTarget pointInCreasePatternOrFoldedFigure(Point p) {//A function that determines which of the development and folding views the Ten obtained with the mouse points to.
         //20171216
         //hyouji_flg==2,ip4==0  omote
         //hyouji_flg==2,ip4==1	ura
@@ -50,7 +50,7 @@ public class FoldedFigureCanvasSelectServiceImpl implements FoldedFigureCanvasSe
         //OZ_hyouji_mode=4;  omote & ura & omote2 & ura2
 
         int tempFoldedFigureIndex = -1;
-        Canvas.MouseWheelTarget temp_i_cp_or_oriagari = Canvas.MouseWheelTarget.CREASE_PATTERN_0;
+        MouseWheelTarget temp_i_cp_or_oriagari = MouseWheelTarget.CREASE_PATTERN_0;
         FoldedFigure_Drawer drawer;
         FoldedFigure OZi;
         for (int i = 0; i < foldedFiguresList.getSize(); i++) {
@@ -99,28 +99,28 @@ public class FoldedFigureCanvasSelectServiceImpl implements FoldedFigureCanvasSe
 
             if (drawer.wireFrame_worker_drawer2.isInsideFront(p) > 0) {
                 if (((OZ_display_mode == 1) || (OZ_display_mode == 3)) || (OZ_display_mode == 4)) {
-                    temp_i_cp_or_oriagari = Canvas.MouseWheelTarget.FOLDED_FRONT_1;
+                    temp_i_cp_or_oriagari = MouseWheelTarget.FOLDED_FRONT_1;
                     tempFoldedFigureIndex = i;
                 }
             }
 
             if (drawer.wireFrame_worker_drawer2.isInsideRear(p) > 0) {
                 if (((OZ_display_mode == 2) || (OZ_display_mode == 3)) || (OZ_display_mode == 4)) {
-                    temp_i_cp_or_oriagari = Canvas.MouseWheelTarget.FOLDED_BACK_2;
+                    temp_i_cp_or_oriagari = MouseWheelTarget.FOLDED_BACK_2;
                     tempFoldedFigureIndex = i;
                 }
             }
 
             if (drawer.wireFrame_worker_drawer2.isInsideTransparentFront(p) > 0) {
                 if (OZ_display_mode == 4) {
-                    temp_i_cp_or_oriagari = Canvas.MouseWheelTarget.TRANSPARENT_FRONT_3;
+                    temp_i_cp_or_oriagari = MouseWheelTarget.TRANSPARENT_FRONT_3;
                     tempFoldedFigureIndex = i;
                 }
             }
 
             if (drawer.wireFrame_worker_drawer2.isInsideTransparentRear(p) > 0) {
                 if (OZ_display_mode == 4) {
-                    temp_i_cp_or_oriagari = Canvas.MouseWheelTarget.TRANSPARENT_BACK_4;
+                    temp_i_cp_or_oriagari = MouseWheelTarget.TRANSPARENT_BACK_4;
                     tempFoldedFigureIndex = i;
                 }
             }

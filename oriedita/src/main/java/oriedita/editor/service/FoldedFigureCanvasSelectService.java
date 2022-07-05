@@ -1,8 +1,8 @@
 package oriedita.editor.service;
 
-import oriedita.editor.Canvas;
+import oriedita.editor.canvas.MouseWheelTarget;
 import origami.crease_pattern.element.Point;
 
 public interface FoldedFigureCanvasSelectService {
-    Canvas.MouseWheelTarget pointInCreasePatternOrFoldedFigure(Point p);
+    MouseWheelTarget pointInCreasePatternOrFoldedFigure(Point p);
 }

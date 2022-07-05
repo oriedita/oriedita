@@ -10,10 +10,8 @@ import oriedita.editor.databinding.*;
 import oriedita.editor.datatransfer.SaveTransferable;
 import oriedita.editor.exception.FileReadingException;
 import oriedita.editor.save.Save;
-import oriedita.editor.service.ButtonService;
-import oriedita.editor.service.FileSaveService;
-import oriedita.editor.service.ResetService;
-import oriedita.editor.service.TaskExecutorService;
+import oriedita.editor.service.*;
+import oriedita.editor.tools.LookAndFeelUtil;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -76,6 +74,7 @@ public class AppMenuBar extends JMenuBar {
     public AppMenuBar(@Named("mainFrame") JFrame frame,
                       @Named("foldingExecutor") TaskExecutorService foldingExecutor,
                       ApplicationModel applicationModel,
+                      LookAndFeelService lookAndFeelService,
                       FileSaveService fileSaveService,
                       ButtonService buttonService,
                       CanvasModel canvasModel,
@@ -207,7 +206,7 @@ public class AppMenuBar extends JMenuBar {
         cpOnTopCheckBox.addActionListener(e -> getData(applicationModel));
         toggleHelpMenuItem.addActionListener(e -> applicationModel.toggleHelpVisible());
         darkModeCheckBox.addActionListener(e -> {
-            applicationModel.toggleDarkMode();
+            lookAndFeelService.toggleDarkMode();
 
             if (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(frame, "Restore custom colors in grid and folded figure for this color scheme?", "Restore colors", JOptionPane.YES_NO_OPTION)) {
                 if (FlatLaf.isLafDark()) {
@@ -404,7 +403,7 @@ public class AppMenuBar extends JMenuBar {
         applicationModel.setDisplayLiveAuxLines(displayLiveAuxLinesCheckBox.isSelected());
         applicationModel.setDisplayMarkings(displayStandardFaceMarksCheckBox.isSelected());
         applicationModel.setDisplayCreasePatternOnTop(cpOnTopCheckBox.isSelected());
-        applicationModel.setDarkMode(darkModeCheckBox.isSelected());
+        applicationModel.setLaf(LookAndFeelUtil.determineLafForDarkMode(darkModeCheckBox.isSelected()));
         applicationModel.setPreciseZoom(preciseZoomCheckBox.isSelected());
         applicationModel.setDisplaySelfIntersection(displaySelfIntersectionCheckBox.isSelected());
         applicationModel.setAdvancedCheck4Display(useAdvancedCheck4Display.isSelected());

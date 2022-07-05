@@ -6,12 +6,14 @@ import oriedita.editor.App;
 import oriedita.editor.Colors;
 import oriedita.editor.databinding.ApplicationModel;
 import oriedita.editor.service.LookAndFeelService;
+import oriedita.editor.tools.LookAndFeelUtil;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.swing.*;
 import java.awt.*;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 
 @Singleton
@@ -48,7 +50,7 @@ public class LookAndFeelServiceImpl implements LookAndFeelService {
 
                 // change look and feel
                 UIManager.setLookAndFeel(lafClassName);
-                Colors.update();
+                Colors.update(FlatLaf.isLafDark());
 
                 // restore custom default font when switched to other FlatLaf LaF
                 if (defaultFont != null && UIManager.getLookAndFeel() instanceof FlatLaf)
@@ -110,6 +112,13 @@ public class LookAndFeelServiceImpl implements LookAndFeelService {
 
     @Override public void updateButtonIcons() {
         updateButtonIcons(frame);
+    }
+
+    @Override
+    public void toggleDarkMode() {
+        boolean darkMode = LookAndFeelUtil.determineLafDark(applicationModel.getLaf());
+
+        applicationModel.setLaf(LookAndFeelUtil.determineLafForDarkMode(!darkMode));
     }
 
     private void updateButtonIcons(Container container) {

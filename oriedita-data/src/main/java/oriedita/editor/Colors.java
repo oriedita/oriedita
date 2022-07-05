@@ -1,7 +1,5 @@
 package oriedita.editor;
 
-import com.formdev.flatlaf.FlatLaf;
-
 import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
@@ -49,8 +47,8 @@ public class Colors {
         return activeColorMap.getOrDefault(color, color);
     }
 
-    public static void update() {
-        if (FlatLaf.isLafDark()) {
+    public static void update(boolean isDark) {
+        if (isDark) {
             activeColorMap = darkColorMap;
         } else {
             activeColorMap = colorMap;

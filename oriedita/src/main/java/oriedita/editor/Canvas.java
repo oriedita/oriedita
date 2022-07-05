@@ -3,6 +3,7 @@ package oriedita.editor;
 import org.tinylog.Logger;
 import oriedita.editor.action.DrawingSettings;
 import oriedita.editor.action.MouseModeHandler;
+import oriedita.editor.canvas.MouseWheelTarget;
 import oriedita.editor.canvas.*;
 import oriedita.editor.databinding.*;
 import oriedita.editor.drawing.FoldedFigure_Drawer;
@@ -785,11 +786,4 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         return new Point(e.getX() - (int) offset, e.getY() - (int) offset);
     }
 
-    public enum MouseWheelTarget {
-        CREASE_PATTERN_0,
-        FOLDED_FRONT_1,
-        FOLDED_BACK_2,
-        TRANSPARENT_FRONT_3,
-        TRANSPARENT_BACK_4,
-    }
 }

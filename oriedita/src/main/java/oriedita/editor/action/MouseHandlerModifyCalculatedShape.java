@@ -424,11 +424,6 @@ public class MouseHandlerModifyCalculatedShape implements MouseModeHandler {
         }
     }
 
-    public enum FoldedFigureOperationMode {
-        MODE_1,
-        MODE_2,
-    }
-
     public enum PointSelection {
         NONE_0,
         WORKER_1,

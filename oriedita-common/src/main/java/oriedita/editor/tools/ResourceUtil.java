@@ -1,7 +1,6 @@
 package oriedita.editor.tools;
 
 import org.tinylog.Logger;
-import oriedita.editor.App;
 
 import javax.swing.*;
 import java.io.File;
@@ -37,7 +36,7 @@ public class ResourceUtil {
 
     public static String getVersionFromManifest() {
         try {
-            File file = new File(App.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+            File file = new File(ResourceUtil.class.getProtectionDomain().getCodeSource().getLocation().toURI());
             if (file.isFile()) {
                 JarFile jarFile = new JarFile(file);
                 Manifest manifest = jarFile.getManifest();
