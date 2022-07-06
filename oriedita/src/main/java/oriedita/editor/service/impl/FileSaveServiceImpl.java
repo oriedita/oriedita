@@ -174,7 +174,7 @@ public class FileSaveServiceImpl implements FileSaveService {
             int pointSize = applicationModel.getPointSize();
             boolean showText = applicationModel.getDisplayComments();
 
-            Svg.exportFile(mainCreasePatternWorker.foldLineSet, mainCreasePatternWorker.textWorker.getTexts(), showText, mainCreasePatternWorker.camera, displayCpLines, lineWidth, intLineWidth, lineStyle, pointSize, foldedFiguresList, exportFile);
+            Svg.exportFile(mainCreasePatternWorker.getFoldLineSet(), mainCreasePatternWorker.getTextWorker().getTexts(), showText, mainCreasePatternWorker.getCamera(), displayCpLines, lineWidth, intLineWidth, lineStyle, pointSize, foldedFiguresList, exportFile);
         } else if (exportFile.getName().endsWith(".png") || exportFile.getName().endsWith(".jpg") || exportFile.getName().endsWith(".jpeg")) {
             writeImageFile(exportFile);
         } else if (exportFile.getName().endsWith(".cp")) {
@@ -216,10 +216,10 @@ public class FileSaveServiceImpl implements FileSaveService {
                 canvas.hideOperationFrame = false;
 
                 if (canvasModel.getMouseMode() == MouseMode.OPERATION_FRAME_CREATE_61 && mainCreasePatternWorker.getDrawingStage() == 4) { //枠設定時の枠内のみ書き出し 20180524
-                    int xMin = (int) mainCreasePatternWorker.operationFrameBox.getXMin();
-                    int xMax = (int) mainCreasePatternWorker.operationFrameBox.getXMax();
-                    int yMin = (int) mainCreasePatternWorker.operationFrameBox.getYMin();
-                    int yMax = (int) mainCreasePatternWorker.operationFrameBox.getYMax();
+                    int xMin = (int) mainCreasePatternWorker.getOperationFrameBox().getXMin();
+                    int xMax = (int) mainCreasePatternWorker.getOperationFrameBox().getXMax();
+                    int yMin = (int) mainCreasePatternWorker.getOperationFrameBox().getYMin();
+                    int yMax = (int) mainCreasePatternWorker.getOperationFrameBox().getYMax();
 
                     ImageIO.write(myImage.getSubimage(xMin, yMin, xMax - xMin + 1, yMax - yMin + 1), formatName, file);
 

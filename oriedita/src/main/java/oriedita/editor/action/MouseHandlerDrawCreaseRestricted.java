@@ -23,13 +23,13 @@ public class MouseHandlerDrawCreaseRestricted extends BaseMouseHandlerInputRestr
     public void mousePressed(Point p0) {
         LineSegment s = new LineSegment();
         Point p = new Point();
-        p.set(d.camera.TV2object(p0));
+        p.set(d.getCamera().TV2object(p0));
         Point closest_point = d.getClosestPoint(p);
-        if (p.distance(closest_point) > d.selectionDistance) {
+        if (p.distance(closest_point) > d.getSelectionDistance()) {
             return;
         }
         s.set(p, closest_point);
-        s.setColor(d.lineColor);
+        s.setColor(d.getLineColor());
 
         d.lineStepAdd(s);
         s.setActive(LineSegment.ActiveState.ACTIVE_B_2);
@@ -39,41 +39,41 @@ public class MouseHandlerDrawCreaseRestricted extends BaseMouseHandlerInputRestr
     public void mouseDragged(Point p0) {
         //近い既存点のみ表示
 
-        if (d.lineStep.size() == 0) {
+        if (d.getLineStep().size() == 0) {
             return;
         }
 
         Point p = new Point();
-        p.set(d.camera.TV2object(p0));
-        d.lineStep.get(0).setA(p);
-        d.lineStep.get(0).setColor(d.lineColor);
+        p.set(d.getCamera().TV2object(p0));
+        d.getLineStep().get(0).setA(p);
+        d.getLineStep().get(0).setColor(d.getLineColor());
 
-        if (d.gridInputAssist) {
-            d.lineCandidate.clear();
+        if (d.getGridInputAssist()) {
+            d.getLineCandidate().clear();
 
             Point closestPoint = d.getClosestPoint(p);
-            if (p.distance(closestPoint) < d.selectionDistance) {
-                d.lineCandidate.add(new LineSegment(closestPoint, closestPoint, d.lineColor));
-                d.lineStep.get(0).setA(d.lineCandidate.get(0).getA());
+            if (p.distance(closestPoint) < d.getSelectionDistance()) {
+                d.getLineCandidate().add(new LineSegment(closestPoint, closestPoint, d.getLineColor()));
+                d.getLineStep().get(0).setA(d.getLineCandidate().get(0).getA());
             }
         }
     }//近い既存点のみ表示
 
     //マウス操作(mouseMode==11線分入力　でボタンを離したとき)を行う関数----------------------------------------------------
     public void mouseReleased(Point p0) {
-        if (d.lineStep.size() == 1) {
+        if (d.getLineStep().size() == 1) {
             Point p = new Point();
-            p.set(d.camera.TV2object(p0));
+            p.set(d.getCamera().TV2object(p0));
             Point closestPoint = d.getClosestPoint(p);
-            d.lineStep.get(0).setA(closestPoint);
-            if (p.distance(closestPoint) <= d.selectionDistance) {
-                if (Epsilon.high.gt0(d.lineStep.get(0).determineLength())) {
-                    d.addLineSegment(d.lineStep.get(0));
+            d.getLineStep().get(0).setA(closestPoint);
+            if (p.distance(closestPoint) <= d.getSelectionDistance()) {
+                if (Epsilon.high.gt0(d.getLineStep().get(0).determineLength())) {
+                    d.addLineSegment(d.getLineStep().get(0));
                     d.record();
                 }
             }
 
-            d.lineStep.clear();
+            d.getLineStep().clear();
         }
     }
 }

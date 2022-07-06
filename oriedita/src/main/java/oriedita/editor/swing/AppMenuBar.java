@@ -236,7 +236,7 @@ public class AppMenuBar extends JMenuBar {
             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 
             Save save = Save.createInstance();
-            mainCreasePatternWorker.foldLineSet.getSaveForSelectFolding(save);
+            mainCreasePatternWorker.getFoldLineSet().getSaveForSelectFolding(save);
 
             clipboard.setContents(new SaveTransferable(save), (clipboard1, contents) -> {});
         });
@@ -244,12 +244,12 @@ public class AppMenuBar extends JMenuBar {
             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 
             Save save = Save.createInstance();
-            mainCreasePatternWorker.foldLineSet.getSaveForSelectFolding(save);
+            mainCreasePatternWorker.getFoldLineSet().getSaveForSelectFolding(save);
 
 
             clipboard.setContents(new SaveTransferable(save), (clipboard1, contents) -> {});
 
-            mainCreasePatternWorker.foldLineSet.delSelectedLineSegmentFast();
+            mainCreasePatternWorker.getFoldLineSet().delSelectedLineSegmentFast();
 
             mainCreasePatternWorker.record();
         });

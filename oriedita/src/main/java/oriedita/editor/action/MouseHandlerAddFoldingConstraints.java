@@ -14,7 +14,6 @@ import origami.folding.constraint.CustomConstraint;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import javax.swing.*;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -127,7 +126,7 @@ public class MouseHandlerAddFoldingConstraints implements MouseModeHandler {
 
     private CustomConstraint nearConstraintInSelectionRadius(Point modelCoords, boolean backside, Iterable<CustomConstraint> constraints) {
         CustomConstraint nearest = null;
-        double nearestDist = drawingWorker.selectionDistance;
+        double nearestDist = drawingWorker.getSelectionDistance();
         for (CustomConstraint customConstraint : constraints) {
             if (backside) {
                 if (customConstraint.getFaceOrder() != CustomConstraint.FaceOrder.FLIPPED) {

@@ -33,18 +33,18 @@ public class MouseHandlerCreaseMove extends BaseMouseHandlerLineTransform {
 
             FoldLineSet ori_s_temp = new FoldLineSet();    //セレクトされた折線だけ取り出すために使う
             Save save = Save.createInstance();
-            d.foldLineSet.getMemoSelectOption(save, 2);
+            d.getFoldLineSet().getMemoSelectOption(save, 2);
             ori_s_temp.setSave(save);//セレクトされた折線だけ取り出してori_s_tempを作る
-            d.foldLineSet.delSelectedLineSegmentFast();//セレクトされた折線を削除する。
+            d.getFoldLineSet().delSelectedLineSegmentFast();//セレクトされた折線を削除する。
             ori_s_temp.move(delta.getX(), delta.getY());//全体を移動する
-            int total_old = d.foldLineSet.getTotal();
+            int total_old = d.getFoldLineSet().getTotal();
             Save save1 = Save.createInstance();
             ori_s_temp.getSave(save1);
-            d.foldLineSet.addSave(save1);
-            int total_new = d.foldLineSet.getTotal();
-            d.foldLineSet.divideLineSegmentWithNewLines(total_old, total_new);
+            d.getFoldLineSet().addSave(save1);
+            int total_new = d.getFoldLineSet().getTotal();
+            d.getFoldLineSet().divideLineSegmentWithNewLines(total_old, total_new);
 
-            d.foldLineSet.unselect_all();
+            d.getFoldLineSet().unselect_all();
             d.record();
 
             canvasModel.setMouseMode(MouseMode.CREASE_SELECT_19);

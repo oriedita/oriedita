@@ -26,14 +26,14 @@ public class MouseHandlerCreaseUnselect extends BaseMouseHandlerBoxSelect {
     //マウス操作(mouseMode==20 select　でボタンを離したとき)を行う関数----------------------------------------------------
     public void mouseReleased(Point p0) {
         super.mouseReleased(p0);
-        d.lineStep.clear();
+        d.getLineStep().clear();
         d.unselect(selectionStart, p0);
 
         if (selectionStart.distance(p0) <= Epsilon.UNKNOWN_1EN6) {
             Point p = new Point();
-            p.set(d.camera.TV2object(p0));
-            if (d.foldLineSet.closestLineSegmentDistance(p) < d.selectionDistance) {//点pに最も近い線分の番号での、その距離を返す	public double mottomo_tikai_senbun_kyori(Ten p)
-                d.foldLineSet.closestLineSegmentSearch(p).setSelected(0);
+            p.set(d.getCamera().TV2object(p0));
+            if (d.getFoldLineSet().closestLineSegmentDistance(p) < d.getSelectionDistance()) {//点pに最も近い線分の番号での、その距離を返す	public double mottomo_tikai_senbun_kyori(Ten p)
+                d.getFoldLineSet().closestLineSegmentSearch(p).setSelected(0);
             }
         }
     }

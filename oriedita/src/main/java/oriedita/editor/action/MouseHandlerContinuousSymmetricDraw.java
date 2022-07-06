@@ -29,19 +29,19 @@ public class MouseHandlerContinuousSymmetricDraw extends BaseMouseHandlerInputRe
 
     //マウス操作(ボタンを押したとき)時の作業
     public void mousePressed(Point p0) {
-        Logger.info("i_egaki_dankai=" + d.lineStep.size());
+        Logger.info("i_egaki_dankai=" + d.getLineStep().size());
 
         Point p = new Point();
-        p.set(d.camera.TV2object(p0));
+        p.set(d.getCamera().TV2object(p0));
         Point closest_point = d.getClosestPoint(p);
 
-        if (p.distance(closest_point) < d.selectionDistance) {
-            d.lineStepAdd(new LineSegment(closest_point, closest_point, d.lineColor));
+        if (p.distance(closest_point) < d.getSelectionDistance()) {
+            d.lineStepAdd(new LineSegment(closest_point, closest_point, d.getLineColor()));
         } else {
-            d.lineStepAdd(new LineSegment(p, p, d.lineColor));
+            d.lineStepAdd(new LineSegment(p, p, d.getLineColor()));
         }
 
-        Logger.info("i_egaki_dankai=" + d.lineStep.size());
+        Logger.info("i_egaki_dankai=" + d.getLineStep().size());
     }
 
     //マウス操作(ドラッグしたとき)を行う関数
@@ -50,12 +50,12 @@ public class MouseHandlerContinuousSymmetricDraw extends BaseMouseHandlerInputRe
 
     //マウス操作(ボタンを離したとき)を行う関数
     public void mouseReleased(Point p0) {
-        if (d.lineStep.size() == 2) {
-            continuous_folding_new(d.lineStep.get(0).getA(), d.lineStep.get(1).getA());
+        if (d.getLineStep().size() == 2) {
+            continuous_folding_new(d.getLineStep().get(0).getA(), d.getLineStep().get(1).getA());
 
-            LineColor lineType = d.lineColor;
-            for (int i = 2; i < d.lineStep.size(); i++) {
-                LineSegment lineSegment = d.lineStep.get(i).clone();
+            LineColor lineType = d.getLineColor();
+            for (int i = 2; i < d.getLineStep().size(); i++) {
+                LineSegment lineSegment = d.getLineStep().get(i).clone();
                 lineSegment.setColor(lineType);
                 lineType = lineType.changeMV();
                 d.addLineSegment(lineSegment);
@@ -63,7 +63,7 @@ public class MouseHandlerContinuousSymmetricDraw extends BaseMouseHandlerInputRe
 
             d.record();
 
-            d.lineStep.clear();
+            d.getLineStep().clear();
         }
     }
 
@@ -71,7 +71,7 @@ public class MouseHandlerContinuousSymmetricDraw extends BaseMouseHandlerInputRe
     public MouseHandlerContinuousSymmetricDraw(CreasePattern_Worker d, CanvasModel canvasModel) {
         this.d = d;
         this.canvasModel = canvasModel;
-        this.e_s_dougubako = new CreasePattern_Worker_Toolbox(d.foldLineSet);
+        this.e_s_dougubako = new CreasePattern_Worker_Toolbox(d.getFoldLineSet());
     }
 
     public void continuous_folding_new(Point a, Point b) {//An improved version of continuous folding.
@@ -123,7 +123,7 @@ public class MouseHandlerContinuousSymmetricDraw extends BaseMouseHandlerInputRe
 
             SortingBox<LineSegment> t_m_s_nbox = new SortingBox<>();
 
-            t_m_s_nbox.set(d.foldLineSet.get_SortingBox_of_vertex_b_surrounding_foldLine(e_s_dougubako.getLengthenUntilIntersectionLineSegment_new().getA(), e_s_dougubako.getLengthenUntilIntersectionLineSegment_new().getB()));
+            t_m_s_nbox.set(d.getFoldLineSet().get_SortingBox_of_vertex_b_surrounding_foldLine(e_s_dougubako.getLengthenUntilIntersectionLineSegment_new().getA(), e_s_dougubako.getLengthenUntilIntersectionLineSegment_new().getB()));
 
             if (t_m_s_nbox.getTotal() == 2) {
                 intersection = tyoku1.lineSegment_intersect_reverse_detail(t_m_s_nbox.getValue(1));//0=この直線は与えられた線分と交差しない、1=X型で交差する、2=T型で交差する、3=線分は直線に含まれる。

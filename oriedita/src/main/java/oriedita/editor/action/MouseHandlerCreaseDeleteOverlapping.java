@@ -24,12 +24,12 @@ public class MouseHandlerCreaseDeleteOverlapping extends BaseMouseHandlerInputRe
 
     //マウス操作(mouseMode==64　でボタンを押したとき)時の作業----------------------------------------------------
     public void mousePressed(Point p0) {
-        d.lineStep.clear();
+        d.getLineStep().clear();
 
         Point p = new Point();
-        p.set(d.camera.TV2object(p0));
+        p.set(d.getCamera().TV2object(p0));
         Point closest_point = d.getClosestPoint(p);
-        if (p.distance(closest_point) > d.selectionDistance) {
+        if (p.distance(closest_point) > d.getSelectionDistance()) {
             return;
         }
 
@@ -43,19 +43,19 @@ public class MouseHandlerCreaseDeleteOverlapping extends BaseMouseHandlerInputRe
 
     //マウス操作(mouseMode==64　でボタンを離したとき)を行う関数----------------------------------------------------
     public void mouseReleased(Point p0) {
-        if (d.lineStep.size() == 1) {
+        if (d.getLineStep().size() == 1) {
             Point p = new Point();
-            p.set(d.camera.TV2object(p0));
+            p.set(d.getCamera().TV2object(p0));
             Point closest_point = d.getClosestPoint(p);
-            d.lineStep.get(0).setA(closest_point);
-            if (p.distance(closest_point) <= d.selectionDistance) {
-                if (Epsilon.high.gt0(d.lineStep.get(0).determineLength())) {
-                    d.foldLineSet.deleteInsideLine(d.lineStep.get(0), "l");//lは小文字のエル
+            d.getLineStep().get(0).setA(closest_point);
+            if (p.distance(closest_point) <= d.getSelectionDistance()) {
+                if (Epsilon.high.gt0(d.getLineStep().get(0).determineLength())) {
+                    d.getFoldLineSet().deleteInsideLine(d.getLineStep().get(0), "l");//lは小文字のエル
 
                     d.record();
                 }
             }
-            d.lineStep.clear();
+            d.getLineStep().clear();
         }
 
     }

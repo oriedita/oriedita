@@ -113,11 +113,11 @@ public class BottomPanel {
 
             if (!applicationModel.getFoldWarning()) {
                 try {
-                    mainCreasePatternWorker.foldLineSet.check4();
+                    mainCreasePatternWorker.getFoldLineSet().check4();
                 } catch (InterruptedException bruh) {
                     Logger.info("Warning window broke");
                 }
-                if (!mainCreasePatternWorker.foldLineSet.getViolations().isEmpty()) {
+                if (!mainCreasePatternWorker.getFoldLineSet().getViolations().isEmpty()) {
                     JCheckBox checkbox = new JCheckBox("Don't show this again");
                     Object[] params = {"Detected errors in flat foldability. Continue to fold?", checkbox};
                     int warningResult = JOptionPane.showConfirmDialog(null, params, "Warning", JOptionPane.YES_NO_OPTION);

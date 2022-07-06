@@ -20,20 +20,20 @@ public class MouseHandlerLineSegmentRatioSet extends BaseMouseHandlerInputRestri
 
     //マウス操作(mouseMode==28線分内分入力 でボタンを押したとき)時の作業----------------------------------------------------
     public void mousePressed(Point p0) {
-        d.lineStep.clear();
+        d.getLineStep().clear();
 
         Point p = new Point();
-        p.set(d.camera.TV2object(p0));
+        p.set(d.getCamera().TV2object(p0));
 
         Point closestPoint = d.getClosestPoint(p);
-        if (p.distance(closestPoint) < d.selectionDistance) {
-            LineSegment s = new LineSegment(p, closestPoint, d.lineColor);
+        if (p.distance(closestPoint) < d.getSelectionDistance()) {
+            LineSegment s = new LineSegment(p, closestPoint, d.getLineColor());
             s.setActive(LineSegment.ActiveState.ACTIVE_B_2);
             d.lineStepAdd(s);
             return;
         }
 
-        LineSegment s = new LineSegment(p, p, d.lineColor);
+        LineSegment s = new LineSegment(p, p, d.getLineColor());
         s.setActive(LineSegment.ActiveState.ACTIVE_B_2);
 
         d.lineStepAdd(s);
@@ -42,54 +42,54 @@ public class MouseHandlerLineSegmentRatioSet extends BaseMouseHandlerInputRestri
     //マウス操作(mouseMode==28線分入力 でドラッグしたとき)を行う関数----------------------------------------------------
     public void mouseDragged(Point p0) {
         Point p = new Point();
-        p.set(d.camera.TV2object(p0));
-        d.lineStep.get(0).setA(p);
+        p.set(d.getCamera().TV2object(p0));
+        d.getLineStep().get(0).setA(p);
 
-        if (d.gridInputAssist) {
-            d.lineCandidate.clear();
+        if (d.getGridInputAssist()) {
+            d.getLineCandidate().clear();
             Point closestPoint = d.getClosestPoint(p);
-            if (p.distance(closestPoint) < d.selectionDistance) {
-                d.lineCandidate.add(new LineSegment(closestPoint, closestPoint, d.lineColor));
+            if (p.distance(closestPoint) < d.getSelectionDistance()) {
+                d.getLineCandidate().add(new LineSegment(closestPoint, closestPoint, d.getLineColor()));
             } else {
-                d.lineCandidate.add(new LineSegment(p, p, d.lineColor));
+                d.getLineCandidate().add(new LineSegment(p, p, d.getLineColor()));
             }
-            d.lineStep.get(0).setA(d.lineCandidate.get(0).getA());
+            d.getLineStep().get(0).setA(d.getLineCandidate().get(0).getA());
         }
     }
 
     //マウス操作(mouseMode==28線分入力　でボタンを離したとき)を行う関数----------------------------------------------------
     public void mouseReleased(Point p0) {
         Point p = new Point();
-        p.set(d.camera.TV2object(p0));
+        p.set(d.getCamera().TV2object(p0));
 
-        d.lineStep.get(0).setA(p);
+        d.getLineStep().get(0).setA(p);
         Point closestPoint = d.getClosestPoint(p);
 
-        if (p.distance(closestPoint) <= d.selectionDistance) {
-            d.lineStep.get(0).setA(closestPoint);
+        if (p.distance(closestPoint) <= d.getSelectionDistance()) {
+            d.getLineStep().get(0).setA(closestPoint);
         }
-        if (Epsilon.high.gt0(d.lineStep.get(0).determineLength())) {
-            if ((d.internalDivisionRatio_s == 0.0) && (d.internalDivisionRatio_t == 0.0)) {
+        if (Epsilon.high.gt0(d.getLineStep().get(0).determineLength())) {
+            if ((d.getInternalDivisionRatio_s() == 0.0) && (d.getInternalDivisionRatio_t() == 0.0)) {
             }
-            if ((d.internalDivisionRatio_s == 0.0) && (d.internalDivisionRatio_t != 0.0)) {
-                d.addLineSegment(d.lineStep.get(0));
+            if ((d.getInternalDivisionRatio_s() == 0.0) && (d.getInternalDivisionRatio_t() != 0.0)) {
+                d.addLineSegment(d.getLineStep().get(0));
             }
-            if ((d.internalDivisionRatio_s != 0.0) && (d.internalDivisionRatio_t == 0.0)) {
-                d.addLineSegment(d.lineStep.get(0));
+            if ((d.getInternalDivisionRatio_s() != 0.0) && (d.getInternalDivisionRatio_t() == 0.0)) {
+                d.addLineSegment(d.getLineStep().get(0));
             }
-            if ((d.internalDivisionRatio_s != 0.0) && (d.internalDivisionRatio_t != 0.0)) {
+            if ((d.getInternalDivisionRatio_s() != 0.0) && (d.getInternalDivisionRatio_t() != 0.0)) {
                 LineSegment s_ad = new LineSegment();
-                s_ad.setColor(d.lineColor);
-                double nx = (d.internalDivisionRatio_t * d.lineStep.get(0).determineBX() + d.internalDivisionRatio_s * d.lineStep.get(0).determineAX()) / (d.internalDivisionRatio_s + d.internalDivisionRatio_t);
-                double ny = (d.internalDivisionRatio_t * d.lineStep.get(0).determineBY() + d.internalDivisionRatio_s * d.lineStep.get(0).determineAY()) / (d.internalDivisionRatio_s + d.internalDivisionRatio_t);
-                s_ad.set(d.lineStep.get(0).determineAX(), d.lineStep.get(0).determineAY(), nx, ny);
+                s_ad.setColor(d.getLineColor());
+                double nx = (d.getInternalDivisionRatio_t() * d.getLineStep().get(0).determineBX() + d.getInternalDivisionRatio_s() * d.getLineStep().get(0).determineAX()) / (d.getInternalDivisionRatio_s() + d.getInternalDivisionRatio_t());
+                double ny = (d.getInternalDivisionRatio_t() * d.getLineStep().get(0).determineBY() + d.getInternalDivisionRatio_s() * d.getLineStep().get(0).determineAY()) / (d.getInternalDivisionRatio_s() + d.getInternalDivisionRatio_t());
+                s_ad.set(d.getLineStep().get(0).determineAX(), d.getLineStep().get(0).determineAY(), nx, ny);
                 d.addLineSegment(s_ad);
-                s_ad.set(d.lineStep.get(0).determineBX(), d.lineStep.get(0).determineBY(), nx, ny);
+                s_ad.set(d.getLineStep().get(0).determineBX(), d.getLineStep().get(0).determineBY(), nx, ny);
                 d.addLineSegment(s_ad);
             }
             d.record();
         }
 
-        d.lineStep.clear();
+        d.getLineStep().clear();
     }
 }

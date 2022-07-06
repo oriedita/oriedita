@@ -21,7 +21,7 @@ import java.util.EnumSet;
 public class MouseHandlerModifyCalculatedShape implements MouseModeHandler {
     private final FoldingService foldingService;
     private final CanvasModel canvasModel;
-    private final DefaultComboBoxModel<FoldedFigure_Drawer> foldedFiguresList;
+    private final FoldedFiguresList foldedFiguresList;
     private final Point p_m_left_on = new Point();//Coordinates when the left mouse button is pressed
     private final Point move_previous_selection_point = new Point();//Coordinates of the selected point before moving
     private int i_nanini_near = 0;//Point p is close to the point in the development view = 1, close to the point in the folded view = 2, not close to either = 0

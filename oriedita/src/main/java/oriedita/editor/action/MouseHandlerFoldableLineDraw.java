@@ -31,7 +31,7 @@ public class MouseHandlerFoldableLineDraw extends BaseMouseHandler {
     }
 
     public void mouseMoved(Point p0) {
-        if (d.lineStep.size() == 0) {
+        if (d.getLineStep().size() == 0) {
             operationMode = MouseMode.UNUSED_0;
             mouseHandlerDrawCreaseFree.mouseMoved(p0);
             return;
@@ -49,26 +49,26 @@ public class MouseHandlerFoldableLineDraw extends BaseMouseHandler {
     public void mousePressed(Point p0) {
         operationModeChangeable = false;
         Point p = new Point();
-        p.set(d.camera.TV2object(p0));
+        p.set(d.getCamera().TV2object(p0));
         double decision_distance = Epsilon.UNKNOWN_1EN6;
 
-        if (p.distance(moyori_point_memo) <= d.selectionDistance) {
-            d.lineStep.clear();
+        if (p.distance(moyori_point_memo) <= d.getSelectionDistance()) {
+            d.getLineStep().clear();
         }
 
-        if (d.lineStep.size() == 0) {
+        if (d.getLineStep().size() == 0) {
             //任意の点が与えられたとき、端点もしくは格子点で最も近い点を得る
             closest_point = d.getClosestPoint(p);
             moyori_point_memo.set(closest_point);
 
-            if (p.distance(closest_point) > d.selectionDistance) {
+            if (p.distance(closest_point) > d.getSelectionDistance()) {
                 closest_point.set(p);
             }
 
             //moyori_tenを端点とする折線をNarabebakoに入れる
             SortingBox<LineSegment> nbox = new SortingBox<>();
-            for (int i = 1; i <= d.foldLineSet.getTotal(); i++) {
-                LineSegment s = d.foldLineSet.get(i);
+            for (int i = 1; i <= d.getFoldLineSet().getTotal(); i++) {
+                LineSegment s = d.getFoldLineSet().get(i);
                 if (s.getColor().isFoldingLine()) {
                     if (closest_point.distance(s.getA()) < decision_distance) {
                         nbox.addByWeight(s, OritaCalc.angle(s.getA(), s.getB()));
@@ -79,7 +79,7 @@ public class MouseHandlerFoldableLineDraw extends BaseMouseHandler {
             }
             if (nbox.getTotal() % 2 == 0) {
                 operationMode = MouseMode.DRAW_CREASE_FREE_1;
-                d.i_foldLine_additional = FoldLineAdditionalInputMode.POLY_LINE_0;
+                d.setI_foldLine_additional(FoldLineAdditionalInputMode.POLY_LINE_0);
             }//When the number of polygonal lines with moyori_ten as the end point is an even number, the processing inside if {} is performed.
             if (nbox.getTotal() % 2 == 1) {
                 operationMode = MouseMode.VERTEX_MAKE_ANGULARLY_FLAT_FOLDABLE_38;
@@ -93,7 +93,7 @@ public class MouseHandlerFoldableLineDraw extends BaseMouseHandler {
         if (operationMode == MouseMode.VERTEX_MAKE_ANGULARLY_FLAT_FOLDABLE_38) {
             mouseHandlerVertexMakeAngularlyFlatFoldable.mousePressed(p0);
             if (!mouseHandlerVertexMakeAngularlyFlatFoldable.workDone) {
-                if (d.lineStep.size() == 0) {
+                if (d.getLineStep().size() == 0) {
                     mousePressed(p0);
                 }
             }
@@ -106,13 +106,13 @@ public class MouseHandlerFoldableLineDraw extends BaseMouseHandler {
     public void mouseDragged(Point p0) {
         if ((operationMode == MouseMode.VERTEX_MAKE_ANGULARLY_FLAT_FOLDABLE_38) && operationModeChangeable) {
             Point p = new Point();
-            p.set(d.camera.TV2object(p0));
+            p.set(d.getCamera().TV2object(p0));
             moyori_point_memo.set(closest_point);
-            if (p.distance(moyori_point_memo) > d.selectionDistance) {
+            if (p.distance(moyori_point_memo) > d.getSelectionDistance()) {
                 operationMode = MouseMode.DRAW_CREASE_FREE_1;
 
-                d.lineStep.get(0).a_b_swap();
-                d.lineStep.get(0).setColor(d.lineColor);
+                d.getLineStep().get(0).a_b_swap();
+                d.getLineStep().get(0).setColor(d.getLineColor());
                 operationModeChangeable = false;
             }
 

@@ -24,7 +24,7 @@ public class MouseHandlerDrawCreaseAngleRestricted3_2 extends BaseMouseHandlerIn
 
     //マウス操作(マウスを動かしたとき)を行う関数
     public void mouseMoved(Point p0) {
-        if (d.lineStep.size() <= 1) {
+        if (d.getLineStep().size() <= 1) {
             super.mouseMoved(p0);//近い既存点のみ表示
         }
     }
@@ -33,8 +33,8 @@ public class MouseHandlerDrawCreaseAngleRestricted3_2 extends BaseMouseHandlerIn
     public void mousePressed(Point p0) {
 
         int honsuu;//Number of lines drawn around one endpoint
-        if (d.id_angle_system != 0) {
-            honsuu = d.id_angle_system * 2 - 1;
+        if (d.getId_angle_system() != 0) {
+            honsuu = d.getId_angle_system() * 2 - 1;
         } else {
             honsuu = 6;
         }
@@ -42,26 +42,26 @@ public class MouseHandlerDrawCreaseAngleRestricted3_2 extends BaseMouseHandlerIn
 
         double kakudo;
         Point p = new Point();
-        p.set(d.camera.TV2object(p0));
+        p.set(d.getCamera().TV2object(p0));
 
-        if ((d.lineStep.size() == 0) || (d.lineStep.size() == 1)) {
+        if ((d.getLineStep().size() == 0) || (d.getLineStep().size() == 1)) {
             Point closest_point = d.getClosestPoint(p);
-            if (p.distance(closest_point) < d.selectionDistance) {
-                d.lineStepAdd(new LineSegment(closest_point, closest_point, LineColor.fromNumber(d.lineStep.size() + 1)));
+            if (p.distance(closest_point) < d.getSelectionDistance()) {
+                d.lineStepAdd(new LineSegment(closest_point, closest_point, LineColor.fromNumber(d.getLineStep().size() + 1)));
             }
         }
 
-        if (d.lineStep.size() == 2) {
+        if (d.getLineStep().size() == 2) {
             //線分abをaを中心にd度回転した線分を返す関数（元の線分は変えずに新しい線分を返す）public oc.Senbun_kaiten(Senbun s0,double d)
 
-            if (d.id_angle_system != 0) {
-                d_angle_system = 180.0 / (double) d.id_angle_system;
+            if (d.getId_angle_system() != 0) {
+                d_angle_system = 180.0 / (double) d.getId_angle_system();
             } else {
                 d_angle_system = 180.0 / 4.0;
             }
 
-            if (d.id_angle_system != 0) {
-                LineSegment s_kiso = new LineSegment(d.lineStep.get(1).getA(), d.lineStep.get(0).getA());
+            if (d.getId_angle_system() != 0) {
+                LineSegment s_kiso = new LineSegment(d.getLineStep().get(1).getA(), d.getLineStep().get(0).getA());
                 kakudo = 0.0;
 
                 boolean i_jyun = false;//i_jyunは線を描くとき順番に色を変えたいとき使う
@@ -80,38 +80,31 @@ public class MouseHandlerDrawCreaseAngleRestricted3_2 extends BaseMouseHandlerIn
             }
 
 
-            if (d.id_angle_system == 0) {
-                double[] jk = new double[7];
-                jk[0] = 0.0;
-                jk[1] = d.d_restricted_angle_2;
-                jk[2] = d.d_restricted_angle_1;
-                jk[3] = d.d_restricted_angle_3;
-                jk[4] = 360.0 - d.d_restricted_angle_2;
-                jk[5] = 360.0 - d.d_restricted_angle_1;
-                jk[6] = 360.0 - d.d_restricted_angle_3;
+            if (d.getId_angle_system() == 0) {
+                double[] jk = d.getAngles();
 
-                LineSegment s_kiso = new LineSegment(d.lineStep.get(1).getA(), d.lineStep.get(0).getA());
+                LineSegment s_kiso = new LineSegment(d.getLineStep().get(1).getA(), d.getLineStep().get(0).getA());
 
-                for (int i = 1; i <= 6; i++) {
+                for (int i = 0; i < 6; i++) {
                     kakudo = jk[i];
                     LineSegment s = OritaCalc.lineSegment_rotate(s_kiso, kakudo, 100.0);
 
-                    if (i == 1) {
+                    if (i == 0) {
                         s.setColor(LineColor.ORANGE_4);
+                    }
+                    if (i == 1) {
+                        s.setColor(LineColor.GREEN_6);
                     }
                     if (i == 2) {
-                        s.setColor(LineColor.GREEN_6);
-                    }
-                    if (i == 3) {
                         s.setColor(LineColor.PURPLE_8);
                     }
-                    if (i == 4) {
+                    if (i == 3) {
                         s.setColor(LineColor.ORANGE_4);
                     }
-                    if (i == 5) {
+                    if (i == 4) {
                         s.setColor(LineColor.GREEN_6);
                     }
-                    if (i == 6) {
+                    if (i == 5) {
                         s.setColor(LineColor.PURPLE_8);
                     }
                     d.lineStepAdd(s);
@@ -121,22 +114,22 @@ public class MouseHandlerDrawCreaseAngleRestricted3_2 extends BaseMouseHandlerIn
             return;
         }
 
-        if (d.lineStep.size() == 2 + (honsuu)) {
+        if (d.getLineStep().size() == 2 + (honsuu)) {
             LineSegment closest_step_lineSegment = new LineSegment(100000.0, 100000.0, 100000.0, 100000.0 + Epsilon.UNKNOWN_01); //マウス最寄のstep線分(線分追加のための準備をするための線分)。なお、ここで宣言する必要はないので、どこで宣言すべきか要検討20161113
 
             closest_step_lineSegment.set(d.get_moyori_step_lineSegment(p, 3, 2 + (honsuu)));
-            if (OritaCalc.determineLineSegmentDistance(p, closest_step_lineSegment) >= d.selectionDistance) {
-                d.lineStep.clear();
+            if (OritaCalc.determineLineSegmentDistance(p, closest_step_lineSegment) >= d.getSelectionDistance()) {
+                d.getLineStep().clear();
                 return;
             }
 
-            if (OritaCalc.determineLineSegmentDistance(p, closest_step_lineSegment) < d.selectionDistance) {
+            if (OritaCalc.determineLineSegmentDistance(p, closest_step_lineSegment) < d.getSelectionDistance()) {
                 Point mokuhyou_point = new Point();
                 mokuhyou_point.set(OritaCalc.findProjection(closest_step_lineSegment, p));
 
                 LineSegment closestLineSegment = new LineSegment();
                 closestLineSegment.set(d.getClosestLineSegment(p));
-                if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.selectionDistance) {//最寄折線が近い場合
+                if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.getSelectionDistance()) {//最寄折線が近い場合
                     if (OritaCalc.isLineSegmentParallel(closest_step_lineSegment, closestLineSegment, Epsilon.UNKNOWN_1EN6) == OritaCalc.ParallelJudgement.NOT_PARALLEL) {//最寄折線が最寄step折線と平行の場合は除外
                         Point mokuhyou_point2 = new Point();
                         mokuhyou_point2.set(OritaCalc.findIntersection(closest_step_lineSegment, closestLineSegment));
@@ -149,13 +142,13 @@ public class MouseHandlerDrawCreaseAngleRestricted3_2 extends BaseMouseHandlerIn
                 }
 
                 LineSegment add_sen = new LineSegment();
-                add_sen.set(mokuhyou_point, d.lineStep.get(1).getA());
-                add_sen.setColor(d.lineColor);
+                add_sen.set(mokuhyou_point, d.getLineStep().get(1).getA());
+                add_sen.setColor(d.getLineColor());
                 d.addLineSegment(add_sen);
                 d.record();
             }
 
-            d.lineStep.clear();
+            d.getLineStep().clear();
         }
     }
 

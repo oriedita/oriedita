@@ -48,7 +48,7 @@ public class TextEditingArea extends JTextArea {
                     textWorker.removeText((Text) e.getOldValue());
                 }
             }
-            update(textModel, cpWorker.camera);
+            update(textModel, cpWorker.getCamera());
             repaint();
         });
         canvasModel.addPropertyChangeListener(e -> {
@@ -86,7 +86,7 @@ public class TextEditingArea extends JTextArea {
                 }
             }
         });
-        cameraModel.addPropertyChangeListener(e -> update(textModel, cpWorker.camera));
+        cameraModel.addPropertyChangeListener(e -> update(textModel, cpWorker.getCamera()));
 
     }
     private void updateSelectedText(SelectedTextModel textModel) {
@@ -98,7 +98,7 @@ public class TextEditingArea extends JTextArea {
     }
 
     public void update() {
-        update(textModel, cpWorker.camera);
+        update(textModel, cpWorker.getCamera());
     }
     private void update(SelectedTextModel textModel, Camera camera) {
         if (textModel.getSelectedText() == null || !textModel.isSelected()) {

@@ -2,6 +2,8 @@ package oriedita.editor.factory;
 
 import dagger.Binds;
 import dagger.Module;
+import oriedita.editor.canvas.CreasePattern_Worker;
+import oriedita.editor.canvas.impl.CreasePattern_Worker_Impl;
 import oriedita.editor.service.*;
 import oriedita.editor.service.impl.*;
 
@@ -27,4 +29,7 @@ public abstract class ServiceFactory {
 
     @Binds
     abstract FoldingService foldingService(FoldingServiceImpl foldingService);
+
+    @Binds
+    abstract CreasePattern_Worker creasePattern_worker(CreasePattern_Worker_Impl creasePattern_worker);
 }

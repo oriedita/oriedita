@@ -49,7 +49,7 @@ public class MouseHandlerChangeStandardFace extends BaseMouseHandler {
 
         if (selectedFigure != null) {
             Point p = new Point();
-            p.set(d.camera.TV2object(p0));
+            p.set(d.getCamera().TV2object(p0));
             int oldStartingFaceId = selectedFigure.getStartingFaceId();
 
             int newStartingFaceId = selectedFigure.foldedFigure.cp_worker1.get().inside(p);

@@ -28,10 +28,10 @@ public class MouseHandlerDisplayAngleBetweenThreePoints2 extends BaseMouseHandle
     //マウス操作(ボタンを押したとき)時の作業
     public void mousePressed(Point p0) {
         Point p = new Point();
-        p.set(d.camera.TV2object(p0));
+        p.set(d.getCamera().TV2object(p0));
         Point closest_point = d.getClosestPoint(p);
-        if (p.distance(closest_point) < d.selectionDistance) {
-            d.lineStepAdd(new LineSegment(closest_point, closest_point, d.lineColor));
+        if (p.distance(closest_point) < d.getSelectionDistance()) {
+            d.lineStepAdd(new LineSegment(closest_point, closest_point, d.getLineColor()));
         }
     }
 
@@ -41,9 +41,9 @@ public class MouseHandlerDisplayAngleBetweenThreePoints2 extends BaseMouseHandle
 
     //マウス操作(ボタンを離したとき)を行う関数
     public void mouseReleased(Point p0) {
-        if (d.lineStep.size() == 3) {
-            measuresModel.setMeasuredAngle2(OritaCalc.angle(d.lineStep.get(1).getA(), d.lineStep.get(2).getA(), d.lineStep.get(1).getA(), d.lineStep.get(0).getA()));
-            d.lineStep.clear();
+        if (d.getLineStep().size() == 3) {
+            measuresModel.setMeasuredAngle2(OritaCalc.angle(d.getLineStep().get(1).getA(), d.getLineStep().get(2).getA(), d.getLineStep().get(1).getA(), d.getLineStep().get(0).getA()));
+            d.getLineStep().clear();
         }
     }
 }

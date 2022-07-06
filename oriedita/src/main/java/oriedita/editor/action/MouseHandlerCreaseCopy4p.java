@@ -32,64 +32,64 @@ public class MouseHandlerCreaseCopy4p extends BaseMouseHandlerInputRestricted {
     //マウス操作(mouseMode==32copy2p2p2p2p　でボタンを押したとき)時の作業----------------------------------------------------
     public void mousePressed(Point p0) {
         Point p = new Point();
-        p.set(d.camera.TV2object(p0));
+        p.set(d.getCamera().TV2object(p0));
 
-        if (d.lineStep.size() == 0) {    //第1段階として、点を選択
+        if (d.getLineStep().size() == 0) {    //第1段階として、点を選択
             Point closestPoint = d.getClosestPoint(p);
 
-            if (p.distance(closestPoint) < d.selectionDistance) {
+            if (p.distance(closestPoint) < d.getSelectionDistance()) {
                 d.lineStepAdd(new LineSegment(closestPoint, closestPoint, LineColor.MAGENTA_5));
             }
             return;
         }
 
-        if (d.lineStep.size() == 1) {    //第2段階として、点を選択
+        if (d.getLineStep().size() == 1) {    //第2段階として、点を選択
             Point closestPoint = d.getClosestPoint(p);
 
-            if (p.distance(closestPoint) >= d.selectionDistance) {
-                d.lineStep.clear();
+            if (p.distance(closestPoint) >= d.getSelectionDistance()) {
+                d.getLineStep().clear();
                 canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.NORMAL_0);//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
                 return;
             }
-            if (p.distance(closestPoint) < d.selectionDistance) {
+            if (p.distance(closestPoint) < d.getSelectionDistance()) {
                 d.lineStepAdd(new LineSegment(closestPoint, closestPoint, LineColor.BLUE_2));
             }
-            if (Epsilon.high.le0(OritaCalc.distance(d.lineStep.get(0).getA(), d.lineStep.get(1).getA()))) {
-                d.lineStep.clear();
+            if (Epsilon.high.le0(OritaCalc.distance(d.getLineStep().get(0).getA(), d.getLineStep().get(1).getA()))) {
+                d.getLineStep().clear();
                 canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.NORMAL_0);//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
             }
             return;
         }
 
 
-        if (d.lineStep.size() == 2) {    //第3段階として、点を選択
+        if (d.getLineStep().size() == 2) {    //第3段階として、点を選択
             Point closestPoint = d.getClosestPoint(p);
 
             closestPoint.set(d.getClosestPoint(p));
-            if (p.distance(closestPoint) >= d.selectionDistance) {
-                d.lineStep.clear();
+            if (p.distance(closestPoint) >= d.getSelectionDistance()) {
+                d.getLineStep().clear();
                 canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.NORMAL_0);//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
                 return;
             }
-            if (p.distance(closestPoint) < d.selectionDistance) {
+            if (p.distance(closestPoint) < d.getSelectionDistance()) {
                 d.lineStepAdd(new LineSegment(closestPoint, closestPoint, LineColor.CYAN_3));
             }
             return;
         }
 
-        if (d.lineStep.size() == 3) {    //第4段階として、点を選択
+        if (d.getLineStep().size() == 3) {    //第4段階として、点を選択
             Point closestPoint = d.getClosestPoint(p);
             closestPoint.set(d.getClosestPoint(p));
-            if (p.distance(closestPoint) >= d.selectionDistance) {
-                d.lineStep.clear();
+            if (p.distance(closestPoint) >= d.getSelectionDistance()) {
+                d.getLineStep().clear();
                 canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.NORMAL_0);//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
                 return;
             }
-            if (p.distance(closestPoint) < d.selectionDistance) {
+            if (p.distance(closestPoint) < d.getSelectionDistance()) {
                 d.lineStepAdd(new LineSegment(closestPoint, closestPoint, LineColor.ORANGE_4));
             }
-            if (Epsilon.high.le0(OritaCalc.distance(d.lineStep.get(2).getA(), d.lineStep.get(3).getA()))) {
-                d.lineStep.clear();
+            if (Epsilon.high.le0(OritaCalc.distance(d.getLineStep().get(2).getA(), d.getLineStep().get(3).getA()))) {
+                d.getLineStep().clear();
                 canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.NORMAL_0);//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
             }
         }
@@ -103,26 +103,26 @@ public class MouseHandlerCreaseCopy4p extends BaseMouseHandlerInputRestricted {
 
     //マウス操作(mouseMode==32copy2p2pp　でボタンを離したとき)を行う関数----------------------------------------------------
     public void mouseReleased(Point p0) {
-        if (d.lineStep.size() == 4) {
+        if (d.getLineStep().size() == 4) {
             canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.NORMAL_0);//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
 
             FoldLineSet ori_s_temp = new FoldLineSet();    //セレクトされた折線だけ取り出すために使う
             Save save = Save.createInstance();
-            d.foldLineSet.getMemoSelectOption(save, 2);
+            d.getFoldLineSet().getMemoSelectOption(save, 2);
             ori_s_temp.setSave(save);//セレクトされた折線だけ取り出してori_s_tempを作る
-            ori_s_temp.move(d.lineStep.get(0).getA(), d.lineStep.get(1).getA(), d.lineStep.get(2).getA(), d.lineStep.get(3).getA());//全体を移動する
+            ori_s_temp.move(d.getLineStep().get(0).getA(), d.getLineStep().get(1).getA(), d.getLineStep().get(2).getA(), d.getLineStep().get(3).getA());//全体を移動する
 
-            int sousuu_old = d.foldLineSet.getTotal();
+            int sousuu_old = d.getFoldLineSet().getTotal();
             Save save1 = Save.createInstance();
             ori_s_temp.getSave(save1);
-            d.foldLineSet.addSave(save1);
-            int sousuu_new = d.foldLineSet.getTotal();
-            d.foldLineSet.divideLineSegmentWithNewLines(sousuu_old, sousuu_new);
+            d.getFoldLineSet().addSave(save1);
+            int sousuu_new = d.getFoldLineSet().getTotal();
+            d.getFoldLineSet().divideLineSegmentWithNewLines(sousuu_old, sousuu_new);
 
             d.record();
             canvasModel.setMouseMode(MouseMode.CREASE_SELECT_19);
 
-            d.lineStep.clear();
+            d.getLineStep().clear();
         }
     }
 }

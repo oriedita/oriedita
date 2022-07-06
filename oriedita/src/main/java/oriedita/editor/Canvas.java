@@ -456,7 +456,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                 mainCreasePatternWorker.setCamera(creasePatternCamera);
                 activeMouseHandler.reset();
                 if (activeMouseHandler.getMouseMode() != MouseMode.LINE_SEGMENT_DELETE_3) {
-                    mainCreasePatternWorker.i_foldLine_additional = FoldLineAdditionalInputMode.BOTH_4;
+                    mainCreasePatternWorker.setFoldLineAdditional(FoldLineAdditionalInputMode.BOTH_4);
                 }
                 mouseModeHandlers.get(MouseMode.LINE_SEGMENT_DELETE_3).mousePressed(p, e);
                 activeMouseHandler = mouseModeHandlers.get(MouseMode.LINE_SEGMENT_DELETE_3);

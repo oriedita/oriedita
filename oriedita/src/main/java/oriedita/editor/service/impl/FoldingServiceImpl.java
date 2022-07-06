@@ -75,7 +75,7 @@ public class FoldingServiceImpl implements FoldingService {
     public void fold(FoldType foldType, FoldedFigure.EstimationOrder estimationOrder) {
         if (foldType == FoldType.FOR_ALL_CONNECTED_LINES_1) {
             Point cameraPos = this.mainCreasePatternWorker.getCameraPosition();
-            mainCreasePatternWorker.selectConnected(this.mainCreasePatternWorker.foldLineSet.closestPoint(cameraPos));
+            mainCreasePatternWorker.selectConnected(this.mainCreasePatternWorker.getFoldLineSet().closestPoint(cameraPos));
             LineSegmentSet newFold = mainCreasePatternWorker.getForSelectFolding();
             if (foldedFiguresList.getSelectedItem() != null && newFold.contentEquals(lastFold)) {
                 Logger.info("CP didnt change, refolding using constraints and starting face");
@@ -95,7 +95,7 @@ public class FoldingServiceImpl implements FoldingService {
         if (applicationModel.getCorrectCpBeforeFolding()) {// Automatically correct strange parts (branch-shaped fold lines, etc.) in the crease pattern
             CreasePattern_Worker creasePatternWorker2 = backupCreasePatternWorker;
             Save save = Save.createInstance();
-            mainCreasePatternWorker.foldLineSet.getSaveForSelectFolding(save);
+            mainCreasePatternWorker.getFoldLineSet().getSaveForSelectFolding(save);
             creasePatternWorker2.setSave_for_reading(save);
             creasePatternWorker2.point_removal();
             creasePatternWorker2.overlapping_line_removal();

@@ -16,16 +16,16 @@ public abstract class BaseMouseHandlerLineSelect extends BaseMouseHandler {
     @Override
     public void mouseMoved(Point p0) {
         //Display candidate points that can be selected with the mouse. If there is an established point nearby, that point is the candidate point, and if not, the mouse position itself is the candidate point.
-        if (d.gridInputAssist) {
-            d.lineCandidate.clear();
+        if (d.getGridInputAssist()) {
+            d.getLineCandidate().clear();
 
             LineSegment candidate = new LineSegment();
             candidate.setActive(LineSegment.ActiveState.ACTIVE_BOTH_3);
             Point p = new Point();
-            p.set(d.camera.TV2object(p0));
+            p.set(d.getCamera().TV2object(p0));
 
             Point closestPoint = d.getClosestPoint(p);
-            if (p.distance(closestPoint) < d.selectionDistance) {
+            if (p.distance(closestPoint) < d.getSelectionDistance()) {
                 candidate.set(closestPoint, closestPoint);
             } else {
                 candidate.set(p, p);
@@ -33,19 +33,19 @@ public abstract class BaseMouseHandlerLineSelect extends BaseMouseHandler {
 
             candidate.setColor(LineColor.MAGENTA_5);
 
-            d.lineCandidate.add(candidate);
+            d.getLineCandidate().add(candidate);
         }
     }
 
     @Override
     public void mousePressed(Point p0) {
         Point p = new Point();
-        p.set(d.camera.TV2object(p0));
+        p.set(d.getCamera().TV2object(p0));
 
         LineSegment s = new LineSegment(p, p);
 
         Point closest_point = d.getClosestPoint(p);
-        if (p.distance(closest_point) < d.selectionDistance) {
+        if (p.distance(closest_point) < d.getSelectionDistance()) {
             s.set(p, closest_point);
         }
         s.setColor(LineColor.MAGENTA_5);
@@ -63,7 +63,7 @@ public abstract class BaseMouseHandlerLineSelect extends BaseMouseHandler {
     private void snapLine() {
         selectionLine.setA(SnappingUtil.snapToClosePointInActiveAngleSystem(d, selectionLine.getB(), selectionLine.getA()));
 
-        d.lineStep.get(0).setA(SnappingUtil.snapToClosePointInActiveAngleSystem(d, d.lineStep.get(0).getB(), d.lineStep.get(0).getA()));
+        d.getLineStep().get(0).setA(SnappingUtil.snapToClosePointInActiveAngleSystem(d, d.getLineStep().get(0).getB(), d.getLineStep().get(0).getA()));
     }
 
     @Override
@@ -71,22 +71,22 @@ public abstract class BaseMouseHandlerLineSelect extends BaseMouseHandler {
         //近くの既成点かマウス位置表示
 
         Point p = new Point();
-        p.set(d.camera.TV2object(p0));
+        p.set(d.getCamera().TV2object(p0));
 
-        d.lineStep.get(0).setA(p);
+        d.getLineStep().get(0).setA(p);
         selectionLine.setA(p);
 
         Point closestPoint = d.getClosestPoint(p);
-        if (p.distance(closestPoint) < d.selectionDistance && !snapping) {
+        if (p.distance(closestPoint) < d.getSelectionDistance() && !snapping) {
             selectionLine = new LineSegment(closestPoint, selectionLine.getB(), LineColor.MAGENTA_5);
         } else {
             selectionLine = new LineSegment(p, selectionLine.getB(), LineColor.MAGENTA_5);
         }
-        if (d.gridInputAssist) {
-            d.lineCandidate.clear();
-            d.lineCandidate.add(selectionLine);
+        if (d.getGridInputAssist()) {
+            d.getLineCandidate().clear();
+            d.getLineCandidate().add(selectionLine);
         }
-        d.lineStep.get(0).setA(selectionLine.getA());
+        d.getLineStep().get(0).setA(selectionLine.getA());
         if (snapping) {
             snapLine();
         }
@@ -102,7 +102,7 @@ public abstract class BaseMouseHandlerLineSelect extends BaseMouseHandler {
         super.reset();
         selectionLine = null;
         snapping = false;
-        d.lineStep.clear();
-        d.lineCandidate.clear();
+        d.getLineStep().clear();
+        d.getLineCandidate().clear();
     }
 }

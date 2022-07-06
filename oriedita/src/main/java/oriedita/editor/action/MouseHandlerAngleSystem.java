@@ -51,7 +51,7 @@ public class MouseHandlerAngleSystem extends BaseMouseHandlerInputRestricted {
 
     public void mouseMoved(Point p0) {
         super.mouseMoved(p0);
-        Point p = d.camera.TV2object(p0);
+        Point p = d.getCamera().TV2object(p0);
         switch (currentStep) {
             case SELECT_FIRST_POINT:
                 pStart = d.getClosestPoint(p);
@@ -71,7 +71,7 @@ public class MouseHandlerAngleSystem extends BaseMouseHandlerInputRestricted {
 
     private Point determinePEnd(Point p) {
         Point previewPEnd = d.getClosestPoint(p);
-        if (previewPEnd.distance(p) >= d.selectionDistance) {
+        if (previewPEnd.distance(p) >= d.getSelectionDistance()) {
             previewPEnd = p;
         }
         return previewPEnd;
@@ -80,7 +80,7 @@ public class MouseHandlerAngleSystem extends BaseMouseHandlerInputRestricted {
     //マウス操作(ボタンを押したとき)時の作業
     public void mousePressed(Point p0) {
         Point p = new Point();
-        p.set(d.camera.TV2object(p0));
+        p.set(d.getCamera().TV2object(p0));
 
         // Apply values from mouseMoved
         switch (currentStep) {
@@ -91,7 +91,7 @@ public class MouseHandlerAngleSystem extends BaseMouseHandlerInputRestricted {
             case SELECT_SECOND_POINT:
                 pEnd = determinePEnd(p);
                 candidates = makePreviewLines(pStart, pEnd);
-                if (pEnd.distance(p) >= d.selectionDistance) {
+                if (pEnd.distance(p) >= d.getSelectionDistance()) {
                     return;
                 }
                 currentStep = Step.SELECT_DIRECTION;
@@ -120,20 +120,20 @@ public class MouseHandlerAngleSystem extends BaseMouseHandlerInputRestricted {
         LineSegment ls = determineLineSegmentToAdd(p);
         if (ls == null) {
             Point newEndPoint = OritaCalc.findProjection(direction, p);
-            return new LineSegment(newEndPoint, pEnd, d.lineColor);
+            return new LineSegment(newEndPoint, pEnd, d.getLineColor());
         }
         return ls;
     }
 
     private LineSegment determineLineSegmentToAdd(Point p) {
         LineSegment closestLineSegment = d.getClosestLineSegment(p);
-        if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.selectionDistance) {
+        if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.getSelectionDistance()) {
             LineSegment s = new LineSegment();
             s.set(closestLineSegment);
             s.setColor(LineColor.GREEN_6);
             Point startingPoint = new Point();
             startingPoint.set(OritaCalc.findIntersection(s, direction));
-            return new LineSegment(startingPoint, pEnd, d.lineColor);
+            return new LineSegment(startingPoint, pEnd, d.getLineColor());
         }
         return null;
     }
@@ -143,7 +143,7 @@ public class MouseHandlerAngleSystem extends BaseMouseHandlerInputRestricted {
                 .min(Comparator.comparingDouble(cand -> OritaCalc.determineLineSegmentDistance(p, cand)));
         if (closestLineSegmentO.isPresent()) {
             LineSegment closestLineSegment = closestLineSegmentO.get();
-            if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.selectionDistance) {
+            if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.getSelectionDistance()) {
                 LineSegment s = new LineSegment();
                 s.set(closestLineSegment);
                 s.setColor(LineColor.BLUE_2);
@@ -156,8 +156,8 @@ public class MouseHandlerAngleSystem extends BaseMouseHandlerInputRestricted {
     private List<LineSegment> makePreviewLines(Point pStart, Point pEnd) {
         List<LineSegment> candidates = new ArrayList<>();
         int numPreviewLines;//1つの端点周りに描く線の本数
-        if (d.id_angle_system != 0) {
-            numPreviewLines = d.id_angle_system * 2 - 1;
+        if (d.getId_angle_system() != 0) {
+            numPreviewLines = d.getId_angle_system() * 2 - 1;
         } else {
             numPreviewLines = 6;
         }
@@ -168,10 +168,10 @@ public class MouseHandlerAngleSystem extends BaseMouseHandlerInputRestricted {
         startingSegment.setColor(LineColor.GREEN_6);
         candidates.add(startingSegment);
 
-        if (d.id_angle_system != 0) {
+        if (d.getId_angle_system() != 0) {
 
             double angle = 0.0;
-            double angleStep = 180.0 / d.id_angle_system;
+            double angleStep = 180.0 / d.getId_angle_system();
             for (int i = 0; i < numPreviewLines; i++) {
                 angle += angleStep;
                 LineSegment e = OritaCalc.lineSegment_rotate(startingSegment, angle, 1.0);
@@ -184,14 +184,7 @@ public class MouseHandlerAngleSystem extends BaseMouseHandlerInputRestricted {
                 candidates.add(e);
             }
         } else {
-            double[] angles = new double[] {
-                    d.d_restricted_angle_1,
-                    d.d_restricted_angle_2,
-                    d.d_restricted_angle_3,
-                    360 - d.d_restricted_angle_1,
-                    360 - d.d_restricted_angle_2,
-                    360 - d.d_restricted_angle_3
-            };
+            double[] angles = d.getAngles();
 
             for (int i = 0; i < 6; i++) {
                 LineSegment s = new LineSegment();
@@ -216,19 +209,19 @@ public class MouseHandlerAngleSystem extends BaseMouseHandlerInputRestricted {
     public void drawPreview(Graphics2D g2, Camera camera, DrawingSettings settings) {
         super.drawPreview(g2, camera, settings);
         for (LineSegment candidate : candidates) {
-            DrawingUtil.drawLineStep(g2, candidate, camera, settings.getLineWidth(), d.gridInputAssist);
+            DrawingUtil.drawLineStep(g2, candidate, camera, settings.getLineWidth(), d.getGridInputAssist());
         }
         if (direction != null && currentStep == Step.SELECT_DIRECTION) {
-            DrawingUtil.drawLineStep(g2, direction, camera, settings.getLineWidth(), d.gridInputAssist);
+            DrawingUtil.drawLineStep(g2, direction, camera, settings.getLineWidth(), d.getGridInputAssist());
         }
         if (pStart != null) {
-            DrawingUtil.drawStepVertex(g2, pStart, LineColor.RED_1, camera, d.gridInputAssist);
+            DrawingUtil.drawStepVertex(g2, pStart, LineColor.RED_1, camera, d.getGridInputAssist());
         }
         if (pEnd != null) {
-            DrawingUtil.drawStepVertex(g2, pEnd, LineColor.BLUE_2, camera, d.gridInputAssist);
+            DrawingUtil.drawStepVertex(g2, pEnd, LineColor.BLUE_2, camera, d.getGridInputAssist());
         }
         if (previewLine != null) {
-            DrawingUtil.drawCpLine(g2, previewLine, camera, settings.getLineStyle(), settings.getLineWidth(), d.pointSize, settings.getWidth(), settings.getHeight());
+            DrawingUtil.drawCpLine(g2, previewLine, camera, settings.getLineStyle(), settings.getLineWidth(), d.getPointSize(), settings.getWidth(), settings.getHeight());
         }
     }
 
