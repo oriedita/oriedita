@@ -278,10 +278,6 @@ public interface CreasePattern_Worker {
 
     CanvasModel.SelectionOperationMode getI_select_mode();
 
-    double getAngle();
-
-    void setAngle(double angle);
-
     int getFoldLineDividingNumber();
 
     TextWorker getTextWorker();
