@@ -58,7 +58,6 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     public FoldLineAdditionalInputMode i_foldLine_additional = FoldLineAdditionalInputMode.POLY_LINE_0;//= 0 is polygonal line input = 1 is auxiliary line input mode (when inputting a line segment, these two). When deleting a line segment, the value becomes as follows. = 0 is the deletion of the polygonal line, = 1 is the deletion of the auxiliary picture line, = 2 is the deletion of the black line, = 3 is the deletion of the auxiliary live line, = 4 is the folding line, the auxiliary live line and the auxiliary picture line.
     public FoldLineSet auxLines = new FoldLineSet();    //Store auxiliary lines
     public int id_angle_system = 8;//180 / id_angle_system represents the angular system. For example, if id_angle_system = 3, 180/3 = 60 degrees, if id_angle_system = 5, 180/5 = 36 degrees
-    public double angle;
     public int foldLineDividingNumber = 1;
     public double internalDivisionRatio_s;
     public double internalDivisionRatio_t;
@@ -1182,16 +1181,6 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     @Override
     public CanvasModel.SelectionOperationMode getI_select_mode() {
         return i_select_mode;
-    }
-
-    @Override
-    public double getAngle() {
-        return angle;
-    }
-
-    @Override
-    public void setAngle(double angle) {
-        this.angle = angle;
     }
 
     @Override

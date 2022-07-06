@@ -63,28 +63,28 @@ public class MouseHandlerDrawCreaseAngleRestricted extends BaseMouseHandler {
 
             if (d.getId_angle_system() != 0) {
                 LineSegment s_kiso = new LineSegment(d.getLineStep().get(0).getA(), d.getLineStep().get(0).getB());
-                d.setAngle(0.0);
+                double angle = 0.0;
                 i_jyun = false;
                 for (int i = 1; i <= honsuu; i++) {
                     i_jyun = !i_jyun;
 
                     LineSegment s = new LineSegment();
-                    d.setAngle(d.getAngle() + d_angle_system);
-                    s.set(OritaCalc.lineSegment_rotate(s_kiso, d.getAngle(), 10.0));
+                    angle = angle + d_angle_system;
+                    s.set(OritaCalc.lineSegment_rotate(s_kiso, angle, 10.0));
                     s.setColor(i_jyun ? LineColor.ORANGE_4 : LineColor.GREEN_6);
                     d.lineStepAdd(s);
 
                 }
 
                 s_kiso.set(d.getLineStep().get(0).getB(), d.getLineStep().get(0).getA());
-                d.setAngle(0.0);
+                angle = 0.0;
                 i_jyun = false;
                 for (int i = 1; i <= honsuu; i++) {
                     i_jyun = !i_jyun;
-                    d.setAngle(d.getAngle() + d_angle_system);
+                    angle = angle + d_angle_system;
                     LineSegment s = new LineSegment();
 
-                    s.set(OritaCalc.lineSegment_rotate(s_kiso, d.getAngle(), 10.0));
+                    s.set(OritaCalc.lineSegment_rotate(s_kiso, angle, 10.0));
                     s.setColor(i_jyun ? LineColor.ORANGE_4 : LineColor.GREEN_6);
 
                     d.lineStepAdd(s);
@@ -94,14 +94,14 @@ public class MouseHandlerDrawCreaseAngleRestricted extends BaseMouseHandler {
                 double[] jk = d.getAngles();
 
                 LineSegment s_kiso = new LineSegment(d.getLineStep().get(0).getA(), d.getLineStep().get(0).getB());
-                d.setAngle(0.0);
+                double angle = 0.0;
                 i_jyun = false;
                 for (int i = 0; i < 6; i++) {
                     i_jyun = !i_jyun;
 
-                    d.setAngle(jk[i]);
+                    angle = jk[i];
                     LineSegment s = new LineSegment();
-                    s.set(OritaCalc.lineSegment_rotate(s_kiso, d.getAngle(), 10.0));
+                    s.set(OritaCalc.lineSegment_rotate(s_kiso, angle, 10.0));
                     if (i == 0) {
                         s.setColor(LineColor.GREEN_6);
                     }
@@ -124,14 +124,13 @@ public class MouseHandlerDrawCreaseAngleRestricted extends BaseMouseHandler {
                 }
 
                 s_kiso.set(d.getLineStep().get(0).getB(), d.getLineStep().get(0).getA());
-                d.setAngle(0.0);
                 i_jyun = false;
                 for (int i = 1; i <= 6; i++) {
                     i_jyun = !i_jyun;
 
-                    d.setAngle(jk[i]);
+                    angle = jk[i];
                     LineSegment s = new LineSegment();
-                    s.set(OritaCalc.lineSegment_rotate(s_kiso, d.getAngle(), 10.0));
+                    s.set(OritaCalc.lineSegment_rotate(s_kiso, angle, 10.0));
                     if (i == 1) {
                         s.setColor(LineColor.GREEN_6);
                     }
