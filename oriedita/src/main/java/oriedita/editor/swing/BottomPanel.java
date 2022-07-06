@@ -133,13 +133,13 @@ public class BottomPanel {
             }
         });
         anotherSolutionButton.addActionListener(e -> {
-            FoldedFigure_Drawer selectedItem = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();
+            FoldedFigure_Drawer selectedItem = foldedFiguresList.getActiveItem();
             if (selectedItem != null) {
                 foldingService.foldAnother(selectedItem);
             }
         });
         flipButton.addActionListener(e -> {
-            FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();
+            FoldedFigure_Drawer selectedFigure = foldedFiguresList.getActiveItem();
             if (selectedFigure != null) {
                 foldedFigureModel.advanceState();
 
@@ -149,7 +149,7 @@ public class BottomPanel {
             }
         });
         As100Button.addActionListener(e -> {
-            FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();
+            FoldedFigure_Drawer selectedFigure = foldedFiguresList.getActiveItem();
             if (selectedFigure != null && selectedFigure.foldedFigure.findAnotherOverlapValid) {
                 selectedFigure.foldedFigure.estimationOrder = FoldedFigure.EstimationOrder.ORDER_6;
 
@@ -165,7 +165,7 @@ public class BottomPanel {
 
             foldedFigureModel.setFoldedCases(newFoldedCases);
 
-            FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();
+            FoldedFigure_Drawer selectedFigure = foldedFiguresList.getActiveItem();
 
             if (selectedFigure == null) {
                 return;
@@ -186,14 +186,14 @@ public class BottomPanel {
         });
 
         undoRedo.addUndoActionListener(e -> {
-            FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();
+            FoldedFigure_Drawer selectedFigure = foldedFiguresList.getActiveItem();
 
             if (selectedFigure != null) {
                 selectedFigure.undo();
             }
         });
         undoRedo.addRedoActionListener(e -> {
-            FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();
+            FoldedFigure_Drawer selectedFigure = foldedFiguresList.getActiveItem();
 
             if (selectedFigure != null) {
                 selectedFigure.redo();
@@ -201,7 +201,7 @@ public class BottomPanel {
         });
         oriagari_sousaButton.addActionListener(e -> {
             canvasModel.setFoldedFigureOperationMode(FoldedFigureOperationMode.MODE_1);
-            FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();
+            FoldedFigure_Drawer selectedFigure = foldedFiguresList.getActiveItem();
 
             if (selectedFigure != null) {
                 selectedFigure.foldedFigure.setAllPointStateFalse();
@@ -212,7 +212,7 @@ public class BottomPanel {
         });
         oriagari_sousa_2Button.addActionListener(e -> {
             canvasModel.setFoldedFigureOperationMode(FoldedFigureOperationMode.MODE_2);
-            FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();
+            FoldedFigure_Drawer selectedFigure = foldedFiguresList.getActiveItem();
 
             if (selectedFigure != null) {
                 selectedFigure.foldedFigure.setAllPointStateFalse();

@@ -79,7 +79,7 @@ public class FoldingServiceImpl implements FoldingService {
             LineSegmentSet newFold = mainCreasePatternWorker.getForSelectFolding();
             if (foldedFiguresList.getSelectedItem() != null && newFold.contentEquals(lastFold)) {
                 Logger.info("CP didnt change, refolding using constraints and starting face");
-                FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();
+                FoldedFigure_Drawer selectedFigure = foldedFiguresList.getActiveItem();
                 if (selectedFigure != null) {
                     selectedFigure.foldedFigure.estimationOrder = estimationOrder;
                     selectedFigure.foldedFigure.estimationStep = FoldedFigure.EstimationStep.STEP_0;

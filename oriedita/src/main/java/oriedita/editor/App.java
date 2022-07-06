@@ -207,7 +207,7 @@ public class App {
         applicationModel.reload();
 
         foldedFigureModel.addPropertyChangeListener(e -> {
-            FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();
+            FoldedFigure_Drawer selectedFigure = foldedFiguresList.getActiveItem();
 
             if (selectedFigure != null) {
                 selectedFigure.setData(foldedFigureModel);

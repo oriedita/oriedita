@@ -29,7 +29,7 @@ public class FoldingEstimateSave100Task implements OrieditaTask {
         long start = System.currentTimeMillis();
 
         File file = fileSaveService.selectExportFile();
-        FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();
+        FoldedFigure_Drawer selectedFigure = foldedFiguresList.getActiveItem();
 
         if (selectedFigure == null) {
             return;

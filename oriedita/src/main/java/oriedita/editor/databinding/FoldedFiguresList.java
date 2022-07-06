@@ -11,4 +11,14 @@ public class FoldedFiguresList extends DefaultComboBoxModel<FoldedFigure_Drawer>
     @Inject
     public FoldedFiguresList() {
     }
+
+    public FoldedFigure_Drawer getActiveItem() {
+        Object selectedItem = getSelectedItem();
+
+        if (selectedItem != null) {
+            return (FoldedFigure_Drawer) selectedItem;
+        }
+
+        return null;
+    }
 }

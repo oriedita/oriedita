@@ -47,7 +47,7 @@ public class MouseHandlerAddFoldingConstraints implements MouseModeHandler {
 
     @Override
     public void mousePressed(Point p0, MouseEvent e) {
-        FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();
+        FoldedFigure_Drawer selectedFigure = foldedFiguresList.getActiveItem();
         if (selectedFigure == null) {
             return;
         }

@@ -240,7 +240,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
             OZi.wireFrame_worker_drawer1.setCamera(creasePatternCamera);
         }
 
-        FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();
+        FoldedFigure_Drawer selectedFigure = foldedFiguresList.getActiveItem();
 
         if (selectedFigure != null) {
 //VVVVVVVVVVVVVVV以下のts2へのカメラセットはOriagari_zuのoekakiで実施しているので以下の5行はなくてもいいはず　20180225
@@ -429,7 +429,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
                 Logger.info("i_cp_or_oriagari = " + target);
 
-                FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();
+                FoldedFigure_Drawer selectedFigure = foldedFiguresList.getActiveItem();
 
                 switch (target) {
                     case CREASE_PATTERN_0: // 展開図移動。
@@ -492,7 +492,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                 case MouseEvent.BUTTON1:
                     break;
                 case MouseEvent.BUTTON2:
-                    FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();
+                    FoldedFigure_Drawer selectedFigure = foldedFiguresList.getActiveItem();
 
                     switch (canvasModel.getMouseInCpOrFoldedFigure()) {
                         case CREASE_PATTERN_0: // 展開図移動。
@@ -569,7 +569,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                     //
                     break;
                 case MouseEvent.BUTTON2:
-                    FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();
+                    FoldedFigure_Drawer selectedFigure = foldedFiguresList.getActiveItem();
                     switch (canvasModel.getMouseInCpOrFoldedFigure()) {
                         case CREASE_PATTERN_0:
                             creasePatternCamera.displayPositionMove(mouse_temp0.other_Point_position(p));

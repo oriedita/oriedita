@@ -53,7 +53,7 @@ public class MouseHandlerModifyCalculatedShape implements MouseModeHandler {
 
     @Override
     public void mousePressed(Point p0) {
-        selectedFigure = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();
+        selectedFigure = foldedFiguresList.getActiveItem();
 
         if (selectedFigure == null) {
             return;
@@ -69,7 +69,7 @@ public class MouseHandlerModifyCalculatedShape implements MouseModeHandler {
 
     @Override
     public void mouseDragged(Point p0) {
-        selectedFigure = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();
+        selectedFigure = foldedFiguresList.getActiveItem();
 
         if (selectedFigure == null) {
             return;
@@ -85,7 +85,7 @@ public class MouseHandlerModifyCalculatedShape implements MouseModeHandler {
 
     @Override
     public void mouseReleased(Point p0) {
-        selectedFigure = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();
+        selectedFigure = foldedFiguresList.getActiveItem();
 
         if (selectedFigure == null) {
             return;

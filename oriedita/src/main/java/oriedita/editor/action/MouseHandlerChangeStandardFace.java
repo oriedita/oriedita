@@ -45,7 +45,7 @@ public class MouseHandlerChangeStandardFace extends BaseMouseHandler {
     @Override
     public void mouseReleased(Point p0) {
 
-        FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();
+        FoldedFigure_Drawer selectedFigure = foldedFiguresList.getActiveItem();
 
         if (selectedFigure != null) {
             Point p = new Point();
