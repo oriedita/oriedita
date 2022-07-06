@@ -49,7 +49,7 @@ public class SaveTest {
         FoldedFigureModel foldedFigureModel = new FoldedFigureModel();
         SelectedTextModel textModel = new SelectedTextModel();
         TextWorker textWorker = new TextWorker();
-        mainCreasePatternWorker = new CreasePattern_Worker_Impl(creasePatternCamera, new DequeHistoryState(), new DequeHistoryState(), new FoldLineSet(), new FoldLineSet(), new SingleTaskExecutorServiceImpl(), canvasModel, applicationModel, gridModel, foldedFigureModel, fileModel, null, null, textWorker, textModel);
+        mainCreasePatternWorker = new CreasePattern_Worker_Impl(creasePatternCamera, new DequeHistoryState(), new DequeHistoryState(), new FoldLineSet(), new FoldLineSet(), new SingleTaskExecutorServiceImpl(), canvasModel, applicationModel, gridModel, foldedFigureModel, fileModel, null, textWorker, textModel);
         ResetService resetService = () -> {};
         fileSaveService = new FileSaveServiceImpl(null, creasePatternCamera, mainCreasePatternWorker, null, fileModel, applicationModel, canvasModel, new FoldedFiguresList(), resetService, null);
     }

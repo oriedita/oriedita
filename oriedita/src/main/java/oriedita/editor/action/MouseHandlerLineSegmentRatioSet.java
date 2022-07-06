@@ -2,6 +2,8 @@ package oriedita.editor.action;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+
+import oriedita.editor.databinding.InternalDivisionRatioModel;
 import origami.Epsilon;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
@@ -9,8 +11,11 @@ import oriedita.editor.canvas.MouseMode;
 
 @Singleton
 public class MouseHandlerLineSegmentRatioSet extends BaseMouseHandlerInputRestricted {
+    private final InternalDivisionRatioModel internalDivisionRatioModel;
+
     @Inject
-    public MouseHandlerLineSegmentRatioSet() {
+    public MouseHandlerLineSegmentRatioSet(InternalDivisionRatioModel internalDivisionRatioModel) {
+        this.internalDivisionRatioModel = internalDivisionRatioModel;
     }
 
     @Override
@@ -69,19 +74,21 @@ public class MouseHandlerLineSegmentRatioSet extends BaseMouseHandlerInputRestri
             d.getLineStep().get(0).setA(closestPoint);
         }
         if (Epsilon.high.gt0(d.getLineStep().get(0).determineLength())) {
-            if ((d.getInternalDivisionRatio_s() == 0.0) && (d.getInternalDivisionRatio_t() == 0.0)) {
+            double internalDivisionRatio_s = internalDivisionRatioModel.getInternalDivisionRatioS();
+            double internalDivisionRatio_t = internalDivisionRatioModel.getInternalDivisionRatioT();
+            if ((internalDivisionRatio_s == 0.0) && (internalDivisionRatio_t == 0.0)) {
             }
-            if ((d.getInternalDivisionRatio_s() == 0.0) && (d.getInternalDivisionRatio_t() != 0.0)) {
+            if ((internalDivisionRatio_s == 0.0) && (internalDivisionRatio_t != 0.0)) {
                 d.addLineSegment(d.getLineStep().get(0));
             }
-            if ((d.getInternalDivisionRatio_s() != 0.0) && (d.getInternalDivisionRatio_t() == 0.0)) {
+            if ((internalDivisionRatio_s != 0.0) && (internalDivisionRatio_t == 0.0)) {
                 d.addLineSegment(d.getLineStep().get(0));
             }
-            if ((d.getInternalDivisionRatio_s() != 0.0) && (d.getInternalDivisionRatio_t() != 0.0)) {
+            if ((internalDivisionRatio_s != 0.0) && (internalDivisionRatio_t != 0.0)) {
                 LineSegment s_ad = new LineSegment();
                 s_ad.setColor(d.getLineColor());
-                double nx = (d.getInternalDivisionRatio_t() * d.getLineStep().get(0).determineBX() + d.getInternalDivisionRatio_s() * d.getLineStep().get(0).determineAX()) / (d.getInternalDivisionRatio_s() + d.getInternalDivisionRatio_t());
-                double ny = (d.getInternalDivisionRatio_t() * d.getLineStep().get(0).determineBY() + d.getInternalDivisionRatio_s() * d.getLineStep().get(0).determineAY()) / (d.getInternalDivisionRatio_s() + d.getInternalDivisionRatio_t());
+                double nx = (internalDivisionRatio_t * d.getLineStep().get(0).determineBX() + internalDivisionRatio_s * d.getLineStep().get(0).determineAX()) / (internalDivisionRatio_s + internalDivisionRatio_t);
+                double ny = (internalDivisionRatio_t * d.getLineStep().get(0).determineBY() + internalDivisionRatio_s * d.getLineStep().get(0).determineAY()) / (internalDivisionRatio_s + internalDivisionRatio_t);
                 s_ad.set(d.getLineStep().get(0).determineAX(), d.getLineStep().get(0).determineAY(), nx, ny);
                 d.addLineSegment(s_ad);
                 s_ad.set(d.getLineStep().get(0).determineBX(), d.getLineStep().get(0).determineBY(), nx, ny);

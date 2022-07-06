@@ -59,8 +59,6 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     public FoldLineSet auxLines = new FoldLineSet();    //Store auxiliary lines
     public int id_angle_system = 8;//180 / id_angle_system represents the angular system. For example, if id_angle_system = 3, 180/3 = 60 degrees, if id_angle_system = 5, 180/5 = 36 degrees
     public int foldLineDividingNumber = 1;
-    public double internalDivisionRatio_s;
-    public double internalDivisionRatio_t;
     public double d_restricted_angle_1;
     public double d_restricted_angle_2;
     public double d_restricted_angle_3;
@@ -115,7 +113,6 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
                                 FoldedFigureModel foldedFigureModel,
                                 FileModel fileModel,
                                 AngleSystemModel angleSystemModel,
-                                InternalDivisionRatioModel internalDivisionRatioModel,
                                 TextWorker textWorker,
                                 SelectedTextModel textModel) {
         this.creasePatternCamera = creasePatternCamera;  //コンストラクタ
@@ -136,7 +133,6 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
         if (applicationModel != null) applicationModel.addPropertyChangeListener(e -> setData(e, applicationModel));
         if (gridModel != null) gridModel.addPropertyChangeListener(e -> setGridConfigurationData(gridModel));
         if (angleSystemModel != null) angleSystemModel.addPropertyChangeListener(e -> setData(angleSystemModel));
-        if (internalDivisionRatioModel != null) internalDivisionRatioModel.addPropertyChangeListener(e -> setData(internalDivisionRatioModel));
         if (canvasModel != null) canvasModel.addPropertyChangeListener(e -> setData(canvasModel));
         if (fileModel != null) fileModel.addPropertyChangeListener(e -> setTitle(fileModel.determineFrameTitle()));
 
@@ -271,7 +267,7 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
         calculateDecisionWidth();
     }
 
-    @Override public void setCustomCircleColor(Color c0) {
+    public void setCustomCircleColor(Color c0) {
         customCircleColor = c0;
     }
 
@@ -311,7 +307,7 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
         return ls;
     }
 
-    @Override public void calculateDecisionWidth() {
+    public void calculateDecisionWidth() {
         selectionDistance = grid.getGridWidth() / 4.0;
         if (camera.getCameraZoomX() * selectionDistance < 10.0) {
             selectionDistance = 10.0 / camera.getCameraZoomX();
@@ -322,7 +318,7 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
         return foldLineSet.getTotal();
     }
 
-    @Override public Save getSave(String title) {
+    public Save getSave(String title) {
         Save save_temp = Save.createInstance();
         foldLineSet.getSave(save_temp, title);
 
@@ -330,7 +326,7 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
         return save_temp;
     }
 
-    @Override public Save h_getSave() {
+    public Save h_getSave() {
         Save save = Save.createInstance();
         auxLines.h_getSave(save);
         return save;
@@ -366,7 +362,7 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
         memo1.setFoldedFigureModel(foldedFigureModel);
     }
 
-    @Override public void setColor(LineColor i) {
+    public void setColor(LineColor i) {
         lineColor = i;
     }
 
@@ -591,7 +587,7 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     //動作モデル00a--------------------------------------------------------------------------------------------------------
     //マウスクリック（マウスの近くの既成点を選択）、マウスドラッグ（選択した点とマウス間の線が表示される）、マウスリリース（マウスの近くの既成点を選択）してから目的の処理をする雛形セット
 
-    @Override public void set_id_angle_system(int i) {
+    public void set_id_angle_system(int i) {
         id_angle_system = i;
     }
 
@@ -1009,11 +1005,6 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
         unselect_all();
     }
 
-    @Override public void setData(InternalDivisionRatioModel data) {
-        internalDivisionRatio_s = data.getInternalDivisionRatioS();
-        internalDivisionRatio_t = data.getInternalDivisionRatioT();
-    }
-
     @Override public Point getCameraPosition() {
         return this.camera.getCameraPosition();
     }
@@ -1104,11 +1095,6 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     }
 
     @Override
-    public void setI_foldLine_additional(FoldLineAdditionalInputMode i_foldLine_additional) {
-        this.i_foldLine_additional = i_foldLine_additional;
-    }
-
-    @Override
     public FoldLineSet getAuxLines() {
         return auxLines;
     }
@@ -1166,16 +1152,6 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     @Override
     public Color getCustomCircleColor() {
         return customCircleColor;
-    }
-
-    @Override
-    public double getInternalDivisionRatio_s() {
-        return internalDivisionRatio_s;
-    }
-
-    @Override
-    public double getInternalDivisionRatio_t() {
-        return internalDivisionRatio_t;
     }
 
     @Override

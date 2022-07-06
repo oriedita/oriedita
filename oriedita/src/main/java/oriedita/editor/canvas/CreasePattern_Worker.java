@@ -35,8 +35,6 @@ public interface CreasePattern_Worker {
     void setCamera(Camera cam0);
     void setSave_for_reading(Save memo);
 
-    void setCustomCircleColor(Color c0);
-
     void allMountainValleyChange();
 
     void branch_trim();
@@ -50,21 +48,13 @@ public interface CreasePattern_Worker {
 
     LineSegmentSet getForSelectFolding();
 
-    void calculateDecisionWidth();
-
     int getTotal();
-
-    Save getSave(String title);
-
-    Save h_getSave();
 
     Save getSave_for_export();
 
     Save getSave_for_export_with_applicationModel();
 
     void saveAdditionalInformation(Save memo1);
-
-    void setColor(LineColor i);
 
     void point_removal();
 
@@ -90,8 +80,6 @@ public interface CreasePattern_Worker {
     void drawWithCamera(Graphics g, boolean displayComments, boolean displayCpLines, boolean displayAuxLines, boolean displayAuxLiveLines, float lineWidth, LineStyle lineStyle, float f_h_WireframeLineWidth, int p0x_max, int p0y_max, boolean i_mejirusi_display, boolean hideOperationFrame);
 
     void resetCircleStep();
-
-    void set_id_angle_system(int i);
 
     // ------------------------------------
     void setGridInputAssist(boolean i);
@@ -214,8 +202,6 @@ public interface CreasePattern_Worker {
 
     void setData(AngleSystemModel angleSystemModel);
 
-    void setData(InternalDivisionRatioModel data);
-
     Point getCameraPosition();
 
     void selectConnected(Point p);
@@ -246,8 +232,6 @@ public interface CreasePattern_Worker {
 
     LineColor getAuxLineColor();
 
-    void setI_foldLine_additional(FoldLineAdditionalInputMode i_foldLine_additional);
-
     FoldLineSet getAuxLines();
 
     Polygon getOperationFrameBox();
@@ -271,10 +255,6 @@ public interface CreasePattern_Worker {
     int getNumPolygonCorners();
 
     Color getCustomCircleColor();
-
-    double getInternalDivisionRatio_s();
-
-    double getInternalDivisionRatio_t();
 
     CanvasModel.SelectionOperationMode getI_select_mode();
 

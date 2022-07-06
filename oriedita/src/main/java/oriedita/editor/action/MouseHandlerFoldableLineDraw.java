@@ -79,7 +79,7 @@ public class MouseHandlerFoldableLineDraw extends BaseMouseHandler {
             }
             if (nbox.getTotal() % 2 == 0) {
                 operationMode = MouseMode.DRAW_CREASE_FREE_1;
-                d.setI_foldLine_additional(FoldLineAdditionalInputMode.POLY_LINE_0);
+                d.setFoldLineAdditional(FoldLineAdditionalInputMode.POLY_LINE_0);
             }//When the number of polygonal lines with moyori_ten as the end point is an even number, the processing inside if {} is performed.
             if (nbox.getTotal() % 2 == 1) {
                 operationMode = MouseMode.VERTEX_MAKE_ANGULARLY_FLAT_FOLDABLE_38;
