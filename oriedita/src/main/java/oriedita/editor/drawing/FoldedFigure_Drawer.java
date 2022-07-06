@@ -1,6 +1,7 @@
 package oriedita.editor.drawing;
 
 import org.tinylog.Logger;
+import oriedita.editor.Foldable;
 import origami.crease_pattern.FoldingException;
 import origami.crease_pattern.LineSegmentSet;
 import origami.crease_pattern.element.Point;
@@ -12,7 +13,7 @@ import oriedita.editor.drawing.tools.Camera;
 
 import java.awt.*;
 
-public class FoldedFigure_Drawer {
+public class FoldedFigure_Drawer implements Foldable {
     public final FoldedFigure_01 foldedFigure;
     public final FoldedFigure_Worker_Drawer foldedFigure_worker_drawer;
     public final WireFrame_Worker_Drawer wireFrame_worker_drawer1;
@@ -133,6 +134,11 @@ public class FoldedFigure_Drawer {
         transparentRearCamera.setCameraMirror(d_camera_mirror * -1.0);
     }
 
+    @Override
+    public void setEstimationOrder(FoldedFigure.EstimationOrder estimationOrder) {
+        foldedFigure.estimationOrder = estimationOrder;
+    }
+
     public void folding_estimated(Camera creasePatternCamera, LineSegmentSet lineSegmentSet) throws InterruptedException, FoldingException {//折畳み予測の最初に、cp_worker1.lineStore2pointStore(lineStore)として使う。　Ss0は、mainDrawingWorker.get_for_oritatami()かes1.get_for_select_oritatami()で得る。
         boolean i_camera_estimated = foldedFigure.estimationStep == FoldedFigure.EstimationStep.STEP_0
                 && foldedFigure.estimationOrder.isAtMost(FoldedFigure.EstimationOrder.ORDER_5);
@@ -146,6 +152,21 @@ public class FoldedFigure_Drawer {
         if (i_camera_estimated) {
             folding_estimation_camera_configure(creasePatternCamera);
         }
+    }
+
+    @Override
+    public void estimated_initialize() {
+        foldedFigure.estimated_initialize();
+    }
+
+    @Override
+    public String getTextResult() {
+        return foldedFigure.text_result;
+    }
+
+    @Override
+    public void setTextResult(String textResult) {
+        foldedFigure.text_result = textResult;
     }
 
     public void createTwoColorCreasePattern(Camera camera_of_foldLine_diagram, LineSegmentSet Ss0) throws InterruptedException {//Two-color crease pattern

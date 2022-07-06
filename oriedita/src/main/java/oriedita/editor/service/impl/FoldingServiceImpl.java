@@ -1,6 +1,7 @@
 package oriedita.editor.service.impl;
 
 import org.tinylog.Logger;
+import oriedita.editor.Foldable;
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.databinding.ApplicationModel;
 import oriedita.editor.databinding.CanvasModel;
@@ -64,7 +65,7 @@ public class FoldingServiceImpl implements FoldingService {
         this.foldedFiguresList = foldedFiguresList;
     }
 
-    @Override public void folding_estimated(FoldedFigure_Drawer selectedFigure) throws InterruptedException, FoldingException {
+    @Override public void folding_estimated(Foldable selectedFigure) throws InterruptedException, FoldingException {
         selectedFigure.folding_estimated(creasePatternCamera, lineSegmentsForFolding);
     }
 
@@ -107,7 +108,7 @@ public class FoldingServiceImpl implements FoldingService {
         }
 
         //これより前のOZは古いOZ
-        FoldedFigure_Drawer selectedFigure = initFoldedFigure();//OAZのアレイリストに、新しく折り上がり図をひとつ追加し、それを操作対象に指定し、foldedFigures(0)共通パラメータを引き継がせる。
+        Foldable selectedFigure = initFoldedFigure();//OAZのアレイリストに、新しく折り上がり図をひとつ追加し、それを操作対象に指定し、foldedFigures(0)共通パラメータを引き継がせる。
         //これより後のOZは新しいOZに変わる
 
         foldingExecutor.executeTask(new FoldingEstimateTask(creasePatternCamera, bulletinBoard, canvasModel, lineSegmentsForFolding, selectedFigure, estimationOrder));
@@ -124,7 +125,7 @@ public class FoldingServiceImpl implements FoldingService {
         }
     }
 
-    @Override public FoldedFigure_Drawer initFoldedFigure() {//Add one new folding diagram to the foldedFigures array list, specify it as the operation target, and inherit the foldedFigures (0) common parameters.
+    @Override public Foldable initFoldedFigure() {//Add one new folding diagram to the foldedFigures array list, specify it as the operation target, and inherit the foldedFigures (0) common parameters.
         Logger.info(" oritatami_jyunbi 20180107");
 
         FoldedFigure_Drawer newFoldedFigure = new FoldedFigure_Drawer(new FoldedFigure_01(bulletinBoard));
@@ -159,7 +160,7 @@ public class FoldingServiceImpl implements FoldingService {
         JOptionPane.showMessageDialog(frame, label);
     }
 
-    @Override public void foldAnother(FoldedFigure_Drawer selectedItem) {
+    @Override public void foldAnother(Foldable selectedItem) {
         foldingExecutor.executeTask(new FoldingEstimateTask(creasePatternCamera, bulletinBoard, canvasModel, lineSegmentsForFolding, selectedItem, FoldedFigure.EstimationOrder.ORDER_6));
     }
 

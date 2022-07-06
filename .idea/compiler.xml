@@ -10,6 +10,7 @@
         <module name="fold" />
         <module name="oriedita-common" />
         <module name="oriedita-data" />
+        <module name="oriedita-services" />
       </profile>
       <profile name="Annotation profile for root" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
