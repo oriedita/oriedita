@@ -7,6 +7,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.canvas.TextWorker;
+import oriedita.editor.canvas.impl.CreasePattern_Worker_Impl;
 import oriedita.editor.databinding.*;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.exception.FileReadingException;
@@ -48,7 +49,7 @@ public class SaveTest {
         FoldedFigureModel foldedFigureModel = new FoldedFigureModel();
         SelectedTextModel textModel = new SelectedTextModel();
         TextWorker textWorker = new TextWorker();
-        mainCreasePatternWorker = new CreasePattern_Worker(creasePatternCamera, new DequeHistoryState(), new DequeHistoryState(), new FoldLineSet(), new FoldLineSet(), new SingleTaskExecutorServiceImpl(), canvasModel, applicationModel, gridModel, foldedFigureModel, fileModel, null, null, textWorker, textModel);
+        mainCreasePatternWorker = new CreasePattern_Worker_Impl(creasePatternCamera, new DequeHistoryState(), new DequeHistoryState(), new FoldLineSet(), new FoldLineSet(), new SingleTaskExecutorServiceImpl(), canvasModel, applicationModel, gridModel, foldedFigureModel, fileModel, null, null, textWorker, textModel);
         ResetService resetService = () -> {};
         fileSaveService = new FileSaveServiceImpl(null, creasePatternCamera, mainCreasePatternWorker, null, fileModel, applicationModel, canvasModel, new FoldedFiguresList(), resetService, null);
     }
@@ -62,7 +63,7 @@ public class SaveTest {
         try {
             fileSaveService.openFile(saveFile);
 
-            FoldLineSet foldLineSet = mainCreasePatternWorker.foldLineSet;
+            FoldLineSet foldLineSet = mainCreasePatternWorker.getFoldLineSet();
             List<Circle> list = (List<Circle>) foldLineSet.getCircles();
 
             Assertions.assertEquals(1, list.size(), "Expected one circle");
@@ -100,8 +101,8 @@ public class SaveTest {
             Assertions.assertEquals(LineColor.CYAN_3, auxLineSegment.getColor());
 
             if (hasText) {
-                Assertions.assertEquals(1, mainCreasePatternWorker.textWorker.getTexts().size());
-                Text t = mainCreasePatternWorker.textWorker.getTexts().get(0);
+                Assertions.assertEquals(1, mainCreasePatternWorker.getTextWorker().getTexts().size());
+                Text t = mainCreasePatternWorker.getTextWorker().getTexts().get(0);
                 Assertions.assertEquals("Test", t.getText());
             }
         } catch (FileReadingException e) {
