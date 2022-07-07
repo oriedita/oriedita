@@ -240,7 +240,7 @@ jobs:
           jpackage `
             @build/jpackage-common.txt `
             @build/jpackage-common-mac.txt `
-            --dest ci-build/portable `
+            --dest ci-build `
             --type app-image `
             --name "Oriedita" `
             --app-version ${{ steps.get_version.outputs.major }}.${{ steps.get_version.outputs.minor }}.${{ steps.get_version.outputs.patch }} `
