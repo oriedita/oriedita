@@ -244,13 +244,10 @@ jobs:
             --type app-image `
             --name "Oriedita" `
             --app-version ${{ steps.get_version.outputs.major }}.${{ steps.get_version.outputs.minor }}.${{ steps.get_version.outputs.patch }} `
-            --main-jar oriedita-${{ steps.get_version.outputs.version-without-v }}.jar `
-
-      - name: Create zip for portable executable (Mac)
-        uses: papeloto/action-zip@v1
-        with:
-          files: 'ci-build/portable'
-          dest: ci-build/Oriedita Portable (Mac) ${{ steps.get_version.outputs.version-without-v }}.zip
+            --main-jar oriedita-${{ steps.get_version.outputs.version-without-v }}.jar
+          pushd ci-build
+          zip -r "Oriedita Portable (Mac) ${{ steps.get_version.outputs.version-without-v }}.zip" Oriedita.app
+          popd
 
       - name: Create DMG (Mac)
         run: |
