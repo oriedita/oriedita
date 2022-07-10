@@ -2,41 +2,58 @@ package fold.model.frame;
 
 import fold.model.FoldEdgeAssignment;
 
-public class Edges {
-    private int[][] vertices;
-    private FoldEdgeAssignment[] assignment;
-    private double[] foldAngle;
-    private double[] length;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
-    public int[][] getVertices() {
+public class Edges {
+    private List<List<Integer>> vertices = new ArrayList<>();
+    private List<FoldEdgeAssignment> assignment = new ArrayList<>();
+    private List<Double> foldAngle = new ArrayList<>();
+    private List<Double> length = new ArrayList<>();
+
+    public List<List<Integer>> getVertices() {
         return vertices;
     }
 
-    public void setVertices(int[][] vertices) {
+    public void setVertices(List<List<Integer>> vertices) {
         this.vertices = vertices;
     }
 
-    public FoldEdgeAssignment[] getAssignment() {
+    public List<FoldEdgeAssignment> getAssignment() {
         return assignment;
     }
 
-    public void setAssignment(FoldEdgeAssignment[] assignment) {
+    public void setAssignment(List<FoldEdgeAssignment> assignment) {
         this.assignment = assignment;
     }
 
-    public double[] getFoldAngle() {
+    public List<Double> getFoldAngle() {
         return foldAngle;
     }
 
-    public void setFoldAngle(double[] foldAngle) {
+    public void setFoldAngle(List<Double> foldAngle) {
         this.foldAngle = foldAngle;
     }
 
-    public double[] getLength() {
+    public List<Double> getLength() {
         return length;
     }
 
-    public void setLength(double[] length) {
+    public void setLength(List<Double> length) {
         this.length = length;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Edges edges = (Edges) o;
+        return getVertices().equals(edges.getVertices()) && getAssignment().equals(edges.getAssignment()) && getFoldAngle().equals(edges.getFoldAngle()) && getLength().equals(edges.getLength());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getVertices(), getAssignment(), getFoldAngle(), getLength());
     }
 }

@@ -2,6 +2,10 @@ package fold.model.file;
 
 import fold.model.FoldFrame;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
 /**
  * File Metadata (file_...)
  */
@@ -39,11 +43,11 @@ public class FileMetadata {
      * "diagrams": A sequence of frames representing folding steps, as in origami diagrams
      * Custom classes should have a colon in them; see Custom Properties below.
      */
-    private String[] classes;
+    private List<String> classes = new ArrayList<>();
     /**
      * Array of frame dictionaries.
      */
-    private FoldFrame[] frames;
+    private List<FoldFrame> frames = new ArrayList<>();
 
     public double getSpec() {
         return spec;
@@ -85,19 +89,32 @@ public class FileMetadata {
         this.description = description;
     }
 
-    public String[] getClasses() {
+    public List<String> getClasses() {
         return classes;
     }
 
-    public void setClasses(String[] classes) {
+    public void setClasses(List<String> classes) {
         this.classes = classes;
     }
 
-    public FoldFrame[] getFrames() {
+    public List<FoldFrame> getFrames() {
         return frames;
     }
 
-    public void setFrames(FoldFrame[] frames) {
+    public void setFrames(List<FoldFrame> frames) {
         this.frames = frames;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        FileMetadata that = (FileMetadata) o;
+        return Double.compare(that.getSpec(), getSpec()) == 0 && Objects.equals(getCreator(), that.getCreator()) && Objects.equals(getAuthor(), that.getAuthor()) && Objects.equals(getTitle(), that.getTitle()) && Objects.equals(getDescription(), that.getDescription()) && getClasses().equals(that.getClasses()) && getFrames().equals(that.getFrames());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getSpec(), getCreator(), getAuthor(), getTitle(), getDescription(), getClasses(), getFrames());
     }
 }

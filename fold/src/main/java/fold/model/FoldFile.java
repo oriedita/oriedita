@@ -1,10 +1,10 @@
 package fold.model;
 
 import com.fasterxml.jackson.annotation.*;
+import fold.FoldFileFormatException;
 import fold.model.file.FileMetadata;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Following the FOLD Specification (version 1.1)
@@ -15,6 +15,14 @@ import java.util.Map;
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 @JsonRootName("fold")
 public class FoldFile extends FoldFrame {
+    private static final List<String> KNOWN_PROPERTIES = Arrays.asList(
+            "file_spec", "file_creator", "file_author", "file_title", "file_description", "file_classes", "file_frames",
+            "frame_author", "frame_title", "frame_description", "frame_classes", "frame_attributes", "frame_unit",
+            "vertices_coords", "vertices_vertices", "vertices_faces",
+            "edges_vertices", "edges_faces", "edges_assignment", "edges_foldAngle", "edges_length",
+            "faces_vertices", "faces_edges",
+            "faceOrders", "edgeOrders"
+    );
     /**
      * Custom properties.
      *
@@ -38,12 +46,39 @@ public class FoldFile extends FoldFrame {
     }
 
     @JsonAnySetter
-    public void setCustomProperty(String name, Object value) {
-        this.customPropertyMap.put(name, value);
+    public void setCustomProperty(String name, Object value) throws FoldFileFormatException {
+        // Due to how @JsonAnySetter works together with @JsonUnwrapped
+        // Every value is passed to setCustomProperty. Only values containing
+        // a : are actually allowed as custom properties.
+        if (name.indexOf(':') != -1) {
+            this.customPropertyMap.put(name, value);
+            return;
+        }
+
+        // If name is not in KNOWN_PROPERTIES there is something wrong about this fold file.
+        // Reject the file.
+        if (KNOWN_PROPERTIES.contains(name)) {
+            return;
+        }
+
+        throw new FoldFileFormatException("Name not allowed in fold file: " + name);
     }
 
     @JsonAnyGetter
     public Map<String, Object> getCustomPropertyMap() {
         return customPropertyMap;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        FoldFile foldFile = (FoldFile) o;
+        return getCustomPropertyMap().equals(foldFile.getCustomPropertyMap()) && getFile().equals(foldFile.getFile());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getCustomPropertyMap(), getFile());
     }
 }

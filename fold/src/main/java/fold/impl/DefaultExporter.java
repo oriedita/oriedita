@@ -1,25 +1,17 @@
 package fold.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import fold.FoldExport;
+import fold.Exporter;
 import fold.FoldFileFormatException;
-import fold.FoldFileProcessor;
 import fold.json.FoldObjectMapper;
 import fold.model.FoldFile;
 
 import java.io.File;
 import java.io.IOException;
 
-public class FoldExportImpl implements FoldExport {
-    private final FoldFileProcessor processor;
-
-    public FoldExportImpl(FoldFileProcessor processor) {
-        this.processor = processor;
-    }
-
+public class DefaultExporter implements Exporter {
     @Override
-    public void exportFoldFile(File file, FoldFile foldFile) throws FoldFileFormatException {
-        processor.process(foldFile);
+    public void exportFile(File file, FoldFile foldFile) throws FoldFileFormatException {
         try {
             ObjectMapper mapper = new FoldObjectMapper();
 

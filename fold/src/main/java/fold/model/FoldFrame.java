@@ -6,6 +6,10 @@ import fold.model.frame.Faces;
 import fold.model.frame.FrameMetadata;
 import fold.model.frame.Vertices;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
 public class FoldFrame {
     /**
      * Frame-level metadata properties
@@ -24,8 +28,8 @@ public class FoldFrame {
      */
     private Faces faces = new Faces();
 
-    private int[][] faceOrders;
-    private int[][] edgeOrders;
+    private List<List<Integer>> faceOrders = new ArrayList<>();
+    private List<List<Integer>> edgeOrders = new ArrayList<>();
 
     @JsonUnwrapped(prefix = "frame_")
     public FrameMetadata getFrame() {
@@ -67,19 +71,32 @@ public class FoldFrame {
         this.faces = faces;
     }
 
-    public int[][] getFaceOrders() {
+    public List<List<Integer>> getFaceOrders() {
         return faceOrders;
     }
 
-    public void setFaceOrders(int[][] faceOrders) {
+    public void setFaceOrders(List<List<Integer>> faceOrders) {
         this.faceOrders = faceOrders;
     }
 
-    public int[][] getEdgeOrders() {
+    public List<List<Integer>> getEdgeOrders() {
         return edgeOrders;
     }
 
-    public void setEdgeOrders(int[][] edgeOrders) {
+    public void setEdgeOrders(List<List<Integer>> edgeOrders) {
         this.edgeOrders = edgeOrders;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        FoldFrame foldFrame = (FoldFrame) o;
+        return getFrame().equals(foldFrame.getFrame()) && getVertices().equals(foldFrame.getVertices()) && getEdges().equals(foldFrame.getEdges()) && getFaces().equals(foldFrame.getFaces()) && getFaceOrders().equals(foldFrame.getFaceOrders()) && getEdgeOrders().equals(foldFrame.getEdgeOrders());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getFrame(), getVertices(), getEdges(), getFaces(), getFaceOrders(), getEdgeOrders());
     }
 }

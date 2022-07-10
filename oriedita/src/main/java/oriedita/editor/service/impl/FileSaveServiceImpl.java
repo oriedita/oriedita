@@ -45,6 +45,7 @@ public class FileSaveServiceImpl implements FileSaveService {
     private final JFrame frame;
     private final Camera creasePatternCamera;
     private final CreasePattern_Worker mainCreasePatternWorker;
+    private final Fold fold;
     private final Canvas canvas;
     private final FileModel fileModel;
     private final ApplicationModel applicationModel;
@@ -60,6 +61,7 @@ public class FileSaveServiceImpl implements FileSaveService {
             @Named("mainFrame") JFrame frame,
             @Named("creasePatternCamera") Camera creasePatternCamera,
             CreasePattern_Worker mainCreasePatternWorker,
+            Fold fold,
             Canvas canvas,
             FileModel fileModel,
             ApplicationModel applicationModel,
@@ -70,6 +72,7 @@ public class FileSaveServiceImpl implements FileSaveService {
         this.frame = frame;
         this.creasePatternCamera = creasePatternCamera;
         this.mainCreasePatternWorker = mainCreasePatternWorker;
+        this.fold = fold;
         this.canvas = canvas;
         this.fileModel = fileModel;
         this.applicationModel = applicationModel;
@@ -183,7 +186,7 @@ public class FileSaveServiceImpl implements FileSaveService {
             Orh.exportFile(mainCreasePatternWorker.getSave_for_export_with_applicationModel(), exportFile);
         } else if (exportFile.getName().endsWith(".fold")) {
             try {
-                Fold.exportFile(mainCreasePatternWorker.getForFolding(), exportFile);
+                fold.exportFile(mainCreasePatternWorker.getForFolding(), exportFile);
             } catch (InterruptedException | FoldFileFormatException e) {
                 e.printStackTrace();
             }
@@ -375,7 +378,7 @@ public class FileSaveServiceImpl implements FileSaveService {
             }
 
             if (file.getName().endsWith(".fold")) {
-                save = Fold.importFile(file);
+                save = fold.importFile(file);
             }
 
             if (file.getName().endsWith(".cp")) {

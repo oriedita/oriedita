@@ -1,7 +1,8 @@
 package oriedita.editor.export;
 
-import fold.FoldFactory;
+import fold.Exporter;
 import fold.FoldFileFormatException;
+import fold.Importer;
 import fold.model.FoldEdgeAssignment;
 import fold.model.FoldFile;
 import oriedita.editor.save.Save;
@@ -13,31 +14,46 @@ import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.worker.WireFrame_Worker;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
+@Singleton
 public class Fold {
-    public static Save toSave(FoldFile foldFile) {
+    private final Importer anImporter;
+    private final Exporter exporter;
+
+    @Inject
+    public Fold(Importer anImporter, Exporter exporter) {
+        this.anImporter = anImporter;
+        this.exporter = exporter;
+    }
+
+    public Save toSave(FoldFile foldFile) {
         Save save = Save.createInstance();
 
-        double[][] verticeCoords = foldFile.getVertices().getCoords();
-        FoldEdgeAssignment[] edgeAssignments = foldFile.getEdges().getAssignment();
+        List<List<Double>> verticeCoords = foldFile.getVertices().getCoords();
+        List<FoldEdgeAssignment> edgeAssignments = foldFile.getEdges().getAssignment();
 
         double minX = Double.MAX_VALUE;
         double maxX = Double.MIN_VALUE;
         double minY = Double.MAX_VALUE;
         double maxY = Double.MIN_VALUE;
 
-        for (int i = 0; i < foldFile.getEdges().getVertices().length; i++) {
-            int[] edgeVertices = foldFile.getEdges().getVertices()[i];
+        for (int i = 0; i < foldFile.getEdges().getVertices().size(); i++) {
+            List<Integer> edgeVertices = foldFile.getEdges().getVertices().get(i);
 
             LineSegment ls = new LineSegment();
-            double ax = verticeCoords[edgeVertices[0]][0];
-            double ay = verticeCoords[edgeVertices[0]][1];
+            double ax = verticeCoords.get(edgeVertices.get(0)).get(0);
+            double ay = verticeCoords.get(edgeVertices.get(0)).get(1);
             ls.setA(new Point(ax, ay));
-            double bx = verticeCoords[edgeVertices[1]][0];
-            double by = verticeCoords[edgeVertices[1]][1];
+            double bx = verticeCoords.get(edgeVertices.get(1)).get(0);
+            double by = verticeCoords.get(edgeVertices.get(1)).get(1);
             ls.setB(new Point(bx, by));
-            ls.setColor(getColor(edgeAssignments[i]));
+            ls.setColor(getColor(edgeAssignments.get(i)));
 
             minX = Math.min(Math.min(minX, ax), bx);
             minY = Math.min(Math.min(minY, ay), by);
@@ -62,34 +78,34 @@ public class Fold {
         return save1;
     }
 
-    private static LineColor getColor(FoldEdgeAssignment edgeAssignment) {
+    private LineColor getColor(FoldEdgeAssignment edgeAssignment) {
         switch (edgeAssignment) {
-            case B:
+            case BORDER:
                 return LineColor.BLACK_0;
-            case M:
+            case MOUNTAIN_FOLD:
                 return LineColor.RED_1;
-            case V:
+            case VALLEY_FOLD:
                 return LineColor.BLUE_2;
-            case F:
+            case FLAT_FOLD:
                 return LineColor.CYAN_3;
-            case U:
+            case UNASSIGNED:
             default:
                 return LineColor.BLACK_0;
         }
     }
 
-    private static FoldEdgeAssignment getAssignment(LineColor lineColor) {
+    private FoldEdgeAssignment getAssignment(LineColor lineColor) {
         switch (lineColor) {
             case ANGLE:
             case NONE:
             default:
-                return FoldEdgeAssignment.U;
+                return FoldEdgeAssignment.UNASSIGNED;
             case BLACK_0:
-                return FoldEdgeAssignment.B;
+                return FoldEdgeAssignment.BORDER;
             case RED_1:
-                return FoldEdgeAssignment.M;
+                return FoldEdgeAssignment.MOUNTAIN_FOLD;
             case BLUE_2:
-                return FoldEdgeAssignment.V;
+                return FoldEdgeAssignment.VALLEY_FOLD;
             case CYAN_3:
             case ORANGE_4:
             case MAGENTA_5:
@@ -97,20 +113,20 @@ public class Fold {
             case YELLOW_7:
             case PURPLE_8:
             case OTHER_9:
-                return FoldEdgeAssignment.F;
+                return FoldEdgeAssignment.FLAT_FOLD;
         }
     }
 
-    public static Save importFile(File file) throws FoldFileFormatException {
-        return toSave(FoldFactory.foldImport().importFoldFile(file));
+    public Save importFile(File file) throws FoldFileFormatException {
+        return toSave(anImporter.importFile(file));
     }
 
 
-    public static void exportFile(LineSegmentSet lineSegmentSet, File file) throws InterruptedException, FoldFileFormatException {
-        FoldFactory.foldExport().exportFoldFile(file, toFoldSave(lineSegmentSet));
+    public void exportFile(LineSegmentSet lineSegmentSet, File file) throws InterruptedException, FoldFileFormatException {
+        exporter.exportFile(file, toFoldSave(lineSegmentSet));
     }
 
-    public static FoldFile toFoldSave(LineSegmentSet save) throws InterruptedException {
+    public FoldFile toFoldSave(LineSegmentSet save) throws InterruptedException {
         WireFrame_Worker wireFrame_worker = new WireFrame_Worker(3.0);
         wireFrame_worker.setLineSegmentSet(save);
 
@@ -118,32 +134,32 @@ public class Fold {
 
         FoldFile foldFile = new FoldFile();
 
-        FoldEdgeAssignment[] edgeAssignments = new FoldEdgeAssignment[pointSet.getNumLines()];
-        int[][] edgeVertices = new int[pointSet.getNumLines()][];
-        double[][] verticesCoords = new double[pointSet.getNumPoints()][];
-        int[][] faceVertices = new int[pointSet.getNumFaces()][];
+        List<FoldEdgeAssignment> edgeAssignments = new ArrayList<>(pointSet.getNumLines());
+        List<List<Integer>> edgeVertices = new ArrayList<>(pointSet.getNumLines());
+        List<List<Double>> verticesCoords = new ArrayList<>(pointSet.getNumPoints());
+        List<List<Integer>> faceVertices = new ArrayList<>(pointSet.getNumFaces());
 
-        double[] edgesFoldAngles = new double[pointSet.getNumLines()];
+        List<Double> edgesFoldAngles = new ArrayList<>(pointSet.getNumLines());
 
         for (int i = 1; i <= pointSet.getNumLines(); i++) {
-            edgeAssignments[i - 1] = getAssignment(pointSet.getColor(i));
-            edgesFoldAngles[i - 1] = getFoldAngle(pointSet.getColor(i));
-            edgeVertices[i - 1] = new int[]{pointSet.getBegin(i) - 1, pointSet.getEnd(i) - 1};
+            edgeAssignments.add(getAssignment(pointSet.getColor(i)));
+            edgesFoldAngles.add(getFoldAngle(pointSet.getColor(i)));
+            edgeVertices.add(Arrays.asList(pointSet.getBegin(i) - 1, pointSet.getEnd(i) - 1));
         }
 
         for (int i = 1; i <= pointSet.getNumPoints(); i++) {
-            verticesCoords[i - 1] = toFoldPoint(pointSet.getPoint(i));
+            verticesCoords.add(toFoldPoint(pointSet.getPoint(i)));
         }
 
         for (int i = 1; i <= pointSet.getNumFaces(); i++) {
             int numPoints = pointSet.getFace(i).getNumPoints();
-            int[] faceVertex = new int[numPoints];
+            List<Integer> faceVertex = new ArrayList<>(numPoints);
 
             for (int j = 1; j <= numPoints; j++) {
-                faceVertex[j - 1] = pointSet.getFace(i).getPointId(j) - 1;
+                faceVertex.add(pointSet.getFace(i).getPointId(j) -1);
             }
 
-            faceVertices[i - 1] = faceVertex;
+            faceVertices.add(faceVertex);
         }
 
         foldFile.getEdges().setAssignment(edgeAssignments);
@@ -155,7 +171,7 @@ public class Fold {
         return foldFile;
     }
 
-    private static double getFoldAngle(LineColor color) {
+    private double getFoldAngle(LineColor color) {
         switch (color) {
             case BLUE_2:
                 return 180;
@@ -166,7 +182,7 @@ public class Fold {
         }
     }
 
-    private static double[] toFoldPoint(Point p) {
-        return new double[]{p.getX(), p.getY()};
+    private List<Double> toFoldPoint(Point p) {
+        return Arrays.asList(p.getX(), p.getY());
     }
 }

@@ -14,6 +14,5 @@ public class FoldObjectMapper extends ObjectMapper {
         setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
 
         configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        configure(SerializationFeature.INDENT_OUTPUT, true);
     }
 }
