@@ -336,7 +336,7 @@
                         </constraints>
                         <properties>
                           <font style="2"/>
-                          <text value="No exporter options"/>
+                          <text value="No export options"/>
                         </properties>
                       </component>
                     </children>
@@ -362,7 +362,7 @@
                         </constraints>
                         <properties>
                           <font style="2"/>
-                          <text value="No exporter options"/>
+                          <text value="No export options"/>
                         </properties>
                       </component>
                     </children>

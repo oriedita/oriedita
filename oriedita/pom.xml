@@ -176,29 +176,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <groupId>com.github.akman</groupId>
-                <artifactId>jpackage-maven-plugin</artifactId>
-                <version>0.1.3</version>
-                <executions>
-                    <execution>
-                        <phase>verify</phase>
-                        <goals><goal>jpackage</goal></goals>
-                        <configuration>
-
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>com.github.akman</groupId>
-                    <artifactId>jpackage-maven-plugin</artifactId>
-                    <version>0.1.3</version>
-                </plugin>
-            </plugins>
-        </pluginManagement>
     </build>
 </project>

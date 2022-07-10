@@ -276,7 +276,7 @@ public class ExportDialog extends JDialog {
         final JLabel label10 = new JLabel();
         Font label10Font = this.$$$getFont$$$(null, Font.ITALIC, -1, label10.getFont());
         if (label10Font != null) label10.setFont(label10Font);
-        label10.setText("No exporter options");
+        label10.setText("No export options");
         panel7.add(label10, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         cpPanel = new JPanel();
         cpPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
@@ -287,7 +287,7 @@ public class ExportDialog extends JDialog {
         final JLabel label11 = new JLabel();
         Font label11Font = this.$$$getFont$$$(null, Font.ITALIC, -1, label11.getFont());
         if (label11Font != null) label11.setFont(label11Font);
-        label11.setText("No exporter options");
+        label11.setText("No export options");
         panel8.add(label11, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     }
 
