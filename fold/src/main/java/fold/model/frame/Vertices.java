@@ -24,7 +24,7 @@ public class Vertices {
      * is arbitrary. Recommended in any frame lacking edges_vertices property (otherwise vertices_vertices
      * can easily be computed from edges_vertices as needed).
      */
-    private List<Integer> vertices = new ArrayList<>();
+    private List<List<Integer>> vertices = new ArrayList<>();
     /**
      * For each vertex, an array of face IDs for the faces incident to the vertex. If the frame represents an
      * orientable manifold, this list should be ordered counterclockwise around the vertex (possibly repeating
@@ -44,11 +44,11 @@ public class Vertices {
         this.coords = coords;
     }
 
-    public List<Integer> getVertices() {
+    public List<List<Integer>> getVertices() {
         return vertices;
     }
 
-    public void setVertices(List<Integer> vertices) {
+    public void setVertices(List<List<Integer>> vertices) {
         this.vertices = vertices;
     }
 
