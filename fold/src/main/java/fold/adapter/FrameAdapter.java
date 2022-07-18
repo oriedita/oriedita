@@ -4,6 +4,9 @@ import fold.model.Face;
 import fold.model.internal.FoldFrame;
 import fold.model.internal.frame.FrameMetadata;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class FrameAdapter implements Adapter<FoldFrame, fold.model.FoldFrame> {
     @Override
     public fold.model.FoldFrame convert(FoldFrame from) {
@@ -40,7 +43,37 @@ public class FrameAdapter implements Adapter<FoldFrame, fold.model.FoldFrame> {
             }
         }
 
+        for (int i = 0; i < from.getFaceOrders().size(); i++) {
+            List<Integer> faceOrdersList = from.getFaceOrders().get(i);
+            fold.model.FoldFrame.FaceOrder faceOrder = new fold.model.FoldFrame.FaceOrder();
+
+            faceOrder.setFace1(frame.getFaces().get(faceOrdersList.get(0)));
+            faceOrder.setFace2(frame.getFaces().get(faceOrdersList.get(1)));
+            faceOrder.setFace1AboveFace2(convertOrder(faceOrdersList.get(2)));
+
+            frame.getFaceOrders().add(faceOrder);
+        }
+
+        for (int i = 0; i < from.getEdgeOrders().size(); i++) {
+            List<Integer> edgeOrdersList = from.getEdgeOrders().get(i);
+            fold.model.FoldFrame.EdgeOrder edgeOrder = new fold.model.FoldFrame.EdgeOrder();
+
+            edgeOrder.setEdge1(frame.getEdges().get(edgeOrdersList.get(0)));
+            edgeOrder.setEdge2(frame.getEdges().get(edgeOrdersList.get(1)));
+            edgeOrder.setEdge1AboveEdge2(convertOrder(edgeOrdersList.get(2)));
+
+            frame.getEdgeOrders().add(edgeOrder);
+        }
+
         return frame;
+    }
+
+    private static Boolean convertOrder(Integer order) {
+        if (order == null || order == 0) {
+            return null;
+        }
+
+        return order > 0;
     }
 
     @Override
@@ -64,6 +97,30 @@ public class FrameAdapter implements Adapter<FoldFrame, fold.model.FoldFrame> {
         frame.setFaces(new FacesAdapter().convertBack(from.getFaces()));
         frame.setVertices(new VerticesAdapter().convertBack(from.getVertices()));
 
+        for (int i = 0; i < from.getFaceOrders().size(); i++) {
+            fold.model.FoldFrame.FaceOrder faceOrder = from.getFaceOrders().get(i);
+
+            frame.getFaceOrders().add(Arrays.asList(faceOrder.getFace1().getId(), faceOrder.getFace2().getId(), convertOrderBack(faceOrder.getFace1AboveFace2())));
+        }
+
+        for (int i = 0; i < from.getEdgeOrders().size(); i++) {
+            fold.model.FoldFrame.EdgeOrder edgeOrder = from.getEdgeOrders().get(i);
+
+            frame.getEdgeOrders().add(Arrays.asList(edgeOrder.getEdge1().getId(), edgeOrder.getEdge2().getId(), convertOrderBack(edgeOrder.getEdge1AboveEdge2())));
+        }
+
         return frame;
+    }
+
+    private static int convertOrderBack(Boolean face1AboveFace2) {
+        if (face1AboveFace2 ==  null) {
+            return 0;
+        }
+
+        if (face1AboveFace2) {
+            return 1;
+        }
+
+        return -1;
     }
 }

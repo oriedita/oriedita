@@ -93,16 +93,65 @@ public class FoldFrame {
         return Objects.hash(getVertices(), getEdges(), getFaces(), getFaceOrders(), getEdgeOrders(), getFrameAuthor(), getFrameTitle(), getFrameDescription(), getFrameClasses(), getAttributes(), getUnit(), getParent(), getInherit());
     }
 
-    private static class FaceOrder {
+    public static class FaceOrder {
         private Face face1;
         private Face face2;
+
+        public Face getFace1() {
+            return face1;
+        }
+
+        public void setFace1(Face face1) {
+            this.face1 = face1;
+        }
+
+        public Face getFace2() {
+            return face2;
+        }
+
+        public void setFace2(Face face2) {
+            this.face2 = face2;
+        }
+
+        public boolean getFace1AboveFace2() {
+            return face1AboveFace2;
+        }
+
+        public void setFace1AboveFace2(boolean face1AboveFace2) {
+            this.face1AboveFace2 = face1AboveFace2;
+        }
+
         private boolean face1AboveFace2;
     }
 
-    private static class EdgeOrder {
+    public static class EdgeOrder {
         private Edge edge1;
         private Edge edge2;
         private Boolean edge1AboveEdge2;
+
+        public Edge getEdge1() {
+            return edge1;
+        }
+
+        public void setEdge1(Edge edge1) {
+            this.edge1 = edge1;
+        }
+
+        public Edge getEdge2() {
+            return edge2;
+        }
+
+        public void setEdge2(Edge edge2) {
+            this.edge2 = edge2;
+        }
+
+        public Boolean getEdge1AboveEdge2() {
+            return edge1AboveEdge2;
+        }
+
+        public void setEdge1AboveEdge2(Boolean edge1AboveEdge2) {
+            this.edge1AboveEdge2 = edge1AboveEdge2;
+        }
     }
 
     public List<Vertex> getVertices() {
