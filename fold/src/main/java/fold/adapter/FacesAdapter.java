@@ -32,8 +32,12 @@ public class FacesAdapter implements Adapter<Faces, List<Face>> {
         Faces faces = new Faces();
 
         for (Face face : from) {
-            faces.getEdges().add(face.getEdges().stream().map(Edge::getId).collect(Collectors.toList()));
-            faces.getVertices().add(face.getVertices().stream().map(Vertex::getId).collect(Collectors.toList()));
+            if (face.getEdges().size() > 0) {
+                faces.getEdges().add(face.getEdges().stream().map(Edge::getId).collect(Collectors.toList()));
+            }
+            if (face.getVertices().size() > 0) {
+                faces.getVertices().add(face.getVertices().stream().map(Vertex::getId).collect(Collectors.toList()));
+            }
         }
 
         return faces;

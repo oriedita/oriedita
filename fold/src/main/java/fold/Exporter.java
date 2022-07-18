@@ -1,6 +1,6 @@
 package fold;
 
-import fold.model.internal.FoldFile;
+import fold.model.FoldFile;
 
 import java.io.File;
 

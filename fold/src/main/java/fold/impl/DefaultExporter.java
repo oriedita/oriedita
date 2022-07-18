@@ -3,8 +3,9 @@ package fold.impl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fold.Exporter;
 import fold.FoldFileFormatException;
+import fold.adapter.FoldFileAdapter;
 import fold.json.FoldObjectMapper;
-import fold.model.internal.FoldFile;
+import fold.model.FoldFile;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,7 +16,7 @@ public class DefaultExporter implements Exporter {
         try {
             ObjectMapper mapper = new FoldObjectMapper();
 
-            mapper.writeValue(file, foldFile);
+            mapper.writeValue(file, new FoldFileAdapter().convertBack(foldFile));
         } catch (IOException e) {
             throw new FoldFileFormatException(e);
         }

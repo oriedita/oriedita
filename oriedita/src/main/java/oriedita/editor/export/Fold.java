@@ -3,8 +3,7 @@ package oriedita.editor.export;
 import fold.Exporter;
 import fold.FoldFileFormatException;
 import fold.Importer;
-import fold.model.FoldEdgeAssignment;
-import fold.model.internal.FoldFile;
+import fold.model.*;
 import oriedita.editor.save.Save;
 import origami.crease_pattern.FoldLineSet;
 import origami.crease_pattern.LineSegmentSet;
@@ -35,25 +34,22 @@ public class Fold {
     public Save toSave(FoldFile foldFile) {
         Save save = Save.createInstance();
 
-        List<List<Double>> verticeCoords = foldFile.getVertices().getCoords();
-        List<FoldEdgeAssignment> edgeAssignments = foldFile.getEdges().getAssignment();
-
         double minX = Double.MAX_VALUE;
         double maxX = Double.MIN_VALUE;
         double minY = Double.MAX_VALUE;
         double maxY = Double.MIN_VALUE;
 
-        for (int i = 0; i < foldFile.getEdges().getVertices().size(); i++) {
-            List<Integer> edgeVertices = foldFile.getEdges().getVertices().get(i);
+        for (int i = 0; i < foldFile.getEdges().size(); i++) {
+            Edge edge = foldFile.getEdges().get(i);
 
             LineSegment ls = new LineSegment();
-            double ax = verticeCoords.get(edgeVertices.get(0)).get(0);
-            double ay = verticeCoords.get(edgeVertices.get(0)).get(1);
+            double ax = edge.getStart().getX();
+            double ay = edge.getStart().getY();
             ls.setA(new Point(ax, ay));
-            double bx = verticeCoords.get(edgeVertices.get(1)).get(0);
-            double by = verticeCoords.get(edgeVertices.get(1)).get(1);
+            double bx = edge.getEnd().getX();
+            double by = edge.getEnd().getY();
             ls.setB(new Point(bx, by));
-            ls.setColor(getColor(edgeAssignments.get(i)));
+            ls.setColor(getColor(edge.getAssignment()));
 
             minX = Math.min(Math.min(minX, ax), bx);
             minY = Math.min(Math.min(minY, ay), by);
@@ -134,39 +130,40 @@ public class Fold {
 
         FoldFile foldFile = new FoldFile();
 
-        List<FoldEdgeAssignment> edgeAssignments = new ArrayList<>(pointSet.getNumLines());
-        List<List<Integer>> edgeVertices = new ArrayList<>(pointSet.getNumLines());
-        List<List<Double>> verticesCoords = new ArrayList<>(pointSet.getNumPoints());
-        List<List<Integer>> faceVertices = new ArrayList<>(pointSet.getNumFaces());
-
-        List<Double> edgesFoldAngles = new ArrayList<>(pointSet.getNumLines());
-
-        for (int i = 1; i <= pointSet.getNumLines(); i++) {
-            edgeAssignments.add(getAssignment(pointSet.getColor(i)));
-            edgesFoldAngles.add(getFoldAngle(pointSet.getColor(i)));
-            edgeVertices.add(Arrays.asList(pointSet.getBegin(i) - 1, pointSet.getEnd(i) - 1));
+        for (int i = 1; i <= pointSet.getNumPoints(); i++) {
+            Vertex vertex = new Vertex();
+            vertex.setId(i-1);
+            vertex.setX(pointSet.getPoint(i).getX());
+            vertex.setY(pointSet.getPoint(i).getY());
+            foldFile.getVertices().add(vertex);
         }
 
-        for (int i = 1; i <= pointSet.getNumPoints(); i++) {
-            verticesCoords.add(toFoldPoint(pointSet.getPoint(i)));
+        for (int i = 1; i <= pointSet.getNumLines(); i++) {
+            Edge edge = new Edge();
+            edge.setAssignment(getAssignment(pointSet.getColor(i)));
+            edge.setFoldAngle(getFoldAngle(pointSet.getColor(i)));
+            Vertex startVertex = foldFile.getVertices().get(pointSet.getBegin(i)-1);
+            Vertex endVertex = foldFile.getVertices().get(pointSet.getEnd(i)-1);
+
+            edge.setStart(startVertex);
+            edge.setEnd(endVertex);
+
+            edge.setId(i);
+
+            foldFile.getEdges().add(edge);
         }
 
         for (int i = 1; i <= pointSet.getNumFaces(); i++) {
-            int numPoints = pointSet.getFace(i).getNumPoints();
-            List<Integer> faceVertex = new ArrayList<>(numPoints);
+            Face face = new Face();
 
-            for (int j = 1; j <= numPoints; j++) {
-                faceVertex.add(pointSet.getFace(i).getPointId(j) -1);
+            face.setId(i);
+
+            for (int j = 1; j <= pointSet.getFace(i).getNumPoints(); j++) {
+                face.getVertices().add(foldFile.getVertices().get(pointSet.getFace(i).getPointId(j) - 1));
             }
 
-            faceVertices.add(faceVertex);
+            foldFile.getFaces().add(face);
         }
-
-        foldFile.getEdges().setAssignment(edgeAssignments);
-        foldFile.getEdges().setVertices(edgeVertices);
-        foldFile.getEdges().setFoldAngle(edgesFoldAngles);
-        foldFile.getFaces().setVertices(faceVertices);
-        foldFile.getVertices().setCoords(verticesCoords);
 
         return foldFile;
     }
