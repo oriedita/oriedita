@@ -4,7 +4,7 @@ import fold.Exporter;
 import fold.FoldFileFormatException;
 import fold.Importer;
 import fold.model.FoldEdgeAssignment;
-import fold.model.FoldFile;
+import fold.model.internal.FoldFile;
 import oriedita.editor.save.Save;
 import origami.crease_pattern.FoldLineSet;
 import origami.crease_pattern.LineSegmentSet;

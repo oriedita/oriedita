@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import fold.FoldFileFormatException;
 import fold.Importer;
 import fold.json.FoldObjectMapper;
-import fold.model.FoldFile;
+import fold.model.internal.FoldFile;
 
 import java.io.File;
 import java.io.IOException;

@@ -1,4 +1,4 @@
-package fold.model.frame;
+package fold.model.internal.frame;
 
 import fold.model.FoldEdgeAssignment;
 

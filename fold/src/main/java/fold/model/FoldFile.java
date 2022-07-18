@@ -1,72 +1,116 @@
 package fold.model;
 
-import com.fasterxml.jackson.annotation.*;
-import fold.FoldFileFormatException;
-import fold.model.file.FileMetadata;
-
 import java.util.*;
 
-/**
- * Following the FOLD Specification (version 1.1)
- *
- * @see <a href="https://github.com/edemaine/fold/blob/v0.11.3/doc/spec.md">FOLD Specification (version 1.1)</a>
- */
-@JsonPropertyOrder({"file_spec", "file_creator", "file_classes", "frame_classes", "vertices_coords", "rootFrame", "foldCustomProps"})
-@JsonInclude(JsonInclude.Include.NON_EMPTY)
-@JsonRootName("fold")
 public class FoldFile extends FoldFrame {
-    private static final List<String> KNOWN_PROPERTIES = Arrays.asList(
-            "file_spec", "file_creator", "file_author", "file_title", "file_description", "file_classes", "file_frames",
-            "frame_author", "frame_title", "frame_description", "frame_classes", "frame_attributes", "frame_unit",
-            "vertices_coords", "vertices_vertices", "vertices_faces",
-            "edges_vertices", "edges_faces", "edges_assignment", "edges_foldAngle", "edges_length",
-            "faces_vertices", "faces_edges",
-            "faceOrders", "edgeOrders"
-    );
     /**
      * Custom properties.
-     *
+     * <p>
      * To add custom data to the FOLD format specific to your software, include a colon (:) in the property key,
      * where the part before the colon identifies your software.
      */
     private final Map<String, Object> customPropertyMap = new HashMap<>();
     /**
-     * File-level metadata.
+     * The version of the FOLD spec that the file assumes.
+     * See the top of this spec for the current value. Strongly recommended,
+     * in case we ever have to make backward-incompatible changes.
      */
-    private FileMetadata file = new FileMetadata();
+    private double spec = 1.1;
+    /**
+     * The software that created the file. Recommended for files
+     * output by computer software; less important for files made by hand.
+     */
+    private String creator = "oriedita";
+    /**
+     * The human author.
+     */
+    private String author;
+    /**
+     * A title for the entire file.
+     */
+    private String title;
+    /**
+     * A description of the entire file.
+     */
+    private String description;
+    /**
+     * A subjective interpretation about what the entire file represents.
+     * Some standard file classes include:
+     * <p>
+     * "singleModel": A single origami model, possibly still in multiple frames to represent crease pattern, folded form, etc.
+     * "multiModel": Multiple origami models collected together into one file
+     * "animation": Animation of sequence of frames, e.g., illustrating a continuous folding motion
+     * "diagrams": A sequence of frames representing folding steps, as in origami diagrams
+     * Custom classes should have a colon in them; see Custom Properties below.
+     */
+    private List<String> classes = new ArrayList<>();
+    /**
+     * Array of frame dictionaries.
+     */
+    private List<FoldFrame> frames = new ArrayList<>();
 
-    @JsonUnwrapped(prefix = "file_")
-    public FileMetadata getFile() {
-        return file;
-    }
-
-    @JsonUnwrapped(prefix = "file_")
-    public void setFile(FileMetadata file) {
-        this.file = file;
-    }
-
-    @JsonAnySetter
-    public void setCustomProperty(String name, Object value) throws FoldFileFormatException {
-        // Due to how @JsonAnySetter works together with @JsonUnwrapped
-        // Every value is passed to setCustomProperty. Only values containing
-        // a : are actually allowed as custom properties.
-        if (name.indexOf(':') != -1) {
-            this.customPropertyMap.put(name, value);
-            return;
-        }
-
-        // If name is not in KNOWN_PROPERTIES there is something wrong about this fold file.
-        // Reject the file.
-        if (KNOWN_PROPERTIES.contains(name)) {
-            return;
-        }
-
-        throw new FoldFileFormatException("Name not allowed in fold file: " + name);
-    }
-
-    @JsonAnyGetter
     public Map<String, Object> getCustomPropertyMap() {
         return customPropertyMap;
+    }
+
+    public void addCustomProperty(String key, Object value) {
+        customPropertyMap.put(key, value);
+    }
+
+    public double getSpec() {
+        return spec;
+    }
+
+    public void setSpec(double spec) {
+        this.spec = spec;
+    }
+
+    public String getCreator() {
+        return creator;
+    }
+
+    public void setCreator(String creator) {
+        this.creator = creator;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public List<String> getClasses() {
+        return classes;
+    }
+
+    public void setClasses(List<String> classes) {
+        this.classes = classes;
+    }
+
+    public List<FoldFrame> getFrames() {
+        return frames;
+    }
+
+    public void setFrames(List<FoldFrame> frames) {
+        this.frames = frames;
     }
 
     @Override
@@ -74,11 +118,11 @@ public class FoldFile extends FoldFrame {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         FoldFile foldFile = (FoldFile) o;
-        return getCustomPropertyMap().equals(foldFile.getCustomPropertyMap()) && getFile().equals(foldFile.getFile());
+        return Double.compare(foldFile.getSpec(), getSpec()) == 0 && Objects.equals(getCustomPropertyMap(), foldFile.getCustomPropertyMap()) && Objects.equals(getCreator(), foldFile.getCreator()) && Objects.equals(getAuthor(), foldFile.getAuthor()) && Objects.equals(getTitle(), foldFile.getTitle()) && Objects.equals(getDescription(), foldFile.getDescription()) && Objects.equals(getClasses(), foldFile.getClasses()) && Objects.equals(getFrames(), foldFile.getFrames());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getCustomPropertyMap(), getFile());
+        return Objects.hash(getCustomPropertyMap(), getSpec(), getCreator(), getAuthor(), getTitle(), getDescription(), getClasses(), getFrames());
     }
 }

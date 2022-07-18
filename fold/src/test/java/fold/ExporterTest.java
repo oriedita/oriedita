@@ -1,6 +1,6 @@
 package fold;
 
-import fold.model.FoldFile;
+import fold.model.internal.FoldFile;
 import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 

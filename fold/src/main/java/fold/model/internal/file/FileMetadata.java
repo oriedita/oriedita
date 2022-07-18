@@ -1,6 +1,6 @@
-package fold.model.file;
+package fold.model.internal.file;
 
-import fold.model.FoldFrame;
+import fold.model.internal.FoldFrame;
 
 import java.util.ArrayList;
 import java.util.List;

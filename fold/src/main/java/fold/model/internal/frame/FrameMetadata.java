@@ -1,4 +1,4 @@
-package fold.model.frame;
+package fold.model.internal.frame;
 
 import java.util.List;
 import java.util.Objects;
