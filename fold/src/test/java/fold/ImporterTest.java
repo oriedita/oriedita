@@ -1,6 +1,6 @@
 package fold;
 
-import fold.model.internal.FoldFile;
+import fold.model.FoldFile;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -14,7 +14,7 @@ public class ImporterTest extends BaseFoldTest {
 
         FoldFile foldFile = importer.importFile(saveFile);
 
-        Assertions.assertEquals("Crease Pattern Editor", foldFile.getFile().getCreator());
+        Assertions.assertEquals("Crease Pattern Editor", foldFile.getCreator());
     }
 
     @Test
@@ -38,54 +38,52 @@ public class ImporterTest extends BaseFoldTest {
     public void testEmpty() throws Exception {
         FoldFile foldFile = loadFile("fold/empty.fold");
 
-        Assertions.assertEquals("oriedita", foldFile.getFile().getCreator());
-        Assertions.assertEquals(1.1, foldFile.getFile().getSpec());
-        Assertions.assertNull(foldFile.getFile().getAuthor());
-        Assertions.assertNull(foldFile.getFile().getTitle());
-        Assertions.assertNull(foldFile.getFile().getDescription());
-        Assertions.assertEquals(0, foldFile.getFile().getClasses().size());
-        Assertions.assertEquals(0, foldFile.getFile().getFrames().size());
+        Assertions.assertEquals("oriedita", foldFile.getCreator());
+        Assertions.assertEquals(1.1, foldFile.getSpec());
+        Assertions.assertNull(foldFile.getAuthor());
+        Assertions.assertNull(foldFile.getTitle());
+        Assertions.assertNull(foldFile.getDescription());
+        Assertions.assertEquals(0, foldFile.getClasses().size());
+        Assertions.assertEquals(0, foldFile.getFrames().size());
 
-        Assertions.assertNull(foldFile.getFrame().getAuthor());
-        Assertions.assertNull(foldFile.getFrame().getTitle());
-        Assertions.assertNull(foldFile.getFrame().getDescription());
-        Assertions.assertNull(foldFile.getFrame().getClasses());
-        Assertions.assertNull(foldFile.getFrame().getAttributes());
-        Assertions.assertNull(foldFile.getFrame().getUnit());
+        Assertions.assertNull(foldFile.getFrameAuthor());
+        Assertions.assertNull(foldFile.getFrameTitle());
+        Assertions.assertNull(foldFile.getFrameDescription());
+        Assertions.assertNull(foldFile.getFrameClasses());
+        Assertions.assertNull(foldFile.getAttributes());
+        Assertions.assertNull(foldFile.getUnit());
 
-        Assertions.assertEquals(0, foldFile.getVertices().getVertices().size());
-        Assertions.assertEquals(0, foldFile.getVertices().getCoords().size());
-        Assertions.assertEquals(0, foldFile.getVertices().getFaces().size());
+        Assertions.assertEquals(0, foldFile.getVertices().size());
     }
 
     @Test
     public void testMultipleFrame() throws Exception {
         FoldFile foldFile = loadFile("fold/multiple-frame.fold");
 
-        Assertions.assertEquals(2, foldFile.getFile().getFrames().size());
+        Assertions.assertEquals(2, foldFile.getFrames().size());
 
-        Assertions.assertEquals("a frame", foldFile.getFile().getFrames().get(0).getFrame().getTitle());
-        Assertions.assertEquals("other frame", foldFile.getFile().getFrames().get(1).getFrame().getTitle());
+        Assertions.assertEquals("a frame", foldFile.getFrames().get(0).getFrameTitle());
+        Assertions.assertEquals("other frame", foldFile.getFrames().get(1).getFrameTitle());
     }
 
     @Test
     public void testMetadata() throws Exception {
         FoldFile foldFile = loadFile("fold/meta.fold");
 
-        Assertions.assertEquals("test", foldFile.getFile().getAuthor());
-        Assertions.assertEquals("The description", foldFile.getFile().getDescription());
+        Assertions.assertEquals("test", foldFile.getAuthor());
+        Assertions.assertEquals("The description", foldFile.getDescription());
     }
 
     @Test
     public void testMainFrame() throws Exception {
         FoldFile foldFile = loadFile("fold/main_frame.fold");
 
-        Assertions.assertEquals("f_author", foldFile.getFrame().getAuthor());
-        Assertions.assertEquals("f_title", foldFile.getFrame().getTitle());
-        Assertions.assertEquals("f_description", foldFile.getFrame().getDescription());
-        Assertions.assertEquals("unit", foldFile.getFrame().getUnit());
-        Assertions.assertEquals(List.of("creasePattern"), foldFile.getFrame().getClasses());
-        Assertions.assertEquals(Arrays.asList("2D", "nonSelfIntersecting"), foldFile.getFrame().getAttributes());
+        Assertions.assertEquals("f_author", foldFile.getFrameAuthor());
+        Assertions.assertEquals("f_title", foldFile.getFrameTitle());
+        Assertions.assertEquals("f_description", foldFile.getFrameDescription());
+        Assertions.assertEquals("unit", foldFile.getUnit());
+        Assertions.assertEquals(List.of("creasePattern"), foldFile.getFrameClasses());
+        Assertions.assertEquals(Arrays.asList("2D", "nonSelfIntersecting"), foldFile.getAttributes());
     }
 
     @Test
