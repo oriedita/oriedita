@@ -1,9 +1,7 @@
 package fold;
 
-import fold.model.FoldFile;
-
 import java.io.File;
 
-public interface Exporter {
-    void exportFile(File file, FoldFile save) throws FoldFileFormatException;
+public interface Exporter<T> {
+    void exportFile(File file, T save) throws FoldFileFormatException;
 }

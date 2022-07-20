@@ -59,17 +59,4 @@ public class Vertices {
     public void setFaces(List<List<Integer>> faces) {
         this.faces = faces;
     }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Vertices vertices1 = (Vertices) o;
-        return getCoords().equals(vertices1.getCoords()) && getVertices().equals(vertices1.getVertices()) && getFaces().equals(vertices1.getFaces());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getCoords(), getVertices(), getFaces());
-    }
 }

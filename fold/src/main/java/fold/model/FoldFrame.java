@@ -113,15 +113,15 @@ public class FoldFrame {
             this.face2 = face2;
         }
 
-        public boolean getFace1AboveFace2() {
+        public Boolean getFace1AboveFace2() {
             return face1AboveFace2;
         }
 
-        public void setFace1AboveFace2(boolean face1AboveFace2) {
+        public void setFace1AboveFace2(Boolean face1AboveFace2) {
             this.face1AboveFace2 = face1AboveFace2;
         }
 
-        private boolean face1AboveFace2;
+        private Boolean face1AboveFace2;
     }
 
     public static class EdgeOrder {

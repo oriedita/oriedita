@@ -3,6 +3,7 @@ package oriedita.editor.export;
 import fold.Exporter;
 import fold.FoldFileFormatException;
 import fold.Importer;
+import fold.adapter.FoldFileAdapter;
 import fold.model.*;
 import oriedita.editor.save.Save;
 import origami.crease_pattern.FoldLineSet;
@@ -22,11 +23,11 @@ import java.util.List;
 
 @Singleton
 public class Fold {
-    private final Importer anImporter;
-    private final Exporter exporter;
+    private final Importer<FoldFile> anImporter;
+    private final Exporter<FoldFile> exporter;
 
     @Inject
-    public Fold(Importer anImporter, Exporter exporter) {
+    public Fold(Importer<FoldFile> anImporter, Exporter<FoldFile> exporter) {
         this.anImporter = anImporter;
         this.exporter = exporter;
     }

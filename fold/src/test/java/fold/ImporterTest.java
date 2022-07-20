@@ -8,18 +8,24 @@ import java.io.File;
 import java.util.*;
 
 public class ImporterTest extends BaseFoldTest {
+    /**
+     * Test if importing of a file works
+     */
     @Test
-    public void testLoadFoldFile() throws FoldFileFormatException {
-        File saveFile = new File(Objects.requireNonNull(getClass().getClassLoader().getResource("fold/basic.fold")).getFile());
+    public void testLoadFoldFile() throws Exception {
+        File saveFile = new File(Objects.requireNonNull(getClass().getClassLoader().getResource("fold/full.fold")).getFile());
 
         FoldFile foldFile = importer.importFile(saveFile);
 
         Assertions.assertEquals("Crease Pattern Editor", foldFile.getCreator());
     }
 
+    /**
+     * Test the importing of custom properties.
+     */
     @Test
     public void testCustomProperty() throws Exception {
-        FoldFile foldFile = loadFile("fold/basic.fold");
+        FoldFile foldFile = loadFile("fold/full.fold");
 
         Object customProperty = foldFile.getCustomPropertyMap().get("cpedit:page");
 
@@ -34,6 +40,9 @@ public class ImporterTest extends BaseFoldTest {
         Assertions.assertEquals("bar", foldFile.getCustomPropertyMap().get("oriedita:foo"));
     }
 
+    /**
+     * Test if importing an empty file works. Everything is optional!
+     */
     @Test
     public void testEmpty() throws Exception {
         FoldFile foldFile = loadFile("fold/empty.fold");
@@ -56,6 +65,9 @@ public class ImporterTest extends BaseFoldTest {
         Assertions.assertEquals(0, foldFile.getVertices().size());
     }
 
+    /**
+     * Test if loading multiple frames works.
+     */
     @Test
     public void testMultipleFrame() throws Exception {
         FoldFile foldFile = loadFile("fold/multiple-frame.fold");
@@ -86,11 +98,17 @@ public class ImporterTest extends BaseFoldTest {
         Assertions.assertEquals(Arrays.asList("2D", "nonSelfIntersecting"), foldFile.getAttributes());
     }
 
+    /**
+     * A file not containing JSON is not considered valid.
+     */
     @Test
     public void testInvalid() {
         Assertions.assertThrows(FoldFileFormatException.class, () -> loadFile("fold/invalid.fold"), "Invalid file throws an exception");
     }
 
+    /**
+     * An invalid property is not expected.
+     */
     @Test
     public void testInvalidProperty() {
         Assertions.assertThrows(FoldFileFormatException.class, () -> loadFile("fold/invalid-property.fold"));

@@ -7,14 +7,14 @@ import fold.model.internal.file.FileMetadata;
 import java.util.*;
 
 /**
- * Following the FOLD Specification (version 1.1)
+ * This file maps directly to the FOLD Specification (version 1.1)
  *
  * @see <a href="https://github.com/edemaine/fold/blob/v0.11.3/doc/spec.md">FOLD Specification (version 1.1)</a>
  */
 @JsonPropertyOrder({"file_spec", "file_creator", "file_classes", "frame_classes", "vertices_coords", "rootFrame", "foldCustomProps"})
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 @JsonRootName("fold")
-public class FoldFile extends FoldFrame {
+public class InternalFoldFile extends InternalFoldFrame {
     private static final List<String> KNOWN_PROPERTIES = Arrays.asList(
             "file_spec", "file_creator", "file_author", "file_title", "file_description", "file_classes", "file_frames",
             "frame_author", "frame_title", "frame_description", "frame_classes", "frame_attributes", "frame_unit",
@@ -67,18 +67,5 @@ public class FoldFile extends FoldFrame {
     @JsonAnyGetter
     public Map<String, Object> getCustomPropertyMap() {
         return customPropertyMap;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        FoldFile foldFile = (FoldFile) o;
-        return getCustomPropertyMap().equals(foldFile.getCustomPropertyMap()) && getFile().equals(foldFile.getFile());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getCustomPropertyMap(), getFile());
     }
 }

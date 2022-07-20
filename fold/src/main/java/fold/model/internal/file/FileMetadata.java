@@ -1,6 +1,6 @@
 package fold.model.internal.file;
 
-import fold.model.internal.FoldFrame;
+import fold.model.internal.InternalFoldFrame;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +47,7 @@ public class FileMetadata {
     /**
      * Array of frame dictionaries.
      */
-    private List<FoldFrame> frames = new ArrayList<>();
+    private List<InternalFoldFrame> frames = new ArrayList<>();
 
     public double getSpec() {
         return spec;
@@ -97,11 +97,11 @@ public class FileMetadata {
         this.classes = classes;
     }
 
-    public List<FoldFrame> getFrames() {
+    public List<InternalFoldFrame> getFrames() {
         return frames;
     }
 
-    public void setFrames(List<FoldFrame> frames) {
+    public void setFrames(List<InternalFoldFrame> frames) {
         this.frames = frames;
     }
 

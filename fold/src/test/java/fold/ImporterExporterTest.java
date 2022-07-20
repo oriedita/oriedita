@@ -1,6 +1,5 @@
 package fold;
 
-import fold.adapter.FoldFileAdapter;
 import fold.model.FoldFile;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -11,9 +10,12 @@ import java.nio.file.Files;
 import java.util.Objects;
 
 public class ImporterExporterTest extends BaseFoldTest {
+    /**
+     * Loading a file and writing it to a new file should result in an equal file.
+     */
     @Test
     public void testLoadAndSaveFoldFile() throws Exception {
-        File saveFile = new File(Objects.requireNonNull(getClass().getClassLoader().getResource("fold/basic.fold")).getFile());
+        File saveFile = new File(Objects.requireNonNull(getClass().getClassLoader().getResource("fold/full.fold")).getFile());
 
         FoldFile foldFile = importer.importFile(saveFile);
 
@@ -23,10 +25,17 @@ public class ImporterExporterTest extends BaseFoldTest {
 
         String expected = Files.readString(saveFile.toPath());
         String actual = Files.readString(exportFile.toPath());
+
         JSONAssert.assertEquals(expected, actual, true);
+    }
 
-        FoldFile foldFile2 = importer.importFile(exportFile);
+    @Test
+    public void testEquals() throws Exception {
+        File saveFile = new File(Objects.requireNonNull(getClass().getClassLoader().getResource("fold/full.fold")).getFile());
 
-        Assertions.assertEquals(foldFile, foldFile2);
+        FoldFile foldFile1 = importer.importFile(saveFile);
+        FoldFile foldFile2 = importer.importFile(saveFile);
+
+        Assertions.assertEquals(foldFile1, foldFile2);
     }
 }

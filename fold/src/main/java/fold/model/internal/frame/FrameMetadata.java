@@ -138,17 +138,4 @@ public class FrameMetadata {
     public void setInherit(Boolean inherit) {
         this.inherit = inherit;
     }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        FrameMetadata that = (FrameMetadata) o;
-        return Objects.equals(getAuthor(), that.getAuthor()) && Objects.equals(getTitle(), that.getTitle()) && Objects.equals(getDescription(), that.getDescription()) && getClasses().equals(that.getClasses()) && getAttributes().equals(that.getAttributes()) && Objects.equals(getUnit(), that.getUnit()) && Objects.equals(getParent(), that.getParent()) && Objects.equals(getInherit(), that.getInherit());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getAuthor(), getTitle(), getDescription(), getClasses(), getAttributes(), getUnit(), getParent(), inherit);
-    }
 }

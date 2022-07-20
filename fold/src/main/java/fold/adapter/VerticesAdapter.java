@@ -5,7 +5,6 @@ import fold.model.Vertex;
 import fold.model.internal.frame.Vertices;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,7 +34,7 @@ public class VerticesAdapter implements Adapter<Vertices, List<Vertex>> {
             for (int i = 0; i < vertices.size(); i++) {
                 List<Vertex> vertexList = new ArrayList<>();
                 for (int j = 0; j < from.getVertices().get(i).size(); j++) {
-                    vertexList.add(vertices.get(j));
+                    vertexList.add(vertices.get(from.getVertices().get(i).get(j)));
                 }
 
                 vertices.get(i).setVertices(vertexList);
@@ -50,11 +49,16 @@ public class VerticesAdapter implements Adapter<Vertices, List<Vertex>> {
         Vertices vertices = new Vertices();
 
         for (Vertex vertex : from) {
-            List<Double> coords = Arrays.asList(vertex.getX(), vertex.getY());
-            if (vertex.getZ() != null) {
-                coords.add(vertex.getZ());
+            if (vertex.getX() != null && vertex.getY() != null) {
+                List<Double> coords = new ArrayList<>();
+                coords.add(vertex.getX());
+                coords.add(vertex.getY());
+
+                if (vertex.getZ() != null) {
+                    coords.add(vertex.getZ());
+                }
+                vertices.getCoords().add(coords);
             }
-            vertices.getCoords().add(coords);
             if (vertex.getFaces().size() > 0) {
                 vertices.getFaces().add(vertex.getFaces().stream().map(Face::getId).collect(Collectors.toList()));
             }

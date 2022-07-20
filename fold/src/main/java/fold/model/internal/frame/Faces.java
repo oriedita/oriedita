@@ -33,17 +33,4 @@ public class Faces {
     public void setEdges(List<List<Integer>> edges) {
         this.edges = edges;
     }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Faces faces = (Faces) o;
-        return getVertices().equals(faces.getVertices()) && getEdges().equals(faces.getEdges());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getVertices(), getEdges());
-    }
 }

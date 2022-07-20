@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class FoldFrame {
+public class InternalFoldFrame {
     /**
      * Frame-level metadata properties
      */
@@ -85,18 +85,5 @@ public class FoldFrame {
 
     public void setEdgeOrders(List<List<Integer>> edgeOrders) {
         this.edgeOrders = edgeOrders;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        FoldFrame foldFrame = (FoldFrame) o;
-        return getFrame().equals(foldFrame.getFrame()) && getVertices().equals(foldFrame.getVertices()) && getEdges().equals(foldFrame.getEdges()) && getFaces().equals(foldFrame.getFaces()) && getFaceOrders().equals(foldFrame.getFaceOrders()) && getEdgeOrders().equals(foldFrame.getEdgeOrders());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getFrame(), getVertices(), getEdges(), getFaces(), getFaceOrders(), getEdgeOrders());
     }
 }

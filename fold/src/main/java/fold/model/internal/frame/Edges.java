@@ -43,17 +43,4 @@ public class Edges {
     public void setLength(List<Double> length) {
         this.length = length;
     }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Edges edges = (Edges) o;
-        return getVertices().equals(edges.getVertices()) && getAssignment().equals(edges.getAssignment()) && getFoldAngle().equals(edges.getFoldAngle()) && getLength().equals(edges.getLength());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getVertices(), getAssignment(), getFoldAngle(), getLength());
-    }
 }
