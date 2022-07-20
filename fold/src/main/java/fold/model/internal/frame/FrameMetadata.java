@@ -1,4 +1,7 @@
-package fold.model.frame;
+package fold.model.internal.frame;
+
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Frame Metadata (frame_...)
@@ -25,7 +28,7 @@ public class FrameMetadata {
      * "linkage": vertices and edges and edge lengths, but no faces
      * Custom classes should have a colon in them; see Custom Properties below.
      */
-    private String[] classes;
+    private List<String> classes;
     /**
      * Attributes that objectively describe properties of the folded structure being represented (array of strings).
      * Some standard frame attributes include
@@ -44,7 +47,7 @@ public class FrameMetadata {
      * "nonSelfIntersecting": the polyhedral complex has no properly intersecting faces
      * Custom attributes should have a colon in them; see Custom Properties below.
      */
-    private String[] attributes;
+    private List<String> attributes;
     /**
      * Physical or logical unit that all coordinates are relative to (a string). Standard defined values
      * are as follows. You can also use a custom string, but it will probably not be understood by software.
@@ -63,14 +66,14 @@ public class FrameMetadata {
      * Parent frame ID. Intuitively, this frame (the child) is a modification (or, in general, is related to) the
      * parent frame. This property is optional, but enables organizing frames into a tree structure.
      */
-    private int parent;
+    private Integer parent;
     /**
      * Boolean. If true, any properties in the parent frame (or recursively inherited from an ancestor) that is
      * not overridden in this frame are automatically inherited, allowing you to avoid duplicated data in many
      * cases. For example, the frame can change the vertex coordinates (vertices_coords) while inheriting the
      * structure of the parent's mesh.
      */
-    private boolean inherit;
+    private Boolean inherit;
 
     public String getAuthor() {
         return author;
@@ -96,19 +99,19 @@ public class FrameMetadata {
         this.description = description;
     }
 
-    public String[] getClasses() {
+    public List<String> getClasses() {
         return classes;
     }
 
-    public void setClasses(String[] classes) {
+    public void setClasses(List<String> classes) {
         this.classes = classes;
     }
 
-    public String[] getAttributes() {
+    public List<String> getAttributes() {
         return attributes;
     }
 
-    public void setAttributes(String[] attributes) {
+    public void setAttributes(List<String> attributes) {
         this.attributes = attributes;
     }
 
@@ -120,19 +123,19 @@ public class FrameMetadata {
         this.unit = unit;
     }
 
-    public int getParent() {
+    public Integer getParent() {
         return parent;
     }
 
-    public void setParent(int parent) {
+    public void setParent(Integer parent) {
         this.parent = parent;
     }
 
-    public boolean isFrameInherit() {
+    public Boolean getInherit() {
         return inherit;
     }
 
-    public void setInherit(boolean inherit) {
+    public void setInherit(Boolean inherit) {
         this.inherit = inherit;
     }
 }

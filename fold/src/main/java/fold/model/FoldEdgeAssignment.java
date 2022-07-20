@@ -1,5 +1,7 @@
 package fold.model;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 /**
  * For an edge, representing its fold direction assignment.
  */
@@ -7,21 +9,33 @@ public enum FoldEdgeAssignment {
     /**
      * Border/boundary edge
      */
-    B,
+    BORDER("B"),
     /**
      * Mountain fold
      */
-    M,
+    MOUNTAIN_FOLD("M"),
     /**
      * Valley fold
      */
-    V,
+    VALLEY_FOLD("V"),
     /**
      * Flat (unfolded) fold
      */
-    F,
+    FLAT_FOLD("F"),
     /**
      * Unassigned/unknown
      */
-    U,
+    UNASSIGNED("U"),
+    ;
+
+    private final String letter;
+
+    FoldEdgeAssignment(String letter) {
+        this.letter = letter;
+    }
+
+    @JsonValue
+    public String getLetter() {
+        return letter;
+    }
 }
