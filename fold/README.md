@@ -17,6 +17,8 @@ Use composition to create a fold file with your own properties. The custom prope
 Example:
 
 ```java
+import org.tinylog.Logger;
+
 class MyFoldFile {
     private final FoldFile foldFile;
 
@@ -32,18 +34,17 @@ class MyFoldFile {
     public MyProperty getMyProperty() {
         Object x = foldFile.getCustomProperty("my", "prop_x");
         Object y = foldFile.getCustomProperty("my", "prop_y");
-        
+
         if (x == null || y == null) {
             return null;
         }
 
-        if (x instanceof BigDecimal && y instanceof BigDecimal) {
+        try {
             return new MyProperty(((BigDecimal) x).doubleValue(), ((BigDecimal) y).doubleValue());
+        } catch (ClassCastException ex) {
+            Logger.warn("Encountered error in fold file.", ex);
+            return null;
         }
-        
-        Logger.warn("Encountered error in fold file.");
-        
-        return null;
     }
 }
 ```

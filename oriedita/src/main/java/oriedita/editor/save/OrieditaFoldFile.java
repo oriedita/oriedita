@@ -40,67 +40,49 @@ public class OrieditaFoldFile {
             return empty;
         }
 
-        if (!(coords instanceof List<?>)
-                || !(radii instanceof List<?>)
-                || !(colors instanceof List<?>)
-        ) {
-            Logger.warn("oriedita:circles_ present, but not of valid type.");
-            // No circles here! No problem.
-            return new ArrayList<>();
-        }
+        try {
+            List<?> coordsListU = (List<?>) coords;
+            List<?> radiiListU = (List<?>) radii;
+            List<?> colorsListU = (List<?>) colors;
 
-        List<?> coordsListU = (List<?>) coords;
-        List<?> radiiListU = (List<?>) radii;
-        List<?> colorsListU = (List<?>) colors;
+            List<Circle> circles = new ArrayList<>();
 
-        List<Circle> circles = new ArrayList<>();
-
-        if (coordsListU.size() == 0) {
-            return empty;
-        }
-
-        if (radiiListU.size() != coordsListU.size() || colorsListU.size() != coordsListU.size()) {
-            Logger.warn("oriedita:circles_ not all parts of equal length.");
-            return empty;
-        }
-
-        for (int i = 0; i < coordsListU.size(); i++) {
-            Object coord = coordsListU.get(i);
-            Object radius = radiiListU.get(i);
-            Object color = colorsListU.get(i);
-
-            Circle circle = new Circle();
-
-            if (!(radius instanceof BigDecimal)
-                    || !(color instanceof String)
-                    || !(coord instanceof List<?>)
-                    || ((List<?>) coord).size() != 2
-            ) {
-                Logger.warn("Types of radius, color of coordinates is not valid. Expected Double, List<Double>, String");
+            if (coordsListU.size() == 0) {
                 return empty;
             }
 
-            circle.setR(((BigDecimal) radius).doubleValue());
-            circle.setColor(LineColor.from((String) color));
-
-            List<?> coordListU = (List<?>) coord;
-
-            Object x = coordListU.get(0);
-            Object y = coordListU.get(1);
-
-            if (!(x instanceof BigDecimal) || !(y instanceof BigDecimal)) {
-                Logger.warn("Types of circle coordinates not valid");
+            if (radiiListU.size() != coordsListU.size() || colorsListU.size() != coordsListU.size()) {
+                Logger.warn("oriedita:circles_ not all parts of equal length.");
                 return empty;
             }
 
-            circle.setX(((BigDecimal) x).doubleValue());
-            circle.setY(((BigDecimal) y).doubleValue());
+            for (int i = 0; i < coordsListU.size(); i++) {
+                List<?> coord = (List<?>) coordsListU.get(i);
+                BigDecimal radius = (BigDecimal) radiiListU.get(i);
+                String color = (String) colorsListU.get(i);
 
-            circles.add(circle);
+                Circle circle = new Circle();
+
+                circle.setR(radius.doubleValue());
+                circle.setColor(LineColor.from(color));
+
+                BigDecimal x = (BigDecimal) coord.get(0);
+                BigDecimal y = (BigDecimal) coord.get(1);
+
+                circle.setX(x.doubleValue());
+                circle.setY(y.doubleValue());
+
+                circles.add(circle);
+            }
+
+            // Users cannot modify this list as it will get out of sync.
+            return Collections.unmodifiableList(circles);
+        } catch (ClassCastException ex) {
+            // Catch any errors in the format of the json map.
+            Logger.warn(ex, "Encountered error in fold file while parsing circles");
+
+            return empty;
         }
-
-        // Users cannot modify this list as it will get out of sync.
-        return Collections.unmodifiableList(circles);
     }
 
     /**
