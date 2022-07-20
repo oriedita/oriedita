@@ -43,7 +43,7 @@ public class ExporterTest extends BaseFoldTest {
     public void testSaveCustomProperty() throws Exception {
         FoldFile foldFile = new FoldFile();
 
-        foldFile.getCustomPropertyMap().put("fold:test", "testvalue");
+        foldFile.setCustomProperty("fold", "test", "testvalue");
 
         File exportFile = File.createTempFile("exportSaveCustomProperty", ".fold");
 
@@ -57,7 +57,7 @@ public class ExporterTest extends BaseFoldTest {
     @Test
     public void testSaveInvalidCustomProperty() throws Exception {
         FoldFile foldFile = new FoldFile();
-        foldFile.addCustomProperty("my_custom_property", "yes");
+        foldFile.getCustomPropertyMap().put("my_custom_property", "yes");
 
         File exportFile = File.createTempFile("testSaveInvalidProperty", ".fold");
 

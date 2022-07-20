@@ -186,7 +186,7 @@ public class FileSaveServiceImpl implements FileSaveService {
             Orh.exportFile(mainCreasePatternWorker.getSave_for_export_with_applicationModel(), exportFile);
         } else if (exportFile.getName().endsWith(".fold")) {
             try {
-                fold.exportFile(mainCreasePatternWorker.getForFolding(), exportFile);
+                fold.exportFile(mainCreasePatternWorker.getSave_for_export(), mainCreasePatternWorker.getForFolding(), exportFile);
             } catch (InterruptedException | FoldFileFormatException e) {
                 e.printStackTrace();
             }

@@ -51,7 +51,7 @@ public class FoldFileAdapter implements Adapter<InternalFoldFile, FoldFile> {
         foldFile.setFrames(from.getFile().getFrames().stream().map(frameAdapter::convert).collect(Collectors.toList()));
 
         for (Map.Entry<String, Object> entry : from.getCustomPropertyMap().entrySet()) {
-            foldFile.addCustomProperty(entry.getKey(), entry.getValue());
+            foldFile.getCustomPropertyMap().put(entry.getKey(), entry.getValue());
         }
 
         return foldFile;

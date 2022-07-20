@@ -53,8 +53,20 @@ public class FoldFile extends FoldFrame {
         return customPropertyMap;
     }
 
-    public void addCustomProperty(String key, Object value) {
-        customPropertyMap.put(key, value);
+    public void setCustomProperty(String namespace, String key, Object value) {
+        customPropertyMap.put(formatCustomProperty(namespace, key), value);
+    }
+
+    public Object getCustomProperty(String namespace, String key) {
+        return customPropertyMap.getOrDefault(formatCustomProperty(namespace, key), null);
+    }
+
+    public void removeCustomProperty(String ns, String key) {
+        customPropertyMap.remove(formatCustomProperty(ns, key));
+    }
+
+    private String formatCustomProperty(String namespace, String key) {
+        return String.format("%s:%s", namespace, key);
     }
 
     public double getSpec() {

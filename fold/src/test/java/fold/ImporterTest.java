@@ -27,7 +27,7 @@ public class ImporterTest extends BaseFoldTest {
     public void testCustomProperty() throws Exception {
         FoldFile foldFile = loadFile("fold/full.fold");
 
-        Object customProperty = foldFile.getCustomPropertyMap().get("cpedit:page");
+        Object customProperty = foldFile.getCustomProperty("cpedit", "page");
 
         Map<String, Integer> expectedProperty = new LinkedHashMap<>();
         expectedProperty.put("xMin", 0);
@@ -37,7 +37,7 @@ public class ImporterTest extends BaseFoldTest {
 
         Assertions.assertEquals(expectedProperty, customProperty);
 
-        Assertions.assertEquals("bar", foldFile.getCustomPropertyMap().get("oriedita:foo"));
+        Assertions.assertEquals("bar", foldFile.getCustomProperty("oriedita", "foo"));
     }
 
     /**

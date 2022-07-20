@@ -3,12 +3,13 @@ package oriedita.editor.export;
 import fold.Exporter;
 import fold.FoldFileFormatException;
 import fold.Importer;
-import fold.adapter.FoldFileAdapter;
 import fold.model.*;
+import oriedita.editor.save.OrieditaFoldFile;
 import oriedita.editor.save.Save;
 import origami.crease_pattern.FoldLineSet;
 import origami.crease_pattern.LineSegmentSet;
 import origami.crease_pattern.PointSet;
+import origami.crease_pattern.element.Circle;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
@@ -20,6 +21,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Singleton
 public class Fold {
@@ -32,7 +34,7 @@ public class Fold {
         this.exporter = exporter;
     }
 
-    public Save toSave(FoldFile foldFile) {
+    public Save toSave(OrieditaFoldFile foldFile) {
         Save save = Save.createInstance();
 
         double minX = Double.MAX_VALUE;
@@ -40,8 +42,8 @@ public class Fold {
         double minY = Double.MAX_VALUE;
         double maxY = Double.MIN_VALUE;
 
-        for (int i = 0; i < foldFile.getEdges().size(); i++) {
-            Edge edge = foldFile.getEdges().get(i);
+        for (int i = 0; i < foldFile.getFoldFile().getEdges().size(); i++) {
+            Edge edge = foldFile.getFoldFile().getEdges().get(i);
 
             LineSegment ls = new LineSegment();
             double ax = edge.getStart().getX();
@@ -59,6 +61,8 @@ public class Fold {
 
             save.addLineSegment(ls);
         }
+
+        save.setCircles(new ArrayList<>(foldFile.getCircles()));
 
         FoldLineSet ori_s_temp = new FoldLineSet();    //セレクトされた折線だけ取り出すために使う
         ori_s_temp.setSave(save);//セレクトされた折線だけ取り出してori_s_tempを作る
@@ -115,21 +119,22 @@ public class Fold {
     }
 
     public Save importFile(File file) throws FoldFileFormatException {
-        return toSave(anImporter.importFile(file));
+        return toSave(new OrieditaFoldFile(anImporter.importFile(file)));
     }
 
 
-    public void exportFile(LineSegmentSet lineSegmentSet, File file) throws InterruptedException, FoldFileFormatException {
-        exporter.exportFile(file, toFoldSave(lineSegmentSet));
+    public void exportFile(Save save, LineSegmentSet lineSegmentSet, File file) throws InterruptedException, FoldFileFormatException {
+        exporter.exportFile(file, toFoldSave(save, lineSegmentSet).getFoldFile());
     }
 
-    public FoldFile toFoldSave(LineSegmentSet save) throws InterruptedException {
+    public OrieditaFoldFile toFoldSave(Save save, LineSegmentSet lineSegmentSet) throws InterruptedException {
         WireFrame_Worker wireFrame_worker = new WireFrame_Worker(3.0);
-        wireFrame_worker.setLineSegmentSet(save);
+        wireFrame_worker.setLineSegmentSet(lineSegmentSet);
 
         PointSet pointSet = wireFrame_worker.get();
 
         FoldFile foldFile = new FoldFile();
+        OrieditaFoldFile orieditaFoldFile = new OrieditaFoldFile(foldFile);
 
         for (int i = 1; i <= pointSet.getNumPoints(); i++) {
             Vertex vertex = new Vertex();
@@ -166,7 +171,9 @@ public class Fold {
             foldFile.getFaces().add(face);
         }
 
-        return foldFile;
+        orieditaFoldFile.setCircles(save.getCircles());
+
+        return orieditaFoldFile;
     }
 
     private double getFoldAngle(LineColor color) {
