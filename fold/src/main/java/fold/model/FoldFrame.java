@@ -80,80 +80,6 @@ public class FoldFrame {
      */
     private Boolean inherit;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        FoldFrame frame = (FoldFrame) o;
-        return Objects.equals(getVertices(), frame.getVertices()) && Objects.equals(getEdges(), frame.getEdges()) && Objects.equals(getFaces(), frame.getFaces()) && Objects.equals(getFaceOrders(), frame.getFaceOrders()) && Objects.equals(getEdgeOrders(), frame.getEdgeOrders()) && Objects.equals(getFrameAuthor(), frame.getFrameAuthor()) && Objects.equals(getFrameTitle(), frame.getFrameTitle()) && Objects.equals(getFrameDescription(), frame.getFrameDescription()) && Objects.equals(getFrameClasses(), frame.getFrameClasses()) && Objects.equals(getAttributes(), frame.getAttributes()) && Objects.equals(getUnit(), frame.getUnit()) && Objects.equals(getParent(), frame.getParent()) && Objects.equals(getInherit(), frame.getInherit());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getVertices(), getEdges(), getFaces(), getFaceOrders(), getEdgeOrders(), getFrameAuthor(), getFrameTitle(), getFrameDescription(), getFrameClasses(), getAttributes(), getUnit(), getParent(), getInherit());
-    }
-
-    public static class FaceOrder {
-        private Face face1;
-        private Face face2;
-
-        public Face getFace1() {
-            return face1;
-        }
-
-        public void setFace1(Face face1) {
-            this.face1 = face1;
-        }
-
-        public Face getFace2() {
-            return face2;
-        }
-
-        public void setFace2(Face face2) {
-            this.face2 = face2;
-        }
-
-        public Boolean getFace1AboveFace2() {
-            return face1AboveFace2;
-        }
-
-        public void setFace1AboveFace2(Boolean face1AboveFace2) {
-            this.face1AboveFace2 = face1AboveFace2;
-        }
-
-        private Boolean face1AboveFace2;
-    }
-
-    public static class EdgeOrder {
-        private Edge edge1;
-        private Edge edge2;
-        private Boolean edge1AboveEdge2;
-
-        public Edge getEdge1() {
-            return edge1;
-        }
-
-        public void setEdge1(Edge edge1) {
-            this.edge1 = edge1;
-        }
-
-        public Edge getEdge2() {
-            return edge2;
-        }
-
-        public void setEdge2(Edge edge2) {
-            this.edge2 = edge2;
-        }
-
-        public Boolean getEdge1AboveEdge2() {
-            return edge1AboveEdge2;
-        }
-
-        public void setEdge1AboveEdge2(Boolean edge1AboveEdge2) {
-            this.edge1AboveEdge2 = edge1AboveEdge2;
-        }
-    }
-
     public List<Vertex> getVertices() {
         return vertices;
     }
@@ -256,5 +182,78 @@ public class FoldFrame {
 
     public void setInherit(Boolean inherit) {
         this.inherit = inherit;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        FoldFrame frame = (FoldFrame) o;
+        return Objects.equals(getVertices(), frame.getVertices()) && Objects.equals(getEdges(), frame.getEdges()) && Objects.equals(getFaces(), frame.getFaces()) && Objects.equals(getFaceOrders(), frame.getFaceOrders()) && Objects.equals(getEdgeOrders(), frame.getEdgeOrders()) && Objects.equals(getFrameAuthor(), frame.getFrameAuthor()) && Objects.equals(getFrameTitle(), frame.getFrameTitle()) && Objects.equals(getFrameDescription(), frame.getFrameDescription()) && Objects.equals(getFrameClasses(), frame.getFrameClasses()) && Objects.equals(getAttributes(), frame.getAttributes()) && Objects.equals(getUnit(), frame.getUnit()) && Objects.equals(getParent(), frame.getParent()) && Objects.equals(getInherit(), frame.getInherit());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getVertices(), getEdges(), getFaces(), getFaceOrders(), getEdgeOrders(), getFrameAuthor(), getFrameTitle(), getFrameDescription(), getFrameClasses(), getAttributes(), getUnit(), getParent(), getInherit());
+    }
+
+    public static class FaceOrder {
+        private Face face1;
+        private Face face2;
+        private Boolean face1AboveFace2;
+
+        public Face getFace1() {
+            return face1;
+        }
+
+        public void setFace1(Face face1) {
+            this.face1 = face1;
+        }
+
+        public Face getFace2() {
+            return face2;
+        }
+
+        public void setFace2(Face face2) {
+            this.face2 = face2;
+        }
+
+        public Boolean getFace1AboveFace2() {
+            return face1AboveFace2;
+        }
+
+        public void setFace1AboveFace2(Boolean face1AboveFace2) {
+            this.face1AboveFace2 = face1AboveFace2;
+        }
+    }
+
+    public static class EdgeOrder {
+        private Edge edge1;
+        private Edge edge2;
+        private Boolean edge1AboveEdge2;
+
+        public Edge getEdge1() {
+            return edge1;
+        }
+
+        public void setEdge1(Edge edge1) {
+            this.edge1 = edge1;
+        }
+
+        public Edge getEdge2() {
+            return edge2;
+        }
+
+        public void setEdge2(Edge edge2) {
+            this.edge2 = edge2;
+        }
+
+        public Boolean getEdge1AboveEdge2() {
+            return edge1AboveEdge2;
+        }
+
+        public void setEdge1AboveEdge2(Boolean edge1AboveEdge2) {
+            this.edge1AboveEdge2 = edge1AboveEdge2;
+        }
     }
 }

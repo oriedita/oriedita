@@ -11,19 +11,14 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class OrieditaFoldFile {
+public class OrieditaFoldFile extends FoldFile {
     private static final String NS = "oriedita";
     public static final String KEY_CIRCLES_COORDS = "circles_coords";
     public static final String KEY_CIRCLES_RADII = "circles_radii";
     public static final String KEY_CIRCLES_COLORS = "circles_colors";
-    private final FoldFile foldFile;
 
-    public OrieditaFoldFile(FoldFile foldFile) {
-        this.foldFile = foldFile;
-    }
-
-    public FoldFile getFoldFile() {
-        return foldFile;
+    public OrieditaFoldFile() {
+        // Public empty constructor required.
     }
 
     /**
@@ -31,9 +26,9 @@ public class OrieditaFoldFile {
      */
     public List<Circle> getCircles() {
         List<Circle> empty = Collections.emptyList();
-        Object coords = foldFile.getCustomProperty(NS, KEY_CIRCLES_COORDS);
-        Object radii = foldFile.getCustomProperty(NS, KEY_CIRCLES_RADII);
-        Object colors = foldFile.getCustomProperty(NS, KEY_CIRCLES_COLORS);
+        Object coords = getCustomProperty(NS, KEY_CIRCLES_COORDS);
+        Object radii = getCustomProperty(NS, KEY_CIRCLES_RADII);
+        Object colors = getCustomProperty(NS, KEY_CIRCLES_COLORS);
 
         if (coords == null || radii == null || colors == null) {
             // No circles present
@@ -90,9 +85,9 @@ public class OrieditaFoldFile {
      */
     public void setCircles(List<Circle> circles) {
         if (circles.size() == 0) {
-            foldFile.removeCustomProperty(NS, KEY_CIRCLES_COORDS);
-            foldFile.removeCustomProperty(NS, KEY_CIRCLES_RADII);
-            foldFile.removeCustomProperty(NS, KEY_CIRCLES_COLORS);
+            removeCustomProperty(NS, KEY_CIRCLES_COORDS);
+            removeCustomProperty(NS, KEY_CIRCLES_RADII);
+            removeCustomProperty(NS, KEY_CIRCLES_COLORS);
 
             return;
         }
@@ -106,8 +101,8 @@ public class OrieditaFoldFile {
             colors.add(circle.getColor().toString());
         }
 
-        foldFile.setCustomProperty(NS, KEY_CIRCLES_COORDS, coords);
-        foldFile.setCustomProperty(NS, KEY_CIRCLES_RADII, radii);
-        foldFile.setCustomProperty(NS, KEY_CIRCLES_COLORS, colors);
+        setCustomProperty(NS, KEY_CIRCLES_COORDS, coords);
+        setCustomProperty(NS, KEY_CIRCLES_RADII, radii);
+        setCustomProperty(NS, KEY_CIRCLES_COLORS, colors);
     }
 }

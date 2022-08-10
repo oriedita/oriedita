@@ -17,7 +17,7 @@ public class DefaultImporter implements Importer<FoldFile> {
             ObjectMapper mapper = new FoldObjectMapper();
 
             return AdapterFactory.getFoldFileAdapter()
-                    .convert(mapper.readValue(file, InternalFoldFile.class));
+                    .convert(mapper.readValue(file, InternalFoldFile.class), new FoldFile());
         } catch (IOException e) {
             throw new FoldFileFormatException(e);
         }

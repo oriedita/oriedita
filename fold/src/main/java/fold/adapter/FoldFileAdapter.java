@@ -10,7 +10,7 @@ import fold.model.internal.file.FileMetadata;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class FoldFileAdapter implements Adapter<InternalFoldFile, FoldFile> {
+public class FoldFileAdapter<T extends InternalFoldFile, V extends FoldFile> implements Adapter<T, V> {
     private final Adapter<InternalFoldFrame, FoldFrame> frameAdapter;
 
     public FoldFileAdapter(Adapter<InternalFoldFrame, FoldFrame> frameAdapter) {
@@ -18,10 +18,8 @@ public class FoldFileAdapter implements Adapter<InternalFoldFile, FoldFile> {
     }
 
     @Override
-    public FoldFile convert(InternalFoldFile from) {
-        FoldFile foldFile = new FoldFile();
-
-        FoldFrame frame = frameAdapter.convert(from);
+    public V convert(T from, V foldFile) {
+        FoldFrame frame = frameAdapter.convert(from, new FoldFrame());
 
         foldFile.setAttributes(frame.getAttributes());
         foldFile.setEdgeOrders(frame.getEdgeOrders());
@@ -48,7 +46,7 @@ public class FoldFileAdapter implements Adapter<InternalFoldFile, FoldFile> {
         foldFile.setAttributes(from.getFrame().getAttributes());
 
 
-        foldFile.setFrames(from.getFile().getFrames().stream().map(frameAdapter::convert).collect(Collectors.toList()));
+        foldFile.setFrames(from.getFile().getFrames().stream().map((InternalFoldFrame to) -> frameAdapter.convert(to, new FoldFrame())).collect(Collectors.toList()));
 
         for (Map.Entry<String, Object> entry : from.getCustomPropertyMap().entrySet()) {
             foldFile.getCustomPropertyMap().put(entry.getKey(), entry.getValue());
@@ -58,10 +56,9 @@ public class FoldFileAdapter implements Adapter<InternalFoldFile, FoldFile> {
     }
 
     @Override
-    public InternalFoldFile convertBack(FoldFile from) {
-        InternalFoldFile internalFoldFile = new InternalFoldFile();
+    public T convertBack(V from, T internalFoldFile) {
 
-        InternalFoldFrame frame = frameAdapter.convertBack(from);
+        InternalFoldFrame frame = frameAdapter.convertBack(from, new InternalFoldFrame());
 
         internalFoldFile.setEdgeOrders(frame.getEdgeOrders());
         internalFoldFile.setEdges(frame.getEdges());
@@ -86,7 +83,7 @@ public class FoldFileAdapter implements Adapter<InternalFoldFile, FoldFile> {
         fileMetadata.setDescription(from.getDescription());
         fileMetadata.setCreator(from.getCreator());
         fileMetadata.setSpec(from.getSpec());
-        fileMetadata.setFrames(from.getFrames().stream().map(frameAdapter::convertBack).collect(Collectors.toList()));
+        fileMetadata.setFrames(from.getFrames().stream().map((FoldFrame to) -> frameAdapter.convertBack(to, new InternalFoldFrame())).collect(Collectors.toList()));
         internalFoldFile.setFile(fileMetadata);
 
         for (Map.Entry<String, Object> entry : from.getCustomPropertyMap().entrySet()) {

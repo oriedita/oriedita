@@ -5,10 +5,10 @@ import dagger.Module;
 import dagger.Provides;
 import fold.Exporter;
 import fold.Importer;
+import fold.impl.CustomImporter;
 import fold.impl.DefaultExporter;
-import fold.impl.DefaultImporter;
-import fold.model.FoldFile;
 import oriedita.editor.export.Fold;
+import oriedita.editor.save.OrieditaFoldFile;
 
 import javax.inject.Singleton;
 
@@ -18,13 +18,13 @@ public abstract class FoldFileFactory {
 
     @Provides
     @Singleton
-    static Importer<FoldFile> foldImport() {
-        return new DefaultImporter();
+    static Importer<OrieditaFoldFile> foldImport() {
+        return new CustomImporter<>(OrieditaFoldFile.class);
     }
 
     @Provides
     @Singleton
-    static Exporter<FoldFile> foldExport() {
-        return new DefaultExporter();
+    static Exporter<OrieditaFoldFile> foldExport() {
+        return new DefaultExporter<>();
     }
 }

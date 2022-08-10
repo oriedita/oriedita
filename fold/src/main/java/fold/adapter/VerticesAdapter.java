@@ -10,9 +10,7 @@ import java.util.stream.Collectors;
 
 public class VerticesAdapter implements Adapter<Vertices, List<Vertex>> {
     @Override
-    public List<Vertex> convert(Vertices from) {
-        List<Vertex> vertices = new ArrayList<>();
-
+    public List<Vertex> convert(Vertices from, List<Vertex> vertices) {
         int id = 0;
 
         for (List<Double> coords : from.getCoords()) {
@@ -45,9 +43,7 @@ public class VerticesAdapter implements Adapter<Vertices, List<Vertex>> {
     }
 
     @Override
-    public Vertices convertBack(List<Vertex> from) {
-        Vertices vertices = new Vertices();
-
+    public Vertices convertBack(List<Vertex> from, Vertices vertices) {
         for (Vertex vertex : from) {
             if (vertex.getX() != null && vertex.getY() != null) {
                 List<Double> coords = new ArrayList<>();

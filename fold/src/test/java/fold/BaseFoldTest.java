@@ -15,7 +15,7 @@ public abstract class BaseFoldTest {
     @BeforeEach
     void beforeEach() {
         importer = new DefaultImporter();
-        exporter = new DefaultExporter();
+        exporter = new DefaultExporter<>();
     }
 
     FoldFile loadFile(String name) throws FoldFileFormatException {
