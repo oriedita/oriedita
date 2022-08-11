@@ -74,7 +74,7 @@ public class OrieditaFoldFile extends FoldFile {
 
             // Users cannot modify this list as it will get out of sync.
             return Collections.unmodifiableList(circles);
-        } catch (ClassCastException | ArrayIndexOutOfBoundsException ex) {
+        } catch (ClassCastException | IndexOutOfBoundsException ex) {
             // Catch any errors in the format of the json map.
             Logger.warn(ex, "Encountered error in fold file while parsing circles");
 
@@ -146,7 +146,7 @@ public class OrieditaFoldFile extends FoldFile {
             // Users cannot modify this list as it will get out of sync.
             return Collections.unmodifiableList(texts);
 
-        } catch (ClassCastException ex) {
+        } catch (ClassCastException | IndexOutOfBoundsException ex) {
             Logger.warn(ex, "Encountered error in fold file while parsing texts");
 
             return Collections.emptyList();
