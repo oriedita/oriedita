@@ -1,4 +1,8 @@
-package fold.model.frame;
+package fold.model.internal.frame;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Vertex information : vertices_...
@@ -11,7 +15,7 @@ public class Vertices {
      * In higher dimensions, all unspecified coordinates are implicitly zero. Recommended except for
      * frames with attribute "abstract".
      */
-    private double[][] coords;
+    private List<List<Double>> coords = new ArrayList<>();
     /**
      * For each vertex, an array of vertices (vertex IDs) that are adjacent along edges. If the frame represents
      * an orientable manifold or planar linkage, this list should be ordered counterclockwise around the
@@ -20,7 +24,7 @@ public class Vertices {
      * is arbitrary. Recommended in any frame lacking edges_vertices property (otherwise vertices_vertices
      * can easily be computed from edges_vertices as needed).
      */
-    private int[] vertices;
+    private List<List<Integer>> vertices = new ArrayList<>();
     /**
      * For each vertex, an array of face IDs for the faces incident to the vertex. If the frame represents an
      * orientable manifold, this list should be ordered counterclockwise around the vertex (possibly repeating
@@ -30,29 +34,29 @@ public class Vertices {
      * should align in start so that vertices_faces[v][i] contains vertices vertices_vertices[v][i] and
      * vertices_vertices[v][(i+1)%d] where d is the degree of vertex v.
      */
-    private int[][] faces;
+    private List<List<Integer>> faces = new ArrayList<>();
 
-    public double[][] getCoords() {
+    public List<List<Double>> getCoords() {
         return coords;
     }
 
-    public void setCoords(double[][] coords) {
+    public void setCoords(List<List<Double>> coords) {
         this.coords = coords;
     }
 
-    public int[] getVertices() {
+    public List<List<Integer>> getVertices() {
         return vertices;
     }
 
-    public void setVertices(int[] vertices) {
+    public void setVertices(List<List<Integer>> vertices) {
         this.vertices = vertices;
     }
 
-    public int[][] getFaces() {
+    public List<List<Integer>> getFaces() {
         return faces;
     }
 
-    public void setFaces(int[][] faces) {
+    public void setFaces(List<List<Integer>> faces) {
         this.faces = faces;
     }
 }
