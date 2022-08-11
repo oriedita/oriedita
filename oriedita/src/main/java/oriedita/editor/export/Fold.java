@@ -61,6 +61,7 @@ public class Fold {
         }
 
         save.setCircles(new ArrayList<>(foldFile.getCircles()));
+        save.setTexts(new ArrayList<>(foldFile.getTexts()));
 
         FoldLineSet ori_s_temp = new FoldLineSet();    //セレクトされた折線だけ取り出すために使う
         ori_s_temp.setSave(save);//セレクトされた折線だけ取り出してori_s_tempを作る
@@ -157,6 +158,8 @@ public class Fold {
         }
 
         foldFile.setCircles(save.getCircles());
+
+        foldFile.setTexts(save.getTexts());
 
         return foldFile;
     }
