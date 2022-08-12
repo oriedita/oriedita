@@ -63,6 +63,7 @@
   ],
   "file_spec": 1.1,
   "file_creator": "oriedita",
+  "oriedita:version": "dev",
   "oriedita:circles_colors": [
     "3",
     "0",

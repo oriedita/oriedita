@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 public class FoldFileAdapter<T extends InternalFoldFile, V extends FoldFile> implements Adapter<T, V> {
     private final Adapter<InternalFoldFrame, FoldFrame> frameAdapter;
 
-    public FoldFileAdapter(Adapter<InternalFoldFrame, FoldFrame> frameAdapter) {
+    public FoldFileAdapter(Class<T> tClass, Class<V> vClass, Adapter<InternalFoldFrame, FoldFrame> frameAdapter) {
         this.frameAdapter = frameAdapter;
     }
 

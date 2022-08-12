@@ -25,7 +25,7 @@ public class CustomImporter<T extends FoldFile> implements Importer<T> {
 
             T instance = tClass.getDeclaredConstructor().newInstance();
 
-            return AdapterFactory.<InternalFoldFile, T>getCustomFoldFileAdapter()
+            return AdapterFactory.getCustomFoldFileAdapter(InternalFoldFile.class, tClass)
                     .convert(mapper.readValue(file, InternalFoldFile.class), instance);
         } catch (IOException | NoSuchMethodException | InstantiationException | IllegalAccessException |
                  InvocationTargetException e) {

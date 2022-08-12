@@ -28,10 +28,10 @@ public class AdapterFactory {
     }
 
     public static Adapter<InternalFoldFile, FoldFile> getFoldFileAdapter() {
-        return new FoldFileAdapter<>(getFoldFrameAdapter());
+        return new FoldFileAdapter<>(InternalFoldFile.class, FoldFile.class, getFoldFrameAdapter());
     }
 
-    public static <T extends InternalFoldFile,V extends FoldFile> Adapter<T,V> getCustomFoldFileAdapter() {
-        return new FoldFileAdapter<>(getFoldFrameAdapter());
+    public static <T extends InternalFoldFile,V extends FoldFile> Adapter<T,V> getCustomFoldFileAdapter(Class<T> tClass, Class<V> vClass) {
+        return new FoldFileAdapter<>(tClass, vClass, getFoldFrameAdapter());
     }
 }

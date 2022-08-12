@@ -6,6 +6,7 @@ import fold.Importer;
 import fold.model.*;
 import oriedita.editor.save.OrieditaFoldFile;
 import oriedita.editor.save.Save;
+import oriedita.editor.tools.ResourceUtil;
 import origami.crease_pattern.FoldLineSet;
 import origami.crease_pattern.LineSegmentSet;
 import origami.crease_pattern.PointSet;
@@ -61,7 +62,6 @@ public class Fold {
         }
 
         save.setCircles(new ArrayList<>(foldFile.getCircles()));
-        save.setTexts(new ArrayList<>(foldFile.getTexts()));
 
         FoldLineSet ori_s_temp = new FoldLineSet();    //セレクトされた折線だけ取り出すために使う
         ori_s_temp.setSave(save);//セレクトされた折線だけ取り出してori_s_tempを作る
@@ -74,6 +74,8 @@ public class Fold {
 
         Save save1 = Save.createInstance();
         ori_s_temp.getSave(save1);
+
+        save1.setTexts(new ArrayList<>(foldFile.getTexts()));
 
         return save1;
     }
@@ -158,8 +160,8 @@ public class Fold {
         }
 
         foldFile.setCircles(save.getCircles());
-
         foldFile.setTexts(save.getTexts());
+        foldFile.setVersion(ResourceUtil.getVersionFromManifest());
 
         return foldFile;
     }
