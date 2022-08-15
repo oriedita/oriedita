@@ -3778,7 +3778,7 @@ public class FoldLineSet {
         return Math.abs(fushimi_decision_angle_goukei - temp_kakudo * 2.0) < Epsilon.FLAT;//この0だけ、角度がおかしいという意味
     }
 
-    public double get_x_max() {//sousuu=0のときは0.0を返す
+    public double getMaxX() {//sousuu=0のときは0.0を返す
         if (total == 0) {
             return 0.0;
         }
@@ -3795,7 +3795,7 @@ public class FoldLineSet {
         return dm;
     }
 
-    public double get_x_min() {//sousuu=0のときは0.0を返す
+    public double getMinX() {//sousuu=0のときは0.0を返す
         if (total == 0) {
             return 0.0;
         }
@@ -3812,7 +3812,7 @@ public class FoldLineSet {
         return dm;
     }
 
-    public double get_y_min() {
+    public double getMinY() {
         if (total == 0) {
             return 0.0;
         }
@@ -3829,7 +3829,7 @@ public class FoldLineSet {
         return dm;
     }
 
-    public double get_y_max() {//sousuu=0のときは0.0を返す
+    public double getMaxY() {//sousuu=0のときは0.0を返す
         if (total == 0) {
             return 0.0;
         }

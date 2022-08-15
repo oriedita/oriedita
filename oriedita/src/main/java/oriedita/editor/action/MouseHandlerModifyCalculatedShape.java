@@ -306,7 +306,7 @@ public class MouseHandlerModifyCalculatedShape implements MouseModeHandler {
     //  ==========Deformation operation with the folded figure===========================================================================================================
     //-----------------------------------------------------------------------------------------------------uuuuuuu--
     private void foldedFigure_operation_mouse_on_2(Point p) {//Work when the left mouse button is pressed in the fold-up diagram operation
-        p_m_left_on.set(new Point(p.getX(), p.getY()));
+        p_m_left_on.set(p);
 
         selectedFigure.wireFrame_worker_drawer2.setCamera(selectedFigure.foldedFigureCamera);
         selectedFigure.wireFrame_worker_drawer2.setCam_front(selectedFigure.foldedFigureFrontCamera);

@@ -235,8 +235,8 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
 
         FoldLineSet tempFoldLineSet = new FoldLineSet();    //追加された折線だけ取り出すために使う
         tempFoldLineSet.setSave(memo1);//追加された折線だけ取り出してori_s_tempを作る
-        addx = foldLineSet.get_x_max() + 100.0 - tempFoldLineSet.get_x_min();
-        addy = foldLineSet.get_y_max() - tempFoldLineSet.get_y_max();
+        addx = foldLineSet.getMaxX() + 100.0 - tempFoldLineSet.getMinX();
+        addy = foldLineSet.getMaxY() - tempFoldLineSet.getMaxY();
 
         tempFoldLineSet.move(addx, addy);//全体を移動する
 

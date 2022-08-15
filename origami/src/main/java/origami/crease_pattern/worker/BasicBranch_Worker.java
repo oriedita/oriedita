@@ -18,21 +18,6 @@ public class BasicBranch_Worker {
         return lineSegmentSet;
     }
 
-    public void split_arrangement_for_SubFace_generation() throws InterruptedException {
-        Logger.info("　　Senbunsyuugouの中で、Smenを発生させるための線分集合の整理");
-        Logger.info("分割整理　１、点削除前	getNumLineSegments() = " + lineSegmentSet.getNumLineSegments());
-        lineSegmentSet.point_removal();          //Just in case, remove the dotted line segment
-        Logger.info("分割整理　２、重複線分削除前	getNumLineSegments() = " + lineSegmentSet.getNumLineSegments());
-        lineSegmentSet.overlapping_line_removal();//念のため、全く一致する線分が２つあれば１つを除く
-        Logger.info("分割整理　３、交差分割前	getNumLineSegments() = " + lineSegmentSet.getNumLineSegments());
-        lineSegmentSet.intersect_divide();
-        Logger.info("分割整理　４、点削除前	getNumLineSegments() = " + lineSegmentSet.getNumLineSegments());
-        lineSegmentSet.point_removal();             //折り畳み推定の針金図の整理のため、点状の線分を除く
-        Logger.info("分割整理　５、重複線分削除前	getNumLineSegments() = " + lineSegmentSet.getNumLineSegments());
-        lineSegmentSet.overlapping_line_removal(); //折り畳み推定の針金図の整理のため、全く一致する線分が２つあれば１つを除く
-        Logger.info("分割整理　５、重複線分削除後	getNumLineSegments() = " + lineSegmentSet.getNumLineSegments());
-    }//k is a set of line segments, LineSegmentSet k = new LineSegmentSet ();
-
     public static LineSegmentSet split_arrangement_for_SubFace_generation(LineSegmentSet inputLineSegmentSet) throws InterruptedException {
         LineSegmentSet lineSegmentSet = new LineSegmentSet();
         lineSegmentSet.set(inputLineSegmentSet);

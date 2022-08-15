@@ -111,10 +111,10 @@ public abstract class BaseMouseHandlerLineTransform extends BaseMouseHandlerLine
 
     private void initCacheImage(Graphics2D g2, Camera camera, DrawingSettings settings) {
         if (bottomLeft == null) {
-            double minX = lines.get_x_min();
-            double maxX = lines.get_x_max();
-            double minY = lines.get_y_min();
-            double maxY = lines.get_y_max();
+            double minX = lines.getMinX();
+            double maxX = lines.getMaxX();
+            double minY = lines.getMinY();
+            double maxY = lines.getMaxY();
 
             bottomLeft = camera.object2TV(new Point(minX, minY));
             topRight = camera.object2TV(new Point(maxX, maxY));

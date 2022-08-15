@@ -295,7 +295,7 @@ public class PointSet implements Serializable {
 
     public void setPoint(int i, Point tn) {
         points[i].set(tn);
-    }                                                        //   <<<------------
+    }
 
     public void addPoint(Point p) {
         numPoints = numPoints + 1;
