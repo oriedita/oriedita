@@ -1,7 +1,6 @@
 package oriedita.editor.swing.dialog;
 
 import org.tinylog.Logger;
-import oriedita.editor.Oriedita;
 import oriedita.editor.databinding.ApplicationModel;
 
 import javax.inject.Inject;
@@ -103,7 +102,7 @@ public class HelpDialog extends JDialog {
         Matcher matcher = p.matcher(helpText);
         return matcher.replaceAll(result -> {
             String path = result.group(1);
-            URL resource = Oriedita.class.getClassLoader().getResource(path);
+            URL resource = HelpDialog.class.getClassLoader().getResource(path);
             if (resource != null) {
                 return "src='" + resource + "'";
             }

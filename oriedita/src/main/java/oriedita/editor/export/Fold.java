@@ -6,6 +6,7 @@ import fold.Importer;
 import fold.model.*;
 import oriedita.editor.save.OrieditaFoldFile;
 import oriedita.editor.save.Save;
+import oriedita.editor.save.SaveProvider;
 import oriedita.editor.tools.ResourceUtil;
 import origami.crease_pattern.FoldLineSet;
 import origami.crease_pattern.LineSegmentSet;
@@ -34,7 +35,7 @@ public class Fold {
     }
 
     public Save toSave(OrieditaFoldFile foldFile) {
-        Save save = Save.createInstance();
+        Save save = SaveProvider.createInstance();
 
         double minX = Double.MAX_VALUE;
         double maxX = Double.MIN_VALUE;
@@ -72,7 +73,7 @@ public class Fold {
                 new Point(-200, 200)
         );
 
-        Save save1 = Save.createInstance();
+        Save save1 = SaveProvider.createInstance();
         ori_s_temp.getSave(save1);
 
         save1.setTexts(new ArrayList<>(foldFile.getTexts()));

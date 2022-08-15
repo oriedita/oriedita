@@ -58,7 +58,7 @@ public class FoldTest {
 
     @Test
     public void testSaveCircles() throws Exception {
-        Save save = Save.createInstance();
+        Save save = SaveProvider.createInstance();
 
         List<Circle> circles = new ArrayList<>();
 
@@ -88,7 +88,7 @@ public class FoldTest {
 
     @Test
     public void testSaveCirclesFile() throws Exception {
-        Save save = Save.createInstance();
+        Save save = SaveProvider.createInstance();
 
         List<Circle> circles = new ArrayList<>();
 
@@ -112,7 +112,7 @@ public class FoldTest {
 
     @Test
     public void testSaveTexts() throws Exception {
-        Save save = Save.createInstance();
+        Save save = SaveProvider.createInstance();
 
         List<Text> texts = new ArrayList<>();
 
@@ -139,7 +139,7 @@ public class FoldTest {
 
     @Test
     public void testSaveTextsFile() throws Exception {
-        Save save = Save.createInstance();
+        Save save = SaveProvider.createInstance();
 
         List<Text> texts = new ArrayList<>();
 

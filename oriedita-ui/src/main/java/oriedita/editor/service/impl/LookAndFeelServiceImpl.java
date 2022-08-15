@@ -2,7 +2,6 @@ package oriedita.editor.service.impl;
 
 import com.formdev.flatlaf.FlatLaf;
 import com.formdev.flatlaf.ui.FlatUIUtils;
-import oriedita.editor.App;
 import oriedita.editor.Colors;
 import oriedita.editor.databinding.ApplicationModel;
 import oriedita.editor.service.LookAndFeelService;
@@ -13,7 +12,6 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.swing.*;
 import java.awt.*;
-import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 
 @Singleton
@@ -121,6 +119,11 @@ public class LookAndFeelServiceImpl implements LookAndFeelService {
         applicationModel.setLaf(LookAndFeelUtil.determineLafForDarkMode(!darkMode));
     }
 
+    @Override
+    public void registerFlatLafSource() {
+        FlatLaf.registerCustomDefaultsSource("oriedita.editor.themes");
+    }
+
     private void updateButtonIcons(Container container) {
         boolean isDark = FlatLaf.isLafDark();
         for (Component c : container.getComponents()) {
@@ -150,7 +153,7 @@ public class LookAndFeelServiceImpl implements LookAndFeelService {
             uri = uri.replaceAll(".*ppp_dark", "ppp");
         }
 
-        URL resource = App.class.getClassLoader().getResource(uri);
+        URL resource = LookAndFeelServiceImpl.class.getClassLoader().getResource(uri);
 
         if (resource != null) {
             return new ImageIcon(resource);

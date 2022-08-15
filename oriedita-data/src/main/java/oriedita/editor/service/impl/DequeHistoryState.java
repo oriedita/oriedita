@@ -2,6 +2,7 @@ package oriedita.editor.service.impl;
 
 import org.tinylog.Logger;
 import oriedita.editor.save.Save;
+import oriedita.editor.save.SaveProvider;
 import oriedita.editor.service.HistoryState;
 
 import javax.inject.Inject;
@@ -84,7 +85,7 @@ public class DequeHistoryState implements HistoryState {
 
     private Save getCurrent() {
         if (current == null) {
-            return Save.createInstance();
+            return SaveProvider.createInstance();
         }
 
         try {
@@ -93,7 +94,7 @@ public class DequeHistoryState implements HistoryState {
             Logger.error(e, "Restoring current save failed");
         }
 
-        return Save.createInstance();
+        return SaveProvider.createInstance();
     }
 
     @Override public Save undo() {

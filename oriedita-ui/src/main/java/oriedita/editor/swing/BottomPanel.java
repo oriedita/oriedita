@@ -10,13 +10,8 @@ import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.databinding.*;
 import oriedita.editor.drawing.FoldedFigure_Drawer;
-import oriedita.editor.service.ButtonService;
-import oriedita.editor.service.FileSaveService;
-import oriedita.editor.service.FoldingService;
-import oriedita.editor.service.TaskExecutorService;
+import oriedita.editor.service.*;
 import oriedita.editor.swing.component.*;
-import oriedita.editor.task.FoldingEstimateSave100Task;
-import oriedita.editor.task.FoldingEstimateSpecificTask;
 import oriedita.editor.tools.StringOp;
 import origami.folding.FoldedFigure;
 
@@ -73,10 +68,7 @@ public class BottomPanel {
                        FoldingService foldingService,
                        ApplicationModel applicationModel,
                        FoldedFiguresList foldedFiguresList,
-                       FileModel fileModel,
-                       FileSaveService fileSaveService,
-                       Canvas canvas,
-                       BulletinBoard bulletinBoard) {
+                       TaskService taskService) {
         this.buttonService = buttonService;
         this.measuresModel = measuresModel;
         this.foldedFigureModel = foldedFigureModel;
@@ -153,7 +145,7 @@ public class BottomPanel {
             if (selectedFigure != null && selectedFigure.foldedFigure.findAnotherOverlapValid) {
                 selectedFigure.foldedFigure.estimationOrder = FoldedFigure.EstimationOrder.ORDER_6;
 
-                foldingTaskExecutor.executeTask(new FoldingEstimateSave100Task(canvas, foldingService, fileSaveService, foldedFiguresList));
+                taskService.executeFoldingEstimateSave100Task();
             }
         });
         goToFoldedFigureButton.addActionListener(e -> {
@@ -178,7 +170,7 @@ public class BottomPanel {
                 //1例目の折り上がり予想はi_suitei_meirei=5を指定、2例目以降の折り上がり予想はi_suitei_meirei=6で実施される
             }
 
-            foldingTaskExecutor.executeTask(new FoldingEstimateSpecificTask(foldedFigureModel, foldingService, canvasModel, foldedFiguresList));
+            taskService.executeFoldingEstimateSpecificTask();
         });
         goToFoldedFigureTextField.addActionListener(e -> goToFoldedFigureButton.doClick());
         constraintButton.addActionListener(e -> {

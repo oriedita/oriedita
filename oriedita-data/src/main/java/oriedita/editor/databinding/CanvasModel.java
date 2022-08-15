@@ -12,6 +12,7 @@ import oriedita.editor.canvas.FoldLineAdditionalInputMode;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.Serializable;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Singleton
 public class CanvasModel implements Serializable {
@@ -22,6 +23,12 @@ public class CanvasModel implements Serializable {
     private MouseMode mouseModeAfterColorSelection;
     private FoldLineAdditionalInputMode foldLineAdditionalInputMode;
     private FoldLineAdditionalInputMode foldLineAdditionalInputMode_old;
+
+    public AtomicBoolean getW_image_running() {
+        return w_image_running;
+    }
+
+    public final AtomicBoolean w_image_running = new AtomicBoolean(false); // Folding together execution. If a single image export is in progress, it will be true.
 
     private MouseWheelTarget mouseInCpOrFoldedFigure;
 

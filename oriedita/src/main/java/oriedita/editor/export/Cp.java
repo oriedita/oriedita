@@ -2,6 +2,7 @@ package oriedita.editor.export;
 
 import org.tinylog.Logger;
 import oriedita.editor.save.Save;
+import oriedita.editor.save.SaveProvider;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 
@@ -23,7 +24,7 @@ public class Cp {
     }
 
     public static Save importFile(BufferedReader reader) throws IOException {
-        Save save = Save.createInstance();
+        Save save = SaveProvider.createInstance();
 
         double d1, d2, d3, d4;
 

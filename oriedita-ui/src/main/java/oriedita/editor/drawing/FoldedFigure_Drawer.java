@@ -1,6 +1,7 @@
 package oriedita.editor.drawing;
 
 import org.tinylog.Logger;
+import oriedita.editor.Foldable;
 import origami.crease_pattern.FoldingException;
 import origami.crease_pattern.LineSegmentSet;
 import origami.crease_pattern.element.Point;
@@ -12,7 +13,7 @@ import oriedita.editor.drawing.tools.Camera;
 
 import java.awt.*;
 
-public class FoldedFigure_Drawer {
+public class FoldedFigure_Drawer implements Foldable {
     public final FoldedFigure_01 foldedFigure;
     public final FoldedFigure_Worker_Drawer foldedFigure_worker_drawer;
     public final WireFrame_Worker_Drawer wireFrame_worker_drawer1;
@@ -146,6 +147,26 @@ public class FoldedFigure_Drawer {
         if (i_camera_estimated) {
             folding_estimation_camera_configure(creasePatternCamera);
         }
+    }
+
+    @Override
+    public void setEstimationOrder(FoldedFigure.EstimationOrder estimationOrder) {
+        foldedFigure.estimationOrder = estimationOrder;
+    }
+
+    @Override
+    public void estimated_initialize() {
+        foldedFigure.estimated_initialize();
+    }
+
+    @Override
+    public void setTextResult(String textResult) {
+        foldedFigure.text_result = textResult;
+    }
+
+    @Override
+    public String getTextResult() {
+        return foldedFigure.text_result;
     }
 
     public void createTwoColorCreasePattern(Camera camera_of_foldLine_diagram, LineSegmentSet Ss0) throws InterruptedException {//Two-color crease pattern

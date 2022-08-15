@@ -1,8 +1,8 @@
 package oriedita.editor.task;
 
 import org.tinylog.Logger;
+import oriedita.editor.databinding.CanvasModel;
 import origami.crease_pattern.FoldingException;
-import oriedita.editor.Canvas;
 import oriedita.editor.databinding.FoldedFiguresList;
 import oriedita.editor.drawing.FoldedFigure_Drawer;
 import oriedita.editor.service.FileSaveService;
@@ -12,13 +12,13 @@ import java.io.File;
 
 public class FoldingEstimateSave100Task implements OrieditaTask {
 
-    private final Canvas canvas;
+    private final CanvasModel canvasModel;
     private final FoldingService foldingService;
     private final FileSaveService fileSaveService;
     private final FoldedFiguresList foldedFiguresList;
 
-    public FoldingEstimateSave100Task(Canvas canvas, FoldingService foldingService, FileSaveService fileSaveService, FoldedFiguresList foldedFiguresList) {
-        this.canvas = canvas;
+    public FoldingEstimateSave100Task(CanvasModel canvasModel, FoldingService foldingService, FileSaveService fileSaveService, FoldedFiguresList foldedFiguresList) {
+        this.canvasModel = canvasModel;
         this.foldingService = foldingService;
         this.fileSaveService = fileSaveService;
         this.foldedFiguresList = foldedFiguresList;
@@ -38,7 +38,7 @@ public class FoldingEstimateSave100Task implements OrieditaTask {
         if (file != null) {
             selectedFigure.foldedFigure.summary_write_image_during_execution = true;//Meaning during summary writing
 
-            synchronized (canvas.w_image_running) {
+            synchronized (canvasModel.getW_image_running()) {
                 int objective = 100;
                 try {
 
@@ -71,7 +71,7 @@ public class FoldingEstimateSave100Task implements OrieditaTask {
         long L = stop - start;
         selectedFigure.foldedFigure.text_result = selectedFigure.foldedFigure.text_result + "     Computation time " + L + " msec.";
 
-        canvas.repaint();
+        canvasModel.markDirty();
     }
 
     @Override

@@ -4,6 +4,7 @@ import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.save.Save;
+import oriedita.editor.save.SaveProvider;
 import origami.Epsilon;
 import origami.crease_pattern.FoldLineSet;
 import origami.crease_pattern.OritaCalc;
@@ -107,13 +108,13 @@ public class MouseHandlerCreaseCopy4p extends BaseMouseHandlerInputRestricted {
             canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.NORMAL_0);//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
 
             FoldLineSet ori_s_temp = new FoldLineSet();    //セレクトされた折線だけ取り出すために使う
-            Save save = Save.createInstance();
+            Save save = SaveProvider.createInstance();
             d.getFoldLineSet().getMemoSelectOption(save, 2);
             ori_s_temp.setSave(save);//セレクトされた折線だけ取り出してori_s_tempを作る
             ori_s_temp.move(d.getLineStep().get(0).getA(), d.getLineStep().get(1).getA(), d.getLineStep().get(2).getA(), d.getLineStep().get(3).getA());//全体を移動する
 
             int sousuu_old = d.getFoldLineSet().getTotal();
-            Save save1 = Save.createInstance();
+            Save save1 = SaveProvider.createInstance();
             ori_s_temp.getSave(save1);
             d.getFoldLineSet().addSave(save1);
             int sousuu_new = d.getFoldLineSet().getTotal();

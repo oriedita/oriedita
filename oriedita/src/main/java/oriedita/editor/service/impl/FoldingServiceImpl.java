@@ -1,6 +1,7 @@
 package oriedita.editor.service.impl;
 
 import org.tinylog.Logger;
+import oriedita.editor.Foldable;
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.databinding.ApplicationModel;
 import oriedita.editor.databinding.CanvasModel;
@@ -10,9 +11,13 @@ import oriedita.editor.drawing.FoldedFigure_Drawer;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.folded_figure.FoldedFigure_01;
 import oriedita.editor.save.Save;
+import oriedita.editor.save.SaveProvider;
+import oriedita.editor.service.FileSaveService;
 import oriedita.editor.service.FoldingService;
 import oriedita.editor.service.TaskExecutorService;
 import oriedita.editor.swing.component.BulletinBoard;
+import oriedita.editor.task.FoldingEstimateSave100Task;
+import oriedita.editor.task.FoldingEstimateSpecificTask;
 import oriedita.editor.task.FoldingEstimateTask;
 import oriedita.editor.task.TwoColoredTask;
 import origami.crease_pattern.FoldingException;
@@ -37,20 +42,20 @@ public class FoldingServiceImpl implements FoldingService {
     private final FoldedFigureModel foldedFigureModel;
     private final CreasePattern_Worker mainCreasePatternWorker;
     private final FoldedFiguresList foldedFiguresList;
-    private LineSegmentSet lastFold;
     public LineSegmentSet lineSegmentsForFolding;//折畳み予測の最初に、ts1.Senbunsyuugou2Tensyuugou(lineSegmentsForFolding)として使う。　Ss0は、mainDrawingWorker.get_for_oritatami()かes1.get_for_select_oritatami()で得る。
+    private LineSegmentSet lastFold;
 
     @Inject
     public FoldingServiceImpl(BulletinBoard bulletinBoard,
-                          CanvasModel canvasModel,
-                          @Named("mainFrame") JFrame frame,
-                          @Named("creasePatternCamera") Camera creasePatternCamera,
-                          @Named("backupCreasePattern_Worker") CreasePattern_Worker backupCreasePatternWorker,
-                          @Named("foldingExecutor") TaskExecutorService foldingExecutor,
-                          ApplicationModel applicationModel,
-                          FoldedFigureModel foldedFigureModel,
-                          CreasePattern_Worker mainCreasePatternWorker,
-                          FoldedFiguresList foldedFiguresList) {
+                              CanvasModel canvasModel,
+                              @Named("mainFrame") JFrame frame,
+                              @Named("creasePatternCamera") Camera creasePatternCamera,
+                              @Named("backupCreasePattern_Worker") CreasePattern_Worker backupCreasePatternWorker,
+                              @Named("foldingExecutor") TaskExecutorService foldingExecutor,
+                              ApplicationModel applicationModel,
+                              FoldedFigureModel foldedFigureModel,
+                              CreasePattern_Worker mainCreasePatternWorker,
+                              FoldedFiguresList foldedFiguresList) {
         this.bulletinBoard = bulletinBoard;
         this.canvasModel = canvasModel;
         this.frame = frame;
@@ -64,11 +69,13 @@ public class FoldingServiceImpl implements FoldingService {
         this.foldedFiguresList = foldedFiguresList;
     }
 
-    @Override public void folding_estimated(FoldedFigure_Drawer selectedFigure) throws InterruptedException, FoldingException {
+    @Override
+    public void folding_estimated(Foldable selectedFigure) throws InterruptedException, FoldingException {
         selectedFigure.folding_estimated(creasePatternCamera, lineSegmentsForFolding);
     }
 
-    @Override public void fold(FoldedFigure.EstimationOrder estimationOrder) {
+    @Override
+    public void fold(FoldedFigure.EstimationOrder estimationOrder) {
         fold(getFoldType(), estimationOrder);
     }
 
@@ -94,7 +101,7 @@ public class FoldingServiceImpl implements FoldingService {
 
         if (applicationModel.getCorrectCpBeforeFolding()) {// Automatically correct strange parts (branch-shaped fold lines, etc.) in the crease pattern
             CreasePattern_Worker creasePatternWorker2 = backupCreasePatternWorker;
-            Save save = Save.createInstance();
+            Save save = SaveProvider.createInstance();
             mainCreasePatternWorker.getFoldLineSet().getSaveForSelectFolding(save);
             creasePatternWorker2.setSave_for_reading(save);
             creasePatternWorker2.point_removal();
@@ -107,13 +114,14 @@ public class FoldingServiceImpl implements FoldingService {
         }
 
         //これより前のOZは古いOZ
-        FoldedFigure_Drawer selectedFigure = initFoldedFigure();//OAZのアレイリストに、新しく折り上がり図をひとつ追加し、それを操作対象に指定し、foldedFigures(0)共通パラメータを引き継がせる。
+        Foldable selectedFigure = initFoldedFigure();//OAZのアレイリストに、新しく折り上がり図をひとつ追加し、それを操作対象に指定し、foldedFigures(0)共通パラメータを引き継がせる。
         //これより後のOZは新しいOZに変わる
 
         foldingExecutor.executeTask(new FoldingEstimateTask(creasePatternCamera, bulletinBoard, canvasModel, lineSegmentsForFolding, selectedFigure, estimationOrder));
     }
 
-    @Override public FoldType getFoldType() {
+    @Override
+    public FoldType getFoldType() {
         //= 0 Do nothing, = 1 Folding estimation for all fold lines in the normal development view, = 2 for fold estimation for selected fold lines, = 3 for changing the folding state
         int foldLineTotalForSelectFolding = mainCreasePatternWorker.getFoldLineTotalForSelectFolding();
         Logger.info("foldedFigures.size() = " + foldedFiguresList.getSize() + "    : foldedFigureIndex = " + foldedFiguresList.getIndexOf(foldedFiguresList.getSelectedItem()) + "    : mainDrawingWorker.get_orisensuu_for_select_oritatami() = " + foldLineTotalForSelectFolding);
@@ -124,7 +132,8 @@ public class FoldingServiceImpl implements FoldingService {
         }
     }
 
-    @Override public FoldedFigure_Drawer initFoldedFigure() {//Add one new folding diagram to the foldedFigures array list, specify it as the operation target, and inherit the foldedFigures (0) common parameters.
+    @Override
+    public FoldedFigure_Drawer initFoldedFigure() {//Add one new folding diagram to the foldedFigures array list, specify it as the operation target, and inherit the foldedFigures (0) common parameters.
         Logger.info(" oritatami_jyunbi 20180107");
 
         FoldedFigure_Drawer newFoldedFigure = new FoldedFigure_Drawer(new FoldedFigure_01(bulletinBoard));
@@ -137,7 +146,8 @@ public class FoldingServiceImpl implements FoldingService {
         return newFoldedFigure;
     }
 
-    @Override public void createTwoColoredCp() {
+    @Override
+    public void createTwoColoredCp() {
         lineSegmentsForFolding = mainCreasePatternWorker.getForSelectFolding();
 
         if (mainCreasePatternWorker.getFoldLineTotalForSelectFolding() == 0) {        //折り線選択無し
@@ -159,7 +169,8 @@ public class FoldingServiceImpl implements FoldingService {
         JOptionPane.showMessageDialog(frame, label);
     }
 
-    @Override public void foldAnother(FoldedFigure_Drawer selectedItem) {
+    @Override
+    public void foldAnother(Foldable selectedItem) {
         foldingExecutor.executeTask(new FoldingEstimateTask(creasePatternCamera, bulletinBoard, canvasModel, lineSegmentsForFolding, selectedItem, FoldedFigure.EstimationOrder.ORDER_6));
     }
 

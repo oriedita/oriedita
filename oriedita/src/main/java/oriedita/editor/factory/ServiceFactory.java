@@ -32,4 +32,7 @@ public abstract class ServiceFactory {
 
     @Binds
     abstract CreasePattern_Worker creasePattern_worker(CreasePattern_Worker_Impl creasePattern_worker);
+
+    @Binds
+    abstract TaskService taskService(TaskServiceImpl taskService);
 }

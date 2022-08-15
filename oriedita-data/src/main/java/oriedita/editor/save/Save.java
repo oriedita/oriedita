@@ -41,7 +41,4 @@ public interface Save extends PointSave, LineSegmentSave, TextSave, Serializable
      */
     boolean canSaveAsCp();
 
-    static Save createInstance() {
-        return new SaveV1_1();
-    }
 }

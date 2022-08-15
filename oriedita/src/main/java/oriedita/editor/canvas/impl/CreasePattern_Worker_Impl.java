@@ -8,6 +8,7 @@ import oriedita.editor.drawing.Grid;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
 import oriedita.editor.save.Save;
+import oriedita.editor.save.SaveProvider;
 import oriedita.editor.service.HistoryState;
 import oriedita.editor.service.TaskExecutorService;
 import oriedita.editor.task.CheckCAMVTask;
@@ -241,7 +242,7 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
         tempFoldLineSet.move(addx, addy);//全体を移動する
 
         int total_old = foldLineSet.getTotal();
-        Save save = Save.createInstance();
+        Save save = SaveProvider.createInstance();
         tempFoldLineSet.getSave(save);
         foldLineSet.addSave(save);
         int total_new = foldLineSet.getTotal();
@@ -280,7 +281,7 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
 
     @Override
     public LineSegmentSet get() {
-        Save save = Save.createInstance();
+        Save save = SaveProvider.createInstance();
         foldLineSet.getSave(save);
         lineSegmentSet.setSave(save);
         return lineSegmentSet;
@@ -288,7 +289,7 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
 
     @Override
     public LineSegmentSet getForFolding() {
-        Save save = Save.createInstance();
+        Save save = SaveProvider.createInstance();
         foldLineSet.getMemo_for_folding(save);
         lineSegmentSet.setSave(save);
         return lineSegmentSet;
@@ -302,7 +303,7 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
 
     @Override
     public LineSegmentSet getForSelectFolding() {//selectした折線で折り畳み推定をする。
-        Save save = Save.createInstance();
+        Save save = SaveProvider.createInstance();
         foldLineSet.getSaveForSelectFolding(save);
         LineSegmentSet ls = new LineSegmentSet();
         ls.setSave(save);
@@ -322,7 +323,7 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     }
 
     public Save getSave(String title) {
-        Save save_temp = Save.createInstance();
+        Save save_temp = SaveProvider.createInstance();
         foldLineSet.getSave(save_temp, title);
 
         saveAdditionalInformation(save_temp);
@@ -330,14 +331,14 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     }
 
     public Save h_getSave() {
-        Save save = Save.createInstance();
+        Save save = SaveProvider.createInstance();
         auxLines.h_getSave(save);
         return save;
     }
 
     @Override
     public Save getSave_for_export() {
-        Save save = Save.createInstance();
+        Save save = SaveProvider.createInstance();
         foldLineSet.getSave(save);
         auxLines.h_getSave(save);
         saveAdditionalInformation(save);

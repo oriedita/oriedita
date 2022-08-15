@@ -12,10 +12,7 @@ import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.exception.FileReadingException;
 import oriedita.editor.export.*;
 import oriedita.editor.json.DefaultObjectMapper;
-import oriedita.editor.save.BaseSave;
-import oriedita.editor.save.FileVersionTester;
-import oriedita.editor.save.Save;
-import oriedita.editor.save.SaveConverter;
+import oriedita.editor.save.*;
 import oriedita.editor.service.FileSaveService;
 import oriedita.editor.service.ResetService;
 import oriedita.editor.swing.dialog.ExportDialog;
@@ -396,7 +393,7 @@ public class FileSaveServiceImpl implements FileSaveService {
 
             fileModel.setSavedFileName(null);
 
-            return Save.createInstance();
+            return SaveProvider.createInstance();
         }
 
         return save;
