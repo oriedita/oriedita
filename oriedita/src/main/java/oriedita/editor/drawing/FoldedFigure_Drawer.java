@@ -50,9 +50,9 @@ public class FoldedFigure_Drawer {
 
     public FoldedFigure_Drawer(FoldedFigure_01 foldedFigure) {
         this.foldedFigure = foldedFigure;
-        foldedFigure_worker_drawer = new FoldedFigure_Worker_Drawer(foldedFigure.ct_worker);
-        wireFrame_worker_drawer1 = new WireFrame_Worker_Drawer(foldedFigure.cp_worker1);
-        wireFrame_worker_drawer2 = new WireFrame_Worker_Drawer(foldedFigure.cp_worker2);
+        foldedFigure_worker_drawer = new FoldedFigure_Worker_Drawer(foldedFigure.foldedFigure_worker);
+        wireFrame_worker_drawer1 = new WireFrame_Worker_Drawer(foldedFigure.wireFrame_worker1);
+        wireFrame_worker_drawer2 = new WireFrame_Worker_Drawer(foldedFigure.wireFrame_worker2);
 
         //Camera settings ------------------------------------------------------------------
         foldedFigure_camera_initialize();
@@ -85,7 +85,7 @@ public class FoldedFigure_Drawer {
         foldedFigureModel.setScale(d_foldedFigure_scale_factor);
         foldedFigureModel.setRotation(d_foldedFigure_rotation_correction);
 
-        Logger.info("cp_worker1.ten_of_kijyunmen_ob     " + wireFrame_worker_drawer1.getStartingFacePointTV(startingFaceId).getX());
+        Logger.info("wireFrame_worker1.ten_of_kijyunmen_ob     " + wireFrame_worker_drawer1.getStartingFacePointTV(startingFaceId).getX());
 
         Point p0 = new Point();
         Point p = new Point();
@@ -133,7 +133,7 @@ public class FoldedFigure_Drawer {
         transparentRearCamera.setCameraMirror(d_camera_mirror * -1.0);
     }
 
-    public void folding_estimated(Camera creasePatternCamera, LineSegmentSet lineSegmentSet) throws InterruptedException, FoldingException {//折畳み予測の最初に、cp_worker1.lineStore2pointStore(lineStore)として使う。　Ss0は、mainDrawingWorker.get_for_oritatami()かes1.get_for_select_oritatami()で得る。
+    public void folding_estimated(Camera creasePatternCamera, LineSegmentSet lineSegmentSet) throws InterruptedException, FoldingException {//折畳み予測の最初に、wireFrame_worker1.lineStore2pointStore(lineStore)として使う。　Ss0は、mainDrawingWorker.get_for_oritatami()かes1.get_for_select_oritatami()で得る。
         boolean i_camera_estimated = foldedFigure.estimationStep == FoldedFigure.EstimationStep.STEP_0
                 && foldedFigure.estimationOrder.isAtMost(FoldedFigure.EstimationOrder.ORDER_5);
         boolean shouldCalculateFromTop = foldedFigure.estimationOrder.isAtLeast(FoldedFigure.EstimationOrder.ORDER_4);
@@ -205,7 +205,7 @@ public class FoldedFigure_Drawer {
         //displayStyle==5,ip4==2	front & rear
         //displayStyle==5,ip4==3	front & rear & front2 & rear2
 
-        //Since ct_worker displays the folded figure, it is not necessary to set the camera in cp_worker2 for the display itself, but after that, cp_worker2 judges the screen click, so it is necessary to update the camera of cp_worker2 in synchronization with the display. ..
+        //Since foldedFigure_worker displays the folded figure, it is not necessary to set the camera in wireFrame_worker2 for the display itself, but after that, wireFrame_worker2 judges the screen click, so it is necessary to update the camera of wireFrame_worker2 in synchronization with the display. ..
         wireFrame_worker_drawer2.setCamera(foldedFigureCamera);
         wireFrame_worker_drawer2.setCam_front(foldedFigureFrontCamera);
         wireFrame_worker_drawer2.setCam_rear(foldedFigureRearCamera);
@@ -214,7 +214,7 @@ public class FoldedFigure_Drawer {
 
         //Wire diagram display
         if (foldedFigure.displayStyle == FoldedFigure.DisplayStyle.WIRE_2) {
-            wireFrame_worker_drawer2.drawing_with_camera(bufferGraphics, foldedFigure.ip4);//The operation of the fold-up diagram moves the wire diagram of this cp_worker2.
+            wireFrame_worker_drawer2.drawing_with_camera(bufferGraphics, foldedFigure.ip4);//The operation of the fold-up diagram moves the wire diagram of this wireFrame_worker2.
         }
 
         //Display of folded figure (table)
@@ -223,12 +223,12 @@ public class FoldedFigure_Drawer {
 
             //Display of transparency
             if (foldedFigure.displayStyle == FoldedFigure.DisplayStyle.TRANSPARENT_3) {        // displayStyle; Specify the display style of the folded figure. If it is 1, it is the same as when actually folding origami. If it is 2, it is a transparent view. If it is 3, it is a wire diagram.
-                foldedFigure_worker_drawer.draw_transparency_with_camera(bufferGraphics, wireFrame_worker_drawer1, foldedFigure.cp_worker2.get(), foldedFigure.cp_worker3.get(), transparencyColor, transparent_transparency);
+                foldedFigure_worker_drawer.draw_transparency_with_camera(bufferGraphics, wireFrame_worker_drawer1, foldedFigure.wireFrame_worker2.get(), foldedFigure.wireFrame_worker3.get(), transparencyColor, transparent_transparency);
             }
 
             //Display of folded figure *************
             if (foldedFigure.displayStyle == FoldedFigure.DisplayStyle.PAPER_5) {
-                foldedFigure_worker_drawer.draw_foldedFigure_with_camera(bufferGraphics, foldedFigure.cp_worker1, foldedFigure.cp_worker3.get());// displayStyle;折り上がり図の表示様式の指定。5なら実際に折り紙を折った場合と同じ。3なら透過図。2なら針金図。
+                foldedFigure_worker_drawer.draw_foldedFigure_with_camera(bufferGraphics, foldedFigure.wireFrame_worker1, foldedFigure.wireFrame_worker3.get());// displayStyle;折り上がり図の表示様式の指定。5なら実際に折り紙を折った場合と同じ。3なら透過図。2なら針金図。
             }
 
             //Cross-shaped display at the center of movement of the folded figure
@@ -243,12 +243,12 @@ public class FoldedFigure_Drawer {
 
             //Display of transparency
             if (foldedFigure.displayStyle == FoldedFigure.DisplayStyle.TRANSPARENT_3) {        // displayStyle;折り上がり図の表示様式の指定。１なら実際に折り紙を折った場合と同じ。２なら透過図。3なら針金図。
-                foldedFigure_worker_drawer.draw_transparency_with_camera(bufferGraphics, wireFrame_worker_drawer1, foldedFigure.cp_worker2.get(), foldedFigure.cp_worker3.get(), transparencyColor, transparent_transparency);
+                foldedFigure_worker_drawer.draw_transparency_with_camera(bufferGraphics, wireFrame_worker_drawer1, foldedFigure.wireFrame_worker2.get(), foldedFigure.wireFrame_worker3.get(), transparencyColor, transparent_transparency);
             }
 
             //Display of folded figure ************* //Logger.info("paint　+++++++++++++++++++++　折り上がり図の表示");
             if (foldedFigure.displayStyle == FoldedFigure.DisplayStyle.PAPER_5) {
-                foldedFigure_worker_drawer.draw_foldedFigure_with_camera(bufferGraphics, foldedFigure.cp_worker1, foldedFigure.cp_worker3.get());// displayStyle;折り上がり図の表示様式の指定。5なら実際に折り紙を折った場合と同じ。3なら透過図。2なら針金図。
+                foldedFigure_worker_drawer.draw_foldedFigure_with_camera(bufferGraphics, foldedFigure.wireFrame_worker1, foldedFigure.wireFrame_worker3.get());// displayStyle;折り上がり図の表示様式の指定。5なら実際に折り紙を折った場合と同じ。3なら透過図。2なら針金図。
             }
 
             //Cross-shaped display at the center of movement of the folded figure
@@ -262,7 +262,7 @@ public class FoldedFigure_Drawer {
             // ---------------------------------------------------------------------------------
             foldedFigure_worker_drawer.setCamera(transparentFrontCamera);
             //Display of transparency
-            foldedFigure_worker_drawer.draw_transparency_with_camera(bufferGraphics, wireFrame_worker_drawer1, foldedFigure.cp_worker2.get(), foldedFigure.cp_worker3.get(), transparencyColor, transparent_transparency);
+            foldedFigure_worker_drawer.draw_transparency_with_camera(bufferGraphics, wireFrame_worker_drawer1, foldedFigure.wireFrame_worker2.get(), foldedFigure.wireFrame_worker3.get(), transparencyColor, transparent_transparency);
 
             //Cross-shaped display at the center of movement of the folded figure
             if (displayMark) {
@@ -272,7 +272,7 @@ public class FoldedFigure_Drawer {
             foldedFigure_worker_drawer.setCamera(transparentRearCamera);
 
             //Display of transparency
-            foldedFigure_worker_drawer.draw_transparency_with_camera(bufferGraphics, wireFrame_worker_drawer1, foldedFigure.cp_worker2.get(), foldedFigure.cp_worker3.get(), transparencyColor, transparent_transparency);
+            foldedFigure_worker_drawer.draw_transparency_with_camera(bufferGraphics, wireFrame_worker_drawer1, foldedFigure.wireFrame_worker2.get(), foldedFigure.wireFrame_worker3.get(), transparencyColor, transparent_transparency);
 
             //Cross-shaped display at the center of movement of the folded figure
             if (displayMark) {
@@ -282,14 +282,14 @@ public class FoldedFigure_Drawer {
 
         //Display of corresponding points on the wire diagram and development diagram when moving the fold-up diagram
 
-        for (int i = 1; i <= foldedFigure.cp_worker1.getPointsTotal(); i++) {
-            if (foldedFigure.cp_worker1.getPointState(i)) {
+        for (int i = 1; i <= foldedFigure.wireFrame_worker1.getPointsTotal(); i++) {
+            if (foldedFigure.wireFrame_worker1.getPointState(i)) {
                 wireFrame_worker_drawer1.drawing_pointId_with_camera(bufferGraphics, i);
             }
         }
 
-        for (int i = 1; i <= foldedFigure.cp_worker2.getPointsTotal(); i++) {
-            if (foldedFigure.cp_worker2.getPointState(i)) {
+        for (int i = 1; i <= foldedFigure.wireFrame_worker2.getPointsTotal(); i++) {
+            if (foldedFigure.wireFrame_worker2.getPointState(i)) {
                 wireFrame_worker_drawer1.drawing_pointId_with_camera_green(bufferGraphics, i);
                 wireFrame_worker_drawer2.drawing_pointId_with_camera(bufferGraphics, i, foldedFigure.ip4);
             }

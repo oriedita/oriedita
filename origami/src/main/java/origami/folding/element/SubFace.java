@@ -34,12 +34,12 @@ public class SubFace {
     private List<EquivalenceCondition> uEquivalenceConditions;
     private Map<Integer, List<EquivalenceCondition>> equivalenceConditions;
 
-    IBulletinBoard bb;
+    private IBulletinBoard bb;
 
     public int swapCounter = 0;
 
-    CombinationGenerator cg;
-    int cgTotal = 0;
+    private CombinationGenerator cg;
+    private int cgTotal = 0;
     private CustomConstraint constraintTopFace;
     private CustomConstraint constraintBottomFace;
 
@@ -93,11 +93,11 @@ public class SubFace {
         return contains(im1) && contains(im2) && contains(im3) && contains(im4);
     }
 
-    public int get_Permutation_count() {
+    public int getPermutationCount() {
         return cgTotal + permutationGenerator.getCount();
     }
 
-    public void Permutation_first() throws InterruptedException {
+    public void resetPermutationGenerator() throws InterruptedException {
         if (getFaceIdCount() > 0) {
             cg = null;
             cgTotal = 0;
@@ -166,7 +166,7 @@ public class SubFace {
             for (int i = 1; i <= faceIdCount; i++) {
                 s0.append(" : ").append(getPermutation(i));
             }
-            bb.rewrite(9, "Tested permutation count : " + get_Permutation_count());
+            bb.rewrite(9, "Tested permutation count : " + getPermutationCount());
             bb.rewrite(10, "Testing permutation " + s0);
         }
         return 0;//There is no permutation that can overlap

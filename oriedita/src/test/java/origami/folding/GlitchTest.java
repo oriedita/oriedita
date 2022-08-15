@@ -26,7 +26,7 @@ public class GlitchTest {
             foldedFigure.estimationOrder = FoldedFigure.EstimationOrder.ORDER_3;
             foldedFigure.folding_estimated(lineSegmentSet, 1);
 
-            Assertions.assertEquals(119, foldedFigure.ct_worker.SubFaceTotal, "Expected 119 SubFaces");
+            Assertions.assertEquals(119, foldedFigure.foldedFigure_worker.SubFaceTotal, "Expected 119 SubFaces");
         } catch (InterruptedException | FoldingException e) {
             Logger.error(e, "test got interrupted");
             Assertions.fail();

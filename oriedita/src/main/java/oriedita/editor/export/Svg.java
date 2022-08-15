@@ -76,9 +76,9 @@ public class Svg {
     }
 
     public static void getMemo_wirediagram_for_svg_export(PrintWriter pw, Camera camera, FoldedFigure_Drawer foldedFigure, boolean i_fill) {
-        FoldedFigure_Worker ctworker = foldedFigure.foldedFigure.ct_worker;
-        WireFrame_Worker orite = foldedFigure.foldedFigure.cp_worker1;
-        PointSet otta_Men_zu = foldedFigure.foldedFigure.cp_worker2.get();
+        FoldedFigure_Worker ctworker = foldedFigure.foldedFigure.foldedFigure_worker;
+        WireFrame_Worker orite = foldedFigure.foldedFigure.wireFrame_worker1;
+        PointSet otta_Men_zu = foldedFigure.foldedFigure.wireFrame_worker2.get();
 
         boolean flipped = camera.determineIsCameraMirrored();
 
@@ -162,8 +162,8 @@ public class Svg {
 
 
     public static void getMemo_for_svg_with_camera(PrintWriter pw, Camera camera, FoldedFigure_Drawer foldedFigure) {//折り上がり図(hyouji_flg==5)
-        WireFrame_Worker orite = foldedFigure.foldedFigure.cp_worker1;
-        PointSet subFace_figure = foldedFigure.foldedFigure.cp_worker3.get();
+        WireFrame_Worker orite = foldedFigure.foldedFigure.wireFrame_worker1;
+        PointSet subFace_figure = foldedFigure.foldedFigure.wireFrame_worker3.get();
         boolean front_back = camera.determineIsCameraMirrored();
 
         Point t0 = new Point();
@@ -178,7 +178,7 @@ public class Svg {
         String str_strokewidth = "1";
 
         int SubFaceTotal = subFace_figure.getNumFaces();
-        SubFace[] s0 = foldedFigure.foldedFigure.ct_worker.s0;
+        SubFace[] s0 = foldedFigure.foldedFigure.foldedFigure_worker.s0;
 
         //面を描く-----------------------------------------------------------------------------------------------------
         String[] x = new String[100];
@@ -186,7 +186,7 @@ public class Svg {
 
         //SubFaceの.set_Menid2uekara_kazoeta_itiは現在の上下表をもとに、上から数えてi番めの面のid番号を全ての順番につき格納する。
         for (int im = 1; im <= SubFaceTotal; im++) { //SubFaceから上からの指定した番目の面のidを求める。
-            s0[im].set_FaceId2fromTop_counted_position(foldedFigure.foldedFigure.ct_worker.hierarchyList);//s0[]はSubFace_zuから得られるSubFaceそのもの、jgは上下表Jyougehyouのこと
+            s0[im].set_FaceId2fromTop_counted_position(foldedFigure.foldedFigure.foldedFigure_worker.hierarchyList);//s0[]はSubFace_zuから得られるSubFaceそのもの、jgは上下表Jyougehyouのこと
         }
         //ここまでで、上下表の情報がSubFaceの各面に入った
 

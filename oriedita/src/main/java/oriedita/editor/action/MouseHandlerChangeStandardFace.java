@@ -52,17 +52,17 @@ public class MouseHandlerChangeStandardFace extends BaseMouseHandler {
             p.set(d.getCamera().TV2object(p0));
             int oldStartingFaceId = selectedFigure.getStartingFaceId();
 
-            int newStartingFaceId = selectedFigure.foldedFigure.cp_worker1.get().inside(p);
+            int newStartingFaceId = selectedFigure.foldedFigure.wireFrame_worker1.get().inside(p);
 
             if (newStartingFaceId < 1) return;
 
             selectedFigure.setStartingFaceId(newStartingFaceId);
 
             Logger.info("kijyunmen_id = " + newStartingFaceId);
-            if (selectedFigure.foldedFigure.ct_worker.face_rating != null) {//20180227追加
-                int index = selectedFigure.foldedFigure.ct_worker.nbox.getSequence(newStartingFaceId);
+            if (selectedFigure.foldedFigure.foldedFigure_worker.face_rating != null) {//20180227追加
+                int index = selectedFigure.foldedFigure.foldedFigure_worker.nbox.getSequence(newStartingFaceId);
                 Logger.info(
-                        "OZ.js.nbox.get_jyunjyo = " + index + " , rating = " + selectedFigure.foldedFigure.ct_worker.nbox.getWeight(index)
+                        "OZ.js.nbox.get_jyunjyo = " + index + " , rating = " + selectedFigure.foldedFigure.foldedFigure_worker.nbox.getWeight(index)
                 );
 
             }

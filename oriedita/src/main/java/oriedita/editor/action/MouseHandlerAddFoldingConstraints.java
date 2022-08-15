@@ -50,7 +50,7 @@ public class MouseHandlerAddFoldingConstraints implements MouseModeHandler {
         if (selectedFigure == null) {
             return;
         }
-        PointSet foldedFigureSet = selectedFigure.foldedFigure.cp_worker2.get();
+        PointSet foldedFigureSet = selectedFigure.foldedFigure.wireFrame_worker2.get();
         Camera modelCameraFront = selectedFigure.foldedFigureFrontCamera;
         Camera modelCameraBack = selectedFigure.foldedFigureRearCamera;
         FoldedFigure.State displayState = selectedFigure.foldedFigure.ip4;
@@ -79,14 +79,14 @@ public class MouseHandlerAddFoldingConstraints implements MouseModeHandler {
 
         if (e.getButton() == MouseEvent.BUTTON1) {
             CustomConstraint nearest = nearConstraintInSelectionRadius(modelCoords, backside,
-                    selectedFigure.foldedFigure.ct_worker.hierarchyList.getCustomConstraints());
+                    selectedFigure.foldedFigure.foldedFigure_worker.hierarchyList.getCustomConstraints());
             if (nearest != null && !e.isControlDown()) {
-                invertColor(nearest, selectedFigure.foldedFigure.ct_worker.hierarchyList);
+                invertColor(nearest, selectedFigure.foldedFigure.foldedFigure_worker.hierarchyList);
             } else {
                 addConstraint(modelCoords, backside, selectedFigure.foldedFigure);
             }
         } else if (e.getButton() == MouseEvent.BUTTON3) {
-            removeNearestConstraint(modelCoords, backside, selectedFigure.foldedFigure.ct_worker.hierarchyList);
+            removeNearestConstraint(modelCoords, backside, selectedFigure.foldedFigure.foldedFigure_worker.hierarchyList);
         }
     }
 
@@ -98,12 +98,12 @@ public class MouseHandlerAddFoldingConstraints implements MouseModeHandler {
     }
 
     private void addConstraint(Point modelCoords, boolean backside, FoldedFigure foldedFigure) {
-        List<Integer> selectedFaces = findSelectedFaces(modelCoords, foldedFigure.cp_worker2.get());
+        List<Integer> selectedFaces = findSelectedFaces(modelCoords, foldedFigure.wireFrame_worker2.get());
 
         List<Integer> white = new ArrayList<>();
         List<Integer> colored = new ArrayList<>();
         for (Integer selFaceIndex : selectedFaces) {
-            if (foldedFigure.cp_worker1.getIFacePosition(selFaceIndex)% 2 == 0) {
+            if (foldedFigure.wireFrame_worker1.getIFacePosition(selFaceIndex)% 2 == 0) {
                 white.add(selFaceIndex);
             }else {
                 colored.add(selFaceIndex);
@@ -116,7 +116,7 @@ public class MouseHandlerAddFoldingConstraints implements MouseModeHandler {
         }
         CustomConstraint.FaceOrder fo = backside ? CustomConstraint.FaceOrder.FLIPPED : CustomConstraint.FaceOrder.NORMAL;
         CustomConstraint lc = new CustomConstraint(fo, white, colored, modelCoords, CustomConstraint.Type.COLOR_BACK);
-        foldedFigure.ct_worker.hierarchyList.addCustomConstraint(lc);
+        foldedFigure.foldedFigure_worker.hierarchyList.addCustomConstraint(lc);
     }
 
     private void invertColor(CustomConstraint nearest, HierarchyList hierarchyList) {

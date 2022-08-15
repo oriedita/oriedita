@@ -32,7 +32,7 @@ public class FoldingTest {
             foldedFigure.estimationOrder = FoldedFigure.EstimationOrder.ORDER_5;
             foldedFigure.folding_estimated(lineSegmentSet, 1);
 
-            expect.serializer("json").toMatchSnapshot(foldedFigure.cp_worker3.get());
+            expect.serializer("json").toMatchSnapshot(foldedFigure.wireFrame_worker3.get());
         } catch (InterruptedException | FoldingException e) {
             Logger.error(e, "test got interrupted");
             Assertions.fail();

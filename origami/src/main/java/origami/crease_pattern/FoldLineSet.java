@@ -3917,8 +3917,8 @@ public class FoldLineSet {
      */
     public void selectProbablyConnected(Point p) {
         // Build map of connections
-        QuadTree qtA = new QuadTree(new LineSegmentListEndPointAdapter(lineSegments, l -> l.getA()));
-        QuadTree qtB = new QuadTree(new LineSegmentListEndPointAdapter(lineSegments, l -> l.getB()));
+        QuadTree qtA = new QuadTree(new LineSegmentListEndPointAdapter(lineSegments, LineSegment::getA));
+        QuadTree qtB = new QuadTree(new LineSegmentListEndPointAdapter(lineSegments, LineSegment::getB));
 
         // Traverse connection map to find all connected points
         Set<Point> activePoints = new HashSet<>();
