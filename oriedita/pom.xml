@@ -48,12 +48,6 @@
             <artifactId>dagger</artifactId>
         </dependency>
         <dependency>
-            <groupId>io.github.origin-energy</groupId>
-            <artifactId>java-snapshot-testing-junit5</artifactId>
-            <version>${snapshot-test.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.tinylog</groupId>
             <artifactId>tinylog-api</artifactId>
         </dependency>
@@ -69,10 +63,6 @@
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
         </dependency>
         <dependency>
@@ -80,24 +70,9 @@
             <artifactId>jackson-annotations</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.fasterxml.jackson.datatype</groupId>
-            <artifactId>jackson-datatype-jdk8</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.datatype</groupId>
-            <artifactId>jackson-datatype-jsr310</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>io.github.qurben</groupId>
             <artifactId>jico</artifactId>
             <version>2.1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.skyscreamer</groupId>
-            <artifactId>jsonassert</artifactId>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>

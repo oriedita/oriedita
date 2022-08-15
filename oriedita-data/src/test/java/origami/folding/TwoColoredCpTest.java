@@ -8,8 +8,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import origami.crease_pattern.LineSegmentSet;
 import oriedita.editor.save.Save;
-import oriedita.editor.swing.component.BulletinBoard;
 import oriedita.editor.export.Cp;
+import origami.folding.util.TestBulletinBoard;
+
 import java.io.IOException;
 
 @ExtendWith({SnapshotExtension.class})
@@ -21,7 +22,7 @@ public class TwoColoredCpTest {
     public void testCreateTwoColoredCp() throws IOException {
         Save save = Cp.importFile(getClass().getClassLoader().getResourceAsStream("birdbase.cp"));
 
-        FoldedFigure foldedFigure = new FoldedFigure(new BulletinBoard());
+        FoldedFigure foldedFigure = new FoldedFigure(new TestBulletinBoard());
 
         LineSegmentSet lineSegmentSet = new LineSegmentSet();
 

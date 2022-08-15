@@ -11,7 +11,6 @@ import oriedita.editor.canvas.impl.CreasePattern_Worker_Impl;
 import oriedita.editor.databinding.*;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.exception.FileReadingException;
-import oriedita.editor.export.Fold;
 import oriedita.editor.service.FileSaveService;
 import oriedita.editor.service.ResetService;
 import oriedita.editor.service.impl.FileSaveServiceImpl;
