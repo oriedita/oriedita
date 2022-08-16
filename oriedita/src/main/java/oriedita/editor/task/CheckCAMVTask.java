@@ -3,6 +3,7 @@ package oriedita.editor.task;
 import org.tinylog.Logger;
 import oriedita.editor.databinding.CanvasModel;
 import origami.crease_pattern.FoldLineSet;
+import origami.crease_pattern.worker.foldlineset.Check4;
 
 public class CheckCAMVTask implements OrieditaTask {
     private final FoldLineSet foldLineSet;
@@ -18,7 +19,7 @@ public class CheckCAMVTask implements OrieditaTask {
         long start = System.currentTimeMillis();
 
         try {
-            foldLineSet.check4();
+            Check4.apply(foldLineSet);
         } catch (InterruptedException e) {
             foldLineSet.getViolations().clear();
         }

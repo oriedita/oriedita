@@ -20,6 +20,7 @@ import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.Polygon;
 import origami.crease_pattern.element.*;
+import origami.crease_pattern.worker.foldlineset.*;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -276,7 +277,7 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
 
     @Override
     public void branch_trim() {
-        foldLineSet.applyBranchTrim();
+        BranchTrim.apply(foldLineSet);
     }
 
     @Override
@@ -907,7 +908,7 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
 
     @Override
     public boolean insideToAux(Point p0a, Point p0b) {
-        return foldLineSet.insideToAux(createBox(p0a, p0b));
+        return InsideToAux.apply(foldLineSet, createBox(p0a, p0b));
     }
 
     @Override
@@ -924,13 +925,13 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
 
     @Override
     public void check1() {
-        foldLineSet.check1();
+        Check1.apply(foldLineSet);
     }//In foldLineSet, check and set the funny fold line to the selected state.
 
     @Override
     public void fix1() {
         while (true) {
-            if (!foldLineSet.fix1()) break;
+            if (!Fix1.apply(foldLineSet)) break;
         }
         //foldLineSet.addsenbun  delsenbunを実施しているところでcheckを実施
         checkIfNecessary();
@@ -943,12 +944,12 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
 
     @Override
     public void check2() {
-        foldLineSet.check2();
+        Check2.apply(foldLineSet);
     }
 
     @Override
     public void fix2() {
-        foldLineSet.fix2();
+        Fix2.apply(foldLineSet);
         //foldLineSet.addsenbun  delsenbunを実施しているところでcheckを実施
         checkIfNecessary();
     }
@@ -962,7 +963,7 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
 
     @Override
     public void check3() {
-        foldLineSet.check3();
+        Check3.apply(foldLineSet);
     }
 
     @Override
@@ -988,7 +989,7 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
 
     @Override
     public void organizeCircles() {//Organize all circles.
-        foldLineSet.organizeCircles();
+        OrganizeCircles.apply(foldLineSet);
     }
 
     @Override

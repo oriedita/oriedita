@@ -3,7 +3,7 @@ package origami.folding;
 import org.tinylog.Logger;
 import origami.crease_pattern.FoldingException;
 import origami.crease_pattern.LineSegmentSet;
-import origami.crease_pattern.worker.BasicBranch_Worker;
+import origami.crease_pattern.worker.LineSegmentSetWorker;
 import origami.crease_pattern.worker.FoldedFigure_Configurator;
 import origami.crease_pattern.worker.FoldedFigure_Worker;
 import origami.crease_pattern.worker.WireFrame_Worker;
@@ -41,7 +41,7 @@ public class FoldedFigure {
     // 0, there is no possible overlapping state.
     // If it is 1000, another way of overlapping was found.
     public String text_result;                //Instantiation of result display string class
-    public BasicBranch_Worker bb_worker = new BasicBranch_Worker();    //Basic branch craftsman. Before passing the point set of wireFrame_worker2 to wireFrame_worker3,
+    public LineSegmentSetWorker bb_worker = new LineSegmentSetWorker();    //Basic branch craftsman. Before passing the point set of wireFrame_worker2 to wireFrame_worker3,
     double r = 3.0;                   //Criteria for determining the radius of the circles at both ends of the straight line of the basic branch structure and the proximity of the branches to various points
     public WireFrame_Worker wireFrame_worker1 = new WireFrame_Worker(r);    //Net craftsman. Fold the input line segment set first to make a fold-up diagram of the wire-shaped point set.
     public WireFrame_Worker wireFrame_worker2 = new WireFrame_Worker(r);    //Net craftsman. It holds the folded-up view of the wire-shaped point set created by wireFrame_worker1 and functions as a line segment set.
@@ -190,14 +190,14 @@ public class FoldedFigure {
         // Before passing the point set of wireFrame_worker2 to wireFrame_worker3, the point set of wireFrame_worker2 may have overlapping bars, so
         // Pass it to bb_worker and organize it as a set of line segments.
         Logger.info("＜＜＜＜＜folding_estimated_03()_____基本枝職人bb_workerはcp_worker2 Receives a set of line segments (made from wire diagrams) from and organizes them.");
-        LineSegmentSet lineSegmentSet = wireFrame_worker2.getLineStore();
+        bb_worker.set(wireFrame_worker2.getLineStore());
         Logger.info("＜＜＜＜＜folding_estimated_03()_____基本枝職人bb_workerがbb_worker.bunkatu_seiri_for_Smen_hassei;実施。");
         //Arrangement of wire diagrams obtained by estimating the folding of overlapping line segments and intersecting line segments
-        LineSegmentSet lineSegmentSet_BasicBranch_Worker = BasicBranch_Worker.split_arrangement_for_SubFace_generation(lineSegmentSet);
+        bb_worker.split_arrangement_for_SubFace_generation();
         //The crease pattern craftsman wireFrame_worker3 receives a point set (arranged wire diagram of wireFrame_worker2) from bb_worker and divides it into SubFace.
         Logger.info("＜＜＜＜＜folding_estimated_03()_____展開図職人cp_worker3はbb_worker Takes a streamlined set of line segments from and splits them into subfaces.");
         Logger.info("　　　folding_estimated_03()のcp_worker3.Senbunsyuugou2Tensyuugou(bb_worker.get());実施");
-        wireFrame_worker3.setLineSegmentSet(lineSegmentSet_BasicBranch_Worker);
+        wireFrame_worker3.setLineSegmentSet(bb_worker.get());
 
         Logger.info("＜＜＜＜＜folding_estimated_03()_____上下表職人ct_workerは、展開図職人cp_worker3Receive a set of points from and set subface.");
         foldedFigure_configurator.configureSubFaces(wireFrame_worker2.get(), wireFrame_worker3.get());

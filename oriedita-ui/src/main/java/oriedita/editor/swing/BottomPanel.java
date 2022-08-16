@@ -13,6 +13,7 @@ import oriedita.editor.drawing.FoldedFigure_Drawer;
 import oriedita.editor.service.*;
 import oriedita.editor.swing.component.*;
 import oriedita.editor.tools.StringOp;
+import origami.crease_pattern.worker.foldlineset.Check4;
 import origami.folding.FoldedFigure;
 
 import javax.inject.Inject;
@@ -105,7 +106,7 @@ public class BottomPanel {
 
             if (!applicationModel.getFoldWarning()) {
                 try {
-                    mainCreasePatternWorker.getFoldLineSet().check4();
+                    Check4.apply(mainCreasePatternWorker.getFoldLineSet());
                 } catch (InterruptedException bruh) {
                     Logger.info("Warning window broke");
                 }
