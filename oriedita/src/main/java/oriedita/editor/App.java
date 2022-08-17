@@ -127,14 +127,14 @@ public class App {
 
         foldedFiguresList.removeAllElements();
 
-        canvas.creasePatternCamera.setCameraPositionX(0.0);
-        canvas.creasePatternCamera.setCameraPositionY(0.0);
-        canvas.creasePatternCamera.setCameraAngle(0.0);
-        canvas.creasePatternCamera.setCameraMirror(1.0);
-        canvas.creasePatternCamera.setCameraZoomX(1.0);
-        canvas.creasePatternCamera.setCameraZoomY(1.0);
-        canvas.creasePatternCamera.setDisplayPositionX(350.0);
-        canvas.creasePatternCamera.setDisplayPositionY(350.0);
+        canvas.getCreasePatternCamera().setCameraPositionX(0.0);
+        canvas.getCreasePatternCamera().setCameraPositionY(0.0);
+        canvas.getCreasePatternCamera().setCameraAngle(0.0);
+        canvas.getCreasePatternCamera().setCameraMirror(1.0);
+        canvas.getCreasePatternCamera().setCameraZoomX(1.0);
+        canvas.getCreasePatternCamera().setCameraZoomY(1.0);
+        canvas.getCreasePatternCamera().setDisplayPositionX(350.0);
+        canvas.getCreasePatternCamera().setDisplayPositionY(350.0);
 
         try {
             frame.setIconImages(Ico.read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("oriedita.ico"))));
@@ -227,7 +227,7 @@ public class App {
 
         buttonService.Button_shared_operation();
 
-        mainCreasePatternWorker.setCamera(canvas.creasePatternCamera);
+        mainCreasePatternWorker.setCamera(canvas.getCreasePatternCamera());
 
         mainCreasePatternWorker.record();
         mainCreasePatternWorker.auxRecord();

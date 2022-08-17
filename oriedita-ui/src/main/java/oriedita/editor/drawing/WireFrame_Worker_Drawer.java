@@ -21,12 +21,12 @@ public class WireFrame_Worker_Drawer {
 
     private final double d_h_k = 10.0;//Judgment distance whether the neighborhood is closer than a certain distance
 
-    public Camera camera = new Camera();
-    Camera cam_front = new Camera();
-    Camera cam_rear = new Camera();
-    Camera cam_transparent_front = new Camera();
-    Camera cam_transparent_rear = new Camera();
-    HistoryState history = new DequeHistoryState();
+    private final Camera camera = new Camera();
+    private final Camera cam_front = new Camera();
+    private final Camera cam_rear = new Camera();
+    private final Camera cam_transparent_front = new Camera();
+    private final Camera cam_transparent_rear = new Camera();
+    private final HistoryState history = new DequeHistoryState();
 
     public WireFrame_Worker_Drawer(WireFrame_Worker wireFrame_worker) {
         this.wireFrame_worker = wireFrame_worker;
@@ -351,5 +351,9 @@ public class WireFrame_Worker_Drawer {
 
     public void setSaveForUndoRedo(Save memo1) {//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<undo,redoでのkiroku復元用
         pointSet.setSave(memo1);
+    }
+
+    public Camera getCamera() {
+        return camera;
     }
 }

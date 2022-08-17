@@ -50,10 +50,10 @@ public class MouseHandlerAddFoldingConstraints implements MouseModeHandler {
         if (selectedFigure == null) {
             return;
         }
-        PointSet foldedFigureSet = selectedFigure.foldedFigure.wireFrame_worker2.get();
-        Camera modelCameraFront = selectedFigure.foldedFigureFrontCamera;
-        Camera modelCameraBack = selectedFigure.foldedFigureRearCamera;
-        FoldedFigure.State displayState = selectedFigure.foldedFigure.ip4;
+        PointSet foldedFigureSet = selectedFigure.getFoldedFigure().wireFrame_worker2.get();
+        Camera modelCameraFront = selectedFigure.getFoldedFigureFrontCamera();
+        Camera modelCameraBack = selectedFigure.getFoldedFigureRearCamera();
+        FoldedFigure.State displayState = selectedFigure.getFoldedFigure().ip4;
         Point modelCoords;
         boolean backside;
         switch (displayState) {
@@ -79,14 +79,14 @@ public class MouseHandlerAddFoldingConstraints implements MouseModeHandler {
 
         if (e.getButton() == MouseEvent.BUTTON1) {
             CustomConstraint nearest = nearConstraintInSelectionRadius(modelCoords, backside,
-                    selectedFigure.foldedFigure.foldedFigure_worker.hierarchyList.getCustomConstraints());
+                    selectedFigure.getFoldedFigure().foldedFigure_worker.hierarchyList.getCustomConstraints());
             if (nearest != null && !e.isControlDown()) {
-                invertColor(nearest, selectedFigure.foldedFigure.foldedFigure_worker.hierarchyList);
+                invertColor(nearest, selectedFigure.getFoldedFigure().foldedFigure_worker.hierarchyList);
             } else {
-                addConstraint(modelCoords, backside, selectedFigure.foldedFigure);
+                addConstraint(modelCoords, backside, selectedFigure.getFoldedFigure());
             }
         } else if (e.getButton() == MouseEvent.BUTTON3) {
-            removeNearestConstraint(modelCoords, backside, selectedFigure.foldedFigure.foldedFigure_worker.hierarchyList);
+            removeNearestConstraint(modelCoords, backside, selectedFigure.getFoldedFigure().foldedFigure_worker.hierarchyList);
         }
     }
 

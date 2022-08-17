@@ -138,7 +138,7 @@ public class TopPanel {
             for (int i_oz = 0; i_oz < foldedFiguresList.getSize(); i_oz++) {
                 OZi = foldedFiguresList.getElementAt(i_oz);
 
-                Point t_o2tv = canvas.creasePatternCamera.object2TV(canvas.creasePatternCamera.getCameraPosition());
+                Point t_o2tv = canvas.getCreasePatternCamera().object2TV(canvas.getCreasePatternCamera().getCameraPosition());
 
                 OZi.scale(magnification, t_o2tv);
             }
@@ -156,7 +156,7 @@ public class TopPanel {
                 for (int i_oz = 0; i_oz < foldedFiguresList.getSize(); i_oz++) {
                     OZi = foldedFiguresList.getElementAt(i_oz);
 
-                    Point t_o2tv = canvas.creasePatternCamera.object2TV(canvas.creasePatternCamera.getCameraPosition());
+                    Point t_o2tv = canvas.getCreasePatternCamera().object2TV(canvas.getCreasePatternCamera().getCameraPosition());
 
                     OZi.scale(magnification, t_o2tv);
                 }
@@ -174,7 +174,7 @@ public class TopPanel {
             for (int i_oz = 0; i_oz < foldedFiguresList.getSize(); i_oz++) {
                 OZi = foldedFiguresList.getElementAt(i_oz);
 
-                Point t_o2tv = canvas.creasePatternCamera.object2TV(canvas.creasePatternCamera.getCameraPosition());
+                Point t_o2tv = canvas.getCreasePatternCamera().object2TV(canvas.getCreasePatternCamera().getCameraPosition());
 
                 OZi.scale(magnification, t_o2tv);
             }
@@ -198,8 +198,8 @@ public class TopPanel {
                 int iw = backgroundImage.getWidth(null);//イメージの幅を取得
                 int ih = backgroundImage.getHeight(null);//イメージの高さを取得
 
-                canvas.h_cam.setBackgroundWidth(iw);
-                canvas.h_cam.setBackgroundHeight(ih);
+                canvas.getH_cam().setBackgroundWidth(iw);
+                canvas.getH_cam().setBackgroundHeight(ih);
 
                 canvas.drawBackground(g2_background, backgroundImage);
             }
@@ -213,7 +213,7 @@ public class TopPanel {
 
                 backgroundModel.setBackgroundImage(offsc_background.getSubimage(xmin, ymin, xmax - xmin, ymax - ymin));
 
-                canvas.h_cam = new Background_camera();
+                canvas.setH_cam(new Background_camera());
 
                 backgroundModel.setBackgroundPosition(new Polygon(new Point(120.0, 120.0),
                         new Point(120.0 + 10.0, 120.0),
@@ -221,9 +221,9 @@ public class TopPanel {
                         new Point((double) xmin + 10.0, ymin)));
 
                 if (backgroundModel.isLockBackground()) {//20181202  このifが無いとlock on のときに背景がうまく表示できない
-                    canvas.h_cam.setLocked(true);
-                    canvas.h_cam.setCamera(canvas.creasePatternCamera);
-                    canvas.h_cam.h3_obj_and_h4_obj_calculation();
+                    canvas.getH_cam().setLocked(true);
+                    canvas.getH_cam().setCamera(canvas.getCreasePatternCamera());
+                    canvas.getH_cam().h3_obj_and_h4_obj_calculation();
                 }
             }
         });
@@ -232,18 +232,18 @@ public class TopPanel {
 
             if (!saved) return;
 
-            canvas.h_cam = new Background_camera();//20181202
-            canvas.h_cam.setLocked(backgroundModel.isLockBackground());
+            canvas.setH_cam(new Background_camera());//20181202
+            canvas.getH_cam().setLocked(backgroundModel.isLockBackground());
 
             int iw = backgroundModel.getBackgroundImage().getWidth(null);//イメージの幅を取得
             int ih = backgroundModel.getBackgroundImage().getHeight(null);//イメージの高さを取得
 
-            canvas.h_cam.setBackgroundWidth(iw);
-            canvas.h_cam.setBackgroundHeight(ih);
+            canvas.getH_cam().setBackgroundWidth(iw);
+            canvas.getH_cam().setBackgroundHeight(ih);
 
             if (backgroundModel.isLockBackground()) {//20181202  このifが無いとlock on のときに背景がうまく表示できない
-                canvas.h_cam.setCamera(canvas.creasePatternCamera);
-                canvas.h_cam.h3_obj_and_h4_obj_calculation();
+                canvas.getH_cam().setCamera(canvas.getCreasePatternCamera());
+                canvas.getH_cam().h3_obj_and_h4_obj_calculation();
             }
         });
         backgroundToggleButton.addActionListener(e -> {

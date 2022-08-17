@@ -1,6 +1,5 @@
 package origami.crease_pattern.worker.foldlineset;
 
-import org.jetbrains.annotations.NotNull;
 import origami.Epsilon;
 import origami.crease_pattern.FoldLineSet;
 import origami.crease_pattern.OritaCalc;
@@ -8,7 +7,7 @@ import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 
 public class Check1 {
-    public static void apply(@NotNull FoldLineSet foldLineSet) {
+    public static void apply(FoldLineSet foldLineSet) {
         foldLineSet.Check1LineSegment.clear();
         foldLineSet.unselect_all();
         for (int i = 1; i <= foldLineSet.getTotal() - 1; i++) {

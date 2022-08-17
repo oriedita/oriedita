@@ -546,7 +546,7 @@ public class LeftPanel {
         koteimen_siteiButton.addActionListener(e -> {
             FoldedFigure_Drawer selectedFigure = foldedFiguresList.getActiveItem();
 
-            if (selectedFigure != null && selectedFigure.foldedFigure.displayStyle != FoldedFigure.DisplayStyle.NONE_0) {
+            if (selectedFigure != null && selectedFigure.getFoldedFigure().displayStyle != FoldedFigure.DisplayStyle.NONE_0) {
                 canvasModel.setMouseMode(MouseMode.CHANGE_STANDARD_FACE_103);
             }
         });

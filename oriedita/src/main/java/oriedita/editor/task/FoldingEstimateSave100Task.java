@@ -36,7 +36,7 @@ public class FoldingEstimateSave100Task implements OrieditaTask {
         }
 
         if (file != null) {
-            selectedFigure.foldedFigure.summary_write_image_during_execution = true;//Meaning during summary writing
+            selectedFigure.getFoldedFigure().summary_write_image_during_execution = true;//Meaning during summary writing
 
             synchronized (canvasModel.getW_image_running()) {
                 int objective = 100;
@@ -50,26 +50,26 @@ public class FoldingEstimateSave100Task implements OrieditaTask {
                             String extension = filename.substring(filename.lastIndexOf("."));
                             String basename = filename.substring(0, filename.lastIndexOf("."));
 
-                            filename = basename + "_" + selectedFigure.foldedFigure.discovered_fold_cases + extension;
+                            filename = basename + "_" + selectedFigure.getFoldedFigure().discovered_fold_cases + extension;
                         }
 
                         fileSaveService.writeImageFile(new File(filename));
 
-                        if (!selectedFigure.foldedFigure.findAnotherOverlapValid) {
-                            objective = selectedFigure.foldedFigure.discovered_fold_cases;
+                        if (!selectedFigure.getFoldedFigure().findAnotherOverlapValid) {
+                            objective = selectedFigure.getFoldedFigure().discovered_fold_cases;
                         }
                     }
                 } catch (InterruptedException | FoldingException e) {
-                    selectedFigure.foldedFigure.estimated_initialize();
+                    selectedFigure.getFoldedFigure().estimated_initialize();
                     Logger.warn(e, "Folding estimate save 100 got interrupted");
                 }
             }
-            selectedFigure.foldedFigure.summary_write_image_during_execution = false;
+            selectedFigure.getFoldedFigure().summary_write_image_during_execution = false;
         }
 
         long stop = System.currentTimeMillis();
         long L = stop - start;
-        selectedFigure.foldedFigure.text_result = selectedFigure.foldedFigure.text_result + "     Computation time " + L + " msec.";
+        selectedFigure.getFoldedFigure().text_result = selectedFigure.getFoldedFigure().text_result + "     Computation time " + L + " msec.";
 
         canvasModel.markDirty();
     }

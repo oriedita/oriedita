@@ -1,7 +1,6 @@
 package oriedita.editor.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import fold.FoldFileFormatException;
 import org.tinylog.Logger;
 import oriedita.editor.Canvas;
 import oriedita.editor.canvas.CreasePattern_Worker;
@@ -184,7 +183,7 @@ public class FileSaveServiceImpl implements FileSaveService {
         } else if (exportFile.getName().endsWith(".fold")) {
             try {
                 fold.exportFile(mainCreasePatternWorker.getSave_for_export(), mainCreasePatternWorker.getForFolding(), exportFile);
-            } catch (InterruptedException | FoldFileFormatException e) {
+            } catch (InterruptedException | FileReadingException e) {
                 e.printStackTrace();
             }
         }
@@ -211,9 +210,9 @@ public class FileSaveServiceImpl implements FileSaveService {
                 BufferedImage myImage = canvas.getGraphicsConfiguration().createCompatibleImage(canvas.getSize().width, canvas.getSize().height);
                 Graphics g = myImage.getGraphics();
 
-                canvas.hideOperationFrame = true;
+                canvas.setHideOperationFrame(true);
                 canvas.paintComponent(g);
-                canvas.hideOperationFrame = false;
+                canvas.setHideOperationFrame(false);
 
                 if (canvasModel.getMouseMode() == MouseMode.OPERATION_FRAME_CREATE_61 && mainCreasePatternWorker.getDrawingStage() == 4) { //枠設定時の枠内のみ書き出し 20180524
                     int xMin = (int) mainCreasePatternWorker.getOperationFrameBox().getXMin();
@@ -386,7 +385,7 @@ public class FileSaveServiceImpl implements FileSaveService {
                 save = Orh.importFile(file);
             }
 
-        } catch (IOException | FoldFileFormatException e) {
+        } catch (IOException | FileReadingException e) {
             Logger.error(e, "Opening file failed");
 
             JOptionPane.showMessageDialog(frame, "Opening of the saved file failed", "Opening failed", JOptionPane.ERROR_MESSAGE);

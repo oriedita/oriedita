@@ -70,7 +70,7 @@ public class FoldTest {
 
         save.setCircles(circles);
 
-        Fold f = new Fold(importer, exporter);
+        Fold f = new Fold();
 
         LineSegmentSet lineSegmentSet = new LineSegmentSet();
         lineSegmentSet.reset(1);
@@ -100,7 +100,7 @@ public class FoldTest {
 
         save.setCircles(circles);
 
-        Fold f = new Fold(importer, exporter);
+        Fold f = new Fold();
 
         LineSegmentSet lineSegmentSet = new LineSegmentSet();
         lineSegmentSet.reset(1);
@@ -121,7 +121,7 @@ public class FoldTest {
 
         save.setTexts(texts);
 
-        Fold f = new Fold(importer, exporter);
+        Fold f = new Fold();
 
         LineSegmentSet lineSegmentSet = new LineSegmentSet();
         lineSegmentSet.reset(1);
@@ -148,7 +148,7 @@ public class FoldTest {
 
         save.setTexts(texts);
 
-        Fold f = new Fold(importer, exporter);
+        Fold f = new Fold();
 
         LineSegmentSet lineSegmentSet = new LineSegmentSet();
         lineSegmentSet.reset(1);

@@ -23,15 +23,15 @@ import java.awt.geom.Path2D;
  * Responsible for drawing a folded figure.
  */
 public class FoldedFigure_Worker_Drawer {
-    static boolean displaySsi = false;
-    boolean showConstraints = true;
+    private static boolean displaySsi = false;
+    private final boolean showConstraints = true;
     private final FoldedFigure_Worker worker;
-    Camera camera = new Camera();
-    Color F_color = new Color(255, 255, 50);//表面の色
-    Color B_color = new Color(233, 233, 233);//裏面の色
-    Color L_color = Color.black;//線の色
-    boolean antiAlias = true;
-    boolean displayShadows = false; //Whether to display shadows. 0 is not displayed, 1 is displayed
+    private final Camera camera = new Camera();
+    private Color F_color = new Color(255, 255, 50);//表面の色
+    private Color B_color = new Color(233, 233, 233);//裏面の色
+    private Color L_color = Color.black;//線の色
+    private boolean antiAlias = true;
+    private boolean displayShadows = false; //Whether to display shadows. 0 is not displayed, 1 is displayed
     private boolean displayNumbers = false;
 
     public FoldedFigure_Worker_Drawer(FoldedFigure_Worker worker) {
@@ -125,10 +125,10 @@ public class FoldedFigure_Worker_Drawer {
             fillSubFace(g2, camera, subFace_figure, worker.errorPos.getC());
             fillSubFace(g2, camera, subFace_figure, worker.errorPos.getD());
 
-            fillFace(g2, orite.camera, orite.get(), worker.errorPos.getA());
-            fillFace(g2, orite.camera, orite.get(), worker.errorPos.getB());
-            fillFace(g2, orite.camera, orite.get(), worker.errorPos.getC());
-            fillFace(g2, orite.camera, orite.get(), worker.errorPos.getD());
+            fillFace(g2, orite.getCamera(), orite.get(), worker.errorPos.getA());
+            fillFace(g2, orite.getCamera(), orite.get(), worker.errorPos.getB());
+            fillFace(g2, orite.getCamera(), orite.get(), worker.errorPos.getC());
+            fillFace(g2, orite.getCamera(), orite.get(), worker.errorPos.getD());
         }
     }
 

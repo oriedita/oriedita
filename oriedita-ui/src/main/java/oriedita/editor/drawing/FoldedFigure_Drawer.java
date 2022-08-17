@@ -14,27 +14,27 @@ import oriedita.editor.drawing.tools.Camera;
 import java.awt.*;
 
 public class FoldedFigure_Drawer implements Foldable {
-    public final FoldedFigure_01 foldedFigure;
-    public final FoldedFigure_Worker_Drawer foldedFigure_worker_drawer;
-    public final WireFrame_Worker_Drawer wireFrame_worker_drawer1;
-    public final WireFrame_Worker_Drawer wireFrame_worker_drawer2;
-    public final FoldedFigureModel foldedFigureModel = new FoldedFigureModel();
+    private final FoldedFigure_01 foldedFigure;
+    private final FoldedFigure_Worker_Drawer foldedFigure_worker_drawer;
+    private final WireFrame_Worker_Drawer wireFrame_worker_drawer1;
+    private final WireFrame_Worker_Drawer wireFrame_worker_drawer2;
+    private final FoldedFigureModel foldedFigureModel = new FoldedFigureModel();
 
     private Color foldedFigure_F_color = new Color(255, 255, 50);//Folded surface color
     private Color foldedFigure_B_color = new Color(233, 233, 233);//The color of the back side of the folded figure
     private Color foldedFigure_L_color = Color.black;//Folded line color
 
-    public double d_foldedFigure_scale_factor = 1.0;//Scale factor of folded view
-    public double d_foldedFigure_rotation_correction = 0.0;//Correction angle of rotation display angle of folded view
+    private double d_foldedFigure_scale_factor = 1.0;//Scale factor of folded view
+    private double d_foldedFigure_rotation_correction = 0.0;//Correction angle of rotation display angle of folded view
 
-    public Camera foldedFigureCamera = new Camera();
-    public Camera foldedFigureFrontCamera = new Camera();//折り上がり
-    public Camera foldedFigureRearCamera = new Camera();
-    public Camera transparentFrontCamera = new Camera();
-    public Camera transparentRearCamera = new Camera();
+    private final Camera foldedFigureCamera = new Camera();
+    private final Camera foldedFigureFrontCamera = new Camera();//折り上がり
+    private final Camera foldedFigureRearCamera = new Camera();
+    private final Camera transparentFrontCamera = new Camera();
+    private final Camera transparentRearCamera = new Camera();
 
-    public boolean transparencyColor = false;//1 if the transparency is in color, 0 otherwise
-    public int transparent_transparency = 16;//Transparency when drawing a transparent diagram in color
+    private boolean transparencyColor = false;//1 if the transparency is in color, 0 otherwise
+    private int transparent_transparency = 16;//Transparency when drawing a transparent diagram in color
 
     /**
      * Standard face, -1 means try to find the face which contains 0,0 or select face 1. Can be updated between folds.
@@ -411,5 +411,45 @@ public class FoldedFigure_Drawer implements Foldable {
         foldedFigureModel.setLineColor(foldedFigure_L_color);
         foldedFigureModel.setRotation(d_foldedFigure_rotation_correction);
         foldedFigureModel.setScale(d_foldedFigure_scale_factor);
+    }
+
+    public FoldedFigure_01 getFoldedFigure() {
+        return foldedFigure;
+    }
+
+    public FoldedFigure_Worker_Drawer getFoldedFigure_worker_drawer() {
+        return foldedFigure_worker_drawer;
+    }
+
+    public WireFrame_Worker_Drawer getWireFrame_worker_drawer1() {
+        return wireFrame_worker_drawer1;
+    }
+
+    public WireFrame_Worker_Drawer getWireFrame_worker_drawer2() {
+        return wireFrame_worker_drawer2;
+    }
+
+    public FoldedFigureModel getFoldedFigureModel() {
+        return foldedFigureModel;
+    }
+
+    public Camera getFoldedFigureCamera() {
+        return foldedFigureCamera;
+    }
+
+    public Camera getFoldedFigureFrontCamera() {
+        return foldedFigureFrontCamera;
+    }
+
+    public Camera getFoldedFigureRearCamera() {
+        return foldedFigureRearCamera;
+    }
+
+    public Camera getTransparentFrontCamera() {
+        return transparentFrontCamera;
+    }
+
+    public Camera getTransparentRearCamera() {
+        return transparentRearCamera;
     }
 }

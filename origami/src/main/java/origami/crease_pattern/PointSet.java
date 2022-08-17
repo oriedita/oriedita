@@ -18,21 +18,21 @@ import java.util.*;
 public class PointSet implements Serializable {
         int numFaces_temp;
 
-    int numPoints;               //Total number of points actually used
-    int numLines;               //Total number of lines actually used
-    int numFaces;               //Total number of faces actually used
+    private int numPoints;               //Total number of points actually used
+    private int numLines;               //Total number of lines actually used
+    private int numFaces;               //Total number of faces actually used
 
-    Point_p[] points;//Instantiation of points
-    Line[] lines;//Instantiation of lines
+    private Point_p[] points;//Instantiation of points
+    private Line[] lines;//Instantiation of lines
     @JsonIgnore
-    int[] lineInFaceBorder_min;
+    private int[] lineInFaceBorder_min;
     @JsonIgnore
-    int[] lineInFaceBorder_max;
+    private int[] lineInFaceBorder_max;
 
-    Face[] faces; //Face instantiation
+    private Face[] faces; //Face instantiation
 
     @JsonIgnore
-    List<List<Integer>> point_linking;//point_linking [i] [j] is the number of points connected to t [i]. The number of Tem is stored in t [0].
+    private List<List<Integer>> point_linking;//point_linking [i] [j] is the number of points connected to t [i]. The number of Tem is stored in t [0].
 
     public PointSet() {
         reset();
@@ -411,7 +411,7 @@ public class PointSet implements Serializable {
 
         int euler = numFaces - numLines + numPoints;
         if (euler != 1) {
-            /**
+            /*
              * Technically speaking, if this happens, then there's something wrong caused by
              * the rounding error and we cannot possibly expect a valid folding result even
              * if the rest of the algorithm reports a solution. So let's hope that this
@@ -467,12 +467,16 @@ public class PointSet implements Serializable {
         }
     }
 
-    //Boundary of lines Boundary surface (two sides in yellow) Here, faceId of the proliferating branch of faceId was made.
+    /**
+     * Boundary of lines Boundary surface (two sides in yellow) Here, faceId of the proliferating branch of faceId was made.
+     */
     public int lineInFaceBorder_min_lookup(int lineId) {
         return lineInFaceBorder_min[lineId];
     }
 
-    //Returns the faceId with the larger faceId of the faces containing the bar lineId as the boundary (there are up to two faces). Returns 0 if there is no face containing the line as the boundary
+    /**
+     * Returns the faceId with the larger faceId of the faces containing the bar lineId as the boundary (there are up to two faces). Returns 0 if there is no face containing the line as the boundary
+     */
     public int lineInFaceBorder_max_lookup(int lineId) {
         return lineInFaceBorder_max[lineId];
     }

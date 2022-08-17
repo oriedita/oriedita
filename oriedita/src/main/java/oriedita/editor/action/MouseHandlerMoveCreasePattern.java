@@ -57,11 +57,11 @@ public class MouseHandlerMoveCreasePattern implements MouseModeHandler {
         for (int i_oz = 0; i_oz < foldedFiguresList.getSize(); i_oz++) {
             FoldedFigure_Drawer OZi = foldedFiguresList.getElementAt(i_oz);
 
-            OZi.foldedFigureCamera.displayPositionMove(mouse_temp0.other_Point_position(p0));
-            OZi.foldedFigureFrontCamera.displayPositionMove(mouse_temp0.other_Point_position(p0));
-            OZi.foldedFigureRearCamera.displayPositionMove(mouse_temp0.other_Point_position(p0));
-            OZi.transparentFrontCamera.displayPositionMove(mouse_temp0.other_Point_position(p0));
-            OZi.transparentRearCamera.displayPositionMove(mouse_temp0.other_Point_position(p0));
+            OZi.getFoldedFigureCamera().displayPositionMove(mouse_temp0.other_Point_position(p0));
+            OZi.getFoldedFigureFrontCamera().displayPositionMove(mouse_temp0.other_Point_position(p0));
+            OZi.getFoldedFigureRearCamera().displayPositionMove(mouse_temp0.other_Point_position(p0));
+            OZi.getTransparentFrontCamera().displayPositionMove(mouse_temp0.other_Point_position(p0));
+            OZi.getTransparentRearCamera().displayPositionMove(mouse_temp0.other_Point_position(p0));
         }
 //20180225追加　ここまで
 
@@ -78,11 +78,11 @@ public class MouseHandlerMoveCreasePattern implements MouseModeHandler {
         for (int i_oz = 0; i_oz < foldedFiguresList.getSize(); i_oz++) {
             FoldedFigure_Drawer OZi = foldedFiguresList.getElementAt(i_oz);
 
-            OZi.foldedFigureCamera.displayPositionMove(mouse_temp0.other_Point_position(p0));
-            OZi.foldedFigureFrontCamera.displayPositionMove(mouse_temp0.other_Point_position(p0));
-            OZi.foldedFigureRearCamera.displayPositionMove(mouse_temp0.other_Point_position(p0));
-            OZi.transparentFrontCamera.displayPositionMove(mouse_temp0.other_Point_position(p0));
-            OZi.transparentRearCamera.displayPositionMove(mouse_temp0.other_Point_position(p0));
+            OZi.getFoldedFigureCamera().displayPositionMove(mouse_temp0.other_Point_position(p0));
+            OZi.getFoldedFigureFrontCamera().displayPositionMove(mouse_temp0.other_Point_position(p0));
+            OZi.getFoldedFigureRearCamera().displayPositionMove(mouse_temp0.other_Point_position(p0));
+            OZi.getTransparentFrontCamera().displayPositionMove(mouse_temp0.other_Point_position(p0));
+            OZi.getTransparentRearCamera().displayPositionMove(mouse_temp0.other_Point_position(p0));
         }
 //20180225追加　ここまで
 

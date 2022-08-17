@@ -29,7 +29,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.beans.PropertyChangeEvent;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Panel in the center of the main view.
@@ -47,21 +46,19 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
     private final FoldedFigureModel foldedFigureModel;
     private final FoldedFigureCanvasSelectService foldedFigureCanvasSelectService;
     private final CanvasModel canvasModel;
-    private final TextWorker textWorker;
-    private final SelectedTextModel textModel;
-    public boolean hideOperationFrame = false;
+    private boolean hideOperationFrame = false;
 
     private MouseModeHandler activeMouseHandler;
 
-    Point p_mouse_object_position = new Point();//マウスのオブジェクト座標上の位置
-    Point p_mouse_TV_position = new Point();//マウスのTV座標上の位置
+    private final Point p_mouse_object_position = new Point();//マウスのオブジェクト座標上の位置
+    private final Point p_mouse_TV_position = new Point();//マウスのTV座標上の位置
 
-    public Background_camera h_cam = new Background_camera();
+    private Background_camera h_cam = new Background_camera();
 
     private final TextEditingArea cpTextEditingArea;
 
-    int btn = 0;//Stores which button in the center of the left and right is pressed. 1 =
-    public Point mouse_temp0 = new Point();//マウスの動作対応時に、一時的に使うTen
+    private int btn = 0;//Stores which button in the center of the left and right is pressed. 1 =
+    private final Point mouse_temp0 = new Point();//マウスの動作対応時に、一時的に使うTen
 
     private boolean displayPointSpotlight;
     private boolean displayPointOffset;
@@ -73,27 +70,26 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
     private boolean displayMarkings;
     private boolean displayCreasePatternOnTop;
 
-    float auxLineWidth;
-    float lineWidth;
+    private float auxLineWidth;
+    private float lineWidth;
 
-    LineStyle lineStyle;
+    private LineStyle lineStyle;
 
     private MouseMode mouseMode;
 
     // Canvas width and height
-    Dimension dim;
+    private Dimension dim;
     private boolean antiAlias;
     private boolean mouseWheelMovesCreasePattern;
 
-    public Camera creasePatternCamera;
+    private Camera creasePatternCamera;
 
-    Map<MouseMode, MouseModeHandler> mouseModeHandlers = new HashMap<>();
+    private final Map<MouseMode, MouseModeHandler> mouseModeHandlers = new HashMap<>();
 
-    public boolean mouseDraggedValid = false;
+    private boolean mouseDraggedValid = false;
     //ウィンドウ透明化用のパラメータ
-    public boolean mouseReleasedValid = false;//0 ignores mouse operation. 1 is valid for mouse operation. When an unexpected mouseDragged or mouseReleased occurs due to on-off of the file box, set it to 0 so that it will not be picked up. These are set to 1 valid when the mouse is clicked.
+    private boolean mouseReleasedValid = false;//0 ignores mouse operation. 1 is valid for mouse operation. When an unexpected mouseDragged or mouseReleased occurs due to on-off of the file box, set it to 0 so that it will not be picked up. These are set to 1 valid when the mouse is clicked.
 
-    public final AtomicBoolean w_image_running = new AtomicBoolean(false); // Folding together execution. If a single image export is in progress, it will be true.
     private final Frame frame;
 
     @Inject
@@ -126,8 +122,6 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         this.foldedFigureModel = foldedFigureModel;
         this.foldedFigureCanvasSelectService = foldedFigureCanvasSelectService;
         this.canvasModel = canvasModel;
-        this.textWorker = textWorker;
-        this.textModel = textModel;
 
         this.setLayout(null);
         cpTextEditingArea = new TextEditingArea(textModel, textWorker, mainCreasePatternWorker,
@@ -237,18 +231,18 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         FoldedFigure_Drawer OZi;
         for (int i_oz = 0; i_oz < foldedFiguresList.getSize(); i_oz++) {
             OZi = foldedFiguresList.getElementAt(i_oz);
-            OZi.wireFrame_worker_drawer1.setCamera(creasePatternCamera);
+            OZi.getWireFrame_worker_drawer1().setCamera(creasePatternCamera);
         }
 
         FoldedFigure_Drawer selectedFigure = foldedFiguresList.getActiveItem();
 
         if (selectedFigure != null) {
 //VVVVVVVVVVVVVVV以下のts2へのカメラセットはOriagari_zuのoekakiで実施しているので以下の5行はなくてもいいはず　20180225
-            selectedFigure.wireFrame_worker_drawer2.setCamera(selectedFigure.foldedFigureCamera);
-            selectedFigure.wireFrame_worker_drawer2.setCam_front(selectedFigure.foldedFigureFrontCamera);
-            selectedFigure.wireFrame_worker_drawer2.setCam_rear(selectedFigure.foldedFigureRearCamera);
-            selectedFigure.wireFrame_worker_drawer2.setCam_transparent_front(selectedFigure.transparentFrontCamera);
-            selectedFigure.wireFrame_worker_drawer2.setCam_transparent_rear(selectedFigure.transparentRearCamera);
+            selectedFigure.getWireFrame_worker_drawer2().setCamera(selectedFigure.getFoldedFigureCamera());
+            selectedFigure.getWireFrame_worker_drawer2().setCam_front(selectedFigure.getFoldedFigureFrontCamera());
+            selectedFigure.getWireFrame_worker_drawer2().setCam_rear(selectedFigure.getFoldedFigureRearCamera());
+            selectedFigure.getWireFrame_worker_drawer2().setCam_transparent_front(selectedFigure.getTransparentFrontCamera());
+            selectedFigure.getWireFrame_worker_drawer2().setCam_transparent_rear(selectedFigure.getTransparentRearCamera());
 //AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
         }
         //Logger.info("paint　+++++++++++++++++++++　背景表示");
@@ -269,8 +263,8 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
         //基準面の表示
         if (displayMarkings && selectedFigure != null) {
-            if (selectedFigure.foldedFigure.displayStyle != FoldedFigure.DisplayStyle.NONE_0) {
-                selectedFigure.wireFrame_worker_drawer1.drawStartingFaceWithCamera(bufferGraphics, selectedFigure.getStartingFaceId());//ts1が折り畳みを行う際の基準面を表示するのに使う。
+            if (selectedFigure.getFoldedFigure().displayStyle != FoldedFigure.DisplayStyle.NONE_0) {
+                selectedFigure.getWireFrame_worker_drawer1().drawStartingFaceWithCamera(bufferGraphics, selectedFigure.getStartingFaceId());//ts1が折り畳みを行う際の基準面を表示するのに使う。
             }
         }
 
@@ -305,7 +299,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
             if (selectedFigure != null) {
                 //結果の文字表示
-                bufferGraphics.drawString(selectedFigure.foldedFigure.text_result, 10, 40); //この表示内容はvoid kekka_syoriで決められる。
+                bufferGraphics.drawString(selectedFigure.getFoldedFigure().text_result, 10, 40); //この表示内容はvoid kekka_syoriで決められる。
             }
 
             if (displayGridInputAssist) {
@@ -436,16 +430,16 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                         creasePatternCamera.camera_position_specify_from_TV(p);
                         break;
                     case FOLDED_FRONT_1:
-                        if (selectedFigure != null) selectedFigure.foldedFigureFrontCamera.camera_position_specify_from_TV(p);
+                        if (selectedFigure != null) selectedFigure.getFoldedFigureFrontCamera().camera_position_specify_from_TV(p);
                         break;
                     case FOLDED_BACK_2:
-                        if (selectedFigure != null) selectedFigure.foldedFigureRearCamera.camera_position_specify_from_TV(p);
+                        if (selectedFigure != null) selectedFigure.getFoldedFigureRearCamera().camera_position_specify_from_TV(p);
                         break;
                     case TRANSPARENT_FRONT_3:
-                        if (selectedFigure != null) selectedFigure.transparentFrontCamera.camera_position_specify_from_TV(p);
+                        if (selectedFigure != null) selectedFigure.getTransparentFrontCamera().camera_position_specify_from_TV(p);
                         break;
                     case TRANSPARENT_BACK_4:
-                        if (selectedFigure != null) selectedFigure.transparentRearCamera.camera_position_specify_from_TV(p);
+                        if (selectedFigure != null) selectedFigure.getTransparentRearCamera().camera_position_specify_from_TV(p);
                         break;
                 }
 
@@ -501,16 +495,16 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                             cpTextEditingArea.update();
                             break;
                         case FOLDED_FRONT_1:
-                            if (selectedFigure != null) selectedFigure.foldedFigureFrontCamera.displayPositionMove(mouse_temp0.other_Point_position(p));
+                            if (selectedFigure != null) selectedFigure.getFoldedFigureFrontCamera().displayPositionMove(mouse_temp0.other_Point_position(p));
                             break;
                         case FOLDED_BACK_2:
-                            if (selectedFigure != null) selectedFigure.foldedFigureRearCamera.displayPositionMove(mouse_temp0.other_Point_position(p));
+                            if (selectedFigure != null) selectedFigure.getFoldedFigureRearCamera().displayPositionMove(mouse_temp0.other_Point_position(p));
                             break;
                         case TRANSPARENT_FRONT_3:
-                            if (selectedFigure != null) selectedFigure.transparentFrontCamera.displayPositionMove(mouse_temp0.other_Point_position(p));
+                            if (selectedFigure != null) selectedFigure.getTransparentFrontCamera().displayPositionMove(mouse_temp0.other_Point_position(p));
                             break;
                         case TRANSPARENT_BACK_4:
-                            if (selectedFigure != null) selectedFigure.transparentRearCamera.displayPositionMove(mouse_temp0.other_Point_position(p));
+                            if (selectedFigure != null) selectedFigure.getTransparentRearCamera().displayPositionMove(mouse_temp0.other_Point_position(p));
                             break;
                     }
 
@@ -576,16 +570,16 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                             mainCreasePatternWorker.setCamera(creasePatternCamera);
                             break;
                         case FOLDED_FRONT_1:
-                            if (selectedFigure != null) selectedFigure.foldedFigureFrontCamera.displayPositionMove(mouse_temp0.other_Point_position(p));
+                            if (selectedFigure != null) selectedFigure.getFoldedFigureFrontCamera().displayPositionMove(mouse_temp0.other_Point_position(p));
                             break;
                         case FOLDED_BACK_2:
-                            if (selectedFigure != null) selectedFigure.foldedFigureRearCamera.displayPositionMove(mouse_temp0.other_Point_position(p));
+                            if (selectedFigure != null) selectedFigure.getFoldedFigureRearCamera().displayPositionMove(mouse_temp0.other_Point_position(p));
                             break;
                         case TRANSPARENT_FRONT_3:
-                            if (selectedFigure != null) selectedFigure.transparentFrontCamera.displayPositionMove(mouse_temp0.other_Point_position(p));
+                            if (selectedFigure != null) selectedFigure.getTransparentFrontCamera().displayPositionMove(mouse_temp0.other_Point_position(p));
                             break;
                         case TRANSPARENT_BACK_4:
-                            if (selectedFigure != null) selectedFigure.transparentRearCamera.displayPositionMove(mouse_temp0.other_Point_position(p));
+                            if (selectedFigure != null) selectedFigure.getTransparentRearCamera().displayPositionMove(mouse_temp0.other_Point_position(p));
                             break;
                     }
 
@@ -755,7 +749,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         // Move all associated windows back.
         frame.setLocation(currentLocation);
         for (Window w : windows) {
-            w.setLocation(locations.poll());
+            w.setLocation(Objects.requireNonNull(locations.poll()));
         }
 
         Logger.info("新背景カメラインスタンス化");
@@ -786,4 +780,19 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         return new Point(e.getX() - (int) offset, e.getY() - (int) offset);
     }
 
+    public void setHideOperationFrame(boolean hideOperationFrame) {
+        this.hideOperationFrame = hideOperationFrame;
+    }
+
+    public Background_camera getH_cam() {
+        return h_cam;
+    }
+
+    public void setH_cam(Background_camera h_cam) {
+        this.h_cam = h_cam;
+    }
+
+    public Camera getCreasePatternCamera() {
+        return creasePatternCamera;
+    }
 }

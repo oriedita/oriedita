@@ -85,8 +85,8 @@ public class FoldingServiceImpl implements FoldingService {
                 Logger.info("CP didnt change, refolding using constraints and starting face");
                 FoldedFigure_Drawer selectedFigure = foldedFiguresList.getActiveItem();
                 if (selectedFigure != null) {
-                    selectedFigure.foldedFigure.estimationOrder = estimationOrder;
-                    selectedFigure.foldedFigure.estimationStep = FoldedFigure.EstimationStep.STEP_0;
+                    selectedFigure.getFoldedFigure().estimationOrder = estimationOrder;
+                    selectedFigure.getFoldedFigure().estimationStep = FoldedFigure.EstimationStep.STEP_0;
                     foldingExecutor.executeTask(new FoldingEstimateTask(creasePatternCamera, bulletinBoard, canvasModel, lineSegmentsForFolding, selectedFigure, estimationOrder));
                 }
                 return;

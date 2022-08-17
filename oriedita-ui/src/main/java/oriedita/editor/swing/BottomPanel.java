@@ -4,7 +4,6 @@ import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import org.tinylog.Logger;
-import oriedita.editor.Canvas;
 import oriedita.editor.action.FoldedFigureOperationMode;
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.canvas.MouseMode;
@@ -136,15 +135,15 @@ public class BottomPanel {
             if (selectedFigure != null) {
                 foldedFigureModel.advanceState();
 
-                if ((canvasModel.getMouseMode() == MouseMode.MODIFY_CALCULATED_SHAPE_101) && (selectedFigure.foldedFigure.ip4 == FoldedFigure.State.BOTH_2)) {
+                if ((canvasModel.getMouseMode() == MouseMode.MODIFY_CALCULATED_SHAPE_101) && (selectedFigure.getFoldedFigure().ip4 == FoldedFigure.State.BOTH_2)) {
                     foldedFigureModel.setState(FoldedFigure.State.FRONT_0);
                 }//Fold-up forecast map Added to avoid the mode that can not be moved when moving
             }
         });
         As100Button.addActionListener(e -> {
             FoldedFigure_Drawer selectedFigure = foldedFiguresList.getActiveItem();
-            if (selectedFigure != null && selectedFigure.foldedFigure.findAnotherOverlapValid) {
-                selectedFigure.foldedFigure.estimationOrder = FoldedFigure.EstimationOrder.ORDER_6;
+            if (selectedFigure != null && selectedFigure.getFoldedFigure().findAnotherOverlapValid) {
+                selectedFigure.getFoldedFigure().estimationOrder = FoldedFigure.EstimationOrder.ORDER_6;
 
                 taskService.executeFoldingEstimateSave100Task();
             }
@@ -164,10 +163,10 @@ public class BottomPanel {
                 return;
             }
 
-            selectedFigure.foldedFigure.estimationOrder = FoldedFigure.EstimationOrder.ORDER_6;
+            selectedFigure.getFoldedFigure().estimationOrder = FoldedFigure.EstimationOrder.ORDER_6;
 
-            if (foldedFigureModel.getFoldedCases() < selectedFigure.foldedFigure.discovered_fold_cases) {
-                selectedFigure.foldedFigure.estimationOrder = FoldedFigure.EstimationOrder.ORDER_51;    //i_suitei_meirei=51はoritatami_suiteiの最初の推定図用カメラの設定は素通りするための設定。推定図用カメラの設定を素通りしたら、i_suitei_meirei=5に変更される。
+            if (foldedFigureModel.getFoldedCases() < selectedFigure.getFoldedFigure().discovered_fold_cases) {
+                selectedFigure.getFoldedFigure().estimationOrder = FoldedFigure.EstimationOrder.ORDER_51;    //i_suitei_meirei=51はoritatami_suiteiの最初の推定図用カメラの設定は素通りするための設定。推定図用カメラの設定を素通りしたら、i_suitei_meirei=5に変更される。
                 //1例目の折り上がり予想はi_suitei_meirei=5を指定、2例目以降の折り上がり予想はi_suitei_meirei=6で実施される
             }
 
@@ -197,7 +196,7 @@ public class BottomPanel {
             FoldedFigure_Drawer selectedFigure = foldedFiguresList.getActiveItem();
 
             if (selectedFigure != null) {
-                selectedFigure.foldedFigure.setAllPointStateFalse();
+                selectedFigure.getFoldedFigure().setAllPointStateFalse();
                 selectedFigure.record();
             }
 
@@ -208,7 +207,7 @@ public class BottomPanel {
             FoldedFigure_Drawer selectedFigure = foldedFiguresList.getActiveItem();
 
             if (selectedFigure != null) {
-                selectedFigure.foldedFigure.setAllPointStateFalse();
+                selectedFigure.getFoldedFigure().setAllPointStateFalse();
                 selectedFigure.record();
             }
 

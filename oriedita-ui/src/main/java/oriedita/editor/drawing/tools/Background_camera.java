@@ -13,27 +13,27 @@ import origami.crease_pattern.element.Point;
  */
 public class Background_camera {
 
-    Point h1 = new Point();
-    Point h2 = new Point();
-    Point h3 = new Point();
-    Point h4 = new Point();
+    private final Point h1 = new Point();
+    private final Point h2 = new Point();
+    private final Point h3 = new Point();
+    private final Point h4 = new Point();
 
-    Point h3_obj = new Point();
-    Point h4_obj = new Point();
+    private final Point h3_obj = new Point();
+    private final Point h4_obj = new Point();
 
-    double background_width;
-    double background_height;
+    private double background_width;
+    private double background_height;
 
-    Camera camera = new Camera();
+    private final Camera camera = new Camera();
 
-    double magnification = 1.0;
-    double p_idou_x = 0.0;
-    double p_idou_y = 0.0;
-    double p_rotation_angle = 0.0;
-    double p_rotation_x = 0.0;
-    double p_rotation_y = 0.0;
+    private double magnification = 1.0;
+    private double p_idou_x = 0.0;
+    private double p_idou_y = 0.0;
+    private double p_rotation_angle = 0.0;
+    private double p_rotation_x = 0.0;
+    private double p_rotation_y = 0.0;
 
-    boolean locked = false;
+    private boolean locked = false;
 
     public Background_camera() {//コンストラクタ
         reset();
@@ -64,52 +64,20 @@ public class Background_camera {
         return pt3;
     }
 
-    public Point get_h1() {
-        return h1;
-    }
-
     public void set_h1(Point ht) {
         h1.set(getStandardStatePosition(ht));
-    }
-
-    public Point get_h2() {
-        return h2;
     }
 
     public void set_h2(Point ht) {
         h2.set(getStandardStatePosition(ht));
     }
 
-    public Point get_h3() {
-        return h3;
-    }
-
     public void set_h3(Point ht) {
         h3.set(ht);
     }
 
-    public Point get_h4() {
-        return h4;
-    }
-
     public void set_h4(Point ht) {
         h4.set(ht);
-    }
-
-    public Point get_h3_obj() {
-        return h3_obj;
-    }
-
-    public void set_h3_obj(Point ht) {
-        h3_obj.set(ht);
-    }
-
-    public Point get_h4_obj() {
-        return h4_obj;
-    }
-
-    public void set_h4_obj(Point ht) {
-        h4_obj.set(ht);
     }
 
     public void parameter_calculation() {
@@ -176,6 +144,11 @@ public class Background_camera {
         h3.set(camera.object2TV(h3_obj));
         h4.set(camera.object2TV(h4_obj));
     }
+
+    public Camera getCamera() {
+        return camera;
+    }
+
 }
 
 

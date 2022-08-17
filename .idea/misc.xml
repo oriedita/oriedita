@@ -7,6 +7,11 @@
         <option value="$PROJECT_DIR$/pom.xml" />
       </list>
     </option>
+    <option name="ignoredFiles">
+      <set>
+        <option value="$PROJECT_DIR$/oriedita-drawing/pom.xml" />
+      </set>
+    </option>
   </component>
   <component name="PWA">
     <option name="wasEnabledAtLeastOnce" value="true" />

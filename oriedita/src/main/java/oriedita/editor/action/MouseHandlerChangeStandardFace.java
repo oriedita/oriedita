@@ -52,22 +52,22 @@ public class MouseHandlerChangeStandardFace extends BaseMouseHandler {
             p.set(d.getCamera().TV2object(p0));
             int oldStartingFaceId = selectedFigure.getStartingFaceId();
 
-            int newStartingFaceId = selectedFigure.foldedFigure.wireFrame_worker1.get().inside(p);
+            int newStartingFaceId = selectedFigure.getFoldedFigure().wireFrame_worker1.get().inside(p);
 
             if (newStartingFaceId < 1) return;
 
             selectedFigure.setStartingFaceId(newStartingFaceId);
 
             Logger.info("kijyunmen_id = " + newStartingFaceId);
-            if (selectedFigure.foldedFigure.foldedFigure_worker.face_rating != null) {//20180227追加
-                int index = selectedFigure.foldedFigure.foldedFigure_worker.nbox.getSequence(newStartingFaceId);
+            if (selectedFigure.getFoldedFigure().foldedFigure_worker.face_rating != null) {//20180227追加
+                int index = selectedFigure.getFoldedFigure().foldedFigure_worker.nbox.getSequence(newStartingFaceId);
                 Logger.info(
-                        "OZ.js.nbox.get_jyunjyo = " + index + " , rating = " + selectedFigure.foldedFigure.foldedFigure_worker.nbox.getWeight(index)
+                        "OZ.js.nbox.get_jyunjyo = " + index + " , rating = " + selectedFigure.getFoldedFigure().foldedFigure_worker.nbox.getWeight(index)
                 );
 
             }
-            if ((newStartingFaceId != oldStartingFaceId) && (selectedFigure.foldedFigure.estimationStep != FoldedFigure.EstimationStep.STEP_0)) {
-                selectedFigure.foldedFigure.estimationStep = FoldedFigure.EstimationStep.STEP_1;
+            if ((newStartingFaceId != oldStartingFaceId) && (selectedFigure.getFoldedFigure().estimationStep != FoldedFigure.EstimationStep.STEP_0)) {
+                selectedFigure.getFoldedFigure().estimationStep = FoldedFigure.EstimationStep.STEP_1;
             }
         }
     }

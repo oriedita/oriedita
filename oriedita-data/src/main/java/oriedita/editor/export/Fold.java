@@ -3,7 +3,10 @@ package oriedita.editor.export;
 import fold.Exporter;
 import fold.FoldFileFormatException;
 import fold.Importer;
+import fold.impl.CustomImporter;
+import fold.impl.DefaultExporter;
 import fold.model.*;
+import oriedita.editor.exception.FileReadingException;
 import oriedita.editor.save.OrieditaFoldFile;
 import oriedita.editor.save.Save;
 import oriedita.editor.save.SaveProvider;
@@ -29,9 +32,9 @@ public class Fold {
     private final Exporter<OrieditaFoldFile> exporter;
 
     @Inject
-    public Fold(Importer<OrieditaFoldFile> anImporter, Exporter<OrieditaFoldFile> exporter) {
-        this.anImporter = anImporter;
-        this.exporter = exporter;
+    public Fold() {
+        this.anImporter = new CustomImporter<>(OrieditaFoldFile.class);
+        this.exporter = new DefaultExporter<>();
     }
 
     public Save toSave(OrieditaFoldFile foldFile) {
@@ -120,13 +123,21 @@ public class Fold {
         }
     }
 
-    public Save importFile(File file) throws FoldFileFormatException {
-        return toSave(anImporter.importFile(file));
+    public Save importFile(File file) throws FileReadingException {
+        try {
+            return toSave(anImporter.importFile(file));
+        } catch (FoldFileFormatException e) {
+            throw new FileReadingException(e);
+        }
     }
 
 
-    public void exportFile(Save save, LineSegmentSet lineSegmentSet, File file) throws InterruptedException, FoldFileFormatException {
-        exporter.exportFile(file, toFoldSave(save, lineSegmentSet));
+    public void exportFile(Save save, LineSegmentSet lineSegmentSet, File file) throws InterruptedException, FileReadingException {
+        try {
+            exporter.exportFile(file, toFoldSave(save, lineSegmentSet));
+        } catch (FoldFileFormatException e) {
+            throw new FileReadingException(e);
+        }
     }
 
     public OrieditaFoldFile toFoldSave(Save save, LineSegmentSet lineSegmentSet) throws InterruptedException {
