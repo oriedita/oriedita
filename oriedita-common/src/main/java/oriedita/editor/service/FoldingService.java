@@ -22,6 +22,7 @@ public interface FoldingService {
 
     enum FoldType {
         FOR_ALL_CONNECTED_LINES_1,
-        FOR_SELECTED_LINES_2
+        FOR_SELECTED_LINES_2,
+        FOR_EXISTING_FOLDED_FIGURE_3,
     }
 }

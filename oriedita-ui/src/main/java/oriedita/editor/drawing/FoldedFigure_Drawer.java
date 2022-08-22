@@ -7,6 +7,7 @@ import origami.crease_pattern.LineSegmentSet;
 import origami.crease_pattern.element.Point;
 import oriedita.editor.databinding.ApplicationModel;
 import oriedita.editor.databinding.FoldedFigureModel;
+import origami.crease_pattern.worker.linesegmentset.GetBoundingBox;
 import origami.folding.FoldedFigure;
 import oriedita.editor.folded_figure.FoldedFigure_01;
 import oriedita.editor.drawing.tools.Camera;
@@ -19,6 +20,8 @@ public class FoldedFigure_Drawer implements Foldable {
     private final WireFrame_Worker_Drawer wireFrame_worker_drawer1;
     private final WireFrame_Worker_Drawer wireFrame_worker_drawer2;
     private final FoldedFigureModel foldedFigureModel = new FoldedFigureModel();
+
+    private origami.crease_pattern.element.Polygon boundingBox;
 
     private Color foldedFigure_F_color = new Color(255, 255, 50);//Folded surface color
     private Color foldedFigure_B_color = new Color(233, 233, 233);//The color of the back side of the folded figure
@@ -134,10 +137,16 @@ public class FoldedFigure_Drawer implements Foldable {
         transparentRearCamera.setCameraMirror(d_camera_mirror * -1.0);
     }
 
+    public origami.crease_pattern.element.Polygon getBoundingBox() {
+        return boundingBox;
+    }
+
     public void folding_estimated(Camera creasePatternCamera, LineSegmentSet lineSegmentSet) throws InterruptedException, FoldingException {//折畳み予測の最初に、wireFrame_worker1.lineStore2pointStore(lineStore)として使う。　Ss0は、mainDrawingWorker.get_for_oritatami()かes1.get_for_select_oritatami()で得る。
         boolean i_camera_estimated = foldedFigure.estimationStep == FoldedFigure.EstimationStep.STEP_0
                 && foldedFigure.estimationOrder.isAtMost(FoldedFigure.EstimationOrder.ORDER_5);
         boolean shouldCalculateFromTop = foldedFigure.estimationOrder.isAtLeast(FoldedFigure.EstimationOrder.ORDER_4);
+
+        boundingBox = GetBoundingBox.getBoundingBox(lineSegmentSet);
 
         foldedFigure.folding_estimated(lineSegmentSet, startingFaceId);
 
@@ -379,10 +388,20 @@ public class FoldedFigure_Drawer implements Foldable {
         foldedFigure_F_color = foldedFigureModel.getFrontColor();
         foldedFigure_B_color = foldedFigureModel.getBackColor();
         foldedFigure_L_color = foldedFigureModel.getLineColor();
-        d_foldedFigure_scale_factor = foldedFigureModel.getScale();
         d_foldedFigure_rotation_correction = foldedFigureModel.getRotation();
 
-        // Update scale
+        setScale(foldedFigureModel.getScale());
+
+        // Update rotation
+        foldedFigureCamera.setCameraAngle(d_foldedFigure_rotation_correction);
+        foldedFigureFrontCamera.setCameraAngle(d_foldedFigure_rotation_correction);
+        foldedFigureRearCamera.setCameraAngle(d_foldedFigure_rotation_correction);
+        transparentFrontCamera.setCameraAngle(d_foldedFigure_rotation_correction);
+        transparentRearCamera.setCameraAngle(d_foldedFigure_rotation_correction);
+    }
+
+    public void setScale(double scale) {
+        d_foldedFigure_scale_factor = scale;
         foldedFigureCamera.setCameraZoomX(d_foldedFigure_scale_factor);
         foldedFigureCamera.setCameraZoomY(d_foldedFigure_scale_factor);
         foldedFigureFrontCamera.setCameraZoomX(d_foldedFigure_scale_factor);
@@ -393,13 +412,6 @@ public class FoldedFigure_Drawer implements Foldable {
         transparentFrontCamera.setCameraZoomY(d_foldedFigure_scale_factor);
         transparentRearCamera.setCameraZoomX(d_foldedFigure_scale_factor);
         transparentRearCamera.setCameraZoomY(d_foldedFigure_scale_factor);
-
-        // Update rotation
-        foldedFigureCamera.setCameraAngle(d_foldedFigure_rotation_correction);
-        foldedFigureFrontCamera.setCameraAngle(d_foldedFigure_rotation_correction);
-        foldedFigureRearCamera.setCameraAngle(d_foldedFigure_rotation_correction);
-        transparentFrontCamera.setCameraAngle(d_foldedFigure_rotation_correction);
-        transparentRearCamera.setCameraAngle(d_foldedFigure_rotation_correction);
     }
 
 

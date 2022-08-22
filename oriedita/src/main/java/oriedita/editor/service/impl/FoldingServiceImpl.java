@@ -77,6 +77,25 @@ public class FoldingServiceImpl implements FoldingService {
     }
 
     public void fold(FoldType foldType, FoldedFigure.EstimationOrder estimationOrder) {
+        if (foldType == FoldType.FOR_EXISTING_FOLDED_FIGURE_3) {
+            assert foldedFiguresList.getSelectedItem() != null;
+
+            FoldedFigure_Drawer selectedFigure = foldedFiguresList.getActiveItem();
+
+            mainCreasePatternWorker.getFoldLineSet().select(selectedFigure.getBoundingBox());
+            LineSegmentSet reFold = mainCreasePatternWorker.getForSelectFolding();
+            if (foldedFiguresList.getSelectedItem() != null && reFold.contentEquals(lastFold)) {
+                Logger.info("CP didnt change, refolding using constraints and starting face");
+                selectedFigure.getFoldedFigure().estimationOrder = estimationOrder;
+                selectedFigure.getFoldedFigure().estimationStep = FoldedFigure.EstimationStep.STEP_0;
+                foldingExecutor.executeTask(new FoldingEstimateTask(creasePatternCamera, bulletinBoard, canvasModel, lineSegmentsForFolding, selectedFigure, estimationOrder));
+                return;
+            }
+            lastFold = reFold;
+            // replace currently selected model if not using selection to fold
+            foldedFiguresList.removeElement(foldedFiguresList.getSelectedItem());
+        }
+
         if (foldType == FoldType.FOR_ALL_CONNECTED_LINES_1) {
             Point cameraPos = this.mainCreasePatternWorker.getCameraPosition();
             mainCreasePatternWorker.selectConnected(this.mainCreasePatternWorker.getFoldLineSet().closestPoint(cameraPos));
@@ -122,7 +141,11 @@ public class FoldingServiceImpl implements FoldingService {
         //= 0 Do nothing, = 1 Folding estimation for all fold lines in the normal development view, = 2 for fold estimation for selected fold lines, = 3 for changing the folding state
         int foldLineTotalForSelectFolding = mainCreasePatternWorker.getFoldLineTotalForSelectFolding();
         Logger.info("foldedFigures.size() = " + foldedFiguresList.getSize() + "    : foldedFigureIndex = " + foldedFiguresList.getIndexOf(foldedFiguresList.getSelectedItem()) + "    : mainDrawingWorker.get_orisensuu_for_select_oritatami() = " + foldLineTotalForSelectFolding);
+
         if (foldLineTotalForSelectFolding == 0) {        //折り線選択無し
+            if (foldedFiguresList.getSelectedItem() != null) {
+                return FoldType.FOR_EXISTING_FOLDED_FIGURE_3;
+            }
             return FoldType.FOR_ALL_CONNECTED_LINES_1;//全展開図で折畳み
         } else {        //折り線選択有り
             return FoldType.FOR_SELECTED_LINES_2;//選択された展開図で折畳み

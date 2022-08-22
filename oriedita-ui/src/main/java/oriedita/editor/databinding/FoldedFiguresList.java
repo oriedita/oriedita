@@ -21,4 +21,13 @@ public class FoldedFiguresList extends DefaultComboBoxModel<FoldedFigure_Drawer>
 
         return null;
     }
+
+    public FoldedFigure_Drawer[] getItems() {
+        FoldedFigure_Drawer[] list = new FoldedFigure_Drawer[getSize()];
+        for (int i = 0; i < getSize(); i++) {
+            list[i] = getElementAt(i);
+        }
+
+        return list;
+    }
 }
