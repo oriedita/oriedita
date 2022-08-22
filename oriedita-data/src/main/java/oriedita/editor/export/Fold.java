@@ -10,7 +10,7 @@ import oriedita.editor.exception.FileReadingException;
 import oriedita.editor.save.OrieditaFoldFile;
 import oriedita.editor.save.Save;
 import oriedita.editor.save.SaveProvider;
-import oriedita.editor.tools.ResourceUtil;
+import oriedita.util.VersionUtil;
 import origami.crease_pattern.FoldLineSet;
 import origami.crease_pattern.LineSegmentSet;
 import origami.crease_pattern.PointSet;
@@ -173,7 +173,7 @@ public class Fold {
 
         foldFile.setCircles(save.getCircles());
         foldFile.setTexts(save.getTexts());
-        foldFile.setVersion(ResourceUtil.getVersionFromManifest());
+        foldFile.setVersion(VersionUtil.getVersionFromManifest());
 
         return foldFile;
     }

@@ -1,7 +1,7 @@
 package oriedita.editor.databinding;
 
 
-import oriedita.editor.tools.ResourceUtil;
+import oriedita.util.VersionUtil;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -57,7 +57,7 @@ public class FileModel implements Serializable {
         this.pcs.firePropertyChange(null, null, null);
     }
 
-    private static final String frame_title_0 = "Oriedita " + ResourceUtil.getVersionFromManifest();
+    private static final String frame_title_0 = "Oriedita " + VersionUtil.getVersionFromManifest();
 
     public String determineFrameTitle() {
         String frame_title;

@@ -385,8 +385,8 @@ public class SubFace {
         
         // We setup faceIdMapArray only for valid subfaces to save memory.
         faceIdMapArray = new int[hierarchyList.getFacesTotal() + 1];
-        for (int k : faceIdMap.keySet()) {
-            faceIdMapArray[k] = faceIdMap.get(k);
+        for (Map.Entry<Integer, Integer> k : faceIdMap.entrySet()) {
+            faceIdMapArray[k.getKey()] = k.getValue();
         }
 
         int[] ueFaceId = new int[faceIdCount + 1];

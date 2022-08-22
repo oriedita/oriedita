@@ -9,8 +9,8 @@ import oriedita.editor.swing.component.GlyphIcon;
 import oriedita.editor.swing.dialog.HelpDialog;
 import oriedita.editor.swing.dialog.SelectKeyStrokeDialog;
 import oriedita.editor.tools.KeyStrokeUtil;
-import oriedita.editor.tools.ResourceUtil;
-import oriedita.editor.tools.StringOp;
+import oriedita.util.ResourceUtil;
+import oriedita.util.StringUtil;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -29,7 +29,7 @@ public class ButtonServiceImpl implements ButtonService {
     private final HelpDialog explanation;
     private final CreasePattern_Worker mainCreasePatternWorker;
     public Map<KeyStroke, AbstractButton> helpInputMap = new HashMap<>();
-    private JFrame owner;
+    private final JFrame owner;
     private final MouseHandlerVoronoiCreate mouseHandlerVoronoiCreate;
     private final CanvasModel canvasModel;
 
@@ -47,24 +47,20 @@ public class ButtonServiceImpl implements ButtonService {
         this.canvasModel = canvasModel;
     }
 
-    @Override public void setOwner(JFrame owner) {
-        this.owner = owner;
-    }
-
     public void setTooltip(AbstractButton button, String key) {
-        String name = ResourceUtil.getBundleString("name", key);
-        String keyStrokeString = ResourceUtil.getBundleString("hotkey", key);
-        String tooltip = ResourceUtil.getBundleString("tooltip", key);
+        String name = ResourceUtil.getBundleString(ResourceUtil.Bundle.name, key);
+        String keyStrokeString = ResourceUtil.getBundleString(ResourceUtil.Bundle.hotkey, key);
+        String tooltip = ResourceUtil.getBundleString(ResourceUtil.Bundle.tooltip, key);
         // String help = ResourceUtil.getBundleString("help", key);
 
         KeyStroke keyStroke = KeyStroke.getKeyStroke(keyStrokeString);
 
 
         String tooltipText = "<html>";
-        if (!StringOp.isEmpty(name)) {
+        if (!StringUtil.isEmpty(name)) {
             tooltipText += "<i>" + name + "</i><br/>";
         }
-        if (!StringOp.isEmpty(tooltip)) {
+        if (!StringUtil.isEmpty(tooltip)) {
             tooltipText += tooltip + "<br/>";
         }
         if (keyStroke != null) {
@@ -77,8 +73,8 @@ public class ButtonServiceImpl implements ButtonService {
     }
 
     @Override public void registerLabel(JLabel label, String key) {
-        String icon = ResourceUtil.getBundleString("icons", key);
-        if (!StringOp.isEmpty(icon)) {
+        String icon = ResourceUtil.getBundleString(ResourceUtil.Bundle.icons, key);
+        if (!StringUtil.isEmpty(icon)) {
             GlyphIcon glyphIcon = new GlyphIcon(icon, label.getForeground());
             label.addPropertyChangeListener("foreground", glyphIcon);
             // Reset the text if there is no icon.
@@ -95,15 +91,15 @@ public class ButtonServiceImpl implements ButtonService {
     }
 
     @Override public void registerButton(AbstractButton button, String key) {
-        String name = ResourceUtil.getBundleString("name", key);
-        String keyStrokeString = ResourceUtil.getBundleString("hotkey", key);
+        String name = ResourceUtil.getBundleString(ResourceUtil.Bundle.name, key);
+        String keyStrokeString = ResourceUtil.getBundleString(ResourceUtil.Bundle.hotkey, key);
         // String tooltip = ResourceUtil.getBundleString("tooltip", key);
-        String help = ResourceUtil.getBundleString("help", key);
-        String icon = ResourceUtil.getBundleString("icons", key);
+        String help = ResourceUtil.getBundleString(ResourceUtil.Bundle.help, key);
+        String icon = ResourceUtil.getBundleString(ResourceUtil.Bundle.icons, key);
 
         KeyStroke keyStroke = KeyStroke.getKeyStroke(keyStrokeString);
 
-        if (!StringOp.isEmpty(keyStrokeString) && keyStroke == null) {
+        if (!StringUtil.isEmpty(keyStrokeString) && keyStroke == null) {
             Logger.error("Keystroke for \"" + key + "\": \"" + keyStrokeString + "\" is invalid");
         }
 
@@ -112,7 +108,7 @@ public class ButtonServiceImpl implements ButtonService {
         if (button instanceof JMenuItem) {
             JMenuItem menuItem = (JMenuItem) button;
 
-            if (!StringOp.isEmpty(name)) {
+            if (!StringUtil.isEmpty(name)) {
                 int mnemonicIndex = name.indexOf('_');
                 if (mnemonicIndex > -1) {
                     String formattedName = name.replaceAll("_", "");
@@ -139,7 +135,7 @@ public class ButtonServiceImpl implements ButtonService {
             }
             owner.getRootPane().getActionMap().put(key, new Click(button));
 
-            if (!StringOp.isEmpty(icon)) {
+            if (!StringUtil.isEmpty(icon)) {
                 GlyphIcon glyphIcon = new GlyphIcon(icon, button.getForeground());
                 button.addPropertyChangeListener("foreground", glyphIcon);
                 // Reset the text if there is no icon.
@@ -156,7 +152,7 @@ public class ButtonServiceImpl implements ButtonService {
             }
         }
 
-        if (!StringOp.isEmpty(help)) {
+        if (!StringUtil.isEmpty(help)) {
             button.addActionListener(e -> {
                 explanation.setExplanation(key);
 

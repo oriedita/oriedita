@@ -17,7 +17,7 @@ import oriedita.editor.service.HistoryState;
 import oriedita.editor.swing.component.ColorIcon;
 import oriedita.editor.swing.component.UndoRedo;
 import oriedita.editor.tools.LookAndFeelUtil;
-import oriedita.editor.tools.StringOp;
+import oriedita.util.StringUtil;
 import origami.crease_pattern.element.LineColor;
 import origami.folding.FoldedFigure;
 
@@ -614,8 +614,8 @@ public class LeftPanel {
 
 
     public void getData(GridModel data) {
-        data.setIntervalGridSize(StringOp.String2int(intervalGridSizeTextField.getText(), data.getIntervalGridSize()));
-        data.setGridSize(StringOp.String2int(gridSizeTextField.getText(), data.getGridSize()));
+        data.setIntervalGridSize(StringUtil.String2int(intervalGridSizeTextField.getText(), data.getIntervalGridSize()));
+        data.setGridSize(StringUtil.String2int(gridSizeTextField.getText(), data.getGridSize()));
         data.setGridXA(measuresModel.string2double(gridXATextField.getText(), data.getGridXA()));
         data.setGridXB(measuresModel.string2double(gridXBTextField.getText(), data.getGridXB()));
         data.setGridXC(measuresModel.string2double(gridXCTextField.getText(), data.getGridXC()));
@@ -1020,7 +1020,7 @@ public class LeftPanel {
     }
 
     public void getData(ApplicationModel data) {
-        data.setFoldLineDividingNumber(StringOp.String2int(lineSegmentDivisionTextField.getText(), data.getFoldLineDividingNumber()));
+        data.setFoldLineDividingNumber(StringUtil.String2int(lineSegmentDivisionTextField.getText(), data.getFoldLineDividingNumber()));
     }
 
     public void setData(PropertyChangeEvent e, ApplicationModel data) {

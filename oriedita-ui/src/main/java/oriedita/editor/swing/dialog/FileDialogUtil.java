@@ -73,19 +73,15 @@ public class FileDialogUtil {
             CharSequence[] filterPatterns,
             CharSequence filterDescription
     ) {
-        MemoryStack stack = MemoryStack.stackPush();
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            PointerBuffer aFilterPatterns = stack.mallocPointer(filterPatterns.length);
+            for (CharSequence filterPattern : filterPatterns) {
+                aFilterPatterns.put(stack.UTF8(filterPattern));
+            }
+            aFilterPatterns.flip();
 
-        PointerBuffer aFilterPatterns = stack.mallocPointer(filterPatterns.length);
-        for (CharSequence filterPattern : filterPatterns) {
-            aFilterPatterns.put(stack.UTF8(filterPattern));
+            return TinyFileDialogs.tinyfd_openFileDialog(title, defaultPath + "/", aFilterPatterns, filterDescription, false);
         }
-        aFilterPatterns.flip();
-
-        String file = TinyFileDialogs.tinyfd_openFileDialog(title, defaultPath + "/", aFilterPatterns, filterDescription, false);
-
-        stack.pop();
-
-        return file;
     }
 
     /**
@@ -99,18 +95,14 @@ public class FileDialogUtil {
             CharSequence[] filterPatterns,
             CharSequence filterDescription
     ) {
-        MemoryStack stack = MemoryStack.stackPush();
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            PointerBuffer aFilterPatterns = stack.mallocPointer(filterPatterns.length);
+            for (CharSequence filterPattern : filterPatterns) {
+                aFilterPatterns.put(stack.UTF8(filterPattern));
+            }
+            aFilterPatterns.flip();
 
-        PointerBuffer aFilterPatterns = stack.mallocPointer(filterPatterns.length);
-        for (CharSequence filterPattern : filterPatterns) {
-            aFilterPatterns.put(stack.UTF8(filterPattern));
+            return TinyFileDialogs.tinyfd_saveFileDialog(title, defaultPath + "/", aFilterPatterns, filterDescription);
         }
-        aFilterPatterns.flip();
-
-        String file = TinyFileDialogs.tinyfd_saveFileDialog(title, defaultPath + "/", aFilterPatterns, filterDescription);
-
-        stack.pop();
-
-        return file;
     }
 }

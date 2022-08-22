@@ -17,7 +17,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 
-import static oriedita.editor.tools.ResourceUtil.getAppDir;
+import static oriedita.util.DirectoryUtil.getAppDir;
 
 @Singleton
 public class ApplicationModelPersistenceServiceImpl implements ApplicationModelPersistenceService {
@@ -25,11 +25,13 @@ public class ApplicationModelPersistenceServiceImpl implements ApplicationModelP
     public static final String CONFIG_JSON = "config.json";
     private final JFrame frame;
     private final ApplicationModel applicationModel;
+    private final ObjectMapper mapper;
 
     @Inject
     public ApplicationModelPersistenceServiceImpl(@Named("mainFrame") JFrame frame, ApplicationModel applicationModel) {
         this.frame = frame;
         this.applicationModel = applicationModel;
+        mapper = new DefaultObjectMapper();
     }
 
     @Override public void init() {
@@ -46,8 +48,6 @@ public class ApplicationModelPersistenceServiceImpl implements ApplicationModelP
 
             return;
         }
-
-        ObjectMapper mapper = new DefaultObjectMapper();
 
         try {
             ApplicationModel loadedApplicationModel = mapper.readValue(configFile, ApplicationModel.class);

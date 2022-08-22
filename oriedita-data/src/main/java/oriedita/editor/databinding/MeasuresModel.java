@@ -1,6 +1,6 @@
 package oriedita.editor.databinding;
 
-import oriedita.editor.tools.StringOp;
+import oriedita.util.StringUtil;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -119,6 +119,6 @@ public class MeasuresModel {
             str0 = String.valueOf(getMeasuredAngle3());
         }
 
-        return StringOp.String2double(str0, default_if_error);
+        return StringUtil.String2double(str0, default_if_error);
     }
 }

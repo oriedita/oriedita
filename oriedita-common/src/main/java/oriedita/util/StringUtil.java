@@ -1,8 +1,8 @@
-package oriedita.editor.tools;
+package oriedita.util;
 
 import java.awt.*;
 
-public class StringOp {//データ格納用のメモ帳
+public class StringUtil {//データ格納用のメモ帳
 
     public static int String2int(String str0, int henkan_error_modoriti) {
 

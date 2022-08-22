@@ -3,6 +3,10 @@ package oriedita.editor.factory;
 import dagger.Component;
 import oriedita.editor.App;
 import oriedita.editor.service.*;
+import oriedita.editor.swing.BottomPanel;
+import oriedita.editor.swing.LeftPanel;
+import oriedita.editor.swing.RightPanel;
+import oriedita.editor.swing.TopPanel;
 
 import javax.inject.Singleton;
 
@@ -22,6 +26,11 @@ import javax.inject.Singleton;
 })
 @Singleton
 public interface AppFactory {
+    LeftPanel leftPanel();
+    RightPanel rightPanel();
+    BottomPanel bottomPanel();
+    TopPanel topPanel();
+
     App app();
 
     ApplicationModelPersistenceService applicationModelPersistenceService();

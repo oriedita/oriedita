@@ -15,7 +15,7 @@ import oriedita.editor.service.HistoryState;
 import oriedita.editor.swing.component.ColorIcon;
 import oriedita.editor.swing.dialog.OpenFrame;
 import oriedita.editor.tools.LookAndFeelUtil;
-import oriedita.editor.tools.StringOp;
+import oriedita.util.StringUtil;
 import origami.crease_pattern.element.LineColor;
 
 import javax.inject.Inject;
@@ -245,11 +245,11 @@ public class RightPanel {
             canvasModel.setMouseMode(MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18);
         });
         polygonSizeSetButton.addActionListener(e -> {
-            applicationModel.setNumPolygonCorners(StringOp.String2int(polygonSizeTextField.getText(), applicationModel.getNumPolygonCorners()));
+            applicationModel.setNumPolygonCorners(StringUtil.String2int(polygonSizeTextField.getText(), applicationModel.getNumPolygonCorners()));
             canvasModel.setMouseMode(MouseMode.POLYGON_SET_NO_CORNERS_29);
         });
         regularPolygonButton.addActionListener(e -> {
-            applicationModel.setNumPolygonCorners(StringOp.String2int(polygonSizeTextField.getText(), applicationModel.getNumPolygonCorners()));
+            applicationModel.setNumPolygonCorners(StringUtil.String2int(polygonSizeTextField.getText(), applicationModel.getNumPolygonCorners()));
             canvasModel.setMouseMode(MouseMode.POLYGON_SET_NO_CORNERS_29);
             canvasModel.setMouseModeAfterColorSelection(MouseMode.POLYGON_SET_NO_CORNERS_29);
 
@@ -339,31 +339,31 @@ public class RightPanel {
 
             mainCreasePatternWorker.unselect_all();
         });
-        measuredLength1TextField.addActionListener(e -> measuresModel.setMeasuredLength1(StringOp.String2double(measuredLength1TextField.getText(), measuresModel.getMeasuredLength1())));
+        measuredLength1TextField.addActionListener(e -> measuresModel.setMeasuredLength1(StringUtil.String2double(measuredLength1TextField.getText(), measuresModel.getMeasuredLength1())));
         l2Button.addActionListener(e -> {
             canvasModel.setMouseMode(MouseMode.DISPLAY_LENGTH_BETWEEN_POINTS_2_54);
 
             mainCreasePatternWorker.unselect_all();
         });
-        measuredLength2TextField.addActionListener(e -> measuresModel.setMeasuredLength2(StringOp.String2double(measuredLength2TextField.getText(), measuresModel.getMeasuredLength2())));
+        measuredLength2TextField.addActionListener(e -> measuresModel.setMeasuredLength2(StringUtil.String2double(measuredLength2TextField.getText(), measuresModel.getMeasuredLength2())));
         a1Button.addActionListener(e -> {
             canvasModel.setMouseMode(MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_1_55);
 
             mainCreasePatternWorker.unselect_all();
         });
-        measuredAngle1TextField.addActionListener(e -> measuresModel.setMeasuredAngle1(StringOp.String2double(measuredAngle1TextField.getText(), measuresModel.getMeasuredAngle1())));
+        measuredAngle1TextField.addActionListener(e -> measuresModel.setMeasuredAngle1(StringUtil.String2double(measuredAngle1TextField.getText(), measuresModel.getMeasuredAngle1())));
         a2Button.addActionListener(e -> {
             canvasModel.setMouseMode(MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_2_56);
 
             mainCreasePatternWorker.unselect_all();
         });
-        measuredAngle2TextField.addActionListener(e -> measuresModel.setMeasuredAngle2(StringOp.String2double(measuredAngle2TextField.getText(), measuresModel.getMeasuredAngle2())));
+        measuredAngle2TextField.addActionListener(e -> measuresModel.setMeasuredAngle2(StringUtil.String2double(measuredAngle2TextField.getText(), measuresModel.getMeasuredAngle2())));
         a3Button.addActionListener(e -> {
             canvasModel.setMouseMode(MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_3_57);
 
             mainCreasePatternWorker.unselect_all();
         });
-        measuredAngle3TextField.addActionListener(e -> measuresModel.setMeasuredAngle3(StringOp.String2double(measuredAngle3TextField.getText(), measuresModel.getMeasuredAngle3())));
+        measuredAngle3TextField.addActionListener(e -> measuresModel.setMeasuredAngle3(StringUtil.String2double(measuredAngle3TextField.getText(), measuresModel.getMeasuredAngle3())));
 
         ad_fncButton.addActionListener(e -> {
             openFrame = new OpenFrame("additionalFrame", frame, canvasModel, mainCreasePatternWorker, buttonService);
@@ -695,7 +695,7 @@ public class RightPanel {
     }
 
     public void getData(ApplicationModel data) {
-        data.setNumPolygonCorners(StringOp.String2int(polygonSizeTextField.getText(), data.getNumPolygonCorners()));
+        data.setNumPolygonCorners(StringUtil.String2int(polygonSizeTextField.getText(), data.getNumPolygonCorners()));
     }
 
     public void setData(ApplicationModel data) {

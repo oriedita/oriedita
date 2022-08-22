@@ -34,13 +34,12 @@ public class CustomListField<T, V> {
         for (int i = 0; i < size; i++) {
             Map<V, Object> constructorMap = new HashMap<>();
 
-            for (V v : vals.keySet()) {
-                List<?> val = vals.get(v);
+            for (Map.Entry<V, List<?>> entry : vals.entrySet()) {
 
-                if (val == null) continue;
+                if (entry.getValue() == null) continue;
 
-                Object value = vals.get(v).size() > i ? vals.get(v).get(i) : null;
-                constructorMap.put(v, value);
+                Object value = entry.getValue().size() > i ? entry.getValue() : null;
+                constructorMap.put(entry.getKey(), value);
             }
 
             T apply = null;
@@ -71,8 +70,8 @@ public class CustomListField<T, V> {
         for (T t : val) {
             Map<V, Object> map = factory.convertBack(t, new HashMap<>());
 
-            for (V v : map.keySet()) {
-                tempMap.get(getKey(v)).add(map.get(v));
+            for (Map.Entry<V, Object> v : map.entrySet()) {
+                tempMap.get(getKey(v.getKey())).add(v.getValue());
             }
         }
 
