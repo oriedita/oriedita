@@ -19,7 +19,6 @@ import java.util.concurrent.TimeUnit;
 public class Check4 {
     public static void apply(FoldLineSet foldLineSet) throws InterruptedException {
         foldLineSet.cAMVViolations.clear();
-        foldLineSet.unselect_all();
 
         PointLineMap map = new PointLineMap(foldLineSet.getLineSegments());
         Logger.info("check4_T_size() = " + map.getPoints().size());
