@@ -1,0 +1,75 @@
+{
+  "file_spec": 1.1,
+  "file_creator": "Crease Pattern Editor",
+  "file_classes": [
+    "singleModel"
+  ],
+  "frame_classes": [
+    "creasePattern"
+  ],
+  "vertices_coords": [
+    [0.0,0.0,0.0],
+    [1.0,0.0],
+    [1.0,1.0],
+    [0.0,1.0]
+  ],
+  "vertices_vertices": [
+    [1],
+    [2],
+    [3],
+    [0, 1]
+  ],
+  "vertices_faces": [
+    [0],
+    [0, 1],
+    [1],
+    [0,1]
+  ],
+  "edges_vertices": [
+    [0,1],
+    [1,2],
+    [2,3],
+    [3,0],
+    [3,1]
+  ],
+  "edges_assignment": [
+    "B",
+    "B",
+    "B",
+    "B",
+    "V"
+  ],
+  "edges_length": [
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.414
+  ],
+  "edges_foldAngle": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    180.0
+  ],
+  "cpedit:page": {"xMin":0,"yMin":0,"xMax":1,"yMax":1},
+  "oriedita:foo": "bar",
+  "file_title": "diagonal",
+  "faces_vertices": [
+    [0,1,3],
+    [1,2,3]
+  ],
+  "faces_edges": [
+    [3,0,4],
+    [4,1,2]
+  ],
+  "faceOrders": [
+    [0, 1, 0]
+  ],
+  "edgeOrders": [
+    [0, 1, 0],
+    [1, 2, -1],
+    [2, 3, 1]
+  ]
+}

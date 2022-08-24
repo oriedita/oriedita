@@ -4,6 +4,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.tinylog.Logger;
+import oriedita.editor.Foldable;
 import origami.folding.FoldedFigure;
 import oriedita.editor.swing.component.BulletinBoard;
 import oriedita.editor.databinding.CanvasModel;
@@ -11,7 +12,7 @@ import oriedita.editor.drawing.FoldedFigure_Drawer;
 import oriedita.editor.service.FoldingService;
 import oriedita.editor.drawing.tools.Camera;
 
-public class TwoColoredTask implements Runnable{
+public class TwoColoredTask implements OrieditaTask {
 
     private final BulletinBoard bulletinBoard;
     private final Camera creasePatternCamera;
@@ -30,21 +31,26 @@ public class TwoColoredTask implements Runnable{
     public void run() {
         long start = System.currentTimeMillis();
 
-        FoldedFigure_Drawer selectedFigure = foldingService.initFoldedFigure();
+        Foldable selectedFigure = foldingService.initFoldedFigure();
 
         try {
-            selectedFigure.foldedFigure.estimationOrder = FoldedFigure.EstimationOrder.ORDER_5;
-            selectedFigure.createTwoColorCreasePattern(creasePatternCamera, foldingService.lineSegmentsForFolding);
+            selectedFigure.setEstimationOrder(FoldedFigure.EstimationOrder.ORDER_5);
+            selectedFigure.createTwoColorCreasePattern(creasePatternCamera, foldingService.getLineSegmentsForFolding());
         } catch (InterruptedException e) {
-            selectedFigure.foldedFigure.estimated_initialize();
+            selectedFigure.estimated_initialize();
             bulletinBoard.clear();
             Logger.warn(e, "Two colored cp creation got cancelled");
         }
 
         long stop = System.currentTimeMillis();
         long L = stop - start;
-        selectedFigure.foldedFigure.text_result = selectedFigure.foldedFigure.text_result + "     Computation time " + L + " msec.";
+        selectedFigure.setTextResult(selectedFigure.getTextResult() + "     Computation time " + L + " msec.");
 
         canvasModel.markDirty();
+    }
+
+    @Override
+    public String getName() {
+        return "Two Colored CP";
     }
 }

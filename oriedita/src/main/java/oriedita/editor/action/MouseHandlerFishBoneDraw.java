@@ -26,15 +26,15 @@ public class MouseHandlerFishBoneDraw extends BaseMouseHandlerInputRestricted {
 
     //マウス操作(mouseMode==33魚の骨　でボタンを押したとき)時の作業----------------------------------------------------
     public void mousePressed(Point p0) {
-        d.lineStep.clear();
+        d.getLineStep().clear();
 
         Point p = new Point();
-        p.set(d.camera.TV2object(p0));
+        p.set(d.getCamera().TV2object(p0));
         Point closest_point = d.getClosestPoint(p);
-        if (p.distance(closest_point) > d.selectionDistance) {
+        if (p.distance(closest_point) > d.getSelectionDistance()) {
             return;
         }
-        d.lineStepAdd(new LineSegment(p, closest_point, d.lineColor));
+        d.lineStepAdd(new LineSegment(p, closest_point, d.getLineColor()));
     }
 
     //マウス操作(mouseMode==33魚の骨　でドラッグしたとき)を行う関数----------------------------------------------------
@@ -47,26 +47,26 @@ public class MouseHandlerFishBoneDraw extends BaseMouseHandlerInputRestricted {
 
     //マウス操作(mouseMode==33魚の骨　でボタンを離したとき)を行う関数----------------------------------------------------
     public void mouseReleased(Point p0) {
-        if (d.lineStep.size() == 1) {
+        if (d.getLineStep().size() == 1) {
             Point p = new Point();
-            p.set(d.camera.TV2object(p0));
+            p.set(d.getCamera().TV2object(p0));
             Point closest_point = d.getClosestPoint(p);
-            d.lineStep.get(0).setA(closest_point);
+            d.getLineStep().get(0).setA(closest_point);
 
-            if (p.distance(closest_point) <= d.selectionDistance) {  //マウスで指定した点が、最寄点と近かったときに実施
-                if (Epsilon.high.gt0(d.lineStep.get(0).determineLength())) {  //lineStep.get(0)が、線の時（=点状ではない時）に実施
-                    double dx = (d.lineStep.get(0).determineAX() - d.lineStep.get(0).determineBX()) * d.grid.getGridWidth() / d.lineStep.get(0).determineLength();
-                    double dy = (d.lineStep.get(0).determineAY() - d.lineStep.get(0).determineBY()) * d.grid.getGridWidth() / d.lineStep.get(0).determineLength();
-                    LineColor icol_temp = d.lineColor;
+            if (p.distance(closest_point) <= d.getSelectionDistance()) {  //マウスで指定した点が、最寄点と近かったときに実施
+                if (Epsilon.high.gt0(d.getLineStep().get(0).determineLength())) {  //lineStep.get(0)が、線の時（=点状ではない時）に実施
+                    double dx = (d.getLineStep().get(0).determineAX() - d.getLineStep().get(0).determineBX()) * d.getGrid().getGridWidth() / d.getLineStep().get(0).determineLength();
+                    double dy = (d.getLineStep().get(0).determineAY() - d.getLineStep().get(0).determineBY()) * d.getGrid().getGridWidth() / d.getLineStep().get(0).determineLength();
+                    LineColor icol_temp = d.getLineColor();
 
                     Point pxy = new Point();
-                    for (int i = 0; i <= (int) Math.floor(d.lineStep.get(0).determineLength() / d.grid.getGridWidth()); i++) {
-                        double px = d.lineStep.get(0).determineBX() + (double) i * dx;
-                        double py = d.lineStep.get(0).determineBY() + (double) i * dy;
+                    for (int i = 0; i <= (int) Math.floor(d.getLineStep().get(0).determineLength() / d.getGrid().getGridWidth()); i++) {
+                        double px = d.getLineStep().get(0).determineBX() + (double) i * dx;
+                        double py = d.getLineStep().get(0).determineBY() + (double) i * dy;
                         pxy.set(px, py);
 
 
-                        if (d.foldLineSet.closestLineSegmentDistanceExcludingParallel(pxy, d.lineStep.get(0)) > Epsilon.UNKNOWN_0001) {
+                        if (d.getFoldLineSet().closestLineSegmentDistanceExcludingParallel(pxy, d.getLineStep().get(0)) > Epsilon.UNKNOWN_0001) {
 
                             int i_sen = 0;
 
@@ -90,7 +90,7 @@ public class MouseHandlerFishBoneDraw extends BaseMouseHandlerInputRestricted {
                             }
 
                             if (i_sen == 2) {
-                                d.foldLineSet.del_V(pxy, d.selectionDistance, Epsilon.UNKNOWN_1EN6);
+                                d.getFoldLineSet().del_V(pxy, d.getSelectionDistance(), Epsilon.UNKNOWN_1EN6);
                             }
 
                         }
@@ -104,7 +104,7 @@ public class MouseHandlerFishBoneDraw extends BaseMouseHandlerInputRestricted {
                     d.record();
                 }  //lineStep.get(0)が、線の時（=点状ではない時）に実施は、ここまで
             }  //マウスで指定した点が、最寄点と近かったときに実施は、ここまで
-            d.lineStep.clear();
+            d.getLineStep().clear();
         }
     }
 
@@ -115,11 +115,11 @@ public class MouseHandlerFishBoneDraw extends BaseMouseHandlerInputRestricted {
 
         StraightLine tyoku1 = new StraightLine(add_line.getA(), add_line.getB());
         StraightLine.Intersection i_intersection_flg;
-        for (int i = 1; i <= d.foldLineSet.getTotal(); i++) {
-            i_intersection_flg = tyoku1.lineSegment_intersect_reverse_detail(d.foldLineSet.get(i));//0 = This straight line does not intersect a given line segment, 1 = X type intersects, 2 = T type intersects, 3 = Line segment is included in the straight line.
+        for (int i = 1; i <= d.getFoldLineSet().getTotal(); i++) {
+            i_intersection_flg = tyoku1.lineSegment_intersect_reverse_detail(d.getFoldLineSet().get(i));//0 = This straight line does not intersect a given line segment, 1 = X type intersects, 2 = T type intersects, 3 = Line segment is included in the straight line.
 
             if (i_intersection_flg.isIntersecting()) {
-                intersection_point.set(OritaCalc.findIntersection(tyoku1, d.foldLineSet.get(i)));
+                intersection_point.set(OritaCalc.findIntersection(tyoku1, d.getFoldLineSet().get(i)));
                 if (intersection_point.distance(add_line.getA()) > Epsilon.UNKNOWN_1EN5) {
                     double d_kakudo = OritaCalc.angle(add_line.getA(), add_line.getB(), add_line.getA(), intersection_point);
                     if (d_kakudo < 1.0 || d_kakudo > 359.0) {

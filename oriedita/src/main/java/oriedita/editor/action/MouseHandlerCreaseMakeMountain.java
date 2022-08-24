@@ -35,7 +35,7 @@ public class MouseHandlerCreaseMakeMountain extends BaseMouseHandlerBoxSelect {
      */
     public void mouseReleased(Point p0) {
         super.mouseReleased(p0);
-        d.lineStep.clear();
+        d.getLineStep().clear();
 
         if (selectionStart.distance(p0) > Epsilon.UNKNOWN_1EN6) {//現状では赤を赤に変えたときもUNDO用に記録されてしまう20161218
             if (d.insideToMountain(selectionStart, p0)) {
@@ -44,9 +44,9 @@ public class MouseHandlerCreaseMakeMountain extends BaseMouseHandlerBoxSelect {
             }
         } else {//現状では赤を赤に変えたときもUNDO用に記録されてしまう20161218
             Point p = new Point();
-            p.set(d.camera.TV2object(p0));
-            if (d.foldLineSet.closestLineSegmentDistance(p) < d.selectionDistance) {//点pに最も近い線分の番号での、その距離を返す	public double closestLineSegmentDistance(Ten p)
-                d.foldLineSet.closestLineSegmentSearch(p).setColor(LineColor.RED_1);
+            p.set(d.getCamera().TV2object(p0));
+            if (d.getFoldLineSet().closestLineSegmentDistance(p) < d.getSelectionDistance()) {//点pに最も近い線分の番号での、その距離を返す	public double closestLineSegmentDistance(Ten p)
+                d.getFoldLineSet().closestLineSegmentSearch(p).setColor(LineColor.RED_1);
                 d.fix2();
                 d.record();
             }

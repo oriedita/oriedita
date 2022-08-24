@@ -1,6 +1,5 @@
 package oriedita.editor;
 
-import com.formdev.flatlaf.FlatLaf;
 import org.tinylog.Logger;
 import oriedita.editor.exception.FileReadingException;
 import oriedita.editor.factory.AppFactory;
@@ -32,7 +31,7 @@ public class Oriedita {
         build.applicationModelPersistenceService().init();
 
         SwingUtilities.invokeLater(() -> {
-            FlatLaf.registerCustomDefaultsSource("oriedita.editor.themes");
+            build.lookAndFeelService().registerFlatLafSource();
 
             build.app().start();
 

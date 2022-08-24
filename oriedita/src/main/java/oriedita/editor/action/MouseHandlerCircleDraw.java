@@ -35,11 +35,11 @@ public class MouseHandlerCircleDraw extends BaseMouseHandler {
     //マウス操作(mouseMode==42 円入力　でボタンを押したとき)時の作業----------------------------------------------------
     public void mousePressed(Point p0) {
         Point p = new Point();
-        p.set(d.camera.TV2object(p0));
+        p.set(d.getCamera().TV2object(p0));
         Point closestPoint = d.getClosestPoint(p);
-        d.circleStep.clear();
-        d.lineStep.clear();
-        if (p.distance(closestPoint) <= d.selectionDistance) {
+        d.getCircleStep().clear();
+        d.getLineStep().clear();
+        if (p.distance(closestPoint) <= d.getSelectionDistance()) {
             this.previewCircle = new Circle(closestPoint, 0, LineColor.CYAN_3);
             this.previewLine = new LineSegment(p, closestPoint, LineColor.CYAN_3);
         }
@@ -48,7 +48,7 @@ public class MouseHandlerCircleDraw extends BaseMouseHandler {
     //マウス操作(mouseMode==42 円入力　でドラッグしたとき)を行う関数----------------------------------------------------
     public void mouseDragged(Point p0) {
         Point p = new Point();
-        p.set(d.camera.TV2object(p0));
+        p.set(d.getCamera().TV2object(p0));
         if (previewLine != null) {
             previewLine.setA(p);
             if (previewCircle != null) {
@@ -61,10 +61,10 @@ public class MouseHandlerCircleDraw extends BaseMouseHandler {
     public void mouseReleased(Point p0) {
         if (previewLine != null) {
             Point p = new Point();
-            p.set(d.camera.TV2object(p0));
+            p.set(d.getCamera().TV2object(p0));
             Point closestPoint = d.getClosestPoint(p);
             previewLine.setA(closestPoint);
-            if (p.distance(closestPoint) <= d.selectionDistance) {
+            if (p.distance(closestPoint) <= d.getSelectionDistance()) {
                 if (Epsilon.high.gt0(previewLine.determineLength())) {
                     d.addCircle(previewLine.determineBX(), previewLine.determineBY(), previewLine.determineLength(), LineColor.CYAN_3);
                     d.record();
@@ -82,7 +82,7 @@ public class MouseHandlerCircleDraw extends BaseMouseHandler {
             DrawingUtil.drawCircleStep(g2, previewCircle,  camera);
         }
         if (previewLine != null) {
-            DrawingUtil.drawLineStep(g2, previewLine, camera, settings.getLineWidth(), d.gridInputAssist);
+            DrawingUtil.drawLineStep(g2, previewLine, camera, settings.getLineWidth(), d.getGridInputAssist());
         }
     }
 }

@@ -1,18 +1,18 @@
 package oriedita.editor.export;
 
 import org.tinylog.Logger;
-import origami.crease_pattern.element.Circle;
-import origami.crease_pattern.element.LineColor;
-import origami.crease_pattern.element.LineSegment;
 import oriedita.editor.canvas.LineStyle;
-import oriedita.editor.save.Save;
-import oriedita.editor.save.SaveV1;
 import oriedita.editor.databinding.ApplicationModel;
 import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.databinding.FoldedFigureModel;
 import oriedita.editor.databinding.GridModel;
 import oriedita.editor.drawing.tools.Camera;
+import oriedita.editor.save.Save;
+import oriedita.editor.save.SaveProvider;
 import oriedita.editor.tools.StringOp;
+import origami.crease_pattern.element.Circle;
+import origami.crease_pattern.element.LineColor;
+import origami.crease_pattern.element.LineSegment;
 
 import java.awt.*;
 import java.io.*;
@@ -30,7 +30,7 @@ public class Orh {
      * Read an Orihime file
      */
     public static Save importFile(File file) throws IOException {
-        Save save = new SaveV1();
+        Save save = SaveProvider.createInstance();
         Pattern p = Pattern.compile("<(.+)>(.+)</(.+)>");
 
         boolean reading;

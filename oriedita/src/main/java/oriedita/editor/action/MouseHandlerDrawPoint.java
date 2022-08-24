@@ -26,11 +26,11 @@ public class MouseHandlerDrawPoint extends BaseMouseHandler {
     //マウス操作(ボタンを押したとき)時の作業
     public void mousePressed(Point p0) {
         Point p = new Point();
-        p.set(d.camera.TV2object(p0));
-        LineSegment mtsLineSegment = d.foldLineSet.closestLineSegmentSearch(p);
+        p.set(d.getCamera().TV2object(p0));
+        LineSegment mtsLineSegment = d.getFoldLineSet().closestLineSegmentSearch(p);
         LineSegment mts = new LineSegment(mtsLineSegment.getA(), mtsLineSegment.getB());//mtsは点pに最も近い線分
 
-        if (OritaCalc.determineLineSegmentDistance(p, mts) < d.selectionDistance) {
+        if (OritaCalc.determineLineSegmentDistance(p, mts) < d.getSelectionDistance()) {
             //直線t上の点pの影の位置（点pと最も近い直線t上の位置）を求める。public Ten oc.kage_motome(Tyokusen t,Ten p){}
             //線分を含む直線を得る public Tyokusen oc.Senbun2Tyokusen(Senbun s){}
             Point pk = new Point();
@@ -40,7 +40,7 @@ public class MouseHandlerDrawPoint extends BaseMouseHandler {
 
             if (OritaCalc.isInside(mts.getA(), pk, mts.getB()) == 2) {
                 //線分の分割-----------------------------------------
-                d.foldLineSet.applyLineSegmentDivide(mtsLineSegment, pk);  //i番目の線分(端点aとb)を点pで分割する。i番目の線分abをapに変え、線分pbを加える。
+                d.getFoldLineSet().applyLineSegmentDivide(mtsLineSegment, pk);  //i番目の線分(端点aとb)を点pで分割する。i番目の線分abをapに変え、線分pbを加える。
                 d.record();
             }
         }

@@ -52,23 +52,23 @@ public class MouseHandlerMoveCalculatedShape implements MouseModeHandler {
     public void mousePressed(Point p0) {
         foldedFigureCanvasSelectService.pointInCreasePatternOrFoldedFigure(p0);
 
-        FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();
+        FoldedFigure_Drawer selectedFigure = foldedFiguresList.getActiveItem();
 
         switch (canvasModel.getMouseInCpOrFoldedFigure()) {
             case CREASE_PATTERN_0:
                 creasePatternCamera.camera_position_specify_from_TV(p0);
                 break;
             case FOLDED_FRONT_1:
-                selectedFigure.foldedFigureFrontCamera.camera_position_specify_from_TV(p0);
+                selectedFigure.getFoldedFigureFrontCamera().camera_position_specify_from_TV(p0);
                 break;
             case FOLDED_BACK_2:
-                selectedFigure.foldedFigureRearCamera.camera_position_specify_from_TV(p0);
+                selectedFigure.getFoldedFigureRearCamera().camera_position_specify_from_TV(p0);
                 break;
             case TRANSPARENT_FRONT_3:
-                selectedFigure.transparentFrontCamera.camera_position_specify_from_TV(p0);
+                selectedFigure.getTransparentFrontCamera().camera_position_specify_from_TV(p0);
                 break;
             case TRANSPARENT_BACK_4:
-                selectedFigure.transparentRearCamera.camera_position_specify_from_TV(p0);
+                selectedFigure.getTransparentRearCamera().camera_position_specify_from_TV(p0);
                 break;
         }
 
@@ -77,23 +77,23 @@ public class MouseHandlerMoveCalculatedShape implements MouseModeHandler {
 
     @Override
     public void mouseDragged(Point p0) {
-        FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();
+        FoldedFigure_Drawer selectedFigure = foldedFiguresList.getActiveItem();
 
         switch (canvasModel.getMouseInCpOrFoldedFigure()) {
             case CREASE_PATTERN_0:
                 creasePatternCamera.displayPositionMove(mouse_temp0.other_Point_position(p0));
                 break;
             case FOLDED_FRONT_1:
-                selectedFigure.foldedFigureFrontCamera.displayPositionMove(mouse_temp0.other_Point_position(p0));
+                selectedFigure.getFoldedFigureFrontCamera().displayPositionMove(mouse_temp0.other_Point_position(p0));
                 break;
             case FOLDED_BACK_2:
-                selectedFigure.foldedFigureRearCamera.displayPositionMove(mouse_temp0.other_Point_position(p0));
+                selectedFigure.getFoldedFigureRearCamera().displayPositionMove(mouse_temp0.other_Point_position(p0));
                 break;
             case TRANSPARENT_FRONT_3:
-                selectedFigure.transparentFrontCamera.displayPositionMove(mouse_temp0.other_Point_position(p0));
+                selectedFigure.getTransparentFrontCamera().displayPositionMove(mouse_temp0.other_Point_position(p0));
                 break;
             case TRANSPARENT_BACK_4:
-                selectedFigure.transparentRearCamera.displayPositionMove(mouse_temp0.other_Point_position(p0));
+                selectedFigure.getTransparentRearCamera().displayPositionMove(mouse_temp0.other_Point_position(p0));
                 break;
         }
 

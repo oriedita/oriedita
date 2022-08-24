@@ -14,6 +14,32 @@ After compiling and packaging the jar is placed in the `target` directory, doubl
 javaw -jar ./oriedita/target/oriedita-0.0.10-SNAPSHOT.jar
 ```
 
+## Modules
+
+### `oriedita`
+
+Glue code, implementation of services
+
+### `oriedita-common`
+
+Service interfaces
+
+### `oriedita-data`
+
+Holds the data model for Oriedita
+
+### `oriedita-ui`
+
+All UI code.
+
+### `origami`
+
+Code for folding and origami related actions, 
+
+### `fold`
+
+FOLD parser and write, to be extracted from this repo.
+
 ## (Technical) Changes made
 
 ### Translations

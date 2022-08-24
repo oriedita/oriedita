@@ -35,7 +35,7 @@ public class MouseHandlerCreaseMakeEdge extends BaseMouseHandlerBoxSelect {
      */
     public void mouseReleased(Point p0) {
         super.mouseReleased(p0);
-        d.lineStep.clear();
+        d.getLineStep().clear();
 
         if (selectionStart.distance(p0) > Epsilon.UNKNOWN_1EN6) {
             if (d.insideToEdge(selectionStart, p0)) {
@@ -44,9 +44,9 @@ public class MouseHandlerCreaseMakeEdge extends BaseMouseHandlerBoxSelect {
             }
         } else {
             Point p = new Point();
-            p.set(d.camera.TV2object(p0));
-            if (d.foldLineSet.closestLineSegmentDistance(p) < d.selectionDistance) {//点pに最も近い線分の番号での、その距離を返す	public double mottomo_tikai_senbun_kyori(Ten p)
-                d.foldLineSet.closestLineSegmentSearch(p).setColor(LineColor.BLACK_0);
+            p.set(d.getCamera().TV2object(p0));
+            if (d.getFoldLineSet().closestLineSegmentDistance(p) < d.getSelectionDistance()) {//点pに最も近い線分の番号での、その距離を返す	public double mottomo_tikai_senbun_kyori(Ten p)
+                d.getFoldLineSet().closestLineSegmentSearch(p).setColor(LineColor.BLACK_0);
                 d.fix2();
                 d.record();
             }

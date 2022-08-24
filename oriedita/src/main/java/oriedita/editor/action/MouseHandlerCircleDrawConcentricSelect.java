@@ -30,28 +30,28 @@ public class MouseHandlerCircleDrawConcentricSelect extends BaseMouseHandler {
     //マウス操作(mouseMode==49 同心円　同心円入力　でボタンを押したとき)時の作業----------------------------------------------------
     public void mousePressed(Point p0) {
         Point p = new Point();
-        p.set(d.camera.TV2object(p0));
+        p.set(d.getCamera().TV2object(p0));
         closest_circumference.set(d.getClosestCircleMidpoint(p));
         // Point closest_point = d.getClosestPoint(p);
 
-        if ((d.lineStep.size() == 0) && (d.circleStep.size() == 0)) {
-            if (OritaCalc.distance_circumference(p, closest_circumference) > d.selectionDistance) {
+        if ((d.getLineStep().size() == 0) && (d.getCircleStep().size() == 0)) {
+            if (OritaCalc.distance_circumference(p, closest_circumference) > d.getSelectionDistance()) {
                 return;
             }
 
-            d.circleStep.add(new Circle(closest_circumference.determineCenter(), closest_circumference.getR(), LineColor.GREEN_6));
-        } else if ((d.lineStep.size() == 0) && (d.circleStep.size() == 1)) {
-            if (OritaCalc.distance_circumference(p, closest_circumference) > d.selectionDistance) {
+            d.getCircleStep().add(new Circle(closest_circumference.determineCenter(), closest_circumference.getR(), LineColor.GREEN_6));
+        } else if ((d.getLineStep().size() == 0) && (d.getCircleStep().size() == 1)) {
+            if (OritaCalc.distance_circumference(p, closest_circumference) > d.getSelectionDistance()) {
                 return;
             }
 
-            d.circleStep.add(new Circle(closest_circumference.determineCenter(), closest_circumference.getR(), LineColor.PURPLE_8));
-        } else if ((d.lineStep.size() == 0) && (d.circleStep.size() == 2)) {
-            if (OritaCalc.distance_circumference(p, closest_circumference) > d.selectionDistance) {
+            d.getCircleStep().add(new Circle(closest_circumference.determineCenter(), closest_circumference.getR(), LineColor.PURPLE_8));
+        } else if ((d.getLineStep().size() == 0) && (d.getCircleStep().size() == 2)) {
+            if (OritaCalc.distance_circumference(p, closest_circumference) > d.getSelectionDistance()) {
                 return;
             }
 
-            d.circleStep.add(new Circle(closest_circumference.determineCenter(), closest_circumference.getR(), LineColor.PURPLE_8));
+            d.getCircleStep().add(new Circle(closest_circumference.determineCenter(), closest_circumference.getR(), LineColor.PURPLE_8));
         }
     }
 
@@ -62,11 +62,11 @@ public class MouseHandlerCircleDrawConcentricSelect extends BaseMouseHandler {
 
     //マウス操作(mouseMode==49 同心円　同心円入力　でボタンを離したとき)を行う関数----------------------------------------------------
     public void mouseReleased(Point p0) {
-        if ((d.lineStep.size() == 0) && (d.circleStep.size() == 3)) {
-            Circle circle1 = d.circleStep.get(0);
-            Circle circle2 = d.circleStep.get(1);
-            Circle circle3 = d.circleStep.get(2);
-            d.circleStep.clear();
+        if ((d.getLineStep().size() == 0) && (d.getCircleStep().size() == 3)) {
+            Circle circle1 = d.getCircleStep().get(0);
+            Circle circle2 = d.getCircleStep().get(1);
+            Circle circle3 = d.getCircleStep().get(2);
+            d.getCircleStep().clear();
             double add_r = circle3.getR() - circle2.getR();
             if (!Epsilon.high.eq0(add_r)) {
                 double new_r = add_r + circle1.getR();

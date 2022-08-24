@@ -1,8 +1,8 @@
 package oriedita.editor.task;
 
 import org.tinylog.Logger;
+import oriedita.editor.databinding.CanvasModel;
 import origami.crease_pattern.FoldingException;
-import oriedita.editor.Canvas;
 import oriedita.editor.databinding.FoldedFiguresList;
 import oriedita.editor.drawing.FoldedFigure_Drawer;
 import oriedita.editor.service.FileSaveService;
@@ -10,15 +10,15 @@ import oriedita.editor.service.FoldingService;
 
 import java.io.File;
 
-public class FoldingEstimateSave100Task implements Runnable {
+public class FoldingEstimateSave100Task implements OrieditaTask {
 
-    private final Canvas canvas;
+    private final CanvasModel canvasModel;
     private final FoldingService foldingService;
     private final FileSaveService fileSaveService;
     private final FoldedFiguresList foldedFiguresList;
 
-    public FoldingEstimateSave100Task(Canvas canvas, FoldingService foldingService, FileSaveService fileSaveService, FoldedFiguresList foldedFiguresList) {
-        this.canvas = canvas;
+    public FoldingEstimateSave100Task(CanvasModel canvasModel, FoldingService foldingService, FileSaveService fileSaveService, FoldedFiguresList foldedFiguresList) {
+        this.canvasModel = canvasModel;
         this.foldingService = foldingService;
         this.fileSaveService = fileSaveService;
         this.foldedFiguresList = foldedFiguresList;
@@ -29,16 +29,16 @@ public class FoldingEstimateSave100Task implements Runnable {
         long start = System.currentTimeMillis();
 
         File file = fileSaveService.selectExportFile();
-        FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();
+        FoldedFigure_Drawer selectedFigure = foldedFiguresList.getActiveItem();
 
         if (selectedFigure == null) {
             return;
         }
 
         if (file != null) {
-            selectedFigure.foldedFigure.summary_write_image_during_execution = true;//Meaning during summary writing
+            selectedFigure.getFoldedFigure().summary_write_image_during_execution = true;//Meaning during summary writing
 
-            synchronized (canvas.w_image_running) {
+            synchronized (canvasModel.getW_image_running()) {
                 int objective = 100;
                 try {
 
@@ -50,27 +50,32 @@ public class FoldingEstimateSave100Task implements Runnable {
                             String extension = filename.substring(filename.lastIndexOf("."));
                             String basename = filename.substring(0, filename.lastIndexOf("."));
 
-                            filename = basename + "_" + selectedFigure.foldedFigure.discovered_fold_cases + extension;
+                            filename = basename + "_" + selectedFigure.getFoldedFigure().discovered_fold_cases + extension;
                         }
 
                         fileSaveService.writeImageFile(new File(filename));
 
-                        if (!selectedFigure.foldedFigure.findAnotherOverlapValid) {
-                            objective = selectedFigure.foldedFigure.discovered_fold_cases;
+                        if (!selectedFigure.getFoldedFigure().findAnotherOverlapValid) {
+                            objective = selectedFigure.getFoldedFigure().discovered_fold_cases;
                         }
                     }
                 } catch (InterruptedException | FoldingException e) {
-                    selectedFigure.foldedFigure.estimated_initialize();
+                    selectedFigure.getFoldedFigure().estimated_initialize();
                     Logger.warn(e, "Folding estimate save 100 got interrupted");
                 }
             }
-            selectedFigure.foldedFigure.summary_write_image_during_execution = false;
+            selectedFigure.getFoldedFigure().summary_write_image_during_execution = false;
         }
 
         long stop = System.currentTimeMillis();
         long L = stop - start;
-        selectedFigure.foldedFigure.text_result = selectedFigure.foldedFigure.text_result + "     Computation time " + L + " msec.";
+        selectedFigure.getFoldedFigure().text_result = selectedFigure.getFoldedFigure().text_result + "     Computation time " + L + " msec.";
 
-        canvas.repaint();
+        canvasModel.markDirty();
+    }
+
+    @Override
+    public String getName() {
+        return "Folding Estimate Save 100";
     }
 }

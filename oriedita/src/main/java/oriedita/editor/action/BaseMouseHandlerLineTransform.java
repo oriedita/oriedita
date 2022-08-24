@@ -4,7 +4,7 @@ import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
 import oriedita.editor.save.Save;
-import oriedita.editor.save.SaveV1;
+import oriedita.editor.save.SaveProvider;
 import origami.crease_pattern.FoldLineSet;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
@@ -37,8 +37,8 @@ public abstract class BaseMouseHandlerLineTransform extends BaseMouseHandlerLine
 
         delta = new Point(0,0);
         FoldLineSet ori_s_temp = new FoldLineSet();    //セレクトされた折線だけ取り出すために使う
-        Save save = new SaveV1();
-        d.foldLineSet.getMemoSelectOption(save, 2);
+        Save save = SaveProvider.createInstance();
+        d.getFoldLineSet().getMemoSelectOption(save, 2);
         ori_s_temp.setSave(save);
         lines = ori_s_temp;
         active = true;
@@ -64,7 +64,7 @@ public abstract class BaseMouseHandlerLineTransform extends BaseMouseHandlerLine
                 -selectionLine.determineBX() + selectionLine.determineAX(),
                 -selectionLine.determineBY() + selectionLine.determineAY()
         );
-        d.lineStep.clear();
+        d.getLineStep().clear();
         active = false;
         image = null;
         cacheTooBig = false;
@@ -112,10 +112,10 @@ public abstract class BaseMouseHandlerLineTransform extends BaseMouseHandlerLine
 
     private void initCacheImage(Graphics2D g2, Camera camera, DrawingSettings settings) {
         if (bottomLeft == null) {
-            double minX = lines.get_x_min();
-            double maxX = lines.get_x_max();
-            double minY = lines.get_y_min();
-            double maxY = lines.get_y_max();
+            double minX = lines.getMinX();
+            double maxX = lines.getMaxX();
+            double minY = lines.getMinY();
+            double maxY = lines.getMaxY();
 
             bottomLeft = camera.object2TV(new Point(minX, minY));
             topRight = camera.object2TV(new Point(maxX, maxY));
@@ -154,7 +154,7 @@ public abstract class BaseMouseHandlerLineTransform extends BaseMouseHandlerLine
                 s2.set(s);
                 s2.set(pa, pb);
                 DrawingUtil.drawCpLine(g2, s2, camera, settings.getLineStyle(), settings.getLineWidth(),
-                        d.pointSize, settings.getWidth(), settings.getHeight());
+                        d.getPointSize(), settings.getWidth(), settings.getHeight());
             }
         }
     }
@@ -169,7 +169,7 @@ public abstract class BaseMouseHandlerLineTransform extends BaseMouseHandlerLine
         g.setBackground(new Color(0f,0,0,0));
         for (int i = 1; i <= ori_s_temp.getTotal(); i++) {
             DrawingUtil.drawCpLine(g, ori_s_temp.get(i), camera, settings.getLineStyle(),
-                    settings.getLineWidth(), d.pointSize, image.getWidth(), image.getHeight());
+                    settings.getLineWidth(), d.getPointSize(), image.getWidth(), image.getHeight());
         }
     }
 

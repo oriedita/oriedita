@@ -1,6 +1,7 @@
 package oriedita.editor.task;
 
 import org.tinylog.Logger;
+import oriedita.editor.Foldable;
 import origami.crease_pattern.LineSegmentSet;
 import origami.folding.FoldedFigure;
 import oriedita.editor.swing.component.BulletinBoard;
@@ -8,42 +9,52 @@ import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.drawing.FoldedFigure_Drawer;
 import oriedita.editor.drawing.tools.Camera;
 
-public class FoldingEstimateTask {
+public class FoldingEstimateTask implements OrieditaTask{
     private final BulletinBoard bulletinBoard;
     private final CanvasModel canvasModel;
+    private final LineSegmentSet lineSegmentsForFolding;
+    private final Foldable selectedFigure;
+    private final FoldedFigure.EstimationOrder estimationOrder;
     private final Camera creasePatternCamera;
 
-    public FoldingEstimateTask(Camera creasePatternCamera, BulletinBoard bulletinBoard, CanvasModel canvasModel) {
+    public FoldingEstimateTask(Camera creasePatternCamera, BulletinBoard bulletinBoard, CanvasModel canvasModel, LineSegmentSet lineSegmentsForFolding, Foldable selectedFigure, FoldedFigure.EstimationOrder estimationOrder) {
         this.creasePatternCamera = creasePatternCamera;
         this.bulletinBoard = bulletinBoard;
         this.canvasModel = canvasModel;
+        this.lineSegmentsForFolding = lineSegmentsForFolding;
+        this.selectedFigure = selectedFigure;
+        this.estimationOrder = estimationOrder;
     }
 
-    public void execute(LineSegmentSet lineSegmentsForFolding, FoldedFigure_Drawer selectedFigure, FoldedFigure.EstimationOrder estimationOrder) {
-        TaskExecutor.executeTask("Folding Estimate", () -> {
-            long start = System.currentTimeMillis();
+    @Override
+    public String getName() {
+        return "Folding Estimate";
+    }
 
-            if (selectedFigure == null) {
-                return;
-            }
+    @Override
+    public void run() {
+        long start = System.currentTimeMillis();
 
-            try {
-                selectedFigure.foldedFigure.estimationOrder = estimationOrder;
-                selectedFigure.folding_estimated(creasePatternCamera, lineSegmentsForFolding);
-            } catch (Exception e) {
-                selectedFigure.foldedFigure.estimated_initialize();
-                bulletinBoard.clear();
+        if (selectedFigure == null) {
+            return;
+        }
 
-                Logger.error(e, "Folding estimation got interrupted.");
-            }
+        try {
+            selectedFigure.setEstimationOrder(estimationOrder);
+            selectedFigure.folding_estimated(creasePatternCamera, lineSegmentsForFolding);
+        } catch (Exception e) {
+            selectedFigure.estimated_initialize();
+            bulletinBoard.clear();
 
-            canvasModel.markDirty();
+            Logger.error(e, "Folding estimation got interrupted.");
+        }
 
-            long stop = System.currentTimeMillis();
-            long L = stop - start;
-            selectedFigure.foldedFigure.text_result = selectedFigure.foldedFigure.text_result + "     Computation time " + L + " msec.";
+        canvasModel.markDirty();
 
-            canvasModel.markDirty();
-        });
+        long stop = System.currentTimeMillis();
+        long L = stop - start;
+        selectedFigure.setTextResult(selectedFigure.getTextResult() + "     Computation time " + L + " msec.");
+
+        canvasModel.markDirty();
     }
 }

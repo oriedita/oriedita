@@ -26,11 +26,11 @@ public class MouseHandlerVertexDeleteOnCrease extends BaseMouseHandler {
     //マウス操作(ボタンを押したとき)時の作業
     public void mousePressed(Point p0) {
         Point p = new Point();
-        p.set(d.camera.TV2object(p0));
+        p.set(d.getCamera().TV2object(p0));
 
         //点pに最も近い線分の、点pに近い方の端点を、頂点とした場合、何本の線分が出ているか（頂点とr以内に端点がある線分の数）	public int tyouten_syuui_sennsuu(Ten p) {
 
-        d.foldLineSet.del_V_cc(p, d.selectionDistance, Epsilon.UNKNOWN_1EN6);
+        d.getFoldLineSet().del_V_cc(p, d.getSelectionDistance(), Epsilon.UNKNOWN_1EN6);
 
         d.record();
     }

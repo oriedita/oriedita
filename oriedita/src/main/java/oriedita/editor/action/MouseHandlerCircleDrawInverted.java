@@ -26,17 +26,17 @@ public class MouseHandlerCircleDrawInverted extends BaseMouseHandler {
     //マウス操作(ボタンを押したとき)時の作業
     public void mousePressed(Point p0) {
         Point p = new Point();
-        p.set(d.camera.TV2object(p0));
+        p.set(d.getCamera().TV2object(p0));
 
         Circle closest_circumference = new Circle(100000.0, 100000.0, 10.0, LineColor.PURPLE_8); //Circle with the circumference closest to the mouse
         closest_circumference.set(d.getClosestCircleMidpoint(p));
 
-        if (d.lineStep.size() + d.circleStep.size() == 0) {
+        if (d.getLineStep().size() + d.getCircleStep().size() == 0) {
             LineSegment closestLineSegment = new LineSegment();
             closestLineSegment.set(d.getClosestLineSegment(p));
 
             if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < OritaCalc.distance_circumference(p, closest_circumference)) {//線分の方が円周より近い
-                if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) > d.selectionDistance) {
+                if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) > d.getSelectionDistance()) {
                     return;
                 }
 
@@ -45,20 +45,20 @@ public class MouseHandlerCircleDrawInverted extends BaseMouseHandler {
                 return;
             }
 
-            d.lineStep.clear();
-            if (OritaCalc.distance_circumference(p, closest_circumference) > d.selectionDistance) {
+            d.getLineStep().clear();
+            if (OritaCalc.distance_circumference(p, closest_circumference) > d.getSelectionDistance()) {
                 return;
             }
 
-            d.circleStep.add(new Circle(closest_circumference.determineCenter(), closest_circumference.getR(), LineColor.GREEN_6));
+            d.getCircleStep().add(new Circle(closest_circumference.determineCenter(), closest_circumference.getR(), LineColor.GREEN_6));
             return;
         }
 
-        if (d.lineStep.size() + d.circleStep.size() == 1) {
-            if (OritaCalc.distance_circumference(p, closest_circumference) > d.selectionDistance) {
+        if (d.getLineStep().size() + d.getCircleStep().size() == 1) {
+            if (OritaCalc.distance_circumference(p, closest_circumference) > d.getSelectionDistance()) {
                 return;
             }
-            d.circleStep.add(new Circle(closest_circumference.determineCenter(), closest_circumference.getR(), LineColor.RED_1));
+            d.getCircleStep().add(new Circle(closest_circumference.determineCenter(), closest_circumference.getR(), LineColor.RED_1));
         }
     }
 
@@ -68,16 +68,16 @@ public class MouseHandlerCircleDrawInverted extends BaseMouseHandler {
 
     //マウス操作(ボタンを離したとき)を行う関数
     public void mouseReleased(Point p0) {
-        if ((d.lineStep.size() == 1) && (d.circleStep.size() == 1)) {
-            add_hanten(d.lineStep.get(0), d.circleStep.get(0));
-            d.lineStep.clear();
-            d.circleStep.clear();
+        if ((d.getLineStep().size() == 1) && (d.getCircleStep().size() == 1)) {
+            add_hanten(d.getLineStep().get(0), d.getCircleStep().get(0));
+            d.getLineStep().clear();
+            d.getCircleStep().clear();
         }
 
-        if ((d.lineStep.size() == 0) && (d.circleStep.size() == 2)) {
-            add_hanten(d.circleStep.get(0), d.circleStep.get(1));
-            d.lineStep.clear();
-            d.circleStep.clear();
+        if ((d.getLineStep().size() == 0) && (d.getCircleStep().size() == 2)) {
+            add_hanten(d.getCircleStep().get(0), d.getCircleStep().get(1));
+            d.getLineStep().clear();
+            d.getCircleStep().clear();
         }
     }
 

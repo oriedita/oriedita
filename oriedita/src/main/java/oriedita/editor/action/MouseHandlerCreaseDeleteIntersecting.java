@@ -26,7 +26,7 @@ public class MouseHandlerCreaseDeleteIntersecting extends BaseMouseHandlerLineSe
     public void mouseReleased(Point p0) {
         if (Epsilon.high.gt0(selectionLine.determineLength())) {
             //やりたい動作はここに書く
-            d.foldLineSet.deleteInsideLine(selectionLine, "lX");//lXは小文字のエルと大文字のエックス
+            d.getFoldLineSet().deleteInsideLine(selectionLine, "lX");//lXは小文字のエルと大文字のエックス
             d.record();
         }
         super.mouseReleased(p0);
