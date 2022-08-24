@@ -1207,8 +1207,4 @@ public class LeftPanel {
     public void setData(FoldedFigureModel foldedFigureModel) {
         coloredXRayCheckBox.setSelected(foldedFigureModel.isTransparencyColor());
     }
-
-    private void createUIComponents() {
-        // TODO: place custom component creation code here
-    }
 }
