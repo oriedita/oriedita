@@ -1,6 +1,7 @@
 package oriedita.editor.action;
 
 import oriedita.editor.canvas.MouseMode;
+import oriedita.editor.databinding.AngleSystemModel;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
 import origami.Epsilon;
@@ -17,6 +18,7 @@ import java.util.*;
 
 @Singleton
 public class MouseHandlerAngleSystem extends BaseMouseHandlerInputRestricted {
+    private final AngleSystemModel angleSystemModel;
     Point pStart, pEnd;
     List<LineSegment> candidates = new ArrayList<>();
     LineSegment direction;
@@ -36,7 +38,8 @@ public class MouseHandlerAngleSystem extends BaseMouseHandlerInputRestricted {
     }
 
     @Inject
-    public MouseHandlerAngleSystem() {
+    public MouseHandlerAngleSystem(AngleSystemModel angleSystemModel) {
+        this.angleSystemModel = angleSystemModel;
     }
 
     @Override
@@ -156,8 +159,8 @@ public class MouseHandlerAngleSystem extends BaseMouseHandlerInputRestricted {
     private List<LineSegment> makePreviewLines(Point pStart, Point pEnd) {
         List<LineSegment> candidates = new ArrayList<>();
         int numPreviewLines;//1つの端点周りに描く線の本数
-        if (d.getId_angle_system() != 0) {
-            numPreviewLines = d.getId_angle_system() * 2 - 1;
+        if (angleSystemModel.getCurrentAngleSystemDivider() != 0) {
+            numPreviewLines = angleSystemModel.getCurrentAngleSystemDivider() * 2 - 1;
         } else {
             numPreviewLines = 6;
         }
@@ -168,10 +171,10 @@ public class MouseHandlerAngleSystem extends BaseMouseHandlerInputRestricted {
         startingSegment.setColor(LineColor.GREEN_6);
         candidates.add(startingSegment);
 
-        if (d.getId_angle_system() != 0) {
+        if (angleSystemModel.getCurrentAngleSystemDivider() != 0) {
 
             double angle = 0.0;
-            double angleStep = 180.0 / d.getId_angle_system();
+            double angleStep = 180.0 / angleSystemModel.getCurrentAngleSystemDivider();
             for (int i = 0; i < numPreviewLines; i++) {
                 angle += angleStep;
                 LineSegment e = OritaCalc.lineSegment_rotate(startingSegment, angle, 1.0);
@@ -184,7 +187,7 @@ public class MouseHandlerAngleSystem extends BaseMouseHandlerInputRestricted {
                 candidates.add(e);
             }
         } else {
-            double[] angles = d.getAngles();
+            double[] angles = angleSystemModel.getAngles();
 
             for (int i = 0; i < 6; i++) {
                 LineSegment s = new LineSegment();

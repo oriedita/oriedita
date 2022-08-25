@@ -1,5 +1,6 @@
 package oriedita.editor.action;
 
+import oriedita.editor.databinding.AngleSystemModel;
 import oriedita.editor.tools.SnappingUtil;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
@@ -11,8 +12,14 @@ import java.awt.event.MouseEvent;
  * Mouse handler for modes which perform some action based on a drawn (magenta) line.
  */
 public abstract class BaseMouseHandlerLineSelect extends BaseMouseHandler {
+    protected final AngleSystemModel angleSystemModel;
     protected LineSegment selectionLine;
     protected boolean snapping = false;
+
+    public BaseMouseHandlerLineSelect(AngleSystemModel angleSystemModel) {
+        this.angleSystemModel = angleSystemModel;
+    }
+
     @Override
     public void mouseMoved(Point p0) {
         //Display candidate points that can be selected with the mouse. If there is an established point nearby, that point is the candidate point, and if not, the mouse position itself is the candidate point.
@@ -61,9 +68,9 @@ public abstract class BaseMouseHandlerLineSelect extends BaseMouseHandler {
     }
 
     private void snapLine() {
-        selectionLine.setA(SnappingUtil.snapToClosePointInActiveAngleSystem(d, selectionLine.getB(), selectionLine.getA()));
+        selectionLine.setA(SnappingUtil.snapToClosePointInActiveAngleSystem(d, selectionLine.getB(), selectionLine.getA(), angleSystemModel.getCurrentAngleSystemDivider(), angleSystemModel.getAngles()));
 
-        d.getLineStep().get(0).setA(SnappingUtil.snapToClosePointInActiveAngleSystem(d, d.getLineStep().get(0).getB(), d.getLineStep().get(0).getA()));
+        d.getLineStep().get(0).setA(SnappingUtil.snapToClosePointInActiveAngleSystem(d, d.getLineStep().get(0).getB(), d.getLineStep().get(0).getA(), angleSystemModel.getCurrentAngleSystemDivider(), angleSystemModel.getAngles()));
     }
 
     @Override

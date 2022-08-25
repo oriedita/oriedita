@@ -7,20 +7,19 @@ import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 
 public class SnappingUtil {
-    public static Point snapToActiveAngleSystem(CreasePattern_Worker d, Point start, Point p) {
+    public static Point snapToActiveAngleSystem(CreasePattern_Worker d, Point start, Point p, int angleSystemDivider, double[] angles) {
         double d_rad = 0.0;
         LineSegment s = new LineSegment(p, start);
         double d_angle_system;
-        if (d.getId_angle_system() != 0) {
-            d_angle_system = 180.0 / (double) d.getId_angle_system();
+        if (angleSystemDivider != 0) {
+            d_angle_system = 180.0 / (double) angleSystemDivider;
             d_rad = (Math.PI / 180) * d_angle_system * (int) Math.round(OritaCalc.angle(s) / d_angle_system);
         } else {
-            double[] jk = d.getAngles();
             double currentAngle = OritaCalc.angle(s);
 
             double d_kakudo_sa_min = 1000.0;
             for (int i = 0; i < 6; i++) {
-                double angle = jk[i] - 180.0;
+                double angle = angles[i] - 180.0;
                 if (Math.min(OritaCalc.angle_between_0_360(angle - currentAngle), OritaCalc.angle_between_0_360(currentAngle - angle)) < d_kakudo_sa_min) {
                     d_kakudo_sa_min = Math.min(OritaCalc.angle_between_0_360(angle - currentAngle), OritaCalc.angle_between_0_360(currentAngle - angle));
                     d_rad = (Math.PI / 180) * angle;
@@ -38,8 +37,8 @@ public class SnappingUtil {
         return pret;
     }
 
-    public static Point snapToClosePointInActiveAngleSystem(CreasePattern_Worker d, Point start, Point p) {
-        Point syuusei_point = snapToActiveAngleSystem(d, start, p);
+    public static Point snapToClosePointInActiveAngleSystem(CreasePattern_Worker d, Point start, Point p, int angleSystemDivider, double[] angles) {
+        Point syuusei_point = snapToActiveAngleSystem(d, start, p, angleSystemDivider, angles);
         Point closestPoint = d.getClosestPoint(syuusei_point);
         double zure_kakudo = OritaCalc.angle(start, syuusei_point, start, closestPoint);
         boolean zure_flg = (Epsilon.UNKNOWN_1EN5 < zure_kakudo) && (zure_kakudo <= 360.0 - Epsilon.UNKNOWN_1EN5);

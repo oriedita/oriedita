@@ -1,6 +1,7 @@
 package oriedita.editor.action;
 
 import oriedita.editor.canvas.MouseMode;
+import oriedita.editor.databinding.AngleSystemModel;
 import origami.Epsilon;
 import origami.crease_pattern.element.Point;
 
@@ -10,7 +11,8 @@ import javax.inject.Singleton;
 @Singleton
 public class MouseHandlerCreaseDeleteIntersecting extends BaseMouseHandlerLineSelect {
     @Inject
-    public MouseHandlerCreaseDeleteIntersecting() {
+    public MouseHandlerCreaseDeleteIntersecting(AngleSystemModel angleSystemModel) {
+        super(angleSystemModel);
     }
 
     @Override

@@ -2,6 +2,8 @@ package oriedita.editor.action;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+
+import oriedita.editor.databinding.AngleSystemModel;
 import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineColor;
@@ -11,10 +13,12 @@ import oriedita.editor.canvas.MouseMode;
 
 @Singleton
 public class MouseHandlerDrawCreaseAngleRestricted extends BaseMouseHandler {
+    private final AngleSystemModel angleSystemModel;
     double d_angle_system;
 
     @Inject
-    public MouseHandlerDrawCreaseAngleRestricted() {
+    public MouseHandlerDrawCreaseAngleRestricted(AngleSystemModel angleSystemModel) {
+        this.angleSystemModel = angleSystemModel;
     }
 
     @Override
@@ -31,8 +35,8 @@ public class MouseHandlerDrawCreaseAngleRestricted extends BaseMouseHandler {
     public void mousePressed(Point p0) {
 
         int honsuu;//1つの端点周りに描く線の本数
-        if (d.getId_angle_system() != 0) {
-            honsuu = d.getId_angle_system() * 2 - 1;
+        if (angleSystemModel.getCurrentAngleSystemDivider() != 0) {
+            honsuu = angleSystemModel.getCurrentAngleSystemDivider() * 2 - 1;
         } else {
             honsuu = 6;
         }
@@ -55,13 +59,13 @@ public class MouseHandlerDrawCreaseAngleRestricted extends BaseMouseHandler {
             boolean i_jyun;//i_jyunは線を描くとき順番に色を変えたいとき使う
             //線分abをaを中心にd度回転した線分を返す関数（元の線分は変えずに新しい線分を返す）public oc.Senbun_kaiten(Senbun s0,double d) //    double d_angle_system;double angle;
 
-            if (d.getId_angle_system() != 0) {
-                d_angle_system = 180.0 / (double) d.getId_angle_system();
+            if (angleSystemModel.getCurrentAngleSystemDivider() != 0) {
+                d_angle_system = 180.0 / (double) angleSystemModel.getCurrentAngleSystemDivider();
             } else {
                 d_angle_system = 180.0 / 4.0;
             }
 
-            if (d.getId_angle_system() != 0) {
+            if (angleSystemModel.getCurrentAngleSystemDivider() != 0) {
                 LineSegment s_kiso = new LineSegment(d.getLineStep().get(0).getA(), d.getLineStep().get(0).getB());
                 double angle = 0.0;
                 i_jyun = false;
@@ -90,8 +94,8 @@ public class MouseHandlerDrawCreaseAngleRestricted extends BaseMouseHandler {
                     d.lineStepAdd(s);
                 }
             }
-            if (d.getId_angle_system() == 0) {
-                double[] jk = d.getAngles();
+            if (angleSystemModel.getCurrentAngleSystemDivider() == 0) {
+                double[] jk = angleSystemModel.getAngles();
 
                 LineSegment s_kiso = new LineSegment(d.getLineStep().get(0).getA(), d.getLineStep().get(0).getB());
                 double angle = 0.0;

@@ -1,5 +1,6 @@
 package oriedita.editor.action;
 
+import oriedita.editor.databinding.AngleSystemModel;
 import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
@@ -27,7 +28,8 @@ public abstract class BaseMouseHandlerLineTransform extends BaseMouseHandlerLine
     private double lastAngle;
     private Point bottomLeft, topRight;
 
-    protected BaseMouseHandlerLineTransform(CanvasModel canvasModel) {
+    protected BaseMouseHandlerLineTransform(CanvasModel canvasModel, AngleSystemModel angleSystemModel) {
+        super(angleSystemModel);
         this.canvasModel = canvasModel;
     }
 

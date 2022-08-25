@@ -1,6 +1,7 @@
 package oriedita.editor.action;
 
 import oriedita.editor.canvas.MouseMode;
+import oriedita.editor.databinding.AngleSystemModel;
 import oriedita.editor.tools.SnappingUtil;
 import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
@@ -12,11 +13,12 @@ import javax.inject.Singleton;
 
 @Singleton
 public class MouseHandlerDrawCreaseAngleRestricted5 extends BaseMouseHandlerInputRestricted {
-    double d_angle_system;
+    private final AngleSystemModel angleSystemModel;
     Point start;
 
     @Inject
-    public MouseHandlerDrawCreaseAngleRestricted5() {
+    public MouseHandlerDrawCreaseAngleRestricted5(AngleSystemModel angleSystemModel) {
+        this.angleSystemModel = angleSystemModel;
     }
 
     @Override
@@ -75,7 +77,7 @@ public class MouseHandlerDrawCreaseAngleRestricted5 extends BaseMouseHandlerInpu
     public Point syuusei_point_A_37(Point p0) {
         Point p = new Point();
         p.set(d.getCamera().TV2object(p0));
-        return SnappingUtil.snapToActiveAngleSystem(d, start, p);
+        return SnappingUtil.snapToActiveAngleSystem(d, start, p, angleSystemModel.getCurrentAngleSystemDivider(), angleSystemModel.getAngles());
     }
 
     // ---

@@ -79,11 +79,7 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     private Color customCircleColor;//Stores custom colors for circles and auxiliary hot lines
     private FoldLineAdditionalInputMode i_foldLine_additional = FoldLineAdditionalInputMode.POLY_LINE_0;//= 0 is polygonal line input = 1 is auxiliary line input mode (when inputting a line segment, these two). When deleting a line segment, the value becomes as follows. = 0 is the deletion of the polygonal line, = 1 is the deletion of the auxiliary picture line, = 2 is the deletion of the black line, = 3 is the deletion of the auxiliary live line, = 4 is the folding line, the auxiliary live line and the auxiliary picture line.
     private FoldLineSet auxLines = new FoldLineSet();    //Store auxiliary lines
-    private int id_angle_system = 8;//180 / id_angle_system represents the angular system. For example, if id_angle_system = 3, 180/3 = 60 degrees, if id_angle_system = 5, 180/5 = 36 degrees
     private int foldLineDividingNumber = 1;
-    private double d_restricted_angle_1;
-    private double d_restricted_angle_2;
-    private double d_restricted_angle_3;
     private int numPolygonCorners = 5;
     private String text_cp_setumei;
     private String s_title; //Used to hold the title that appears at the top of the frame
@@ -598,10 +594,6 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
         circleStep.clear();
     }
 
-    public void set_id_angle_system(int i) {
-        id_angle_system = i;
-    }
-
     //--------------------------------------------------------------------------------------
     //Mouse operation----------------------------------------------------------------------------
     //--------------------------------------------------------------------------------------
@@ -912,13 +904,6 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     }
 
     @Override
-    public void set_d_restricted_angle(double d_1, double d_2, double d_3) {
-        d_restricted_angle_1 = d_1;
-        d_restricted_angle_2 = d_2;
-        d_restricted_angle_3 = d_3;
-    }
-
-    @Override
     public void setFoldLineAdditional(FoldLineAdditionalInputMode i) {
         i_foldLine_additional = i;
     }
@@ -1028,9 +1013,6 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
 
     @Override
     public void setData(AngleSystemModel angleSystemModel) {
-        set_id_angle_system(angleSystemModel.getCurrentAngleSystemDivider());
-        set_d_restricted_angle(angleSystemModel.getCurrentAngleA(), angleSystemModel.getCurrentAngleB(), angleSystemModel.getCurrentAngleC());
-
         unselect_all();
     }
 
@@ -1105,23 +1087,6 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     @Override
     public int getPointSize() {
         return pointSize;
-    }
-
-    @Override
-    public double[] getAngles() {
-        return new double[]{
-                d_restricted_angle_1,
-                d_restricted_angle_2,
-                d_restricted_angle_3,
-                360 - d_restricted_angle_1,
-                360 - d_restricted_angle_2,
-                360 - d_restricted_angle_3
-        };
-    }
-
-    @Override
-    public int getId_angle_system() {
-        return id_angle_system;
     }
 
     @Override

@@ -159,8 +159,6 @@ public interface CreasePattern_Worker {
 
     void setFoldLineDividingNumber(int i);
 
-    void set_d_restricted_angle(double d_1, double d_2, double d_3);
-
     void setNumPolygonCorners(int i);
 
     void setFoldLineAdditional(FoldLineAdditionalInputMode i);
@@ -219,10 +217,6 @@ public interface CreasePattern_Worker {
     FoldLineSet getFoldLineSet();
 
     int getPointSize();
-
-    double[] getAngles();
-
-    int getId_angle_system();
 
     List<Circle> getCircleStep();
 

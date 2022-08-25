@@ -2,6 +2,7 @@ package oriedita.editor.action;
 
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.canvas.MouseMode;
+import oriedita.editor.databinding.AngleSystemModel;
 import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.save.Save;
 import oriedita.editor.save.SaveProvider;
@@ -21,8 +22,8 @@ public class MouseHandlerCreaseMove extends BaseMouseHandlerLineTransform {
     }
 
     @Inject
-    public MouseHandlerCreaseMove(CreasePattern_Worker d, CanvasModel canvasModel) {
-        super(canvasModel);
+    public MouseHandlerCreaseMove(CreasePattern_Worker d, CanvasModel canvasModel, AngleSystemModel angleSystemModel) {
+        super(canvasModel, angleSystemModel);
         this.d = d;
     }
 

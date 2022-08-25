@@ -240,6 +240,17 @@ public class AngleSystemModel {
         this.pcs.firePropertyChange(null, null, null);
     }
 
+    public double[] getAngles() {
+        return new double[]{
+                currentAngleA,
+                currentAngleB,
+                currentAngleC,
+                360 - currentAngleA,
+                360 - currentAngleB,
+                360 - currentAngleC,
+        };
+    }
+
     public enum AngleSystemInputType {
         NONE_0,
         DEG_1,
