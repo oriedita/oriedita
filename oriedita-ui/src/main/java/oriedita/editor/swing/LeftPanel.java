@@ -602,7 +602,11 @@ public class LeftPanel {
                 applicationModel.setGridScaleColor(color);
             }
         });
-        setGridParametersButton.addActionListener(e -> getData(gridModel));
+        setGridParametersButton.addActionListener(e -> {
+            getData(gridModel);
+            // Update the view if the grid angle got reset
+            setData(gridModel);
+        });
         gridAngleTextField.addActionListener(e -> setGridParametersButton.doClick());
         resetButton.addActionListener(e -> gridModel.reset());
     }

@@ -220,13 +220,7 @@ public class GridModel implements Serializable {
     public void setGridAngle(final double gridAngle) {
         double oldAngle = this.gridAngle;
         double newAngle = gridAngle;
-        if (Math.abs(OritaCalc.angle_between_0_360(this.gridAngle)) < Epsilon.UNKNOWN_01) {
-            newAngle = 90.0;
-        }
-        if (Math.abs(OritaCalc.angle_between_0_360(this.gridAngle - 180.0)) < Epsilon.UNKNOWN_01) {
-            newAngle = 90.0;
-        }
-        if (Math.abs(OritaCalc.angle_between_0_360(this.gridAngle - 360.0)) < Epsilon.UNKNOWN_01) {
+        if (newAngle < Epsilon.UNKNOWN_01 || newAngle > 180.0 - Epsilon.UNKNOWN_01) {
             newAngle = 90.0;
         }
 
