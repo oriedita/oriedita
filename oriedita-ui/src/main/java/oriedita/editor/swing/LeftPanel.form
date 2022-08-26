@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="oriedita.editor.swing.LeftPanel">
-  <grid id="27dc6" binding="root" layout-manager="GridLayoutManager" row-count="22" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="1" vgap="1">
+  <grid id="27dc6" binding="root" layout-manager="GridLayoutManager" row-count="23" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="1" vgap="1">
     <margin top="1" left="1" bottom="1" right="1"/>
     <constraints>
-      <xy x="20" y="20" width="483" height="964"/>
+      <xy x="20" y="20" width="584" height="987"/>
     </constraints>
     <properties/>
     <border type="none"/>
     <children>
       <nested-form id="f03b2" form-file="oriedita/editor/swing/component/UndoRedo.form" binding="undoRedo">
         <constraints>
-          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="0" column="0" row-span="1" col-span="3" vsize-policy="1" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
       </nested-form>
       <grid id="f0ac3" layout-manager="GridLayoutManager" row-count="1" column-count="6" same-size-horizontally="false" same-size-vertically="true" hgap="1" vgap="1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
-          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="1" column="0" row-span="1" col-span="3" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties/>
         <border type="none"/>
@@ -74,7 +74,7 @@
       <grid id="c6fbb" layout-manager="GridLayoutManager" row-count="1" column-count="4" same-size-horizontally="true" same-size-vertically="false" hgap="1" vgap="1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
-          <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="3" column="0" row-span="1" col-span="3" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties/>
         <border type="none"/>
@@ -120,7 +120,7 @@
       <grid id="7161c" layout-manager="GridLayoutManager" row-count="1" column-count="4" same-size-horizontally="true" same-size-vertically="false" hgap="1" vgap="1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
-          <grid row="9" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="9" column="0" row-span="1" col-span="3" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties/>
         <border type="none"/>
@@ -165,7 +165,7 @@
       <grid id="94876" layout-manager="GridLayoutManager" row-count="1" column-count="3" same-size-horizontally="true" same-size-vertically="false" hgap="1" vgap="1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
-          <grid row="10" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="10" column="0" row-span="1" col-span="3" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties/>
         <border type="none"/>
@@ -202,7 +202,7 @@
       <grid id="c4e26" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="true" same-size-vertically="false" hgap="1" vgap="1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
-          <grid row="11" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="11" column="0" row-span="1" col-span="3" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties/>
         <border type="none"/>
@@ -228,7 +228,7 @@
       <grid id="19cc9" layout-manager="GridLayoutManager" row-count="1" column-count="5" same-size-horizontally="false" same-size-vertically="false" hgap="1" vgap="1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
-          <grid row="12" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="12" column="0" row-span="1" col-span="3" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties/>
         <border type="none"/>
@@ -278,7 +278,7 @@
       <grid id="d6f82" layout-manager="GridLayoutManager" row-count="1" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="1" vgap="1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
-          <grid row="18" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="19" column="0" row-span="1" col-span="3" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties/>
         <border type="none"/>
@@ -313,7 +313,7 @@
       <grid id="92167" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="true" same-size-vertically="false" hgap="1" vgap="1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
-          <grid row="19" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="20" column="0" row-span="1" col-span="3" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties/>
         <border type="none"/>
@@ -339,7 +339,7 @@
       <grid id="acbac" layout-manager="GridLayoutManager" row-count="1" column-count="5" same-size-horizontally="false" same-size-vertically="false" hgap="1" vgap="1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
-          <grid row="20" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="21" column="0" row-span="1" col-span="3" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties/>
         <border type="none"/>
@@ -389,7 +389,7 @@
       <grid id="9a3c7" layout-manager="GridLayoutManager" row-count="5" column-count="4" same-size-horizontally="true" same-size-vertically="false" hgap="1" vgap="1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
-          <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="4" column="0" row-span="1" col-span="3" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties/>
         <border type="none"/>
@@ -563,7 +563,7 @@
       <grid id="eb3e0" layout-manager="GridLayoutManager" row-count="3" column-count="4" same-size-horizontally="false" same-size-vertically="false" hgap="1" vgap="1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
-          <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="6" column="0" row-span="1" col-span="3" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties/>
         <border type="none"/>
@@ -653,7 +653,7 @@
       <grid id="97077" layout-manager="GridLayoutManager" row-count="3" column-count="5" same-size-horizontally="false" same-size-vertically="false" hgap="1" vgap="1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
-          <grid row="14" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="14" column="0" row-span="1" col-span="3" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties/>
         <border type="none"/>
@@ -772,7 +772,7 @@
       <grid id="79e6f" layout-manager="GridLayoutManager" row-count="1" column-count="4" same-size-horizontally="true" same-size-vertically="false" hgap="1" vgap="1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
-          <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="8" column="0" row-span="1" col-span="3" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties/>
         <border type="none"/>
@@ -814,7 +814,7 @@
       </grid>
       <vspacer id="7b4c3">
         <constraints>
-          <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false">
+          <grid row="5" column="0" row-span="1" col-span="3" vsize-policy="3" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false">
             <minimum-size width="-1" height="5"/>
             <preferred-size width="-1" height="5"/>
           </grid>
@@ -822,7 +822,7 @@
       </vspacer>
       <vspacer id="de56">
         <constraints>
-          <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false">
+          <grid row="7" column="0" row-span="1" col-span="3" vsize-policy="3" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false">
             <minimum-size width="-1" height="5"/>
             <preferred-size width="-1" height="5"/>
           </grid>
@@ -830,7 +830,7 @@
       </vspacer>
       <vspacer id="3b0cc">
         <constraints>
-          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false">
+          <grid row="2" column="0" row-span="1" col-span="3" vsize-policy="3" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false">
             <minimum-size width="-1" height="5"/>
             <preferred-size width="-1" height="5"/>
           </grid>
@@ -838,7 +838,7 @@
       </vspacer>
       <vspacer id="7d041">
         <constraints>
-          <grid row="17" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false">
+          <grid row="18" column="0" row-span="1" col-span="3" vsize-policy="3" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false">
             <minimum-size width="-1" height="5"/>
             <preferred-size width="-1" height="5"/>
           </grid>
@@ -846,12 +846,12 @@
       </vspacer>
       <vspacer id="3f4a3">
         <constraints>
-          <grid row="21" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+          <grid row="22" column="0" row-span="1" col-span="3" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
         </constraints>
       </vspacer>
       <vspacer id="85fdf">
         <constraints>
-          <grid row="13" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false">
+          <grid row="13" column="0" row-span="1" col-span="3" vsize-policy="3" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false">
             <minimum-size width="-1" height="5"/>
             <preferred-size width="-1" height="5"/>
           </grid>
@@ -860,7 +860,7 @@
       <grid id="64df9" layout-manager="GridLayoutManager" row-count="1" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
-          <grid row="16" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="16" column="0" row-span="1" col-span="3" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties/>
         <border type="none"/>
@@ -898,7 +898,7 @@
       <grid id="b0059" layout-manager="GridLayoutManager" row-count="2" column-count="5" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
-          <grid row="15" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="15" column="0" row-span="1" col-span="3" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties/>
         <border type="none"/>
@@ -1003,6 +1003,15 @@
           </component>
         </children>
       </grid>
+      <component id="d39f5" class="javax.swing.JCheckBox" binding="drawDiagonalGridlinesCheckBox">
+        <constraints>
+          <grid row="17" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Draw diagonal gridlines"/>
+          <toolTipText value="Draw diagonal gridlines"/>
+        </properties>
+      </component>
     </children>
   </grid>
 </form>
