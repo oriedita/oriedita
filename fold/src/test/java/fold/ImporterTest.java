@@ -58,8 +58,8 @@ public class ImporterTest extends BaseFoldTest {
         Assertions.assertNull(foldFile.getFrameAuthor());
         Assertions.assertNull(foldFile.getFrameTitle());
         Assertions.assertNull(foldFile.getFrameDescription());
-        Assertions.assertNull(foldFile.getFrameClasses());
-        Assertions.assertNull(foldFile.getAttributes());
+        Assertions.assertEquals(Collections.emptyList(), foldFile.getFrameClasses());
+        Assertions.assertEquals(Collections.emptyList(), foldFile.getAttributes());
         Assertions.assertNull(foldFile.getUnit());
 
         Assertions.assertEquals(0, foldFile.getVertices().size());

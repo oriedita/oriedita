@@ -1,6 +1,8 @@
 package fold;
 
-public class FoldFileFormatException extends Exception {
+import java.io.IOException;
+
+public class FoldFileFormatException extends IOException {
     public FoldFileFormatException(String message) {
         super(message);
     }

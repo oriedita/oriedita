@@ -63,8 +63,8 @@
     </dependencyManagement>
 
     <properties>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <dagger.version>2.43.2</dagger.version>
         <snapshot-test.version>3.3.0</snapshot-test.version>

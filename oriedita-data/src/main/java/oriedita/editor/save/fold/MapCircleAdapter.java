@@ -1,6 +1,6 @@
 package oriedita.editor.save.fold;
 
-import fold.adapter.Adapter;
+import fold.custom.Adapter;
 import origami.crease_pattern.element.Circle;
 import origami.crease_pattern.element.LineColor;
 

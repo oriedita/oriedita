@@ -61,6 +61,6 @@ public class ExporterTest extends BaseFoldTest {
 
         File exportFile = File.createTempFile("testSaveInvalidProperty", ".fold");
 
-        Assertions.assertThrows(RuntimeException.class, () -> exporter.exportFile(exportFile, foldFile));
+        Assertions.assertThrows(FoldFileFormatException.class, () -> exporter.exportFile(exportFile, foldFile));
     }
 }

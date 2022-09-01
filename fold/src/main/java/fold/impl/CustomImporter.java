@@ -1,15 +1,15 @@
 package fold.impl;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import fold.FoldFileFormatException;
 import fold.Importer;
-import fold.json.FoldObjectMapper;
+import fold.json.Fold;
 import fold.model.FoldFile;
-import fold.model.internal.InternalFoldFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
+import java.nio.file.Files;
+
+import static fold.json.Fold.json;
 
 public class CustomImporter<T extends FoldFile> implements Importer<T> {
     private final Class<T> tClass;
@@ -21,14 +21,8 @@ public class CustomImporter<T extends FoldFile> implements Importer<T> {
     @Override
     public T importFile(File file) throws FoldFileFormatException {
         try {
-            ObjectMapper mapper = new FoldObjectMapper();
-
-            T instance = tClass.getDeclaredConstructor().newInstance();
-
-            return AdapterFactory.getCustomFoldFileAdapter(InternalFoldFile.class, tClass)
-                    .convert(mapper.readValue(file, InternalFoldFile.class), instance);
-        } catch (IOException | NoSuchMethodException | InstantiationException | IllegalAccessException |
-                 InvocationTargetException e) {
+            return json.beanFrom(tClass, Files.newBufferedReader(file.toPath()));
+        } catch (IOException e) {
             throw new FoldFileFormatException(e);
         }
     }
