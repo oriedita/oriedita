@@ -31,30 +31,38 @@ public class FoldFileReader<T extends FoldFile> extends ValueReader {
         String fieldName;
         while ((fieldName = p.nextFieldName()) != null) {
             switch (fieldName) {
-                case "file_spec" -> {
+                case "file_spec":
                     p.nextToken();
                     instance.setSpec(p.getDoubleValue());
-                }
-                case "file_creator" -> instance.setCreator(p.nextTextValue());
-                case "file_author" -> instance.setAuthor(p.nextTextValue());
-                case "file_title" -> instance.setTitle(p.nextTextValue());
-                case "file_description" -> instance.setDescription(p.nextTextValue());
-                case "file_classes" -> {
+                    break;
+                case "file_creator":
+                    instance.setCreator(p.nextTextValue());
+                    break;
+                case "file_author":
+                    instance.setAuthor(p.nextTextValue());
+                    break;
+                case "file_title":
+                    instance.setTitle(p.nextTextValue());
+                    break;
+                case "file_description":
+                    instance.setDescription(p.nextTextValue());
+                    break;
+                case "file_classes":
                     p.nextToken();
                     instance.getClasses().addAll(reader.readListOf(String.class));
-                }
-                case "file_frames" -> {
+                    break;
+                case "file_frames":
                     p.nextToken();
                     instance.getFrames().addAll(reader.readListOf(FoldFrame.class));
-                }
-                default -> {
+                    break;
+                default:
                     if (fieldName.contains(":")) {
                         p.nextToken();
                         instance.getCustomPropertyMap().put(fieldName, reader.readValue());
                     } else {
                         foldFrameFactory.readField(fieldName, reader, p);
                     }
-                }
+                    break;
             }
         }
 

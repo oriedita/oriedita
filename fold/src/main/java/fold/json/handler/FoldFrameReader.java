@@ -59,40 +59,67 @@ public class FoldFrameReader extends ValueReader {
 
         public void readField(String fieldName, JSONReader reader, JsonParser p) throws IOException {
             switch (fieldName) {
-                case "frame_author" -> instance.setFrameAuthor(p.nextTextValue());
-                case "frame_title" -> instance.setFrameTitle(p.nextTextValue());
-                case "frame_description" -> instance.setFrameDescription(p.nextTextValue());
-                case "frame_classes" -> {
+                case "frame_author":
+                    instance.setFrameAuthor(p.nextTextValue());
+                    break;
+                case "frame_title":
+                    instance.setFrameTitle(p.nextTextValue());
+                    break;
+                case "frame_description":
+                    instance.setFrameDescription(p.nextTextValue());
+                    break;
+                case "frame_classes":
                     p.nextToken();
                     instance.setFrameClasses(reader.readListOf(String.class));
-                }
-                case "frame_attributes" -> {
+                    break;
+                case "frame_attributes":
                     p.nextToken();
                     instance.setAttributes(reader.readListOf(String.class));
-                }
-                case "frame_unit" -> instance.setUnit(p.nextTextValue());
-                case "vertices_coords" -> vertices_coords = readListListOf(Double.class, reader, p);
-                case "vertices_vertices" -> vertices_vertices = readListListOf(Integer.class, reader, p);
-                case "vertices_faces" -> vertices_faces = readListListOf(Integer.class, reader, p);
-                case "edges_vertices" -> edges_vertices = readListListOf(Integer.class, reader, p);
-                case "edges_faces" -> edges_faces = readListListOf(Integer.class, reader, p);
-                case "edges_assignment" -> {
+                    break;
+                case "frame_unit":
+                    instance.setUnit(p.nextTextValue());
+                    break;
+                case "vertices_coords":
+                    vertices_coords = readListListOf(Double.class, reader, p);
+                    break;
+                case "vertices_vertices":
+                    vertices_vertices = readListListOf(Integer.class, reader, p);
+                    break;
+                case "vertices_faces":
+                    vertices_faces = readListListOf(Integer.class, reader, p);
+                    break;
+                case "edges_vertices":
+                    edges_vertices = readListListOf(Integer.class, reader, p);
+                    break;
+                case "edges_faces":
+                    edges_faces = readListListOf(Integer.class, reader, p);
+                    break;
+                case "edges_assignment":
                     p.nextToken();
                     edges_assignment = reader.readListOf(String.class);
-                }
-                case "edges_foldAngle" -> {
+                    break;
+                case "edges_foldAngle":
                     p.nextToken();
                     edges_foldAngle = reader.readListOf(Double.class);
-                }
-                case "edges_length" -> {
+                    break;
+                case "edges_length":
                     p.nextToken();
                     edges_length = reader.readListOf(Double.class);
-                }
-                case "faces_vertices" -> faces_vertices = readListListOf(Integer.class, reader, p);
-                case "faces_edges" -> faces_edges = readListListOf(Integer.class, reader, p);
-                case "edgeOrders" -> edgeOrders = readListListOf(Integer.class, reader, p);
-                case "faceOrders" -> faceOrders = readListListOf(Integer.class, reader, p);
-                default -> throw new FoldFileFormatException("Field \"" + fieldName + "\" not valid");
+                    break;
+                case "faces_vertices":
+                    faces_vertices = readListListOf(Integer.class, reader, p);
+                    break;
+                case "faces_edges":
+                    faces_edges = readListListOf(Integer.class, reader, p);
+                    break;
+                case "edgeOrders":
+                    edgeOrders = readListListOf(Integer.class, reader, p);
+                    break;
+                case "faceOrders":
+                    faceOrders = readListListOf(Integer.class, reader, p);
+                    break;
+                default:
+                    throw new FoldFileFormatException("Field \"" + fieldName + "\" not valid");
             }
         }
 
