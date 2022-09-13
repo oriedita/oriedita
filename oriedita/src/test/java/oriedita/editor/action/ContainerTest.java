@@ -9,6 +9,8 @@ import org.jboss.weld.junit5.WeldSetup;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import oriedita.editor.action2.OrieditaAction;
+import oriedita.editor.action2.ActionType;
 import oriedita.editor.canvas.MouseMode;
 
 import java.util.List;
@@ -19,6 +21,8 @@ import java.util.stream.Collectors;
 public class ContainerTest {
 
     public static final String TEST_CONTAINER_ID = "TEST123";
+    @WeldSetup
+    public WeldInitiator weld = WeldInitiator.of(new Weld().containerId(TEST_CONTAINER_ID));
 
     private <T> void assertSetEquality(Set<T> options, Set<T> implementations) {
         List<T> differences = implementations.stream().sorted()
@@ -36,8 +40,23 @@ public class ContainerTest {
         Assertions.assertEquals(options, implementations);
     }
 
-    @WeldSetup
-    public WeldInitiator weld = WeldInitiator.of(new Weld().containerId(TEST_CONTAINER_ID));
+    /**
+     * Asserts if the implementation of actions is equal to the values in the OrieditaActionType enum.
+     */
+    @Test
+    public void testAllActions() {
+        Instance<OrieditaAction> instances = weld.select(OrieditaAction.class, new Any.Literal());
+
+        try {
+            Set<ActionType> implementedHandlers = instances.stream()
+                    .map(OrieditaAction::getActionType)
+                    .collect(Collectors.toSet());
+
+            assertSetEquality(Set.of(ActionType.values()), implementedHandlers);
+        } catch (Exception e) {
+            Assertions.fail(e);
+        }
+    }
 
     /**
      * Asserts if the implementations of mousehandlers actually is equal to the values in the MouseMode enum.

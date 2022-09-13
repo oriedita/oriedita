@@ -9,6 +9,7 @@ import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import org.tinylog.Logger;
 import oriedita.editor.Colors;
+import oriedita.editor.action2.*;
 import oriedita.editor.FrameProvider;
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.canvas.FoldLineAdditionalInputMode;
@@ -29,12 +30,29 @@ import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
+import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.ResourceBundle;
 
 @ApplicationScoped
 public class LeftPanel {
+    @Inject @ActionHandler(ActionType.lineWidthDecreaseAction)
+    LineWidthDecreaseAction lineWidthDecreaseAction;
+    private final FrameProvider frameProvider;
+    private final HistoryState historyState;
     private final MeasuresModel measuresModel;
+    private final ButtonService buttonService;
+    private final CreasePattern_Worker mainCreasePatternWorker;
+    private final ApplicationModel applicationModel;
+    private final FoldedFigureModel foldedFigureModel;
+    private final GridModel gridModel;
+    private final CanvasModel canvasModel;
+    private final DrawCreaseFreeAction drawCreaseFreeAction;
+    private final FoldingService foldingService;
+    private final FoldedFiguresList foldedFiguresList;
     private JPanel root;
 
     private JTextField lineSegmentDivisionTextField;
@@ -145,17 +163,33 @@ public class LeftPanel {
                      FoldedFigureModel foldedFigureModel,
                      GridModel gridModel,
                      CanvasModel canvasModel,
+                     @ActionHandler(ActionType.drawCreaseFreeAction) DrawCreaseFreeAction drawCreaseFreeAction,
                      FoldingService foldingService,
                      FoldedFiguresList foldedFiguresList) {
+        this.frameProvider = frameProvider;
+        this.historyState = historyState;
         this.measuresModel = measuresModel;
+        this.buttonService = buttonService;
+        this.mainCreasePatternWorker = mainCreasePatternWorker;
+        this.applicationModel = applicationModel;
+        this.foldedFigureModel = foldedFigureModel;
+        this.gridModel = gridModel;
+        this.canvasModel = canvasModel;
+        this.drawCreaseFreeAction = drawCreaseFreeAction;
+        this.foldingService = foldingService;
+        this.foldedFiguresList = foldedFiguresList;
+
+
+    }
+
+    public void init() {
+        buttonService.addDefaultListener($$$getRootComponent$$$());
 
         applicationModel.addPropertyChangeListener(e -> setData(e, applicationModel));
         gridModel.addPropertyChangeListener(e -> setData(gridModel));
         foldedFigureModel.addPropertyChangeListener(e -> setData(foldedFigureModel));
         canvasModel.addPropertyChangeListener(e -> setData(e, canvasModel));
         historyState.addPropertyChangeListener(e -> setData(historyState));
-
-        $$$setupUI$$$();
 
         setData(historyState);
 
@@ -167,7 +201,6 @@ public class LeftPanel {
         buttonService.registerButton(pointSizeIncreaseButton, "pointSizeIncreaseAction");
         buttonService.registerButton(antiAliasToggleButton, "antiAliasToggleAction");
         buttonService.registerButton(lineStyleChangeButton, "lineStyleChangeAction");
-        buttonService.registerButton(drawCreaseFreeButton, "drawCreaseFreeAction");
         buttonService.registerButton(drawCreaseRestrictedButton, "drawCreaseRestrictedAction");
         buttonService.registerButton(voronoiButton, "voronoiAction");
         buttonService.registerButton(makeFlatFoldableButton, "makeFlatFoldableAction");
@@ -260,7 +293,6 @@ public class LeftPanel {
         undoRedo.addRedoActionListener(e -> {
             mainCreasePatternWorker.redo();
         });
-        lineWidthDecreaseButton.addActionListener(e -> applicationModel.decreaseLineWidth());
         lineWidthIncreaseButton.addActionListener(e -> applicationModel.increaseLineWidth());
         pointSizeDecreaseButton.addActionListener(e -> applicationModel.decreasePointSize());
         pointSizeIncreaseButton.addActionListener(e -> applicationModel.increasePointSize());
@@ -270,13 +302,7 @@ public class LeftPanel {
         colBlueButton.addActionListener(e -> canvasModel.setLineColor(LineColor.BLUE_2));
         colBlackButton.addActionListener(e -> canvasModel.setLineColor(LineColor.BLACK_0));
         colCyanButton.addActionListener(e -> canvasModel.setLineColor(LineColor.CYAN_3));
-        drawCreaseFreeButton.addActionListener(e -> {
-            canvasModel.setFoldLineAdditionalInputMode(FoldLineAdditionalInputMode.POLY_LINE_0);
-            canvasModel.setMouseMode(MouseMode.DRAW_CREASE_FREE_1);
-            canvasModel.setMouseModeAfterColorSelection(MouseMode.DRAW_CREASE_FREE_1);
-
-            mainCreasePatternWorker.unselect_all();
-        });
+//        drawCreaseFreeButton.setAction(drawCreaseFreeAction);
         drawCreaseRestrictedButton.addActionListener(e -> {
             canvasModel.setMouseMode(MouseMode.DRAW_CREASE_RESTRICTED_11);
             canvasModel.setMouseModeAfterColorSelection(MouseMode.DRAW_CREASE_RESTRICTED_11);
@@ -647,6 +673,13 @@ public class LeftPanel {
         gridSizeDecreaseButton.setEnabled(data.getGridSize() != 1);
     }
 
+    {
+// GUI initializer generated by IntelliJ IDEA GUI Designer
+// >>> IMPORTANT!! <<<
+// DO NOT EDIT OR ADD ANY CODE HERE!
+        $$$setupUI$$$();
+    }
+
     /**
      * Method generated by IntelliJ IDEA GUI Designer
      * >>> IMPORTANT!! <<<
@@ -663,6 +696,7 @@ public class LeftPanel {
         panel1.setLayout(new GridLayoutManager(1, 6, new Insets(0, 0, 0, 0), 1, 1, false, true));
         root.add(panel1, new GridConstraints(1, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         lineWidthDecreaseButton = new JButton();
+        lineWidthDecreaseButton.setActionCommand("lineWidthDecreaseAction");
         lineWidthDecreaseButton.setIcon(new ImageIcon(getClass().getResource("/ppp/senhaba_sage.png")));
         panel1.add(lineWidthDecreaseButton, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         lineWidthIncreaseButton = new JButton();
@@ -850,6 +884,7 @@ public class LeftPanel {
         lengthenCreaseButton.setIcon(new ImageIcon(getClass().getResource("/ppp/senbun_entyou.png")));
         panel10.add(lengthenCreaseButton, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         drawCreaseRestrictedButton = new JButton();
+        drawCreaseRestrictedButton.setActionCommand("drawCreaseRestrictedAction");
         drawCreaseRestrictedButton.setIcon(new ImageIcon(getClass().getResource("/ppp/senbun_nyuryoku11.png")));
         panel10.add(drawCreaseRestrictedButton, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         rabbitEarButton = new JButton();
@@ -859,7 +894,9 @@ public class LeftPanel {
         foldableLineDrawButton.setIcon(new ImageIcon(getClass().getResource("/ppp/oritatami_kanousen_and_kousitenkei_simple.png")));
         panel10.add(foldableLineDrawButton, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         drawCreaseFreeButton = new JButton();
+        drawCreaseFreeButton.setActionCommand("drawCreaseFreeAction");
         drawCreaseFreeButton.setIcon(new ImageIcon(getClass().getResource("/ppp/senbun_nyuryoku.png")));
+        drawCreaseFreeButton.setText("");
         panel10.add(drawCreaseFreeButton, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JPanel panel11 = new JPanel();
         panel11.setLayout(new GridLayoutManager(3, 4, new Insets(0, 0, 0, 0), 1, 1));

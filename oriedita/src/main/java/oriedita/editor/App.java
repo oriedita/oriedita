@@ -199,6 +199,7 @@ public class App {
             }
         });
 
+        appMenuBar.init();
         frame.setJMenuBar(appMenuBar.getAppMenuBarUI());
 
         applicationModel.addPropertyChangeListener(e -> {

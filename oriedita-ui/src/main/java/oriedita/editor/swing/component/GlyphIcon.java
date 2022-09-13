@@ -63,7 +63,11 @@ public class GlyphIcon implements Icon, PropertyChangeListener {
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getPropertyName() != null && evt.getPropertyName().equals("foreground")) {
-            color = (Color) evt.getNewValue();
+            setColor((Color) evt.getNewValue());
         }
+    }
+
+    public void setColor(Color color) {
+        this.color = color;
     }
 }

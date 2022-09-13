@@ -1,6 +1,8 @@
 package oriedita.editor.service;
 
 import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.util.Map;
 
 public interface ButtonService {
@@ -13,4 +15,6 @@ public interface ButtonService {
     void Button_shared_operation();
 
     Map<KeyStroke, AbstractButton> getHelpInputMap();
+
+    void addDefaultListener(Container root);
 }

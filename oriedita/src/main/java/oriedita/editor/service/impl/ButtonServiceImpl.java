@@ -1,12 +1,16 @@
 package oriedita.editor.service.impl;
 
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Any;
+import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import org.tinylog.Logger;
 import oriedita.editor.FrameProvider;
 import oriedita.editor.action.Handles;
 import oriedita.editor.action.MouseHandlerVoronoiCreate;
+import oriedita.editor.action2.OrieditaAction;
+import oriedita.editor.action2.ActionType;
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.databinding.CanvasModel;
@@ -26,27 +30,29 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @ApplicationScoped
 public class ButtonServiceImpl implements ButtonService {
+    private final Instance<OrieditaAction> actions;
     private final HelpDialog explanation;
     private final CreasePattern_Worker mainCreasePatternWorker;
     private Map<KeyStroke, AbstractButton> helpInputMap = new HashMap<>();
     private FrameProvider owner;
-    private final MouseHandlerVoronoiCreate mouseHandlerVoronoiCreate;
     private final CanvasModel canvasModel;
 
     @Inject
     public ButtonServiceImpl(
             FrameProvider frame,
+            @Any Instance<OrieditaAction> actions,
             HelpDialog explanation,
             @Named("mainCreasePattern_Worker") CreasePattern_Worker mainCreasePatternWorker,
             @Handles(MouseMode.VORONOI_CREATE_62) MouseHandlerVoronoiCreate mouseHandlerVoronoiCreate,
             CanvasModel canvasModel) {
         this.owner = frame;
+        this.actions = actions;
         this.explanation = explanation;
         this.mainCreasePatternWorker = mainCreasePatternWorker;
-        this.mouseHandlerVoronoiCreate = mouseHandlerVoronoiCreate;
         this.canvasModel = canvasModel;
     }
 
@@ -100,6 +106,16 @@ public class ButtonServiceImpl implements ButtonService {
 
     @Override
     public void registerButton(AbstractButton button, String key) {
+        try {
+            ActionType type = ActionType.valueOf(key);
+
+            key = type.getKey();
+
+            Optional<OrieditaAction> first = actions.stream().filter(a -> a.getActionType().equals(type)).findFirst();
+            first.ifPresent(button::setAction);
+        } catch (IllegalArgumentException e) {
+            // ignore
+        }
         String name = ResourceUtil.getBundleString("name", key);
         String keyStrokeString = ResourceUtil.getBundleString("hotkey", key);
         // String tooltip = ResourceUtil.getBundleString("tooltip", key);
@@ -161,9 +177,11 @@ public class ButtonServiceImpl implements ButtonService {
             }
         }
 
+        final String fKey = key;
+
         if (!StringOp.isEmpty(help)) {
             button.addActionListener(e -> {
-                explanation.setExplanation(key);
+                explanation.setExplanation(fKey);
 
                 Button_shared_operation();
             });
@@ -174,7 +192,7 @@ public class ButtonServiceImpl implements ButtonService {
     public void Button_shared_operation() {
         mainCreasePatternWorker.setDrawingStage(0);
         mainCreasePatternWorker.resetCircleStep();
-        mouseHandlerVoronoiCreate.getVoronoiLineSet().clear();
+        // TODO RESET VORONOI mouseHandlerVoronoiCreate.getVoronoiLineSet().clear();
 
         canvasModel.markDirty();
     }
@@ -186,7 +204,7 @@ public class ButtonServiceImpl implements ButtonService {
 
     private void addContextMenu(AbstractButton button, String key, KeyStroke keyStroke) {
         JPopupMenu popup = new JPopupMenu();
-        Action addKeybindAction = new AbstractAction() {
+        javax.swing.Action addKeybindAction = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 InputMap map = owner.get().getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
@@ -214,9 +232,9 @@ public class ButtonServiceImpl implements ButtonService {
 
                     if (newKeyStroke != null) {
                         addKeyStroke(newKeyStroke, button, key);
-                        putValue(Action.NAME, "Change key stroke (Current: " + KeyStrokeUtil.toString(newKeyStroke) + ")");
+                        putValue(javax.swing.Action.NAME, "Change key stroke (Current: " + KeyStrokeUtil.toString(newKeyStroke) + ")");
                     } else {
-                        putValue(Action.NAME, "Change key stroke");
+                        putValue(javax.swing.Action.NAME, "Change key stroke");
                     }
 
                     setTooltip(button, key);
@@ -229,7 +247,7 @@ public class ButtonServiceImpl implements ButtonService {
         if (keyStroke != null) {
             actionName += " (Current: " + KeyStrokeUtil.toString(keyStroke) + ")";
         }
-        addKeybindAction.putValue(Action.NAME, actionName);
+        addKeybindAction.putValue(javax.swing.Action.NAME, actionName);
         popup.add(addKeybindAction);
 
         Point point = new Point();
@@ -253,6 +271,32 @@ public class ButtonServiceImpl implements ButtonService {
                 }
             }
         });
+    }
+
+    @Override
+    public void addDefaultListener(Container component) {
+        Component[] components = component.getComponents();
+
+        for (Component component1 : components) {
+            if (component1 instanceof AbstractButton) {
+                AbstractButton button = (AbstractButton) component1;
+                if (button.getActionCommand() != null) {
+                    registerButton(button, button.getActionCommand());
+                }
+            }
+
+            if (component1 instanceof Container) {
+                addDefaultListener((Container) component1);
+            }
+
+            if (component1 instanceof JMenu) {
+                for (MenuElement element : ((JMenu) component1).getSubElements()) {
+                    if (element instanceof Container) {
+                        addDefaultListener((Container) element);
+                    }
+                }
+            }
+        }
     }
 
     public static class Click extends AbstractAction {
