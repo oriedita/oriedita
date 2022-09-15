@@ -16,7 +16,7 @@ import oriedita.editor.service.FileSaveService;
 import oriedita.editor.service.ResetService;
 import oriedita.editor.swing.dialog.ExportDialog;
 import oriedita.editor.swing.dialog.SaveTypeDialog;
-import oriedita.editor.tools.ResourceUtil;
+import oriedita.util.DirectoryUtil;
 
 import javax.imageio.ImageIO;
 import javax.inject.Inject;
@@ -469,7 +469,7 @@ public class FileSaveServiceImpl implements FileSaveService {
     @Override public void initAutoSave() {
         ScheduledThreadPoolExecutor pool = new ScheduledThreadPoolExecutor(1);
 
-        autoSavePath = ResourceUtil.getTempDir().resolve("oriedita-autosave-" + df.format(new Date()));
+        autoSavePath = DirectoryUtil.getTempDir().resolve("oriedita-autosave-" + df.format(new Date()));
         autoSavePath.toFile().mkdirs();
 
         pool.scheduleAtFixedRate(this::autoSaveFile, 5, 5, TimeUnit.MINUTES);

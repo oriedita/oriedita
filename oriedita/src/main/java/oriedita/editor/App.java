@@ -13,7 +13,7 @@ import oriedita.editor.service.ResetService;
 import oriedita.editor.swing.AppMenuBar;
 import oriedita.editor.swing.Editor;
 import oriedita.editor.swing.dialog.HelpDialog;
-import oriedita.editor.tools.ResourceUtil;
+import oriedita.util.VersionUtil;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -85,7 +85,7 @@ public class App {
     }
 
     public void start() {
-        frame.setTitle("Oriedita " + ResourceUtil.getVersionFromManifest());//Specify the title and execute the constructor
+        frame.setTitle("Oriedita " + VersionUtil.getVersionFromManifest());//Specify the title and execute the constructor
 
         frame.addWindowStateListener(new WindowAdapter() {
             public void windowStateChanged(WindowEvent eve) {

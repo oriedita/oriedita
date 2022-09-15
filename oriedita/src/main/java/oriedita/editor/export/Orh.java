@@ -9,7 +9,7 @@ import oriedita.editor.databinding.GridModel;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.save.Save;
 import oriedita.editor.save.SaveProvider;
-import oriedita.editor.tools.StringOp;
+import oriedita.util.StringUtil;
 import origami.crease_pattern.element.Circle;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
@@ -222,7 +222,7 @@ public class Orh {
                         gridModel.setBaseState(GridModel.State.from(m.group(2)));
                         break;
                     case "nyuuryoku_kitei":
-                        gridModel.setGridSize(StringOp.String2int(m.group(2), gridModel.getGridSize()));
+                        gridModel.setGridSize(StringUtil.String2int(m.group(2), gridModel.getGridSize()));
                         break;
                     case "memori_kankaku":
                         int scale_interval = Integer.parseInt(m.group(2));
@@ -239,25 +239,25 @@ public class Orh {
                         applicationModel.setGridLineWidth(Integer.parseInt(m.group(2)));
                         break;
                     case "d_kousi_x_a":
-                        gridXA = StringOp.String2double(m.group(2), gridModel.getGridXA());
+                        gridXA = StringUtil.String2double(m.group(2), gridModel.getGridXA());
                         break;
                     case "d_kousi_x_b":
-                        gridXB = StringOp.String2double(m.group(2), gridModel.getGridXB());
+                        gridXB = StringUtil.String2double(m.group(2), gridModel.getGridXB());
                         break;
                     case "d_kousi_x_c":
-                        gridXC = StringOp.String2double(m.group(2), gridModel.getGridXC());
+                        gridXC = StringUtil.String2double(m.group(2), gridModel.getGridXC());
                         break;
                     case "d_kousi_y_a":
-                        gridYA = StringOp.String2double(m.group(2), gridModel.getGridYA());
+                        gridYA = StringUtil.String2double(m.group(2), gridModel.getGridYA());
                         break;
                     case "d_kousi_y_b":
-                        gridYB = StringOp.String2double(m.group(2), gridModel.getGridYB());
+                        gridYB = StringUtil.String2double(m.group(2), gridModel.getGridYB());
                         break;
                     case "d_kousi_y_c":
-                        gridYC = StringOp.String2double(m.group(2), gridModel.getGridYC());
+                        gridYC = StringUtil.String2double(m.group(2), gridModel.getGridYC());
                         break;
                     case "d_kousi_kakudo":
-                        gridModel.setGridAngle(StringOp.String2double(m.group(2), gridModel.getGridAngle()));
+                        gridModel.setGridAngle(StringUtil.String2double(m.group(2), gridModel.getGridAngle()));
                         break;
                 }
 

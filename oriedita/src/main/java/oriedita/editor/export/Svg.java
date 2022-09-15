@@ -6,7 +6,7 @@ import oriedita.editor.databinding.FoldedFiguresList;
 import oriedita.editor.drawing.FoldedFigure_Drawer;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.text.Text;
-import oriedita.editor.tools.StringOp;
+import oriedita.util.StringUtil;
 import origami.Epsilon;
 import origami.crease_pattern.FoldLineSet;
 import origami.crease_pattern.PointSet;
@@ -140,15 +140,15 @@ public class Svg {
             } else {
                 if (flipped) {
                     if (orite.getIFacePosition(im) % 2 == 1) {
-                        str_fill = StringOp.toHtmlColor(foldedFigure.getFoldedFigureModel().getBackColor());
+                        str_fill = StringUtil.toHtmlColor(foldedFigure.getFoldedFigureModel().getBackColor());
                     } else {
-                        str_fill = StringOp.toHtmlColor(foldedFigure.getFoldedFigureModel().getFrontColor());
+                        str_fill = StringUtil.toHtmlColor(foldedFigure.getFoldedFigureModel().getFrontColor());
                     }
                 } else {
                     if (orite.getIFacePosition(im) % 2 == 1) {
-                        str_fill = StringOp.toHtmlColor(foldedFigure.getFoldedFigureModel().getFrontColor());
+                        str_fill = StringUtil.toHtmlColor(foldedFigure.getFoldedFigureModel().getFrontColor());
                     } else {
-                        str_fill = StringOp.toHtmlColor(foldedFigure.getFoldedFigureModel().getBackColor());
+                        str_fill = StringUtil.toHtmlColor(foldedFigure.getFoldedFigureModel().getBackColor());
                     }
                 }
             }
@@ -203,18 +203,18 @@ public class Svg {
 
 
                 if (orite.getIFacePosition(s0[im].fromTop_count_FaceId(face_order)) % 2 == 1) {
-                    str_stroke = StringOp.toHtmlColor(foldedFigure.getFoldedFigureModel().getFrontColor());
+                    str_stroke = StringUtil.toHtmlColor(foldedFigure.getFoldedFigureModel().getFrontColor());
                 }//g.setColor(F_color)
                 if (orite.getIFacePosition(s0[im].fromTop_count_FaceId(face_order)) % 2 == 0) {
-                    str_stroke = StringOp.toHtmlColor(foldedFigure.getFoldedFigureModel().getBackColor());
+                    str_stroke = StringUtil.toHtmlColor(foldedFigure.getFoldedFigureModel().getBackColor());
                 }//g.setColor(B_color)
 
                 if (front_back) {
                     if (orite.getIFacePosition(s0[im].fromTop_count_FaceId(face_order)) % 2 == 0) {
-                        str_stroke = StringOp.toHtmlColor(foldedFigure.getFoldedFigureModel().getFrontColor());
+                        str_stroke = StringUtil.toHtmlColor(foldedFigure.getFoldedFigureModel().getFrontColor());
                     }//g.setColor(F_color)
                     if (orite.getIFacePosition(s0[im].fromTop_count_FaceId(face_order)) % 2 == 1) {
-                        str_stroke = StringOp.toHtmlColor(foldedFigure.getFoldedFigureModel().getBackColor());
+                        str_stroke = StringUtil.toHtmlColor(foldedFigure.getFoldedFigureModel().getBackColor());
                     }//g.setColor(B_color)
                 }
 
@@ -252,7 +252,7 @@ public class Svg {
 
         //棒を描く-----------------------------------------------------------------------------------------
 
-        str_stroke = StringOp.toHtmlColor(foldedFigure.getFoldedFigureModel().getLineColor());
+        str_stroke = StringUtil.toHtmlColor(foldedFigure.getFoldedFigureModel().getLineColor());
 
         for (int ib = 1; ib <= subFace_figure.getNumLines(); ib++) {
             int faceId_min, faceId_max; //棒の両側のSubFaceの番号の小さいほうがMid_min,　大きいほうがMid_max
@@ -431,7 +431,7 @@ public class Svg {
             LineColor color = c.getColor();
             str_stroke = getStrokeColor(color);
             if (c.getCustomized() == 1) {
-                str_stroke = StringOp.toHtmlColor(c.getCustomizedColor());
+                str_stroke = StringUtil.toHtmlColor(c.getCustomizedColor());
             }
             if (str_stroke == null) continue;
             Circle c_tv = camera.object2TV(c);

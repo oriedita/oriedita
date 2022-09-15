@@ -8,7 +8,8 @@ import java.io.Serializable;
 
 public class Camera implements Serializable { // Mediation between actual coordinates and display coordinates
 
-    double camera_position_x, camera_position_y;
+    double camera_position_x;
+    double camera_position_y;
     double camera_angle;
     double camera_mirror; //-Either 1.0 or 1.0 Change the sign only on the x-axis // Mirror
     double camera_zoom_x;

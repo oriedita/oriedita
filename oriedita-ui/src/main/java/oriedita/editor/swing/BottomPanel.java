@@ -11,7 +11,7 @@ import oriedita.editor.databinding.*;
 import oriedita.editor.drawing.FoldedFigure_Drawer;
 import oriedita.editor.service.*;
 import oriedita.editor.swing.component.*;
-import oriedita.editor.tools.StringOp;
+import oriedita.util.StringUtil;
 import origami.crease_pattern.worker.foldlineset.Check4;
 import origami.folding.FoldedFigure;
 
@@ -150,7 +150,7 @@ public class BottomPanel {
         });
         goToFoldedFigureButton.addActionListener(e -> {
             int foldedCases_old = foldedFigureModel.getFoldedCases();
-            int newFoldedCases = StringOp.String2int(goToFoldedFigureTextField.getText(), foldedCases_old);
+            int newFoldedCases = StringUtil.String2int(goToFoldedFigureTextField.getText(), foldedCases_old);
             if (newFoldedCases < 1) {
                 newFoldedCases = 1;
             }
@@ -443,7 +443,7 @@ public class BottomPanel {
     public void getData(FoldedFigureModel foldedFigureModel) {
         foldedFigureModel.setScale(measuresModel.string2double(foldedFigureResize.getText(), foldedFigureModel.getScale()));
         foldedFigureModel.setRotation(measuresModel.string2double(foldedFigureRotate.getText(), foldedFigureModel.getRotation()));
-        foldedFigureModel.setFoldedCases(StringOp.String2int(goToFoldedFigureTextField.getText(), foldedFigureModel.getFoldedCases()));
+        foldedFigureModel.setFoldedCases(StringUtil.String2int(goToFoldedFigureTextField.getText(), foldedFigureModel.getFoldedCases()));
     }
 
     private static class IndexCellRenderer extends DefaultListCellRenderer {
