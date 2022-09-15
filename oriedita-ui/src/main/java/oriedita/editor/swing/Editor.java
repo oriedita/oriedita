@@ -14,14 +14,14 @@ import java.awt.*;
 @Singleton
 public class Editor {
     private JPanel root;
-    private Canvas canvas;
+    private Canvas.CanvasImpl canvas;
     private RightPanel rightPanel;
     private BottomPanel bottomPanel;
     private TopPanel topPanel;
     private LeftPanel leftPanel;
 
     @Inject
-    public Editor(Canvas canvas, RightPanel rightPanel, BottomPanel bottomPanel, TopPanel topPanel, LeftPanel leftPanel) {
+    public Editor(Canvas.CanvasImpl canvas, RightPanel rightPanel, BottomPanel bottomPanel, TopPanel topPanel, LeftPanel leftPanel) {
         this.canvas = canvas;
         this.rightPanel = rightPanel;
         this.bottomPanel = bottomPanel;
@@ -56,10 +56,6 @@ public class Editor {
      */
     public JComponent $$$getRootComponent$$$() {
         return root;
-    }
-
-    public Canvas getCanvas() {
-        return canvas;
     }
 
     public RightPanel getRightPanel() {

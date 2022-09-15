@@ -250,8 +250,7 @@ public class App {
 
         frame.setVisible(true);
 
-
-        explanation.start(canvas.getLocationOnScreen(), canvas.getSize());
+        explanation.start(canvas.getCanvasImpl().getLocationOnScreen(), canvas.getCanvasImpl().getSize());
 
         explanation.setVisible(applicationModel.getHelpVisible());
         //focus back to here after creating dialog

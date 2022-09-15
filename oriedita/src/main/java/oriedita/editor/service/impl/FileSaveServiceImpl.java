@@ -190,49 +190,7 @@ public class FileSaveServiceImpl implements FileSaveService {
     }
 
     @Override public void writeImageFile(File file) {//i=1　png, 2=jpg
-        if (file != null) {
-            String fname = file.getName();
-
-            String formatName;
-
-            if (fname.endsWith("png")) {
-                formatName = "png";
-            } else if (fname.endsWith("jpg")) {
-                formatName = "jpg";
-            } else {
-                file = new File(fname + ".png");
-                formatName = "png";
-            }
-
-            //	ファイル保存
-
-            try {
-                BufferedImage myImage = canvas.getGraphicsConfiguration().createCompatibleImage(canvas.getSize().width, canvas.getSize().height);
-                Graphics g = myImage.getGraphics();
-
-                canvas.setHideOperationFrame(true);
-                canvas.paintComponent(g);
-                canvas.setHideOperationFrame(false);
-
-                if (canvasModel.getMouseMode() == MouseMode.OPERATION_FRAME_CREATE_61 && mainCreasePatternWorker.getDrawingStage() == 4) { //枠設定時の枠内のみ書き出し 20180524
-                    int xMin = (int) mainCreasePatternWorker.getOperationFrameBox().getXMin();
-                    int xMax = (int) mainCreasePatternWorker.getOperationFrameBox().getXMax();
-                    int yMin = (int) mainCreasePatternWorker.getOperationFrameBox().getYMin();
-                    int yMax = (int) mainCreasePatternWorker.getOperationFrameBox().getYMax();
-
-                    ImageIO.write(myImage.getSubimage(xMin, yMin, xMax - xMin + 1, yMax - yMin + 1), formatName, file);
-
-                } else {//Full export without frame
-                    Logger.info("2018-529_");
-
-                    ImageIO.write(myImage, formatName, file);
-                }
-            } catch (IOException e) {
-                Logger.error(e, "Writing image file failed");
-            }
-
-            Logger.info("終わりました");
-        }
+        canvas.getCanvasImpl().writeImageFile(file);
     }
 
     public File selectOpenFile() {

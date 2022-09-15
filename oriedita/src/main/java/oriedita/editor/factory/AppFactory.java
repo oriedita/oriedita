@@ -21,6 +21,7 @@ import java.util.Set;
         FoldLineSetFactory.class,
         ServiceFactory.class,
         FoldFileFactory.class,
+        UiFactory.class,
 })
 @Singleton
 public interface AppFactory {
