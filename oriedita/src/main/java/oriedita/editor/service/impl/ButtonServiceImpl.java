@@ -104,18 +104,9 @@ public class ButtonServiceImpl implements ButtonService {
         owner.get().getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, key);
     }
 
-    @Override
-    public void registerButton(AbstractButton button, String key) {
-        try {
-            ActionType type = ActionType.valueOf(key);
+    @Override public void registerButton(AbstractButton button, String key) {
 
-            key = type.getKey();
 
-            Optional<OrieditaAction> first = actions.stream().filter(a -> a.getActionType().equals(type)).findFirst();
-            first.ifPresent(button::setAction);
-        } catch (IllegalArgumentException e) {
-            // ignore
-        }
         String name = ResourceUtil.getBundleString("name", key);
         String keyStrokeString = ResourceUtil.getBundleString("hotkey", key);
         // String tooltip = ResourceUtil.getBundleString("tooltip", key);
@@ -280,8 +271,18 @@ public class ButtonServiceImpl implements ButtonService {
         for (Component component1 : components) {
             if (component1 instanceof AbstractButton) {
                 AbstractButton button = (AbstractButton) component1;
-                if (button.getActionCommand() != null) {
-                    registerButton(button, button.getActionCommand());
+                String key = button.getActionCommand();
+
+                if (key != null && !"".equals(key)) {
+                    ActionType type = ActionType.fromAction(key);
+
+                    if (type != null) {
+                        Optional<OrieditaAction> first = actions.stream().filter(a -> a.getActionType().equals(type)).findFirst();
+                        first.ifPresentOrElse(button::setAction, () -> Logger.warn("No handler for {}", key));
+                    } else {
+                        Logger.warn("No action found for {}", key);
+                    }
+                    registerButton(button, key);
                 }
             }
 

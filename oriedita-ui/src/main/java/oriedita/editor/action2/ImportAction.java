@@ -7,7 +7,7 @@ import oriedita.editor.service.FileSaveService;
 import java.awt.event.ActionEvent;
 
 @ApplicationScoped
-@ActionHandler(ActionType.importAction)
+@ActionHandler(ActionType.IMPORT)
 public class ImportAction extends AbstractOrieditaAction {
     @Inject
     FileSaveService fileSaveService;

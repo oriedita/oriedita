@@ -14,7 +14,7 @@ import java.awt.event.ActionEvent;
 import java.io.File;
 
 @ApplicationScoped
-@ActionHandler(ActionType.importAddAction)
+@ActionHandler(ActionType.IMPORT_ADD)
 public class ImportAddAction extends AbstractOrieditaAction {
     @Inject
     FileSaveService fileSaveService;

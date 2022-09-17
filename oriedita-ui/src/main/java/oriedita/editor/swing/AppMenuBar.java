@@ -38,9 +38,9 @@ import java.util.ArrayList;
 public class AppMenuBar {
 
     @Inject
-    @ActionHandler(ActionType.importAction) ImportAction importAction;
+    @ActionHandler(ActionType.IMPORT) ImportAction importAction;
     @Inject
-    @ActionHandler(ActionType.importAddAction) ImportAddAction importAddAction;
+    @ActionHandler(ActionType.IMPORT_ADD) ImportAddAction importAddAction;
 
     private final FrameProvider frameProvider;
     private final TaskExecutorService foldingExecutor;
@@ -331,11 +331,11 @@ public class AppMenuBar {
         fileMenu.add(exportButton);
 
         JMenuItem importButton = new JMenuItem("Import");
-        importButton.setActionCommand(ActionType.importAction.name());
+        importButton.setActionCommand(ActionType.IMPORT.action());
         fileMenu.add(importButton);
 
         JMenuItem importAddButton = new JMenuItem("Import (Add)");
-        importAddButton.setActionCommand(ActionType.importAddAction.name());
+        importAddButton.setActionCommand(ActionType.IMPORT_ADD.action());
         fileMenu.add(importAddButton);
 
         fileMenu.addSeparator();
