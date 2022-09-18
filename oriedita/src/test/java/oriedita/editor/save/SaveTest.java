@@ -51,7 +51,7 @@ public class SaveTest {
         TextWorker textWorker = new TextWorker();
         mainCreasePatternWorker = new CreasePattern_Worker_Impl(creasePatternCamera, new DequeHistoryState(), new DequeHistoryState(), new FoldLineSet(), new FoldLineSet(), new SingleTaskExecutorServiceImpl(), canvasModel, applicationModel, gridModel, foldedFigureModel, fileModel, null, textWorker, textModel);
         ResetService resetService = () -> {};
-        fileSaveService = new FileSaveServiceImpl(null, creasePatternCamera, mainCreasePatternWorker, null, null, fileModel, applicationModel, canvasModel, new FoldedFiguresList(), resetService, null);
+        fileSaveService = new FileSaveServiceImpl(null, creasePatternCamera, mainCreasePatternWorker, null, null, fileModel, applicationModel, new FoldedFiguresList(), resetService, null);
     }
 
     @ParameterizedTest
