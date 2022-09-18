@@ -1,5 +1,6 @@
 package oriedita.editor.service.impl;
 
+import dagger.Lazy;
 import org.tinylog.Logger;
 import oriedita.editor.Foldable;
 import oriedita.editor.canvas.CreasePattern_Worker;
@@ -31,7 +32,7 @@ import javax.swing.*;
 public class FoldingServiceImpl implements FoldingService {
     private final BulletinBoard bulletinBoard;
     private final CanvasModel canvasModel;
-    private final JFrame frame;
+    private final Lazy<JFrame> frame;
     private final Camera creasePatternCamera;
     private final CreasePattern_Worker backupCreasePatternWorker;
     private final TaskExecutorService foldingExecutor;
@@ -45,7 +46,7 @@ public class FoldingServiceImpl implements FoldingService {
     @Inject
     public FoldingServiceImpl(BulletinBoard bulletinBoard,
                               CanvasModel canvasModel,
-                              @Named("mainFrame") JFrame frame,
+                              @Named("mainFrame") Lazy<JFrame> frame,
                               @Named("creasePatternCamera") Camera creasePatternCamera,
                               @Named("backupCreasePattern_Worker") CreasePattern_Worker backupCreasePatternWorker,
                               @Named("foldingExecutor") TaskExecutorService foldingExecutor,
@@ -186,7 +187,7 @@ public class FoldingServiceImpl implements FoldingService {
                 "<html>２色塗りわけ展開図を描くためには、あらかじめ対象範囲を選択してください（selectボタンを使う）。<br>" +
                         "To get 2-Colored crease pattern, select the target range in advance (use the select button).<html>");
         // TODO fix owner
-        JOptionPane.showMessageDialog(frame, label);
+        JOptionPane.showMessageDialog(frame.get(), label);
     }
 
     @Override

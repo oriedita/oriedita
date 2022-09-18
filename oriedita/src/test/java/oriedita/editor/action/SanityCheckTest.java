@@ -2,6 +2,7 @@ package oriedita.editor.action;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.tinylog.Logger;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.factory.DaggerAppFactory;
 
@@ -32,15 +33,19 @@ public class SanityCheckTest {
      */
     @Test
     public void testAllMouseHandlers() {
-        Set<MouseModeHandler> handlers = DaggerAppFactory.create().handlers();
-        Set<String> implementedHandlers = handlers.stream()
-                .map(MouseModeHandler::getMouseMode)
-                .map(MouseMode::toReadableString)
-                .collect(Collectors.toSet());
-        Set<String> expectedHandlers = Arrays.stream(MouseMode.values())
-                .map(MouseMode::toReadableString)
-                .collect(Collectors.toSet());
+        try {
+            Set<MouseModeHandler> handlers = DaggerAppFactory.create().handlers();
+            Set<String> implementedHandlers = handlers.stream()
+                    .map(MouseModeHandler::getMouseMode)
+                    .map(MouseMode::toReadableString)
+                    .collect(Collectors.toSet());
+            Set<String> expectedHandlers = Arrays.stream(MouseMode.values())
+                    .map(MouseMode::toReadableString)
+                    .collect(Collectors.toSet());
 
-        assertSetEquality(expectedHandlers, implementedHandlers);
+            assertSetEquality(expectedHandlers, implementedHandlers);
+        } catch (Exception e) {
+            Assertions.fail(e);
+        }
     }
 }
