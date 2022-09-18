@@ -1,5 +1,6 @@
 package oriedita.editor.service.impl;
 
+import oriedita.editor.Canvas;
 import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.databinding.FoldedFigureModel;
 import oriedita.editor.databinding.FoldedFiguresList;
@@ -18,6 +19,7 @@ import javax.inject.Singleton;
 public class TaskServiceImpl implements TaskService {
     private final TaskExecutorService foldingExecutor;
     private final CanvasModel canvasModel;
+    private final Canvas canvas;
     private final FileSaveService fileSaveService;
     private final FoldingService foldingService;
     private final FoldedFiguresList foldedFiguresList;
@@ -27,6 +29,7 @@ public class TaskServiceImpl implements TaskService {
     public TaskServiceImpl(
             @Named("foldingExecutor") TaskExecutorService foldingExecutor,
             CanvasModel canvasModel,
+            Canvas canvas,
             FileSaveService fileSaveService,
             FoldingService foldingService,
             FoldedFiguresList foldedFiguresList,
@@ -35,6 +38,7 @@ public class TaskServiceImpl implements TaskService {
 
         this.foldingExecutor = foldingExecutor;
         this.canvasModel = canvasModel;
+        this.canvas = canvas;
         this.fileSaveService = fileSaveService;
         this.foldingService = foldingService;
         this.foldedFiguresList = foldedFiguresList;
@@ -42,7 +46,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     public void executeFoldingEstimateSave100Task() {
-        foldingExecutor.executeTask(new FoldingEstimateSave100Task(canvasModel, foldingService, fileSaveService, foldedFiguresList));
+        foldingExecutor.executeTask(new FoldingEstimateSave100Task(canvas, canvasModel, foldingService, fileSaveService, foldedFiguresList));
     }
 
     public void executeFoldingEstimateSpecificTask() {
