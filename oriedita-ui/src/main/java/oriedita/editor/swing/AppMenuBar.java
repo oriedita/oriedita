@@ -48,7 +48,6 @@ public class AppMenuBar extends JMenuBar {
     private JCheckBoxMenuItem displaySelfIntersectionCheckBox;
     private JCheckBoxMenuItem useAdvancedCheck4Display;
 
-    private JMenu displayPanelMenu;
     private JCheckBoxMenuItem displayTopPanel;
     private JCheckBoxMenuItem displayBottomPanel;
     private JCheckBoxMenuItem displayLeftPanel;
@@ -375,7 +374,7 @@ public class AppMenuBar extends JMenuBar {
         useAdvancedCheck4Display = new JCheckBoxMenuItem("Use Advanced cAMV display");
         viewMenu.add(useAdvancedCheck4Display);
 
-        displayPanelMenu = new JMenu("Panels");
+        JMenu displayPanelMenu = new JMenu("Panels");
         viewMenu.add(displayPanelMenu);
         displayTopPanel = new JCheckBoxMenuItem("Top Panel");
         displayPanelMenu.add(displayTopPanel);

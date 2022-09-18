@@ -1,6 +1,7 @@
 package oriedita.editor.task;
 
 import org.tinylog.Logger;
+import oriedita.editor.Canvas;
 import oriedita.editor.databinding.CanvasModel;
 import origami.crease_pattern.FoldingException;
 import oriedita.editor.databinding.FoldedFiguresList;
@@ -12,12 +13,14 @@ import java.io.File;
 
 public class FoldingEstimateSave100Task implements OrieditaTask {
 
+    private final Canvas canvas;
     private final CanvasModel canvasModel;
     private final FoldingService foldingService;
     private final FileSaveService fileSaveService;
     private final FoldedFiguresList foldedFiguresList;
 
-    public FoldingEstimateSave100Task(CanvasModel canvasModel, FoldingService foldingService, FileSaveService fileSaveService, FoldedFiguresList foldedFiguresList) {
+    public FoldingEstimateSave100Task(Canvas canvas, CanvasModel canvasModel, FoldingService foldingService, FileSaveService fileSaveService, FoldedFiguresList foldedFiguresList) {
+        this.canvas = canvas;
         this.canvasModel = canvasModel;
         this.foldingService = foldingService;
         this.fileSaveService = fileSaveService;
@@ -53,7 +56,7 @@ public class FoldingEstimateSave100Task implements OrieditaTask {
                             filename = basename + "_" + selectedFigure.getFoldedFigure().discovered_fold_cases + extension;
                         }
 
-                        fileSaveService.writeImageFile(new File(filename));
+                        canvas.writeImageFile(new File(filename));
 
                         if (!selectedFigure.getFoldedFigure().findAnotherOverlapValid) {
                             objective = selectedFigure.getFoldedFigure().discovered_fold_cases;

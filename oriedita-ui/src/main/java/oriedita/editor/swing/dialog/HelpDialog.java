@@ -32,7 +32,7 @@ public class HelpDialog {
         helpDialogUI.setVisible(helpVisible);
     }
 
-    private class HelpDialogUI extends JDialog {
+    private static class HelpDialogUI extends JDialog {
         public HelpDialogUI(Frame owner, JPanel contentPane, ApplicationModel applicationModel) {
             super(owner, "Help");
 
@@ -49,7 +49,7 @@ public class HelpDialog {
                 if (e.getPropertyName() == null || e.getPropertyName().equals("helpVisible")) {
                     setVisible(applicationModel.getHelpVisible());
                 }
-                frame.get().requestFocus();
+                owner.requestFocus();
             });
 
             setUndecorated(true);

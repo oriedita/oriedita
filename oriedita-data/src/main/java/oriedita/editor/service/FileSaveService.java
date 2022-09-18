@@ -14,8 +14,6 @@ public interface FileSaveService {
 
     void exportFile();
 
-    void writeImageFile(File file);
-
     File selectSaveFile();
 
     File selectImportFile();

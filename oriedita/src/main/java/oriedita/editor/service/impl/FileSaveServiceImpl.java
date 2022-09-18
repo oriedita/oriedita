@@ -5,7 +5,6 @@ import org.tinylog.Logger;
 import oriedita.editor.Canvas;
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.canvas.LineStyle;
-import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.databinding.*;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.exception.FileReadingException;
@@ -18,13 +17,11 @@ import oriedita.editor.swing.dialog.ExportDialog;
 import oriedita.editor.swing.dialog.SaveTypeDialog;
 import oriedita.editor.tools.ResourceUtil;
 
-import javax.imageio.ImageIO;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -45,7 +42,6 @@ public class FileSaveServiceImpl implements FileSaveService {
     private final Canvas canvas;
     private final FileModel fileModel;
     private final ApplicationModel applicationModel;
-    private final CanvasModel canvasModel;
     private final FoldedFiguresList foldedFiguresList;
     private final ResetService resetService;
     private final BackgroundModel backgroundModel;
@@ -61,7 +57,6 @@ public class FileSaveServiceImpl implements FileSaveService {
             Canvas canvas,
             FileModel fileModel,
             ApplicationModel applicationModel,
-            CanvasModel canvasModel,
             FoldedFiguresList foldedFiguresList,
             ResetService resetService,
             BackgroundModel backgroundModel) {
@@ -72,7 +67,6 @@ public class FileSaveServiceImpl implements FileSaveService {
         this.canvas = canvas;
         this.fileModel = fileModel;
         this.applicationModel = applicationModel;
-        this.canvasModel = canvasModel;
         this.foldedFiguresList = foldedFiguresList;
         this.resetService = resetService;
         this.backgroundModel = backgroundModel;
@@ -175,7 +169,7 @@ public class FileSaveServiceImpl implements FileSaveService {
 
             Svg.exportFile(mainCreasePatternWorker.getFoldLineSet(), mainCreasePatternWorker.getTextWorker().getTexts(), showText, mainCreasePatternWorker.getCamera(), displayCpLines, lineWidth, intLineWidth, lineStyle, pointSize, foldedFiguresList, exportFile);
         } else if (exportFile.getName().endsWith(".png") || exportFile.getName().endsWith(".jpg") || exportFile.getName().endsWith(".jpeg")) {
-            writeImageFile(exportFile);
+            canvas.writeImageFile(exportFile);
         } else if (exportFile.getName().endsWith(".cp")) {
             Cp.exportFile(mainCreasePatternWorker.getSave_for_export(), exportFile);
         } else if (exportFile.getName().endsWith(".orh")) {
@@ -187,10 +181,6 @@ public class FileSaveServiceImpl implements FileSaveService {
                 e.printStackTrace();
             }
         }
-    }
-
-    @Override public void writeImageFile(File file) {//i=1　png, 2=jpg
-        canvas.getCanvasImpl().writeImageFile(file);
     }
 
     public File selectOpenFile() {
@@ -288,7 +278,7 @@ public class FileSaveServiceImpl implements FileSaveService {
         return readImportFile(file, true);
     }
 
-    @Override public Save readImportFile(File file, boolean askOnUnknownFormat) throws FileReadingException {
+    @Override public Save readImportFile(File file, boolean askOnUnknownFormat) {
         if (file == null) {
             return null;
         }

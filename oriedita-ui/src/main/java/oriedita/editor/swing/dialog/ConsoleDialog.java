@@ -171,12 +171,12 @@ public class ConsoleDialog extends JDialog {
         }
 
         @Override
-        public void write(byte[] b, int off, int len) throws IOException {
+        public void write(byte[] b, int off, int len) {
             append(new String(b, off, len));
         }
 
         @Override
-        public void write(int b) throws IOException {
+        public void write(int b) {
             append(String.valueOf((char) b));
         }
     }

@@ -91,7 +91,7 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
     private boolean antiAlias;
     private boolean mouseWheelMovesCreasePattern;
 
-    private Camera creasePatternCamera;
+    private final Camera creasePatternCamera;
 
     private final Map<MouseMode, MouseModeHandler> mouseModeHandlers = new HashMap<>();
 
@@ -101,10 +101,10 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
 
     private final Frame frame;
 
-    private CanvasUI canvas;
+    private CanvasUI canvasUI;
 
     public CanvasUI getCanvasImpl() {
-        return canvas;
+        return canvasUI;
     }
 
     @Singleton
@@ -131,7 +131,7 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
                 //	ファイル保存
 
                 try {
-                    BufferedImage myImage = canvas.getGraphicsConfiguration().createCompatibleImage(canvas.getSize().width, canvas.getSize().height);
+                    BufferedImage myImage = canvasUI.getGraphicsConfiguration().createCompatibleImage(canvasUI.getSize().width, canvasUI.getSize().height);
                     Graphics g = myImage.getGraphics();
 
                     setHideOperationFrame(true);
@@ -209,8 +209,8 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
             Image backgroundImage = backgroundModel.getBackgroundImage();
 
             if ((backgroundImage != null) && backgroundModel.isDisplayBackground()) {
-                int iw = backgroundImage.getWidth(canvas);//イメージの幅を取得
-                int ih = backgroundImage.getHeight(canvas);//イメージの高さを取得
+                int iw = backgroundImage.getWidth(canvasUI);//イメージの幅を取得
+                int ih = backgroundImage.getHeight(canvasUI);//イメージの高さを取得
 
                 h_cam.setBackgroundWidth(iw);
                 h_cam.setBackgroundHeight(ih);
@@ -344,16 +344,16 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
         this.textModel = textModel;
     }
 
-    public CanvasUI init() {
+    public void init() {
 
-        canvas = new CanvasUI();
+        canvasUI = new CanvasUI();
 
-        canvas.setLayout(null);
+        canvasUI.setLayout(null);
         cpTextEditingArea = new TextEditingArea(textModel, textWorker, mainCreasePatternWorker,
                                                 canvasModel, creasePatternCameraModel);
         cpTextEditingArea.setBounds(0,0, 300, 100);
         cpTextEditingArea.setVisible(false);
-        canvas.add(cpTextEditingArea);
+        canvasUI.add(cpTextEditingArea);
 
         cpTextEditingArea.setupListeners();
 
@@ -361,11 +361,11 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
         canvasModel.addPropertyChangeListener(e -> setData(e, canvasModel));
         backgroundModel.addPropertyChangeListener(e -> setData(e, backgroundModel));
 
-        creasePatternCameraModel.addPropertyChangeListener(e -> canvas.repaint());
-        foldedFigureModel.addPropertyChangeListener(e -> canvas.repaint());
-        gridModel.addPropertyChangeListener(e -> canvas.repaint());
-        angleSystemModel.addPropertyChangeListener(e -> canvas.repaint());
-        bulletinBoard.addChangeListener(e -> canvas.repaint());
+        creasePatternCameraModel.addPropertyChangeListener(e -> canvasUI.repaint());
+        foldedFigureModel.addPropertyChangeListener(e -> canvasUI.repaint());
+        gridModel.addPropertyChangeListener(e -> canvasUI.repaint());
+        angleSystemModel.addPropertyChangeListener(e -> canvasUI.repaint());
+        bulletinBoard.addChangeListener(e -> canvasUI.repaint());
 
         foldedFiguresList.addListDataListener(new ListDataListener() {
             @Override
@@ -380,19 +380,19 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
 
             @Override
             public void contentsChanged(ListDataEvent e) {
-                canvas.repaint();
+                canvasUI.repaint();
             }
         });
 
         onResize();
 
-        canvas.addMouseListener(this);
-        canvas.addMouseMotionListener(this);
-        canvas.addMouseWheelListener(this);
+        canvasUI.addMouseListener(this);
+        canvasUI.addMouseMotionListener(this);
+        canvasUI.addMouseWheelListener(this);
 
         Logger.info(" dim 001 :" + dim.width + " , " + dim.height);//多分削除可能
 
-        canvas.addComponentListener(new ComponentAdapter() {
+        canvasUI.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
                 onResize();
@@ -402,12 +402,14 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
         for (MouseModeHandler handler : handlerList) {
             addMouseModeHandler(handler);
         }
+    }
 
-        return canvas;
+    public void writeImageFile(File file) {
+        canvasUI.writeImageFile(file);
     }
 
     public void onResize() {
-        dim = canvas.getSize();
+        dim = canvasUI.getSize();
         if (dim.width == 0) {
             // Set a default size if the canvas is not yet loaded.
             dim = new Dimension(2000, 1000);
@@ -418,7 +420,7 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
             return;
         }
 
-        canvas.repaint();
+        canvasUI.repaint();
     }
 
     public void addMouseModeHandler(MouseModeHandler handler) {
@@ -445,7 +447,7 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
         at.rotate(h_cam.getAngle() * Math.PI / 180.0, h_cam.getRotationX(), h_cam.getRotationY());
         g2h.setTransform(at);
 
-        g2h.drawImage(imgh, h_cam.getX0(), h_cam.getY0(), h_cam.getX1(), h_cam.getY1(), canvas);
+        g2h.drawImage(imgh, h_cam.getX0(), h_cam.getY0(), h_cam.getX1(), h_cam.getY1(), canvasUI);
 
         at.rotate(-h_cam.getAngle() * Math.PI / 180.0, h_cam.getRotationX(), h_cam.getRotationY());
         g2h.setTransform(at);
@@ -466,7 +468,7 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
             mouseModeHandlers.get(mouseMode).mouseMoved(p, e);
         }
 
-        canvas.repaint();
+        canvasUI.repaint();
     }
 
     //マウス操作(ボタンを押したとき)を行う関数----------------------------------------------------
@@ -488,7 +490,7 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
                 handler.mousePressed(p, e);
                 activeMouseHandler = handler;
                 mainCreasePatternWorker.setCamera(creasePatternCamera);
-                canvas.repaint();
+                canvasUI.repaint();
                 return;
             }
         }
@@ -523,7 +525,7 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
                 }
 
                 mouse_temp0.set(p);
-                canvas.repaint();
+                canvasUI.repaint();
                 return;
             case MouseEvent.BUTTON3:
                 mainCreasePatternWorker.setCamera(creasePatternCamera);
@@ -533,7 +535,7 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
                 }
                 mouseModeHandlers.get(MouseMode.LINE_SEGMENT_DELETE_3).mousePressed(p, e);
                 activeMouseHandler = mouseModeHandlers.get(MouseMode.LINE_SEGMENT_DELETE_3);
-                canvas.repaint();
+                canvasUI.repaint();
                 return;
         }
 
@@ -541,7 +543,7 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
 
         mainCreasePatternWorker.setCamera(creasePatternCamera);
 
-        canvas.repaint();
+        canvasUI.repaint();
     }
 
     //マウス操作(ドラッグしたとき)を行う関数---------- Logger.info("A");------------------------------------------
@@ -556,7 +558,7 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
                 if (handler.accepts(e, btn)) {
                     handler.mouseDragged(p, e);
                     activeMouseHandler = handler;
-                    canvas.repaint();
+                    canvasUI.repaint();
                     return;
                 }
             }
@@ -595,7 +597,7 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
                     }
 
                     mouse_temp0.set(p);
-                    canvas.repaint();
+                    canvasUI.repaint();
                     return;
 
                 case MouseEvent.BUTTON3:
@@ -606,7 +608,7 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
 
             mainCreasePatternWorker.setCamera(creasePatternCamera);
 
-            canvas.repaint();
+            canvasUI.repaint();
         }
     }
 
@@ -637,7 +639,7 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
                 if (handler.accepts(e, btn)) {
                     handler.mouseReleased(p, e);
                     activeMouseHandler = handler;
-                    canvas.repaint();
+                    canvasUI.repaint();
                     return;
                 }
             }
@@ -677,7 +679,7 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
                     }
 
                     mouse_temp0.set(p);
-                    canvas.repaint();
+                    canvasUI.repaint();
                     mouseDraggedValid = false;
                     mouseReleasedValid = false;
                     return;//
@@ -686,7 +688,7 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
                     mainCreasePatternWorker.setCamera(creasePatternCamera);
                     mouseModeHandlers.get(MouseMode.LINE_SEGMENT_DELETE_3).mouseReleased(p, e);
                     activeMouseHandler = mouseModeHandlers.get(MouseMode.LINE_SEGMENT_DELETE_3);
-                    canvas.repaint();//なんでここにrepaintがあるか検討した方がよいかも。20181208
+                    canvasUI.repaint();//なんでここにrepaintがあるか検討した方がよいかも。20181208
                     canvasModel.restoreFoldLineAdditionalInputMode();
                     mouseDraggedValid = false;
                     mouseReleasedValid = false;
@@ -697,7 +699,7 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
             //----------------------------Logger.info("a");-----------------------
             //}  //20201010　コメントアウト
 
-            canvas.repaint();
+            canvasUI.repaint();
 
         }
 
@@ -724,7 +726,7 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
             }
 
             mouse_object_position(p_mouse_TV_position);
-            canvas.repaint();
+            canvasUI.repaint();
         }
     }
 
@@ -751,7 +753,7 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
         lineWidth = applicationModel.determineCalculatedLineWidth();
         auxLineWidth = applicationModel.determineCalculatedAuxLineWidth();
 
-        canvas.repaint();
+        canvasUI.repaint();
     }
 
     public void setData(PropertyChangeEvent e, CanvasModel canvasModel) {
@@ -771,7 +773,7 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
             mouseDraggedValid = false;
         }
 
-        canvas.repaint();
+        canvasUI.repaint();
     }
 
     //=============================================================================
@@ -824,9 +826,9 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
         }
 
         // Capture by specifying a range
-        Rectangle canvasBounds = canvas.getBounds();
+        Rectangle canvasBounds = canvasUI.getBounds();
 
-        java.awt.Point canvasLocation = canvas.getLocationOnScreen();
+        java.awt.Point canvasLocation = canvasUI.getLocationOnScreen();
         Rectangle bounds = new Rectangle(canvasLocation.x, canvasLocation.y, canvasBounds.width, canvasBounds.height);
 
         java.awt.Point currentLocation = frame.getLocation();
@@ -867,7 +869,7 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
             h_cam.h3_obj_and_h4_obj_calculation();
         }
 
-        canvas.repaint();
+        canvasUI.repaint();
     }
 
     public Point e2p(MouseEvent e) {
