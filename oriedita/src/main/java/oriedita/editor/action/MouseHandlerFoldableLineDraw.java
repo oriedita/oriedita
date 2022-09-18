@@ -14,7 +14,7 @@ import oriedita.editor.canvas.FoldLineAdditionalInputMode;
 public class MouseHandlerFoldableLineDraw extends BaseMouseHandler {
     private final MouseHandlerDrawCreaseFree mouseHandlerDrawCreaseFree;
     private final MouseHandlerVertexMakeAngularlyFlatFoldable mouseHandlerVertexMakeAngularlyFlatFoldable;
-    MouseMode operationMode = MouseMode.UNUSED_0;
+    MouseMode operationMode = null;
     boolean operationModeChangeable = false;
     Point moyori_point_memo = new Point();
     Point closest_point;
@@ -32,7 +32,7 @@ public class MouseHandlerFoldableLineDraw extends BaseMouseHandler {
 
     public void mouseMoved(Point p0) {
         if (d.getLineStep().size() == 0) {
-            operationMode = MouseMode.UNUSED_0;
+            operationMode = null;
             mouseHandlerDrawCreaseFree.mouseMoved(p0);
             return;
         }

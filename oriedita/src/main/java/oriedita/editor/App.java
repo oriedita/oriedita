@@ -1,5 +1,6 @@
 package oriedita.editor;
 
+import dagger.Lazy;
 import jico.Ico;
 import jico.ImageReadException;
 import org.tinylog.Logger;
@@ -38,7 +39,7 @@ public class App {
     private final Queue<Popup> popups = new ArrayDeque<>();
     private final ButtonService buttonService;
     private final LookAndFeelService lookAndFeelService;
-    private final Editor editor;
+    private final Lazy<Editor> editor;
     private final AppMenuBar appMenuBar;
     private final ResetService resetService;
     // ------------------------------------------------------------------------
@@ -64,7 +65,7 @@ public class App {
             Canvas canvas,
             HelpDialog explanation,
             ButtonService buttonService,
-            Editor editor,
+            Lazy<Editor> editor,
             AppMenuBar appMenuBar,
             ResetService resetService
     ) {
@@ -85,6 +86,7 @@ public class App {
     }
 
     public void start() {
+        canvas.init();
         frame.setTitle("Oriedita " + ResourceUtil.getVersionFromManifest());//Specify the title and execute the constructor
 
         frame.addWindowStateListener(new WindowAdapter() {
@@ -141,7 +143,7 @@ public class App {
         } catch (IOException | ImageReadException | NullPointerException e) {
             e.printStackTrace();
         }
-        frame.setContentPane(editor.$$$getRootComponent$$$());
+        frame.setContentPane(editor.get().$$$getRootComponent$$$());
         frame.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_CONTROL, KeyEvent.CTRL_DOWN_MASK),
                 "CTRLPress");
         frame.getRootPane().getActionMap().put("CTRLPress", new AbstractAction() {
@@ -250,8 +252,7 @@ public class App {
 
         frame.setVisible(true);
 
-
-        explanation.start(canvas.getLocationOnScreen(), canvas.getSize());
+        explanation.start(canvas.getCanvasImpl().getLocationOnScreen(), canvas.getCanvasImpl().getSize());
 
         explanation.setVisible(applicationModel.getHelpVisible());
         //focus back to here after creating dialog
@@ -259,9 +260,9 @@ public class App {
     }
 
     private void setData(ApplicationModel applicationModel) {
-        editor.getBottomPanel().$$$getRootComponent$$$().setVisible(applicationModel.getDisplayBottomPanel());
-        editor.getTopPanel().$$$getRootComponent$$$().setVisible(applicationModel.getDisplayTopPanel());
-        editor.getRightPanel().$$$getRootComponent$$$().setVisible(applicationModel.getDisplayRightPanel());
-        editor.getLeftPanel().$$$getRootComponent$$$().setVisible(applicationModel.getDisplayLeftPanel());
+        editor.get().getBottomPanel().$$$getRootComponent$$$().setVisible(applicationModel.getDisplayBottomPanel());
+        editor.get().getTopPanel().$$$getRootComponent$$$().setVisible(applicationModel.getDisplayTopPanel());
+        editor.get().getRightPanel().$$$getRootComponent$$$().setVisible(applicationModel.getDisplayRightPanel());
+        editor.get().getLeftPanel().$$$getRootComponent$$$().setVisible(applicationModel.getDisplayLeftPanel());
     }
 }

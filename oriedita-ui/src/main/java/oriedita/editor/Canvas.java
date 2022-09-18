@@ -17,6 +17,7 @@ import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.Polygon;
 import origami.folding.FoldedFigure;
 
+import javax.imageio.ImageIO;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -27,14 +28,17 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
+import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
 /**
  * Panel in the center of the main view.
  */
 @Singleton
-public class Canvas extends JPanel implements MouseListener, MouseMotionListener, MouseWheelListener {
+public class Canvas implements MouseListener, MouseMotionListener, MouseWheelListener {
 
     private final TaskExecutorService foldingExecutor;
     private final CreasePattern_Worker mainCreasePatternWorker;
@@ -44,8 +48,13 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
     private final ApplicationModel applicationModel;
     private final CameraModel creasePatternCameraModel;
     private final FoldedFigureModel foldedFigureModel;
+    private final GridModel gridModel;
+    private final Set<MouseModeHandler> handlerList;
+    private final AngleSystemModel angleSystemModel;
     private final FoldedFigureCanvasSelectService foldedFigureCanvasSelectService;
     private final CanvasModel canvasModel;
+    private final TextWorker textWorker;
+    private final SelectedTextModel textModel;
     private boolean hideOperationFrame = false;
 
     private MouseModeHandler activeMouseHandler;
@@ -55,7 +64,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
     private Background_camera h_cam = new Background_camera();
 
-    private final TextEditingArea cpTextEditingArea;
+    private TextEditingArea cpTextEditingArea;
 
     private int btn = 0;//Stores which button in the center of the left and right is pressed. 1 =
     private final Point mouse_temp0 = new Point();//マウスの動作対応時に、一時的に使うTen
@@ -92,6 +101,212 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
     private final Frame frame;
 
+    private CanvasUI canvas;
+
+    public CanvasUI getCanvasImpl() {
+        return canvas;
+    }
+
+    @Singleton
+    public class CanvasUI extends JPanel {
+        protected CanvasUI() {
+
+        }
+        public void writeImageFile(File file) {
+
+            if (file != null) {
+                String fname = file.getName();
+
+                String formatName;
+
+                if (fname.endsWith("png")) {
+                    formatName = "png";
+                } else if (fname.endsWith("jpg")) {
+                    formatName = "jpg";
+                } else {
+                    file = new File(fname + ".png");
+                    formatName = "png";
+                }
+
+                //	ファイル保存
+
+                try {
+                    BufferedImage myImage = canvas.getGraphicsConfiguration().createCompatibleImage(canvas.getSize().width, canvas.getSize().height);
+                    Graphics g = myImage.getGraphics();
+
+                    setHideOperationFrame(true);
+                    paintComponent(g);
+                    setHideOperationFrame(false);
+
+                    if (canvasModel.getMouseMode() == MouseMode.OPERATION_FRAME_CREATE_61 && mainCreasePatternWorker.getDrawingStage() == 4) { //枠設定時の枠内のみ書き出し 20180524
+                        int xMin = (int) mainCreasePatternWorker.getOperationFrameBox().getXMin();
+                        int xMax = (int) mainCreasePatternWorker.getOperationFrameBox().getXMax();
+                        int yMin = (int) mainCreasePatternWorker.getOperationFrameBox().getYMin();
+                        int yMax = (int) mainCreasePatternWorker.getOperationFrameBox().getYMax();
+
+                        ImageIO.write(myImage.getSubimage(xMin, yMin, xMax - xMin + 1, yMax - yMin + 1), formatName, file);
+
+                    } else {//Full export without frame
+                        Logger.info("2018-529_");
+
+                        ImageIO.write(myImage, formatName, file);
+                    }
+                } catch (IOException e) {
+                    Logger.error(e, "Writing image file failed");
+                }
+
+                Logger.info("終わりました");
+            }
+        }
+
+        @Override
+        public void paintComponent(Graphics bufferGraphics) {
+            //「f」を付けることでfloat型の数値として記述することができる
+            Graphics2D g2 = (Graphics2D) bufferGraphics;
+
+            BasicStroke BStroke = new BasicStroke(lineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER);
+            g2.setStroke(BStroke);//線の太さや線の末端の形状
+
+            //アンチエイリアス　オフ
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, antiAlias ? RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF);//アンチエイリアス　オン
+
+            g2.setBackground(Colors.get(Color.WHITE));    //この行は、画像をファイルに書き出そうとしてBufferedImageクラスを使う場合、デフォルトで背景が黒になるので、それを避けるための意味　20170107
+            //画像をファイルに書き出さすことはやめて、、BufferedImageクラスを使わず、Imageクラスだけですむなら不要の行
+
+            //別の重なりさがし　のボタンの色の指定。
+
+
+            // バッファー画面のクリア
+            bufferGraphics.clearRect(0, 0, dim.width, dim.height);
+
+            bufferGraphics.setColor(Colors.get(Color.red));
+            //描画したい内容は以下に書くことVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
+
+            //カメラのセット
+            mainCreasePatternWorker.setCamera(creasePatternCamera);
+
+
+
+            FoldedFigure_Drawer OZi;
+            for (int i_oz = 0; i_oz < foldedFiguresList.getSize(); i_oz++) {
+                OZi = foldedFiguresList.getElementAt(i_oz);
+                OZi.getWireFrame_worker_drawer1().setCamera(creasePatternCamera);
+            }
+
+            FoldedFigure_Drawer selectedFigure = foldedFiguresList.getActiveItem();
+
+            if (selectedFigure != null) {
+//VVVVVVVVVVVVVVV以下のts2へのカメラセットはOriagari_zuのoekakiで実施しているので以下の5行はなくてもいいはず　20180225
+                selectedFigure.getWireFrame_worker_drawer2().setCamera(selectedFigure.getFoldedFigureCamera());
+                selectedFigure.getWireFrame_worker_drawer2().setCam_front(selectedFigure.getFoldedFigureFrontCamera());
+                selectedFigure.getWireFrame_worker_drawer2().setCam_rear(selectedFigure.getFoldedFigureRearCamera());
+                selectedFigure.getWireFrame_worker_drawer2().setCam_transparent_front(selectedFigure.getTransparentFrontCamera());
+                selectedFigure.getWireFrame_worker_drawer2().setCam_transparent_rear(selectedFigure.getTransparentRearCamera());
+//AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+            }
+            //Logger.info("paint　+++++++++++++++++++++　背景表示");
+            //背景表示
+            Image backgroundImage = backgroundModel.getBackgroundImage();
+
+            if ((backgroundImage != null) && backgroundModel.isDisplayBackground()) {
+                int iw = backgroundImage.getWidth(canvas);//イメージの幅を取得
+                int ih = backgroundImage.getHeight(canvas);//イメージの高さを取得
+
+                h_cam.setBackgroundWidth(iw);
+                h_cam.setBackgroundHeight(ih);
+
+                drawBackground(g2, backgroundImage);
+            }
+
+            //格子表示
+
+            //基準面の表示
+            if (displayMarkings && selectedFigure != null) {
+                if (selectedFigure.getFoldedFigure().displayStyle != FoldedFigure.DisplayStyle.NONE_0) {
+                    selectedFigure.getWireFrame_worker_drawer1().drawStartingFaceWithCamera(bufferGraphics, selectedFigure.getStartingFaceId());//ts1が折り畳みを行う際の基準面を表示するのに使う。
+                }
+            }
+
+            double d_width = creasePatternCamera.getCameraZoomX() * mainCreasePatternWorker.getSelectionDistance();
+            //Flashlight (dot) search range
+            if (displayPointSpotlight) {
+                g2.setColor(Colors.get(new Color(255, 240, 0, 30)));
+                g2.setStroke(new BasicStroke(2.0f));
+                g2.setColor(Colors.get(new Color(255, 240, 0, 230)));
+                g2.draw(new Ellipse2D.Double(p_mouse_TV_position.getX() - d_width, p_mouse_TV_position.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
+            }
+
+            //Luminous flux of flashlight, etc.
+            if (displayPointSpotlight && displayPointOffset) {
+                g2.setStroke(new BasicStroke(2.0f));
+                g2.setColor(Colors.get(new Color(255, 240, 0, 170)));
+            }
+
+            //展開図表示
+            mainCreasePatternWorker.drawWithCamera(bufferGraphics, displayComments, displayCpLines, displayAuxLines, displayLiveAuxLines, lineWidth, lineStyle, auxLineWidth, dim.width, dim.height, displayMarkings, hideOperationFrame);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ,展開図動かし中心の十字の目印の表示
+            DrawingSettings settings = new DrawingSettings(lineWidth, lineStyle, dim.height, dim.width);
+            if (activeMouseHandler != null) {
+                activeMouseHandler.drawPreview(g2, creasePatternCamera, settings);
+            }
+            if (displayComments) {
+                //展開図情報の文字表示
+                bufferGraphics.setColor(Colors.get(Color.black));
+
+                bufferGraphics.drawString(String.format("mouse= ( %.2f, %.2f )", p_mouse_object_position.getX(), p_mouse_object_position.getY()), 10, 10); //この表示内容はvoid kekka_syoriで決められる。
+
+                bufferGraphics.drawString("L=" + mainCreasePatternWorker.getTotal(), 10, 25); //この表示内容はvoid kekka_syoriで決められる。
+
+                if (selectedFigure != null) {
+                    //結果の文字表示
+                    bufferGraphics.drawString(selectedFigure.getFoldedFigure().text_result, 10, 40); //この表示内容はvoid kekka_syoriで決められる。
+                }
+
+                if (displayGridInputAssist) {
+                    Point gridIndex = new Point(mainCreasePatternWorker.getGridPosition(p_mouse_TV_position));//20201024高密度入力がオンならばrepaint（画面更新）のたびにここで最寄り点を求めているので、描き職人で別途最寄り点を求めていることと二度手間になっている。
+
+                    double dx_ind = gridIndex.getX();
+                    double dy_ind = gridIndex.getY();
+                    int ix_ind = (int) Math.round(dx_ind);
+                    int iy_ind = (int) Math.round(dy_ind);
+                    bufferGraphics.drawString("(" + ix_ind + "," + iy_ind + ")", (int) p_mouse_TV_position.getX() + 25, (int) p_mouse_TV_position.getY() + 20); //この表示内容はvoid kekka_syoriで決められる。
+                }
+
+                if (foldingExecutor.isTaskRunning()) {
+                    bufferGraphics.setColor(Colors.get(Color.red));
+
+                    bufferGraphics.drawString(foldingExecutor.getTaskName() + " Under Calculation. If you want to cancel calculation, uncheck [check A + MV]on right side and press the brake button (bicycle brake icon) on lower side.", 10, 69); //この表示内容はvoid kekka_syoriで決められる。
+                    bufferGraphics.drawString("計算中。　なお、計算を取り消し通常状態に戻りたいなら、右辺の[check A+MV]のチェックをはずし、ブレーキボタン（下辺の、自転車のブレーキのアイコン）を押す。 ", 10, 83); //この表示内容はvoid kekka_syoriで決められる。
+                }
+
+                bulletinBoard.draw(bufferGraphics);//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+            }
+
+
+            //折り上がりの各種お絵かき
+            for (int i_oz = 0; i_oz < foldedFiguresList.getSize(); i_oz++) {
+                OZi = foldedFiguresList.getElementAt(i_oz);
+                OZi.foldUp_draw(bufferGraphics, displayMarkings, i_oz + 1, OZi == foldedFiguresList.getSelectedItem());
+            }
+
+            //展開図を折り上がり図の上に描くために、展開図を再表示する
+            if (displayCreasePatternOnTop) {
+                mainCreasePatternWorker.drawWithCamera(bufferGraphics, displayComments, displayCpLines, displayAuxLines, displayLiveAuxLines, lineWidth, lineStyle, auxLineWidth, dim.width, dim.height, displayMarkings, hideOperationFrame);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ
+            }
+
+            //アンチェイリアス
+            //アンチェイリアス　オフ
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, antiAlias ? RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF);//アンチェイリアス　オン
+
+            //Central indicator
+            if (displayPointOffset) {
+                g2.setStroke(new BasicStroke(1.0f));
+                g2.setColor(Colors.get(Color.black));
+                g2.drawLine((int) (p_mouse_TV_position.getX()), (int) (p_mouse_TV_position.getY()),
+                        (int) (p_mouse_TV_position.getX() + d_width), (int) (p_mouse_TV_position.getY() + d_width)); //直線
+            }
+        }
+    }
+
     @Inject
     public Canvas(@Named("creasePatternCamera") Camera creasePatternCamera,
                   @Named("mainFrame") JFrame frame,
@@ -120,15 +335,25 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         this.applicationModel = applicationModel;
         this.creasePatternCameraModel = creasePatternCameraModel;
         this.foldedFigureModel = foldedFigureModel;
+        this.gridModel = gridModel;
+        this.handlerList = handlerList;
+        this.angleSystemModel = angleSystemModel;
         this.foldedFigureCanvasSelectService = foldedFigureCanvasSelectService;
         this.canvasModel = canvasModel;
+        this.textWorker = textWorker;
+        this.textModel = textModel;
+    }
 
-        this.setLayout(null);
+    public CanvasUI init() {
+
+        canvas = new CanvasUI();
+
+        canvas.setLayout(null);
         cpTextEditingArea = new TextEditingArea(textModel, textWorker, mainCreasePatternWorker,
                                                 canvasModel, creasePatternCameraModel);
         cpTextEditingArea.setBounds(0,0, 300, 100);
         cpTextEditingArea.setVisible(false);
-        this.add(cpTextEditingArea);
+        canvas.add(cpTextEditingArea);
 
         cpTextEditingArea.setupListeners();
 
@@ -136,13 +361,11 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         canvasModel.addPropertyChangeListener(e -> setData(e, canvasModel));
         backgroundModel.addPropertyChangeListener(e -> setData(e, backgroundModel));
 
-        creasePatternCameraModel.addPropertyChangeListener(e -> repaint());
-        foldedFigureModel.addPropertyChangeListener(e -> repaint());
-        gridModel.addPropertyChangeListener(e -> repaint());
-        angleSystemModel.addPropertyChangeListener(e -> repaint());
-        bulletinBoard.addChangeListener(e -> repaint());
-
-
+        creasePatternCameraModel.addPropertyChangeListener(e -> canvas.repaint());
+        foldedFigureModel.addPropertyChangeListener(e -> canvas.repaint());
+        gridModel.addPropertyChangeListener(e -> canvas.repaint());
+        angleSystemModel.addPropertyChangeListener(e -> canvas.repaint());
+        bulletinBoard.addChangeListener(e -> canvas.repaint());
 
         foldedFiguresList.addListDataListener(new ListDataListener() {
             @Override
@@ -157,19 +380,19 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
             @Override
             public void contentsChanged(ListDataEvent e) {
-                repaint();
+                canvas.repaint();
             }
         });
 
         onResize();
 
-        addMouseListener(this);
-        addMouseMotionListener(this);
-        addMouseWheelListener(this);
+        canvas.addMouseListener(this);
+        canvas.addMouseMotionListener(this);
+        canvas.addMouseWheelListener(this);
 
         Logger.info(" dim 001 :" + dim.width + " , " + dim.height);//多分削除可能
 
-        addComponentListener(new ComponentAdapter() {
+        canvas.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
                 onResize();
@@ -179,10 +402,12 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         for (MouseModeHandler handler : handlerList) {
             addMouseModeHandler(handler);
         }
+
+        return canvas;
     }
 
     public void onResize() {
-        dim = getSize();
+        dim = canvas.getSize();
         if (dim.width == 0) {
             // Set a default size if the canvas is not yet loaded.
             dim = new Dimension(2000, 1000);
@@ -193,159 +418,13 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
             return;
         }
 
-        repaint();
+        canvas.repaint();
     }
 
     public void addMouseModeHandler(MouseModeHandler handler) {
         mouseModeHandlers.put(handler.getMouseMode(), handler);
     }
 
-    @Override
-    public void paintComponent(Graphics bufferGraphics) {
-        //「f」を付けることでfloat型の数値として記述することができる
-        Graphics2D g2 = (Graphics2D) bufferGraphics;
-
-        BasicStroke BStroke = new BasicStroke(lineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER);
-        g2.setStroke(BStroke);//線の太さや線の末端の形状
-
-        //アンチエイリアス　オフ
-        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, antiAlias ? RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF);//アンチエイリアス　オン
-
-        g2.setBackground(Colors.get(Color.WHITE));    //この行は、画像をファイルに書き出そうとしてBufferedImageクラスを使う場合、デフォルトで背景が黒になるので、それを避けるための意味　20170107
-        //画像をファイルに書き出さすことはやめて、、BufferedImageクラスを使わず、Imageクラスだけですむなら不要の行
-
-        //別の重なりさがし　のボタンの色の指定。
-
-
-        // バッファー画面のクリア
-        bufferGraphics.clearRect(0, 0, dim.width, dim.height);
-
-        bufferGraphics.setColor(Colors.get(Color.red));
-        //描画したい内容は以下に書くことVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
-
-        //カメラのセット
-        mainCreasePatternWorker.setCamera(creasePatternCamera);
-
-
-
-        FoldedFigure_Drawer OZi;
-        for (int i_oz = 0; i_oz < foldedFiguresList.getSize(); i_oz++) {
-            OZi = foldedFiguresList.getElementAt(i_oz);
-            OZi.getWireFrame_worker_drawer1().setCamera(creasePatternCamera);
-        }
-
-        FoldedFigure_Drawer selectedFigure = foldedFiguresList.getActiveItem();
-
-        if (selectedFigure != null) {
-//VVVVVVVVVVVVVVV以下のts2へのカメラセットはOriagari_zuのoekakiで実施しているので以下の5行はなくてもいいはず　20180225
-            selectedFigure.getWireFrame_worker_drawer2().setCamera(selectedFigure.getFoldedFigureCamera());
-            selectedFigure.getWireFrame_worker_drawer2().setCam_front(selectedFigure.getFoldedFigureFrontCamera());
-            selectedFigure.getWireFrame_worker_drawer2().setCam_rear(selectedFigure.getFoldedFigureRearCamera());
-            selectedFigure.getWireFrame_worker_drawer2().setCam_transparent_front(selectedFigure.getTransparentFrontCamera());
-            selectedFigure.getWireFrame_worker_drawer2().setCam_transparent_rear(selectedFigure.getTransparentRearCamera());
-//AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-        }
-        //Logger.info("paint　+++++++++++++++++++++　背景表示");
-        //背景表示
-        Image backgroundImage = backgroundModel.getBackgroundImage();
-
-        if ((backgroundImage != null) && backgroundModel.isDisplayBackground()) {
-            int iw = backgroundImage.getWidth(this);//イメージの幅を取得
-            int ih = backgroundImage.getHeight(this);//イメージの高さを取得
-
-            h_cam.setBackgroundWidth(iw);
-            h_cam.setBackgroundHeight(ih);
-
-            drawBackground(g2, backgroundImage);
-        }
-
-        //格子表示
-
-        //基準面の表示
-        if (displayMarkings && selectedFigure != null) {
-            if (selectedFigure.getFoldedFigure().displayStyle != FoldedFigure.DisplayStyle.NONE_0) {
-                selectedFigure.getWireFrame_worker_drawer1().drawStartingFaceWithCamera(bufferGraphics, selectedFigure.getStartingFaceId());//ts1が折り畳みを行う際の基準面を表示するのに使う。
-            }
-        }
-
-        double d_width = creasePatternCamera.getCameraZoomX() * mainCreasePatternWorker.getSelectionDistance();
-        //Flashlight (dot) search range
-        if (displayPointSpotlight) {
-            g2.setColor(Colors.get(new Color(255, 240, 0, 30)));
-            g2.setStroke(new BasicStroke(2.0f));
-            g2.setColor(Colors.get(new Color(255, 240, 0, 230)));
-            g2.draw(new Ellipse2D.Double(p_mouse_TV_position.getX() - d_width, p_mouse_TV_position.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
-        }
-
-        //Luminous flux of flashlight, etc.
-        if (displayPointSpotlight && displayPointOffset) {
-            g2.setStroke(new BasicStroke(2.0f));
-            g2.setColor(Colors.get(new Color(255, 240, 0, 170)));
-        }
-
-        //展開図表示
-        mainCreasePatternWorker.drawWithCamera(bufferGraphics, displayComments, displayCpLines, displayAuxLines, displayLiveAuxLines, lineWidth, lineStyle, auxLineWidth, dim.width, dim.height, displayMarkings, hideOperationFrame);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ,展開図動かし中心の十字の目印の表示
-        DrawingSettings settings = new DrawingSettings(lineWidth, lineStyle, dim.height, dim.width);
-        if (activeMouseHandler != null) {
-            activeMouseHandler.drawPreview(g2, creasePatternCamera, settings);
-        }
-        if (displayComments) {
-            //展開図情報の文字表示
-            bufferGraphics.setColor(Colors.get(Color.black));
-
-            bufferGraphics.drawString(String.format("mouse= ( %.2f, %.2f )", p_mouse_object_position.getX(), p_mouse_object_position.getY()), 10, 10); //この表示内容はvoid kekka_syoriで決められる。
-
-            bufferGraphics.drawString("L=" + mainCreasePatternWorker.getTotal(), 10, 25); //この表示内容はvoid kekka_syoriで決められる。
-
-            if (selectedFigure != null) {
-                //結果の文字表示
-                bufferGraphics.drawString(selectedFigure.getFoldedFigure().text_result, 10, 40); //この表示内容はvoid kekka_syoriで決められる。
-            }
-
-            if (displayGridInputAssist) {
-                Point gridIndex = new Point(mainCreasePatternWorker.getGridPosition(p_mouse_TV_position));//20201024高密度入力がオンならばrepaint（画面更新）のたびにここで最寄り点を求めているので、描き職人で別途最寄り点を求めていることと二度手間になっている。
-
-                double dx_ind = gridIndex.getX();
-                double dy_ind = gridIndex.getY();
-                int ix_ind = (int) Math.round(dx_ind);
-                int iy_ind = (int) Math.round(dy_ind);
-                bufferGraphics.drawString("(" + ix_ind + "," + iy_ind + ")", (int) p_mouse_TV_position.getX() + 25, (int) p_mouse_TV_position.getY() + 20); //この表示内容はvoid kekka_syoriで決められる。
-            }
-
-            if (foldingExecutor.isTaskRunning()) {
-                bufferGraphics.setColor(Colors.get(Color.red));
-
-                bufferGraphics.drawString(foldingExecutor.getTaskName() + " Under Calculation. If you want to cancel calculation, uncheck [check A + MV]on right side and press the brake button (bicycle brake icon) on lower side.", 10, 69); //この表示内容はvoid kekka_syoriで決められる。
-                bufferGraphics.drawString("計算中。　なお、計算を取り消し通常状態に戻りたいなら、右辺の[check A+MV]のチェックをはずし、ブレーキボタン（下辺の、自転車のブレーキのアイコン）を押す。 ", 10, 83); //この表示内容はvoid kekka_syoriで決められる。
-            }
-
-            bulletinBoard.draw(bufferGraphics);//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-        }
-
-
-        //折り上がりの各種お絵かき
-        for (int i_oz = 0; i_oz < foldedFiguresList.getSize(); i_oz++) {
-            OZi = foldedFiguresList.getElementAt(i_oz);
-            OZi.foldUp_draw(bufferGraphics, displayMarkings, i_oz + 1, OZi == foldedFiguresList.getSelectedItem());
-        }
-
-        //展開図を折り上がり図の上に描くために、展開図を再表示する
-        if (displayCreasePatternOnTop) {
-            mainCreasePatternWorker.drawWithCamera(bufferGraphics, displayComments, displayCpLines, displayAuxLines, displayLiveAuxLines, lineWidth, lineStyle, auxLineWidth, dim.width, dim.height, displayMarkings, hideOperationFrame);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ
-        }
-
-        //アンチェイリアス
-        //アンチェイリアス　オフ
-        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, antiAlias ? RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF);//アンチェイリアス　オン
-
-        //Central indicator
-        if (displayPointOffset) {
-            g2.setStroke(new BasicStroke(1.0f));
-            g2.setColor(Colors.get(Color.black));
-            g2.drawLine((int) (p_mouse_TV_position.getX()), (int) (p_mouse_TV_position.getY()),
-                    (int) (p_mouse_TV_position.getX() + d_width), (int) (p_mouse_TV_position.getY() + d_width)); //直線
-        }
-    }
 
     public void drawBackground(Graphics2D g2h, Image imgh) {//引数はカメラ設定、線幅、画面X幅、画面y高さ
         //背景画を、画像の左上はしを、ウィンドウの(0,0)に合わせて回転や拡大なしで表示した場合を基準状態とする。
@@ -366,7 +445,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         at.rotate(h_cam.getAngle() * Math.PI / 180.0, h_cam.getRotationX(), h_cam.getRotationY());
         g2h.setTransform(at);
 
-        g2h.drawImage(imgh, h_cam.getX0(), h_cam.getY0(), h_cam.getX1(), h_cam.getY1(), this);
+        g2h.drawImage(imgh, h_cam.getX0(), h_cam.getY0(), h_cam.getX1(), h_cam.getY1(), canvas);
 
         at.rotate(-h_cam.getAngle() * Math.PI / 180.0, h_cam.getRotationX(), h_cam.getRotationY());
         g2h.setTransform(at);
@@ -387,7 +466,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
             mouseModeHandlers.get(mouseMode).mouseMoved(p, e);
         }
 
-        repaint();
+        canvas.repaint();
     }
 
     //マウス操作(ボタンを押したとき)を行う関数----------------------------------------------------
@@ -409,7 +488,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                 handler.mousePressed(p, e);
                 activeMouseHandler = handler;
                 mainCreasePatternWorker.setCamera(creasePatternCamera);
-                repaint();
+                canvas.repaint();
                 return;
             }
         }
@@ -444,7 +523,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                 }
 
                 mouse_temp0.set(p);
-                repaint();
+                canvas.repaint();
                 return;
             case MouseEvent.BUTTON3:
                 mainCreasePatternWorker.setCamera(creasePatternCamera);
@@ -454,7 +533,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                 }
                 mouseModeHandlers.get(MouseMode.LINE_SEGMENT_DELETE_3).mousePressed(p, e);
                 activeMouseHandler = mouseModeHandlers.get(MouseMode.LINE_SEGMENT_DELETE_3);
-                repaint();
+                canvas.repaint();
                 return;
         }
 
@@ -462,7 +541,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
         mainCreasePatternWorker.setCamera(creasePatternCamera);
 
-        repaint();
+        canvas.repaint();
     }
 
     //マウス操作(ドラッグしたとき)を行う関数---------- Logger.info("A");------------------------------------------
@@ -477,7 +556,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                 if (handler.accepts(e, btn)) {
                     handler.mouseDragged(p, e);
                     activeMouseHandler = handler;
-                    repaint();
+                    canvas.repaint();
                     return;
                 }
             }
@@ -516,7 +595,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                     }
 
                     mouse_temp0.set(p);
-                    repaint();
+                    canvas.repaint();
                     return;
 
                 case MouseEvent.BUTTON3:
@@ -527,7 +606,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
             mainCreasePatternWorker.setCamera(creasePatternCamera);
 
-            repaint();
+            canvas.repaint();
         }
     }
 
@@ -558,7 +637,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                 if (handler.accepts(e, btn)) {
                     handler.mouseReleased(p, e);
                     activeMouseHandler = handler;
-                    repaint();
+                    canvas.repaint();
                     return;
                 }
             }
@@ -598,7 +677,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                     }
 
                     mouse_temp0.set(p);
-                    repaint();
+                    canvas.repaint();
                     mouseDraggedValid = false;
                     mouseReleasedValid = false;
                     return;//
@@ -607,7 +686,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                     mainCreasePatternWorker.setCamera(creasePatternCamera);
                     mouseModeHandlers.get(MouseMode.LINE_SEGMENT_DELETE_3).mouseReleased(p, e);
                     activeMouseHandler = mouseModeHandlers.get(MouseMode.LINE_SEGMENT_DELETE_3);
-                    repaint();//なんでここにrepaintがあるか検討した方がよいかも。20181208
+                    canvas.repaint();//なんでここにrepaintがあるか検討した方がよいかも。20181208
                     canvasModel.restoreFoldLineAdditionalInputMode();
                     mouseDraggedValid = false;
                     mouseReleasedValid = false;
@@ -618,7 +697,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
             //----------------------------Logger.info("a");-----------------------
             //}  //20201010　コメントアウト
 
-            repaint();
+            canvas.repaint();
 
         }
 
@@ -645,7 +724,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
             }
 
             mouse_object_position(p_mouse_TV_position);
-            repaint();
+            canvas.repaint();
         }
     }
 
@@ -672,7 +751,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         lineWidth = applicationModel.determineCalculatedLineWidth();
         auxLineWidth = applicationModel.determineCalculatedAuxLineWidth();
 
-        repaint();
+        canvas.repaint();
     }
 
     public void setData(PropertyChangeEvent e, CanvasModel canvasModel) {
@@ -692,7 +771,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
             mouseDraggedValid = false;
         }
 
-        repaint();
+        canvas.repaint();
     }
 
     //=============================================================================
@@ -745,9 +824,9 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         }
 
         // Capture by specifying a range
-        Rectangle canvasBounds = getBounds();
+        Rectangle canvasBounds = canvas.getBounds();
 
-        java.awt.Point canvasLocation = getLocationOnScreen();
+        java.awt.Point canvasLocation = canvas.getLocationOnScreen();
         Rectangle bounds = new Rectangle(canvasLocation.x, canvasLocation.y, canvasBounds.width, canvasBounds.height);
 
         java.awt.Point currentLocation = frame.getLocation();
@@ -788,7 +867,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
             h_cam.h3_obj_and_h4_obj_calculation();
         }
 
-        repaint();
+        canvas.repaint();
     }
 
     public Point e2p(MouseEvent e) {

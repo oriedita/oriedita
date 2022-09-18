@@ -2,9 +2,11 @@ package oriedita.editor.factory;
 
 import dagger.Component;
 import oriedita.editor.App;
+import oriedita.editor.action.MouseModeHandler;
 import oriedita.editor.service.*;
 
 import javax.inject.Singleton;
+import java.util.Set;
 
 /**
  * Main factory for the application.
@@ -29,4 +31,6 @@ public interface AppFactory {
     FileSaveService fileSaveService();
 
     LookAndFeelService lookAndFeelService();
+
+    Set<MouseModeHandler> handlers();
 }

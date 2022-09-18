@@ -1,7 +1,6 @@
 package oriedita.editor.canvas;
 
 public enum MouseMode {
-    UNUSED_0(0),
     DRAW_CREASE_FREE_1(1),
     MOVE_CREASE_PATTERN_2(2),
     /**

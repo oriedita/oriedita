@@ -75,7 +75,7 @@ public class TopPanel {
 
         applicationModel.addPropertyChangeListener(e -> setData(applicationModel));
         internalDivisionRatioModel.addPropertyChangeListener(e -> setData(internalDivisionRatioModel));
-        canvas.addPropertyChangeListener(e -> setData(e, canvasModel));
+        canvas.getCanvasImpl().addPropertyChangeListener(e -> setData(e, canvasModel));
         backgroundModel.addPropertyChangeListener(e -> setData(backgroundModel));
         creasePatternCameraModel.addPropertyChangeListener(e -> setData(creasePatternCameraModel));
 
