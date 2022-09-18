@@ -86,6 +86,7 @@ public class App {
     }
 
     public void start() {
+        canvas.init();
         frame.setTitle("Oriedita " + ResourceUtil.getVersionFromManifest());//Specify the title and execute the constructor
 
         frame.addWindowStateListener(new WindowAdapter() {

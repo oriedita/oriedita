@@ -101,15 +101,15 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
 
     private final Frame frame;
 
-    private CanvasImpl canvas;
+    private CanvasUI canvas;
 
-    public CanvasImpl getCanvasImpl() {
+    public CanvasUI getCanvasImpl() {
         return canvas;
     }
 
     @Singleton
-    public class CanvasImpl extends JPanel {
-        protected CanvasImpl() {
+    public class CanvasUI extends JPanel {
+        protected CanvasUI() {
 
         }
         public void writeImageFile(File file) {
@@ -344,9 +344,9 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
         this.textModel = textModel;
     }
 
-    public CanvasImpl init() {
+    public CanvasUI init() {
 
-        canvas = new CanvasImpl();
+        canvas = new CanvasUI();
 
         canvas.setLayout(null);
         cpTextEditingArea = new TextEditingArea(textModel, textWorker, mainCreasePatternWorker,

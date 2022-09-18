@@ -14,15 +14,16 @@ import java.awt.*;
 @Singleton
 public class Editor {
     private JPanel root;
-    private Canvas.CanvasImpl canvas;
+    private Canvas.CanvasUI canvas;
+    private final Canvas canvas1;
     private RightPanel rightPanel;
     private BottomPanel bottomPanel;
     private TopPanel topPanel;
     private LeftPanel leftPanel;
 
     @Inject
-    public Editor(Canvas.CanvasImpl canvas, RightPanel rightPanel, BottomPanel bottomPanel, TopPanel topPanel, LeftPanel leftPanel) {
-        this.canvas = canvas;
+    public Editor(Canvas canvas, RightPanel rightPanel, BottomPanel bottomPanel, TopPanel topPanel, LeftPanel leftPanel) {
+        this.canvas1 = canvas;
         this.rightPanel = rightPanel;
         this.bottomPanel = bottomPanel;
         this.topPanel = topPanel;
@@ -31,6 +32,7 @@ public class Editor {
     }
 
     private void createUIComponents() {
+        this.canvas = canvas1.getCanvasImpl();
     }
 
     /**

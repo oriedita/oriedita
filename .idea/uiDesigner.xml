@@ -121,7 +121,7 @@
       </item>
     </group>
     <group name="Custom">
-      <item class="oriedita.editor.Canvas$CanvasImpl" icon="/com/intellij/uiDesigner/icons/panel.svg" removable="true" auto-create-binding="true" can-attach-label="false">
+      <item class="oriedita.editor.Canvas$CanvasUI" icon="/com/intellij/uiDesigner/icons/panel.svg" removable="true" auto-create-binding="true" can-attach-label="false">
         <default-constraints vsize-policy="3" hsize-policy="3" anchor="0" fill="0" />
       </item>
       <item class="origami_editor.editor.component.FoldedFigureRotate" icon="/com/intellij/uiDesigner/icons/toolbarSeparator.svg" removable="false" auto-create-binding="false" can-attach-label="false">
