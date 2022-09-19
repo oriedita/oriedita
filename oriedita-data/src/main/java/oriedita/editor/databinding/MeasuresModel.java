@@ -16,6 +16,12 @@ public class MeasuresModel {
     private double measuredAngle2;
     private double measuredAngle3;
 
+    private double displayMeasuredLength1;
+    private double displayMeasuredLength2;
+    private double displayMeasuredAngle1;
+    private double displayMeasuredAngle2;
+    private double displayMeasuredAngle3;
+
     @Inject
     public MeasuresModel() {
         reset();
@@ -100,6 +106,8 @@ public class MeasuresModel {
         }
         this.pcs.firePropertyChange("measuredAngle3", oldMeasuredAngle3, this.measuredAngle3);
     }
+
+
 
     public double string2double(String str0, double default_if_error) {
         String new_str0 = str0.trim();

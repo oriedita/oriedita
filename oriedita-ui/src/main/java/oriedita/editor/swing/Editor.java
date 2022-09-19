@@ -30,6 +30,7 @@ public class Editor {
         this.leftPanel = leftPanel;
 
         leftPanel.init();
+        topPanel.init();
         $$$setupUI$$$();
     }
 

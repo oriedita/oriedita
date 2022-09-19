@@ -209,7 +209,6 @@ public class LeftPanel {
         buttonService.registerButton(parallelDrawButton, "parallelDrawAction");
         buttonService.registerButton(setParallelDrawWidthButton, "setParallelDrawWidthAction");
         buttonService.registerButton(foldableLineDrawButton, "foldableLineDrawAction");
-        buttonService.registerButton(all_s_step_to_orisenButton, "all_s_step_to_orisenAction");
         buttonService.registerButton(fishBoneDrawButton, "fishBoneDrawAction");
         buttonService.registerButton(doubleSymmetricDrawButton, "doubleSymmetricDrawAction");
         buttonService.registerButton(senbun_b_nyuryokuButton, "senbun_b_nyuryokuAction");
@@ -326,12 +325,6 @@ public class LeftPanel {
 
             mainCreasePatternWorker.unselect_all();
         });
-        angleBisectorButton.addActionListener(e -> {
-            canvasModel.setMouseMode(MouseMode.SQUARE_BISECTOR_7);
-            canvasModel.setMouseModeAfterColorSelection(MouseMode.SQUARE_BISECTOR_7);
-
-            mainCreasePatternWorker.unselect_all();
-        });
         rabbitEarButton.addActionListener(e -> {
             canvasModel.setMouseMode(MouseMode.INWARD_8);
             canvasModel.setMouseModeAfterColorSelection(MouseMode.INWARD_8);
@@ -373,12 +366,6 @@ public class LeftPanel {
             canvasModel.setMouseModeAfterColorSelection(MouseMode.FOLDABLE_LINE_DRAW_71);
 
             mainCreasePatternWorker.unselect_all();
-        });
-        all_s_step_to_orisenButton.addActionListener(e -> {
-            Logger.info("i_egaki_dankai = " + mainCreasePatternWorker.getDrawingStage());
-            Logger.info("i_kouho_dankai = " + mainCreasePatternWorker.getCandidateSize());
-
-            mainCreasePatternWorker.all_s_step_to_orisen();
         });
         fishBoneDrawButton.addActionListener(e -> {
             canvasModel.setMouseMode(MouseMode.FISH_BONE_DRAW_33);
