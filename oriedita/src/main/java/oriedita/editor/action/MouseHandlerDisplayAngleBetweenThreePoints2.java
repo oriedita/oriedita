@@ -1,5 +1,8 @@
 package oriedita.editor.action;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.databinding.MeasuresModel;
@@ -7,23 +10,16 @@ import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
-@Singleton
+@ApplicationScoped
+@Handles(MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_2_56)
 public class MouseHandlerDisplayAngleBetweenThreePoints2 extends BaseMouseHandlerInputRestricted {
     private final CreasePattern_Worker d;
     private final MeasuresModel measuresModel;
 
     @Inject
-    public MouseHandlerDisplayAngleBetweenThreePoints2(CreasePattern_Worker d, MeasuresModel measuresModel) {
+    public MouseHandlerDisplayAngleBetweenThreePoints2(@Named("mainCreasePattern_Worker") CreasePattern_Worker d, MeasuresModel measuresModel) {
         this.d = d;
         this.measuresModel = measuresModel;
-    }
-
-    @Override
-    public MouseMode getMouseMode() {
-        return MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_2_56;
     }
 
     //マウス操作(ボタンを押したとき)時の作業

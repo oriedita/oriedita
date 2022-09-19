@@ -1,5 +1,7 @@
 package oriedita.editor.action;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import org.tinylog.Logger;
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.canvas.MouseMode;
@@ -10,21 +12,14 @@ import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami.folding.util.SortingBox;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
-@Singleton
+@ApplicationScoped
+@Handles(MouseMode.FOLDABLE_LINE_INPUT_39)
 public class MouseHandlerFoldableLineInput extends BaseMouseHandlerInputRestricted {
 
     CreasePattern_Worker.FourPointStep i_step_for_copy_4p = CreasePattern_Worker.FourPointStep.STEP_0;
 
     @Inject
     public MouseHandlerFoldableLineInput() {
-    }
-
-    @Override
-    public MouseMode getMouseMode() {
-        return MouseMode.FOLDABLE_LINE_INPUT_39;
     }
 
     //マウス操作(マウスを動かしたとき)を行う関数    //Logger.info("_");

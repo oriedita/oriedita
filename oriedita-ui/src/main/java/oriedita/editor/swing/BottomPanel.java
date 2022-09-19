@@ -3,6 +3,9 @@ package oriedita.editor.swing;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import org.tinylog.Logger;
 import oriedita.editor.action.FoldedFigureOperationMode;
 import oriedita.editor.canvas.CreasePattern_Worker;
@@ -21,9 +24,6 @@ import oriedita.editor.tools.StringOp;
 import origami.crease_pattern.worker.foldlineset.Check4;
 import origami.folding.FoldedFigure;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
 import javax.swing.*;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
@@ -32,7 +32,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 
-@Singleton
+@ApplicationScoped
 public class BottomPanel {
     private final ButtonService buttonService;
     private final MeasuresModel measuresModel;
@@ -70,7 +70,7 @@ public class BottomPanel {
                        CanvasModel canvasModel,
                        FoldedFigureModel foldedFigureModel,
                        CameraModel creasePatternCameraModel,
-                       CreasePattern_Worker mainCreasePatternWorker,
+                       @Named("mainCreasePattern_Worker") CreasePattern_Worker mainCreasePatternWorker,
                        FoldingService foldingService,
                        ApplicationModel applicationModel,
                        FoldedFiguresList foldedFiguresList,

@@ -1,12 +1,12 @@
 package oriedita.editor.service.impl;
 
+import jakarta.enterprise.context.ApplicationScoped;
 import oriedita.editor.service.TaskExecutorService;
 import oriedita.editor.task.OrieditaTask;
 
-import javax.inject.Singleton;
 import java.util.concurrent.*;
 
-@Singleton
+@ApplicationScoped
 public class SingleTaskExecutorServiceImpl implements TaskExecutorService {
     private final ExecutorService pool;
     private static Future<?> currentTask = CompletableFuture.completedFuture(null);

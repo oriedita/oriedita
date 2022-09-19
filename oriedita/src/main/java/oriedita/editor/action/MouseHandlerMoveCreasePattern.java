@@ -1,5 +1,8 @@
 package oriedita.editor.action;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.databinding.FoldedFiguresList;
@@ -7,21 +10,19 @@ import oriedita.editor.drawing.FoldedFigure_Drawer;
 import oriedita.editor.drawing.tools.Camera;
 import origami.crease_pattern.element.Point;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
 import java.util.EnumSet;
 
-@Singleton
+@ApplicationScoped
+@Handles(MouseMode.MOVE_CREASE_PATTERN_2)
 public class MouseHandlerMoveCreasePattern implements MouseModeHandler {
-    public Point mouse_temp0 = new Point();//マウスの動作対応時に、一時的に使うTen
+    private final Point mouse_temp0 = new Point();//マウスの動作対応時に、一時的に使うTen
 
     private final Camera creasePatternCamera;
     private final FoldedFiguresList foldedFiguresList;
     private final CreasePattern_Worker mainCreasePatternWorker;
 
     @Inject
-    public MouseHandlerMoveCreasePattern(@Named("creasePatternCamera") Camera creasePatternCamera, FoldedFiguresList foldedFiguresList, CreasePattern_Worker mainCreasePatternWorker) {
+    public MouseHandlerMoveCreasePattern(@Named("creasePatternCamera") Camera creasePatternCamera, FoldedFiguresList foldedFiguresList, @Named("mainCreasePattern_Worker") CreasePattern_Worker mainCreasePatternWorker) {
         this.creasePatternCamera = creasePatternCamera;
         this.foldedFiguresList = foldedFiguresList;
         this.mainCreasePatternWorker = mainCreasePatternWorker;
@@ -30,11 +31,6 @@ public class MouseHandlerMoveCreasePattern implements MouseModeHandler {
     @Override
     public EnumSet<Feature> getSubscribedFeatures() {
         return EnumSet.of(Feature.BUTTON_1);
-    }
-
-    @Override
-    public MouseMode getMouseMode() {
-        return MouseMode.MOVE_CREASE_PATTERN_2;
     }
 
     @Override

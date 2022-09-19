@@ -1,6 +1,9 @@
 package oriedita.editor.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import org.tinylog.Logger;
 import oriedita.editor.Canvas;
 import oriedita.editor.canvas.CreasePattern_Worker;
@@ -20,9 +23,6 @@ import oriedita.editor.swing.dialog.ExportDialog;
 import oriedita.editor.swing.dialog.SaveTypeDialog;
 import oriedita.editor.tools.ResourceUtil;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
@@ -36,7 +36,7 @@ import java.util.concurrent.TimeUnit;
 import static oriedita.editor.swing.dialog.FileDialogUtil.openFileDialog;
 import static oriedita.editor.swing.dialog.FileDialogUtil.saveFileDialog;
 
-@Singleton
+@ApplicationScoped
 public class FileSaveServiceImpl implements FileSaveService {
     private final JFrame frame;
     private final Camera creasePatternCamera;
@@ -55,7 +55,7 @@ public class FileSaveServiceImpl implements FileSaveService {
     public FileSaveServiceImpl(
             @Named("mainFrame") JFrame frame,
             @Named("creasePatternCamera") Camera creasePatternCamera,
-            CreasePattern_Worker mainCreasePatternWorker,
+            @Named("mainCreasePattern_Worker") CreasePattern_Worker mainCreasePatternWorker,
             Fold fold,
             Canvas canvas,
             FileModel fileModel,

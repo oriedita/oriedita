@@ -1,5 +1,7 @@
 package oriedita.editor.action;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import org.tinylog.Logger;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.databinding.CanvasModel;
@@ -11,11 +13,10 @@ import origami.crease_pattern.FoldingException;
 import origami.crease_pattern.element.Point;
 import origami.folding.FoldedFigure;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
 import java.util.EnumSet;
 
-@Singleton
+@ApplicationScoped
+@Handles(MouseMode.MODIFY_CALCULATED_SHAPE_101)
 public class MouseHandlerModifyCalculatedShape implements MouseModeHandler {
     private final FoldingService foldingService;
     private final CanvasModel canvasModel;
@@ -37,11 +38,6 @@ public class MouseHandlerModifyCalculatedShape implements MouseModeHandler {
     @Override
     public EnumSet<Feature> getSubscribedFeatures() {
         return EnumSet.of(Feature.BUTTON_1);
-    }
-
-    @Override
-    public MouseMode getMouseMode() {
-        return MouseMode.MODIFY_CALCULATED_SHAPE_101;
     }
 
     @Override

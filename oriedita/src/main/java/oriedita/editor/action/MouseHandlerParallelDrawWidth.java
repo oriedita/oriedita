@@ -1,5 +1,7 @@
 package oriedita.editor.action;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
 import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
@@ -7,18 +9,11 @@ import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
-@Singleton
+@ApplicationScoped
+@Handles(MouseMode.PARALLEL_DRAW_WIDTH_51)
 public class MouseHandlerParallelDrawWidth extends BaseMouseHandler {
     @Inject
     public MouseHandlerParallelDrawWidth() {
-    }
-
-    @Override
-    public MouseMode getMouseMode() {
-        return MouseMode.PARALLEL_DRAW_WIDTH_51;
     }
 
     @Override

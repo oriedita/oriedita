@@ -1,5 +1,7 @@
 package oriedita.editor.action;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
 import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
@@ -7,20 +9,13 @@ import origami.crease_pattern.element.Circle;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.Point;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
-@Singleton
+@ApplicationScoped
+@Handles(MouseMode.CIRCLE_DRAW_CONCENTRIC_SELECT_49)
 public class MouseHandlerCircleDrawConcentricSelect extends BaseMouseHandler {
     Circle closest_circumference = new Circle(100000.0, 100000.0, 10.0, LineColor.PURPLE_8); //Circle with the circumference closest to the mouse
 
     @Inject
     public MouseHandlerCircleDrawConcentricSelect() {
-    }
-
-    @Override
-    public MouseMode getMouseMode() {
-        return MouseMode.CIRCLE_DRAW_CONCENTRIC_SELECT_49;
     }
 
     @Override

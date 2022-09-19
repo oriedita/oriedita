@@ -1,19 +1,21 @@
 package oriedita.editor.databinding;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.Dependent;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 import oriedita.editor.action.FoldedFigureOperationMode;
 import oriedita.editor.canvas.FoldLineAdditionalInputMode;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.canvas.MouseWheelTarget;
 import origami.crease_pattern.element.LineColor;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.Serializable;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-@Singleton
+@ApplicationScoped
 public class CanvasModel implements Serializable {
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     private LineColor lineColor;
@@ -27,7 +29,7 @@ public class CanvasModel implements Serializable {
         return w_image_running;
     }
 
-    public final AtomicBoolean w_image_running = new AtomicBoolean(false); // Folding together execution. If a single image export is in progress, it will be true.
+    private final AtomicBoolean w_image_running = new AtomicBoolean(false); // Folding together execution. If a single image export is in progress, it will be true.
 
     private MouseWheelTarget mouseInCpOrFoldedFigure;
 

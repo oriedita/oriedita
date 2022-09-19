@@ -1,5 +1,8 @@
 package oriedita.editor.action;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.databinding.AngleSystemModel;
@@ -10,19 +13,12 @@ import origami.Epsilon;
 import origami.crease_pattern.FoldLineSet;
 import origami.crease_pattern.element.Point;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
-@Singleton
+@ApplicationScoped
+@Handles(MouseMode.CREASE_MOVE_21)
 public class MouseHandlerCreaseMove extends BaseMouseHandlerLineTransform {
 
-    @Override
-    public MouseMode getMouseMode() {
-        return MouseMode.CREASE_MOVE_21;
-    }
-
     @Inject
-    public MouseHandlerCreaseMove(CreasePattern_Worker d, CanvasModel canvasModel, AngleSystemModel angleSystemModel) {
+    public MouseHandlerCreaseMove(@Named("mainCreasePattern_Worker") CreasePattern_Worker d, CanvasModel canvasModel, AngleSystemModel angleSystemModel) {
         super(canvasModel, angleSystemModel);
         this.d = d;
     }

@@ -1,23 +1,18 @@
 package oriedita.editor.action;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.canvas.MouseMode;
 import origami.Epsilon;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.Point;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
-@Singleton
+@ApplicationScoped
+@Handles(MouseMode.CREASE_MAKE_EDGE_25)
 public class MouseHandlerCreaseMakeEdge extends BaseMouseHandlerBoxSelect {
     @Inject
     public MouseHandlerCreaseMakeEdge() {
-    }
-
-    @Override
-    public MouseMode getMouseMode() {
-        return MouseMode.CREASE_MAKE_EDGE_25;
     }
 
     @Override

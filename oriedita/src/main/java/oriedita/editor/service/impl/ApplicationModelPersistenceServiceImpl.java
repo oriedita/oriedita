@@ -2,14 +2,15 @@ package oriedita.editor.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import org.jboss.weld.proxy.WeldClientProxy;
 import org.tinylog.Logger;
 import oriedita.editor.databinding.ApplicationModel;
 import oriedita.editor.json.DefaultObjectMapper;
 import oriedita.editor.service.ApplicationModelPersistenceService;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
 import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
@@ -17,7 +18,7 @@ import java.nio.file.Path;
 
 import static oriedita.editor.tools.ResourceUtil.getAppDir;
 
-@Singleton
+@ApplicationScoped
 public class ApplicationModelPersistenceServiceImpl implements ApplicationModelPersistenceService {
 
     public static final String CONFIG_JSON = "config.json";
@@ -79,7 +80,9 @@ public class ApplicationModelPersistenceServiceImpl implements ApplicationModelP
         mapper.enable(SerializationFeature.INDENT_OUTPUT);
 
         try {
-            mapper.writeValue(storage.resolve(CONFIG_JSON).toFile(), applicationModel);
+            ApplicationModel tempApplicationModel = new ApplicationModel();
+            tempApplicationModel.set(applicationModel);
+            mapper.writeValue(storage.resolve(CONFIG_JSON).toFile(), tempApplicationModel);
         } catch (IOException e) {
             Logger.error(e, "Unable to write applicationModel to disk.");
         }

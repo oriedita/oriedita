@@ -1,22 +1,17 @@
 package oriedita.editor.action;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
 import origami.Epsilon;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
-@Singleton
+@ApplicationScoped
+@Handles(MouseMode.DRAW_CREASE_RESTRICTED_11)
 public class MouseHandlerDrawCreaseRestricted extends BaseMouseHandlerInputRestricted {
     @Inject
     public MouseHandlerDrawCreaseRestricted() {
-    }
-
-    @Override
-    public MouseMode getMouseMode() {
-        return MouseMode.DRAW_CREASE_RESTRICTED_11;
     }
 
     //マウス操作(mouseMode==11線分入力　でボタンを押したとき)時の作業----------------------------------------------------

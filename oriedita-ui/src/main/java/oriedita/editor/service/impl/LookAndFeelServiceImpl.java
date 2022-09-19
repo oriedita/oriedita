@@ -2,19 +2,19 @@ package oriedita.editor.service.impl;
 
 import com.formdev.flatlaf.FlatLaf;
 import com.formdev.flatlaf.ui.FlatUIUtils;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import oriedita.editor.Colors;
 import oriedita.editor.databinding.ApplicationModel;
 import oriedita.editor.service.LookAndFeelService;
 import oriedita.editor.tools.LookAndFeelUtil;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
 import javax.swing.*;
 import java.awt.*;
 import java.net.URL;
 
-@Singleton
+@ApplicationScoped
 public class LookAndFeelServiceImpl implements LookAndFeelService {
     private final JFrame frame;
     private final ApplicationModel applicationModel;

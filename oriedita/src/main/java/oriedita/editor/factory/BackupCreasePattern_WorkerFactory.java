@@ -1,7 +1,8 @@
 package oriedita.editor.factory;
 
-import dagger.Module;
-import dagger.Provides;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Produces;
+import jakarta.inject.Named;
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.canvas.TextWorker;
 import oriedita.editor.canvas.impl.CreasePattern_Worker_Impl;
@@ -11,13 +12,10 @@ import oriedita.editor.service.HistoryState;
 import oriedita.editor.service.TaskExecutorService;
 import origami.crease_pattern.FoldLineSet;
 
-import javax.inject.Named;
-import javax.inject.Singleton;
-
-@Module
+@ApplicationScoped
 public class BackupCreasePattern_WorkerFactory {
-    @Provides
-    @Singleton
+    @Produces
+    @ApplicationScoped
     @Named("backupCreasePattern_Worker")
     public static CreasePattern_Worker backupCreasePattern_Worker(@Named("creasePatternCamera") Camera creasePatternCamera,
                                                                   @Named("normal") HistoryState historyState,
@@ -33,6 +31,27 @@ public class BackupCreasePattern_WorkerFactory {
                                                                   AngleSystemModel angleSystemModel,
                                                                   TextWorker textWorker,
                                                                   SelectedTextModel textModel) {
-        return new CreasePattern_Worker_Impl(creasePatternCamera, historyState, auxHistoryState, auxLines, foldLineSet, camvTaskExecutor, canvasModel, applicationModel, gridModel, foldedFigureModel, fileModel, angleSystemModel, textWorker, textModel);
+        return new CreasePattern_Worker_Impl(creasePatternCamera, historyState, auxHistoryState, auxLines, foldLineSet, camvTaskExecutor, canvasModel, applicationModel, gridModel, foldedFigureModel, fileModel, textWorker, textModel);
+    }
+
+    @Produces
+    @ApplicationScoped
+    @Named("mainCreasePattern_Worker")
+    public static CreasePattern_Worker mainCreasePattern_Worker(@Named("creasePatternCamera") Camera creasePatternCamera,
+                                                                @Named("normal") HistoryState historyState,
+                                                                @Named("aux") HistoryState auxHistoryState,
+                                                                @Named("auxlines") FoldLineSet auxLines,
+                                                                @Named("foldlines") FoldLineSet foldLineSet,
+                                                                @Named("camvExecutor") TaskExecutorService camvTaskExecutor,
+                                                                CanvasModel canvasModel,
+                                                                ApplicationModel applicationModel,
+                                                                GridModel gridModel,
+                                                                FoldedFigureModel foldedFigureModel,
+                                                                FileModel fileModel,
+                                                                AngleSystemModel angleSystemModel,
+                                                                TextWorker textWorker,
+                                                                SelectedTextModel textModel) {
+
+        return new CreasePattern_Worker_Impl(creasePatternCamera, historyState, auxHistoryState, auxLines, foldLineSet, camvTaskExecutor, canvasModel, applicationModel, gridModel, foldedFigureModel, fileModel, textWorker, textModel);
     }
 }

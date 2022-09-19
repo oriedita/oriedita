@@ -3,6 +3,7 @@ package oriedita.editor.canvas;
 import oriedita.editor.databinding.AngleSystemModel;
 import oriedita.editor.databinding.ApplicationModel;
 import oriedita.editor.databinding.CanvasModel;
+import oriedita.editor.databinding.GridModel;
 import oriedita.editor.drawing.Grid;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.save.Save;
@@ -255,6 +256,8 @@ public interface CreasePattern_Worker {
     int getFoldLineDividingNumber();
 
     TextWorker getTextWorker();
+
+    void setGridConfigurationData(GridModel gridModel);
 
     //30 30 30 30 30 30 30 30 30 30 30 30 除け_線_変換
     enum FourPointStep {

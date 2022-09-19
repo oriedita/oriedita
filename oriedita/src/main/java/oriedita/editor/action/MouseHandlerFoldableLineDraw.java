@@ -1,5 +1,7 @@
 package oriedita.editor.action;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import oriedita.editor.canvas.FoldLineAdditionalInputMode;
 import oriedita.editor.canvas.MouseMode;
 import origami.Epsilon;
@@ -8,10 +10,8 @@ import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami.folding.util.SortingBox;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
-@Singleton
+@ApplicationScoped
+@Handles(MouseMode.FOLDABLE_LINE_DRAW_71)
 public class MouseHandlerFoldableLineDraw extends BaseMouseHandler {
     private final MouseHandlerDrawCreaseFree mouseHandlerDrawCreaseFree;
     private final MouseHandlerVertexMakeAngularlyFlatFoldable mouseHandlerVertexMakeAngularlyFlatFoldable;
@@ -21,14 +21,12 @@ public class MouseHandlerFoldableLineDraw extends BaseMouseHandler {
     Point closest_point;
 
     @Inject
-    public MouseHandlerFoldableLineDraw(MouseHandlerDrawCreaseFree mouseHandlerDrawCreaseFree, MouseHandlerVertexMakeAngularlyFlatFoldable mouseHandlerVertexMakeAngularlyFlatFoldable) {
+    public MouseHandlerFoldableLineDraw(
+            @Handles(MouseMode.DRAW_CREASE_FREE_1) MouseHandlerDrawCreaseFree mouseHandlerDrawCreaseFree,
+            @Handles(MouseMode.VERTEX_MAKE_ANGULARLY_FLAT_FOLDABLE_38) MouseHandlerVertexMakeAngularlyFlatFoldable mouseHandlerVertexMakeAngularlyFlatFoldable
+    ) {
         this.mouseHandlerDrawCreaseFree = mouseHandlerDrawCreaseFree;
         this.mouseHandlerVertexMakeAngularlyFlatFoldable = mouseHandlerVertexMakeAngularlyFlatFoldable;
-    }
-
-    @Override
-    public MouseMode getMouseMode() {
-        return MouseMode.FOLDABLE_LINE_DRAW_71;
     }
 
     public void mouseMoved(Point p0) {
@@ -93,7 +91,7 @@ public class MouseHandlerFoldableLineDraw extends BaseMouseHandler {
         }
         if (operationMode == MouseMode.VERTEX_MAKE_ANGULARLY_FLAT_FOLDABLE_38) {
             mouseHandlerVertexMakeAngularlyFlatFoldable.mousePressed(p0);
-            if (!mouseHandlerVertexMakeAngularlyFlatFoldable.workDone) {
+            if (!mouseHandlerVertexMakeAngularlyFlatFoldable.isWorkDone()) {
                 if (d.getLineStep().size() == 0) {
                     mousePressed(p0);
                 }

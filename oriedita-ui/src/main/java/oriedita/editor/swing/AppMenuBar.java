@@ -2,6 +2,10 @@ package oriedita.editor.swing;
 
 import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatLaf;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Any;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import org.tinylog.Logger;
 import oriedita.editor.Colors;
 import oriedita.editor.canvas.CreasePattern_Worker;
@@ -14,9 +18,6 @@ import oriedita.editor.save.SaveProvider;
 import oriedita.editor.service.*;
 import oriedita.editor.tools.LookAndFeelUtil;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
@@ -28,8 +29,15 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-@Singleton
-public class AppMenuBar extends JMenuBar {
+@ApplicationScoped
+public class AppMenuBar {
+    public AppMenuBarUI getAppMenuBarUI() {
+        return appMenuBarUI;
+    }
+
+    private static class AppMenuBarUI extends JMenuBar {
+
+    }
     private final JFrame frame;
     private final TaskExecutorService foldingExecutor;
     private final FileSaveService fileSaveService;
@@ -70,6 +78,8 @@ public class AppMenuBar extends JMenuBar {
     private JMenuItem pasteButton;
     private JMenuItem pasteOffsetButton;
 
+    private AppMenuBarUI appMenuBarUI;
+
     @Inject
     public AppMenuBar(@Named("mainFrame") JFrame frame,
                       @Named("foldingExecutor") TaskExecutorService foldingExecutor,
@@ -77,9 +87,9 @@ public class AppMenuBar extends JMenuBar {
                       LookAndFeelService lookAndFeelService,
                       FileSaveService fileSaveService,
                       ButtonService buttonService,
-                      CanvasModel canvasModel,
+                      @Any CanvasModel canvasModel,
                       FileModel fileModel,
-                      CreasePattern_Worker mainCreasePatternWorker,
+                      @Named("mainCreasePattern_Worker") CreasePattern_Worker mainCreasePatternWorker,
                       FoldedFigureModel foldedFigureModel,
                       ResetService resetService,
                       FoldedFiguresList foldedFiguresList) {
@@ -286,10 +296,11 @@ public class AppMenuBar extends JMenuBar {
     }
 
     private void createElements() {
+        appMenuBarUI = new AppMenuBarUI();
         JMenu fileMenu = new JMenu("File");
         fileMenu.setMnemonic('F');
 
-        add(fileMenu);
+        appMenuBarUI.add(fileMenu);
 
         newButton = new JMenuItem("New");
         fileMenu.add(newButton);
@@ -327,7 +338,7 @@ public class AppMenuBar extends JMenuBar {
 
         JMenu editMenu = new JMenu("Edit");
         editMenu.setMnemonic('E');
-        add(editMenu);
+        appMenuBarUI.add(editMenu);
 
         copyButton = new JMenuItem("Copy");
         editMenu.add(copyButton);
@@ -347,7 +358,7 @@ public class AppMenuBar extends JMenuBar {
         JMenu viewMenu = new JMenu("View");
         viewMenu.setMnemonic('V');
 
-        add(viewMenu);
+        appMenuBarUI.add(viewMenu);
 
         darkModeCheckBox = new JCheckBoxMenuItem("Dark Mode");
         viewMenu.add(darkModeCheckBox);
@@ -389,7 +400,7 @@ public class AppMenuBar extends JMenuBar {
 
         JMenu helpMenu = new JMenu("Help");
         helpMenu.setMnemonic('H');
-        add(helpMenu);
+        appMenuBarUI.add(helpMenu);
 
         toggleHelpMenuItem = new JMenuItem("Toggle help");
         helpMenu.add(toggleHelpMenuItem);

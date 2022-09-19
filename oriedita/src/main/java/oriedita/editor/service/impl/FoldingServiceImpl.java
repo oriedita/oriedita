@@ -1,6 +1,8 @@
 package oriedita.editor.service.impl;
 
-import dagger.Lazy;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import org.tinylog.Logger;
 import oriedita.editor.Foldable;
 import oriedita.editor.canvas.CreasePattern_Worker;
@@ -23,16 +25,13 @@ import origami.crease_pattern.LineSegmentSet;
 import origami.crease_pattern.element.Point;
 import origami.folding.FoldedFigure;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
 import javax.swing.*;
 
-@Singleton
+@ApplicationScoped
 public class FoldingServiceImpl implements FoldingService {
     private final BulletinBoard bulletinBoard;
     private final CanvasModel canvasModel;
-    private final Lazy<JFrame> frame;
+    private final JFrame frame;
     private final Camera creasePatternCamera;
     private final CreasePattern_Worker backupCreasePatternWorker;
     private final TaskExecutorService foldingExecutor;
@@ -40,19 +39,19 @@ public class FoldingServiceImpl implements FoldingService {
     private final FoldedFigureModel foldedFigureModel;
     private final CreasePattern_Worker mainCreasePatternWorker;
     private final FoldedFiguresList foldedFiguresList;
-    public LineSegmentSet lineSegmentsForFolding;//折畳み予測の最初に、ts1.Senbunsyuugou2Tensyuugou(lineSegmentsForFolding)として使う。　Ss0は、mainDrawingWorker.get_for_oritatami()かes1.get_for_select_oritatami()で得る。
+    private LineSegmentSet lineSegmentsForFolding;//折畳み予測の最初に、ts1.Senbunsyuugou2Tensyuugou(lineSegmentsForFolding)として使う。　Ss0は、mainDrawingWorker.get_for_oritatami()かes1.get_for_select_oritatami()で得る。
     private LineSegmentSet lastFold;
 
     @Inject
     public FoldingServiceImpl(BulletinBoard bulletinBoard,
                               CanvasModel canvasModel,
-                              @Named("mainFrame") Lazy<JFrame> frame,
+                              @Named("mainFrame") JFrame frame,
                               @Named("creasePatternCamera") Camera creasePatternCamera,
                               @Named("backupCreasePattern_Worker") CreasePattern_Worker backupCreasePatternWorker,
                               @Named("foldingExecutor") TaskExecutorService foldingExecutor,
                               ApplicationModel applicationModel,
                               FoldedFigureModel foldedFigureModel,
-                              CreasePattern_Worker mainCreasePatternWorker,
+                              @Named("mainCreasePattern_Worker") CreasePattern_Worker mainCreasePatternWorker,
                               FoldedFiguresList foldedFiguresList) {
         this.bulletinBoard = bulletinBoard;
         this.canvasModel = canvasModel;
@@ -187,7 +186,7 @@ public class FoldingServiceImpl implements FoldingService {
                 "<html>２色塗りわけ展開図を描くためには、あらかじめ対象範囲を選択してください（selectボタンを使う）。<br>" +
                         "To get 2-Colored crease pattern, select the target range in advance (use the select button).<html>");
         // TODO fix owner
-        JOptionPane.showMessageDialog(frame.get(), label);
+        JOptionPane.showMessageDialog(frame, label);
     }
 
     @Override

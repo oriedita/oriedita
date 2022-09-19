@@ -1,19 +1,19 @@
 package oriedita.editor.service.impl;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import org.tinylog.Logger;
 import oriedita.editor.save.Save;
 import oriedita.editor.save.SaveProvider;
 import oriedita.editor.service.HistoryState;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.*;
 import java.util.ArrayDeque;
 import java.util.Deque;
 
-@Singleton
+@ApplicationScoped
 public class DequeHistoryState implements HistoryState {
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 

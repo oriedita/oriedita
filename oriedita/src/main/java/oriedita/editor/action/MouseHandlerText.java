@@ -1,5 +1,7 @@
 package oriedita.editor.action;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.canvas.TextWorker;
 import oriedita.editor.databinding.ApplicationModel;
@@ -8,14 +10,13 @@ import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.text.Text;
 import origami.crease_pattern.element.Point;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.util.EnumSet;
 
-@Singleton
+@ApplicationScoped
+@Handles(MouseMode.TEXT)
 public class MouseHandlerText extends BaseMouseHandlerBoxSelect {
     private final SelectedTextModel textModel;
     private final TextWorker textWorker;
@@ -33,11 +34,6 @@ public class MouseHandlerText extends BaseMouseHandlerBoxSelect {
         this.textWorker = textWorker;
         this.showWarningThisSession = applicationModel.getShowInvisibleTextWarning();
         this.applicationModel = applicationModel;
-    }
-
-    @Override
-    public MouseMode getMouseMode() {
-        return MouseMode.TEXT;
     }
 
     @Override

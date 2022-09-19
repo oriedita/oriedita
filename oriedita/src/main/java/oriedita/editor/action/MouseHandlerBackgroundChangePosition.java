@@ -1,5 +1,7 @@
 package oriedita.editor.action;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.databinding.BackgroundModel;
 import oriedita.editor.service.ButtonService;
@@ -8,19 +10,12 @@ import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.Polygon;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
 
-
-@Singleton
+@ApplicationScoped
+@Handles(MouseMode.BACKGROUND_CHANGE_POSITION_26)
 public class MouseHandlerBackgroundChangePosition extends BaseMouseHandler {
     private final ButtonService buttonService;
     private final BackgroundModel backgroundModel;
-
-    @Override
-    public MouseMode getMouseMode() {
-        return MouseMode.BACKGROUND_CHANGE_POSITION_26;
-    }
 
     @Override
     public void mouseMoved(Point p0) {

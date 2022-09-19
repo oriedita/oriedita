@@ -1,5 +1,7 @@
 package oriedita.editor.action;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import org.tinylog.Logger;
 import oriedita.editor.canvas.MouseMode;
 import origami.Epsilon;
@@ -7,21 +9,14 @@ import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
-@Singleton
+@ApplicationScoped
+@Handles(MouseMode.DOUBLE_SYMMETRIC_DRAW_35)
 public class MouseHandlerDoubleSymmetricDraw extends BaseMouseHandlerInputRestricted {
     private final MouseHandlerDrawCreaseRestricted mouseHandlerDrawCreaseRestricted;
 
     @Inject
-    public MouseHandlerDoubleSymmetricDraw(MouseHandlerDrawCreaseRestricted mouseHandlerDrawCreaseRestricted) {
+    public MouseHandlerDoubleSymmetricDraw(@Handles(MouseMode.DRAW_CREASE_RESTRICTED_11) MouseHandlerDrawCreaseRestricted mouseHandlerDrawCreaseRestricted) {
         this.mouseHandlerDrawCreaseRestricted = mouseHandlerDrawCreaseRestricted;
-    }
-
-    @Override
-    public MouseMode getMouseMode() {
-        return MouseMode.DOUBLE_SYMMETRIC_DRAW_35;
     }
 
     //マウス操作(mouseMode==35　でドラッグしたとき)を行う関数----------------------------------------------------

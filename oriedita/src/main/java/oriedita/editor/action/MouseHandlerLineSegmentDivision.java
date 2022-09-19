@@ -1,22 +1,17 @@
 package oriedita.editor.action;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
 import origami.Epsilon;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
-@Singleton
+@ApplicationScoped
+@Handles(MouseMode.LINE_SEGMENT_DIVISION_27)
 public class MouseHandlerLineSegmentDivision extends BaseMouseHandlerInputRestricted {
     @Inject
     public MouseHandlerLineSegmentDivision() {
-    }
-
-    @Override
-    public MouseMode getMouseMode() {
-        return MouseMode.LINE_SEGMENT_DIVISION_27;
     }
 
     //マウス操作(mouseMode==27線分入力　でボタンを押したとき)時の作業----------------------------------------------------

@@ -1,5 +1,8 @@
 package oriedita.editor.action;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import org.tinylog.Logger;
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.canvas.MouseMode;
@@ -7,12 +10,11 @@ import oriedita.editor.databinding.CanvasModel;
 import origami.Epsilon;
 import origami.crease_pattern.element.Point;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
 import java.awt.event.MouseEvent;
 import java.util.EnumSet;
 
-@Singleton
+@ApplicationScoped
+@Handles(MouseMode.CREASE_SELECT_19)
 public class MouseHandlerCreaseSelect extends BaseMouseHandlerBoxSelect {
     private final MouseHandlerCreaseMove4p mouseHandlerCreaseMove4p;
     private final MouseHandlerCreaseCopy4p mouseHandlerCreaseCopy4p;
@@ -24,13 +26,13 @@ public class MouseHandlerCreaseSelect extends BaseMouseHandlerBoxSelect {
 
     @Inject
     public MouseHandlerCreaseSelect(
-            CreasePattern_Worker d,
+            @Named("mainCreasePattern_Worker") CreasePattern_Worker d,
             CanvasModel canvasModel,
-            MouseHandlerCreaseMove4p mouseHandlerCreaseMove4p,
-            MouseHandlerCreaseCopy4p mouseHandlerCreaseCopy4p,
-            MouseHandlerCreaseMove mouseHandlerCreaseMove,
-            MouseHandlerCreaseCopy mouseHandlerCreaseCopy,
-            MouseHandlerDrawCreaseSymmetric mouseHandlerDrawCreaseSymmetric) {
+            @Handles(MouseMode.CREASE_MOVE_4P_31) MouseHandlerCreaseMove4p mouseHandlerCreaseMove4p,
+            @Handles(MouseMode.CREASE_COPY_4P_32) MouseHandlerCreaseCopy4p mouseHandlerCreaseCopy4p,
+            @Handles(MouseMode.CREASE_MOVE_21) MouseHandlerCreaseMove mouseHandlerCreaseMove,
+            @Handles(MouseMode.CREASE_COPY_22) MouseHandlerCreaseCopy mouseHandlerCreaseCopy,
+            @Handles(MouseMode.DRAW_CREASE_SYMMETRIC_12) MouseHandlerDrawCreaseSymmetric mouseHandlerDrawCreaseSymmetric) {
         this.d = d;
         this.canvasModel = canvasModel;
         this.mouseHandlerCreaseMove4p = mouseHandlerCreaseMove4p;
@@ -38,11 +40,6 @@ public class MouseHandlerCreaseSelect extends BaseMouseHandlerBoxSelect {
         this.mouseHandlerCreaseMove = mouseHandlerCreaseMove;
         this.mouseHandlerCreaseCopy = mouseHandlerCreaseCopy;
         this.mouseHandlerDrawCreaseSymmetric = mouseHandlerDrawCreaseSymmetric;
-    }
-
-    @Override
-    public MouseMode getMouseMode() {
-        return MouseMode.CREASE_SELECT_19;
     }
 
     @Override

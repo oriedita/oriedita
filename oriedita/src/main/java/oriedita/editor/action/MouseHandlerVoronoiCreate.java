@@ -1,5 +1,7 @@
 package oriedita.editor.action;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import org.tinylog.Logger;
 import oriedita.editor.canvas.FoldLineAdditionalInputMode;
 import oriedita.editor.canvas.MouseMode;
@@ -7,25 +9,23 @@ import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.*;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Singleton
+@ApplicationScoped
+@Handles(MouseMode.VORONOI_CREATE_62)
 public class MouseHandlerVoronoiCreate extends BaseMouseHandler {
-    public List<LineSegmentVoronoi> voronoiLineSet = new ArrayList<>();
+    public List<LineSegmentVoronoi> getVoronoiLineSet() {
+        return voronoiLineSet;
+    }
+
+    private List<LineSegmentVoronoi> voronoiLineSet = new ArrayList<>();
     List<LineSegmentVoronoi> lineSegment_voronoi_onePoint = new ArrayList<>(); //Line segment around one point in Voronoi diagram
 
     @Inject
     public MouseHandlerVoronoiCreate() {
-    }
-
-    @Override
-    public MouseMode getMouseMode() {
-        return MouseMode.VORONOI_CREATE_62;
     }
 
     @Override

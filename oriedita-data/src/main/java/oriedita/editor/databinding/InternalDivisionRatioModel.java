@@ -1,12 +1,13 @@
 package oriedita.editor.databinding;
 
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
-@Singleton
+@ApplicationScoped
 public class InternalDivisionRatioModel {
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     private double internalDivisionRatioA;

@@ -1,17 +1,17 @@
 package oriedita.editor.swing;
 
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import oriedita.editor.Canvas;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
 import javax.swing.*;
 import java.awt.*;
 
 /**
  * BorderLayout for each different part.
  */
-@Singleton
+@ApplicationScoped
 public class Editor {
     private JPanel root;
     private Canvas.CanvasUI canvas;

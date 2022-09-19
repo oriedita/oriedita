@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit;
 
 public class Check4 {
     public static void apply(FoldLineSet foldLineSet) throws InterruptedException {
-        foldLineSet.cAMVViolations.clear();
+        foldLineSet.getcAMVViolations().clear();
 
         PointLineMap map = new PointLineMap(foldLineSet.getLineSegments());
         Logger.info("check4_T_size() = " + map.getPoints().size());
@@ -31,7 +31,7 @@ public class Check4 {
                 Point p = new Point(point);
                 try {
                     Optional<FlatFoldabilityViolation> violation = findFlatfoldabilityViolation(p, map.getLines(point));
-                    violation.ifPresent(foldLineSet.cAMVViolations::add);
+                    violation.ifPresent(e -> foldLineSet.getcAMVViolations().add(e));
                 } catch (InterruptedException e) {
                     // finish thread.
                 }

@@ -1,15 +1,15 @@
 package oriedita.editor.databinding;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.Polygon;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
 import java.awt.*;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
-@Singleton
+@ApplicationScoped
 public class BackgroundModel {
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     private boolean displayBackground;

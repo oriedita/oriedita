@@ -1,15 +1,15 @@
 package oriedita.editor.databinding;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import origami.folding.FoldedFigure;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
 import java.awt.*;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.Serializable;
 
-@Singleton
+@ApplicationScoped
 public class FoldedFigureModel implements Serializable {
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     private Color frontColor;
@@ -196,6 +196,26 @@ public class FoldedFigureModel implements Serializable {
         FoldedFigure.State oldState = this.state;
         this.state = state;
         this.pcs.firePropertyChange("state", oldState, state);
+    }
+
+    public void set(FoldedFigureModel model) {
+        scale = model.getScale();
+        rotation = model.getRotation();
+        antiAlias = model.getAntiAlias();
+        displayShadows = model.getDisplayShadows();
+        state = model.getState();
+
+        frontColor = model.getFrontColor();
+        backColor = model.getBackColor();
+        lineColor = model.getLineColor();
+
+        transparencyColor = model.isTransparencyColor();
+
+        transparentTransparency = model.getTransparentTransparency();
+
+        foldedCases = model.getFoldedCases();
+
+        this.pcs.firePropertyChange(null, null, null);
     }
 
     public void toggleAntiAlias() {
