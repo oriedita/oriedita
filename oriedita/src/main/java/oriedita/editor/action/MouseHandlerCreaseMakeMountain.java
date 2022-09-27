@@ -27,7 +27,7 @@ public class MouseHandlerCreaseMakeMountain extends BaseMouseHandlerBoxSelect {
 
     /**
      * マウス操作(mouseMode==23 でボタンを離したとき)を行う関数
-     * 
+     * <p>
      * The reason for doing {@link CreasePattern_Worker#fix2()} at the end of this
      * process is to correct the T-shaped disconnection that frequently occurs in
      * the combination of the original polygonal line and the polygonal line

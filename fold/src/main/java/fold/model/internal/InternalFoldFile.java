@@ -4,7 +4,10 @@ import com.fasterxml.jackson.annotation.*;
 import fold.FoldFileFormatException;
 import fold.model.internal.file.FileMetadata;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * This file maps directly to the FOLD Specification (version 1.1)
@@ -25,7 +28,7 @@ public class InternalFoldFile extends InternalFoldFrame {
     );
     /**
      * Custom properties.
-     *
+     * <p>
      * To add custom data to the FOLD format specific to your software, include a colon (:) in the property key,
      * where the part before the colon identifies your software.
      */

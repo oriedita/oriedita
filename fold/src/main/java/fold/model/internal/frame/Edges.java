@@ -4,7 +4,6 @@ import fold.model.FoldEdgeAssignment;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class Edges {
     private List<List<Integer>> vertices = new ArrayList<>();

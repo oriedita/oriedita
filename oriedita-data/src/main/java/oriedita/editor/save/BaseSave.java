@@ -15,7 +15,7 @@ import java.util.List;
 
 
 // No json type name, because this class should never be serialized
-public class BaseSave implements Save{
+public class BaseSave implements Save {
     private List<LineSegment> lineSegments;
     private List<Circle> circles;
 

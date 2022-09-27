@@ -2,9 +2,10 @@ package origami.crease_pattern.worker;
 
 import org.tinylog.Logger;
 import origami.crease_pattern.FoldingException;
-import origami.crease_pattern.element.LineColor;
-import origami.folding.util.AverageCoordinates;
+import origami.crease_pattern.LineSegmentSet;
 import origami.crease_pattern.OritaCalc;
+import origami.crease_pattern.PointSet;
+import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.Point;
 import origami.data.ListArray;
 import origami.data.quadTree.QuadTree;
@@ -12,13 +13,13 @@ import origami.data.quadTree.adapter.InitialAdapter;
 import origami.data.quadTree.adapter.PointSetFaceAdapter;
 import origami.data.quadTree.adapter.PointSetPointAdapter;
 import origami.data.quadTree.collector.PointCollector;
-import origami.crease_pattern.LineSegmentSet;
-import origami.crease_pattern.PointSet;
+import origami.folding.util.AverageCoordinates;
 
-import java.util.*;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 public class WireFrame_Worker {
-        //This crease pattern craftsman class has only one PointStore c as a crease pattern.
+    //This crease pattern craftsman class has only one PointStore c as a crease pattern.
     //PointSet obtained as a result of folding etc. should be returned to the outside and not held by oneself.
     double r;                   //Criteria for determining the radius of the circles at both ends of the straight line of the basic branch structure and the proximity of the branches to various points
     PointSet pointSet = new PointSet();    //Development view
@@ -103,7 +104,7 @@ public class WireFrame_Worker {
     public PointSet folding() throws InterruptedException, FoldingException {//Folding estimate
         // The code that was previously here is identical to getFacePositions
         PointSet pointSet = getFacePositions();
-  
+
         Logger.info("折ったときの点の位置を求める。");
         // Find the position of the point when folded.
         // If the point it is included in the face im
@@ -216,7 +217,7 @@ public class WireFrame_Worker {
 
         //Next, define the lines in PointSet.
         defineLines(lineSegmentSet);
-        
+
         //Then generate a surface within PointSet.
         pointSet.FaceOccurrence();
     }
@@ -258,7 +259,7 @@ public class WireFrame_Worker {
         Logger.info(numPoints);
 
         int numLines = lineSegmentSet.getNumLineSegments();
-        
+
         // Euler's formula says F - E + V = 1 (for bounded faces)
         int supposedNumFaces = numLines - numPoints + 1;
         /**
@@ -316,7 +317,6 @@ public class WireFrame_Worker {
     public int lineInFaceBorder_max_request(int lineId) {
         return pointSet.lineInFaceBorder_max_lookup(lineId);
     }
-
 
 
     public int getSelectedPointsNum() {

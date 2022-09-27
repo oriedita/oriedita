@@ -1,9 +1,9 @@
 package origami.data.quadTree.collector;
 
-import java.util.ArrayList;
-
 import origami.data.quadTree.QuadTree.Node;
 import origami.data.quadTree.adapter.QuadTreeAdapter;
+
+import java.util.ArrayList;
 
 public class CollisionCollector implements QuadTreeCollector {
 

@@ -1,7 +1,5 @@
 package origami.crease_pattern;
 
-import java.util.*;
-
 import origami.Epsilon;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
@@ -10,12 +8,14 @@ import origami.data.quadTree.QuadTree;
 import origami.data.quadTree.adapter.PointLineMapAdapter;
 import origami.data.quadTree.collector.PointCollector;
 
+import java.util.*;
+
 /**
  * PointLineMap maps all {@link Point}s in a CP to the adjacent
  * {@link LineSegment}s. Right now this object is constructed as needed, but in
  * the future it would be much more efficient for {@link FoldLineSet} to
  * maintain an instance of this map at all times.
- * 
+ *
  * @author Mu-Tsun Tsai
  */
 public class PointLineMap {

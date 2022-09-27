@@ -1,11 +1,12 @@
 package oriedita.editor.action;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import oriedita.editor.canvas.MouseMode;
 import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.*;
-import oriedita.editor.canvas.MouseMode;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 @Singleton
 public class MouseHandlerCircleDrawInverted extends BaseMouseHandler {

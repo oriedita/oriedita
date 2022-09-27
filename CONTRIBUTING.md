@@ -8,7 +8,8 @@ This version of the code requires a JDK (at least version 8) and [maven](https:/
 mvn clean package
 ```
 
-After compiling and packaging the jar is placed in the `target` directory, double click it or execute it with the java command.
+After compiling and packaging the jar is placed in the `target` directory, double click it or execute it with the java
+command.
 
 ```bash
 javaw -jar ./oriedita/target/oriedita-0.0.10-SNAPSHOT.jar
@@ -34,7 +35,7 @@ All UI code.
 
 ### `origami`
 
-Code for folding and origami related actions, 
+Code for folding and origami related actions,
 
 ### `fold`
 
@@ -43,25 +44,31 @@ FOLD parser and write, to be extracted from this repo.
 ## (Technical) Changes made
 
 ### Translations
+
 See also [TRANSLATIONS.md](TRANSLATIONS.md).
 
 Classnames, variable names and comments are translated to English.
 
 ### Code Quality
 
-Integers with only values 1 and 0 are replaced with booleans. Integers with a specific set of values are replaced with enums. Dead code is removed.
+Integers with only values 1 and 0 are replaced with booleans. Integers with a specific set of values are replaced with
+enums. Dead code is removed.
 
 Deprecated `Thread.stop` is replaced by `Thread.interrupted` checks.
 
-Saving and history is handled by Java Serialization, giving a performance boost. (This will be replaced by a text-based, more portable format for saving).
+Saving and history is handled by Java Serialization, giving a performance boost. (This will be replaced by a text-based,
+more portable format for saving).
 
 Different input modes are handled by multiple classes, making the code more readable.
 
 ### Gui Improvements
 
-Left over `java.awt` components are replaced by their `javax.swing` counterparts, this reduces flickering when resizing and interacting. The Look and Feel is changed to a more modern one (FlatLaf). The Gui is build using GUI Designer in IntelliJ, this allows for easier updating and managing of the layout.
+Left over `java.awt` components are replaced by their `javax.swing` counterparts, this reduces flickering when resizing
+and interacting. The Look and Feel is changed to a more modern one (FlatLaf). The Gui is build using GUI Designer in
+IntelliJ, this allows for easier updating and managing of the layout.
 
-The state management of the Gui is handled by Java Beans' PropertyChangeSupport to keep the Gui in sync with the application state.
+The state management of the Gui is handled by Java Beans' PropertyChangeSupport to keep the Gui in sync with the
+application state.
 
 A menu, hotkeys and tooltips are added.
 

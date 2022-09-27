@@ -1,19 +1,18 @@
 package oriedita.editor.action;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
 import org.tinylog.Logger;
-import origami.Epsilon;
-import origami.crease_pattern.FoldingException;
-import origami.crease_pattern.element.Point;
 import oriedita.editor.canvas.MouseMode;
-import origami.folding.FoldedFigure;
 import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.databinding.FoldedFiguresList;
 import oriedita.editor.drawing.FoldedFigure_Drawer;
 import oriedita.editor.service.FoldingService;
+import origami.Epsilon;
+import origami.crease_pattern.FoldingException;
+import origami.crease_pattern.element.Point;
+import origami.folding.FoldedFigure;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.util.EnumSet;
 
 @Singleton

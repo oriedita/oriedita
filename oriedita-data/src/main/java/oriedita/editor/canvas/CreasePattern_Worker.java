@@ -1,21 +1,20 @@
 package oriedita.editor.canvas;
 
-import oriedita.editor.databinding.*;
+import oriedita.editor.databinding.AngleSystemModel;
+import oriedita.editor.databinding.ApplicationModel;
+import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.drawing.Grid;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.save.Save;
 import origami.crease_pattern.FoldLineSet;
 import origami.crease_pattern.LineSegmentSet;
-import origami.crease_pattern.element.Circle;
-import origami.crease_pattern.element.LineColor;
-import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.Polygon;
+import origami.crease_pattern.element.*;
 
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.util.List;
-import java.util.Map;
 
 public interface CreasePattern_Worker {
     void lineStepAdd(LineSegment s);
@@ -33,6 +32,7 @@ public interface CreasePattern_Worker {
     void setAuxMemo(Save memo1);
 
     void setCamera(Camera cam0);
+
     void setSave_for_reading(Save memo);
 
     void allMountainValleyChange();

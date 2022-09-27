@@ -1,18 +1,18 @@
 package origami.folding;
 
-import org.tinylog.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.tinylog.Logger;
+import oriedita.editor.export.Cp;
+import oriedita.editor.save.Save;
 import origami.crease_pattern.FoldingException;
 import origami.crease_pattern.LineSegmentSet;
-import oriedita.editor.save.Save;
-import oriedita.editor.export.Cp;
 import origami.folding.util.TestBulletinBoard;
 
 import java.io.IOException;
 
 public class FoldingSolutionsTest {
-        @Test
+    @Test
     public void testFoldSolutionNumber() throws IOException {
         Save save = Cp.importFile(getClass().getClassLoader().getResourceAsStream("solution_sample_1.cp"));
 

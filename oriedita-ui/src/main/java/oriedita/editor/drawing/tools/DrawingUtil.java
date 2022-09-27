@@ -82,7 +82,7 @@ public class DrawingUtil {
 
     public static void drawVertex(Graphics2D g, Point a, int pointSize) {
         g.setColor(Colors.get(Color.black));
-        g.fillRect((int)(a.getX()-pointSize), (int)(a.getY()-pointSize), (int)(pointSize*2+0.5), (int)(pointSize*2+0.5));
+        g.fillRect((int) (a.getX() - pointSize), (int) (a.getY() - pointSize), (int) (pointSize * 2 + 0.5), (int) (pointSize * 2 + 0.5));
     }
 
     //Draw a pointing diagram around the specified Point
@@ -204,7 +204,7 @@ public class DrawingUtil {
     }
 
     public static void drawCircle(Graphics g, Circle circle, Camera camera, float lineWidth, int pointSize) {
-        Point a= new Point();
+        Point a = new Point();
         a.set(camera.object2TV(circle.determineCenter()));//この場合のaは描画座標系での円の中心の位置
 
         Graphics2D g2 = (Graphics2D) g;
@@ -258,7 +258,7 @@ public class DrawingUtil {
 
         LineSegment s_tv = new LineSegment();
         s_tv.set(camera.object2TV(s));
-        Point a= new Point();
+        Point a = new Point();
         Point b = new Point();
         a.set(s_tv.determineAX() + Epsilon.UNKNOWN_1EN6, s_tv.determineAY() + Epsilon.UNKNOWN_1EN6);
         b.set(s_tv.determineBX() + Epsilon.UNKNOWN_1EN6, s_tv.determineBY() + Epsilon.UNKNOWN_1EN6);//なぜEpsilon.UNKNOWN_0000001を足すかというと,ディスプレイに描画するとき元の折線が新しい折線に影響されて動いてしまうのを防ぐため
@@ -449,7 +449,7 @@ public class DrawingUtil {
         }
 
 
-        g2.drawLine((int)a.getX(), (int)a.getY(), (int)b.getX(), (int)b.getY());
+        g2.drawLine((int) a.getX(), (int) a.getY(), (int) b.getX(), (int) b.getY());
 
         if (Epsilon.high.eq0(lineWidth)) {
 
@@ -480,13 +480,13 @@ public class DrawingUtil {
 
 
     public static final int CENTER = 0;
-    public static final int WEST  = 0b0001;
-    public static final int EAST  = 0b0010;
+    public static final int WEST = 0b0001;
+    public static final int EAST = 0b0010;
     public static final int NORTH = 0b0100;
     public static final int SOUTH = 0b1000;
 
     public static int cohenSutherlandRegion(int clipX, int clipY, Point point) {
-        return cohenSutherlandRegion(0,0,clipX, clipY, point);
+        return cohenSutherlandRegion(0, 0, clipX, clipY, point);
     }
 
     /**
@@ -494,9 +494,9 @@ public class DrawingUtil {
      * going from (clipLowX, clipLowY) to (clipHighX, clipHighY). If the point is inside the viewport, the region
      * will be CENTER (= 0), otherwise, the direction of the point in relation to the viewport can be retrieved
      * using bitwise-and with the Constants WEST, EAST, NORTH, SOUTH.
-     *
+     * <p>
      * If the bitwise-and of the Endpoints of a Line is not CENTER, the whole line is outside the viewport.
-     *
+     * <p>
      * for more info, see https://en.wikipedia.org/wiki/Cohen%E2%80%93Sutherland_algorithm
      */
     public static int cohenSutherlandRegion(int clipLowX, int clipLowY, int clipHighX, int clipHighY, Point point) {
@@ -516,12 +516,13 @@ public class DrawingUtil {
 
     /**
      * Draws a Flatfoldability violation to the graphics object.
-     * @param g Graphics on which to draw
-     * @param p point that violates flatfoldability
-     * @param violation object that describes the violation
+     *
+     * @param g            Graphics on which to draw
+     * @param p            point that violates flatfoldability
+     * @param violation    object that describes the violation
      * @param transparency how transparently the violation should be drawn
-     * @param useAdvanced whether to use the "legacy" way to draw (purple circles) or the newer one which differentiates
-     *                    between types of violations
+     * @param useAdvanced  whether to use the "legacy" way to draw (purple circles) or the newer one which differentiates
+     *                     between types of violations
      */
     public static void drawViolation(Graphics2D g, Point p, FlatFoldabilityViolation violation, int transparency, boolean useAdvanced) {
         g.setColor(Colors.get(new Color(255, 0, 147, transparency)));
@@ -578,13 +579,13 @@ public class DrawingUtil {
                         break;
                     }
                     LineSegment current = OritaCalc.lineSegmentChangeLength(segments[i], 15);
-                    LineSegment next = OritaCalc.lineSegmentChangeLength(segments[(i+1)%segments.length], 15);
-                    int[] xCoords = new int[] {
+                    LineSegment next = OritaCalc.lineSegmentChangeLength(segments[(i + 1) % segments.length], 15);
+                    int[] xCoords = new int[]{
                             (int) p.getX(),
                             (int) (p.getX() + current.determineDeltaX()),
                             (int) (p.getX() + next.determineDeltaX()),
                     };
-                    int[] yCoords = new int[] {
+                    int[] yCoords = new int[]{
                             (int) p.getY(),
                             (int) (p.getY() + current.determineDeltaY()),
                             (int) (p.getY() + next.determineDeltaY()),
@@ -601,11 +602,11 @@ public class DrawingUtil {
     }
 
     private static void drawTriangleAroundPoint(Graphics2D g, Point p) {
-        g.fillPolygon(new int[] {
+        g.fillPolygon(new int[]{
                 (int) p.getX(),
                 (int) p.getX() - 10,
                 (int) p.getX() + 10
-        }, new int[] {
+        }, new int[]{
                 (int) p.getY() - 9,
                 (int) p.getY() + 7,
                 (int) p.getY() + 7

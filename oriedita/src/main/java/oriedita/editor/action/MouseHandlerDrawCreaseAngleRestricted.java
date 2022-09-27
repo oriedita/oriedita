@@ -1,15 +1,15 @@
 package oriedita.editor.action;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
+import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.databinding.AngleSystemModel;
 import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
-import oriedita.editor.canvas.MouseMode;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 @Singleton
 public class MouseHandlerDrawCreaseAngleRestricted extends BaseMouseHandler {
@@ -157,8 +157,7 @@ public class MouseHandlerDrawCreaseAngleRestricted extends BaseMouseHandler {
                 }
             }
 
-        } else
-        if (d.getLineStep().size() == i_jyunnbi_step_suu + (honsuu) + (honsuu)) {//19     //動作の準備としてソフトが返答するステップ数が終わった状態で実行
+        } else if (d.getLineStep().size() == i_jyunnbi_step_suu + (honsuu) + (honsuu)) {//19     //動作の準備としてソフトが返答するステップ数が終わった状態で実行
             int i_tikai_s_step_suu = 0;
 
             LineSegment closestLineSegment = new LineSegment();

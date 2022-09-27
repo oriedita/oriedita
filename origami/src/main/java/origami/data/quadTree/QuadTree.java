@@ -1,16 +1,17 @@
 package origami.data.quadTree;
 
-import java.util.*;
-
 import origami.crease_pattern.element.Point;
 import origami.data.quadTree.adapter.QuadTreeAdapter;
-import origami.data.quadTree.collector.*;
+import origami.data.quadTree.collector.CollisionCollector;
+import origami.data.quadTree.collector.QuadTreeCollector;
 import origami.data.quadTree.comparator.QuadTreeComparator;
 import origami.data.quadTree.comparator.ShrinkComparator;
 
+import java.util.ArrayList;
+
 /**
  * QuadTree is a classical data structure for organizing objects in a 2D space.
- * 
+ *
  * @author Mu-Tsun Tsai
  */
 public class QuadTree {
@@ -21,10 +22,14 @@ public class QuadTree {
     private final QuadTreeAdapter adapter;
     private final QuadTreeComparator comparator;
 
-    /** The index of next QuadTreeItem in the list. */
+    /**
+     * The index of next QuadTreeItem in the list.
+     */
     private final ArrayList<Integer> next;
 
-    /** Which node contains the QuadTreeItem. */
+    /**
+     * Which node contains the QuadTreeItem.
+     */
     private final ArrayList<Node> map;
 
     private final int offset;
@@ -57,7 +62,9 @@ public class QuadTree {
         grow(adapter.getCount());
     }
 
-    /** Read items of then given amount from the collection. */
+    /**
+     * Read items of then given amount from the collection.
+     */
     public void grow(int num) {
         int new_count = count + num;
         for (int i = count; i < new_count; i++) {
@@ -68,7 +75,9 @@ public class QuadTree {
         count = new_count;
     }
 
-    /** Directly add an item at a new index, skipping the items in between. */
+    /**
+     * Directly add an item at a new index, skipping the items in between.
+     */
     public void addIndex(int index) {
         index -= offset;
         for (int i = count; i <= index; i++) {
@@ -92,7 +101,9 @@ public class QuadTree {
         }
     }
 
-    /** This only returns items that are of greater index. */
+    /**
+     * This only returns items that are of greater index.
+     */
     public Iterable<Integer> getPotentialCollision(int i) {
         return getPotentialCollision(i, i);
     }

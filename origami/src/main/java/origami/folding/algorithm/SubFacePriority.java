@@ -7,7 +7,7 @@ import origami.folding.element.SubFace;
 /**
  * This class improves the implementation of the original {@link SubFace}
  * priority algorithm.
- * 
+ *
  * @author Mu-Tsun Tsai
  */
 public class SubFacePriority {
@@ -57,7 +57,9 @@ public class SubFacePriority {
         }
     }
 
-    /** high bits: max value, low bits: index */
+    /**
+     * high bits: max value, low bits: index
+     */
     public long getMaxSubFace(SubFace[] subFaces) {
         long max = 0;
         int found = 0;

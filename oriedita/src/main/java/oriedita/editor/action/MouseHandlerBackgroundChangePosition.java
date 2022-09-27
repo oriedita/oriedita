@@ -1,15 +1,15 @@
 package oriedita.editor.action;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
+import oriedita.editor.canvas.MouseMode;
+import oriedita.editor.databinding.BackgroundModel;
+import oriedita.editor.service.ButtonService;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.Polygon;
-import oriedita.editor.canvas.MouseMode;
-import oriedita.editor.databinding.BackgroundModel;
-import oriedita.editor.service.ButtonService;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 
 @Singleton

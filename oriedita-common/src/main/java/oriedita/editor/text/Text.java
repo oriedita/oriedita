@@ -7,12 +7,12 @@ import java.awt.*;
 import java.io.Serializable;
 
 public class Text implements Serializable {
-    private double x,y;
+    private double x, y;
     private String text;
     private static Graphics g;
 
     private Text() {
-        this(0,0,"");
+        this(0, 0, "");
     }
 
     public Text(double x, double y, String text) {
@@ -63,7 +63,7 @@ public class Text implements Serializable {
 
     public Rectangle calculateBounds() {
         if (g == null) {
-            return new Rectangle(25,3);
+            return new Rectangle(25, 3);
         }
         int width = 0;
         String[] lines = text.split("\n");
@@ -74,6 +74,6 @@ public class Text implements Serializable {
             }
         }
         int height = g.getFontMetrics().getHeight();
-        return new Rectangle(width, (height) * (int) text.chars().filter(c -> c == '\n').count()+1);
+        return new Rectangle(width, (height) * (int) text.chars().filter(c -> c == '\n').count() + 1);
     }
 }

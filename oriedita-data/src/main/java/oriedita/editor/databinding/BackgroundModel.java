@@ -5,7 +5,7 @@ import origami.crease_pattern.element.Polygon;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.awt.Image;
+import java.awt.*;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 

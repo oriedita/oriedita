@@ -5,7 +5,10 @@ import org.tinylog.Logger;
 import oriedita.editor.Canvas;
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.canvas.LineStyle;
-import oriedita.editor.databinding.*;
+import oriedita.editor.databinding.ApplicationModel;
+import oriedita.editor.databinding.BackgroundModel;
+import oriedita.editor.databinding.FileModel;
+import oriedita.editor.databinding.FoldedFiguresList;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.exception.FileReadingException;
 import oriedita.editor.export.*;
@@ -72,7 +75,8 @@ public class FileSaveServiceImpl implements FileSaveService {
         this.backgroundModel = backgroundModel;
     }
 
-    @Override public void openFile(File file) throws FileReadingException {
+    @Override
+    public void openFile(File file) throws FileReadingException {
         if (file == null || !file.exists()) {
             return;
         }
@@ -95,7 +99,8 @@ public class FileSaveServiceImpl implements FileSaveService {
         }
     }
 
-    @Override public void openFile() {
+    @Override
+    public void openFile() {
         Logger.info("readFile2Memo() 開始");
 
         if (saveUnsavedFile()) return;
@@ -123,7 +128,8 @@ public class FileSaveServiceImpl implements FileSaveService {
         return false;
     }
 
-    @Override public void importFile() {
+    @Override
+    public void importFile() {
         if (saveUnsavedFile()) return;
 
         Logger.info("readFile2Memo() 開始");
@@ -152,7 +158,8 @@ public class FileSaveServiceImpl implements FileSaveService {
         }
     }
 
-    @Override public void exportFile() {
+    @Override
+    public void exportFile() {
         File exportFile = selectExportFile();
 
         if (exportFile == null) {
@@ -205,7 +212,8 @@ public class FileSaveServiceImpl implements FileSaveService {
         return selectedFile;
     }
 
-    @Override public File selectSaveFile() {
+    @Override
+    public File selectSaveFile() {
         String saveType = SaveTypeDialog.showSaveTypeDialog(frame);
 
         if (saveType == null) {
@@ -232,7 +240,8 @@ public class FileSaveServiceImpl implements FileSaveService {
         return selectedFile;
     }
 
-    @Override public File selectImportFile() {
+    @Override
+    public File selectImportFile() {
         String fileName = openFileDialog(frame, "Import...", applicationModel.getDefaultDirectory(), new String[]{"*.ori", "*.cp", "*.orh", "*.fold"}, "Supported files (.ori, .cp, .orh, .fold)");
 
         if (fileName == null) {
@@ -250,7 +259,8 @@ public class FileSaveServiceImpl implements FileSaveService {
         return selectedFile;
     }
 
-    @Override public File selectExportFile() {
+    @Override
+    public File selectExportFile() {
         String exportType = ExportDialog.showExportDialog(frame);
 
         if (exportType == null) {
@@ -274,11 +284,13 @@ public class FileSaveServiceImpl implements FileSaveService {
         return selectedFile;
     }
 
-    @Override public Save readImportFile(File file) throws FileReadingException {
+    @Override
+    public Save readImportFile(File file) throws FileReadingException {
         return readImportFile(file, true);
     }
 
-    @Override public Save readImportFile(File file, boolean askOnUnknownFormat) {
+    @Override
+    public Save readImportFile(File file, boolean askOnUnknownFormat) {
         if (file == null) {
             return null;
         }
@@ -346,7 +358,8 @@ public class FileSaveServiceImpl implements FileSaveService {
         return save;
     }
 
-    @Override public void saveFile() {
+    @Override
+    public void saveFile() {
         if (fileModel.getSavedFileName() == null) {
             saveAsFile();
 
@@ -362,7 +375,8 @@ public class FileSaveServiceImpl implements FileSaveService {
         fileModel.setSaved(true);
     }
 
-    @Override public void saveAsFile() {
+    @Override
+    public void saveAsFile() {
         File file = selectSaveFile();
 
         if (file == null) {
@@ -397,7 +411,8 @@ public class FileSaveServiceImpl implements FileSaveService {
     }
 
 
-    @Override public boolean readBackgroundImageFromFile() {
+    @Override
+    public boolean readBackgroundImageFromFile() {
         String filename = openFileDialog(frame, "Select Image File.", applicationModel.getDefaultDirectory(), new String[]{"*.png", "*.jpg"}, "Supported image formats (.png, .jpg)");
 
         if (filename != null) {
@@ -414,7 +429,8 @@ public class FileSaveServiceImpl implements FileSaveService {
         return filename != null;
     }
 
-    @Override public void initAutoSave() {
+    @Override
+    public void initAutoSave() {
         ScheduledThreadPoolExecutor pool = new ScheduledThreadPoolExecutor(1);
 
         autoSavePath = ResourceUtil.getTempDir().resolve("oriedita-autosave-" + df.format(new Date()));

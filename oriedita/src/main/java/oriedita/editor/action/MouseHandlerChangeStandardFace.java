@@ -1,15 +1,15 @@
 package oriedita.editor.action;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
 import org.tinylog.Logger;
-import origami.crease_pattern.element.Point;
-import oriedita.editor.canvas.MouseMode;
-import origami.folding.FoldedFigure;
 import oriedita.editor.canvas.CreasePattern_Worker;
+import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.databinding.FoldedFiguresList;
 import oriedita.editor.drawing.FoldedFigure_Drawer;
+import origami.crease_pattern.element.Point;
+import origami.folding.FoldedFigure;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 @Singleton
 public class MouseHandlerChangeStandardFace extends BaseMouseHandler {

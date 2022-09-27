@@ -17,11 +17,13 @@ public class SingleTaskExecutorServiceImpl implements TaskExecutorService {
         pool = Executors.newFixedThreadPool(1);
     }
 
-    @Override public String getTaskName() {
+    @Override
+    public String getTaskName() {
         return taskName;
     }
 
-    @Override public void executeTask(OrieditaTask task) {
+    @Override
+    public void executeTask(OrieditaTask task) {
         stopTask();
 
         taskName = task.getName();
@@ -29,17 +31,20 @@ public class SingleTaskExecutorServiceImpl implements TaskExecutorService {
         currentTask = pool.submit(task);
     }
 
-    @Override public boolean isTaskRunning() {
+    @Override
+    public boolean isTaskRunning() {
         return !currentTask.isDone();
     }
 
-    @Override public void stopTask() {
+    @Override
+    public void stopTask() {
         if (isTaskRunning()) {
             currentTask.cancel(true);
         }
     }
 
-    @Override public void join() throws ExecutionException, InterruptedException, TimeoutException {
+    @Override
+    public void join() throws ExecutionException, InterruptedException, TimeoutException {
         currentTask.get(10, TimeUnit.SECONDS);
     }
 }

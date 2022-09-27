@@ -182,7 +182,7 @@ public class Check4 {
             LineSegment copy = new LineSegment();
             copy.set(nbox.getValue(k));
 
-            if(copy.getA().distance(p) > Epsilon.UNKNOWN_1EN6) {
+            if (copy.getA().distance(p) > Epsilon.UNKNOWN_1EN6) {
                 copy.a_b_swap();
             }
             littleBigLittleViolations.put(copy, false);
@@ -251,12 +251,11 @@ public class Check4 {
                         maxAngle = maxAngle - 2.0 * minAngle;
                         result = nbox11;
                         break;
-                    }
-                    else {
+                    } else {
                         LineSegment copy = new LineSegment();
                         copy.set(nbox.getValue(1));
 
-                        if(copy.getA().distance(p) > Epsilon.UNKNOWN_1EN6) {
+                        if (copy.getA().distance(p) > Epsilon.UNKNOWN_1EN6) {
                             copy.a_b_swap();
                         }
                         littleBigLittleViolations.put(copy, true);
@@ -286,7 +285,7 @@ public class Check4 {
                 , maxAngle
         );
 
-        return Math.abs(maxAngle - temp_kakudo * 2.0) < Epsilon.FLAT?
+        return Math.abs(maxAngle - temp_kakudo * 2.0) < Epsilon.FLAT ?
                 Optional.empty() :
                 Optional.of(new FlatFoldabilityViolation(p, FlatFoldabilityViolation.Rule.ANGLES,
                         FlatFoldabilityViolation.Color.UNKNOWN));//この0だけ、角度がおかしいという意味
@@ -354,7 +353,7 @@ public class Check4 {
             LineSegment copy = new LineSegment();
             copy.set(nbox.getValue(k));
 
-            if(copy.getA().distance(p) > Epsilon.UNKNOWN_1EN6) {
+            if (copy.getA().distance(p) > Epsilon.UNKNOWN_1EN6) {
                 copy.a_b_swap();
             }
             littleBigLittleViolations.put(copy, false);
@@ -433,7 +432,7 @@ public class Check4 {
                     LineSegment copy = new LineSegment();
                     copy.set(nbox0.getValue(k));
 
-                    if(copy.getA().distance(p) > Epsilon.UNKNOWN_1EN6) {
+                    if (copy.getA().distance(p) > Epsilon.UNKNOWN_1EN6) {
                         copy.a_b_swap();
                     }
                     violating.put(copy, true);
@@ -454,12 +453,12 @@ public class Check4 {
         double odd = 0;
         for (int k = 1; k <= lines.getTotal(); k++) {//kは角度の順番
             if (k % 2 == 0) {
-                even += lines.getWeight(k) - lines.getWeight(k-1);
+                even += lines.getWeight(k) - lines.getWeight(k - 1);
             } else {
                 if (k == 1) {
-                    odd += lines.getWeight(k) - (lines.getWeight(lines.getTotal())-360);
+                    odd += lines.getWeight(k) - (lines.getWeight(lines.getTotal()) - 360);
                 } else {
-                    odd += lines.getWeight(k) - lines.getWeight(k-1);
+                    odd += lines.getWeight(k) - lines.getWeight(k - 1);
                 }
             }
 

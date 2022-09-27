@@ -11,7 +11,8 @@ public class ExpandComparator extends QuadTreeComparator {
 
     public final static ExpandComparator instance = new ExpandComparator();
 
-    private ExpandComparator() {}
+    private ExpandComparator() {
+    }
 
     @Override
     public boolean contains(Node node, double l, double r, double b, double t) {

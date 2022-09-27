@@ -1,8 +1,13 @@
 {
-"frame_author": "f_author",
+  "frame_author": "f_author",
   "frame_title": "f_title",
   "frame_description": "f_description",
-  "frame_classes": ["creasePattern"],
-  "frame_attributes": ["2D", "nonSelfIntersecting"],
+  "frame_classes": [
+    "creasePattern"
+  ],
+  "frame_attributes": [
+    "2D",
+    "nonSelfIntersecting"
+  ],
   "frame_unit": "unit"
 }

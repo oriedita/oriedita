@@ -1,13 +1,14 @@
 package origami.folding.algorithm.italiano;
 
-import java.util.*;
-
 import origami.folding.HierarchyList;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * TraceableItalianoAlgorithm keeps a record of the depths where each change is
  * made.
- * 
+ *
  * @author Mu-Tsun Tsai
  */
 public class TraceableItalianoAlgorithm extends RestorableItalianoAlgorithm {

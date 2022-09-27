@@ -7,7 +7,7 @@ import origami.folding.util.EquivalenceCondition;
  * Constraint classes are essentially {@link EquivalenceCondition}s with
  * additional knowledge about their possible stacking combination. These are the
  * main actors for the {@link CombinationGenerator}.
- * 
+ *
  * @author Mu-Tsun Tsai
  */
 public abstract class Constraint {
@@ -21,7 +21,9 @@ public abstract class Constraint {
         optionValid = new boolean[options];
     }
 
-    /** Go the the next combination. */
+    /**
+     * Go the the next combination.
+     */
     public final boolean next() {
         for (int i = state; i < optionValid.length; i++) {
             if (optionValid[i]) {

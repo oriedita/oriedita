@@ -7,7 +7,7 @@ import oriedita.editor.save.fold.MapTextAdapter;
 import oriedita.editor.text.Text;
 import origami.crease_pattern.element.Circle;
 
-import java.util.*;
+import java.util.List;
 
 public class OrieditaFoldFile extends FoldFile {
     private static final String NS = "oriedita";

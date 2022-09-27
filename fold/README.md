@@ -2,17 +2,22 @@
 
 This module imports and exports .fold files.
 
-See the [specification](https://github.com/edemaine/fold/blob/main/doc/spec.md) of fold files for more information. 
+See the [specification](https://github.com/edemaine/fold/blob/main/doc/spec.md) of fold files for more information.
 
 ## Inner workings
 
-The [Jackson](https://github.com/FasterXML/jackson) library is used to convert a fold file (which is actually a JSON file) to a Java representation. This representation is found in the `fold.model.internal` package. The internal representation maps directly to a fold file and isn't a logical Java class. 
+The [Jackson](https://github.com/FasterXML/jackson) library is used to convert a fold file (which is actually a JSON
+file) to a Java representation. This representation is found in the `fold.model.internal` package. The internal
+representation maps directly to a fold file and isn't a logical Java class.
 
-The internal representation is then mapped to another representation, found in the `fold.model` package. This representation is easier to use and makes sure that relations between the different values in the fold file is represented in a Java way.
+The internal representation is then mapped to another representation, found in the `fold.model` package. This
+representation is easier to use and makes sure that relations between the different values in the fold file is
+represented in a Java way.
 
 ## Extending
 
-Use composition to create a fold file with your own properties. The custom properties map is untyped, so you will need to add additional validation here.
+Use composition to create a fold file with your own properties. The custom properties map is untyped, so you will need
+to add additional validation here.
 
 Example:
 

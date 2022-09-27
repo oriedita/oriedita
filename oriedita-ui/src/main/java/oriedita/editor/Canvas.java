@@ -3,7 +3,6 @@ package oriedita.editor;
 import org.tinylog.Logger;
 import oriedita.editor.action.DrawingSettings;
 import oriedita.editor.action.MouseModeHandler;
-import oriedita.editor.canvas.MouseWheelTarget;
 import oriedita.editor.canvas.*;
 import oriedita.editor.databinding.*;
 import oriedita.editor.drawing.FoldedFigure_Drawer;
@@ -112,6 +111,7 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
         protected CanvasUI() {
 
         }
+
         public void writeImageFile(File file) {
 
             if (file != null) {
@@ -184,7 +184,6 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
 
             //カメラのセット
             mainCreasePatternWorker.setCamera(creasePatternCamera);
-
 
 
             FoldedFigure_Drawer OZi;
@@ -350,8 +349,8 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
 
         canvasUI.setLayout(null);
         cpTextEditingArea = new TextEditingArea(textModel, textWorker, mainCreasePatternWorker,
-                                                canvasModel, creasePatternCameraModel);
-        cpTextEditingArea.setBounds(0,0, 300, 100);
+                canvasModel, creasePatternCameraModel);
+        cpTextEditingArea.setBounds(0, 0, 300, 100);
         cpTextEditingArea.setVisible(false);
         canvasUI.add(cpTextEditingArea);
 
@@ -511,16 +510,20 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
                         creasePatternCamera.camera_position_specify_from_TV(p);
                         break;
                     case FOLDED_FRONT_1:
-                        if (selectedFigure != null) selectedFigure.getFoldedFigureFrontCamera().camera_position_specify_from_TV(p);
+                        if (selectedFigure != null)
+                            selectedFigure.getFoldedFigureFrontCamera().camera_position_specify_from_TV(p);
                         break;
                     case FOLDED_BACK_2:
-                        if (selectedFigure != null) selectedFigure.getFoldedFigureRearCamera().camera_position_specify_from_TV(p);
+                        if (selectedFigure != null)
+                            selectedFigure.getFoldedFigureRearCamera().camera_position_specify_from_TV(p);
                         break;
                     case TRANSPARENT_FRONT_3:
-                        if (selectedFigure != null) selectedFigure.getTransparentFrontCamera().camera_position_specify_from_TV(p);
+                        if (selectedFigure != null)
+                            selectedFigure.getTransparentFrontCamera().camera_position_specify_from_TV(p);
                         break;
                     case TRANSPARENT_BACK_4:
-                        if (selectedFigure != null) selectedFigure.getTransparentRearCamera().camera_position_specify_from_TV(p);
+                        if (selectedFigure != null)
+                            selectedFigure.getTransparentRearCamera().camera_position_specify_from_TV(p);
                         break;
                 }
 
@@ -538,7 +541,6 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
                 canvasUI.repaint();
                 return;
         }
-
 
 
         mainCreasePatternWorker.setCamera(creasePatternCamera);
@@ -583,16 +585,20 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
                             }
                             break;
                         case FOLDED_FRONT_1:
-                            if (selectedFigure != null) selectedFigure.getFoldedFigureFrontCamera().displayPositionMove(mouse_temp0.other_Point_position(p));
+                            if (selectedFigure != null)
+                                selectedFigure.getFoldedFigureFrontCamera().displayPositionMove(mouse_temp0.other_Point_position(p));
                             break;
                         case FOLDED_BACK_2:
-                            if (selectedFigure != null) selectedFigure.getFoldedFigureRearCamera().displayPositionMove(mouse_temp0.other_Point_position(p));
+                            if (selectedFigure != null)
+                                selectedFigure.getFoldedFigureRearCamera().displayPositionMove(mouse_temp0.other_Point_position(p));
                             break;
                         case TRANSPARENT_FRONT_3:
-                            if (selectedFigure != null) selectedFigure.getTransparentFrontCamera().displayPositionMove(mouse_temp0.other_Point_position(p));
+                            if (selectedFigure != null)
+                                selectedFigure.getTransparentFrontCamera().displayPositionMove(mouse_temp0.other_Point_position(p));
                             break;
                         case TRANSPARENT_BACK_4:
-                            if (selectedFigure != null) selectedFigure.getTransparentRearCamera().displayPositionMove(mouse_temp0.other_Point_position(p));
+                            if (selectedFigure != null)
+                                selectedFigure.getTransparentRearCamera().displayPositionMove(mouse_temp0.other_Point_position(p));
                             break;
                     }
 
@@ -665,16 +671,20 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
                             }
                             break;
                         case FOLDED_FRONT_1:
-                            if (selectedFigure != null) selectedFigure.getFoldedFigureFrontCamera().displayPositionMove(mouse_temp0.other_Point_position(p));
+                            if (selectedFigure != null)
+                                selectedFigure.getFoldedFigureFrontCamera().displayPositionMove(mouse_temp0.other_Point_position(p));
                             break;
                         case FOLDED_BACK_2:
-                            if (selectedFigure != null) selectedFigure.getFoldedFigureRearCamera().displayPositionMove(mouse_temp0.other_Point_position(p));
+                            if (selectedFigure != null)
+                                selectedFigure.getFoldedFigureRearCamera().displayPositionMove(mouse_temp0.other_Point_position(p));
                             break;
                         case TRANSPARENT_FRONT_3:
-                            if (selectedFigure != null) selectedFigure.getTransparentFrontCamera().displayPositionMove(mouse_temp0.other_Point_position(p));
+                            if (selectedFigure != null)
+                                selectedFigure.getTransparentFrontCamera().displayPositionMove(mouse_temp0.other_Point_position(p));
                             break;
                         case TRANSPARENT_BACK_4:
-                            if (selectedFigure != null) selectedFigure.getTransparentRearCamera().displayPositionMove(mouse_temp0.other_Point_position(p));
+                            if (selectedFigure != null)
+                                selectedFigure.getTransparentRearCamera().displayPositionMove(mouse_temp0.other_Point_position(p));
                             break;
                     }
 
@@ -764,7 +774,7 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
             }
         }
         mouseMode = canvasModel.getMouseMode();
-        if (mouseModeHandlers.containsKey(mouseMode)){
+        if (mouseModeHandlers.containsKey(mouseMode)) {
             activeMouseHandler = mouseModeHandlers.get(mouseMode);
         }
 

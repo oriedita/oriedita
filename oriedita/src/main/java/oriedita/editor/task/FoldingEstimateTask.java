@@ -2,14 +2,13 @@ package oriedita.editor.task;
 
 import org.tinylog.Logger;
 import oriedita.editor.Foldable;
+import oriedita.editor.databinding.CanvasModel;
+import oriedita.editor.drawing.tools.Camera;
+import oriedita.editor.swing.component.BulletinBoard;
 import origami.crease_pattern.LineSegmentSet;
 import origami.folding.FoldedFigure;
-import oriedita.editor.swing.component.BulletinBoard;
-import oriedita.editor.databinding.CanvasModel;
-import oriedita.editor.drawing.FoldedFigure_Drawer;
-import oriedita.editor.drawing.tools.Camera;
 
-public class FoldingEstimateTask implements OrieditaTask{
+public class FoldingEstimateTask implements OrieditaTask {
     private final BulletinBoard bulletinBoard;
     private final CanvasModel canvasModel;
     private final LineSegmentSet lineSegmentsForFolding;

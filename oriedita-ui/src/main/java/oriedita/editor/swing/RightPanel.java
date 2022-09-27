@@ -203,7 +203,7 @@ public class RightPanel {
         angleSystemADecreaseButton.addActionListener(e -> angleSystemModel.decreaseAngleSystemA());
 
         angleSystemAButton.addActionListener(
-            e -> angleSystemModel.setCurrentAngleSystemDivider(angleSystemModel.getAngleSystemADivider()));
+                e -> angleSystemModel.setCurrentAngleSystemDivider(angleSystemModel.getAngleSystemADivider()));
         angleSystemAIncreaseButton.addActionListener(e -> angleSystemModel.increaseAngleSystemA());
 
         angleSystemBDecreaseButton.addActionListener(e -> angleSystemModel.decreaseAngleSystemB());

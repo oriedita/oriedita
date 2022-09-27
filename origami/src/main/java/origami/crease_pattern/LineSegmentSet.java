@@ -1,14 +1,8 @@
 package origami.crease_pattern;
 
-import origami.Epsilon;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
-import origami.data.quadTree.QuadTree;
-import origami.data.quadTree.adapter.LineSegmentEndPointAdapter;
-import origami.data.quadTree.adapter.LineSegmentSetLineAdapter;
-import origami.data.quadTree.collector.EndPointCollector;
-import origami.data.quadTree.collector.QuadTreeCollector;
 import origami.data.save.LineSegmentSave;
 
 import java.util.ArrayList;
@@ -29,7 +23,7 @@ public class LineSegmentSet {
     public LineSegmentSet(PointSet pointSet) {
         reset(pointSet.getNumLines());
         for (int i = 1; i <= pointSet.getNumLines(); i++) {
-            lineSegments.get(i-1).set(pointSet.getPoint(pointSet.getBegin(i)), pointSet.getPoint(pointSet.getEnd(i)), pointSet.getColor(i), LineSegment.ActiveState.INACTIVE_0);
+            lineSegments.get(i - 1).set(pointSet.getPoint(pointSet.getBegin(i)), pointSet.getPoint(pointSet.getEnd(i)), pointSet.getColor(i), LineSegment.ActiveState.INACTIVE_0);
         }
     }
 

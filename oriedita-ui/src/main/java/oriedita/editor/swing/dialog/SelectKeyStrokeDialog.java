@@ -48,10 +48,10 @@ public class SelectKeyStrokeDialog extends JDialog {
 
                 KeyStroke keyStrokeForEvent = KeyStroke.getKeyStrokeForEvent(e);
                 if (keyStrokeForEvent != null && helpInputMap.containsKey(keyStrokeForEvent) && helpInputMap.get(
-                    keyStrokeForEvent) != button) {
+                        keyStrokeForEvent) != button) {
                     String conflictingButton = (String) owner.getRootPane()
-                                                             .getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
-                                                             .get(keyStrokeForEvent);
+                            .getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+                            .get(keyStrokeForEvent);
                     setConflict("Conflicting with " + conflictingButton);
                 } else {
                     setConflict(null);

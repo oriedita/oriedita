@@ -1,16 +1,15 @@
 package oriedita.editor.task;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import org.tinylog.Logger;
 import oriedita.editor.Foldable;
-import origami.folding.FoldedFigure;
-import oriedita.editor.swing.component.BulletinBoard;
 import oriedita.editor.databinding.CanvasModel;
-import oriedita.editor.drawing.FoldedFigure_Drawer;
-import oriedita.editor.service.FoldingService;
 import oriedita.editor.drawing.tools.Camera;
+import oriedita.editor.service.FoldingService;
+import oriedita.editor.swing.component.BulletinBoard;
+import origami.folding.FoldedFigure;
+
+import javax.inject.Inject;
+import javax.inject.Named;
 
 public class TwoColoredTask implements OrieditaTask {
 

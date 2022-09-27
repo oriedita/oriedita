@@ -60,8 +60,9 @@ public class TextWorker {
 
     /**
      * Deletes all texts whose bounding boxes are (at least partially) contained inside the Rectangle spanned by pa and pb.
-     * @param pa one corner of the deletion box (in canvas coordinates)
-     * @param pb opposite corner to pa of the deletion box (in canvas coordinates)
+     *
+     * @param pa     one corner of the deletion box (in canvas coordinates)
+     * @param pb     opposite corner to pa of the deletion box (in canvas coordinates)
      * @param camera current camera, to account for zoom level
      * @return true if any text was deleted, false otherwise
      */
@@ -85,8 +86,8 @@ public class TextWorker {
         for (Text text : texts) {
             Rectangle r = text.calculateBounds();
             Point p1 = camera.object2TV(text.getPos());
-            r.setLocation((int)p1.getX(), (int) p1.getY());
-            Rectangle selection = new Rectangle((int) pa.getX(), (int) pa.getY(), (int)(pb.getX() - pa.getX()), (int)(pb.getY() - pa.getY()));
+            r.setLocation((int) p1.getX(), (int) p1.getY());
+            Rectangle selection = new Rectangle((int) pa.getX(), (int) pa.getY(), (int) (pb.getX() - pa.getX()), (int) (pb.getY() - pa.getY()));
 
             if (selection.contains(r) || selection.intersects(r) || r.contains(selection)) {
                 changed = true;

@@ -1,9 +1,10 @@
 package origami.data.listMatrix;
 
+import origami.data.tree.AVLTree;
+import origami.data.tree.BST;
+
 import java.util.ArrayList;
 import java.util.Iterator;
-
-import origami.data.tree.*;
 
 /**
  * This is the data structure for "a list of int per some positions in a very
@@ -13,7 +14,7 @@ import origami.data.tree.*;
  * I use BST and customized linked list to implement such structure. In
  * particular, {@link AVLTree} is used, since typically this structure is first
  * filled with data and then perform lots of searches.
- * 
+ *
  * @author Mu-Tsun Tsai
  */
 public class ListMatrix {
@@ -45,6 +46,7 @@ public class ListMatrix {
     public Iterable<Integer> get(int i, int j) {
         return () -> new Iterator<Integer>() {
             long nextNode;
+
             {
                 BST<Integer> tree = heads.get(i);
                 if (tree != null) {

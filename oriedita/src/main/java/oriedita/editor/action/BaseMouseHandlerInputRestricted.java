@@ -3,7 +3,7 @@ package oriedita.editor.action;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 
-public abstract class BaseMouseHandlerInputRestricted extends BaseMouseHandler{
+public abstract class BaseMouseHandlerInputRestricted extends BaseMouseHandler {
     protected Point candidatePoint;
 
     @Override

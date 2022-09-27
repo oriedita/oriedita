@@ -7,6 +7,7 @@ import java.util.List;
 
 /**
  * Savefile containing lines, circles and auxlines
+ *
  * @see origami.crease_pattern.FoldLineSet
  * @see origami.crease_pattern.LineSegmentSet
  */

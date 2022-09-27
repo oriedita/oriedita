@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
  * Import and Export Orihime files.
  */
 public class Orh {
-        /**
+    /**
      * Read an Orihime file
      */
     public static Save importFile(File file) throws IOException {
@@ -43,7 +43,7 @@ public class Orh {
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String str;
 
-            while ((str = reader.readLine()) != null ) {
+            while ((str = reader.readLine()) != null) {
                 fileLines.add(str);
             }
         }

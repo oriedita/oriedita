@@ -1,7 +1,7 @@
 package oriedita.editor.swing.component;
 
-import origami.folding.util.IBulletinBoard;
 import oriedita.editor.Colors;
+import origami.folding.util.IBulletinBoard;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;

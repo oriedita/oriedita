@@ -48,7 +48,8 @@ public class ButtonServiceImpl implements ButtonService {
         this.canvasModel = canvasModel;
     }
 
-    @Override public void setOwner(JFrame owner) {
+    @Override
+    public void setOwner(JFrame owner) {
     }
 
     public void setTooltip(AbstractButton button, String key) {
@@ -76,7 +77,8 @@ public class ButtonServiceImpl implements ButtonService {
         }
     }
 
-    @Override public void registerLabel(JLabel label, String key) {
+    @Override
+    public void registerLabel(JLabel label, String key) {
         String icon = ResourceUtil.getBundleString("icons", key);
         if (!StringOp.isEmpty(icon)) {
             GlyphIcon glyphIcon = new GlyphIcon(icon, label.getForeground());
@@ -94,7 +96,8 @@ public class ButtonServiceImpl implements ButtonService {
         owner.get().getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, key);
     }
 
-    @Override public void registerButton(AbstractButton button, String key) {
+    @Override
+    public void registerButton(AbstractButton button, String key) {
         String name = ResourceUtil.getBundleString("name", key);
         String keyStrokeString = ResourceUtil.getBundleString("hotkey", key);
         // String tooltip = ResourceUtil.getBundleString("tooltip", key);
@@ -149,7 +152,7 @@ public class ButtonServiceImpl implements ButtonService {
                 button.setIcon(glyphIcon);
 
                 if (button instanceof JCheckBox) {
-                    GlyphIcon selectedGlyphIcon = new GlyphIcon(String.valueOf((char)(icon.toCharArray()[0] + 1)), button.getForeground());
+                    GlyphIcon selectedGlyphIcon = new GlyphIcon(String.valueOf((char) (icon.toCharArray()[0] + 1)), button.getForeground());
                     button.addPropertyChangeListener("foreground", selectedGlyphIcon);
                     button.setSelectedIcon(selectedGlyphIcon);
                 }
@@ -165,7 +168,8 @@ public class ButtonServiceImpl implements ButtonService {
         }
     }
 
-    @Override public void Button_shared_operation() {
+    @Override
+    public void Button_shared_operation() {
         mainCreasePatternWorker.setDrawingStage(0);
         mainCreasePatternWorker.resetCircleStep();
         mouseHandlerVoronoiCreate.voronoiLineSet.clear();
@@ -195,8 +199,8 @@ public class ButtonServiceImpl implements ButtonService {
                 new SelectKeyStrokeDialog(owner.get(), button, helpInputMap, currentKeyStroke, newKeyStroke -> {
                     if (newKeyStroke != null && helpInputMap.containsKey(newKeyStroke) && helpInputMap.get(newKeyStroke) != button) {
                         String conflictingButton = (String) helpInputMap.get(newKeyStroke).getRootPane()
-                                                                        .getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
-                                                                        .get(newKeyStroke);
+                                .getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+                                .get(newKeyStroke);
                         JOptionPane.showMessageDialog(owner.get(), "Conflicting KeyStroke! Conflicting with " + conflictingButton);
                         return false;
                     }

@@ -1,9 +1,9 @@
 package origami.crease_pattern.element;
 
-import java.awt.Color;
-import java.io.Serializable;
-
 import origami.Epsilon;
+
+import java.awt.*;
+import java.io.Serializable;
 
 public class Circle implements Serializable {//Used to represent point coordinates, direction vectors, etc.
 

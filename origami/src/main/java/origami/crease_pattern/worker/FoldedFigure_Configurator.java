@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * This class isolates those codes related to configuring {@link FoldedFigure_Worker}.
- * 
+ *
  * @author Mu-Tsun Tsai
  */
 public class FoldedFigure_Configurator {
@@ -182,7 +182,7 @@ public class FoldedFigure_Configurator {
         Collection<Integer> allFaces = cc.getAll();
         Map<Integer, Integer> subfaceIds = new HashMap<>();
         for (int faceId : allFaces) {
-            if (subfaceIds.isEmpty()){
+            if (subfaceIds.isEmpty()) {
                 for (int subfaceId : faceToSubFaceMap.get(faceId)) {
                     if (worker.s[subfaceId].getFaceIdCount() == allFaces.size()) {
                         subfaceIds.put(subfaceId, 1);
@@ -191,7 +191,7 @@ public class FoldedFigure_Configurator {
             } else {
                 for (int subfaceId : faceToSubFaceMap.get(faceId)) {
                     if (subfaceIds.containsKey(subfaceId)) {
-                        subfaceIds.put(subfaceId, subfaceIds.get(subfaceId)+1);
+                        subfaceIds.put(subfaceId, subfaceIds.get(subfaceId) + 1);
                     }
                 }
             }
@@ -312,7 +312,7 @@ public class FoldedFigure_Configurator {
         }
         AEA = null; // Now we can release the memory
         System.gc();
-        
+
         worker.hierarchyList.sortEquivalenceConditions();
         // Here we can compare and see the huge difference before and after AEA
         Logger.info("３面が関与する突き抜け条件の数　＝　{}", worker.hierarchyList.getEquivalenceConditionTotal());
@@ -429,7 +429,7 @@ public class FoldedFigure_Configurator {
     }
 
     private HierarchyListStatus setupUEquivalenceConditions() throws InterruptedException {
-         // Add equivalence condition. There are two adjacent faces im1 and im2 as the boundary of the bar ib,
+        // Add equivalence condition. There are two adjacent faces im1 and im2 as the boundary of the bar ib,
         // Also, there are two adjacent faces im3 and im4 as the boundary of the bar jb, and when ib and jb are parallel and partially overlap, when folding is estimated.
         // The surface of the bar ib and the surface of the surface jb are not aligned with i, j, i, j or j, i, j, i. If this happens,
         // Since there is a mistake in the 3rd place from the beginning, find the number of digits in this 3rd place with SubFace and advance this digit by 1.

@@ -3,7 +3,10 @@ package oriedita.editor.swing.dialog;
 import javax.swing.*;
 import javax.swing.text.*;
 import java.awt.*;
-import java.io.*;
+import java.io.BufferedOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
 
 public class ConsoleDialog extends JDialog {
     private JPanel contentPane;

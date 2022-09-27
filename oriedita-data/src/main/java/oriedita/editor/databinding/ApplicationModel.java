@@ -71,13 +71,13 @@ public class ApplicationModel implements Serializable {
         reset();
     }
 
-    public void setFoldWarning(boolean foldWarning){
+    public void setFoldWarning(boolean foldWarning) {
         boolean oldFoldWarning = this.foldWarning;
         this.foldWarning = foldWarning;
         this.pcs.firePropertyChange("foldWarning", oldFoldWarning, foldWarning);
     }
 
-    public boolean getFoldWarning(){
+    public boolean getFoldWarning() {
         return foldWarning;
     }
 

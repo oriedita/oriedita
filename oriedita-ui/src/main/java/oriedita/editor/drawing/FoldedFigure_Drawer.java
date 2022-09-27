@@ -2,15 +2,15 @@ package oriedita.editor.drawing;
 
 import org.tinylog.Logger;
 import oriedita.editor.Foldable;
+import oriedita.editor.databinding.ApplicationModel;
+import oriedita.editor.databinding.FoldedFigureModel;
+import oriedita.editor.drawing.tools.Camera;
+import oriedita.editor.folded_figure.FoldedFigure_01;
 import origami.crease_pattern.FoldingException;
 import origami.crease_pattern.LineSegmentSet;
 import origami.crease_pattern.element.Point;
-import oriedita.editor.databinding.ApplicationModel;
-import oriedita.editor.databinding.FoldedFigureModel;
 import origami.crease_pattern.worker.linesegmentset.GetBoundingBox;
 import origami.folding.FoldedFigure;
-import oriedita.editor.folded_figure.FoldedFigure_01;
-import oriedita.editor.drawing.tools.Camera;
 
 import java.awt.*;
 

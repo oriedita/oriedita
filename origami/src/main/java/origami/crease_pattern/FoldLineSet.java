@@ -7,28 +7,23 @@ import origami.crease_pattern.element.Polygon;
 import origami.crease_pattern.element.*;
 import origami.data.quadTree.QuadTree;
 import origami.data.quadTree.adapter.DivideAdapter;
-import origami.data.quadTree.adapter.LineSegmentListAdapter;
 import origami.data.quadTree.adapter.LineSegmentListEndPointAdapter;
 import origami.data.quadTree.collector.LineSegmentCollector;
 import origami.data.quadTree.collector.PointCollector;
 import origami.data.save.LineSegmentSave;
 import origami.folding.util.SortingBox;
-import origami.folding.util.WeightedValue;
 
 import java.awt.*;
 import java.util.List;
 import java.util.Queue;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Representation of the current drawn crease pattern.
  */
 public class FoldLineSet {
-        int total;               //Total number of line segments actually used
+    int total;               //Total number of line segments actually used
     List<LineSegment> lineSegments = new ArrayList<>(); //折線とする線分のインスタンス化
 
     public Queue<LineSegment> Check1LineSegment = new ConcurrentLinkedQueue<>(); //Instantiation of line segments to store check information
@@ -684,11 +679,12 @@ public class FoldLineSet {
     }
 
     //------------------zzzzzzzzz-------------------------------------------------------------------
+
     /**
      * Divide the two line segments at the intersection of the two intersecting line
      * segments. If there were two line segments that completely overlapped, both
      * would remain without any processing.
-     * 
+     * <p>
      * Crossing division when originalEnd + 1 to addedEnd fold lines are added to
      * the original 1 to originalEnd fold lines.
      */
@@ -1668,14 +1664,14 @@ public class FoldLineSet {
 
     public void del_V_all() throws InterruptedException {
         PointLineMap map = new PointLineMap(lineSegments);
-        for(Point p : map.getPoints()) {
+        for (Point p : map.getPoints()) {
             List<LineSegment> lines = map.getLines(p);
-            if(lines.size() == 2) {
+            if (lines.size() == 2) {
                 LineSegment si = lines.get(0);
                 LineSegment sj = lines.get(1);
                 if (si.getColor() == sj.getColor() && si.getColor() != LineColor.CYAN_3) {
                     LineSegment new_line = del_V(si, sj);
-                    if(new_line != null) {
+                    if (new_line != null) {
                         map.replaceLine(si, new_line);
                         map.replaceLine(sj, new_line);
                     }
@@ -1686,13 +1682,13 @@ public class FoldLineSet {
 
     public void del_V_all_cc() throws InterruptedException {
         PointLineMap map = new PointLineMap(lineSegments);
-        for(Point p : map.getPoints()) {
+        for (Point p : map.getPoints()) {
             List<LineSegment> lines = map.getLines(p);
-            if(lines.size() == 2) {
+            if (lines.size() == 2) {
                 LineSegment si = lines.get(0);
                 LineSegment sj = lines.get(1);
                 LineSegment new_line = del_V(si, sj);
-                if(new_line != null) {
+                if (new_line != null) {
                     map.replaceLine(si, new_line);
                     map.replaceLine(sj, new_line);
                 }
@@ -2195,18 +2191,18 @@ public class FoldLineSet {
         while (!activePoints.isEmpty()) {
             for (Point activePoint : activePoints) {
                 processedPoints.add(activePoint);
-                for(int i : qtA.collect(new PointCollector(activePoint))) {
+                for (int i : qtA.collect(new PointCollector(activePoint))) {
                     LineSegment activeLine = lineSegments.get(i);
-                    if(OritaCalc.equal(activeLine.getA(), activePoint)) {
+                    if (OritaCalc.equal(activeLine.getA(), activePoint)) {
                         connectedLines.add(activeLine);
                         if (!processedPoints.contains(activeLine.getB())) {
                             newActivePoints.add(activeLine.getB());
                         }
                     }
                 }
-                for(int i : qtB.collect(new PointCollector(activePoint))) {
+                for (int i : qtB.collect(new PointCollector(activePoint))) {
                     LineSegment activeLine = lineSegments.get(i);
-                    if(OritaCalc.equal(activeLine.getB(), activePoint)) {
+                    if (OritaCalc.equal(activeLine.getB(), activePoint)) {
                         connectedLines.add(activeLine);
                         if (!processedPoints.contains(activeLine.getA())) {
                             newActivePoints.add(activeLine.getA());

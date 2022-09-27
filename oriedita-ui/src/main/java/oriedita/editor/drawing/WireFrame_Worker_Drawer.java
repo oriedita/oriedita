@@ -35,7 +35,7 @@ public class WireFrame_Worker_Drawer {
 
     public Point getStartingFacePoint(int faceId) {
         if (faceId < 1) {
-            if (pointSet.inside(new Point(0,0)) > 0) {
+            if (pointSet.inside(new Point(0, 0)) > 0) {
                 return pointSet.insidePoint_surface(pointSet.inside(new Point(0, 0)));
             } else {
                 return pointSet.insidePoint_surface(1);

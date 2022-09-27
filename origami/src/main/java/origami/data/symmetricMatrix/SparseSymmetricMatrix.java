@@ -7,15 +7,19 @@ package origami.data.symmetricMatrix;
  * about 90% of the blocks will be empty, so this implementation provides huge
  * memory saving comparing to {@link BitmapSymmetricMatrix} while getting and
  * setting are still O(1) operations, so it is only very slightly slower.
- * 
+ *
  * @author Mu-Tsun Tsai
  */
 public class SparseSymmetricMatrix extends SymmetricMatrix {
 
-    /** Size of each entry */
+    /**
+     * Size of each entry
+     */
     private final int bits;
 
-    /** of the form 0b111..1 of length bits */
+    /**
+     * of the form 0b111..1 of length bits
+     */
     private final int mask;
 
     private final int blockSize;

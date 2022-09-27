@@ -5,6 +5,8 @@ package origami.folding.util;
  */
 public interface IBulletinBoard {
     void rewrite(int i, String s);
+
     void write(String s);
+
     void clear();
 }

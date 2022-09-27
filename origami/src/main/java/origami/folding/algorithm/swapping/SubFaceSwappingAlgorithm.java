@@ -10,7 +10,7 @@ import origami.folding.element.SubFace;
  * dead-end at a certain depth over and over. The idea of swapping algorithm is
  * to swap the order of the SubFace reaching a dead-end to a earlier position,
  * and doing so generally improves ths searching performance.
- * 
+ *
  * @author Mu-Tsun Tsai
  */
 public class SubFaceSwappingAlgorithm extends SwappingAlgorithm<SubFace> {
@@ -21,8 +21,8 @@ public class SubFaceSwappingAlgorithm extends SwappingAlgorithm<SubFace> {
     protected void onAfterProcess(SubFace[] s, int low, int max) {
         lastLow = low;
 
-		// To further improve performance
-		reverseSwap(s, low, low, max, s[low].swapCounter - 1);
+        // To further improve performance
+        reverseSwap(s, low, low, max, s[low].swapCounter - 1);
     }
 
     @Override
@@ -34,7 +34,7 @@ public class SubFaceSwappingAlgorithm extends SwappingAlgorithm<SubFace> {
     protected void onSwapOver(SubFace s) {
         s.clearTempGuide();
     }
-    
+
     public boolean shouldEstimate(int s) {
         if (lastLow == 0) return true;
         if (s == lastLow) {

@@ -22,7 +22,8 @@ public class DequeHistoryState implements HistoryState {
     Deque<byte[]> future = new ArrayDeque<>();
     byte[] current;
 
-    @Override public void addPropertyChangeListener(PropertyChangeListener propertyChangeListener) {
+    @Override
+    public void addPropertyChangeListener(PropertyChangeListener propertyChangeListener) {
         this.pcs.addPropertyChangeListener(propertyChangeListener);
     }
 
@@ -30,7 +31,8 @@ public class DequeHistoryState implements HistoryState {
     public DequeHistoryState() {
     }
 
-    @Override public void reset() {
+    @Override
+    public void reset() {
         history.clear();
         future.clear();
         current = null;
@@ -38,11 +40,13 @@ public class DequeHistoryState implements HistoryState {
         this.pcs.firePropertyChange(null, null, null);
     }
 
-    @Override public boolean isEmpty() {
+    @Override
+    public boolean isEmpty() {
         return history.isEmpty() && future.isEmpty() && current == null;
     }
 
-    @Override public void record(Save s0) {
+    @Override
+    public void record(Save s0) {
         if (current != null) history.addFirst(current);
         try {
             current = convertToBytes(s0);
@@ -75,11 +79,13 @@ public class DequeHistoryState implements HistoryState {
         }
     }
 
-    @Override public boolean canUndo() {
+    @Override
+    public boolean canUndo() {
         return !history.isEmpty();
     }
 
-    @Override public boolean canRedo() {
+    @Override
+    public boolean canRedo() {
         return !future.isEmpty();
     }
 
@@ -97,7 +103,8 @@ public class DequeHistoryState implements HistoryState {
         return SaveProvider.createInstance();
     }
 
-    @Override public Save undo() {
+    @Override
+    public Save undo() {
         if (history.isEmpty()) {
             return getCurrent();
         }
@@ -110,7 +117,8 @@ public class DequeHistoryState implements HistoryState {
         return getCurrent();
     }
 
-    @Override public Save redo() {
+    @Override
+    public Save redo() {
         if (future.isEmpty()) {
             return getCurrent();
         }

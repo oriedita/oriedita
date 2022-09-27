@@ -1,5 +1,10 @@
 package oriedita.editor.drawing;
 
+import oriedita.editor.Colors;
+import oriedita.editor.databinding.ApplicationModel;
+import oriedita.editor.databinding.FoldedFigureModel;
+import oriedita.editor.drawing.tools.Camera;
+import oriedita.editor.drawing.tools.DrawingUtil;
 import origami.Epsilon;
 import origami.crease_pattern.PointSet;
 import origami.crease_pattern.element.LineColor;
@@ -8,11 +13,6 @@ import origami.crease_pattern.element.Point;
 import origami.crease_pattern.worker.FoldedFigure_Worker;
 import origami.crease_pattern.worker.WireFrame_Worker;
 import origami.folding.HierarchyList;
-import oriedita.editor.Colors;
-import oriedita.editor.drawing.tools.DrawingUtil;
-import oriedita.editor.databinding.ApplicationModel;
-import oriedita.editor.databinding.FoldedFigureModel;
-import oriedita.editor.drawing.tools.Camera;
 import origami.folding.constraint.CustomConstraint;
 
 import java.awt.*;
@@ -419,9 +419,9 @@ public class FoldedFigure_Worker_Drawer {
             int x = (int) pos.getX();
             int y = (int) pos.getY();
             g2.setPaint(fill);
-            g2.fillOval(x-4, y-4, 8, 8);
+            g2.fillOval(x - 4, y - 4, 8, 8);
             g2.setColor(border);
-            g2.drawOval(x-4, y-4, 8, 8);
+            g2.drawOval(x - 4, y - 4, 8, 8);
         }
     }
 

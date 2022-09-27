@@ -3,7 +3,6 @@ package oriedita.editor.databinding;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 

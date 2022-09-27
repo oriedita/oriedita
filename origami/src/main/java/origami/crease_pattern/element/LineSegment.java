@@ -118,18 +118,21 @@ public class LineSegment implements Serializable, Cloneable {
     public int determineMaxX() {
         return Math.max((int) Math.ceil(a.x), (int) Math.ceil(b.x));
     }
+
     /**
      * The smaller one when truncating the x-coordinate of the end point
      */
     public int determineMinX() {
         return Math.min((int) Math.floor(a.x), (int) Math.floor(b.x));
     }
+
     /**
      * Larger when rounding up the y-coordinate of the end point
      */
     public int determineMaxY() {
         return Math.max((int) Math.ceil(a.y), (int) Math.ceil(b.y));
     }
+
     /**
      * The smaller one when truncating the y coordinate of the end point
      */

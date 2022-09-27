@@ -6,10 +6,10 @@ import java.util.Iterator;
  * This data structure is for "an array of stacks". In addition to the methods
  * of {@link ListArray}, it also supports flushing the stack of a given index,
  * and it will reuse the memory after flushing.
- * 
+ * <p>
  * The idea is that chain index zero stands for "empty slots" that can be reused
  * when new entires are added.
- * 
+ *
  * @author Mu-Tsun Tsai
  */
 public final class StackArray extends ListArray {

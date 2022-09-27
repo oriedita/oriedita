@@ -6,7 +6,7 @@ import origami.data.quadTree.QuadTreeItem;
 /**
  * LineSegmentSetLineAdapter is a {@link LineSegmentSetAdapter} of which items
  * are the lines.
- * 
+ *
  * @author Mu-Tsun Tsai
  */
 public class LineSegmentSetLineAdapter extends LineSegmentSetAdapter {

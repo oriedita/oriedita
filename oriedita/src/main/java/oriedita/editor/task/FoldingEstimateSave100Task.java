@@ -3,11 +3,11 @@ package oriedita.editor.task;
 import org.tinylog.Logger;
 import oriedita.editor.Canvas;
 import oriedita.editor.databinding.CanvasModel;
-import origami.crease_pattern.FoldingException;
 import oriedita.editor.databinding.FoldedFiguresList;
 import oriedita.editor.drawing.FoldedFigure_Drawer;
 import oriedita.editor.service.FileSaveService;
 import oriedita.editor.service.FoldingService;
+import origami.crease_pattern.FoldingException;
 
 import java.io.File;
 

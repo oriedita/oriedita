@@ -2,7 +2,7 @@ package origami.data.symmetricMatrix;
 
 /**
  * This is the base class of 1-based symmetric matrix.
- * 
+ *
  * @author Mu-Tsun Tsai
  */
 public abstract class SymmetricMatrix {

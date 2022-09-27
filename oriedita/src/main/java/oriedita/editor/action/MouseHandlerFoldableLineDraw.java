@@ -1,14 +1,15 @@
 package oriedita.editor.action;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import oriedita.editor.canvas.FoldLineAdditionalInputMode;
+import oriedita.editor.canvas.MouseMode;
 import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami.folding.util.SortingBox;
-import oriedita.editor.canvas.MouseMode;
-import oriedita.editor.canvas.FoldLineAdditionalInputMode;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 @Singleton
 public class MouseHandlerFoldableLineDraw extends BaseMouseHandler {

@@ -1,21 +1,21 @@
 package oriedita.editor.action;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
 import org.tinylog.Logger;
+import oriedita.editor.canvas.MouseMode;
 import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.StraightLine;
-import oriedita.editor.canvas.MouseMode;
 import origami.folding.util.SortingBox;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 @Singleton
 public class MouseHandlerLengthenCrease extends BaseMouseHandler {
-        SortingBox<LineSegment> entyou_kouho_nbox = new SortingBox<>();
+    SortingBox<LineSegment> entyou_kouho_nbox = new SortingBox<>();
 
     @Inject
     public MouseHandlerLengthenCrease() {

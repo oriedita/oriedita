@@ -1,19 +1,19 @@
 package oriedita.editor.action;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
 import org.tinylog.Logger;
+import oriedita.editor.canvas.CreasePattern_Worker;
+import oriedita.editor.canvas.MouseMode;
+import oriedita.editor.databinding.CanvasModel;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.StraightLine;
-import oriedita.editor.canvas.MouseMode;
-import oriedita.editor.canvas.CreasePattern_Worker;
 import origami.crease_pattern.util.CreasePattern_Worker_Toolbox;
 import origami.folding.util.SortingBox;
-import oriedita.editor.databinding.CanvasModel;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 @Singleton
 public class MouseHandlerContinuousSymmetricDraw extends BaseMouseHandlerInputRestricted {

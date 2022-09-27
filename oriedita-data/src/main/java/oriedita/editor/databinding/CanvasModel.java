@@ -1,14 +1,13 @@
 package oriedita.editor.databinding;
 
+import oriedita.editor.action.FoldedFigureOperationMode;
+import oriedita.editor.canvas.FoldLineAdditionalInputMode;
+import oriedita.editor.canvas.MouseMode;
+import oriedita.editor.canvas.MouseWheelTarget;
+import origami.crease_pattern.element.LineColor;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
-
-import oriedita.editor.canvas.MouseWheelTarget;
-import oriedita.editor.action.FoldedFigureOperationMode;
-import origami.crease_pattern.element.LineColor;
-import oriedita.editor.canvas.MouseMode;
-import oriedita.editor.canvas.FoldLineAdditionalInputMode;
-
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.Serializable;
@@ -35,6 +34,7 @@ public class CanvasModel implements Serializable {
     public void markDirty() {
         this.pcs.firePropertyChange("dirty", false, true);
     }
+
     public boolean getToggleLineColor() {
         return toggleLineColor;
     }

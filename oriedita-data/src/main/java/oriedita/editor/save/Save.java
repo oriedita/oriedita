@@ -19,21 +19,27 @@ import static com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 @JsonSubTypes({@Type(BaseSave.class), @Type(SaveV1_0.class), @Type(SaveV1_1.class)})
 public interface Save extends PointSave, LineSegmentSave, TextSave, Serializable {
     ApplicationModel getApplicationModel();
+
     void setApplicationModel(ApplicationModel applicationModel);
 
     Camera getCreasePatternCamera();
+
     void setCreasePatternCamera(Camera creasePatternCamera);
 
     CanvasModel getCanvasModel();
+
     void setCanvasModel(CanvasModel canvasModel);
 
     GridModel getGridModel();
+
     void setGridModel(GridModel gridModel);
 
     FoldedFigureModel getFoldedFigureModel();
+
     void setFoldedFigureModel(FoldedFigureModel foldedFigureModel);
 
     void set(Save save);
+
     void add(Save save);
 
     /**

@@ -7,7 +7,7 @@ import java.util.ArrayDeque;
  * http://dx.doi.org/10.1016/0304-3975%2886%2990098-8. The base class only
  * contains the basic functionality, while additional features are added in the
  * derived classes.
- * 
+ *
  * @author Mu-Tsun Tsai
  */
 public class ItalianoAlgorithm {
@@ -21,7 +21,7 @@ public class ItalianoAlgorithm {
     /**
      * matrix[i][j] is the node of j on the spanning tree of i, of which existence
      * implies that i > j. matrix[i][i] is the root of the spanning tree of i.
-     * 
+     * <p>
      * In order to save memory, we use int array instead of Node array (which can
      * take 3x space). Each node is firstChild in the upper 7 bits follow by 1, and
      * then the nextSibling in the lower 8 bits. By doing so we assume that a
@@ -35,7 +35,7 @@ public class ItalianoAlgorithm {
      * allocate larger memory for JVM in the first place. Accordingly, ArrayDeque is
      * more efficient than other classes such as ArrayList, LinkedList, etc. We use
      * int64 to store 4 int16 parameters.
-     * 
+     * <p>
      * We do not use a centralized StackArray to implement this part like what we
      * did for changes, since the way stack operates here is that it pops and stack
      * at the same time, such operations are in fact slower to use StackArray than

@@ -1,8 +1,9 @@
 package oriedita.editor.action;
 
+import oriedita.editor.canvas.MouseMode;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import oriedita.editor.canvas.MouseMode;
 
 @Singleton
 public class MouseHandlerSelectPolygon extends BaseMouseHandlerPolygon {

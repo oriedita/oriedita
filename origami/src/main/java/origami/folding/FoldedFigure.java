@@ -3,9 +3,9 @@ package origami.folding;
 import org.tinylog.Logger;
 import origami.crease_pattern.FoldingException;
 import origami.crease_pattern.LineSegmentSet;
-import origami.crease_pattern.worker.LineSegmentSetWorker;
 import origami.crease_pattern.worker.FoldedFigure_Configurator;
 import origami.crease_pattern.worker.FoldedFigure_Worker;
+import origami.crease_pattern.worker.LineSegmentSetWorker;
 import origami.crease_pattern.worker.WireFrame_Worker;
 import origami.folding.util.IBulletinBoard;
 

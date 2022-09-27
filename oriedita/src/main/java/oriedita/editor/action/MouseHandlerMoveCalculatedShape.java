@@ -1,16 +1,16 @@
 package oriedita.editor.action;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
-import origami.crease_pattern.element.Point;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.databinding.FoldedFiguresList;
 import oriedita.editor.drawing.FoldedFigure_Drawer;
-import oriedita.editor.service.FoldedFigureCanvasSelectService;
 import oriedita.editor.drawing.tools.Camera;
+import oriedita.editor.service.FoldedFigureCanvasSelectService;
+import origami.crease_pattern.element.Point;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
 import java.util.EnumSet;
 
 @Singleton

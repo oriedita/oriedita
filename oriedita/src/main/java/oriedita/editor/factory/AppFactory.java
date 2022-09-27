@@ -3,7 +3,9 @@ package oriedita.editor.factory;
 import dagger.Component;
 import oriedita.editor.App;
 import oriedita.editor.action.MouseModeHandler;
-import oriedita.editor.service.*;
+import oriedita.editor.service.ApplicationModelPersistenceService;
+import oriedita.editor.service.FileSaveService;
+import oriedita.editor.service.LookAndFeelService;
 
 import javax.inject.Singleton;
 import java.util.Set;

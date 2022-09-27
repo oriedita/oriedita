@@ -28,7 +28,7 @@ public class MouseHandlerCreaseToggleMV extends BaseMouseHandlerBoxSelect {
 
     /**
      * マウス操作(mouseMode==58線_変換 でボタンを離したとき)を行う関数
-     * 
+     * <p>
      * Toggling M/V creases cannot possibly create new T-intersections, so we dont' need {@link CreasePattern_Worker#fix2()} here.
      */
     public void mouseReleased(Point p0) {

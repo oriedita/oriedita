@@ -1,9 +1,9 @@
 package oriedita.editor.databinding;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
 import oriedita.editor.drawing.FoldedFigure_Drawer;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.swing.*;
 
 @Singleton

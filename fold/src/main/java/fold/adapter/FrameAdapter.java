@@ -1,6 +1,9 @@
 package fold.adapter;
 
-import fold.model.*;
+import fold.model.Edge;
+import fold.model.Face;
+import fold.model.FoldFrame;
+import fold.model.Vertex;
 import fold.model.internal.InternalFoldFrame;
 import fold.model.internal.frame.Edges;
 import fold.model.internal.frame.Faces;
@@ -130,7 +133,7 @@ public class FrameAdapter implements Adapter<InternalFoldFrame, FoldFrame> {
     }
 
     private static int convertOrderBack(Boolean face1AboveFace2) {
-        if (face1AboveFace2 ==  null) {
+        if (face1AboveFace2 == null) {
             return 0;
         }
 

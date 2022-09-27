@@ -6,7 +6,7 @@ import origami.crease_pattern.element.Point;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class LittleBigLittleViolation extends FlatFoldabilityViolation{
+public class LittleBigLittleViolation extends FlatFoldabilityViolation {
     private final LineSegment[] lineSegments;
     private final boolean[] violatingLBL;
 
@@ -26,6 +26,7 @@ public class LittleBigLittleViolation extends FlatFoldabilityViolation{
     public LineSegment[] getLineSegments() {
         return lineSegments;
     }
+
     public boolean[] getViolatingLBL() {
         return violatingLBL;
     }

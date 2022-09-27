@@ -1,7 +1,7 @@
 package oriedita.editor.swing.dialog;
 
-import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.canvas.CreasePattern_Worker;
+import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.service.ButtonService;
 

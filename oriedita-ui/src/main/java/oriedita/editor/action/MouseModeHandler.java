@@ -35,6 +35,7 @@ public interface MouseModeHandler {
             return EnumSet.copyOf(features);
         }
     }
+
     default boolean accepts(MouseEvent e, int mouseButton) {
         EnumSet<Feature> features = Feature.getFeatures(e, mouseButton);
         for (Feature feature : features) {
@@ -71,7 +72,9 @@ public interface MouseModeHandler {
 
     void mouseReleased(Point p0);
 
-    default void reset() {}
+    default void reset() {
+    }
 
-    default void drawPreview(Graphics2D g2, Camera camera, DrawingSettings settings) {}
+    default void drawPreview(Graphics2D g2, Camera camera, DrawingSettings settings) {
+    }
 }

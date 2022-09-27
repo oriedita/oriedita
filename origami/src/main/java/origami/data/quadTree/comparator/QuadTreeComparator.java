@@ -1,13 +1,14 @@
 package origami.data.quadTree.comparator;
 
 import origami.Epsilon;
-import origami.data.quadTree.*;
+import origami.data.quadTree.QuadTree;
 import origami.data.quadTree.QuadTree.Node;
+import origami.data.quadTree.QuadTreeItem;
 
 /**
  * QuadTreeComparator describes how should {@link QuadTree} decide if a node
  * contains a given 2D rectangle.
- * 
+ *
  * @author Mu-Tsun Tsai
  */
 public abstract class QuadTreeComparator {

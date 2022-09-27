@@ -13,7 +13,7 @@ import origami.crease_pattern.element.Point;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-public abstract class BaseMouseHandlerLineTransform extends BaseMouseHandlerLineSelect{
+public abstract class BaseMouseHandlerLineTransform extends BaseMouseHandlerLineSelect {
 
     protected CanvasModel canvasModel;
     protected FoldLineSet lines;
@@ -37,7 +37,7 @@ public abstract class BaseMouseHandlerLineTransform extends BaseMouseHandlerLine
     public void mousePressed(Point p0) {
         super.mousePressed(p0);
 
-        delta = new Point(0,0);
+        delta = new Point(0, 0);
         FoldLineSet ori_s_temp = new FoldLineSet();    //セレクトされた折線だけ取り出すために使う
         Save save = SaveProvider.createInstance();
         d.getFoldLineSet().getMemoSelectOption(save, 2);
@@ -99,7 +99,7 @@ public abstract class BaseMouseHandlerLineTransform extends BaseMouseHandlerLine
         }
 
         if (image != null) {
-            Point origin = camera.object2TV(new Point(0,0));
+            Point origin = camera.object2TV(new Point(0, 0));
             Point deltaTransformed = camera.object2TV(delta);
             System.out.println(delta);
             g2.drawImage(image,
@@ -123,17 +123,17 @@ public abstract class BaseMouseHandlerLineTransform extends BaseMouseHandlerLine
             topRight = camera.object2TV(new Point(maxX, maxY));
         }
 
-        int width = (int)(topRight.getX() - bottomLeft.getX())+3;
-        int height = (int)(topRight.getY() - bottomLeft.getY())+3;
+        int width = (int) (topRight.getX() - bottomLeft.getX()) + 3;
+        int height = (int) (topRight.getY() - bottomLeft.getY()) + 3;
         image = null;
         if (width * height < settings.getWidth() * settings.getHeight() * 1.5) {
             image = g2.getDeviceConfiguration().createCompatibleImage(width, height, BufferedImage.BITMASK);
-            bottomLeft.move(new Point(-1,-1));
+            bottomLeft.move(new Point(-1, -1));
         }
     }
 
     protected void drawDirect(Graphics2D g2, Camera camera, DrawingSettings settings) {
-        Point origin = camera.object2TV(new Point(0,0));
+        Point origin = camera.object2TV(new Point(0, 0));
         Point deltaTransformed = camera.object2TV(delta);
         int minx = (int) -(deltaTransformed.getX() - origin.getX());
         int miny = (int) -(deltaTransformed.getY() - origin.getY());
@@ -162,13 +162,13 @@ public abstract class BaseMouseHandlerLineTransform extends BaseMouseHandlerLine
     }
 
     protected void rerender(Camera camera, DrawingSettings settings) {
-        Point zero = camera.TV2object(new Point(0,0));
+        Point zero = camera.TV2object(new Point(0, 0));
         Point boObject = camera.TV2object(bottomLeft);
         FoldLineSet ori_s_temp = new FoldLineSet();
         ori_s_temp.set(lines);
         ori_s_temp.move(zero.getX() - boObject.getX(), zero.getY() - boObject.getY());
         Graphics2D g = image.createGraphics();
-        g.setBackground(new Color(0f,0,0,0));
+        g.setBackground(new Color(0f, 0, 0, 0));
         for (int i = 1; i <= ori_s_temp.getTotal(); i++) {
             DrawingUtil.drawCpLine(g, ori_s_temp.get(i), camera, settings.getLineStyle(),
                     settings.getLineWidth(), d.getPointSize(), image.getWidth(), image.getHeight());

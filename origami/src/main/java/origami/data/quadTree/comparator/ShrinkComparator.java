@@ -10,7 +10,8 @@ public class ShrinkComparator extends QuadTreeComparator {
 
     public final static ShrinkComparator instance = new ShrinkComparator();
 
-    private ShrinkComparator() {}
+    private ShrinkComparator() {
+    }
 
     @Override
     public boolean contains(Node node, double l, double r, double b, double t) {

@@ -8,7 +8,7 @@ import java.util.*;
  * each source node. These trees together form a structure that is pretty close
  * to transitive reduction, and with just a bit more work we can obtain the
  * actual reduction.
- * 
+ *
  * @author Mu-Tsun Tsai
  */
 public class ReductionItalianoAlgorithm extends TraceableItalianoAlgorithm {

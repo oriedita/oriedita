@@ -1,7 +1,5 @@
 package fold;
 
-import fold.model.FoldFile;
-
 import java.io.File;
 
 public interface Importer<T> {

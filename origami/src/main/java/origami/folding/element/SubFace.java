@@ -356,7 +356,6 @@ public class SubFace {
     }
 
 
-
     // Enter the information due to the overlap of SubFace's faces in the upper and lower tables
     public void enterStackingOfSubFace(AdditionalEstimationAlgorithm AEA) {
         try {
@@ -365,7 +364,7 @@ public class SubFace {
                     AEA.inferAbove(faceIdList[getPermutation(i)], faceIdList[getPermutation(j)]);
                 }
             }
-        } catch(InferenceFailureException e) {
+        } catch (InferenceFailureException e) {
             // Not supposed to happen
         }
     }
@@ -379,10 +378,12 @@ public class SubFace {
         }
     }
 
-    /** Prepare a guidebook for the permutation generator in SubFace. */
+    /**
+     * Prepare a guidebook for the permutation generator in SubFace.
+     */
     public void setGuideMap(HierarchyList hierarchyList) {
         if (Thread.interrupted()) return;
-        
+
         // We setup faceIdMapArray only for valid subfaces to save memory.
         faceIdMapArray = new int[hierarchyList.getFacesTotal() + 1];
         for (int k : faceIdMap.keySet()) {
@@ -492,7 +493,7 @@ public class SubFace {
     private boolean uecSorted = false;
 
     public Iterable<EquivalenceCondition> getUEquivalenceConditions() {
-        if(!uecSorted) {
+        if (!uecSorted) {
             uEquivalenceConditions.sort(
                     Comparator.comparingInt(EquivalenceCondition::getA).thenComparingInt(EquivalenceCondition::getB)
                             .thenComparingInt(EquivalenceCondition::getC).thenComparingInt(EquivalenceCondition::getD));

@@ -37,7 +37,7 @@ public class FoldTest {
 
     /**
      * Loading a file and writing it to a new file should result in an equal file.
-     *
+     * <p>
      * This test makes sure that anything that is read is also written back to the file.
      */
     @Test
@@ -116,7 +116,7 @@ public class FoldTest {
 
         List<Text> texts = new ArrayList<>();
 
-        Text text = new Text(1,2,"TestText");
+        Text text = new Text(1, 2, "TestText");
         texts.add(text);
 
         save.setTexts(texts);
@@ -143,7 +143,7 @@ public class FoldTest {
 
         List<Text> texts = new ArrayList<>();
 
-        Text text = new Text(1,2,"TestText");
+        Text text = new Text(1, 2, "TestText");
         texts.add(text);
 
         save.setTexts(texts);

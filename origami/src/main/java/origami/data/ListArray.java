@@ -5,7 +5,7 @@ import java.util.Iterator;
 /**
  * This data structure is for "an array of lists". It supports adding elements
  * and iterating over the list of a given index.
- * 
+ *
  * @author Mu-Tsun Tsai
  */
 public class ListArray {
@@ -21,7 +21,7 @@ public class ListArray {
     public ListArray(int count, int capacity) {
         this.capacity = capacity;
         head = new int[count + 1];
-        sizes = new int[count+1];
+        sizes = new int[count + 1];
         next = new int[capacity + 1];
         values = new int[capacity + 1];
     }

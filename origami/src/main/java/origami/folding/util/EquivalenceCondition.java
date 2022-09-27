@@ -18,7 +18,7 @@ public class EquivalenceCondition {
         d = id;
     }
 
-	// New algorithm requires that EquivalenceCondition class being immutable, so all the following methods are commented out.
+    // New algorithm requires that EquivalenceCondition class being immutable, so all the following methods are commented out.
 
     // public void reset() {
     //     a = 0;

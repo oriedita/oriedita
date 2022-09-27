@@ -1,17 +1,17 @@
 package oriedita.editor.service.impl;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
 import org.tinylog.Logger;
 import oriedita.editor.canvas.MouseWheelTarget;
-import oriedita.editor.service.FoldedFigureCanvasSelectService;
-import origami.crease_pattern.element.Point;
-import origami.folding.FoldedFigure;
 import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.databinding.FoldedFigureModel;
 import oriedita.editor.databinding.FoldedFiguresList;
 import oriedita.editor.drawing.FoldedFigure_Drawer;
+import oriedita.editor.service.FoldedFigureCanvasSelectService;
+import origami.crease_pattern.element.Point;
+import origami.folding.FoldedFigure;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 @Singleton
 public class FoldedFigureCanvasSelectServiceImpl implements FoldedFigureCanvasSelectService {
@@ -26,7 +26,8 @@ public class FoldedFigureCanvasSelectServiceImpl implements FoldedFigureCanvasSe
         this.canvasModel = canvasModel;
     }
 
-    @Override public MouseWheelTarget pointInCreasePatternOrFoldedFigure(Point p) {//A function that determines which of the development and folding views the Ten obtained with the mouse points to.
+    @Override
+    public MouseWheelTarget pointInCreasePatternOrFoldedFigure(Point p) {//A function that determines which of the development and folding views the Ten obtained with the mouse points to.
         //20171216
         //hyouji_flg==2,ip4==0  omote
         //hyouji_flg==2,ip4==1	ura

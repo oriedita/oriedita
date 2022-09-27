@@ -25,7 +25,8 @@ public class LookAndFeelServiceImpl implements LookAndFeelService {
         this.applicationModel = applicationModel;
     }
 
-    @Override public void init() {
+    @Override
+    public void init() {
         applicationModel.addPropertyChangeListener(e -> {
             if (e.getPropertyName() == null || e.getPropertyName().equals("laf")) {
                 applyLookAndFeel(applicationModel.getLaf());
@@ -108,7 +109,8 @@ public class LookAndFeelServiceImpl implements LookAndFeelService {
         }
     }
 
-    @Override public void updateButtonIcons() {
+    @Override
+    public void updateButtonIcons() {
         updateButtonIcons(frame);
     }
 

@@ -103,9 +103,9 @@ public class MouseHandlerAddFoldingConstraints implements MouseModeHandler {
         List<Integer> white = new ArrayList<>();
         List<Integer> colored = new ArrayList<>();
         for (Integer selFaceIndex : selectedFaces) {
-            if (foldedFigure.wireFrame_worker1.getIFacePosition(selFaceIndex)% 2 == 0) {
+            if (foldedFigure.wireFrame_worker1.getIFacePosition(selFaceIndex) % 2 == 0) {
                 white.add(selFaceIndex);
-            }else {
+            } else {
                 colored.add(selFaceIndex);
             }
         }

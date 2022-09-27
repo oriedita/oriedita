@@ -1,15 +1,11 @@
 package oriedita.editor.factory;
 
 
-import dagger.Binds;
 import dagger.Module;
 import dagger.Provides;
-import oriedita.editor.service.ResetService;
-import oriedita.editor.service.impl.ResetServiceImpl;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
-
 import javax.swing.*;
 
 @Module

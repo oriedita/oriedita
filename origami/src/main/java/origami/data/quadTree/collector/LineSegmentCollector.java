@@ -2,11 +2,13 @@ package origami.data.quadTree.collector;
 
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
-import origami.data.quadTree.QuadTreeItem;
 import origami.data.quadTree.QuadTree.Node;
+import origami.data.quadTree.QuadTreeItem;
 import origami.data.quadTree.adapter.QuadTreeAdapter;
 
-/** Get all items that might partially contains the given line. */
+/**
+ * Get all items that might partially contains the given line.
+ */
 public class LineSegmentCollector extends RecursiveCollector {
 
     private QuadTreeItem item;

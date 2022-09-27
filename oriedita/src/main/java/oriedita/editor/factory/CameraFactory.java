@@ -2,7 +2,7 @@ package oriedita.editor.factory;
 
 import dagger.Module;
 import dagger.Provides;
-import oriedita.editor.databinding.*;
+import oriedita.editor.databinding.CameraModel;
 import oriedita.editor.drawing.tools.Camera;
 
 import javax.inject.Named;

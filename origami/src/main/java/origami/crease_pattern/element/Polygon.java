@@ -33,7 +33,9 @@ public class Polygon {
         vertices[i].set(p);
     }
 
-    public int size() {return vertexCount;}
+    public int size() {
+        return vertexCount;
+    }
 
     public Point get(int i) {
         return vertices[i];

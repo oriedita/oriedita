@@ -49,7 +49,7 @@ public class MouseHandlerText extends BaseMouseHandlerBoxSelect {
     public void mouseMoved(Point p0, MouseEvent e) {
 
         if (textModel.isSelected() && calculateBounds(textModel.getSelectedText()).contains(e.getPoint())) {
-                e.getComponent().setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
+            e.getComponent().setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
         } else {
             boolean changed = false;
             for (Text text : textWorker.getTexts()) {
@@ -210,8 +210,8 @@ public class MouseHandlerText extends BaseMouseHandlerBoxSelect {
     @Override
     public void mouseReleased(Point p0) {
         if (selectionStart != null
-            && selectionStart.distance(p0) > 2
-            && !textModel.getSelectedText().getText().isEmpty()
+                && selectionStart.distance(p0) > 2
+                && !textModel.getSelectedText().getText().isEmpty()
         ) {
             d.record();
             textModel.markClean();
@@ -229,9 +229,9 @@ public class MouseHandlerText extends BaseMouseHandlerBoxSelect {
     private Rectangle calculateBounds(Text text) {
         Point posCam = d.getCamera().object2TV(text.getPos());
         Rectangle bounds = text.calculateBounds();
-        int selectionRadius = textModel.isSelected(text)? 7 : 1; // make selection area bigger if editing ui is visible on this text
-        bounds.setLocation((int) posCam.getX()-3-selectionRadius, (int) posCam.getY()-10-selectionRadius);
-        bounds.setSize(bounds.width+8+selectionRadius*5, bounds.height+10+selectionRadius*5);
+        int selectionRadius = textModel.isSelected(text) ? 7 : 1; // make selection area bigger if editing ui is visible on this text
+        bounds.setLocation((int) posCam.getX() - 3 - selectionRadius, (int) posCam.getY() - 10 - selectionRadius);
+        bounds.setSize(bounds.width + 8 + selectionRadius * 5, bounds.height + 10 + selectionRadius * 5);
         return bounds;
     }
 }

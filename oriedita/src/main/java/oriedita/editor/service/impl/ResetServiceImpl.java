@@ -23,14 +23,14 @@ public class ResetServiceImpl implements ResetService {
 
     @Inject
     public ResetServiceImpl(CreasePattern_Worker mainCreasePatternWorker,
-                        @Named("creasePatternCamera") Camera creasePatternCamera,
-                        CanvasModel canvasModel,
-                        InternalDivisionRatioModel internalDivisionRatioModel,
-                        FoldedFigureModel foldedFigureModel,
-                        GridModel gridModel,
-                        AngleSystemModel angleSystemModel,
-                        CameraModel creasePatternCameraModel,
-                        FoldedFiguresList foldedFiguresList) {
+                            @Named("creasePatternCamera") Camera creasePatternCamera,
+                            CanvasModel canvasModel,
+                            InternalDivisionRatioModel internalDivisionRatioModel,
+                            FoldedFigureModel foldedFigureModel,
+                            GridModel gridModel,
+                            AngleSystemModel angleSystemModel,
+                            CameraModel creasePatternCameraModel,
+                            FoldedFiguresList foldedFiguresList) {
         this.mainCreasePatternWorker = mainCreasePatternWorker;
         this.creasePatternCamera = creasePatternCamera;
         this.canvasModel = canvasModel;

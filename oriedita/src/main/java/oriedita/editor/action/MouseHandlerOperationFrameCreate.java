@@ -1,14 +1,15 @@
 package oriedita.editor.action;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import oriedita.editor.canvas.CreasePattern_Worker;
+import oriedita.editor.canvas.MouseMode;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.Polygon;
-import oriedita.editor.canvas.MouseMode;
-import oriedita.editor.canvas.CreasePattern_Worker;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 @Singleton
 public class MouseHandlerOperationFrameCreate extends BaseMouseHandler {

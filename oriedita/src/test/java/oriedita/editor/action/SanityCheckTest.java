@@ -2,7 +2,6 @@ package oriedita.editor.action;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.tinylog.Logger;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.factory.DaggerAppFactory;
 

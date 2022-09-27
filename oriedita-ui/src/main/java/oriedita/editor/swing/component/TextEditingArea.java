@@ -63,6 +63,7 @@ public class TextEditingArea extends JTextArea {
             public void keyTyped(KeyEvent e) {
                 updateSelectedText(textModel);
             }
+
             @Override
             public void keyPressed(KeyEvent e) {
                 if (KeyEvent.VK_ESCAPE == e.getKeyCode()) {
@@ -89,6 +90,7 @@ public class TextEditingArea extends JTextArea {
         cameraModel.addPropertyChangeListener(e -> update(textModel, cpWorker.getCamera()));
 
     }
+
     private void updateSelectedText(SelectedTextModel textModel) {
         boolean changed = !textModel.getSelectedText().getText().equals(getText());
         textModel.getSelectedText().setText(getText());
@@ -100,6 +102,7 @@ public class TextEditingArea extends JTextArea {
     public void update() {
         update(textModel, cpWorker.getCamera());
     }
+
     private void update(SelectedTextModel textModel, Camera camera) {
         if (textModel.getSelectedText() == null || !textModel.isSelected()) {
             setVisible(false);
@@ -116,7 +119,7 @@ public class TextEditingArea extends JTextArea {
         setVisible(true);
 
         Point textPos = camera.object2TV(textModel.getSelectedText().getPos());
-        setBounds((int) textPos.getX()-3, (int) textPos.getY()-10, bounds.width+30, bounds.height+30);
+        setBounds((int) textPos.getX() - 3, (int) textPos.getY() - 10, bounds.width + 30, bounds.height + 30);
         repaint();
     }
 }

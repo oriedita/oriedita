@@ -1,11 +1,12 @@
 package origami.data.symmetricMatrix;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This is a data structure for extremely large (that is, the indices may exceed
  * the limit of int type) and dynamic integer array.
- * 
+ *
  * @author Mu-Tsun Tsai
  */
 public class GiantArray {

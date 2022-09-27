@@ -21,6 +21,7 @@ public class MouseHandlerCreaseCopy extends BaseMouseHandlerLineTransform {
         super(canvasModel, angleSystemModel);
         this.d = d;
     }
+
     @Override
     public MouseMode getMouseMode() {
         return MouseMode.CREASE_COPY_22;
@@ -30,7 +31,7 @@ public class MouseHandlerCreaseCopy extends BaseMouseHandlerLineTransform {
     public void mouseReleased(Point p0) {
         super.mouseReleased(p0);
 
-        if (Epsilon.high.gt0(delta.distance(new Point(0,0)))) {
+        if (Epsilon.high.gt0(delta.distance(new Point(0, 0)))) {
             //やりたい動作はここに書く
 
             FoldLineSet ori_s_temp = lines;

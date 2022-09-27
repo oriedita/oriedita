@@ -2,11 +2,11 @@ package oriedita.editor.drawing;
 
 import oriedita.editor.databinding.ApplicationModel;
 import oriedita.editor.databinding.GridModel;
-import origami.crease_pattern.element.LineSegment;
+import oriedita.editor.drawing.tools.Camera;
 import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
+import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
-import oriedita.editor.drawing.tools.Camera;
 
 import java.awt.*;
 
@@ -360,17 +360,17 @@ public class Grid {
             g.drawLine((int) s_tv.determineAX(), (int) s_tv.determineAY(), (int) s_tv.determineBX(), (int) s_tv.determineBY()); //直線
         }
 
-        if(drawDiagonalGridlines){
+        if (drawDiagonalGridlines) {
             // first draw these lines:
             // \.. <- ((ax+cx)*i
             // \\.
             // \\\ <- (ax*i+bx*bmin, ay*i+by*bmin)
             for (int i = grid_screen_a_min; i <= grid_screen_a_max; i++) {
                 s_ob.set(
-                    i * d_grid_ax + grid_screen_b_min * d_grid_bx + okx0,
-                    i * d_grid_ay + grid_screen_b_min * d_grid_by + oky0,
-                    i * d_grid_ax + grid_screen_b_min * d_grid_bx + okx0 + (i - grid_screen_a_min)  * d_grid_cx,
-                    i * d_grid_ay + grid_screen_b_min * d_grid_by + oky0 + (i - grid_screen_a_min)  * d_grid_cy
+                        i * d_grid_ax + grid_screen_b_min * d_grid_bx + okx0,
+                        i * d_grid_ay + grid_screen_b_min * d_grid_by + oky0,
+                        i * d_grid_ax + grid_screen_b_min * d_grid_bx + okx0 + (i - grid_screen_a_min) * d_grid_cx,
+                        i * d_grid_ay + grid_screen_b_min * d_grid_by + oky0 + (i - grid_screen_a_min) * d_grid_cy
                 );
 
                 s_tv.set(camera.object2TV(s_ob));
@@ -382,10 +382,10 @@ public class Grid {
             // ...
             for (int i = grid_screen_b_min; i <= grid_screen_b_max; i++) {
                 s_ob.set(
-                    grid_screen_a_max * d_grid_ax + i * d_grid_bx + okx0,
-                    grid_screen_a_max * d_grid_ay + i * d_grid_by + oky0,
-                    grid_screen_a_max * d_grid_ax + i * d_grid_bx + okx0 + (grid_screen_b_max - i) * d_grid_cx,
-                    grid_screen_a_max * d_grid_ay + i * d_grid_by + oky0 + (grid_screen_b_max - i) * d_grid_cy
+                        grid_screen_a_max * d_grid_ax + i * d_grid_bx + okx0,
+                        grid_screen_a_max * d_grid_ay + i * d_grid_by + oky0,
+                        grid_screen_a_max * d_grid_ax + i * d_grid_bx + okx0 + (grid_screen_b_max - i) * d_grid_cx,
+                        grid_screen_a_max * d_grid_ay + i * d_grid_by + oky0 + (grid_screen_b_max - i) * d_grid_cy
                 );
 
                 s_tv.set(camera.object2TV(s_ob));
@@ -433,7 +433,7 @@ public class Grid {
                 }
             }
 
-            if(drawDiagonalGridlines) {
+            if (drawDiagonalGridlines) {
                 // \\\4
                 // \\\
                 // \\\
@@ -447,10 +447,10 @@ public class Grid {
                         continue;
                     }
                     s_ob.set(
-                        i * d_grid_ax + grid_screen_b_min * d_grid_bx + okx0,
-                        i * d_grid_ay + grid_screen_b_min * d_grid_by + oky0,
-                        i * d_grid_ax + grid_screen_b_min * d_grid_bx + okx0 + (i - grid_screen_a_min)  * d_grid_cx,
-                        i * d_grid_ay + grid_screen_b_min * d_grid_by + oky0 + (i - grid_screen_a_min)  * d_grid_cy
+                            i * d_grid_ax + grid_screen_b_min * d_grid_bx + okx0,
+                            i * d_grid_ay + grid_screen_b_min * d_grid_by + oky0,
+                            i * d_grid_ax + grid_screen_b_min * d_grid_bx + okx0 + (i - grid_screen_a_min) * d_grid_cx,
+                            i * d_grid_ay + grid_screen_b_min * d_grid_by + oky0 + (i - grid_screen_a_min) * d_grid_cy
                     );
 
                     s_tv.set(camera.object2TV(s_ob));
@@ -465,10 +465,10 @@ public class Grid {
                         continue;
                     }
                     s_ob.set(
-                        grid_screen_a_max * d_grid_ax + i * d_grid_bx + okx0,
-                        grid_screen_a_max * d_grid_ay + i * d_grid_by + oky0,
-                        grid_screen_a_max * d_grid_ax + i * d_grid_bx + okx0 + (grid_screen_b_max - i) * d_grid_cx,
-                        grid_screen_a_max * d_grid_ay + i * d_grid_by + oky0 + (grid_screen_b_max - i) * d_grid_cy
+                            grid_screen_a_max * d_grid_ax + i * d_grid_bx + okx0,
+                            grid_screen_a_max * d_grid_ay + i * d_grid_by + oky0,
+                            grid_screen_a_max * d_grid_ax + i * d_grid_bx + okx0 + (grid_screen_b_max - i) * d_grid_cx,
+                            grid_screen_a_max * d_grid_ay + i * d_grid_by + oky0 + (grid_screen_b_max - i) * d_grid_cy
                     );
 
                     s_tv.set(camera.object2TV(s_ob));

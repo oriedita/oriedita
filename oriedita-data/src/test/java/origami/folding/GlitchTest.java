@@ -12,7 +12,7 @@ import origami.folding.util.TestBulletinBoard;
 import java.io.IOException;
 
 public class GlitchTest {
-        @Test
+    @Test
     public void testFoldGlitch() throws IOException {
         Save save = Cp.importFile(getClass().getClassLoader().getResourceAsStream("glitch.cp"));
 

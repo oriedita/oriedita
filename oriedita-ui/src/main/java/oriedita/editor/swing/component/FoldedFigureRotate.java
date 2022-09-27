@@ -3,9 +3,9 @@ package oriedita.editor.swing.component;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import oriedita.editor.databinding.FoldedFigureModel;
-import origami.crease_pattern.OritaCalc;
 import oriedita.editor.databinding.MeasuresModel;
 import oriedita.editor.service.ButtonService;
+import origami.crease_pattern.OritaCalc;
 
 import javax.swing.*;
 import java.awt.*;

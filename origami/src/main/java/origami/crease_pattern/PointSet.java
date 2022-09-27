@@ -8,15 +8,16 @@ import origami.data.save.PointSave;
 import origami.folding.element.Face;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A collection of points.
- *
+ * <p>
  * Every line can be part of a line and/or a face.
  */
 public class PointSet implements Serializable {
-        int numFaces_temp;
+    int numFaces_temp;
 
     private int numPoints;               //Total number of points actually used
     private int numLines;               //Total number of lines actually used
@@ -449,9 +450,9 @@ public class PointSet implements Serializable {
 
         // Registration of both sides of line
         for (int i = 1; i <= numLines; i++) {
-            int min =  numFaces + 1, max = 0;
+            int min = numFaces + 1, max = 0;
             int cursor = head[lines[i].getBegin()];
-            while(cursor != 0) {
+            while (cursor != 0) {
                 int id = list.get(cursor);
                 if (lineInFaceBorder(id, i)) {
                     if (min > id) min = id;
@@ -481,7 +482,9 @@ public class PointSet implements Serializable {
         return lineInFaceBorder_max[lineId];
     }
 
-    /** Determines if two Faces are identical, in the way that their points match index by index. */
+    /**
+     * Determines if two Faces are identical, in the way that their points match index by index.
+     */
     private boolean equals(Face m, Face n) {
         if (m.getNumPoints() != n.getNumPoints()) {
             return false;
@@ -524,7 +527,7 @@ public class PointSet implements Serializable {
 
     public ListArray getPointToLineMap() {
         ListArray map = new ListArray(numPoints, numLines * 5);
-        for(int i = 1; i <= numLines; i++) {
+        for (int i = 1; i <= numLines; i++) {
             map.add(lines[i].getBegin(), i);
             map.add(lines[i].getEnd(), i);
         }
@@ -537,7 +540,7 @@ public class PointSet implements Serializable {
         for (int i = 1; i <= pm; i++) {
             ma = faces[m].getPointId(i);
             mb = faces[m].getPointId(i % pm + 1);
-            
+
             for (int j = 1; j <= pn; j++) {
                 na = faces[n].getPointId(j);
                 nb = faces[n].getPointId(j % pn + 1);
@@ -667,7 +670,7 @@ public class PointSet implements Serializable {
 
     public void setSave(PointSave save) {
         for (int i = 0; i < save.getPoints().size(); i++) {
-            points[i+1].set(save.getPoints().get(i));
+            points[i + 1].set(save.getPoints().get(i));
         }
     }
 }

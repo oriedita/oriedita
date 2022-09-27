@@ -5,15 +5,15 @@ import java.util.ArrayList;
 /**
  * This class improves the efficiency of the original GuideMap class. There are
  * two differences:
- * 
+ * <p>
  * 1. It uses goal checking mechanism to quickly determine if a digit is ready.
  * 2. It allows assigning temporary guide to vastly reduce runtime.
- * 
+ * <p>
  * There was also this idea called "TripleGuide" which supposedly will replace
  * the functionality of penetration_inconsistent_digits_request(), but it turned
  * out that the cost of confirming and retracting in TripleGuide is too high, in
  * some cases even brings down the performance.
- * 
+ *
  * @author Mu-Tsun Tsai
  */
 public class PairGuide {
@@ -30,7 +30,7 @@ public class PairGuide {
 
     /**
      * guide[i] points to the head of the list of elements that must appear after i.
-     * 
+     * <p>
      * Orihime use int[50] for each digit, but I'm not sure if that's safe
      * (especially now with temporary guides), so I use linked list instead.
      */
@@ -114,7 +114,9 @@ public class PairGuide {
         }
     }
 
-    /** Lock the initial guide. */
+    /**
+     * Lock the initial guide.
+     */
     public int[] lock() {
         locked = true;
         initEntries = entries.size();

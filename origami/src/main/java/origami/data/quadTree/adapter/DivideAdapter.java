@@ -1,8 +1,8 @@
 package origami.data.quadTree.adapter;
 
-import java.util.List;
-
 import origami.crease_pattern.element.LineSegment;
+
+import java.util.List;
 
 public class DivideAdapter extends LineSegmentListAdapter {
 

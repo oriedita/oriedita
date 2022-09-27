@@ -1,10 +1,9 @@
 package oriedita.editor.databinding;
 
+import origami.Epsilon;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import origami.Epsilon;
-import origami.crease_pattern.OritaCalc;
-
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.Serializable;
@@ -73,7 +72,7 @@ public class GridModel implements Serializable {
         setBaseState(baseState.advance());
     }
 
-    public boolean getDrawDiagonalGridlines(){
+    public boolean getDrawDiagonalGridlines() {
         return drawDiagonalGridlines;
     }
 

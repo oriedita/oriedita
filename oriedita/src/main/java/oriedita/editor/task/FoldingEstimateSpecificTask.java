@@ -1,13 +1,13 @@
 package oriedita.editor.task;
 
 import org.tinylog.Logger;
-import origami.crease_pattern.FoldingException;
-import origami.folding.FoldedFigure;
 import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.databinding.FoldedFigureModel;
 import oriedita.editor.databinding.FoldedFiguresList;
 import oriedita.editor.drawing.FoldedFigure_Drawer;
 import oriedita.editor.service.FoldingService;
+import origami.crease_pattern.FoldingException;
+import origami.folding.FoldedFigure;
 
 public class FoldingEstimateSpecificTask implements OrieditaTask {
     private final FoldedFigureModel foldedFigureModel;

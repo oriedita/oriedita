@@ -24,7 +24,7 @@ public class MouseHandlerAngleSystem extends BaseMouseHandlerInputRestricted {
     LineSegment direction;
     LineSegment previewLine;
     Step currentStep = Step.SELECT_FIRST_POINT;
-    LineColor[] customAngleColors = new LineColor[] {
+    LineColor[] customAngleColors = new LineColor[]{
             LineColor.ORANGE_4,
             LineColor.GREEN_6,
             LineColor.PURPLE_8
@@ -194,7 +194,7 @@ public class MouseHandlerAngleSystem extends BaseMouseHandlerInputRestricted {
                 s.set(OritaCalc.lineSegment_rotate(startingSegment, angles[i], 1.0));
                 s.setActive(LineSegment.ActiveState.ACTIVE_BOTH_3);
                 candidates.add(s);
-                s.setColor(customAngleColors[i%3]);
+                s.setColor(customAngleColors[i % 3]);
             }
         }
         return candidates;

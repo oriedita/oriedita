@@ -1,22 +1,9 @@
 package origami.crease_pattern.worker;
 
 import org.tinylog.Logger;
-import origami.Epsilon;
 import origami.crease_pattern.LineSegmentSet;
-import origami.crease_pattern.OritaCalc;
-import origami.crease_pattern.element.LineColor;
-import origami.crease_pattern.element.LineSegment;
-import origami.crease_pattern.element.Point;
 import origami.crease_pattern.worker.linesegmentset.IntersectDivide;
 import origami.crease_pattern.worker.linesegmentset.OverlappingLineRemoval;
-import origami.data.quadTree.QuadTree;
-import origami.data.quadTree.adapter.LineSegmentEndPointAdapter;
-import origami.data.quadTree.adapter.LineSegmentSetLineAdapter;
-import origami.data.quadTree.collector.EndPointCollector;
-import origami.data.quadTree.collector.QuadTreeCollector;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class LineSegmentSetWorker {
     LineSegmentSet lineSegmentSet = new LineSegmentSet();    //Instantiation of basic branch structure
@@ -25,7 +12,7 @@ public class LineSegmentSetWorker {
         OverlappingLineRemoval.apply(lineSegmentSet);
     }
 
-    public void intersect_divide() throws InterruptedException{
+    public void intersect_divide() throws InterruptedException {
         IntersectDivide.apply(lineSegmentSet);
     }
 

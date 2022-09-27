@@ -2,16 +2,14 @@ package oriedita.editor.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
-
 import org.tinylog.Logger;
 import oriedita.editor.databinding.ApplicationModel;
 import oriedita.editor.json.DefaultObjectMapper;
 import oriedita.editor.service.ApplicationModelPersistenceService;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
 import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
@@ -32,7 +30,8 @@ public class ApplicationModelPersistenceServiceImpl implements ApplicationModelP
         this.applicationModel = applicationModel;
     }
 
-    @Override public void init() {
+    @Override
+    public void init() {
         restoreApplicationModel();
         applicationModel.addPropertyChangeListener(e -> persistApplicationModel());
     }

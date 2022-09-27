@@ -30,7 +30,7 @@ public class MouseHandlerCreaseMove extends BaseMouseHandlerLineTransform {
     //マウスリリース----------------------------------------------------
     public void mouseReleased(Point p0) {
         super.mouseReleased(p0);
-        if (Epsilon.high.gt0(delta.distance(new Point(0,0)))) {
+        if (Epsilon.high.gt0(delta.distance(new Point(0, 0)))) {
             //やりたい動作はここに書く
 
             FoldLineSet ori_s_temp = new FoldLineSet();    //セレクトされた折線だけ取り出すために使う

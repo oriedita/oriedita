@@ -2,21 +2,21 @@ package origami.folding;
 
 import au.com.origin.snapshots.Expect;
 import au.com.origin.snapshots.junit5.SnapshotExtension;
-import org.tinylog.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.tinylog.Logger;
+import oriedita.editor.export.Cp;
+import oriedita.editor.save.Save;
 import origami.crease_pattern.FoldingException;
 import origami.crease_pattern.LineSegmentSet;
-import oriedita.editor.save.Save;
-import oriedita.editor.export.Cp;
 import origami.folding.util.TestBulletinBoard;
 
 import java.io.IOException;
 
 @ExtendWith({SnapshotExtension.class})
 public class FoldingTest {
-        private Expect expect;
+    private Expect expect;
 
     @Test
     public void testFoldBirdbase() throws IOException {

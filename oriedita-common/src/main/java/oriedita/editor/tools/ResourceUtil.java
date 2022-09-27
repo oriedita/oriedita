@@ -43,7 +43,7 @@ public class ResourceUtil {
                 Attributes attributes = manifest.getMainAttributes();
                 final String version = attributes.getValue("Implementation-Version");
                 jarFile.close();
-                
+
                 if (version != null) {
                     return version;
                 }
@@ -59,8 +59,9 @@ public class ResourceUtil {
      * 1. Try to find a properties file with the key in the same directory as where the jar is executed
      * 2. Try to find a properties file with the key in the directory from {@link #getAppDir}
      * 3. Try to read the key from the properties file in the jar.
+     *
      * @param bundle Properties file to load
-     * @param key Key to read in properties file
+     * @param key    Key to read in properties file
      */
     public static String getBundleString(String bundle, String key) {
         ResourceBundle userBundle = null;

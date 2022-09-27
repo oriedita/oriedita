@@ -1,8 +1,8 @@
 package oriedita.editor.folded_figure;
 
+import oriedita.editor.databinding.FoldedFigureModel;
 import origami.folding.FoldedFigure;
 import origami.folding.util.IBulletinBoard;
-import oriedita.editor.databinding.FoldedFigureModel;
 
 public class FoldedFigure_01 extends FoldedFigure {//FoldedFigure-based folding prediction algorithm
 

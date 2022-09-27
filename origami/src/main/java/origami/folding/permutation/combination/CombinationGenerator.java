@@ -1,14 +1,16 @@
 package origami.folding.permutation.combination;
 
-import java.util.*;
-
 import origami.folding.HierarchyList;
 import origami.folding.algorithm.InferenceFailureException;
 import origami.folding.algorithm.italiano.ReductionItalianoAlgorithm;
 import origami.folding.algorithm.swapping.SwappingAlgorithm;
 import origami.folding.element.SubFace;
-import origami.folding.permutation.*;
+import origami.folding.permutation.ChainPermutationGenerator;
+import origami.folding.permutation.PermutationGenerator;
 import origami.folding.util.EquivalenceCondition;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * CombinationGenerator is the latest boost to the search performance. It solves
@@ -19,7 +21,7 @@ import origami.folding.util.EquivalenceCondition;
  * focus on the {@link EquivalenceCondition}s first, converting them into
  * {@link Constraint}s, and search for a valid combination for them using also
  * the {@link SwappingAlgorithm}.
- * 
+ *
  * @author Mu-Tsun Tsai
  */
 public class CombinationGenerator {
@@ -40,9 +42,9 @@ public class CombinationGenerator {
             for (int j = i + 1; j <= faceIdCount; j++) {
                 int state = hierarchyList.get(s.getFaceId(i), s.getFaceId(j));
                 if (state == HierarchyList.ABOVE_1) {
-                    if(!ia.tryAdd(i, j)) throw new InferenceFailureException(i, j);
+                    if (!ia.tryAdd(i, j)) throw new InferenceFailureException(i, j);
                 } else if (state == HierarchyList.BELOW_0) {
-                    if(!ia.tryAdd(j, i)) throw new InferenceFailureException(i, j);
+                    if (!ia.tryAdd(j, i)) throw new InferenceFailureException(i, j);
                 }
             }
         }

@@ -1,9 +1,9 @@
 package oriedita.editor.databinding;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
 import origami.folding.FoldedFigure;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.awt.*;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;

@@ -5,7 +5,9 @@ import fold.FoldFileFormatException;
 import fold.Importer;
 import fold.impl.CustomImporter;
 import fold.impl.DefaultExporter;
-import fold.model.*;
+import fold.model.Edge;
+import fold.model.FoldEdgeAssignment;
+import fold.model.Vertex;
 import oriedita.editor.exception.FileReadingException;
 import oriedita.editor.save.OrieditaFoldFile;
 import oriedita.editor.save.Save;
@@ -150,7 +152,7 @@ public class Fold {
 
         for (int i = 1; i <= pointSet.getNumPoints(); i++) {
             Vertex vertex = new Vertex();
-            vertex.setId(i-1);
+            vertex.setId(i - 1);
             vertex.setX(pointSet.getPoint(i).getX());
             vertex.setY(pointSet.getPoint(i).getY());
             foldFile.getVertices().add(vertex);
@@ -160,8 +162,8 @@ public class Fold {
             Edge edge = new Edge();
             edge.setAssignment(getAssignment(pointSet.getColor(i)));
             edge.setFoldAngle(getFoldAngle(pointSet.getColor(i)));
-            Vertex startVertex = foldFile.getVertices().get(pointSet.getBegin(i)-1);
-            Vertex endVertex = foldFile.getVertices().get(pointSet.getEnd(i)-1);
+            Vertex startVertex = foldFile.getVertices().get(pointSet.getBegin(i) - 1);
+            Vertex endVertex = foldFile.getVertices().get(pointSet.getEnd(i) - 1);
 
             edge.setStart(startVertex);
             edge.setEnd(endVertex);
