@@ -237,7 +237,7 @@ public class App {
         lookAndFeelService.updateButtonIcons();
 
 
-        if (applicationModel.getWindowPosition() != null) {
+        if (applicationModel.getWindowPosition() != null && isPointInScreen(applicationModel.getWindowPosition())) {
             frame.setLocation(applicationModel.getWindowPosition());
         } else {
             frame.setLocationRelativeTo(null);
@@ -257,6 +257,16 @@ public class App {
         explanation.setVisible(applicationModel.getHelpVisible());
         //focus back to here after creating dialog
         frame.requestFocus();
+    }
+
+    public static boolean isPointInScreen(Point pos) {
+        for (GraphicsDevice gd : GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()) {
+            if (gd.getDefaultConfiguration().getBounds().contains(pos)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private void setData(ApplicationModel applicationModel) {
