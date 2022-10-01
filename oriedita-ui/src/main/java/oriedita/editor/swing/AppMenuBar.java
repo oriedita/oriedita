@@ -8,6 +8,7 @@ import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import org.tinylog.Logger;
 import oriedita.editor.Colors;
+import oriedita.editor.FrameProvider;
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.databinding.*;
@@ -31,14 +32,7 @@ import java.util.ArrayList;
 
 @ApplicationScoped
 public class AppMenuBar {
-    public AppMenuBarUI getAppMenuBarUI() {
-        return appMenuBarUI;
-    }
-
-    private static class AppMenuBarUI extends JMenuBar {
-
-    }
-    private final JFrame frame;
+    private final FrameProvider frameProvider;
     private final TaskExecutorService foldingExecutor;
     private final FileSaveService fileSaveService;
     private final FileModel fileModel;
@@ -55,12 +49,10 @@ public class AppMenuBar {
     private JCheckBoxMenuItem preciseZoomCheckBox;
     private JCheckBoxMenuItem displaySelfIntersectionCheckBox;
     private JCheckBoxMenuItem useAdvancedCheck4Display;
-
     private JCheckBoxMenuItem displayTopPanel;
     private JCheckBoxMenuItem displayBottomPanel;
     private JCheckBoxMenuItem displayLeftPanel;
     private JCheckBoxMenuItem displayRightPanel;
-
     private JMenuItem newButton;
     private JMenuItem openButton;
     private JMenuItem saveButton;
@@ -72,28 +64,27 @@ public class AppMenuBar {
     private JMenuItem toggleHelpMenuItem;
     private JMenu openRecentMenu;
     private JMenuItem clearRecentFileMenuItem;
-
     private JMenuItem copyButton;
     private JMenuItem cutButton;
     private JMenuItem pasteButton;
     private JMenuItem pasteOffsetButton;
-
     private AppMenuBarUI appMenuBarUI;
-
     @Inject
-    public AppMenuBar(@Named("mainFrame") JFrame frame,
-                      @Named("foldingExecutor") TaskExecutorService foldingExecutor,
-                      ApplicationModel applicationModel,
-                      LookAndFeelService lookAndFeelService,
-                      FileSaveService fileSaveService,
-                      ButtonService buttonService,
-                      @Any CanvasModel canvasModel,
-                      FileModel fileModel,
-                      @Named("mainCreasePattern_Worker") CreasePattern_Worker mainCreasePatternWorker,
-                      FoldedFigureModel foldedFigureModel,
-                      ResetService resetService,
-                      FoldedFiguresList foldedFiguresList) {
-        this.frame = frame;
+    public AppMenuBar(
+            FrameProvider frameProvider,
+            @Named("foldingExecutor") TaskExecutorService foldingExecutor,
+            ApplicationModel applicationModel,
+            LookAndFeelService lookAndFeelService,
+            FileSaveService fileSaveService,
+            ButtonService buttonService,
+            @Any CanvasModel canvasModel,
+            FileModel fileModel,
+            @Named("mainCreasePattern_Worker") CreasePattern_Worker mainCreasePatternWorker,
+            FoldedFigureModel foldedFigureModel,
+            ResetService resetService,
+            FoldedFiguresList foldedFiguresList
+    ) {
+        this.frameProvider = frameProvider;
         this.foldingExecutor = foldingExecutor;
         this.fileSaveService = fileSaveService;
         this.fileModel = fileModel;
@@ -101,7 +92,7 @@ public class AppMenuBar {
         applicationModel.addPropertyChangeListener(e -> setData(applicationModel));
 
         //--------------------------------------------------------------------------------------------------
-        frame.addWindowListener(new WindowAdapter() {//ウィンドウの状態が変化したときの処理
+        frameProvider.get().addWindowListener(new WindowAdapter() {//ウィンドウの状態が変化したときの処理
             //終了ボタンを有効化
             public void windowClosing(WindowEvent evt) {
                 closing();//Work to be done when pressing X at the right end of the upper side of the window
@@ -144,7 +135,7 @@ public class AppMenuBar {
 
         newButton.addActionListener(e -> {
             if (!fileModel.isSaved()) {
-                int choice = JOptionPane.showConfirmDialog(frame, "<html>Current file not saved.<br/>Do you want to save it?", "File not saved", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+                int choice = JOptionPane.showConfirmDialog(frameProvider.get(), "<html>Current file not saved.<br/>Do you want to save it?", "File not saved", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
 
                 if (choice == JOptionPane.YES_OPTION) {
                     fileSaveService.saveFile();
@@ -218,7 +209,7 @@ public class AppMenuBar {
         darkModeCheckBox.addActionListener(e -> {
             lookAndFeelService.toggleDarkMode();
 
-            if (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(frame, "Restore custom colors in grid and folded figure for this color scheme?", "Restore colors", JOptionPane.YES_NO_OPTION)) {
+            if (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(frameProvider.get(), "Restore custom colors in grid and folded figure for this color scheme?", "Restore colors", JOptionPane.YES_NO_OPTION)) {
                 if (FlatLaf.isLafDark()) {
                     applicationModel.setGridColor(Colors.GRID_LINE_DARK);
                     applicationModel.setGridScaleColor(Colors.GRID_SCALE_DARK);
@@ -293,6 +284,10 @@ public class AppMenuBar {
                 // We don't know how to paste this
             }
         });
+    }
+
+    public AppMenuBarUI getAppMenuBarUI() {
+        return appMenuBarUI;
     }
 
     private void createElements() {
@@ -460,7 +455,7 @@ public class AppMenuBar {
                     applicationModel.addRecentFile(recentFile);
                 } catch (FileReadingException ex) {
                     ex.printStackTrace();
-                    JOptionPane.showMessageDialog(frame, "An error occurred when reading this file", "Read Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(frameProvider.get(), "An error occurred when reading this file", "Read Error", JOptionPane.ERROR_MESSAGE);
                     applicationModel.removeRecentFile(recentFile);
                 }
             });
@@ -472,7 +467,7 @@ public class AppMenuBar {
 
     public void closing() {
         if (!fileModel.isSaved()) {
-            int option = JOptionPane.showConfirmDialog(frame, "Save crease pattern before exiting?", "Save", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+            int option = JOptionPane.showConfirmDialog(frameProvider.get(), "Save crease pattern before exiting?", "Save", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
 
             switch (option) {
                 case JOptionPane.YES_OPTION:
@@ -490,5 +485,9 @@ public class AppMenuBar {
             foldingExecutor.stopTask();
             System.exit(0);
         }
+    }
+
+    private static class AppMenuBarUI extends JMenuBar {
+
     }
 }

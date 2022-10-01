@@ -13,6 +13,7 @@ import oriedita.editor.service.ApplicationModelPersistenceService;
 import oriedita.editor.service.FileSaveService;
 import oriedita.editor.service.LookAndFeelService;
 import oriedita.editor.swing.dialog.LoadingDialog;
+import oriedita.editor.swing.dialog.LoadingDialogUtil;
 
 import javax.swing.*;
 import java.awt.*;
@@ -23,7 +24,6 @@ import java.util.Objects;
 
 @ApplicationScoped
 public class Oriedita {
-    private static JDialog loadingDialog;
     @Inject
     LookAndFeelService lookAndFeelService;
     @Inject
@@ -59,7 +59,7 @@ public class Oriedita {
 
             app.start();
 
-            loadingDialog.dispose();
+            LoadingDialogUtil.hide();
 
             if (argv.size() == 1) {
                 // We got a file
@@ -85,10 +85,7 @@ public class Oriedita {
     }
 
     public static void main(String[] argv) {
-        SwingUtilities.invokeLater(() -> {
-            loadingDialog = new LoadingDialog();
-
-        });
+        LoadingDialogUtil.show();
         StartMain.main(argv);
     }
 }

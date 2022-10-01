@@ -9,6 +9,7 @@ import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import org.tinylog.Logger;
 import oriedita.editor.Colors;
+import oriedita.editor.FrameProvider;
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.canvas.FoldLineAdditionalInputMode;
 import oriedita.editor.canvas.MouseMode;
@@ -135,7 +136,7 @@ public class LeftPanel {
     private JCheckBox drawDiagonalGridlinesCheckBox;
 
     @Inject
-    public LeftPanel(@Named("mainFrame") JFrame frame,
+    public LeftPanel(FrameProvider frameProvider,
                      @Named("normal") HistoryState historyState,
                      MeasuresModel measuresModel,
                      ButtonService buttonService,
@@ -584,7 +585,7 @@ public class LeftPanel {
         gridSizeIncreaseButton.addActionListener(e -> gridModel.setGridSize(gridModel.getGridSize() * 2));
         gridColorButton.addActionListener(e -> {
             //以下にやりたいことを書く
-            Color color = JColorChooser.showDialog(frame, "Col", FlatLaf.isLafDark() ? Colors.GRID_LINE_DARK : Colors.GRID_LINE);
+            Color color = JColorChooser.showDialog(frameProvider.get(), "Col", FlatLaf.isLafDark() ? Colors.GRID_LINE_DARK : Colors.GRID_LINE);
             if (color != null) {
                 applicationModel.setGridColor(color);
             }
@@ -599,7 +600,7 @@ public class LeftPanel {
         moveIntervalGridHorizontal.addActionListener(e -> gridModel.changeVerticalScalePosition());
         intervalGridColorButton.addActionListener(e -> {
             //以下にやりたいことを書く
-            Color color = JColorChooser.showDialog(frame, "Col", FlatLaf.isLafDark() ? Colors.GRID_SCALE_DARK : Colors.GRID_SCALE);
+            Color color = JColorChooser.showDialog(frameProvider.get(), "Col", FlatLaf.isLafDark() ? Colors.GRID_SCALE_DARK : Colors.GRID_SCALE);
             if (color != null) {
                 applicationModel.setGridScaleColor(color);
             }

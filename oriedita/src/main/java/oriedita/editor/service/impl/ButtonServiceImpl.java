@@ -4,6 +4,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import org.tinylog.Logger;
+import oriedita.editor.FrameProvider;
 import oriedita.editor.action.Handles;
 import oriedita.editor.action.MouseHandlerVoronoiCreate;
 import oriedita.editor.canvas.CreasePattern_Worker;
@@ -31,13 +32,13 @@ public class ButtonServiceImpl implements ButtonService {
     private final HelpDialog explanation;
     private final CreasePattern_Worker mainCreasePatternWorker;
     private Map<KeyStroke, AbstractButton> helpInputMap = new HashMap<>();
-    private JFrame owner;
+    private FrameProvider owner;
     private final MouseHandlerVoronoiCreate mouseHandlerVoronoiCreate;
     private final CanvasModel canvasModel;
 
     @Inject
     public ButtonServiceImpl(
-            @Named("mainFrame") JFrame frame,
+            FrameProvider frame,
             HelpDialog explanation,
             @Named("mainCreasePattern_Worker") CreasePattern_Worker mainCreasePatternWorker,
             @Handles(MouseMode.VORONOI_CREATE_62) MouseHandlerVoronoiCreate mouseHandlerVoronoiCreate,
@@ -94,7 +95,7 @@ public class ButtonServiceImpl implements ButtonService {
 
     private void addKeyStroke(KeyStroke keyStroke, AbstractButton button, String key) {
         helpInputMap.put(keyStroke, button);
-        owner.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, key);
+        owner.get().getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, key);
     }
 
     @Override
@@ -141,7 +142,7 @@ public class ButtonServiceImpl implements ButtonService {
             if (keyStroke != null) {
                 addKeyStroke(keyStroke, button, key);
             }
-            owner.getRootPane().getActionMap().put(key, new Click(button));
+            owner.get().getRootPane().getActionMap().put(key, new Click(button));
 
             if (!StringOp.isEmpty(icon)) {
                 GlyphIcon glyphIcon = new GlyphIcon(icon, button.getForeground());
@@ -188,7 +189,7 @@ public class ButtonServiceImpl implements ButtonService {
         Action addKeybindAction = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                InputMap map = owner.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+                InputMap map = owner.get().getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
                 KeyStroke stroke = null;
                 for (KeyStroke keyStroke : map.keys()) {
                     if (map.get(keyStroke).equals(key)) {
@@ -197,19 +198,19 @@ public class ButtonServiceImpl implements ButtonService {
                 }
                 KeyStroke currentKeyStroke = stroke;
 
-                new SelectKeyStrokeDialog(owner, button, helpInputMap, currentKeyStroke, newKeyStroke -> {
+                new SelectKeyStrokeDialog(owner.get(), button, helpInputMap, currentKeyStroke, newKeyStroke -> {
                     if (newKeyStroke != null && helpInputMap.containsKey(newKeyStroke) && helpInputMap.get(newKeyStroke) != button) {
                         String conflictingButton = (String) helpInputMap.get(newKeyStroke).getRootPane()
                                 .getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
                                 .get(newKeyStroke);
-                        JOptionPane.showMessageDialog(owner, "Conflicting KeyStroke! Conflicting with " + conflictingButton);
+                        JOptionPane.showMessageDialog(owner.get(), "Conflicting KeyStroke! Conflicting with " + conflictingButton);
                         return false;
                     }
 
                     ResourceUtil.updateBundleKey("hotkey", key, newKeyStroke == null ? "" : newKeyStroke.toString());
 
                     helpInputMap.remove(currentKeyStroke);
-                    owner.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).remove(currentKeyStroke);
+                    owner.get().getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).remove(currentKeyStroke);
 
                     if (newKeyStroke != null) {
                         addKeyStroke(newKeyStroke, button, key);

@@ -7,6 +7,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import org.tinylog.Logger;
+import oriedita.editor.FrameProvider;
 import oriedita.editor.action.FoldedFigureOperationMode;
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.canvas.MouseMode;
@@ -62,7 +63,7 @@ public class BottomPanel {
     private JButton constraintButton;
 
     @Inject
-    public BottomPanel(@Named("mainFrame") JFrame frame,
+    public BottomPanel(FrameProvider frameProvider,
                        @Named("camvExecutor") TaskExecutorService camvTaskExecutor,
                        @Named("foldingExecutor") TaskExecutorService foldingTaskExecutor,
                        ButtonService buttonService,
@@ -225,7 +226,7 @@ public class BottomPanel {
         frontColorButton.addActionListener(e -> {
             //以下にやりたいことを書く
 
-            Color frontColor = JColorChooser.showDialog(frame, "F_col", Color.white);
+            Color frontColor = JColorChooser.showDialog(frameProvider.get(), "F_col", Color.white);
 
             if (frontColor != null) {
                 foldedFigureModel.setFrontColor(frontColor);
@@ -233,7 +234,7 @@ public class BottomPanel {
         });
         backColorButton.addActionListener(e -> {
             //以下にやりたいことを書く
-            Color backColor = JColorChooser.showDialog(frame, "B_col", Color.white);
+            Color backColor = JColorChooser.showDialog(frameProvider.get(), "B_col", Color.white);
 
             if (backColor != null) {
                 foldedFigureModel.setBackColor(backColor);
@@ -242,7 +243,7 @@ public class BottomPanel {
         lineColorButton.addActionListener(e -> {
             //以下にやりたいことを書く
 
-            Color lineColor = JColorChooser.showDialog(frame, "L_col", Color.white);
+            Color lineColor = JColorChooser.showDialog(frameProvider.get(), "L_col", Color.white);
             if (lineColor != null) {
                 foldedFigureModel.setLineColor(lineColor);
             }

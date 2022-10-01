@@ -2,8 +2,8 @@ package oriedita.editor.swing.dialog;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.inject.Named;
 import org.tinylog.Logger;
+import oriedita.editor.FrameProvider;
 import oriedita.editor.databinding.ApplicationModel;
 
 import javax.swing.*;
@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 public class HelpDialog {
     private ResourceBundle helpBundle;
     private final Point point = new Point();
-    private final JFrame frame;
+    private final FrameProvider frameProvider;
     private final ApplicationModel applicationModel;
     private JPanel contentPane;
     private JTextPane helpLabel;
@@ -61,14 +61,14 @@ public class HelpDialog {
     }
 
     @Inject
-    public HelpDialog(@Named("mainFrame") JFrame frame, ApplicationModel applicationModel) {
-        this.frame = frame;
+    public HelpDialog(FrameProvider frameProvider, ApplicationModel applicationModel) {
+        this.frameProvider = frameProvider;
         this.applicationModel = applicationModel;
     }
 
     public void start(Point canvasLocation, Dimension canvasSize) {
         $$$setupUI$$$();
-        helpDialogUI = new HelpDialogUI(frame, contentPane, applicationModel);
+        helpDialogUI = new HelpDialogUI(frameProvider.get(), contentPane, applicationModel);
 
         JPopupMenu popup = new JPopupMenu();
         JMenuItem dismissMenuItem = new JMenuItem("Dismiss");
@@ -84,7 +84,7 @@ public class HelpDialog {
 
                 maybeShowPopup(e);
 
-                frame.requestFocus();
+                frameProvider.get().requestFocus();
             }
 
             public void mouseReleased(MouseEvent e) {

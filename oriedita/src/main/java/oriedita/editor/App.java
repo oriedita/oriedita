@@ -48,11 +48,11 @@ public class App {
     //画像出力するため20170107_oldと書かれた行をコメントアウトし、20170107_newの行を有効にした。
     //画像出力不要で元にもどすなら、20170107_oldと書かれた行を有効にし、20170107_newの行をコメントアウトにすればよい。（この変更はOrihime.javaの中だけに2箇所ある）
     // オフスクリーン
-    JFrame frame;
+    FrameProvider frameProvider;
 
     @Inject
     public App(
-            @Named("mainFrame") JFrame frame,
+            FrameProvider frameProvider,
             LookAndFeelService lookAndFeelService,
             ApplicationModel applicationModel,
             CanvasModel canvasModel,
@@ -69,7 +69,7 @@ public class App {
             AngleSystemModel angleSystemModel,
             ResetService resetService
     ) {
-        this.frame = frame;
+        this.frameProvider = frameProvider;
         this.lookAndFeelService = lookAndFeelService;
         this.applicationModel = applicationModel;
         this.canvasModel = canvasModel;
@@ -89,6 +89,8 @@ public class App {
 
     public void start() {
         canvas.init();
+
+        JFrame frame = frameProvider.get();
         frame.setTitle("Oriedita " + ResourceUtil.getVersionFromManifest());//Specify the title and execute the constructor
 
         frame.addWindowStateListener(new WindowAdapter() {

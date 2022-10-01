@@ -7,7 +7,6 @@ import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import org.tinylog.Logger;
 import oriedita.editor.action.DrawingSettings;
-import oriedita.editor.action.Handles;
 import oriedita.editor.action.MouseModeHandler;
 import oriedita.editor.canvas.*;
 import oriedita.editor.databinding.*;
@@ -104,7 +103,7 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
     //ウィンドウ透明化用のパラメータ
     private boolean mouseReleasedValid = false;//0 ignores mouse operation. 1 is valid for mouse operation. When an unexpected mouseDragged or mouseReleased occurs due to on-off of the file box, set it to 0 so that it will not be picked up. These are set to 1 valid when the mouse is clicked.
 
-    private final Frame frame;
+    private final FrameProvider frameProvider;
 
     private CanvasUI canvasUI;
 
@@ -313,7 +312,7 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
 
     @Inject
     public Canvas(@Named("creasePatternCamera") Camera creasePatternCamera,
-                  @Named("mainFrame") JFrame frame,
+                  FrameProvider frameProvider,
                   @Named("foldingExecutor") TaskExecutorService foldingExecutor,
                   @Named("mainCreasePattern_Worker") CreasePattern_Worker mainCreasePatternWorker,
                   FoldedFiguresList foldedFiguresList,
@@ -330,7 +329,7 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
                   TextWorker textWorker,
                   SelectedTextModel textModel) {
         this.creasePatternCamera = creasePatternCamera;
-        this.frame = frame;
+        this.frameProvider = frameProvider;
         this.foldingExecutor = foldingExecutor;
         this.mainCreasePatternWorker = mainCreasePatternWorker;
         this.foldedFiguresList = foldedFiguresList;
@@ -841,13 +840,13 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
         java.awt.Point canvasLocation = canvasUI.getLocationOnScreen();
         Rectangle bounds = new Rectangle(canvasLocation.x, canvasLocation.y, canvasBounds.width, canvasBounds.height);
 
-        java.awt.Point currentLocation = frame.getLocation();
-        Dimension size = frame.getSize();
+        java.awt.Point currentLocation = frameProvider.get().getLocation();
+        Dimension size = frameProvider.get().getSize();
 
         // Move all associated windows outside the bounds.
-        Window[] windows = frame.getOwnedWindows();
+        Window[] windows = frameProvider.get().getOwnedWindows();
         java.util.Queue<java.awt.Point> locations = new LinkedList<>();
-        frame.setLocation(currentLocation.x, currentLocation.y + size.height);
+        frameProvider.get().setLocation(currentLocation.x, currentLocation.y + size.height);
         for (Window w : windows) {
             java.awt.Point loc = w.getLocation();
             locations.offer(loc);
@@ -857,7 +856,7 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
         backgroundModel.setBackgroundImage(robot.createScreenCapture(bounds));
 
         // Move all associated windows back.
-        frame.setLocation(currentLocation);
+        frameProvider.get().setLocation(currentLocation);
         for (Window w : windows) {
             w.setLocation(Objects.requireNonNull(locations.poll()));
         }

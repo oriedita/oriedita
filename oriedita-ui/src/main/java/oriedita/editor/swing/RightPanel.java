@@ -4,9 +4,9 @@ import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.enterprise.inject.Any;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
+import oriedita.editor.FrameProvider;
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.canvas.FoldLineAdditionalInputMode;
 import oriedita.editor.canvas.MouseMode;
@@ -95,7 +95,7 @@ public class RightPanel {
     private boolean darkMode;
 
     @Inject
-    public RightPanel(@Named("mainFrame") JFrame frame,
+    public RightPanel(FrameProvider frameProvider,
                       @Named("aux") HistoryState auxHistoryState,
                       AngleSystemModel angleSystemModel,
                       ButtonService buttonService,
@@ -369,7 +369,7 @@ public class RightPanel {
         measuredAngle3TextField.addActionListener(e -> measuresModel.setMeasuredAngle3(StringOp.String2double(measuredAngle3TextField.getText(), measuresModel.getMeasuredAngle3())));
 
         ad_fncButton.addActionListener(e -> {
-            openFrame = new OpenFrame("additionalFrame", frame, canvasModel, mainCreasePatternWorker, buttonService);
+            openFrame = new OpenFrame("additionalFrame", frameProvider.get(), canvasModel, mainCreasePatternWorker, buttonService);
 
             openFrame.setData(null, canvasModel);
 

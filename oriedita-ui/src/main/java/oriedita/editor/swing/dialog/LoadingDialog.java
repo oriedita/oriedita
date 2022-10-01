@@ -1,19 +1,17 @@
 package oriedita.editor.swing.dialog;
 
-import com.intellij.uiDesigner.core.GridConstraints;
-import com.intellij.uiDesigner.core.GridLayoutManager;
-import com.intellij.uiDesigner.core.Spacer;
 import jico.Ico;
 import jico.ImageReadException;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.List;
 import java.util.Objects;
 
+/**
+ * Dialog shown when loading Oriedita
+ */
 public class LoadingDialog extends JDialog {
     public LoadingDialog() {
         setUndecorated(true);
