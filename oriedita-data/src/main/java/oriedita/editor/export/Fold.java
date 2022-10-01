@@ -1,11 +1,10 @@
 package oriedita.editor.export;
 
-import fold.Writer;
-import fold.Reader;
-import fold.io.CustomReader;
-import fold.io.FoldWriter;
+import fold.io.CustomFoldReader;
+import fold.io.CustomFoldWriter;
 import fold.model.Edge;
 import fold.model.FoldEdgeAssignment;
+import fold.model.FoldFile;
 import fold.model.Vertex;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -23,6 +22,8 @@ import origami.crease_pattern.element.Point;
 import origami.crease_pattern.worker.WireFrame_Worker;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,13 +31,8 @@ import java.util.List;
 
 @ApplicationScoped
 public class Fold {
-    private final Reader<OrieditaFoldFile> anReader;
-    private final Writer<OrieditaFoldFile> writer;
-
     @Inject
     public Fold() {
-        this.anReader = new CustomReader<>(OrieditaFoldFile.class);
-        this.writer = new FoldWriter<>();
     }
 
     public Save toSave(OrieditaFoldFile foldFile) {
@@ -126,8 +122,9 @@ public class Fold {
     }
 
     public Save importFile(File file) throws FileReadingException {
-        try {
-            return toSave(anReader.read(file));
+        try (FileInputStream fileInputStream = new FileInputStream(file)) {
+            CustomFoldReader<OrieditaFoldFile> orieditaFoldFileCustomFoldReader = new CustomFoldReader<>(OrieditaFoldFile.class, fileInputStream);
+            return toSave(orieditaFoldFileCustomFoldReader.read());
         } catch (IOException e) {
             throw new FileReadingException(e);
         }
@@ -135,8 +132,9 @@ public class Fold {
 
 
     public void exportFile(Save save, LineSegmentSet lineSegmentSet, File file) throws InterruptedException, FileReadingException {
-        try {
-            writer.write(file, toFoldSave(save, lineSegmentSet));
+        try (FileOutputStream fileOutputStream = new FileOutputStream(file)) {
+            CustomFoldWriter<FoldFile> foldFileCustomFoldWriter = new CustomFoldWriter<>(fileOutputStream);
+            foldFileCustomFoldWriter.write(toFoldSave(save, lineSegmentSet));
         } catch (IOException e) {
             throw new FileReadingException(e);
         }

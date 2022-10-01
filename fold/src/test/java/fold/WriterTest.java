@@ -1,11 +1,13 @@
 package fold;
 
+import fold.io.FoldWriter;
 import fold.model.FoldFile;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.nio.file.Files;
 
 public class WriterTest extends BaseFoldTest {
@@ -18,7 +20,10 @@ public class WriterTest extends BaseFoldTest {
 
         File exportFile = File.createTempFile("exportSaveEmpty", ".fold");
 
-        writer.write(exportFile, foldFile);
+        try (FileOutputStream outputStream = new FileOutputStream(exportFile)) {
+            FoldWriter foldWriter = new FoldWriter(outputStream);
+            foldWriter.write(foldFile);
+        }
 
         String contents = Files.readString(exportFile.toPath());
 
@@ -32,7 +37,10 @@ public class WriterTest extends BaseFoldTest {
 
         File exportFile = File.createTempFile("testSave", ".fold");
 
-        writer.write(exportFile, foldFile);
+        try (FileOutputStream outputStream = new FileOutputStream(exportFile)) {
+            FoldWriter foldWriter = new FoldWriter(outputStream);
+            foldWriter.write(foldFile);
+        }
 
         String contents = Files.readString(exportFile.toPath());
 
@@ -47,7 +55,10 @@ public class WriterTest extends BaseFoldTest {
 
         File exportFile = File.createTempFile("exportSaveCustomProperty", ".fold");
 
-        writer.write(exportFile, foldFile);
+        try (FileOutputStream outputStream = new FileOutputStream(exportFile)) {
+            FoldWriter foldWriter = new FoldWriter(outputStream);
+            foldWriter.write(foldFile);
+        }
 
         String contents = Files.readString(exportFile.toPath());
 
@@ -61,6 +72,11 @@ public class WriterTest extends BaseFoldTest {
 
         File exportFile = File.createTempFile("testSaveInvalidProperty", ".fold");
 
-        Assertions.assertThrows(FoldFileFormatException.class, () -> writer.write(exportFile, foldFile));
+        Assertions.assertThrows(FoldFileFormatException.class, () -> {
+            try (FileOutputStream outputStream = new FileOutputStream(exportFile)) {
+                FoldWriter foldWriter = new FoldWriter(outputStream);
+                foldWriter.write(foldFile);
+            }
+        });
     }
 }

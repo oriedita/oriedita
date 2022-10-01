@@ -2,12 +2,10 @@ package oriedita.editor.save;
 
 import au.com.origin.snapshots.Expect;
 import au.com.origin.snapshots.junit5.SnapshotExtension;
-import fold.Writer;
-import fold.Reader;
-import fold.io.CustomReader;
-import fold.io.FoldWriter;
+import fold.io.CustomFoldReader;
+import fold.io.CustomFoldWriter;
+import fold.model.FoldFile;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.skyscreamer.jsonassert.JSONAssert;
@@ -17,6 +15,8 @@ import origami.crease_pattern.LineSegmentSet;
 import origami.crease_pattern.element.Circle;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,15 +25,6 @@ import java.util.Objects;
 @ExtendWith({SnapshotExtension.class})
 public class FoldTest {
     Expect expect;
-
-    Reader<OrieditaFoldFile> reader;
-    Writer<OrieditaFoldFile> writer;
-
-    @BeforeEach
-    void beforeEach() {
-        reader = new CustomReader<>(OrieditaFoldFile.class);
-        writer = new FoldWriter<>();
-    }
 
     /**
      * Loading a file and writing it to a new file should result in an equal file.
@@ -44,11 +35,19 @@ public class FoldTest {
     public void testLoadAndSaveFoldFile() throws Exception {
         File saveFile = new File(Objects.requireNonNull(getClass().getClassLoader().getResource("fold/oriedita.fold")).getFile());
 
-        OrieditaFoldFile foldFile = reader.read(saveFile);
+
+        OrieditaFoldFile foldFile;
+        try (FileInputStream inputStream = new FileInputStream(saveFile)) {
+            CustomFoldReader<OrieditaFoldFile> orieditaFoldFileCustomFoldReader = new CustomFoldReader<>(OrieditaFoldFile.class, inputStream);
+            foldFile = orieditaFoldFileCustomFoldReader.read();
+        }
 
         File exportFile = File.createTempFile("export", ".fold");
 
-        writer.write(exportFile, foldFile);
+        try (FileOutputStream fileOutputStream = new FileOutputStream(exportFile)) {
+            CustomFoldWriter<FoldFile> foldFileCustomFoldWriter = new CustomFoldWriter<>(fileOutputStream);
+            foldFileCustomFoldWriter.write(foldFile);
+        }
 
         String expected = Files.readString(saveFile.toPath());
         String actual = Files.readString(exportFile.toPath());

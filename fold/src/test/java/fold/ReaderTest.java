@@ -1,10 +1,12 @@
 package fold;
 
+import fold.io.FoldReader;
 import fold.model.FoldFile;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.util.*;
 
 public class ReaderTest extends BaseFoldTest {
@@ -15,7 +17,7 @@ public class ReaderTest extends BaseFoldTest {
     public void testLoadFoldFile() throws Exception {
         File saveFile = new File(Objects.requireNonNull(getClass().getClassLoader().getResource("fold/full.fold")).getFile());
 
-        FoldFile foldFile = reader.read(saveFile);
+        FoldFile foldFile = new FoldReader(new FileInputStream(saveFile)).read();
 
         Assertions.assertEquals("Crease Pattern Editor", foldFile.getCreator());
     }
