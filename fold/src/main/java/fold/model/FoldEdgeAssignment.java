@@ -1,7 +1,5 @@
 package fold.model;
 
-import com.fasterxml.jackson.annotation.JsonValue;
-
 /**
  * For an edge, representing its fold direction assignment.
  */
@@ -34,7 +32,16 @@ public enum FoldEdgeAssignment {
         this.letter = letter;
     }
 
-    @JsonValue
+    public static FoldEdgeAssignment of(String letter) {
+        for (FoldEdgeAssignment foldEdgeAssignment : values()) {
+            if (foldEdgeAssignment.getLetter().equals(letter)) {
+                return foldEdgeAssignment;
+            }
+        }
+
+        return null;
+    }
+
     public String getLetter() {
         return letter;
     }

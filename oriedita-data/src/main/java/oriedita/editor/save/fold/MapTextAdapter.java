@@ -1,6 +1,6 @@
 package oriedita.editor.save.fold;
 
-import fold.adapter.Adapter;
+import fold.custom.Adapter;
 import oriedita.editor.text.Text;
 
 import java.math.BigDecimal;

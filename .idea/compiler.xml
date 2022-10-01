@@ -45,8 +45,5 @@
         <module name="oriedita" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="oriedita-drawing" target="11" />
-    </bytecodeTargetLevel>
   </component>
 </project>

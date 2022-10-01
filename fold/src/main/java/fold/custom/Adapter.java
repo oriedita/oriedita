@@ -1,4 +1,4 @@
-package fold.adapter;
+package fold.custom;
 
 public interface Adapter<T, V> {
     V convert(T from, V to);

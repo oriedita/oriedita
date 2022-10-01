@@ -1,7 +1,5 @@
 package fold.custom;
 
-import fold.adapter.Adapter;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -79,6 +77,12 @@ public class CustomListField<T, V> {
             }
         }
 
-        customMap.putAll(tempMap);
+        for (Map.Entry<String, List<Object>> entry : tempMap.entrySet()) {
+            if (entry.getValue().size() > 0) {
+                customMap.put(entry.getKey(), entry.getValue());
+            } else {
+                customMap.remove(entry.getKey());
+            }
+        }
     }
 }
