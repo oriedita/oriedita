@@ -1,24 +1,25 @@
 package fold;
 
-import fold.impl.DefaultExporter;
-import fold.impl.DefaultImporter;
+import fold.io.FoldWriter;
+import fold.io.FoldReader;
 import fold.model.FoldFile;
 import org.junit.jupiter.api.BeforeEach;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Objects;
 
 public abstract class BaseFoldTest {
-    Importer<FoldFile> importer;
-    Exporter<FoldFile> exporter;
+    Reader<FoldFile> reader;
+    Writer<FoldFile> writer;
 
     @BeforeEach
     void beforeEach() {
-        importer = new DefaultImporter();
-        exporter = new DefaultExporter<>();
+        reader = new FoldReader();
+        writer = new FoldWriter<>();
     }
 
-    FoldFile loadFile(String name) throws FoldFileFormatException {
-        return importer.importFile(new File(Objects.requireNonNull(getClass().getClassLoader().getResource(name)).getFile()));
+    FoldFile loadFile(String name) throws IOException {
+        return reader.read(new File(Objects.requireNonNull(getClass().getClassLoader().getResource(name)).getFile()));
     }
 }

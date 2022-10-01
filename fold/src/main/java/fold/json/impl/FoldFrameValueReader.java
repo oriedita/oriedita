@@ -1,4 +1,4 @@
-package fold.json.handler;
+package fold.json.impl;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
@@ -13,8 +13,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class FoldFrameReader extends ValueReader {
-    public FoldFrameReader() {
+public class FoldFrameValueReader extends ValueReader {
+    public FoldFrameValueReader() {
         super(FoldFrame.class);
     }
 

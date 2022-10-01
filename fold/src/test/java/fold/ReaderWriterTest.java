@@ -9,7 +9,7 @@ import java.io.File;
 import java.nio.file.Files;
 import java.util.Objects;
 
-public class ImporterExporterTest extends BaseFoldTest {
+public class ReaderWriterTest extends BaseFoldTest {
     /**
      * Loading a file and writing it to a new file should result in an equal file.
      */
@@ -17,11 +17,11 @@ public class ImporterExporterTest extends BaseFoldTest {
     public void testLoadAndSaveFoldFile() throws Exception {
         File saveFile = new File(Objects.requireNonNull(getClass().getClassLoader().getResource("fold/full.fold")).getFile());
 
-        FoldFile foldFile = importer.importFile(saveFile);
+        FoldFile foldFile = reader.read(saveFile);
 
         File exportFile = File.createTempFile("export", ".fold");
 
-        exporter.exportFile(exportFile, foldFile);
+        writer.write(exportFile, foldFile);
 
         String expected = Files.readString(saveFile.toPath());
         String actual = Files.readString(exportFile.toPath());
@@ -33,8 +33,8 @@ public class ImporterExporterTest extends BaseFoldTest {
     public void testEquals() throws Exception {
         File saveFile = new File(Objects.requireNonNull(getClass().getClassLoader().getResource("fold/full.fold")).getFile());
 
-        FoldFile foldFile1 = importer.importFile(saveFile);
-        FoldFile foldFile2 = importer.importFile(saveFile);
+        FoldFile foldFile1 = reader.read(saveFile);
+        FoldFile foldFile2 = reader.read(saveFile);
 
         Assertions.assertEquals(foldFile1, foldFile2);
     }

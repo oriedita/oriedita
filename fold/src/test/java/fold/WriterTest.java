@@ -8,7 +8,7 @@ import org.skyscreamer.jsonassert.JSONAssert;
 import java.io.File;
 import java.nio.file.Files;
 
-public class ExporterTest extends BaseFoldTest {
+public class WriterTest extends BaseFoldTest {
     /**
      * Test saving of a default FoldFile without any changes.
      */
@@ -18,7 +18,7 @@ public class ExporterTest extends BaseFoldTest {
 
         File exportFile = File.createTempFile("exportSaveEmpty", ".fold");
 
-        exporter.exportFile(exportFile, foldFile);
+        writer.write(exportFile, foldFile);
 
         String contents = Files.readString(exportFile.toPath());
 
@@ -32,7 +32,7 @@ public class ExporterTest extends BaseFoldTest {
 
         File exportFile = File.createTempFile("testSave", ".fold");
 
-        exporter.exportFile(exportFile, foldFile);
+        writer.write(exportFile, foldFile);
 
         String contents = Files.readString(exportFile.toPath());
 
@@ -47,7 +47,7 @@ public class ExporterTest extends BaseFoldTest {
 
         File exportFile = File.createTempFile("exportSaveCustomProperty", ".fold");
 
-        exporter.exportFile(exportFile, foldFile);
+        writer.write(exportFile, foldFile);
 
         String contents = Files.readString(exportFile.toPath());
 
@@ -61,6 +61,6 @@ public class ExporterTest extends BaseFoldTest {
 
         File exportFile = File.createTempFile("testSaveInvalidProperty", ".fold");
 
-        Assertions.assertThrows(FoldFileFormatException.class, () -> exporter.exportFile(exportFile, foldFile));
+        Assertions.assertThrows(FoldFileFormatException.class, () -> writer.write(exportFile, foldFile));
     }
 }

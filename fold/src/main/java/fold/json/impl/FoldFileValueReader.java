@@ -1,4 +1,4 @@
-package fold.json.handler;
+package fold.json.impl;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.jr.ob.api.ValueReader;
@@ -9,10 +9,10 @@ import fold.model.FoldFrame;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
-public class FoldFileReader<T extends FoldFile> extends ValueReader {
+public class FoldFileValueReader<T extends FoldFile> extends ValueReader {
     private final Class<T> type;
 
-    public FoldFileReader(Class<T> type) {
+    public FoldFileValueReader(Class<T> type) {
         super(FoldFile.class);
         this.type = type;
     }
@@ -26,7 +26,7 @@ public class FoldFileReader<T extends FoldFile> extends ValueReader {
             throw new RuntimeException(e);
         }
 
-        FoldFrameReader.FoldFrameFactory foldFrameFactory = new FoldFrameReader.FoldFrameFactory(instance);
+        FoldFrameValueReader.FoldFrameFactory foldFrameFactory = new FoldFrameValueReader.FoldFrameFactory(instance);
 
         String fieldName;
         while ((fieldName = p.nextFieldName()) != null) {

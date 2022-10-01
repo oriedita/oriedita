@@ -1,10 +1,9 @@
 package oriedita.editor.export;
 
-import fold.Exporter;
-import fold.FoldFileFormatException;
-import fold.Importer;
-import fold.impl.CustomImporter;
-import fold.impl.DefaultExporter;
+import fold.Writer;
+import fold.Reader;
+import fold.io.CustomReader;
+import fold.io.FoldWriter;
 import fold.model.Edge;
 import fold.model.FoldEdgeAssignment;
 import fold.model.Vertex;
@@ -24,19 +23,20 @@ import origami.crease_pattern.element.Point;
 import origami.crease_pattern.worker.WireFrame_Worker;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 @ApplicationScoped
 public class Fold {
-    private final Importer<OrieditaFoldFile> anImporter;
-    private final Exporter<OrieditaFoldFile> exporter;
+    private final Reader<OrieditaFoldFile> anReader;
+    private final Writer<OrieditaFoldFile> writer;
 
     @Inject
     public Fold() {
-        this.anImporter = new CustomImporter<>(OrieditaFoldFile.class);
-        this.exporter = new DefaultExporter<>();
+        this.anReader = new CustomReader<>(OrieditaFoldFile.class);
+        this.writer = new FoldWriter<>();
     }
 
     public Save toSave(OrieditaFoldFile foldFile) {
@@ -127,8 +127,8 @@ public class Fold {
 
     public Save importFile(File file) throws FileReadingException {
         try {
-            return toSave(anImporter.importFile(file));
-        } catch (FoldFileFormatException e) {
+            return toSave(anReader.read(file));
+        } catch (IOException e) {
             throw new FileReadingException(e);
         }
     }
@@ -136,8 +136,8 @@ public class Fold {
 
     public void exportFile(Save save, LineSegmentSet lineSegmentSet, File file) throws InterruptedException, FileReadingException {
         try {
-            exporter.exportFile(file, toFoldSave(save, lineSegmentSet));
-        } catch (FoldFileFormatException e) {
+            writer.write(file, toFoldSave(save, lineSegmentSet));
+        } catch (IOException e) {
             throw new FileReadingException(e);
         }
     }

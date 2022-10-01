@@ -1,4 +1,4 @@
-package fold.json.handler;
+package fold.json.impl;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.jr.ob.api.ValueWriter;
@@ -10,7 +10,7 @@ import fold.model.FoldFrame;
 import java.io.IOException;
 import java.util.Map;
 
-public class FoldFileWriter implements ValueWriter {
+public class FoldFileValueWriter implements ValueWriter {
     @Override
     public void writeValue(JSONWriter context, JsonGenerator g, Object value) throws IOException {
         FoldFile foldFile = (FoldFile) value;
@@ -39,7 +39,7 @@ public class FoldFileWriter implements ValueWriter {
             g.writeEndArray();
         }
 
-        new FoldFrameWriter().partialWriteValue(context, g, foldFile);
+        new FoldFrameValueWriter().partialWriteValue(context, g, foldFile);
 
         for (Map.Entry<String, Object> entry : foldFile.getCustomPropertyMap().entrySet()) {
             if (!entry.getKey().contains(":")) {

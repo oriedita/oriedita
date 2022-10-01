@@ -1,4 +1,4 @@
-package fold.json.handler;
+package fold.json.impl;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.jr.ob.api.ValueWriter;
@@ -11,7 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class FoldFrameWriter implements ValueWriter {
+public class FoldFrameValueWriter implements ValueWriter {
 
     @Override
     public void writeValue(JSONWriter context, JsonGenerator g, Object value) throws IOException {

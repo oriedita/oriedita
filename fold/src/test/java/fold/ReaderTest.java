@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.util.*;
 
-public class ImporterTest extends BaseFoldTest {
+public class ReaderTest extends BaseFoldTest {
     /**
      * Test if importing of a file works
      */
@@ -15,7 +15,7 @@ public class ImporterTest extends BaseFoldTest {
     public void testLoadFoldFile() throws Exception {
         File saveFile = new File(Objects.requireNonNull(getClass().getClassLoader().getResource("fold/full.fold")).getFile());
 
-        FoldFile foldFile = importer.importFile(saveFile);
+        FoldFile foldFile = reader.read(saveFile);
 
         Assertions.assertEquals("Crease Pattern Editor", foldFile.getCreator());
     }

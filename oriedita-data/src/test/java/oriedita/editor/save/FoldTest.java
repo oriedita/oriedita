@@ -2,10 +2,10 @@ package oriedita.editor.save;
 
 import au.com.origin.snapshots.Expect;
 import au.com.origin.snapshots.junit5.SnapshotExtension;
-import fold.Exporter;
-import fold.Importer;
-import fold.impl.CustomImporter;
-import fold.impl.DefaultExporter;
+import fold.Writer;
+import fold.Reader;
+import fold.io.CustomReader;
+import fold.io.FoldWriter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,13 +26,13 @@ import java.util.Objects;
 public class FoldTest {
     Expect expect;
 
-    Importer<OrieditaFoldFile> importer;
-    Exporter<OrieditaFoldFile> exporter;
+    Reader<OrieditaFoldFile> reader;
+    Writer<OrieditaFoldFile> writer;
 
     @BeforeEach
     void beforeEach() {
-        importer = new CustomImporter<>(OrieditaFoldFile.class);
-        exporter = new DefaultExporter<>();
+        reader = new CustomReader<>(OrieditaFoldFile.class);
+        writer = new FoldWriter<>();
     }
 
     /**
@@ -44,11 +44,11 @@ public class FoldTest {
     public void testLoadAndSaveFoldFile() throws Exception {
         File saveFile = new File(Objects.requireNonNull(getClass().getClassLoader().getResource("fold/oriedita.fold")).getFile());
 
-        OrieditaFoldFile foldFile = importer.importFile(saveFile);
+        OrieditaFoldFile foldFile = reader.read(saveFile);
 
         File exportFile = File.createTempFile("export", ".fold");
 
-        exporter.exportFile(exportFile, foldFile);
+        writer.write(exportFile, foldFile);
 
         String expected = Files.readString(saveFile.toPath());
         String actual = Files.readString(exportFile.toPath());
