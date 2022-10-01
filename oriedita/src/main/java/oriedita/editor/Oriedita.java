@@ -5,7 +5,6 @@ import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
 import org.jboss.weld.bootstrap.api.helpers.RegistrySingletonProvider;
 import org.jboss.weld.environment.se.StartMain;
-import org.jboss.weld.environment.se.Weld;
 import org.jboss.weld.environment.se.bindings.Parameters;
 import org.jboss.weld.environment.se.events.ContainerInitialized;
 import org.tinylog.Logger;
@@ -13,11 +12,10 @@ import oriedita.editor.exception.FileReadingException;
 import oriedita.editor.service.ApplicationModelPersistenceService;
 import oriedita.editor.service.FileSaveService;
 import oriedita.editor.service.LookAndFeelService;
+import oriedita.editor.swing.dialog.LoadingDialog;
 
 import javax.swing.*;
-import java.awt.Font;
-import java.awt.FontFormatException;
-import java.awt.GraphicsEnvironment;
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -25,7 +23,7 @@ import java.util.Objects;
 
 @ApplicationScoped
 public class Oriedita {
-
+    private static JDialog loadingDialog;
     @Inject
     LookAndFeelService lookAndFeelService;
     @Inject
@@ -61,6 +59,8 @@ public class Oriedita {
 
             app.start();
 
+            loadingDialog.dispose();
+
             if (argv.size() == 1) {
                 // We got a file
                 try {
@@ -85,6 +85,10 @@ public class Oriedita {
     }
 
     public static void main(String[] argv) {
+        SwingUtilities.invokeLater(() -> {
+            loadingDialog = new LoadingDialog();
+
+        });
         StartMain.main(argv);
     }
 }
