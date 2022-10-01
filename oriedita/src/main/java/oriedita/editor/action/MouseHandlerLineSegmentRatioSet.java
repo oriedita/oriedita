@@ -1,26 +1,21 @@
 package oriedita.editor.action;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.databinding.InternalDivisionRatioModel;
 import origami.Epsilon;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
-@Singleton
+@ApplicationScoped
+@Handles(MouseMode.LINE_SEGMENT_RATIO_SET_28)
 public class MouseHandlerLineSegmentRatioSet extends BaseMouseHandlerInputRestricted {
     private final InternalDivisionRatioModel internalDivisionRatioModel;
 
     @Inject
     public MouseHandlerLineSegmentRatioSet(InternalDivisionRatioModel internalDivisionRatioModel) {
         this.internalDivisionRatioModel = internalDivisionRatioModel;
-    }
-
-    @Override
-    public MouseMode getMouseMode() {
-        return MouseMode.LINE_SEGMENT_RATIO_SET_28;
     }
 
     //マウス操作(mouseMode==28線分内分入力 でボタンを押したとき)時の作業----------------------------------------------------

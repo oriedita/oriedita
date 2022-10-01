@@ -3,6 +3,10 @@ package oriedita.editor.swing;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Any;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import oriedita.editor.Canvas;
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.canvas.FoldLineAdditionalInputMode;
@@ -15,14 +19,12 @@ import oriedita.editor.service.FileSaveService;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.Polygon;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 
-@Singleton
+@ApplicationScoped
 public class TopPanel {
     private final MeasuresModel measuresModel;
     private JButton operationFrameSelectButton;
@@ -61,10 +63,10 @@ public class TopPanel {
     @Inject
     public TopPanel(MeasuresModel measuresModel,
                     ButtonService buttonService,
-                    CanvasModel canvasModel,
+                    @Any CanvasModel canvasModel,
                     InternalDivisionRatioModel internalDivisionRatioModel,
                     BackgroundModel backgroundModel,
-                    CreasePattern_Worker mainCreasePatternWorker,
+                    @Named("mainCreasePattern_Worker") CreasePattern_Worker mainCreasePatternWorker,
                     FoldedFigureModel foldedFigureModel,
                     FileSaveService fileSaveService,
                     CameraModel creasePatternCameraModel,

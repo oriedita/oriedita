@@ -1,5 +1,7 @@
 package oriedita.editor.action;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.databinding.AngleSystemModel;
 import oriedita.editor.drawing.tools.Camera;
@@ -10,13 +12,12 @@ import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
 import java.awt.*;
 import java.util.List;
 import java.util.*;
 
-@Singleton
+@ApplicationScoped
+@Handles(MouseMode.ANGLE_SYSTEM_16)
 public class MouseHandlerAngleSystem extends BaseMouseHandlerInputRestricted {
     private final AngleSystemModel angleSystemModel;
     Point pStart, pEnd;
@@ -40,11 +41,6 @@ public class MouseHandlerAngleSystem extends BaseMouseHandlerInputRestricted {
     @Inject
     public MouseHandlerAngleSystem(AngleSystemModel angleSystemModel) {
         this.angleSystemModel = angleSystemModel;
-    }
-
-    @Override
-    public MouseMode getMouseMode() {
-        return MouseMode.ANGLE_SYSTEM_16;
     }
 
     @Override

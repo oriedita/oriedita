@@ -8,7 +8,7 @@ import origami.crease_pattern.element.LineSegment;
 
 public class Check2 {
     public static void apply(FoldLineSet foldLineSet) {
-        foldLineSet.Check2LineSegment.clear();
+        foldLineSet.getCheck2LineSegment().clear();
 
         foldLineSet.unselect_all();
         for (int i = 1; i <= foldLineSet.getTotal() - 1; i++) {
@@ -31,8 +31,8 @@ public class Check2 {
                             case INTERSECTS_TSHAPE_S1_VERTICAL_BAR_26:
                             case INTERSECTS_TSHAPE_S2_VERTICAL_BAR_27:
                             case INTERSECTS_TSHAPE_S2_VERTICAL_BAR_28:
-                                foldLineSet.Check2LineSegment.add(si1);
-                                foldLineSet.Check2LineSegment.add(sj1);   /* set_select(i,2);set_select(j,2); */
+                                foldLineSet.getCheck2LineSegment().add(si1);
+                                foldLineSet.getCheck2LineSegment().add(sj1);   /* set_select(i,2);set_select(j,2); */
                                 break;
                             default:
                                 break;

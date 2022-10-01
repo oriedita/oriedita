@@ -2,14 +2,16 @@ package oriedita.editor.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import org.jboss.weld.proxy.WeldClientProxy;
 import org.tinylog.Logger;
+import oriedita.editor.FrameProvider;
 import oriedita.editor.databinding.ApplicationModel;
 import oriedita.editor.json.DefaultObjectMapper;
 import oriedita.editor.service.ApplicationModelPersistenceService;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
 import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
@@ -17,15 +19,15 @@ import java.nio.file.Path;
 
 import static oriedita.editor.tools.ResourceUtil.getAppDir;
 
-@Singleton
+@ApplicationScoped
 public class ApplicationModelPersistenceServiceImpl implements ApplicationModelPersistenceService {
 
     public static final String CONFIG_JSON = "config.json";
-    private final JFrame frame;
+    private final FrameProvider frame;
     private final ApplicationModel applicationModel;
 
     @Inject
-    public ApplicationModelPersistenceServiceImpl(@Named("mainFrame") JFrame frame, ApplicationModel applicationModel) {
+    public ApplicationModelPersistenceServiceImpl(FrameProvider frame, ApplicationModel applicationModel) {
         this.frame = frame;
         this.applicationModel = applicationModel;
     }
@@ -54,7 +56,7 @@ public class ApplicationModelPersistenceServiceImpl implements ApplicationModelP
             applicationModel.set(loadedApplicationModel);
         } catch (IOException e) {
             // An application state is found, but it is not valid.
-            JOptionPane.showMessageDialog(frame, "<html>Failed to load application state.<br/>Loading default application configuration.", "State load failed", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(frame.get(), "<html>Failed to load application state.<br/>Loading default application configuration.", "State load failed", JOptionPane.WARNING_MESSAGE);
 
             if (!configFile.renameTo(storage.resolve(CONFIG_JSON + ".old").toFile())) {
                 Logger.error("Not allowed to move config.json");
@@ -79,7 +81,9 @@ public class ApplicationModelPersistenceServiceImpl implements ApplicationModelP
         mapper.enable(SerializationFeature.INDENT_OUTPUT);
 
         try {
-            mapper.writeValue(storage.resolve(CONFIG_JSON).toFile(), applicationModel);
+            ApplicationModel tempApplicationModel = new ApplicationModel();
+            tempApplicationModel.set(applicationModel);
+            mapper.writeValue(storage.resolve(CONFIG_JSON).toFile(), tempApplicationModel);
         } catch (IOException e) {
             Logger.error(e, "Unable to write applicationModel to disk.");
         }

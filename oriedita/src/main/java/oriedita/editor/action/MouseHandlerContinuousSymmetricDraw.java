@@ -1,5 +1,8 @@
 package oriedita.editor.action;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import org.tinylog.Logger;
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.canvas.MouseMode;
@@ -12,20 +15,13 @@ import origami.crease_pattern.element.StraightLine;
 import origami.crease_pattern.util.CreasePattern_Worker_Toolbox;
 import origami.folding.util.SortingBox;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
-@Singleton
+@ApplicationScoped
+@Handles(MouseMode.CONTINUOUS_SYMMETRIC_DRAW_52)
 public class MouseHandlerContinuousSymmetricDraw extends BaseMouseHandlerInputRestricted {
 
     private final CreasePattern_Worker d;
     private final CanvasModel canvasModel;
     private final CreasePattern_Worker_Toolbox toolbox;
-
-    @Override
-    public MouseMode getMouseMode() {
-        return MouseMode.CONTINUOUS_SYMMETRIC_DRAW_52;
-    }
 
     //マウス操作(ボタンを押したとき)時の作業
     public void mousePressed(Point p0) {
@@ -68,7 +64,7 @@ public class MouseHandlerContinuousSymmetricDraw extends BaseMouseHandlerInputRe
     }
 
     @Inject
-    public MouseHandlerContinuousSymmetricDraw(CreasePattern_Worker d, CanvasModel canvasModel) {
+    public MouseHandlerContinuousSymmetricDraw(@Named("mainCreasePattern_Worker") CreasePattern_Worker d, CanvasModel canvasModel) {
         this.d = d;
         this.canvasModel = canvasModel;
         this.toolbox = new CreasePattern_Worker_Toolbox(d.getFoldLineSet());

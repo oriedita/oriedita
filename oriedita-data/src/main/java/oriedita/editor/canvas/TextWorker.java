@@ -1,12 +1,12 @@
 package oriedita.editor.canvas;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.save.TextSave;
 import oriedita.editor.text.Text;
 import origami.crease_pattern.element.Point;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * Allows displaying text on the canvas
  */
-@Singleton
+@ApplicationScoped
 public class TextWorker {
     private final List<Text> texts;
 

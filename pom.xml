@@ -39,11 +39,6 @@
                 <type>pom</type>
             </dependency>
             <dependency>
-                <groupId>com.google.dagger</groupId>
-                <artifactId>dagger</artifactId>
-                <version>${dagger.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>org.tinylog</groupId>
                 <artifactId>tinylog-impl</artifactId>
                 <version>${tinylog.version}</version>
@@ -59,6 +54,11 @@
                 <version>${jsonassert.version}</version>
                 <scope>test</scope>
             </dependency>
+            <dependency>
+                <groupId>jakarta.enterprise</groupId>
+                <artifactId>jakarta.enterprise.cdi-api</artifactId>
+                <version>4.0.1</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -66,7 +66,6 @@
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <dagger.version>2.43.2</dagger.version>
         <snapshot-test.version>3.3.0</snapshot-test.version>
         <junit.version>5.9.0</junit.version>
         <lwjgl.version>3.3.1</lwjgl.version>

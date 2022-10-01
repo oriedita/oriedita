@@ -1,5 +1,7 @@
 package oriedita.editor.action;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.canvas.MouseMode;
 import origami.crease_pattern.OritaCalc;
@@ -8,20 +10,13 @@ import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.Polygon;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
-@Singleton
+@ApplicationScoped
+@Handles(MouseMode.OPERATION_FRAME_CREATE_61)
 public class MouseHandlerOperationFrameCreate extends BaseMouseHandler {
     CreasePattern_Worker.OperationFrameMode operationFrameMode;
 
     @Inject
     public MouseHandlerOperationFrameCreate() {
-    }
-
-    @Override
-    public MouseMode getMouseMode() {
-        return MouseMode.OPERATION_FRAME_CREATE_61;
     }
 
     //マウス操作(マウスを動かしたとき)を行う関数

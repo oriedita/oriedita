@@ -1,5 +1,7 @@
 package oriedita.editor.action;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
 import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
@@ -8,20 +10,13 @@ import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami.folding.util.SortingBox;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
-@Singleton
+@ApplicationScoped
+@Handles(MouseMode.FLAT_FOLDABLE_CHECK_63)
 public class MouseHandlerFlatFoldableCheck extends BaseMouseHandler {
     boolean i_O_F_C = false;
 
     @Inject
     public MouseHandlerFlatFoldableCheck() {
-    }
-
-    @Override
-    public MouseMode getMouseMode() {
-        return MouseMode.FLAT_FOLDABLE_CHECK_63;
     }
 
     //マウス操作(マウスを動かしたとき)を行う関数

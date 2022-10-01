@@ -34,7 +34,10 @@ public class BaseSave implements Save {
     }
 
     public void setApplicationModel(ApplicationModel applicationModel) {
-        this.applicationModel = applicationModel;
+        this.applicationModel = new ApplicationModel();
+        if (applicationModel != null) {
+            this.applicationModel.set(applicationModel);
+        }
     }
 
     protected BaseSave() {
@@ -115,7 +118,10 @@ public class BaseSave implements Save {
     }
 
     public void setCanvasModel(CanvasModel canvasModel) {
-        this.canvasModel = canvasModel;
+        this.canvasModel = new CanvasModel();
+        if (canvasModel != null) {
+            this.canvasModel.set(canvasModel);
+        }
     }
 
     public GridModel getGridModel() {
@@ -123,7 +129,10 @@ public class BaseSave implements Save {
     }
 
     public void setGridModel(GridModel gridModel) {
-        this.gridModel = gridModel;
+        this.gridModel = new GridModel();
+        if (gridModel != null) {
+            this.gridModel.set(gridModel);
+        }
     }
 
     public FoldedFigureModel getFoldedFigureModel() {
@@ -131,7 +140,10 @@ public class BaseSave implements Save {
     }
 
     public void setFoldedFigureModel(FoldedFigureModel foldedFigureModel) {
-        this.foldedFigureModel = foldedFigureModel;
+        this.foldedFigureModel = new FoldedFigureModel();
+        if (foldedFigureModel != null) {
+            this.foldedFigureModel.set(foldedFigureModel);
+        }
     }
 
     public List<LineSegment> getAuxLineSegments() {

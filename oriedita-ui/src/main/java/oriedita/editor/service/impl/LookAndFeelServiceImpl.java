@@ -2,26 +2,26 @@ package oriedita.editor.service.impl;
 
 import com.formdev.flatlaf.FlatLaf;
 import com.formdev.flatlaf.ui.FlatUIUtils;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import oriedita.editor.Colors;
+import oriedita.editor.FrameProvider;
 import oriedita.editor.databinding.ApplicationModel;
 import oriedita.editor.service.LookAndFeelService;
 import oriedita.editor.tools.LookAndFeelUtil;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
 import javax.swing.*;
 import java.awt.*;
 import java.net.URL;
 
-@Singleton
+@ApplicationScoped
 public class LookAndFeelServiceImpl implements LookAndFeelService {
-    private final JFrame frame;
+    private final FrameProvider frameProvider;
     private final ApplicationModel applicationModel;
 
     @Inject
-    public LookAndFeelServiceImpl(@Named("mainFrame") JFrame frame, ApplicationModel applicationModel) {
-        this.frame = frame;
+    public LookAndFeelServiceImpl(FrameProvider frameProvider, ApplicationModel applicationModel) {
+        this.frameProvider = frameProvider;
         this.applicationModel = applicationModel;
     }
 
@@ -57,6 +57,8 @@ public class LookAndFeelServiceImpl implements LookAndFeelService {
 
                 // update all components
                 updateUI2();
+
+                JFrame frame = frameProvider.get();
 
                 updateButtonIcons(frame);
 
@@ -111,7 +113,7 @@ public class LookAndFeelServiceImpl implements LookAndFeelService {
 
     @Override
     public void updateButtonIcons() {
-        updateButtonIcons(frame);
+        updateButtonIcons(frameProvider.get());
     }
 
     @Override

@@ -13,7 +13,7 @@ public class Check3 {
     //Check the number of lines around the vertex
     public static void apply(FoldLineSet foldLineSet) {
         double r = Epsilon.UNKNOWN_1EN4;
-        foldLineSet.Check3LineSegment.clear();
+        foldLineSet.getCheck3LineSegment().clear();
         foldLineSet.unselect_all();
         for (int i = 1; i <= foldLineSet.getTotal(); i++) {
             LineSegment si = foldLineSet.get(i);
@@ -34,24 +34,24 @@ public class Check3 {
                 tss_hojyo_kassen = vertex_surrounding_lineCount_auxiliary_live_line(foldLineSet, p, r);
 
                 if ((tss_black != 0) && (tss_black != 2)) {//黒線がないか2本以外の場合はおかしい。
-                    foldLineSet.Check3LineSegment.add(new LineSegment(p, p));//set_select(i,2);
+                    foldLineSet.getCheck3LineSegment().add(new LineSegment(p, p));//set_select(i,2);
                 }
 
                 if (tss_black == 0) {//黒線がない場合
                     if (tss - tss_hojyo_kassen == tss_red + tss_blue) {//（前提として境界は黒で、山谷未設定折線はないこと。）頂点周囲に赤か青しかない。つまり、用紙内部の点
 
                         if (Math.abs(tss_red - tss_blue) != 2) {//用紙内部の点で前川定理を満たさないのはダメ
-                            foldLineSet.Check3LineSegment.add(new LineSegment(p, p));//set_select(i,2);
+                            foldLineSet.getCheck3LineSegment().add(new LineSegment(p, p));//set_select(i,2);
                         }
                     }
                     if (!extended_fushimi_decide_inside(foldLineSet, p)) {
-                        foldLineSet.Check3LineSegment.add(new LineSegment(p, p));//set_select(i,2);
+                        foldLineSet.getCheck3LineSegment().add(new LineSegment(p, p));//set_select(i,2);
                     }
                 }
 
                 if (tss_black == 2) {//黒線が2本の場合
                     if (!extended_fushimi_decide_sides(foldLineSet, p)) {
-                        foldLineSet.Check3LineSegment.add(new LineSegment(p, p));//set_select(i,2);
+                        foldLineSet.getCheck3LineSegment().add(new LineSegment(p, p));//set_select(i,2);
                     }
                 }
 
@@ -65,23 +65,23 @@ public class Check3 {
 
                 //-----------------
                 if ((tss_black != 0) && (tss_black != 2)) {//黒線がないか2本以外の場合はおかしい。
-                    foldLineSet.Check3LineSegment.add(new LineSegment(p, p));//set_select(i,2);
+                    foldLineSet.getCheck3LineSegment().add(new LineSegment(p, p));//set_select(i,2);
                 }
 
                 if (tss_black == 0) {//黒線がない場合
                     if (tss - tss_hojyo_kassen == tss_red + tss_blue) {//（前提として境界は黒で、山谷未設定折線はないこと。）頂点周囲に赤か青しかない。つまり、用紙内部の点
                         if (Math.abs(tss_red - tss_blue) != 2) {//用紙内部の点で前川定理を満たさないのはダメ
-                            foldLineSet.Check3LineSegment.add(new LineSegment(p, p));//set_select(i,2);
+                            foldLineSet.getCheck3LineSegment().add(new LineSegment(p, p));//set_select(i,2);
                         }
                     }
                     if (!extended_fushimi_decide_inside(foldLineSet, p)) {
-                        foldLineSet.Check3LineSegment.add(new LineSegment(p, p));//set_select(i,2);
+                        foldLineSet.getCheck3LineSegment().add(new LineSegment(p, p));//set_select(i,2);
                     }
                 }
 
                 if (tss_black == 2) {//黒線が2本の場合
                     if (!extended_fushimi_decide_sides(foldLineSet, p)) {
-                        foldLineSet.Check3LineSegment.add(new LineSegment(p, p));//set_select(i,2);
+                        foldLineSet.getCheck3LineSegment().add(new LineSegment(p, p));//set_select(i,2);
                     }
                 }
             }

@@ -1,5 +1,8 @@
 package oriedita.editor.action;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import org.tinylog.Logger;
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.canvas.MouseMode;
@@ -8,23 +11,16 @@ import oriedita.editor.drawing.FoldedFigure_Drawer;
 import origami.crease_pattern.element.Point;
 import origami.folding.FoldedFigure;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
-@Singleton
+@ApplicationScoped
+@Handles(MouseMode.CHANGE_STANDARD_FACE_103)
 public class MouseHandlerChangeStandardFace extends BaseMouseHandler {
     private final CreasePattern_Worker d;
     private final FoldedFiguresList foldedFiguresList;
 
     @Inject
-    public MouseHandlerChangeStandardFace(FoldedFiguresList foldedFiguresList, CreasePattern_Worker d) {
+    public MouseHandlerChangeStandardFace(FoldedFiguresList foldedFiguresList, @Named("mainCreasePattern_Worker") CreasePattern_Worker d) {
         this.foldedFiguresList = foldedFiguresList;
         this.d = d;
-    }
-
-    @Override
-    public MouseMode getMouseMode() {
-        return MouseMode.CHANGE_STANDARD_FACE_103;
     }
 
     @Override

@@ -1,5 +1,7 @@
 package oriedita.editor.service.impl;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import org.tinylog.Logger;
 import oriedita.editor.canvas.MouseWheelTarget;
 import oriedita.editor.databinding.CanvasModel;
@@ -10,10 +12,7 @@ import oriedita.editor.service.FoldedFigureCanvasSelectService;
 import origami.crease_pattern.element.Point;
 import origami.folding.FoldedFigure;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
-@Singleton
+@ApplicationScoped
 public class FoldedFigureCanvasSelectServiceImpl implements FoldedFigureCanvasSelectService {
     private final FoldedFiguresList foldedFiguresList;
     private final FoldedFigureModel foldedFigureModel;

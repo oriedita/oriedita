@@ -1,5 +1,7 @@
 package oriedita.editor.action;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
 import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
@@ -8,21 +10,14 @@ import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.StraightLine;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
-@Singleton
+@ApplicationScoped
+@Handles(MouseMode.FISH_BONE_DRAW_33)
 public class MouseHandlerFishBoneDraw extends BaseMouseHandlerInputRestricted {
     private final MouseHandlerDrawCreaseRestricted mouseHandlerDrawCreaseRestricted;
 
     @Inject
-    public MouseHandlerFishBoneDraw(MouseHandlerDrawCreaseRestricted mouseHandlerDrawCreaseRestricted) {
+    public MouseHandlerFishBoneDraw(@Handles(MouseMode.DRAW_CREASE_RESTRICTED_11) MouseHandlerDrawCreaseRestricted mouseHandlerDrawCreaseRestricted) {
         this.mouseHandlerDrawCreaseRestricted = mouseHandlerDrawCreaseRestricted;
-    }
-
-    @Override
-    public MouseMode getMouseMode() {
-        return MouseMode.FISH_BONE_DRAW_33;
     }
 
     //マウス操作(mouseMode==33魚の骨　でボタンを押したとき)時の作業----------------------------------------------------

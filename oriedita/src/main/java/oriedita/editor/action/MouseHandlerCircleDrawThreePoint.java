@@ -1,5 +1,7 @@
 package oriedita.editor.action;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
 import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
@@ -8,18 +10,11 @@ import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.StraightLine;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
-@Singleton
+@ApplicationScoped
+@Handles(MouseMode.CIRCLE_DRAW_THREE_POINT_43)
 public class MouseHandlerCircleDrawThreePoint extends BaseMouseHandler {
     @Inject
     public MouseHandlerCircleDrawThreePoint() {
-    }
-
-    @Override
-    public MouseMode getMouseMode() {
-        return MouseMode.CIRCLE_DRAW_THREE_POINT_43;
     }
 
     @Override

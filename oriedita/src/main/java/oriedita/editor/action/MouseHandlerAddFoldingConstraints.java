@@ -1,5 +1,8 @@
 package oriedita.editor.action;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.databinding.FoldedFiguresList;
@@ -12,14 +15,13 @@ import origami.folding.FoldedFigure;
 import origami.folding.HierarchyList;
 import origami.folding.constraint.CustomConstraint;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 
-@Singleton
+@ApplicationScoped
+@Handles(MouseMode.ADD_FOLDING_CONSTRAINT)
 public class MouseHandlerAddFoldingConstraints implements MouseModeHandler {
     private final FoldedFiguresList foldedFiguresList;
     private final CreasePattern_Worker drawingWorker;
@@ -30,14 +32,9 @@ public class MouseHandlerAddFoldingConstraints implements MouseModeHandler {
     }
 
     @Inject
-    public MouseHandlerAddFoldingConstraints(FoldedFiguresList foldedFiguresList, CreasePattern_Worker drawingWorker) {
+    public MouseHandlerAddFoldingConstraints(FoldedFiguresList foldedFiguresList, @Named("mainCreasePattern_Worker") CreasePattern_Worker drawingWorker) {
         this.foldedFiguresList = foldedFiguresList;
         this.drawingWorker = drawingWorker;
-    }
-
-    @Override
-    public MouseMode getMouseMode() {
-        return MouseMode.ADD_FOLDING_CONSTRAINT;
     }
 
     @Override

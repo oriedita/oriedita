@@ -44,7 +44,15 @@ public interface MouseModeHandler {
         return false;
     }
 
-    MouseMode getMouseMode();
+    default MouseMode getMouseMode() {
+        Handles annotation = getClass().getAnnotation(Handles.class);
+
+        if (annotation == null){
+            throw new IllegalStateException("MouseHandler does not have an @Handles annotation: " + getClass());
+        }
+
+        return annotation.value();
+    }
 
     EnumSet<Feature> getSubscribedFeatures();
 

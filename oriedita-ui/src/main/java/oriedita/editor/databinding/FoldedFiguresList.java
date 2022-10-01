@@ -1,12 +1,12 @@
 package oriedita.editor.databinding;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import oriedita.editor.drawing.FoldedFigure_Drawer;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
 import javax.swing.*;
 
-@Singleton
+@ApplicationScoped
 public class FoldedFiguresList extends DefaultComboBoxModel<FoldedFigure_Drawer> {
     @Inject
     public FoldedFiguresList() {

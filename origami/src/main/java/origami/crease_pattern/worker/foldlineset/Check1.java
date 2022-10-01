@@ -8,7 +8,7 @@ import origami.crease_pattern.element.LineSegment;
 
 public class Check1 {
     public static void apply(FoldLineSet foldLineSet) {
-        foldLineSet.Check1LineSegment.clear();
+        foldLineSet.getCheck1LineSegment().clear();
         foldLineSet.unselect_all();
         for (int i = 1; i <= foldLineSet.getTotal() - 1; i++) {
             LineSegment si = foldLineSet.get(i);
@@ -35,15 +35,15 @@ public class Check1 {
                             case PARALLEL_START_OF_S2_CONTAINS_END_OF_S1_342:
                             case PARALLEL_END_OF_S1_CONTAINS_END_OF_S2_351:
                             case PARALLEL_END_OF_S2_CONTAINS_END_OF_S1_352:
-                                foldLineSet.Check1LineSegment.add(si1);
-                                foldLineSet.Check1LineSegment.add(sj1);   /* set_select(i,2);set_select(j,2); */
+                                foldLineSet.getCheck1LineSegment().add(si1);
+                                foldLineSet.getCheck1LineSegment().add(sj1);   /* set_select(i,2);set_select(j,2); */
                                 break;
                             default:
                                 break;
                         }
                         if (intersection.isContainedInside()) {
-                            foldLineSet.Check1LineSegment.add(si1);
-                            foldLineSet.Check1LineSegment.add(sj1);   /* set_select(i,2);set_select(j,2); */
+                            foldLineSet.getCheck1LineSegment().add(si1);
+                            foldLineSet.getCheck1LineSegment().add(sj1);   /* set_select(i,2);set_select(j,2); */
                         }
 
                     }

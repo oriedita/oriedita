@@ -1,5 +1,7 @@
 package oriedita.editor.action;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.canvas.MouseMode;
 import origami.Epsilon;
@@ -9,22 +11,19 @@ import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami.folding.util.SortingBox;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
-@Singleton
+@ApplicationScoped
+@Handles(MouseMode.VERTEX_MAKE_ANGULARLY_FLAT_FOLDABLE_38)
 public class MouseHandlerVertexMakeAngularlyFlatFoldable extends BaseMouseHandlerInputRestricted {
-    public boolean workDone = false;
+    public boolean isWorkDone() {
+        return workDone;
+    }
+
+    private boolean workDone = false;
     LineColor icol_temp = LineColor.BLACK_0;
     CreasePattern_Worker.FourPointStep i_step_for_move_4p = CreasePattern_Worker.FourPointStep.STEP_0;
 
     @Inject
     public MouseHandlerVertexMakeAngularlyFlatFoldable() {
-    }
-
-    @Override
-    public MouseMode getMouseMode() {
-        return MouseMode.VERTEX_MAKE_ANGULARLY_FLAT_FOLDABLE_38;
     }
 
     //マウス操作(マウスを動かしたとき)を行う関数

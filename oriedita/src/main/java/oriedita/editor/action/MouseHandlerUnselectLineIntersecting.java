@@ -1,23 +1,18 @@
 package oriedita.editor.action;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.databinding.AngleSystemModel;
 import origami.Epsilon;
 import origami.crease_pattern.element.Point;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
-@Singleton
+@ApplicationScoped
+@Handles(MouseMode.UNSELECT_LINE_INTERSECTING_69)
 public class MouseHandlerUnselectLineIntersecting extends BaseMouseHandlerLineSelect {
     @Inject
     public MouseHandlerUnselectLineIntersecting(AngleSystemModel angleSystemModel) {
         super(angleSystemModel);
-    }
-
-    @Override
-    public MouseMode getMouseMode() {
-        return MouseMode.UNSELECT_LINE_INTERSECTING_69;
     }
 
     //マウス操作でボタンを離したとき)を行う関数----------------------------------------------------

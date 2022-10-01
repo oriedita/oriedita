@@ -1,6 +1,8 @@
 package oriedita.editor;
 
-import dagger.Lazy;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import jico.Ico;
 import jico.ImageReadException;
 import org.tinylog.Logger;
@@ -16,19 +18,13 @@ import oriedita.editor.swing.Editor;
 import oriedita.editor.swing.dialog.HelpDialog;
 import oriedita.editor.tools.ResourceUtil;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
-import java.util.ArrayDeque;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Queue;
+import java.util.*;
 
-@Singleton
+@ApplicationScoped
 public class App {
     private final ApplicationModel applicationModel;
     private final CanvasModel canvasModel;
@@ -39,8 +35,10 @@ public class App {
     private final Queue<Popup> popups = new ArrayDeque<>();
     private final ButtonService buttonService;
     private final LookAndFeelService lookAndFeelService;
-    private final Lazy<Editor> editor;
+    private final Editor editor;
     private final AppMenuBar appMenuBar;
+    private final GridModel gridModel;
+    private final AngleSystemModel angleSystemModel;
     private final ResetService resetService;
     // ------------------------------------------------------------------------
     // Buffer screen settings VVVVVVVVVVVVVVVVVVVVVVVVV
@@ -50,26 +48,28 @@ public class App {
     //画像出力するため20170107_oldと書かれた行をコメントアウトし、20170107_newの行を有効にした。
     //画像出力不要で元にもどすなら、20170107_oldと書かれた行を有効にし、20170107_newの行をコメントアウトにすればよい。（この変更はOrihime.javaの中だけに2箇所ある）
     // オフスクリーン
-    JFrame frame;
+    FrameProvider frameProvider;
 
     @Inject
     public App(
-            @Named("mainFrame") JFrame frame,
+            FrameProvider frameProvider,
             LookAndFeelService lookAndFeelService,
             ApplicationModel applicationModel,
             CanvasModel canvasModel,
             FoldedFigureModel foldedFigureModel,
             FileModel fileModel,
             FoldedFiguresList foldedFiguresList,
-            CreasePattern_Worker mainCreasePatternWorker,
+            @Named("mainCreasePattern_Worker") CreasePattern_Worker mainCreasePatternWorker,
             Canvas canvas,
             HelpDialog explanation,
             ButtonService buttonService,
-            Lazy<Editor> editor,
+            Editor editor,
             AppMenuBar appMenuBar,
+            GridModel gridModel,
+            AngleSystemModel angleSystemModel,
             ResetService resetService
     ) {
-        this.frame = frame;
+        this.frameProvider = frameProvider;
         this.lookAndFeelService = lookAndFeelService;
         this.applicationModel = applicationModel;
         this.canvasModel = canvasModel;
@@ -82,11 +82,15 @@ public class App {
         this.buttonService = buttonService;
         this.editor = editor;
         this.appMenuBar = appMenuBar;
+        this.gridModel = gridModel;
+        this.angleSystemModel = angleSystemModel;
         this.resetService = resetService;
     }
 
     public void start() {
         canvas.init();
+
+        JFrame frame = frameProvider.get();
         frame.setTitle("Oriedita " + ResourceUtil.getVersionFromManifest());//Specify the title and execute the constructor
 
         frame.addWindowStateListener(new WindowAdapter() {
@@ -143,7 +147,7 @@ public class App {
         } catch (IOException | ImageReadException | NullPointerException e) {
             e.printStackTrace();
         }
-        frame.setContentPane(editor.get().$$$getRootComponent$$$());
+        frame.setContentPane(editor.$$$getRootComponent$$$());
         frame.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_CONTROL, KeyEvent.CTRL_DOWN_MASK),
                 "CTRLPress");
         frame.getRootPane().getActionMap().put("CTRLPress", new AbstractAction() {
@@ -195,7 +199,7 @@ public class App {
             }
         });
 
-        frame.setJMenuBar(appMenuBar);
+        frame.setJMenuBar(appMenuBar.getAppMenuBarUI());
 
         applicationModel.addPropertyChangeListener(e -> {
             for (int i = 0; i < foldedFiguresList.getSize(); i++) {
@@ -205,6 +209,13 @@ public class App {
             FoldedFigure_Worker_Drawer.setStaticData(applicationModel);
             setData(applicationModel);
         });
+
+
+        applicationModel.addPropertyChangeListener(e -> mainCreasePatternWorker.setData(e, applicationModel));
+        gridModel.addPropertyChangeListener(e -> mainCreasePatternWorker.setGridConfigurationData(gridModel));
+        angleSystemModel.addPropertyChangeListener(e -> mainCreasePatternWorker.setData(angleSystemModel));
+        canvasModel.addPropertyChangeListener(e -> mainCreasePatternWorker.setData(canvasModel));
+        fileModel.addPropertyChangeListener(e -> mainCreasePatternWorker.setTitle(fileModel.determineFrameTitle()));
 
         applicationModel.reload();
 
@@ -270,9 +281,9 @@ public class App {
     }
 
     private void setData(ApplicationModel applicationModel) {
-        editor.get().getBottomPanel().$$$getRootComponent$$$().setVisible(applicationModel.getDisplayBottomPanel());
-        editor.get().getTopPanel().$$$getRootComponent$$$().setVisible(applicationModel.getDisplayTopPanel());
-        editor.get().getRightPanel().$$$getRootComponent$$$().setVisible(applicationModel.getDisplayRightPanel());
-        editor.get().getLeftPanel().$$$getRootComponent$$$().setVisible(applicationModel.getDisplayLeftPanel());
+        editor.getBottomPanel().$$$getRootComponent$$$().setVisible(applicationModel.getDisplayBottomPanel());
+        editor.getTopPanel().$$$getRootComponent$$$().setVisible(applicationModel.getDisplayTopPanel());
+        editor.getRightPanel().$$$getRootComponent$$$().setVisible(applicationModel.getDisplayRightPanel());
+        editor.getLeftPanel().$$$getRootComponent$$$().setVisible(applicationModel.getDisplayLeftPanel());
     }
 }

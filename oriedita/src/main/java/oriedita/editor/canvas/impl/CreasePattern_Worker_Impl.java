@@ -1,5 +1,8 @@
 package oriedita.editor.canvas.impl;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import org.tinylog.Logger;
 import oriedita.editor.Colors;
 import oriedita.editor.canvas.*;
@@ -22,9 +25,6 @@ import origami.crease_pattern.element.Polygon;
 import origami.crease_pattern.element.*;
 import origami.crease_pattern.worker.foldlineset.*;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
@@ -33,7 +33,7 @@ import java.util.List;
 /**
  * Responsible for holding the current creasepattern and drawing it.
  */
-@Singleton
+@ApplicationScoped
 public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     // ------------
     private final int check4ColorTransparencyIncrement = 10;
@@ -71,7 +71,7 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     private final Point operationFrame_p3 = new Point();//TV座標
     private final Point operationFrame_p4 = new Point();//TV座標
     private final SelectedTextModel textModel;
-    public double selectionDistance = 50.0;//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<Value for determining whether an input point is close to an existing point or line segment
+    private double selectionDistance = 50.0;//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<Value for determining whether an input point is close to an existing point or line segment
     private int pointSize = 1;
     private LineColor lineColor;//Line segment color
     private LineColor auxLineColor = LineColor.ORANGE_4;//Auxiliary line color
@@ -109,7 +109,6 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
                                      GridModel gridModel,
                                      FoldedFigureModel foldedFigureModel,
                                      FileModel fileModel,
-                                     AngleSystemModel angleSystemModel,
                                      TextWorker textWorker,
                                      SelectedTextModel textModel) {
         this.creasePatternCamera = creasePatternCamera;  //コンストラクタ
@@ -126,12 +125,6 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
 
         this.auxLines = auxLines;
         this.foldLineSet = foldLineSet;
-
-        if (applicationModel != null) applicationModel.addPropertyChangeListener(e -> setData(e, applicationModel));
-        if (gridModel != null) gridModel.addPropertyChangeListener(e -> setGridConfigurationData(gridModel));
-        if (angleSystemModel != null) angleSystemModel.addPropertyChangeListener(e -> setData(angleSystemModel));
-        if (canvasModel != null) canvasModel.addPropertyChangeListener(e -> setData(canvasModel));
-        if (fileModel != null) fileModel.addPropertyChangeListener(e -> setTitle(fileModel.determineFrameTitle()));
 
         lineColor = LineColor.BLACK_0;
 

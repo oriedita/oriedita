@@ -1,5 +1,7 @@
 package oriedita.editor.action;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import org.tinylog.Logger;
 import oriedita.editor.canvas.MouseMode;
 import origami.Epsilon;
@@ -10,20 +12,13 @@ import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.StraightLine;
 import origami.folding.util.SortingBox;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
-@Singleton
+@ApplicationScoped
+@Handles(MouseMode.LENGTHEN_CREASE_5)
 public class MouseHandlerLengthenCrease extends BaseMouseHandler {
     SortingBox<LineSegment> entyou_kouho_nbox = new SortingBox<>();
 
     @Inject
     public MouseHandlerLengthenCrease() {
-    }
-
-    @Override
-    public MouseMode getMouseMode() {
-        return MouseMode.LENGTHEN_CREASE_5;
     }
 
     //5 5 5 5 5 55555555555555555    mouseMode==5　;線分延長モード

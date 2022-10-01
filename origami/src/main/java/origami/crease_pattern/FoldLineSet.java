@@ -26,10 +26,10 @@ public class FoldLineSet {
     int total;               //Total number of line segments actually used
     List<LineSegment> lineSegments = new ArrayList<>(); //折線とする線分のインスタンス化
 
-    public Queue<LineSegment> Check1LineSegment = new ConcurrentLinkedQueue<>(); //Instantiation of line segments to store check information
-    public Queue<LineSegment> Check2LineSegment = new ConcurrentLinkedQueue<>(); //Instantiation of line segments to store check information
-    public Queue<LineSegment> Check3LineSegment = new ConcurrentLinkedQueue<>(); //Instantiation of line segments to store check information
-    public Queue<FlatFoldabilityViolation> cAMVViolations = new ConcurrentLinkedQueue<>();
+    private final Queue<LineSegment> Check1LineSegment = new ConcurrentLinkedQueue<>(); //Instantiation of line segments to store check information
+    private final Queue<LineSegment> Check2LineSegment = new ConcurrentLinkedQueue<>(); //Instantiation of line segments to store check information
+    private final Queue<LineSegment> Check3LineSegment = new ConcurrentLinkedQueue<>(); //Instantiation of line segments to store check information
+    private final Queue<FlatFoldabilityViolation> cAMVViolations = new ConcurrentLinkedQueue<>();
     List<Circle> circles = new ArrayList<>(); //円のインスタンス化
 
     // Specify the point Q, delete the line segments AQ and QC, and add the line segment AC (however, only two line segments have Q as the end point) // When implemented, 1 when nothing is done Returns 0.
@@ -59,6 +59,22 @@ public class FoldLineSet {
             LineSegment s = lineSegments.get(i);
             s.set(foldLineSet.get(i));
         }
+    }
+
+    public Queue<LineSegment> getCheck1LineSegment() {
+        return Check1LineSegment;
+    }
+
+    public Queue<LineSegment> getCheck2LineSegment() {
+        return Check2LineSegment;
+    }
+
+    public Queue<LineSegment> getCheck3LineSegment() {
+        return Check3LineSegment;
+    }
+
+    public Queue<FlatFoldabilityViolation> getcAMVViolations() {
+        return cAMVViolations;
     }
 
     //Get the total number of line segments

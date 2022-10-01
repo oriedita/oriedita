@@ -2,8 +2,13 @@ package oriedita.editor.swing;
 
 import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatLaf;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Any;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import org.tinylog.Logger;
 import oriedita.editor.Colors;
+import oriedita.editor.FrameProvider;
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.databinding.*;
@@ -14,9 +19,6 @@ import oriedita.editor.save.SaveProvider;
 import oriedita.editor.service.*;
 import oriedita.editor.tools.LookAndFeelUtil;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
@@ -28,9 +30,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-@Singleton
-public class AppMenuBar extends JMenuBar {
-    private final JFrame frame;
+@ApplicationScoped
+public class AppMenuBar {
+    private final FrameProvider frameProvider;
     private final TaskExecutorService foldingExecutor;
     private final FileSaveService fileSaveService;
     private final FileModel fileModel;
@@ -47,12 +49,10 @@ public class AppMenuBar extends JMenuBar {
     private JCheckBoxMenuItem preciseZoomCheckBox;
     private JCheckBoxMenuItem displaySelfIntersectionCheckBox;
     private JCheckBoxMenuItem useAdvancedCheck4Display;
-
     private JCheckBoxMenuItem displayTopPanel;
     private JCheckBoxMenuItem displayBottomPanel;
     private JCheckBoxMenuItem displayLeftPanel;
     private JCheckBoxMenuItem displayRightPanel;
-
     private JMenuItem newButton;
     private JMenuItem openButton;
     private JMenuItem saveButton;
@@ -64,26 +64,27 @@ public class AppMenuBar extends JMenuBar {
     private JMenuItem toggleHelpMenuItem;
     private JMenu openRecentMenu;
     private JMenuItem clearRecentFileMenuItem;
-
     private JMenuItem copyButton;
     private JMenuItem cutButton;
     private JMenuItem pasteButton;
     private JMenuItem pasteOffsetButton;
-
+    private AppMenuBarUI appMenuBarUI;
     @Inject
-    public AppMenuBar(@Named("mainFrame") JFrame frame,
-                      @Named("foldingExecutor") TaskExecutorService foldingExecutor,
-                      ApplicationModel applicationModel,
-                      LookAndFeelService lookAndFeelService,
-                      FileSaveService fileSaveService,
-                      ButtonService buttonService,
-                      CanvasModel canvasModel,
-                      FileModel fileModel,
-                      CreasePattern_Worker mainCreasePatternWorker,
-                      FoldedFigureModel foldedFigureModel,
-                      ResetService resetService,
-                      FoldedFiguresList foldedFiguresList) {
-        this.frame = frame;
+    public AppMenuBar(
+            FrameProvider frameProvider,
+            @Named("foldingExecutor") TaskExecutorService foldingExecutor,
+            ApplicationModel applicationModel,
+            LookAndFeelService lookAndFeelService,
+            FileSaveService fileSaveService,
+            ButtonService buttonService,
+            @Any CanvasModel canvasModel,
+            FileModel fileModel,
+            @Named("mainCreasePattern_Worker") CreasePattern_Worker mainCreasePatternWorker,
+            FoldedFigureModel foldedFigureModel,
+            ResetService resetService,
+            FoldedFiguresList foldedFiguresList
+    ) {
+        this.frameProvider = frameProvider;
         this.foldingExecutor = foldingExecutor;
         this.fileSaveService = fileSaveService;
         this.fileModel = fileModel;
@@ -91,7 +92,7 @@ public class AppMenuBar extends JMenuBar {
         applicationModel.addPropertyChangeListener(e -> setData(applicationModel));
 
         //--------------------------------------------------------------------------------------------------
-        frame.addWindowListener(new WindowAdapter() {//ウィンドウの状態が変化したときの処理
+        frameProvider.get().addWindowListener(new WindowAdapter() {//ウィンドウの状態が変化したときの処理
             //終了ボタンを有効化
             public void windowClosing(WindowEvent evt) {
                 closing();//Work to be done when pressing X at the right end of the upper side of the window
@@ -134,7 +135,7 @@ public class AppMenuBar extends JMenuBar {
 
         newButton.addActionListener(e -> {
             if (!fileModel.isSaved()) {
-                int choice = JOptionPane.showConfirmDialog(frame, "<html>Current file not saved.<br/>Do you want to save it?", "File not saved", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+                int choice = JOptionPane.showConfirmDialog(frameProvider.get(), "<html>Current file not saved.<br/>Do you want to save it?", "File not saved", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
 
                 if (choice == JOptionPane.YES_OPTION) {
                     fileSaveService.saveFile();
@@ -208,7 +209,7 @@ public class AppMenuBar extends JMenuBar {
         darkModeCheckBox.addActionListener(e -> {
             lookAndFeelService.toggleDarkMode();
 
-            if (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(frame, "Restore custom colors in grid and folded figure for this color scheme?", "Restore colors", JOptionPane.YES_NO_OPTION)) {
+            if (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(frameProvider.get(), "Restore custom colors in grid and folded figure for this color scheme?", "Restore colors", JOptionPane.YES_NO_OPTION)) {
                 if (FlatLaf.isLafDark()) {
                     applicationModel.setGridColor(Colors.GRID_LINE_DARK);
                     applicationModel.setGridScaleColor(Colors.GRID_SCALE_DARK);
@@ -285,11 +286,16 @@ public class AppMenuBar extends JMenuBar {
         });
     }
 
+    public AppMenuBarUI getAppMenuBarUI() {
+        return appMenuBarUI;
+    }
+
     private void createElements() {
+        appMenuBarUI = new AppMenuBarUI();
         JMenu fileMenu = new JMenu("File");
         fileMenu.setMnemonic('F');
 
-        add(fileMenu);
+        appMenuBarUI.add(fileMenu);
 
         newButton = new JMenuItem("New");
         fileMenu.add(newButton);
@@ -327,7 +333,7 @@ public class AppMenuBar extends JMenuBar {
 
         JMenu editMenu = new JMenu("Edit");
         editMenu.setMnemonic('E');
-        add(editMenu);
+        appMenuBarUI.add(editMenu);
 
         copyButton = new JMenuItem("Copy");
         editMenu.add(copyButton);
@@ -347,7 +353,7 @@ public class AppMenuBar extends JMenuBar {
         JMenu viewMenu = new JMenu("View");
         viewMenu.setMnemonic('V');
 
-        add(viewMenu);
+        appMenuBarUI.add(viewMenu);
 
         darkModeCheckBox = new JCheckBoxMenuItem("Dark Mode");
         viewMenu.add(darkModeCheckBox);
@@ -389,7 +395,7 @@ public class AppMenuBar extends JMenuBar {
 
         JMenu helpMenu = new JMenu("Help");
         helpMenu.setMnemonic('H');
-        add(helpMenu);
+        appMenuBarUI.add(helpMenu);
 
         toggleHelpMenuItem = new JMenuItem("Toggle help");
         helpMenu.add(toggleHelpMenuItem);
@@ -449,7 +455,7 @@ public class AppMenuBar extends JMenuBar {
                     applicationModel.addRecentFile(recentFile);
                 } catch (FileReadingException ex) {
                     ex.printStackTrace();
-                    JOptionPane.showMessageDialog(frame, "An error occurred when reading this file", "Read Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(frameProvider.get(), "An error occurred when reading this file", "Read Error", JOptionPane.ERROR_MESSAGE);
                     applicationModel.removeRecentFile(recentFile);
                 }
             });
@@ -461,7 +467,7 @@ public class AppMenuBar extends JMenuBar {
 
     public void closing() {
         if (!fileModel.isSaved()) {
-            int option = JOptionPane.showConfirmDialog(frame, "Save crease pattern before exiting?", "Save", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+            int option = JOptionPane.showConfirmDialog(frameProvider.get(), "Save crease pattern before exiting?", "Save", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
 
             switch (option) {
                 case JOptionPane.YES_OPTION:
@@ -479,5 +485,9 @@ public class AppMenuBar extends JMenuBar {
             foldingExecutor.stopTask();
             System.exit(0);
         }
+    }
+
+    private static class AppMenuBarUI extends JMenuBar {
+
     }
 }

@@ -1,22 +1,17 @@
 package oriedita.editor.action;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
 import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.*;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
-@Singleton
+@ApplicationScoped
+@Handles(MouseMode.CIRCLE_DRAW_INVERTED_46)
 public class MouseHandlerCircleDrawInverted extends BaseMouseHandler {
     @Inject
     public MouseHandlerCircleDrawInverted() {
-    }
-
-    @Override
-    public MouseMode getMouseMode() {
-        return MouseMode.CIRCLE_DRAW_INVERTED_46;
     }
 
     @Override

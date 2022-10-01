@@ -1,18 +1,14 @@
 package oriedita.editor.action;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
-@Singleton
+@ApplicationScoped
+@Handles(MouseMode.LENGTHEN_CREASE_SAME_COLOR_70)
 public class MouseHandlerLengthenCreaseSameColor extends MouseHandlerLengthenCrease {
     @Inject
     public MouseHandlerLengthenCreaseSameColor() {
     }
 
-    @Override
-    public MouseMode getMouseMode() {
-        return MouseMode.LENGTHEN_CREASE_SAME_COLOR_70;
-    }
 }

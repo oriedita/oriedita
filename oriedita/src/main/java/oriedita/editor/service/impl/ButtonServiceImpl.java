@@ -1,9 +1,14 @@
 package oriedita.editor.service.impl;
 
-import dagger.Lazy;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import org.tinylog.Logger;
+import oriedita.editor.FrameProvider;
+import oriedita.editor.action.Handles;
 import oriedita.editor.action.MouseHandlerVoronoiCreate;
 import oriedita.editor.canvas.CreasePattern_Worker;
+import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.service.ButtonService;
 import oriedita.editor.swing.component.GlyphIcon;
@@ -13,9 +18,6 @@ import oriedita.editor.tools.KeyStrokeUtil;
 import oriedita.editor.tools.ResourceUtil;
 import oriedita.editor.tools.StringOp;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
 import javax.swing.*;
 import javax.swing.text.JTextComponent;
 import java.awt.*;
@@ -25,21 +27,21 @@ import java.awt.event.MouseEvent;
 import java.util.HashMap;
 import java.util.Map;
 
-@Singleton
+@ApplicationScoped
 public class ButtonServiceImpl implements ButtonService {
     private final HelpDialog explanation;
     private final CreasePattern_Worker mainCreasePatternWorker;
-    public Map<KeyStroke, AbstractButton> helpInputMap = new HashMap<>();
-    private Lazy<JFrame> owner;
+    private Map<KeyStroke, AbstractButton> helpInputMap = new HashMap<>();
+    private FrameProvider owner;
     private final MouseHandlerVoronoiCreate mouseHandlerVoronoiCreate;
     private final CanvasModel canvasModel;
 
     @Inject
     public ButtonServiceImpl(
-            @Named("mainFrame") Lazy<JFrame> frame,
+            FrameProvider frame,
             HelpDialog explanation,
-            CreasePattern_Worker mainCreasePatternWorker,
-            MouseHandlerVoronoiCreate mouseHandlerVoronoiCreate,
+            @Named("mainCreasePattern_Worker") CreasePattern_Worker mainCreasePatternWorker,
+            @Handles(MouseMode.VORONOI_CREATE_62) MouseHandlerVoronoiCreate mouseHandlerVoronoiCreate,
             CanvasModel canvasModel) {
         this.owner = frame;
         this.explanation = explanation;
@@ -172,7 +174,7 @@ public class ButtonServiceImpl implements ButtonService {
     public void Button_shared_operation() {
         mainCreasePatternWorker.setDrawingStage(0);
         mainCreasePatternWorker.resetCircleStep();
-        mouseHandlerVoronoiCreate.voronoiLineSet.clear();
+        mouseHandlerVoronoiCreate.getVoronoiLineSet().clear();
 
         canvasModel.markDirty();
     }

@@ -1,27 +1,25 @@
 package oriedita.editor.factory;
 
-import dagger.Module;
-import dagger.Provides;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Produces;
+import jakarta.inject.Named;
 import origami.crease_pattern.FoldLineSet;
-
-import javax.inject.Named;
-import javax.inject.Singleton;
 
 /**
  * Provides specific fold line sets
  */
-@Module
+@ApplicationScoped
 public class FoldLineSetFactory {
     @Named("auxlines")
-    @Provides
-    @Singleton
+    @Produces
+    @ApplicationScoped
     FoldLineSet auxLinesFoldLineSet() {
         return new FoldLineSet();
     }
 
     @Named("foldlines")
-    @Provides
-    @Singleton
+    @Produces
+    @ApplicationScoped
     FoldLineSet foldLineSet() {
         return new FoldLineSet();
     }

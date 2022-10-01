@@ -1,15 +1,15 @@
 package oriedita.editor.databinding;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import org.tinylog.Logger;
 import oriedita.editor.text.Text;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
-@Singleton
+@ApplicationScoped
 public class SelectedTextModel {
 
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);

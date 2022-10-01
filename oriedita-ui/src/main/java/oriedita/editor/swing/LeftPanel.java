@@ -4,8 +4,12 @@ import com.formdev.flatlaf.FlatLaf;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import org.tinylog.Logger;
 import oriedita.editor.Colors;
+import oriedita.editor.FrameProvider;
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.canvas.FoldLineAdditionalInputMode;
 import oriedita.editor.canvas.MouseMode;
@@ -21,9 +25,6 @@ import oriedita.editor.tools.StringOp;
 import origami.crease_pattern.element.LineColor;
 import origami.folding.FoldedFigure;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
@@ -31,7 +32,7 @@ import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.util.Arrays;
 
-@Singleton
+@ApplicationScoped
 public class LeftPanel {
     private final MeasuresModel measuresModel;
     private JPanel root;
@@ -135,11 +136,11 @@ public class LeftPanel {
     private JCheckBox drawDiagonalGridlinesCheckBox;
 
     @Inject
-    public LeftPanel(@Named("mainFrame") JFrame frame,
+    public LeftPanel(FrameProvider frameProvider,
                      @Named("normal") HistoryState historyState,
                      MeasuresModel measuresModel,
                      ButtonService buttonService,
-                     CreasePattern_Worker mainCreasePatternWorker,
+                     @Named("mainCreasePattern_Worker") CreasePattern_Worker mainCreasePatternWorker,
                      ApplicationModel applicationModel,
                      FoldedFigureModel foldedFigureModel,
                      GridModel gridModel,
@@ -584,7 +585,7 @@ public class LeftPanel {
         gridSizeIncreaseButton.addActionListener(e -> gridModel.setGridSize(gridModel.getGridSize() * 2));
         gridColorButton.addActionListener(e -> {
             //以下にやりたいことを書く
-            Color color = JColorChooser.showDialog(frame, "Col", FlatLaf.isLafDark() ? Colors.GRID_LINE_DARK : Colors.GRID_LINE);
+            Color color = JColorChooser.showDialog(frameProvider.get(), "Col", FlatLaf.isLafDark() ? Colors.GRID_LINE_DARK : Colors.GRID_LINE);
             if (color != null) {
                 applicationModel.setGridColor(color);
             }
@@ -599,7 +600,7 @@ public class LeftPanel {
         moveIntervalGridHorizontal.addActionListener(e -> gridModel.changeVerticalScalePosition());
         intervalGridColorButton.addActionListener(e -> {
             //以下にやりたいことを書く
-            Color color = JColorChooser.showDialog(frame, "Col", FlatLaf.isLafDark() ? Colors.GRID_SCALE_DARK : Colors.GRID_SCALE);
+            Color color = JColorChooser.showDialog(frameProvider.get(), "Col", FlatLaf.isLafDark() ? Colors.GRID_SCALE_DARK : Colors.GRID_SCALE);
             if (color != null) {
                 applicationModel.setGridScaleColor(color);
             }

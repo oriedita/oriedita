@@ -1,22 +1,17 @@
 package oriedita.editor.action;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
-@Singleton
+@ApplicationScoped
+@Handles(MouseMode.UNUSED_10001)
 public class MouseHandlerUnused_10001 extends BaseMouseHandler {
     @Inject
     public MouseHandlerUnused_10001() {
-    }
-
-    @Override
-    public MouseMode getMouseMode() {
-        return MouseMode.UNUSED_10001;
     }
 
     @Override

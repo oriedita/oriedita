@@ -1,24 +1,19 @@
 package oriedita.editor.action;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
 import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.*;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
-@Singleton
+@ApplicationScoped
+@Handles(MouseMode.CIRCLE_DRAW_TANGENT_LINE_45)
 public class MouseHandlerCircleDrawTangentLine extends BaseMouseHandler {
     Circle closest_circumference = new Circle(100000.0, 100000.0, 10.0, LineColor.PURPLE_8); //Circle with the circumference closest to the mouse
 
     @Inject
     public MouseHandlerCircleDrawTangentLine() {
-    }
-
-    @Override
-    public MouseMode getMouseMode() {
-        return MouseMode.CIRCLE_DRAW_TANGENT_LINE_45;
     }
 
     @Override

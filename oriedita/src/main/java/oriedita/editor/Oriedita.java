@@ -1,51 +1,91 @@
 package oriedita.editor;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.event.Observes;
+import jakarta.inject.Inject;
+import org.jboss.weld.bootstrap.api.helpers.RegistrySingletonProvider;
+import org.jboss.weld.environment.se.StartMain;
+import org.jboss.weld.environment.se.bindings.Parameters;
+import org.jboss.weld.environment.se.events.ContainerInitialized;
 import org.tinylog.Logger;
 import oriedita.editor.exception.FileReadingException;
-import oriedita.editor.factory.AppFactory;
-import oriedita.editor.factory.DaggerAppFactory;
+import oriedita.editor.service.ApplicationModelPersistenceService;
+import oriedita.editor.service.FileSaveService;
+import oriedita.editor.service.LookAndFeelService;
+import oriedita.editor.swing.dialog.LoadingDialog;
+import oriedita.editor.swing.dialog.LoadingDialogUtil;
 
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Objects;
 
+@ApplicationScoped
 public class Oriedita {
+    @Inject
+    LookAndFeelService lookAndFeelService;
+    @Inject
+    ApplicationModelPersistenceService applicationModelPersistenceService;
 
-    public static void main(String[] argv) {
-        System.setProperty("apple.laf.useScreenMenuBar", "true");
+    @Inject
+    FileSaveService fileSaveService;
 
-        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        try {
-            ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, Objects.requireNonNull(Oriedita.class.getClassLoader().getResourceAsStream("Icons2.ttf"))));
-        } catch (IOException | FontFormatException e) {
-            e.printStackTrace();
+    @Inject
+    App app;
+
+    @Inject
+    @Parameters
+    List<String> argv;
+
+    public void start(@Observes ContainerInitialized event) {
+        if (! event.getContainerId().equals(RegistrySingletonProvider.STATIC_INSTANCE)) {
+            Logger.warn("Not starting Oriedita outside of normal mode");
+            return;
         }
 
-        AppFactory build = DaggerAppFactory.create();
+        System.setProperty("apple.laf.useScreenMenuBar", "true");
+
+        loadFont();
 
         // Initialize look and feel service, this will bind to the applicationModel update the look and feel (must be done early).
-        build.lookAndFeelService().init();
+        lookAndFeelService.init();
         // Restore the applicationModel, this should be done as early as possible.
-        build.applicationModelPersistenceService().init();
+        applicationModelPersistenceService.init();
 
         SwingUtilities.invokeLater(() -> {
-            build.lookAndFeelService().registerFlatLafSource();
+            lookAndFeelService.registerFlatLafSource();
 
-            build.app().start();
+            app.start();
 
-            if (argv.length == 1) {
+            LoadingDialogUtil.hide();
+
+            if (argv.size() == 1) {
                 // We got a file
                 try {
-                    build.fileSaveService().openFile(new File(argv[0]));
+                    fileSaveService.openFile(new File(argv.get(0)));
                 } catch (FileReadingException e) {
                     Logger.error(e, "Error reading file");
                     JOptionPane.showMessageDialog(null, "An error occurred when reading this file", "Read Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
 
-            build.fileSaveService().initAutoSave();
+            fileSaveService.initAutoSave();
         });
+    }
+
+    private static void loadFont() {
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        try {
+            ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, Objects.requireNonNull(Oriedita.class.getClassLoader().getResourceAsStream("Icons2.ttf"))));
+        } catch (IOException | FontFormatException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void main(String[] argv) {
+        LoadingDialogUtil.show();
+        StartMain.main(argv);
     }
 }

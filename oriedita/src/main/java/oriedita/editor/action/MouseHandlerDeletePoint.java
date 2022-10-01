@@ -1,21 +1,16 @@
 package oriedita.editor.action;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
 import origami.Epsilon;
 import origami.crease_pattern.element.Point;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
-@Singleton
+@ApplicationScoped
+@Handles(MouseMode.DELETE_POINT_15)
 public class MouseHandlerDeletePoint extends BaseMouseHandler {
     @Inject
     public MouseHandlerDeletePoint() {
-    }
-
-    @Override
-    public MouseMode getMouseMode() {
-        return MouseMode.DELETE_POINT_15;
     }
 
     @Override

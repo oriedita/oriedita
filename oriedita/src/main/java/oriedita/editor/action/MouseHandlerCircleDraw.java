@@ -1,5 +1,7 @@
 package oriedita.editor.action;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
@@ -9,22 +11,16 @@ import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
 import java.awt.*;
 
-@Singleton
+@ApplicationScoped
+@Handles(MouseMode.CIRCLE_DRAW_42)
 public class MouseHandlerCircleDraw extends BaseMouseHandler {
     private Circle previewCircle;
     private LineSegment previewLine;
 
     @Inject
     public MouseHandlerCircleDraw() {
-    }
-
-    @Override
-    public MouseMode getMouseMode() {
-        return MouseMode.CIRCLE_DRAW_42;
     }
 
     @Override

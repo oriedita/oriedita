@@ -8,6 +8,8 @@ import fold.impl.DefaultExporter;
 import fold.model.Edge;
 import fold.model.FoldEdgeAssignment;
 import fold.model.Vertex;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import oriedita.editor.exception.FileReadingException;
 import oriedita.editor.save.OrieditaFoldFile;
 import oriedita.editor.save.Save;
@@ -21,14 +23,12 @@ import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.worker.WireFrame_Worker;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-@Singleton
+@ApplicationScoped
 public class Fold {
     private final Importer<OrieditaFoldFile> anImporter;
     private final Exporter<OrieditaFoldFile> exporter;

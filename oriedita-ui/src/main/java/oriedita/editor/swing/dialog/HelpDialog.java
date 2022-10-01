@@ -1,12 +1,11 @@
 package oriedita.editor.swing.dialog;
 
-import dagger.Lazy;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import org.tinylog.Logger;
+import oriedita.editor.FrameProvider;
 import oriedita.editor.databinding.ApplicationModel;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
@@ -16,11 +15,11 @@ import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@Singleton
+@ApplicationScoped
 public class HelpDialog {
     private ResourceBundle helpBundle;
     private final Point point = new Point();
-    private final Lazy<JFrame> frame;
+    private final FrameProvider frameProvider;
     private final ApplicationModel applicationModel;
     private JPanel contentPane;
     private JTextPane helpLabel;
@@ -62,14 +61,14 @@ public class HelpDialog {
     }
 
     @Inject
-    public HelpDialog(@Named("mainFrame") Lazy<JFrame> frame, ApplicationModel applicationModel) {
-        this.frame = frame;
+    public HelpDialog(FrameProvider frameProvider, ApplicationModel applicationModel) {
+        this.frameProvider = frameProvider;
         this.applicationModel = applicationModel;
     }
 
     public void start(Point canvasLocation, Dimension canvasSize) {
         $$$setupUI$$$();
-        helpDialogUI = new HelpDialogUI(frame.get(), contentPane, applicationModel);
+        helpDialogUI = new HelpDialogUI(frameProvider.get(), contentPane, applicationModel);
 
         JPopupMenu popup = new JPopupMenu();
         JMenuItem dismissMenuItem = new JMenuItem("Dismiss");
@@ -85,7 +84,7 @@ public class HelpDialog {
 
                 maybeShowPopup(e);
 
-                frame.get().requestFocus();
+                frameProvider.get().requestFocus();
             }
 
             public void mouseReleased(MouseEvent e) {
