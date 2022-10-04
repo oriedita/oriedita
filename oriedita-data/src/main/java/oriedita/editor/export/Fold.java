@@ -146,6 +146,7 @@ public class Fold {
         PointSet pointSet = wireFrame_worker.get();
 
         OrieditaFoldFile foldFile = new OrieditaFoldFile();
+        foldFile.setCreator("oriedita");
         FoldFrame rootFrame = foldFile.getRootFrame();
 
         for (int i = 1; i <= pointSet.getNumPoints(); i++) {
