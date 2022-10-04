@@ -2,10 +2,7 @@ package oriedita.editor.export;
 
 import fold.io.CustomFoldReader;
 import fold.io.CustomFoldWriter;
-import fold.model.Edge;
-import fold.model.FoldEdgeAssignment;
-import fold.model.FoldFile;
-import fold.model.Vertex;
+import fold.model.*;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import oriedita.editor.exception.FileReadingException;
@@ -43,8 +40,10 @@ public class Fold {
         double minY = Double.MAX_VALUE;
         double maxY = Double.MIN_VALUE;
 
-        for (int i = 0; i < foldFile.getEdges().size(); i++) {
-            Edge edge = foldFile.getEdges().get(i);
+        FoldFrame rootFrame = foldFile.getRootFrame();
+
+        for (int i = 0; i < rootFrame.getEdges().size(); i++) {
+            Edge edge = rootFrame.getEdges().get(i);
 
             LineSegment ls = new LineSegment();
             double ax = edge.getStart().getX();
@@ -147,28 +146,26 @@ public class Fold {
         PointSet pointSet = wireFrame_worker.get();
 
         OrieditaFoldFile foldFile = new OrieditaFoldFile();
+        FoldFrame rootFrame = foldFile.getRootFrame();
 
         for (int i = 1; i <= pointSet.getNumPoints(); i++) {
             Vertex vertex = new Vertex();
-            vertex.setId(i - 1);
             vertex.setX(pointSet.getPoint(i).getX());
             vertex.setY(pointSet.getPoint(i).getY());
-            foldFile.getVertices().add(vertex);
+            rootFrame.getVertices().add(vertex);
         }
 
         for (int i = 1; i <= pointSet.getNumLines(); i++) {
             Edge edge = new Edge();
             edge.setAssignment(getAssignment(pointSet.getColor(i)));
             edge.setFoldAngle(getFoldAngle(pointSet.getColor(i)));
-            Vertex startVertex = foldFile.getVertices().get(pointSet.getBegin(i) - 1);
-            Vertex endVertex = foldFile.getVertices().get(pointSet.getEnd(i) - 1);
+            Vertex startVertex = rootFrame.getVertices().get(pointSet.getBegin(i) - 1);
+            Vertex endVertex = rootFrame.getVertices().get(pointSet.getEnd(i) - 1);
 
             edge.setStart(startVertex);
             edge.setEnd(endVertex);
 
-            edge.setId(i);
-
-            foldFile.getEdges().add(edge);
+            rootFrame.getEdges().add(edge);
         }
 
         foldFile.setCircles(save.getCircles());

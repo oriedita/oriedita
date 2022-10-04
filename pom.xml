@@ -100,7 +100,6 @@
     </build>
 
     <modules>
-        <module>fold</module>
         <module>origami</module>
         <module>oriedita-common</module>
         <module>oriedita-data</module>
