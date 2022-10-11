@@ -7,12 +7,14 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="origami" />
-        <module name="fold" />
         <module name="oriedita-ui" />
         <module name="oriedita-common" />
         <module name="oriedita-data" />
         <module name="oriedita" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="fold" target="11" />
+    </bytecodeTargetLevel>
   </component>
 </project>

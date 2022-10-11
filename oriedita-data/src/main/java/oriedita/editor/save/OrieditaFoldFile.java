@@ -15,8 +15,8 @@ public class OrieditaFoldFile extends FoldFile {
     private final CustomListField<Circle, MapCircleAdapter.CircleFields> circleFieldsCustomListField;
 
     public OrieditaFoldFile() {
-        circleFieldsCustomListField = new CustomListField<>(NS, MapCircleAdapter.CircleFields.values(), new MapCircleAdapter());
-        textFieldsCustomListField = new CustomListField<>(NS, MapTextAdapter.TextFields.values(), new MapTextAdapter());
+        circleFieldsCustomListField = new CustomListField<>(NS, MapCircleAdapter.CircleFields.class, new MapCircleAdapter());
+        textFieldsCustomListField = new CustomListField<>(NS, MapTextAdapter.TextFields.class, new MapTextAdapter());
     }
 
     /**
