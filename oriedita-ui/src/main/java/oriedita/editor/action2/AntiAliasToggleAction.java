@@ -7,17 +7,19 @@ import oriedita.editor.databinding.ApplicationModel;
 import java.awt.event.ActionEvent;
 
 @ApplicationScoped
-@ActionHandler(ActionType.lineWidthIncreaseAction)
-public class LineWidthIncreaseAction extends AbstractOrieditaAction {
-    @Inject
+@ActionHandler(ActionType.antiAliasToggleAction)
+public class AntiAliasToggleAction extends AbstractOrieditaAction {
     ApplicationModel applicationModel;
 
     @Inject
-    public LineWidthIncreaseAction() {
+    public AntiAliasToggleAction(ApplicationModel applicationModel) {
+        this.applicationModel = applicationModel;
+        // This button has text value a_a
+        putValue(NAME, "a_a");
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        applicationModel.increaseLineWidth();
+        applicationModel.toggleAntiAlias();
     }
 }

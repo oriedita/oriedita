@@ -194,7 +194,6 @@ public class LeftPanel {
         getData(gridModel);
 
         buttonService.registerButton(pointSizeIncreaseButton, "pointSizeIncreaseAction");
-        buttonService.registerButton(antiAliasToggleButton, "antiAliasToggleAction");
         buttonService.registerButton(lineStyleChangeButton, "lineStyleChangeAction");
         buttonService.registerButton(drawCreaseRestrictedButton, "drawCreaseRestrictedAction");
         buttonService.registerButton(voronoiButton, "voronoiAction");
@@ -287,7 +286,6 @@ public class LeftPanel {
         undoRedo.addRedoActionListener(e -> {
             mainCreasePatternWorker.redo();
         });
-        antiAliasToggleButton.addActionListener(e -> applicationModel.toggleAntiAlias());
         lineStyleChangeButton.addActionListener(e -> applicationModel.advanceLineStyle());
         colRedButton.addActionListener(e -> canvasModel.setLineColor(LineColor.RED_1));
         colBlueButton.addActionListener(e -> canvasModel.setLineColor(LineColor.BLUE_2));

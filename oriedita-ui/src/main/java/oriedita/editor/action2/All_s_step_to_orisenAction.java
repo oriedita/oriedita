@@ -10,8 +10,9 @@ import java.awt.event.ActionEvent;
 
 @ApplicationScoped
 @ActionHandler(ActionType.all_s_step_to_orisenAction)
-public class All_s_step_to_orisenAction extends AbstractOrieditaAction{
-    @Inject @Named("mainCreasePattern_Worker")
+public class All_s_step_to_orisenAction extends AbstractOrieditaAction {
+    @Inject
+    @Named("mainCreasePattern_Worker")
     CreasePattern_Worker mainCreasePatternWorker;
 
     @Inject

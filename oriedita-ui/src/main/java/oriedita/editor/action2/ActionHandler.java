@@ -1,5 +1,6 @@
 package oriedita.editor.action2;
 
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Qualifier;
 
 import java.lang.annotation.Documented;
