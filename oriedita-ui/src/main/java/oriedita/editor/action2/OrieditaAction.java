@@ -5,7 +5,7 @@ public interface OrieditaAction extends javax.swing.Action {
         ActionHandler annotation = getClass().getAnnotation(ActionHandler.class);
 
         if (annotation == null){
-            throw new IllegalStateException("MouseHandler does not have an @Handles annotation: " + getClass());
+            throw new IllegalStateException("Action does not have an @ActionHandler annotation: " + getClass());
         }
 
         return annotation.value();

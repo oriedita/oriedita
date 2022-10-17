@@ -9,31 +9,25 @@ import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import oriedita.editor.Canvas;
 import oriedita.editor.canvas.CreasePattern_Worker;
-import oriedita.editor.canvas.FoldLineAdditionalInputMode;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.databinding.*;
 import oriedita.editor.drawing.FoldedFigure_Drawer;
-import oriedita.editor.drawing.tools.Background_camera;
 import oriedita.editor.service.ButtonService;
-import oriedita.editor.service.FileSaveService;
 import origami.crease_pattern.element.Point;
-import origami.crease_pattern.element.Polygon;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 @ApplicationScoped
-public class TopPanel {
+public class TopPanel implements PropertyChangeListener {
     private final MeasuresModel measuresModel;
     private final ButtonService buttonService;
     private final CanvasModel canvasModel;
     private final InternalDivisionRatioModel internalDivisionRatioModel;
-    private final BackgroundModel backgroundModel;
     private final CreasePattern_Worker mainCreasePatternWorker;
     private final FoldedFigureModel foldedFigureModel;
-    private final FileSaveService fileSaveService;
     private final CameraModel creasePatternCameraModel;
     private final FoldedFiguresList foldedFiguresList;
     private final Canvas canvas;
@@ -76,10 +70,8 @@ public class TopPanel {
                     ButtonService buttonService,
                     @Any CanvasModel canvasModel,
                     InternalDivisionRatioModel internalDivisionRatioModel,
-                    BackgroundModel backgroundModel,
                     @Named("mainCreasePattern_Worker") CreasePattern_Worker mainCreasePatternWorker,
                     FoldedFigureModel foldedFigureModel,
-                    FileSaveService fileSaveService,
                     CameraModel creasePatternCameraModel,
                     FoldedFiguresList foldedFiguresList,
                     Canvas canvas,
@@ -88,10 +80,8 @@ public class TopPanel {
         this.buttonService = buttonService;
         this.canvasModel = canvasModel;
         this.internalDivisionRatioModel = internalDivisionRatioModel;
-        this.backgroundModel = backgroundModel;
         this.mainCreasePatternWorker = mainCreasePatternWorker;
         this.foldedFigureModel = foldedFigureModel;
-        this.fileSaveService = fileSaveService;
         this.creasePatternCameraModel = creasePatternCameraModel;
         this.foldedFiguresList = foldedFiguresList;
         this.canvas = canvas;
@@ -100,12 +90,6 @@ public class TopPanel {
 
     public void init() {
         buttonService.addDefaultListener($$$getRootComponent$$$());
-
-        applicationModel.addPropertyChangeListener(e -> setData(applicationModel));
-//        internalDivisionRatioModel.addPropertyChangeListener(e -> setData(internalDivisionRatioModel));
-        canvas.getCanvasImpl().addPropertyChangeListener(e -> setData(e, canvasModel));
-        backgroundModel.addPropertyChangeListener(e -> setData(backgroundModel));
-        creasePatternCameraModel.addPropertyChangeListener(e -> setData(creasePatternCameraModel));
 
         buttonService.registerButton(creasePatternZoomInButton, "creasePatternZoomInAction");
         buttonService.registerButton(rotateAnticlockwiseButton, "rotateAnticlockwiseAction");
@@ -188,73 +172,8 @@ public class TopPanel {
         rotationTextField.addActionListener(e -> rotationSetButton.doClick());
         rotateClockwiseButton.addActionListener(e -> creasePatternCameraModel.decreaseRotation());
         transparentButton.addActionListener(e -> canvas.createTransparentBackground());
-        backgroundTrimButton.addActionListener(e -> {
-            BufferedImage offsc_background = new BufferedImage(2000, 1100, BufferedImage.TYPE_INT_ARGB);
-
-            Graphics2D g2_background = offsc_background.createGraphics();
-            //背景表示
-            Image backgroundImage = backgroundModel.getBackgroundImage();
-
-            if ((backgroundImage != null) && backgroundModel.isDisplayBackground()) {
-                int iw = backgroundImage.getWidth(null);//イメージの幅を取得
-                int ih = backgroundImage.getHeight(null);//イメージの高さを取得
-
-                canvas.getH_cam().setBackgroundWidth(iw);
-                canvas.getH_cam().setBackgroundHeight(ih);
-
-                canvas.drawBackground(g2_background, backgroundImage);
-            }
-
-//枠設定時の背景を枠内のみ残してトリム 20181204
-            if ((canvasModel.getMouseMode() == MouseMode.OPERATION_FRAME_CREATE_61) && (mainCreasePatternWorker.getDrawingStage() == 4)) {//枠線が表示されている状態
-                int xmin = (int) mainCreasePatternWorker.getOperationFrameBox().getXMin();
-                int xmax = (int) mainCreasePatternWorker.getOperationFrameBox().getXMax();
-                int ymin = (int) mainCreasePatternWorker.getOperationFrameBox().getYMin();
-                int ymax = (int) mainCreasePatternWorker.getOperationFrameBox().getYMax();
-
-                backgroundModel.setBackgroundImage(offsc_background.getSubimage(xmin, ymin, xmax - xmin, ymax - ymin));
-
-                canvas.setH_cam(new Background_camera());
-
-                backgroundModel.setBackgroundPosition(new Polygon(new Point(120.0, 120.0),
-                        new Point(120.0 + 10.0, 120.0),
-                        new Point(xmin, ymin),
-                        new Point((double) xmin + 10.0, ymin)));
-
-                if (backgroundModel.isLockBackground()) {//20181202  このifが無いとlock on のときに背景がうまく表示できない
-                    canvas.getH_cam().setLocked(true);
-                    canvas.getH_cam().setCamera(canvas.getCreasePatternCamera());
-                    canvas.getH_cam().h3_obj_and_h4_obj_calculation();
-                }
-            }
-        });
-        readBackgroundButton.addActionListener(e -> {
-            boolean saved = fileSaveService.readBackgroundImageFromFile();
-
-            if (!saved) return;
-
-            canvas.setH_cam(new Background_camera());//20181202
-            canvas.getH_cam().setLocked(backgroundModel.isLockBackground());
-
-            int iw = backgroundModel.getBackgroundImage().getWidth(null);//イメージの幅を取得
-            int ih = backgroundModel.getBackgroundImage().getHeight(null);//イメージの高さを取得
-
-            canvas.getH_cam().setBackgroundWidth(iw);
-            canvas.getH_cam().setBackgroundHeight(ih);
-
-            if (backgroundModel.isLockBackground()) {//20181202  このifが無いとlock on のときに背景がうまく表示できない
-                canvas.getH_cam().setCamera(canvas.getCreasePatternCamera());
-                canvas.getH_cam().h3_obj_and_h4_obj_calculation();
-            }
-        });
-        backgroundToggleButton.addActionListener(e -> {
-            backgroundModel.setDisplayBackground(!backgroundModel.isDisplayBackground());
-        });
         backgroundSetPositionButton.addActionListener(e -> {
             canvasModel.setMouseMode(MouseMode.BACKGROUND_CHANGE_POSITION_26);
-        });
-        backgroundLockButton.addActionListener(e -> {
-            backgroundModel.setLockBackground(!backgroundModel.isLockBackground());
         });
         senbun_yoke_henkanButton.addActionListener(e -> {
             canvasModel.setMouseMode(MouseMode.CREASE_ADVANCE_TYPE_30);
@@ -474,5 +393,21 @@ public class TopPanel {
         rotationTextField.setCaretPosition(0);
         scaleFactorTextField.setText(String.valueOf(creasePatternCameraModel.getScale()));
         scaleFactorTextField.setCaretPosition(0);
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        if (evt.getSource() instanceof BackgroundModel) {
+            setData((BackgroundModel) evt.getSource());
+        }
+        if (evt.getSource() instanceof ApplicationModel) {
+            setData((ApplicationModel) evt.getSource());
+        }
+        if (evt.getSource() instanceof CameraModel) {
+            setData((CameraModel) evt.getSource());
+        }
+        if (evt.getSource() instanceof CanvasModel) {
+            setData(evt, (CanvasModel) evt.getSource());
+        }
     }
 }

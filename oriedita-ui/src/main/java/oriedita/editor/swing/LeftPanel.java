@@ -193,11 +193,6 @@ public class LeftPanel {
 
         getData(gridModel);
 
-        buttonService.registerButton(pointSizeIncreaseButton, "pointSizeIncreaseAction");
-        buttonService.registerButton(lineStyleChangeButton, "lineStyleChangeAction");
-        buttonService.registerButton(drawCreaseRestrictedButton, "drawCreaseRestrictedAction");
-        buttonService.registerButton(voronoiButton, "voronoiAction");
-        buttonService.registerButton(makeFlatFoldableButton, "makeFlatFoldableAction");
         buttonService.registerButton(lengthenCreaseButton, "lengthenCreaseAction");
         buttonService.registerButton(lengthenCrease2Button, "lengthenCrease2Action");
         buttonService.registerButton(angleBisectorButton, "angleBisectorAction");
@@ -286,31 +281,11 @@ public class LeftPanel {
         undoRedo.addRedoActionListener(e -> {
             mainCreasePatternWorker.redo();
         });
-        lineStyleChangeButton.addActionListener(e -> applicationModel.advanceLineStyle());
         colRedButton.addActionListener(e -> canvasModel.setLineColor(LineColor.RED_1));
         colBlueButton.addActionListener(e -> canvasModel.setLineColor(LineColor.BLUE_2));
         colBlackButton.addActionListener(e -> canvasModel.setLineColor(LineColor.BLACK_0));
         colCyanButton.addActionListener(e -> canvasModel.setLineColor(LineColor.CYAN_3));
 //        drawCreaseFreeButton.setAction(drawCreaseFreeAction);
-        drawCreaseRestrictedButton.addActionListener(e -> {
-            canvasModel.setMouseMode(MouseMode.DRAW_CREASE_RESTRICTED_11);
-            canvasModel.setMouseModeAfterColorSelection(MouseMode.DRAW_CREASE_RESTRICTED_11);
-
-            mainCreasePatternWorker.unselect_all();
-        });
-        voronoiButton.addActionListener(e -> {
-            canvasModel.setFoldLineAdditionalInputMode(FoldLineAdditionalInputMode.POLY_LINE_0);
-            canvasModel.setMouseMode(MouseMode.VORONOI_CREATE_62);
-            canvasModel.setMouseModeAfterColorSelection(MouseMode.VORONOI_CREATE_62);
-
-            mainCreasePatternWorker.unselect_all();
-        });
-        makeFlatFoldableButton.addActionListener(e -> {
-            canvasModel.setMouseMode(MouseMode.VERTEX_MAKE_ANGULARLY_FLAT_FOLDABLE_38);
-            canvasModel.setMouseModeAfterColorSelection(MouseMode.VERTEX_MAKE_ANGULARLY_FLAT_FOLDABLE_38);
-
-            mainCreasePatternWorker.unselect_all();
-        });
         lengthenCreaseButton.addActionListener(e -> {
             canvasModel.setMouseMode(MouseMode.LENGTHEN_CREASE_5);
             canvasModel.setMouseModeAfterColorSelection(MouseMode.LENGTHEN_CREASE_5);

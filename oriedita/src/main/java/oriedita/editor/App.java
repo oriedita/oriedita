@@ -10,6 +10,7 @@ import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.databinding.*;
 import oriedita.editor.drawing.FoldedFigure_Drawer;
 import oriedita.editor.drawing.FoldedFigure_Worker_Drawer;
+import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.service.ButtonService;
 import oriedita.editor.service.LookAndFeelService;
 import oriedita.editor.service.ResetService;
@@ -38,7 +39,9 @@ public class App {
     private final Editor editor;
     private final AppMenuBar appMenuBar;
     private final GridModel gridModel;
+    private final BackgroundModel backgroundModel;
     private final AngleSystemModel angleSystemModel;
+    private final CameraModel cameraModel;
     private final ResetService resetService;
     // ------------------------------------------------------------------------
     // Buffer screen settings VVVVVVVVVVVVVVVVVVVVVVVVV
@@ -66,7 +69,9 @@ public class App {
             Editor editor,
             AppMenuBar appMenuBar,
             GridModel gridModel,
+            BackgroundModel backgroundModel,
             AngleSystemModel angleSystemModel,
+            CameraModel cameraModel,
             ResetService resetService
     ) {
         this.frameProvider = frameProvider;
@@ -83,12 +88,20 @@ public class App {
         this.editor = editor;
         this.appMenuBar = appMenuBar;
         this.gridModel = gridModel;
+        this.backgroundModel = backgroundModel;
         this.angleSystemModel = angleSystemModel;
+        this.cameraModel = cameraModel;
         this.resetService = resetService;
     }
 
     public void start() {
         canvas.init();
+        // ---
+        // Bind model to ui
+        backgroundModel.addPropertyChangeListener(editor.getTopPanel());
+        applicationModel.addPropertyChangeListener(editor.getTopPanel());
+        cameraModel.addPropertyChangeListener(editor.getTopPanel());
+        // ---
 
         JFrame frame = frameProvider.get();
         frame.setTitle("Oriedita " + ResourceUtil.getVersionFromManifest());//Specify the title and execute the constructor
