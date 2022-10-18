@@ -1,10 +1,18 @@
 package oriedita.editor.export;
 
+import fold.io.CreasePatternReader;
+import fold.io.CreasePatternWriter;
+import fold.model.Edge;
+import fold.model.FoldEdgeAssignment;
+import fold.model.FoldFile;
 import org.tinylog.Logger;
+import oriedita.editor.save.OrieditaFoldFile;
 import oriedita.editor.save.Save;
 import oriedita.editor.save.SaveProvider;
+import origami.crease_pattern.LineSegmentSet;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
+import origami.crease_pattern.element.Point;
 
 import java.io.*;
 import java.util.StringTokenizer;
@@ -12,68 +20,32 @@ import java.util.StringTokenizer;
 public class Cp {
 
     public static void exportFile(Save save, File file) {
-        try (FileWriter fw = new FileWriter(file); BufferedWriter bw = new BufferedWriter(fw); PrintWriter pw = new PrintWriter(bw)) {
-            for (LineSegment s : save.getLineSegments()) {
-                int color = s.getColor().getNumber() + 1;
 
-                pw.println(String.format("%d %s %s %s %s", color, s.determineAX(), s.determineAY(), s.determineBX(), s.determineBY()));
-            }
-        } catch (IOException e) {
+        try (FileWriter fw = new FileWriter(file); BufferedWriter bw = new BufferedWriter(fw); PrintWriter pw = new PrintWriter(bw); OutputStream os = new FileOutputStream(file)) {
+            CreasePatternWriter creasePatternWriter = new CreasePatternWriter(os);
+            creasePatternWriter.write(new Fold().toFoldSave(save, new LineSegmentSet()));
+        } catch (IOException | InterruptedException e) {
             Logger.error(e, "Error exporting cp file");
         }
     }
 
-    public static Save importFile(BufferedReader reader) throws IOException {
+    public static Save importFile(InputStream is) throws IOException {
         Save save = SaveProvider.createInstance();
 
-        double d1, d2, d3, d4;
+        CreasePatternReader creasePatternReader = new CreasePatternReader(is);
 
-        String fileLine;
-        //オリヒメ　0.Contour, 1.Mountain, 2.Valley　、ORIPA 1.Contour, 2.Mountain, 3.Valley
+        FoldFile foldFile = creasePatternReader.read();
 
-        while ((fileLine = reader.readLine()) != null) {
-            StringTokenizer tk = new StringTokenizer(fileLine, " ");
-            String str = tk.nextToken();
-            LineColor col;
-            switch (str) {
-                case "1":
-                    col = LineColor.BLACK_0;
-                    break;
-                case "2":
-                    col = LineColor.RED_1;
-                    break;
-                case "3":
-                    col = LineColor.BLUE_2;
-                    break;
-                case "4":
-                    col = LineColor.CYAN_3;
-                    break;
-                default:
-                    continue;
-            }
-            d1 = Double.parseDouble(tk.nextToken());
-            d2 = Double.parseDouble(tk.nextToken());
-            d3 = Double.parseDouble(tk.nextToken());
-            d4 = Double.parseDouble(tk.nextToken());
-
-            LineSegment s = new LineSegment();
-            s.set(d1, d2, d3, d4, col);
-
-            save.addLineSegment(s.clone());
+        for (Edge edge : foldFile.getRootFrame().getEdges()) {
+            save.addLineSegment(new LineSegment(new Point(edge.getStart().getX(), edge.getStart().getY()), new Point(edge.getEnd().getX(), edge.getEnd().getY()), Fold.getColor(edge.getAssignment())));
         }
 
         return save;
     }
 
-    public static Save importFile(InputStream stream) throws IOException {
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(stream))) {
-            return importFile(reader);
-        }
-    }
-
     public static Save importFile(File mem) throws IOException {
-        try (BufferedReader reader = new BufferedReader(new FileReader(mem))) {
-            return importFile(reader);
+        try (FileInputStream is = new FileInputStream(mem)) {
+            return importFile(is);
         }
     }
 }
