@@ -101,7 +101,18 @@ public enum ActionType {
     backgroundSetPositionAction("backgroundSetPositionAction"),
     backgroundLockAction("backgroundLockAction"),
     mouseSettingsAction("mouseSettingsAction"),
-    ;
+    foldAction("foldAction"),
+    trashAction("foldedFigureTrashAction"),
+    anotherSolutionAction("anotherSolutionAction"),
+    haltAction("haltAction"),
+    resetAction("resetAction"),
+    flipAction("foldedFigureFlipAction"),
+    frontColorAction("frontColorAction"),
+    As100Action("As100Action"),
+    lineColorAction("lineColorAction"),
+    backColorAction("backColorAction"),
+    oriagari_sousaAction("oriagari_sousaAction");
+
 
     static final Map<String, ActionType> actionMap;
 
@@ -129,6 +140,4 @@ public enum ActionType {
     public String action() {
         return action;
     }
-
-
 }

@@ -96,7 +96,6 @@ public class TopPanel implements PropertyChangeListener {
         buttonService.registerButton(rotateClockwiseButton, "rotateClockwiseAction");
         buttonService.registerButton(senbun_yoke_henkanButton, "senbun_yoke_henkanAction");
         buttonService.registerButton(lineSegmentInternalDivisionRatioSetButton, "lineSegmentInternalDivisionRatioSetAction");
-        buttonService.registerButton(drawLineSegmentInternalDivisionRatioButton, "drawLineSegmentInternalDivisionRatioAction");
         buttonService.registerButton(scaleFactorSetButton, "scaleFactorSetAction");
         buttonService.registerButton(rotationSetButton, "rotationSetAction");
         buttonService.registerButton(transparentButton, "transparentAction");
@@ -122,14 +121,6 @@ public class TopPanel implements PropertyChangeListener {
 
         mouseSettingsCheckBox.addActionListener(e -> applicationModel.setMouseWheelMovesCreasePattern(mouseSettingsCheckBox.isSelected()));
 
-        drawLineSegmentInternalDivisionRatioButton.addActionListener(e -> {
-            internalDivisionRatioModel.commit();
-
-            canvasModel.setMouseMode(MouseMode.LINE_SEGMENT_RATIO_SET_28);
-            canvasModel.setMouseModeAfterColorSelection(MouseMode.LINE_SEGMENT_RATIO_SET_28);
-
-            mainCreasePatternWorker.unselect_all();
-        });
         scaleFactorSetButton.addActionListener(e -> {
             double d_syukusyaku_keisuu_old = creasePatternCameraModel.getScale();
 

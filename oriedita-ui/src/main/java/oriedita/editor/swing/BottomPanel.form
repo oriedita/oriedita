@@ -13,6 +13,7 @@
           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
+          <actionCommand value="foldAction"/>
           <icon value="ppp/suitei_04.png"/>
           <text value="Fold"/>
         </properties>
@@ -27,6 +28,7 @@
           <grid row="0" column="11" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
+          <actionCommand value="oriagari_sousaAction"/>
           <icon value="ppp/oriagari_sousa.png"/>
         </properties>
       </component>
@@ -71,7 +73,7 @@
           <grid row="0" column="21" row-span="1" col-span="1" vsize-policy="3" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <actionCommand value="frontColorButton"/>
+          <actionCommand value="frontColorAction"/>
           <icon value="ppp/F_color.png"/>
           <text value="FC"/>
         </properties>
@@ -101,6 +103,7 @@
           <grid row="0" column="25" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
+          <actionCommand value="haltAction"/>
           <icon value="ppp/keisan_tyuusi.png"/>
           <margin top="0" left="10" bottom="0" right="10"/>
         </properties>
@@ -110,6 +113,7 @@
           <grid row="0" column="26" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
+          <actionCommand value="foldedFigureTrashAction"/>
           <icon value="ppp/settei_syokika.png"/>
           <margin top="0" left="10" bottom="0" right="10"/>
         </properties>
@@ -119,6 +123,7 @@
           <grid row="0" column="27" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
+          <actionCommand value="resetAction"/>
           <icon value="ppp/zen_syokika.png"/>
           <margin top="0" left="10" bottom="0" right="10"/>
         </properties>
@@ -134,6 +139,7 @@
           <grid row="0" column="12" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
+          <actionCommand value="oriagari_sousa_2Action"/>
           <icon value="ppp/oriagari_sousa_2.png"/>
         </properties>
       </component>
@@ -151,6 +157,7 @@
           <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
+          <actionCommand value="as100Action"/>
           <text value="AS100"/>
         </properties>
       </component>
@@ -178,6 +185,7 @@
           <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
+          <actionCommand value="foldedFigureFlipAction"/>
           <icon value="ppp/Button0b.png"/>
         </properties>
       </component>
