@@ -7,5 +7,11 @@ public interface LookAndFeelService {
 
     void toggleDarkMode();
 
+    void registerLafModeListener(LookAndFeelListener listener);
+
     void registerFlatLafSource();
+
+    interface LookAndFeelListener {
+        void handleLookAndFeelChange(String lookAndFeel);
+    }
 }

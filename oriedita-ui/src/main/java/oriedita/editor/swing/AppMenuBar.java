@@ -8,6 +8,9 @@ import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import org.tinylog.Logger;
 import oriedita.editor.Colors;
+import oriedita.editor.action2.ActionHandler;
+import oriedita.editor.action2.ImportAddAction;
+import oriedita.editor.action2.ActionType;
 import oriedita.editor.FrameProvider;
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.canvas.MouseMode;
@@ -18,6 +21,7 @@ import oriedita.editor.save.Save;
 import oriedita.editor.save.SaveProvider;
 import oriedita.editor.service.*;
 import oriedita.editor.tools.LookAndFeelUtil;
+import oriedita.editor.action2.ImportAction;
 
 import javax.swing.*;
 import java.awt.*;
@@ -32,10 +36,24 @@ import java.util.ArrayList;
 
 @ApplicationScoped
 public class AppMenuBar {
+
+    @Inject
+    @ActionHandler(ActionType.IMPORT) ImportAction importAction;
+    @Inject
+    @ActionHandler(ActionType.IMPORT_ADD) ImportAddAction importAddAction;
+
     private final FrameProvider frameProvider;
     private final TaskExecutorService foldingExecutor;
+    private final ApplicationModel applicationModel;
+    private final LookAndFeelService lookAndFeelService;
     private final FileSaveService fileSaveService;
+    private final ButtonService buttonService;
+    private final CanvasModel canvasModel;
     private final FileModel fileModel;
+    private final CreasePattern_Worker mainCreasePatternWorker;
+    private final FoldedFigureModel foldedFigureModel;
+    private final ResetService resetService;
+    private final FoldedFiguresList foldedFiguresList;
     private JCheckBoxMenuItem showPointRangeCheckBox;//点を探す範囲
     private JCheckBoxMenuItem pointOffsetCheckBox;//点を離すかどうか
     private JCheckBoxMenuItem gridInputAssistCheckBox;//高密度用入力をするかどうか
@@ -58,8 +76,6 @@ public class AppMenuBar {
     private JMenuItem saveButton;
     private JMenuItem saveAsButton;
     private JMenuItem exportButton;
-    private JMenuItem importButton;
-    private JMenuItem importAddButton;
     private JMenuItem exitButton;
     private JMenuItem toggleHelpMenuItem;
     private JMenu openRecentMenu;
@@ -86,8 +102,19 @@ public class AppMenuBar {
     ) {
         this.frameProvider = frameProvider;
         this.foldingExecutor = foldingExecutor;
+        this.applicationModel = applicationModel;
+        this.lookAndFeelService = lookAndFeelService;
         this.fileSaveService = fileSaveService;
+        this.buttonService = buttonService;
+        this.canvasModel = canvasModel;
         this.fileModel = fileModel;
+        this.mainCreasePatternWorker = mainCreasePatternWorker;
+        this.foldedFigureModel = foldedFigureModel;
+        this.resetService = resetService;
+        this.foldedFiguresList = foldedFiguresList;
+    }
+
+    public void init() {
 
         applicationModel.addPropertyChangeListener(e -> setData(applicationModel));
 
@@ -100,13 +127,14 @@ public class AppMenuBar {
         });//Processing when the window state changes Up to here.
 
         createElements();
+
+        buttonService.addDefaultListener(appMenuBarUI);
+
         buttonService.registerButton(newButton, "newAction");
         buttonService.registerButton(openButton, "openAction");
         buttonService.registerButton(openRecentMenu, "openRecentAction");
         buttonService.registerButton(saveButton, "saveAction");
         buttonService.registerButton(saveAsButton, "saveAsAction");
-        buttonService.registerButton(importButton, "importAction");
-        buttonService.registerButton(importAddButton, "importAddAction");
         buttonService.registerButton(exportButton, "exportAction");
         buttonService.registerButton(exitButton, "exitAction");
         buttonService.registerButton(showPointRangeCheckBox, "showPointRangeAction");
@@ -169,24 +197,6 @@ public class AppMenuBar {
             }//枠設定時(==61)には、その枠を消さないためにes1.set_i_egaki_dankaiを０にしないでおく　20180524
 
             fileSaveService.exportFile();
-        });
-        importButton.addActionListener(e -> fileSaveService.importFile());
-        importAddButton.addActionListener(e -> {
-            Logger.info("readFile2Memo() 開始");
-            File file = fileSaveService.selectImportFile();
-            Save save = null;
-            try {
-                save = fileSaveService.readImportFile(file);
-            } catch (FileReadingException ex) {
-                ex.printStackTrace();
-                JOptionPane.showMessageDialog(null, "An error occurred when reading this file", "Read Error", JOptionPane.ERROR_MESSAGE);
-            }
-            Logger.info("readFile2Memo() 終了");
-
-            if (save != null) {
-                mainCreasePatternWorker.setSave_for_reading_tuika(save);
-                mainCreasePatternWorker.record();
-            }
         });
         exitButton.addActionListener(e -> closing());
         showPointRangeCheckBox.addActionListener(e -> getData(applicationModel));
@@ -320,10 +330,12 @@ public class AppMenuBar {
         exportButton = new JMenuItem("Export");
         fileMenu.add(exportButton);
 
-        importButton = new JMenuItem("Import");
+        JMenuItem importButton = new JMenuItem("Import");
+        importButton.setActionCommand(ActionType.IMPORT.action());
         fileMenu.add(importButton);
 
-        importAddButton = new JMenuItem("Import (Add)");
+        JMenuItem importAddButton = new JMenuItem("Import (Add)");
+        importAddButton.setActionCommand(ActionType.IMPORT_ADD.action());
         fileMenu.add(importAddButton);
 
         fileMenu.addSeparator();

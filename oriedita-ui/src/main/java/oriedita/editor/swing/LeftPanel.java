@@ -9,6 +9,9 @@ import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import org.tinylog.Logger;
 import oriedita.editor.Colors;
+import oriedita.editor.action2.DrawCreaseFreeAction;
+import oriedita.editor.action2.LineWidthDecreaseAction;
+import oriedita.editor.action2.*;
 import oriedita.editor.FrameProvider;
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.canvas.FoldLineAdditionalInputMode;
@@ -34,7 +37,20 @@ import java.util.Arrays;
 
 @ApplicationScoped
 public class LeftPanel {
+    @Inject @ActionHandler(ActionType.lineWidthDecreaseAction)
+    LineWidthDecreaseAction lineWidthDecreaseAction;
+    private final FrameProvider frameProvider;
+    private final HistoryState historyState;
     private final MeasuresModel measuresModel;
+    private final ButtonService buttonService;
+    private final CreasePattern_Worker mainCreasePatternWorker;
+    private final ApplicationModel applicationModel;
+    private final FoldedFigureModel foldedFigureModel;
+    private final GridModel gridModel;
+    private final CanvasModel canvasModel;
+    private final DrawCreaseFreeAction drawCreaseFreeAction;
+    private final FoldingService foldingService;
+    private final FoldedFiguresList foldedFiguresList;
     private JPanel root;
 
     private JTextField lineSegmentDivisionTextField;
@@ -107,7 +123,7 @@ public class LeftPanel {
     private JCheckBox correctCpBeforeFoldingCheckBox;
     private JCheckBox selectPersistentCheckBox;
     private JCheckBox coloredXRayCheckBox;
-    private JButton resetButton;
+    private JButton resetGridButton;
     private JButton moveIntervalGridVerticalButton;
     private JTextField intervalGridSizeTextField;
     private JButton setIntervalGridSizeButton;
@@ -145,9 +161,27 @@ public class LeftPanel {
                      FoldedFigureModel foldedFigureModel,
                      GridModel gridModel,
                      CanvasModel canvasModel,
+                     @ActionHandler(ActionType.drawCreaseFreeAction) DrawCreaseFreeAction drawCreaseFreeAction,
                      FoldingService foldingService,
                      FoldedFiguresList foldedFiguresList) {
+        this.frameProvider = frameProvider;
+        this.historyState = historyState;
         this.measuresModel = measuresModel;
+        this.buttonService = buttonService;
+        this.mainCreasePatternWorker = mainCreasePatternWorker;
+        this.applicationModel = applicationModel;
+        this.foldedFigureModel = foldedFigureModel;
+        this.gridModel = gridModel;
+        this.canvasModel = canvasModel;
+        this.drawCreaseFreeAction = drawCreaseFreeAction;
+        this.foldingService = foldingService;
+        this.foldedFiguresList = foldedFiguresList;
+
+
+    }
+
+    public void init() {
+        buttonService.addDefaultListener($$$getRootComponent$$$());
 
         applicationModel.addPropertyChangeListener(e -> setData(e, applicationModel));
         gridModel.addPropertyChangeListener(e -> setData(gridModel));
@@ -155,22 +189,10 @@ public class LeftPanel {
         canvasModel.addPropertyChangeListener(e -> setData(e, canvasModel));
         historyState.addPropertyChangeListener(e -> setData(historyState));
 
-        $$$setupUI$$$();
-
         setData(historyState);
 
         getData(gridModel);
 
-        buttonService.registerButton(lineWidthDecreaseButton, "lineWidthDecreaseAction");
-        buttonService.registerButton(lineWidthIncreaseButton, "lineWidthIncreaseAction");
-        buttonService.registerButton(pointSizeDecreaseButton, "pointSizeDecreaseAction");
-        buttonService.registerButton(pointSizeIncreaseButton, "pointSizeIncreaseAction");
-        buttonService.registerButton(antiAliasToggleButton, "antiAliasToggleAction");
-        buttonService.registerButton(lineStyleChangeButton, "lineStyleChangeAction");
-        buttonService.registerButton(drawCreaseFreeButton, "drawCreaseFreeAction");
-        buttonService.registerButton(drawCreaseRestrictedButton, "drawCreaseRestrictedAction");
-        buttonService.registerButton(voronoiButton, "voronoiAction");
-        buttonService.registerButton(makeFlatFoldableButton, "makeFlatFoldableAction");
         buttonService.registerButton(lengthenCreaseButton, "lengthenCreaseAction");
         buttonService.registerButton(lengthenCrease2Button, "lengthenCrease2Action");
         buttonService.registerButton(angleBisectorButton, "angleBisectorAction");
@@ -181,7 +203,6 @@ public class LeftPanel {
         buttonService.registerButton(parallelDrawButton, "parallelDrawAction");
         buttonService.registerButton(setParallelDrawWidthButton, "setParallelDrawWidthAction");
         buttonService.registerButton(foldableLineDrawButton, "foldableLineDrawAction");
-        buttonService.registerButton(all_s_step_to_orisenButton, "all_s_step_to_orisenAction");
         buttonService.registerButton(fishBoneDrawButton, "fishBoneDrawAction");
         buttonService.registerButton(doubleSymmetricDrawButton, "doubleSymmetricDrawAction");
         buttonService.registerButton(senbun_b_nyuryokuButton, "senbun_b_nyuryokuAction");
@@ -238,7 +259,7 @@ public class LeftPanel {
         buttonService.registerButton(moveIntervalGridHorizontal, "moveIntervalGridHorizontalAction");
         buttonService.registerButton(intervalGridColorButton, "intervalGridColorAction");
         buttonService.registerButton(setGridParametersButton, "setGridParametersAction");
-        buttonService.registerButton(resetButton, "gridConfigureResetAction");
+        buttonService.registerButton(resetGridButton, "gridConfigureResetAction");
 
         buttonService.registerButton(undoRedo.getRedoButton(), "redoAction");
         buttonService.registerButton(undoRedo.getUndoButton(), "undoAction");
@@ -260,42 +281,11 @@ public class LeftPanel {
         undoRedo.addRedoActionListener(e -> {
             mainCreasePatternWorker.redo();
         });
-        lineWidthDecreaseButton.addActionListener(e -> applicationModel.decreaseLineWidth());
-        lineWidthIncreaseButton.addActionListener(e -> applicationModel.increaseLineWidth());
-        pointSizeDecreaseButton.addActionListener(e -> applicationModel.decreasePointSize());
-        pointSizeIncreaseButton.addActionListener(e -> applicationModel.increasePointSize());
-        antiAliasToggleButton.addActionListener(e -> applicationModel.toggleAntiAlias());
-        lineStyleChangeButton.addActionListener(e -> applicationModel.advanceLineStyle());
         colRedButton.addActionListener(e -> canvasModel.setLineColor(LineColor.RED_1));
         colBlueButton.addActionListener(e -> canvasModel.setLineColor(LineColor.BLUE_2));
         colBlackButton.addActionListener(e -> canvasModel.setLineColor(LineColor.BLACK_0));
         colCyanButton.addActionListener(e -> canvasModel.setLineColor(LineColor.CYAN_3));
-        drawCreaseFreeButton.addActionListener(e -> {
-            canvasModel.setFoldLineAdditionalInputMode(FoldLineAdditionalInputMode.POLY_LINE_0);
-            canvasModel.setMouseMode(MouseMode.DRAW_CREASE_FREE_1);
-            canvasModel.setMouseModeAfterColorSelection(MouseMode.DRAW_CREASE_FREE_1);
-
-            mainCreasePatternWorker.unselect_all();
-        });
-        drawCreaseRestrictedButton.addActionListener(e -> {
-            canvasModel.setMouseMode(MouseMode.DRAW_CREASE_RESTRICTED_11);
-            canvasModel.setMouseModeAfterColorSelection(MouseMode.DRAW_CREASE_RESTRICTED_11);
-
-            mainCreasePatternWorker.unselect_all();
-        });
-        voronoiButton.addActionListener(e -> {
-            canvasModel.setFoldLineAdditionalInputMode(FoldLineAdditionalInputMode.POLY_LINE_0);
-            canvasModel.setMouseMode(MouseMode.VORONOI_CREATE_62);
-            canvasModel.setMouseModeAfterColorSelection(MouseMode.VORONOI_CREATE_62);
-
-            mainCreasePatternWorker.unselect_all();
-        });
-        makeFlatFoldableButton.addActionListener(e -> {
-            canvasModel.setMouseMode(MouseMode.VERTEX_MAKE_ANGULARLY_FLAT_FOLDABLE_38);
-            canvasModel.setMouseModeAfterColorSelection(MouseMode.VERTEX_MAKE_ANGULARLY_FLAT_FOLDABLE_38);
-
-            mainCreasePatternWorker.unselect_all();
-        });
+//        drawCreaseFreeButton.setAction(drawCreaseFreeAction);
         lengthenCreaseButton.addActionListener(e -> {
             canvasModel.setMouseMode(MouseMode.LENGTHEN_CREASE_5);
             canvasModel.setMouseModeAfterColorSelection(MouseMode.LENGTHEN_CREASE_5);
@@ -305,12 +295,6 @@ public class LeftPanel {
         lengthenCrease2Button.addActionListener(e -> {
             canvasModel.setMouseMode(MouseMode.LENGTHEN_CREASE_SAME_COLOR_70);
             canvasModel.setMouseModeAfterColorSelection(MouseMode.LENGTHEN_CREASE_SAME_COLOR_70);
-
-            mainCreasePatternWorker.unselect_all();
-        });
-        angleBisectorButton.addActionListener(e -> {
-            canvasModel.setMouseMode(MouseMode.SQUARE_BISECTOR_7);
-            canvasModel.setMouseModeAfterColorSelection(MouseMode.SQUARE_BISECTOR_7);
 
             mainCreasePatternWorker.unselect_all();
         });
@@ -355,12 +339,6 @@ public class LeftPanel {
             canvasModel.setMouseModeAfterColorSelection(MouseMode.FOLDABLE_LINE_DRAW_71);
 
             mainCreasePatternWorker.unselect_all();
-        });
-        all_s_step_to_orisenButton.addActionListener(e -> {
-            Logger.info("i_egaki_dankai = " + mainCreasePatternWorker.getDrawingStage());
-            Logger.info("i_kouho_dankai = " + mainCreasePatternWorker.getCandidateSize());
-
-            mainCreasePatternWorker.all_s_step_to_orisen();
         });
         fishBoneDrawButton.addActionListener(e -> {
             canvasModel.setMouseMode(MouseMode.FISH_BONE_DRAW_33);
@@ -611,7 +589,7 @@ public class LeftPanel {
             setData(gridModel);
         });
         gridAngleTextField.addActionListener(e -> setGridParametersButton.doClick());
-        resetButton.addActionListener(e -> gridModel.reset());
+        resetGridButton.addActionListener(e -> gridModel.reset());
         drawDiagonalGridlinesCheckBox.addActionListener(e -> gridModel.setDrawDiagonalGridlines(drawDiagonalGridlinesCheckBox.isSelected()));
     }
 
@@ -647,6 +625,13 @@ public class LeftPanel {
         gridSizeDecreaseButton.setEnabled(data.getGridSize() != 1);
     }
 
+    {
+// GUI initializer generated by IntelliJ IDEA GUI Designer
+// >>> IMPORTANT!! <<<
+// DO NOT EDIT OR ADD ANY CODE HERE!
+        $$$setupUI$$$();
+    }
+
     /**
      * Method generated by IntelliJ IDEA GUI Designer
      * >>> IMPORTANT!! <<<
@@ -663,39 +648,49 @@ public class LeftPanel {
         panel1.setLayout(new GridLayoutManager(1, 6, new Insets(0, 0, 0, 0), 1, 1, false, true));
         root.add(panel1, new GridConstraints(1, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         lineWidthDecreaseButton = new JButton();
+        lineWidthDecreaseButton.setActionCommand("lineWidthDecreaseAction");
         lineWidthDecreaseButton.setIcon(new ImageIcon(getClass().getResource("/ppp/senhaba_sage.png")));
         panel1.add(lineWidthDecreaseButton, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         lineWidthIncreaseButton = new JButton();
+        lineWidthIncreaseButton.setActionCommand("lineWidthIncreaseAction");
         lineWidthIncreaseButton.setIcon(new ImageIcon(getClass().getResource("/ppp/senhaba_age.png")));
         panel1.add(lineWidthIncreaseButton, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         pointSizeDecreaseButton = new JButton();
+        pointSizeDecreaseButton.setActionCommand("pointSizeDecreaseAction");
         pointSizeDecreaseButton.setIcon(new ImageIcon(getClass().getResource("/ppp/tenhaba_sage.png")));
         panel1.add(pointSizeDecreaseButton, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         pointSizeIncreaseButton = new JButton();
+        pointSizeIncreaseButton.setActionCommand("pointSizeIncreaseAction");
         pointSizeIncreaseButton.setIcon(new ImageIcon(getClass().getResource("/ppp/tenhaba_age.png")));
         panel1.add(pointSizeIncreaseButton, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         antiAliasToggleButton = new JButton();
+        antiAliasToggleButton.setActionCommand("antiAliasToggleAction");
         antiAliasToggleButton.setText("a_a");
         panel1.add(antiAliasToggleButton, new GridConstraints(0, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         lineStyleChangeButton = new JButton();
+        lineStyleChangeButton.setActionCommand("lineStyleChangeAction");
         lineStyleChangeButton.setIcon(new ImageIcon(getClass().getResource("/ppp/orisen_hyougen.png")));
         panel1.add(lineStyleChangeButton, new GridConstraints(0, 5, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         final JPanel panel2 = new JPanel();
         panel2.setLayout(new GridLayoutManager(1, 4, new Insets(0, 0, 0, 0), 1, 1, true, false));
         root.add(panel2, new GridConstraints(3, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         colRedButton = new JButton();
+        colRedButton.setActionCommand("colRedAction");
         colRedButton.setBackground(new Color(-6908266));
         colRedButton.setText("M");
         panel2.add(colRedButton, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         colBlueButton = new JButton();
+        colBlueButton.setActionCommand("colBlueAction");
         colBlueButton.setBackground(new Color(-6908266));
         colBlueButton.setText("V");
         panel2.add(colBlueButton, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         colBlackButton = new JButton();
+        colBlackButton.setActionCommand("colBlackAction");
         colBlackButton.setBackground(new Color(-6908266));
         colBlackButton.setText("E");
         panel2.add(colBlackButton, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         colCyanButton = new JButton();
+        colCyanButton.setActionCommand("colCyanAction");
         colCyanButton.setBackground(new Color(-6908266));
         colCyanButton.setText("A");
         panel2.add(colCyanButton, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
@@ -703,17 +698,21 @@ public class LeftPanel {
         panel3.setLayout(new GridLayoutManager(1, 4, new Insets(0, 0, 0, 0), 1, 1, true, false));
         root.add(panel3, new GridConstraints(9, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         toMountainButton = new JButton();
+        toMountainButton.setActionCommand("toMountainAction");
         toMountainButton.setForeground(new Color(-65536));
         toMountainButton.setIcon(new ImageIcon(getClass().getResource("/ppp/M_nisuru.png")));
         panel3.add(toMountainButton, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         toValleyButton = new JButton();
+        toValleyButton.setActionCommand("toValleyAction");
         toValleyButton.setForeground(new Color(-16776961));
         toValleyButton.setIcon(new ImageIcon(getClass().getResource("/ppp/V_nisuru.png")));
         panel3.add(toValleyButton, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         toEdgeButton = new JButton();
+        toEdgeButton.setActionCommand("toEdgeAction");
         toEdgeButton.setIcon(new ImageIcon(getClass().getResource("/ppp/E_nisuru.png")));
         panel3.add(toEdgeButton, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         toAuxButton = new JButton();
+        toAuxButton.setActionCommand("toAuxAction");
         toAuxButton.setForeground(new Color(-10172216));
         toAuxButton.setIcon(new ImageIcon(getClass().getResource("/ppp/HK_nisuru.png")));
         panel3.add(toAuxButton, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
@@ -721,39 +720,49 @@ public class LeftPanel {
         panel4.setLayout(new GridLayoutManager(1, 3, new Insets(0, 0, 0, 0), 1, 1, true, false));
         root.add(panel4, new GridConstraints(10, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         zen_yama_tani_henkanButton = new JButton();
+        zen_yama_tani_henkanButton.setActionCommand("zen_yama_tani_henkanAction");
         zen_yama_tani_henkanButton.setText("AC");
         panel4.add(zen_yama_tani_henkanButton, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, new Dimension(0, -1), new Dimension(0, -1), null, 0, false));
         senbun_henkan2Button = new JButton();
+        senbun_henkan2Button.setActionCommand("senbun_henkan2Action");
         senbun_henkan2Button.setIcon(new ImageIcon(getClass().getResource("/ppp/senbun_henkan2.png")));
         panel4.add(senbun_henkan2Button, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         senbun_henkanButton = new JButton();
+        senbun_henkanButton.setActionCommand("senbun_henkanAction");
         senbun_henkanButton.setIcon(new ImageIcon(getClass().getResource("/ppp/senbun_henkan.png")));
         panel4.add(senbun_henkanButton, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         final JPanel panel5 = new JPanel();
         panel5.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 0, 0), 1, 1, true, false));
         root.add(panel5, new GridConstraints(11, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         in_L_col_changeButton = new JButton();
+        in_L_col_changeButton.setActionCommand("in_L_col_changeAction");
         in_L_col_changeButton.setIcon(new ImageIcon(getClass().getResource("/ppp/in_L_col_change.png")));
         panel5.add(in_L_col_changeButton, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         on_L_col_changeButton = new JButton();
+        on_L_col_changeButton.setActionCommand("on_L_col_changeButton");
         on_L_col_changeButton.setIcon(new ImageIcon(getClass().getResource("/ppp/on_L_col_change.png")));
         panel5.add(on_L_col_changeButton, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         final JPanel panel6 = new JPanel();
         panel6.setLayout(new GridLayoutManager(1, 5, new Insets(0, 0, 0, 0), 1, 1));
         root.add(panel6, new GridConstraints(12, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         v_addButton = new JButton();
+        v_addButton.setActionCommand("v_addAction");
         v_addButton.setIcon(new ImageIcon(getClass().getResource("/ppp/v_add.png")));
         panel6.add(v_addButton, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         v_delButton = new JButton();
+        v_delButton.setActionCommand("v_delAction");
         v_delButton.setIcon(new ImageIcon(getClass().getResource("/ppp/v_del.png")));
         panel6.add(v_delButton, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         v_del_ccButton = new JButton();
+        v_del_ccButton.setActionCommand("v_del_ccAction");
         v_del_ccButton.setIcon(new ImageIcon(getClass().getResource("/ppp/v_del_cc.png")));
         panel6.add(v_del_ccButton, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         v_del_allButton = new JButton();
+        v_del_allButton.setActionCommand("v_del_allAction");
         v_del_allButton.setIcon(new ImageIcon(getClass().getResource("/ppp/v_del_all.png")));
         panel6.add(v_del_allButton, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         v_del_all_ccButton = new JButton();
+        v_del_all_ccButton.setActionCommand("v_del_all_ccAction");
         v_del_all_ccButton.setIcon(new ImageIcon(getClass().getResource("/ppp/v_del_all_cc.png")));
         panel6.add(v_del_all_ccButton, new GridConstraints(0, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         final JPanel panel7 = new JPanel();
@@ -767,39 +776,47 @@ public class LeftPanel {
         selectPersistentCheckBox.setToolTipText("ckbox_select_nokosi");
         panel7.add(selectPersistentCheckBox, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         drawTwoColoredCpButton = new JButton();
+        drawTwoColoredCpButton.setActionCommand("drawTwoColoredCpAction");
         drawTwoColoredCpButton.setIcon(new ImageIcon(getClass().getResource("/ppp/2syoku_tenkaizu.png")));
         panel7.add(drawTwoColoredCpButton, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         final JPanel panel8 = new JPanel();
         panel8.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 0, 0), 1, 1, true, false));
         root.add(panel8, new GridConstraints(20, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         suitei_01Button = new JButton();
+        suitei_01Button.setActionCommand("suitei_01Action");
         suitei_01Button.setText("CP_rcg");
         panel8.add(suitei_01Button, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         koteimen_siteiButton = new JButton();
+        koteimen_siteiButton.setActionCommand("koteimen_siteiAction");
         koteimen_siteiButton.setText("S_face");
         panel8.add(koteimen_siteiButton, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         final JPanel panel9 = new JPanel();
         panel9.setLayout(new GridLayoutManager(1, 5, new Insets(0, 0, 0, 0), 1, 1));
         root.add(panel9, new GridConstraints(21, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         suitei_02Button = new JButton();
+        suitei_02Button.setActionCommand("suitei_02Action");
         suitei_02Button.setIcon(new ImageIcon(getClass().getResource("/ppp/suitei_02.png")));
         panel9.add(suitei_02Button, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         suitei_03Button = new JButton();
+        suitei_03Button.setActionCommand("suitei_03Action");
         suitei_03Button.setIcon(new ImageIcon(getClass().getResource("/ppp/suitei_03.png")));
         panel9.add(suitei_03Button, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         coloredXRayCheckBox = new JCheckBox();
         coloredXRayCheckBox.setText("Colored");
         panel9.add(coloredXRayCheckBox, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         coloredXRayDecreaseButton = new JButton();
+        coloredXRayDecreaseButton.setActionCommand("coloredXRayDecreaseAction");
         coloredXRayDecreaseButton.setIcon(new ImageIcon(getClass().getResource("/ppp/ck4_color_sage.png")));
         panel9.add(coloredXRayDecreaseButton, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         coloredXRayIncreaseButton = new JButton();
+        coloredXRayIncreaseButton.setActionCommand("coloredXRayIncreaseAction");
         coloredXRayIncreaseButton.setIcon(new ImageIcon(getClass().getResource("/ppp/ck4_color_age.png")));
         panel9.add(coloredXRayIncreaseButton, new GridConstraints(0, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         final JPanel panel10 = new JPanel();
         panel10.setLayout(new GridLayoutManager(5, 4, new Insets(0, 0, 0, 0), 1, 1, true, false));
         root.add(panel10, new GridConstraints(4, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         perpendicularDrawButton = new JButton();
+        perpendicularDrawButton.setActionCommand("perpendicularDrawAction");
         perpendicularDrawButton.setIcon(new ImageIcon(getClass().getResource("/ppp/suisen.png")));
         panel10.add(perpendicularDrawButton, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         lineSegmentDivisionTextField = new JTextField();
@@ -807,121 +824,158 @@ public class LeftPanel {
         lineSegmentDivisionTextField.setText("2");
         panel10.add(lineSegmentDivisionTextField, new GridConstraints(4, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, 1, GridConstraints.SIZEPOLICY_FIXED, new Dimension(30, -1), null, null, 0, false));
         lineSegmentDivisionSetButton = new JButton();
+        lineSegmentDivisionSetButton.setActionCommand("lineSegmentDivisionSetAction");
         lineSegmentDivisionSetButton.setText("Set");
         panel10.add(lineSegmentDivisionSetButton, new GridConstraints(4, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         senbun_b_nyuryokuButton = new JButton();
+        senbun_b_nyuryokuButton.setActionCommand("senbun_b_nyuryokuAction");
         senbun_b_nyuryokuButton.setIcon(new ImageIcon(getClass().getResource("/ppp/senbun_b_nyuryoku.png")));
         panel10.add(senbun_b_nyuryokuButton, new GridConstraints(4, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         all_s_step_to_orisenButton = new JButton();
+        all_s_step_to_orisenButton.setActionCommand("all_s_step_to_orisenAction");
         all_s_step_to_orisenButton.setIcon(new ImageIcon(getClass().getResource("/ppp/all_s_step_to_orisen.png")));
         panel10.add(all_s_step_to_orisenButton, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         voronoiButton = new JButton();
+        voronoiButton.setActionCommand("voronoiAction");
         voronoiButton.setIcon(new ImageIcon(getClass().getResource("/ppp/Voronoi.png")));
         panel10.add(voronoiButton, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         parallelDrawButton = new JButton();
+        parallelDrawButton.setActionCommand("parallelDrawAction");
         parallelDrawButton.setIcon(new ImageIcon(getClass().getResource("/ppp/heikousen.png")));
         panel10.add(parallelDrawButton, new GridConstraints(3, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         fishBoneDrawButton = new JButton();
+        fishBoneDrawButton.setActionCommand("fishBoneDrawAction");
         fishBoneDrawButton.setIcon(new ImageIcon(getClass().getResource("/ppp/sakananohone.png")));
         panel10.add(fishBoneDrawButton, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         setParallelDrawWidthButton = new JButton();
+        setParallelDrawWidthButton.setActionCommand("setParallelDrawWidthAction");
         setParallelDrawWidthButton.setIcon(new ImageIcon(getClass().getResource("/ppp/heikousen_haba_sitei.png")));
         panel10.add(setParallelDrawWidthButton, new GridConstraints(3, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         doubleSymmetricDrawButton = new JButton();
+        doubleSymmetricDrawButton.setActionCommand("doubleSymmetricDrawAction");
         doubleSymmetricDrawButton.setIcon(new ImageIcon(getClass().getResource("/ppp/fuku_orikaesi.png")));
         panel10.add(doubleSymmetricDrawButton, new GridConstraints(2, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         makeFlatFoldableButton = new JButton();
+        makeFlatFoldableButton.setActionCommand("makeFlatFoldableAction");
         makeFlatFoldableButton.setIcon(new ImageIcon(getClass().getResource("/ppp/oritatami_kanousen.png")));
         panel10.add(makeFlatFoldableButton, new GridConstraints(3, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         continuousSymmetricDrawButton = new JButton();
+        continuousSymmetricDrawButton.setActionCommand("continuousSymmetricDrawAction");
         continuousSymmetricDrawButton.setIcon(new ImageIcon(getClass().getResource("/ppp/renzoku_orikaesi.png")));
         panel10.add(continuousSymmetricDrawButton, new GridConstraints(2, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         symmetricDrawButton = new JButton();
+        symmetricDrawButton.setActionCommand("symmetricDrawAction");
         symmetricDrawButton.setIcon(new ImageIcon(getClass().getResource("/ppp/orikaesi.png")));
         panel10.add(symmetricDrawButton, new GridConstraints(1, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         angleBisectorButton = new JButton();
+        angleBisectorButton.setActionCommand("angleBisectorAction");
         angleBisectorButton.setIcon(new ImageIcon(getClass().getResource("/ppp/kaku_toubun.png")));
         angleBisectorButton.setText("");
         panel10.add(angleBisectorButton, new GridConstraints(1, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         lengthenCrease2Button = new JButton();
+        lengthenCrease2Button.setActionCommand("lengthenCrease2Action");
         lengthenCrease2Button.setIcon(new ImageIcon(getClass().getResource("/ppp/senbun_entyou_2.png")));
         panel10.add(lengthenCrease2Button, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         lengthenCreaseButton = new JButton();
+        lengthenCreaseButton.setActionCommand("lengthenCreaseAction");
         lengthenCreaseButton.setIcon(new ImageIcon(getClass().getResource("/ppp/senbun_entyou.png")));
         panel10.add(lengthenCreaseButton, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         drawCreaseRestrictedButton = new JButton();
+        drawCreaseRestrictedButton.setActionCommand("drawCreaseRestrictedAction");
         drawCreaseRestrictedButton.setIcon(new ImageIcon(getClass().getResource("/ppp/senbun_nyuryoku11.png")));
         panel10.add(drawCreaseRestrictedButton, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         rabbitEarButton = new JButton();
+        rabbitEarButton.setActionCommand("rabbitEarAction");
         rabbitEarButton.setIcon(new ImageIcon(getClass().getResource("/ppp/naishin.png")));
         panel10.add(rabbitEarButton, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         foldableLineDrawButton = new JButton();
+        foldableLineDrawButton.setActionCommand("foldableLineAction");
         foldableLineDrawButton.setIcon(new ImageIcon(getClass().getResource("/ppp/oritatami_kanousen_and_kousitenkei_simple.png")));
         panel10.add(foldableLineDrawButton, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         drawCreaseFreeButton = new JButton();
+        drawCreaseFreeButton.setActionCommand("drawCreaseFreeAction");
         drawCreaseFreeButton.setIcon(new ImageIcon(getClass().getResource("/ppp/senbun_nyuryoku.png")));
+        drawCreaseFreeButton.setText("");
         panel10.add(drawCreaseFreeButton, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JPanel panel11 = new JPanel();
         panel11.setLayout(new GridLayoutManager(3, 4, new Insets(0, 0, 0, 0), 1, 1));
         root.add(panel11, new GridConstraints(6, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         selectButton = new JButton();
+        selectButton.setActionCommand("selectAction");
         selectButton.setText("sel");
         panel11.add(selectButton, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         selectAllButton = new JButton();
+        selectAllButton.setActionCommand("selectAllAction");
         selectAllButton.setText("s_al");
         panel11.add(selectAllButton, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         moveButton = new JButton();
+        moveButton.setActionCommand("moveAction");
         moveButton.setText("move");
         panel11.add(moveButton, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         move2p2pButton = new JButton();
+        move2p2pButton.setActionCommand("move2p2pAction");
         move2p2pButton.setText("mv_4p");
         panel11.add(move2p2pButton, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         reflectButton = new JButton();
+        reflectButton.setActionCommand("reflectAction");
         reflectButton.setIcon(new ImageIcon(getClass().getResource("/ppp/kyouei.png")));
         panel11.add(reflectButton, new GridConstraints(2, 0, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         unselectButton = new JButton();
+        unselectButton.setActionCommand("unselectAction");
         unselectButton.setText("unsel");
         panel11.add(unselectButton, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         unselectAllButton = new JButton();
+        unselectAllButton.setActionCommand("unselectAllAction");
         unselectAllButton.setText("uns_al");
         panel11.add(unselectAllButton, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         copyButton = new JButton();
+        copyButton.setActionCommand("copyAction");
         copyButton.setText("copy");
         panel11.add(copyButton, new GridConstraints(1, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         copy2p2pButton = new JButton();
+        copy2p2pButton.setActionCommand("copy2p2pAction");
         copy2p2pButton.setText("cp_4p");
         panel11.add(copy2p2pButton, new GridConstraints(1, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         deleteSelectedLineSegmentButton = new JButton();
+        deleteSelectedLineSegmentButton.setActionCommand("d_s_LAction");
         deleteSelectedLineSegmentButton.setText("d_s_L");
         panel11.add(deleteSelectedLineSegmentButton, new GridConstraints(2, 2, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         final JPanel panel12 = new JPanel();
         panel12.setLayout(new GridLayoutManager(3, 5, new Insets(0, 0, 0, 0), 1, 1));
         root.add(panel12, new GridConstraints(14, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         gridSizeDecreaseButton = new JButton();
+        gridSizeDecreaseButton.setActionCommand("gridSizeDecreaseAction");
         gridSizeDecreaseButton.setIcon(new ImageIcon(getClass().getResource("/ppp/kitei2.png")));
         panel12.add(gridSizeDecreaseButton, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         gridSizeTextField = new JTextField();
         gridSizeTextField.setColumns(2);
         panel12.add(gridSizeTextField, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, new Dimension(30, -1), null, null, 0, false));
         gridSizeSetButton = new JButton();
+        gridSizeSetButton.setActionCommand("gridSizeSetAction");
         gridSizeSetButton.setText("S");
         panel12.add(gridSizeSetButton, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         gridSizeIncreaseButton = new JButton();
+        gridSizeIncreaseButton.setActionCommand("gridSizeIncreaseAction");
         gridSizeIncreaseButton.setIcon(new ImageIcon(getClass().getResource("/ppp/kitei.png")));
         panel12.add(gridSizeIncreaseButton, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         gridColorButton = new JButton();
+        gridColorButton.setActionCommand("gridColorAction");
         gridColorButton.setText("Color");
         panel12.add(gridColorButton, new GridConstraints(0, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         gridLineWidthDecreaseButton = new JButton();
+        gridLineWidthDecreaseButton.setActionCommand("gridLineWidthDecreaseAction");
         gridLineWidthDecreaseButton.setIcon(new ImageIcon(getClass().getResource("/ppp/kousi_senhaba_sage.png")));
         panel12.add(gridLineWidthDecreaseButton, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         gridLineWidthIncreaseButton = new JButton();
+        gridLineWidthIncreaseButton.setActionCommand("gridLineWidthIncreaseAction");
         gridLineWidthIncreaseButton.setIcon(new ImageIcon(getClass().getResource("/ppp/kousi_senhaba_age.png")));
         panel12.add(gridLineWidthIncreaseButton, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         changeGridStateButton = new JButton();
+        changeGridStateButton.setActionCommand("changeGridStateAction");
         changeGridStateButton.setIcon(new ImageIcon(getClass().getResource("/ppp/i_kitei_jyoutai.png")));
         panel12.add(changeGridStateButton, new GridConstraints(1, 2, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         moveIntervalGridVerticalButton = new JButton();
+        moveIntervalGridVerticalButton.setActionCommand("moveIntervalGridVerticalAction");
         moveIntervalGridVerticalButton.setIcon(new ImageIcon(getClass().getResource("/ppp/memori_tate_idou.png")));
         panel12.add(moveIntervalGridVerticalButton, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         intervalGridSizeTextField = new JTextField();
@@ -929,28 +983,35 @@ public class LeftPanel {
         intervalGridSizeTextField.setText("8");
         panel12.add(intervalGridSizeTextField, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, new Dimension(30, -1), null, null, 0, false));
         setIntervalGridSizeButton = new JButton();
+        setIntervalGridSizeButton.setActionCommand("setIntervalGridSizeAction");
         setIntervalGridSizeButton.setText("S");
         panel12.add(setIntervalGridSizeButton, new GridConstraints(2, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         moveIntervalGridHorizontal = new JButton();
+        moveIntervalGridHorizontal.setActionCommand("moveIntervalGridHorizontalAction");
         moveIntervalGridHorizontal.setIcon(new ImageIcon(getClass().getResource("/ppp/memori_yoko_idou.png")));
         panel12.add(moveIntervalGridHorizontal, new GridConstraints(2, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         intervalGridColorButton = new JButton();
+        intervalGridColorButton.setActionCommand("intervalGridColorAction");
         intervalGridColorButton.setText("Color");
         panel12.add(intervalGridColorButton, new GridConstraints(2, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         final JPanel panel13 = new JPanel();
         panel13.setLayout(new GridLayoutManager(1, 4, new Insets(0, 0, 0, 0), 1, 1, true, false));
         root.add(panel13, new GridConstraints(8, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         lineSegmentDeleteButton = new JButton();
+        lineSegmentDeleteButton.setActionCommand("lineSegmentDeleteAction");
         lineSegmentDeleteButton.setIcon(new ImageIcon(getClass().getResource("/ppp/senbun_sakujyo.png")));
         panel13.add(lineSegmentDeleteButton, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         edgeLineSegmentDeleteButton = new JButton();
+        edgeLineSegmentDeleteButton.setActionCommand("edgeLineSegmentDeleteAction");
         edgeLineSegmentDeleteButton.setIcon(new ImageIcon(getClass().getResource("/ppp/kuro_senbun_sakujyo.png")));
         panel13.add(edgeLineSegmentDeleteButton, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         auxLiveLineSegmentDeleteButton = new JButton();
+        auxLiveLineSegmentDeleteButton.setActionCommand("auxLiveLineSegmentDeleteAction");
         auxLiveLineSegmentDeleteButton.setForeground(new Color(-10172216));
         auxLiveLineSegmentDeleteButton.setIcon(new ImageIcon(getClass().getResource("/ppp/senbun3_sakujyo.png")));
         panel13.add(auxLiveLineSegmentDeleteButton, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         trimBranchesButton = new JButton();
+        trimBranchesButton.setActionCommand("trimBranchesAction");
         trimBranchesButton.setIcon(new ImageIcon(getClass().getResource("/ppp/eda_kesi.png")));
         panel13.add(trimBranchesButton, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         final Spacer spacer1 = new Spacer();
@@ -974,11 +1035,13 @@ public class LeftPanel {
         gridAngleTextField.setText("90.0");
         panel14.add(gridAngleTextField, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, new Dimension(30, -1), null, null, 0, false));
         setGridParametersButton = new JButton();
+        setGridParametersButton.setActionCommand("setGridParametersAction");
         setGridParametersButton.setText("S");
         panel14.add(setGridParametersButton, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-        resetButton = new JButton();
-        resetButton.setText("Reset");
-        panel14.add(resetButton, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        resetGridButton = new JButton();
+        resetGridButton.setActionCommand("resetGridAction");
+        resetGridButton.setText("Reset");
+        panel14.add(resetGridButton, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JPanel panel15 = new JPanel();
         panel15.setLayout(new GridLayoutManager(2, 5, new Insets(0, 0, 0, 0), -1, -1));
         root.add(panel15, new GridConstraints(15, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));

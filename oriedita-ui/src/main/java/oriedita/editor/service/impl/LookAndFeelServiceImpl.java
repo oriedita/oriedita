@@ -124,6 +124,11 @@ public class LookAndFeelServiceImpl implements LookAndFeelService {
     }
 
     @Override
+    public void registerLafModeListener(LookAndFeelListener listener) {
+
+    }
+
+    @Override
     public void registerFlatLafSource() {
         FlatLaf.registerCustomDefaultsSource("oriedita.editor.themes");
     }

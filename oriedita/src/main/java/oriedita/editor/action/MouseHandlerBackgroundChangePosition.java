@@ -4,7 +4,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.databinding.BackgroundModel;
-import oriedita.editor.service.ButtonService;
+import oriedita.editor.service.ResetService;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
@@ -14,7 +14,7 @@ import origami.crease_pattern.element.Polygon;
 @ApplicationScoped
 @Handles(MouseMode.BACKGROUND_CHANGE_POSITION_26)
 public class MouseHandlerBackgroundChangePosition extends BaseMouseHandler {
-    private final ButtonService buttonService;
+    private final ResetService resetService;
     private final BackgroundModel backgroundModel;
 
     @Override
@@ -53,8 +53,8 @@ public class MouseHandlerBackgroundChangePosition extends BaseMouseHandler {
     }
 
     @Inject
-    public MouseHandlerBackgroundChangePosition(ButtonService buttonService, BackgroundModel backgroundModel) {
-        this.buttonService = buttonService;
+    public MouseHandlerBackgroundChangePosition(ResetService resetService, BackgroundModel backgroundModel) {
+        this.resetService = resetService;
         this.backgroundModel = backgroundModel;
     }
 
@@ -69,7 +69,7 @@ public class MouseHandlerBackgroundChangePosition extends BaseMouseHandler {
             s_3.set(d.getLineStep().get(2));
             LineSegment s_4 = new LineSegment();
             s_4.set(d.getLineStep().get(3));
-            buttonService.Button_shared_operation();
+            resetService.Button_shared_operation();
 
             backgroundModel.setLockBackground(false);
 

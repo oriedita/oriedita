@@ -28,6 +28,9 @@ public class Editor {
         this.bottomPanel = bottomPanel;
         this.topPanel = topPanel;
         this.leftPanel = leftPanel;
+
+        leftPanel.init();
+        topPanel.init();
         $$$setupUI$$$();
     }
 

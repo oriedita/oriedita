@@ -26,6 +26,7 @@
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <actionCommand value="lineWidthDecreaseAction"/>
               <icon value="ppp/senhaba_sage.png"/>
             </properties>
           </component>
@@ -34,6 +35,7 @@
               <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <actionCommand value="lineWidthIncreaseAction"/>
               <icon value="ppp/senhaba_age.png"/>
             </properties>
           </component>
@@ -42,6 +44,7 @@
               <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <actionCommand value="pointSizeDecreaseAction"/>
               <icon value="ppp/tenhaba_sage.png"/>
             </properties>
           </component>
@@ -50,6 +53,7 @@
               <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <actionCommand value="pointSizeIncreaseAction"/>
               <icon value="ppp/tenhaba_age.png"/>
             </properties>
           </component>
@@ -58,6 +62,7 @@
               <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <actionCommand value="antiAliasToggleAction"/>
               <text value="a_a"/>
             </properties>
           </component>
@@ -66,6 +71,7 @@
               <grid row="0" column="5" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <actionCommand value="lineStyleChangeAction"/>
               <icon value="ppp/orisen_hyougen.png"/>
             </properties>
           </component>
@@ -84,6 +90,7 @@
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <actionCommand value="colRedAction"/>
               <background color="-6908266"/>
               <text value="M"/>
             </properties>
@@ -93,6 +100,7 @@
               <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <actionCommand value="colBlueAction"/>
               <background color="-6908266"/>
               <text value="V"/>
             </properties>
@@ -102,6 +110,7 @@
               <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <actionCommand value="colBlackAction"/>
               <background color="-6908266"/>
               <text value="E"/>
             </properties>
@@ -111,6 +120,7 @@
               <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <actionCommand value="colCyanAction"/>
               <background color="-6908266"/>
               <text value="A"/>
             </properties>
@@ -130,6 +140,7 @@
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <actionCommand value="toMountainAction"/>
               <foreground color="-65536"/>
               <icon value="ppp/M_nisuru.png"/>
             </properties>
@@ -139,6 +150,7 @@
               <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <actionCommand value="toValleyAction"/>
               <foreground color="-16776961"/>
               <icon value="ppp/V_nisuru.png"/>
             </properties>
@@ -148,6 +160,7 @@
               <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <actionCommand value="toEdgeAction"/>
               <icon value="ppp/E_nisuru.png"/>
             </properties>
           </component>
@@ -156,6 +169,7 @@
               <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <actionCommand value="toAuxAction"/>
               <foreground color="-10172216"/>
               <icon value="ppp/HK_nisuru.png"/>
             </properties>
@@ -178,6 +192,7 @@
               </grid>
             </constraints>
             <properties>
+              <actionCommand value="zen_yama_tani_henkanAction"/>
               <text value="AC"/>
             </properties>
           </component>
@@ -186,6 +201,7 @@
               <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <actionCommand value="senbun_henkan2Action"/>
               <icon value="ppp/senbun_henkan2.png"/>
             </properties>
           </component>
@@ -194,6 +210,7 @@
               <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <actionCommand value="senbun_henkanAction"/>
               <icon value="ppp/senbun_henkan.png"/>
             </properties>
           </component>
@@ -212,6 +229,7 @@
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <actionCommand value="in_L_col_changeAction"/>
               <icon value="ppp/in_L_col_change.png"/>
             </properties>
           </component>
@@ -220,6 +238,7 @@
               <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <actionCommand value="on_L_col_changeButton"/>
               <icon value="ppp/on_L_col_change.png"/>
             </properties>
           </component>
@@ -238,6 +257,7 @@
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <actionCommand value="v_addAction"/>
               <icon value="ppp/v_add.png"/>
             </properties>
           </component>
@@ -246,6 +266,7 @@
               <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <actionCommand value="v_delAction"/>
               <icon value="ppp/v_del.png"/>
             </properties>
           </component>
@@ -254,6 +275,7 @@
               <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <actionCommand value="v_del_ccAction"/>
               <icon value="ppp/v_del_cc.png"/>
             </properties>
           </component>
@@ -262,6 +284,7 @@
               <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <actionCommand value="v_del_allAction"/>
               <icon value="ppp/v_del_all.png"/>
             </properties>
           </component>
@@ -270,6 +293,7 @@
               <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <actionCommand value="v_del_all_ccAction"/>
               <icon value="ppp/v_del_all_cc.png"/>
             </properties>
           </component>
@@ -305,6 +329,7 @@
               <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <actionCommand value="drawTwoColoredCpAction"/>
               <icon value="ppp/2syoku_tenkaizu.png"/>
             </properties>
           </component>
@@ -323,6 +348,7 @@
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <actionCommand value="suitei_01Action"/>
               <text value="CP_rcg"/>
             </properties>
           </component>
@@ -331,6 +357,7 @@
               <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <actionCommand value="koteimen_siteiAction"/>
               <text value="S_face"/>
             </properties>
           </component>
@@ -349,6 +376,7 @@
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <actionCommand value="suitei_02Action"/>
               <icon value="ppp/suitei_02.png"/>
             </properties>
           </component>
@@ -357,6 +385,7 @@
               <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <actionCommand value="suitei_03Action"/>
               <icon value="ppp/suitei_03.png"/>
             </properties>
           </component>
@@ -373,6 +402,7 @@
               <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <actionCommand value="coloredXRayDecreaseAction"/>
               <icon value="ppp/ck4_color_sage.png"/>
             </properties>
           </component>
@@ -381,6 +411,7 @@
               <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <actionCommand value="coloredXRayIncreaseAction"/>
               <icon value="ppp/ck4_color_age.png"/>
             </properties>
           </component>
@@ -399,6 +430,7 @@
               <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <actionCommand value="perpendicularDrawAction"/>
               <icon value="ppp/suisen.png"/>
             </properties>
           </component>
@@ -418,6 +450,7 @@
               <grid row="4" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <actionCommand value="lineSegmentDivisionSetAction"/>
               <text value="Set"/>
             </properties>
           </component>
@@ -426,6 +459,7 @@
               <grid row="4" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <actionCommand value="senbun_b_nyuryokuAction"/>
               <icon value="ppp/senbun_b_nyuryoku.png"/>
             </properties>
           </component>
@@ -434,6 +468,7 @@
               <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <actionCommand value="all_s_step_to_orisenAction"/>
               <icon value="ppp/all_s_step_to_orisen.png"/>
             </properties>
           </component>
@@ -442,6 +477,7 @@
               <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <actionCommand value="voronoiAction"/>
               <icon value="ppp/Voronoi.png"/>
             </properties>
           </component>
@@ -450,6 +486,7 @@
               <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <actionCommand value="parallelDrawAction"/>
               <icon value="ppp/heikousen.png"/>
             </properties>
           </component>
@@ -458,6 +495,7 @@
               <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <actionCommand value="fishBoneDrawAction"/>
               <icon value="ppp/sakananohone.png"/>
             </properties>
           </component>
@@ -466,6 +504,7 @@
               <grid row="3" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <actionCommand value="setParallelDrawWidthAction"/>
               <icon value="ppp/heikousen_haba_sitei.png"/>
             </properties>
           </component>
@@ -474,6 +513,7 @@
               <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <actionCommand value="doubleSymmetricDrawAction"/>
               <icon value="ppp/fuku_orikaesi.png"/>
             </properties>
           </component>
@@ -482,6 +522,7 @@
               <grid row="3" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <actionCommand value="makeFlatFoldableAction"/>
               <icon value="ppp/oritatami_kanousen.png"/>
             </properties>
           </component>
@@ -490,6 +531,7 @@
               <grid row="2" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <actionCommand value="continuousSymmetricDrawAction"/>
               <icon value="ppp/renzoku_orikaesi.png"/>
             </properties>
           </component>
@@ -498,6 +540,7 @@
               <grid row="1" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <actionCommand value="symmetricDrawAction"/>
               <icon value="ppp/orikaesi.png"/>
             </properties>
           </component>
@@ -506,6 +549,7 @@
               <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <actionCommand value="angleBisectorAction"/>
               <icon value="ppp/kaku_toubun.png"/>
               <text value=""/>
             </properties>
@@ -515,6 +559,7 @@
               <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <actionCommand value="lengthenCrease2Action"/>
               <icon value="ppp/senbun_entyou_2.png"/>
             </properties>
           </component>
@@ -523,6 +568,7 @@
               <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <actionCommand value="lengthenCreaseAction"/>
               <icon value="ppp/senbun_entyou.png"/>
             </properties>
           </component>
@@ -531,6 +577,7 @@
               <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <actionCommand value="drawCreaseRestrictedAction"/>
               <icon value="ppp/senbun_nyuryoku11.png"/>
             </properties>
           </component>
@@ -539,6 +586,7 @@
               <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <actionCommand value="rabbitEarAction"/>
               <icon value="ppp/naishin.png"/>
             </properties>
           </component>
@@ -547,6 +595,7 @@
               <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <actionCommand value="foldableLineAction"/>
               <icon value="ppp/oritatami_kanousen_and_kousitenkei_simple.png"/>
             </properties>
           </component>
@@ -555,7 +604,9 @@
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <actionCommand value="drawCreaseFreeAction"/>
               <icon value="ppp/senbun_nyuryoku.png"/>
+              <text value=""/>
             </properties>
           </component>
         </children>
@@ -573,6 +624,7 @@
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <actionCommand value="selectAction"/>
               <text value="sel"/>
             </properties>
           </component>
@@ -581,6 +633,7 @@
               <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <actionCommand value="selectAllAction"/>
               <text value="s_al"/>
             </properties>
           </component>
@@ -589,6 +642,7 @@
               <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <actionCommand value="moveAction"/>
               <text value="move"/>
             </properties>
           </component>
@@ -597,6 +651,7 @@
               <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <actionCommand value="move2p2pAction"/>
               <text value="mv_4p"/>
             </properties>
           </component>
@@ -605,6 +660,7 @@
               <grid row="2" column="0" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <actionCommand value="reflectAction"/>
               <icon value="ppp/kyouei.png"/>
             </properties>
           </component>
@@ -613,6 +669,7 @@
               <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <actionCommand value="unselectAction"/>
               <text value="unsel"/>
             </properties>
           </component>
@@ -621,6 +678,7 @@
               <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <actionCommand value="unselectAllAction"/>
               <text value="uns_al"/>
             </properties>
           </component>
@@ -629,6 +687,7 @@
               <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <actionCommand value="copyAction"/>
               <text value="copy"/>
             </properties>
           </component>
@@ -637,6 +696,7 @@
               <grid row="1" column="3" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <actionCommand value="copy2p2pAction"/>
               <text value="cp_4p"/>
             </properties>
           </component>
@@ -645,6 +705,7 @@
               <grid row="2" column="2" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <actionCommand value="d_s_LAction"/>
               <text value="d_s_L"/>
             </properties>
           </component>
@@ -663,6 +724,7 @@
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <actionCommand value="gridSizeDecreaseAction"/>
               <icon value="ppp/kitei2.png"/>
             </properties>
           </component>
@@ -681,6 +743,7 @@
               <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <actionCommand value="gridSizeSetAction"/>
               <text value="S"/>
             </properties>
           </component>
@@ -689,6 +752,7 @@
               <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <actionCommand value="gridSizeIncreaseAction"/>
               <icon value="ppp/kitei.png"/>
             </properties>
           </component>
@@ -697,6 +761,7 @@
               <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <actionCommand value="gridColorAction"/>
               <text value="Color"/>
             </properties>
           </component>
@@ -705,6 +770,7 @@
               <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <actionCommand value="gridLineWidthDecreaseAction"/>
               <icon value="ppp/kousi_senhaba_sage.png"/>
             </properties>
           </component>
@@ -713,6 +779,7 @@
               <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <actionCommand value="gridLineWidthIncreaseAction"/>
               <icon value="ppp/kousi_senhaba_age.png"/>
             </properties>
           </component>
@@ -721,6 +788,7 @@
               <grid row="1" column="2" row-span="1" col-span="3" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <actionCommand value="changeGridStateAction"/>
               <icon value="ppp/i_kitei_jyoutai.png"/>
             </properties>
           </component>
@@ -729,6 +797,7 @@
               <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <actionCommand value="moveIntervalGridVerticalAction"/>
               <icon value="ppp/memori_tate_idou.png"/>
             </properties>
           </component>
@@ -748,6 +817,7 @@
               <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <actionCommand value="setIntervalGridSizeAction"/>
               <text value="S"/>
             </properties>
           </component>
@@ -756,6 +826,7 @@
               <grid row="2" column="3" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <actionCommand value="moveIntervalGridHorizontalAction"/>
               <icon value="ppp/memori_yoko_idou.png"/>
             </properties>
           </component>
@@ -764,6 +835,7 @@
               <grid row="2" column="4" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <actionCommand value="intervalGridColorAction"/>
               <text value="Color"/>
             </properties>
           </component>
@@ -782,6 +854,7 @@
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <actionCommand value="lineSegmentDeleteAction"/>
               <icon value="ppp/senbun_sakujyo.png"/>
             </properties>
           </component>
@@ -790,6 +863,7 @@
               <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <actionCommand value="edgeLineSegmentDeleteAction"/>
               <icon value="ppp/kuro_senbun_sakujyo.png"/>
             </properties>
           </component>
@@ -798,6 +872,7 @@
               <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <actionCommand value="auxLiveLineSegmentDeleteAction"/>
               <foreground color="-10172216"/>
               <icon value="ppp/senbun3_sakujyo.png"/>
             </properties>
@@ -807,6 +882,7 @@
               <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <actionCommand value="trimBranchesAction"/>
               <icon value="ppp/eda_kesi.png"/>
             </properties>
           </component>
@@ -882,14 +958,16 @@
               <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <actionCommand value="setGridParametersAction"/>
               <text value="S"/>
             </properties>
           </component>
-          <component id="cc344" class="javax.swing.JButton" binding="resetButton" default-binding="true">
+          <component id="cc344" class="javax.swing.JButton" binding="resetGridButton">
             <constraints>
               <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <actionCommand value="resetGridAction"/>
               <text value="Reset"/>
             </properties>
           </component>

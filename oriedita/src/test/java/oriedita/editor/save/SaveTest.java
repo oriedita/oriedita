@@ -112,7 +112,16 @@ public class SaveTest {
         SelectedTextModel textModel = new SelectedTextModel();
         TextWorker textWorker = new TextWorker();
         mainCreasePatternWorker = new CreasePattern_Worker_Impl(creasePatternCamera, new DequeHistoryState(), new DequeHistoryState(), new FoldLineSet(), new FoldLineSet(), new SingleTaskExecutorServiceImpl(), canvasModel, applicationModel, gridModel, foldedFigureModel, fileModel, textWorker, textModel);
-        ResetService resetService = () -> {
+        ResetService resetService = new ResetService() {
+            @Override
+            public void developmentView_initialization() {
+
+            }
+
+            @Override
+            public void Button_shared_operation() {
+
+            }
         };
         fileSaveService = new FileSaveServiceImpl(null, creasePatternCamera, mainCreasePatternWorker, null, null, fileModel, applicationModel, new FoldedFiguresList(), resetService, null);
     }

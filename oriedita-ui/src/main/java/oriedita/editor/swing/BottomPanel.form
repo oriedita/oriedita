@@ -53,6 +53,7 @@
           <grid row="0" column="19" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
+          <actionCommand value="foldedFigureAntiAliasAction"/>
           <text value="a_a"/>
         </properties>
       </component>
@@ -61,6 +62,7 @@
           <grid row="0" column="20" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
+          <actionCommand value="shadowAction"/>
           <text value="S"/>
         </properties>
       </component>
@@ -69,6 +71,7 @@
           <grid row="0" column="21" row-span="1" col-span="1" vsize-policy="3" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
+          <actionCommand value="frontColorButton"/>
           <icon value="ppp/F_color.png"/>
           <text value="FC"/>
         </properties>
@@ -78,6 +81,7 @@
           <grid row="0" column="22" row-span="1" col-span="1" vsize-policy="3" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
+          <actionCommand value="backColorAction"/>
           <icon value="ppp/B_color.png"/>
           <text value="BC"/>
         </properties>
@@ -87,6 +91,7 @@
           <grid row="0" column="23" row-span="1" col-span="1" vsize-policy="3" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
+          <actionCommand value="lineColorAction"/>
           <icon value="ppp/L_color.png"/>
           <text value="LC"/>
         </properties>
@@ -137,6 +142,7 @@
           <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
+          <actionCommand value="anotherSolutionAction"/>
           <text value="a_s"/>
         </properties>
       </component>
@@ -163,6 +169,7 @@
           <grid row="0" column="6" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
+          <actionCommand value="goToFoldedFigureAction"/>
           <text value="Go"/>
         </properties>
       </component>
@@ -226,6 +233,7 @@
           <grid row="0" column="7" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
+          <actionCommand value="constraintAction"/>
           <text value="C"/>
           <toolTipText value="Add Constraints"/>
         </properties>
