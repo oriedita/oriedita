@@ -81,7 +81,7 @@ public class Fold {
         return save1;
     }
 
-    private LineColor getColor(FoldEdgeAssignment edgeAssignment) {
+    public static LineColor getColor(FoldEdgeAssignment edgeAssignment) {
         switch (edgeAssignment) {
             case BORDER:
                 return LineColor.BLACK_0;
