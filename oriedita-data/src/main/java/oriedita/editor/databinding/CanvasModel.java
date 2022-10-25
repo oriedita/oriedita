@@ -1,10 +1,8 @@
 package oriedita.editor.databinding;
 
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.enterprise.context.Dependent;
 import jakarta.inject.Inject;
-import jakarta.inject.Singleton;
-import oriedita.editor.action.FoldedFigureOperationMode;
+import oriedita.editor.handler.FoldedFigureOperationMode;
 import oriedita.editor.canvas.FoldLineAdditionalInputMode;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.canvas.MouseWheelTarget;
