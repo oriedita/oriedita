@@ -11,7 +11,15 @@ import origami.crease_pattern.LineSegmentSet;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 
 public class Cp {
 

@@ -6,8 +6,13 @@ import oriedita.editor.databinding.FoldedFigureModel;
 import oriedita.editor.databinding.MeasuresModel;
 import oriedita.editor.service.ButtonService;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import java.awt.Dimension;
+import java.awt.Insets;
 
 public class FoldedFigureResize extends JPanel {
     private JButton foldedFigureSizeDecreaseButton;

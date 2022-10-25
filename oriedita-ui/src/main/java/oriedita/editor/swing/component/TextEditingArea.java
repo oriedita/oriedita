@@ -10,8 +10,8 @@ import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.text.Text;
 import origami.crease_pattern.element.Point;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JTextArea;
+import java.awt.Rectangle;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyAdapter;

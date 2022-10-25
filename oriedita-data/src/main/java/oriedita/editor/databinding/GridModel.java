@@ -1,7 +1,6 @@
 package oriedita.editor.databinding;
 
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.enterprise.context.Dependent;
 import jakarta.inject.Inject;
 import origami.Epsilon;
 

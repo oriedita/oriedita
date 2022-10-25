@@ -15,7 +15,13 @@ import origami.crease_pattern.worker.WireFrame_Worker;
 import origami.folding.HierarchyList;
 import origami.folding.constraint.CustomConstraint;
 
-import java.awt.*;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.GradientPaint;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Path2D;
 

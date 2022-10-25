@@ -13,7 +13,8 @@ import origami.crease_pattern.element.Point;
 import origami.crease_pattern.worker.WireFrame_Worker;
 import origami.folding.FoldedFigure;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics;
 
 public class WireFrame_Worker_Drawer {
     private final WireFrame_Worker wireFrame_worker;

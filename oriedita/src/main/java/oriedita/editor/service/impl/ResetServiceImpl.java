@@ -4,7 +4,13 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import oriedita.editor.canvas.CreasePattern_Worker;
-import oriedita.editor.databinding.*;
+import oriedita.editor.databinding.AngleSystemModel;
+import oriedita.editor.databinding.CameraModel;
+import oriedita.editor.databinding.CanvasModel;
+import oriedita.editor.databinding.FoldedFigureModel;
+import oriedita.editor.databinding.FoldedFiguresList;
+import oriedita.editor.databinding.GridModel;
+import oriedita.editor.databinding.InternalDivisionRatioModel;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.service.ResetService;
 

@@ -1,10 +1,9 @@
 package oriedita.editor.databinding;
 
 
-import oriedita.editor.AbstractModel;
-
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import oriedita.editor.AbstractModel;
 
 @ApplicationScoped
 public class InternalDivisionRatioModel extends AbstractModel {

@@ -12,11 +12,13 @@ import oriedita.editor.exception.FileReadingException;
 import oriedita.editor.service.ApplicationModelPersistenceService;
 import oriedita.editor.service.FileSaveService;
 import oriedita.editor.service.LookAndFeelService;
-import oriedita.editor.swing.dialog.LoadingDialog;
 import oriedita.editor.swing.dialog.LoadingDialogUtil;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+import java.awt.Font;
+import java.awt.FontFormatException;
+import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;

@@ -9,7 +9,7 @@ import oriedita.editor.exception.FileReadingException;
 import oriedita.editor.save.Save;
 import oriedita.editor.service.FileSaveService;
 
-import javax.swing.*;
+import javax.swing.JOptionPane;
 import java.awt.event.ActionEvent;
 import java.io.File;
 

@@ -10,8 +10,23 @@ import oriedita.editor.databinding.ApplicationModel;
 import oriedita.editor.service.LookAndFeelService;
 import oriedita.editor.tools.LookAndFeelUtil;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.AbstractButton;
+import javax.swing.ImageIcon;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JSpinner;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.EventQueue;
+import java.awt.Font;
+import java.awt.Frame;
+import java.awt.KeyboardFocusManager;
+import java.awt.Rectangle;
 import java.net.URL;
 
 @ApplicationScoped
@@ -23,6 +38,25 @@ public class LookAndFeelServiceImpl implements LookAndFeelService {
     public LookAndFeelServiceImpl(FrameProvider frameProvider, ApplicationModel applicationModel) {
         this.frameProvider = frameProvider;
         this.applicationModel = applicationModel;
+    }
+
+    private static void updateUI2() {
+        KeyboardFocusManager keyboardFocusManager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
+        Component permanentFocusOwner = keyboardFocusManager.getPermanentFocusOwner();
+        JSpinner spinner = (permanentFocusOwner != null)
+                ? (JSpinner) SwingUtilities.getAncestorOfClass(JSpinner.class, permanentFocusOwner)
+                : null;
+
+        FlatLaf.updateUI();
+
+        if (spinner != null && keyboardFocusManager.getPermanentFocusOwner() == null) {
+            JComponent editor = spinner.getEditor();
+            JTextField textField = (editor instanceof JSpinner.DefaultEditor)
+                    ? ((JSpinner.DefaultEditor) editor).getTextField()
+                    : null;
+            if (textField != null)
+                textField.requestFocusInWindow();
+        }
     }
 
     @Override
@@ -89,26 +123,6 @@ public class LookAndFeelServiceImpl implements LookAndFeelService {
                 ex.printStackTrace();
             }
         });
-    }
-
-
-    private static void updateUI2() {
-        KeyboardFocusManager keyboardFocusManager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
-        Component permanentFocusOwner = keyboardFocusManager.getPermanentFocusOwner();
-        JSpinner spinner = (permanentFocusOwner != null)
-                ? (JSpinner) SwingUtilities.getAncestorOfClass(JSpinner.class, permanentFocusOwner)
-                : null;
-
-        FlatLaf.updateUI();
-
-        if (spinner != null && keyboardFocusManager.getPermanentFocusOwner() == null) {
-            JComponent editor = spinner.getEditor();
-            JTextField textField = (editor instanceof JSpinner.DefaultEditor)
-                    ? ((JSpinner.DefaultEditor) editor).getTextField()
-                    : null;
-            if (textField != null)
-                textField.requestFocusInWindow();
-        }
     }
 
     @Override

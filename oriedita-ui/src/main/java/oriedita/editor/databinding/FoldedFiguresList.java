@@ -4,7 +4,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import oriedita.editor.drawing.FoldedFigure_Drawer;
 
-import javax.swing.*;
+import javax.swing.DefaultComboBoxModel;
 
 @ApplicationScoped
 public class FoldedFiguresList extends DefaultComboBoxModel<FoldedFigure_Drawer> {

@@ -5,7 +5,11 @@ import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
 import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
-import origami.crease_pattern.element.*;
+import origami.crease_pattern.element.Circle;
+import origami.crease_pattern.element.LineColor;
+import origami.crease_pattern.element.LineSegment;
+import origami.crease_pattern.element.Point;
+import origami.crease_pattern.element.StraightLine;
 
 @ApplicationScoped
 @Handles(MouseMode.CIRCLE_DRAW_INVERTED_46)

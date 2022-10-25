@@ -12,7 +12,8 @@ import origami.crease_pattern.element.Point;
 import origami.crease_pattern.worker.linesegmentset.GetBoundingBox;
 import origami.folding.FoldedFigure;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics;
 
 public class FoldedFigure_Drawer implements Foldable {
     private final FoldedFigure_01 foldedFigure;
@@ -20,22 +21,17 @@ public class FoldedFigure_Drawer implements Foldable {
     private final WireFrame_Worker_Drawer wireFrame_worker_drawer1;
     private final WireFrame_Worker_Drawer wireFrame_worker_drawer2;
     private final FoldedFigureModel foldedFigureModel = new FoldedFigureModel();
-
-    private origami.crease_pattern.element.Polygon boundingBox;
-
-    private Color foldedFigure_F_color = new Color(255, 255, 50);//Folded surface color
-    private Color foldedFigure_B_color = new Color(233, 233, 233);//The color of the back side of the folded figure
-    private Color foldedFigure_L_color = Color.black;//Folded line color
-
-    private double d_foldedFigure_scale_factor = 1.0;//Scale factor of folded view
-    private double d_foldedFigure_rotation_correction = 0.0;//Correction angle of rotation display angle of folded view
-
     private final Camera foldedFigureCamera = new Camera();
     private final Camera foldedFigureFrontCamera = new Camera();//折り上がり
     private final Camera foldedFigureRearCamera = new Camera();
     private final Camera transparentFrontCamera = new Camera();
     private final Camera transparentRearCamera = new Camera();
-
+    private origami.crease_pattern.element.Polygon boundingBox;
+    private Color foldedFigure_F_color = new Color(255, 255, 50);//Folded surface color
+    private Color foldedFigure_B_color = new Color(233, 233, 233);//The color of the back side of the folded figure
+    private Color foldedFigure_L_color = Color.black;//Folded line color
+    private double d_foldedFigure_scale_factor = 1.0;//Scale factor of folded view
+    private double d_foldedFigure_rotation_correction = 0.0;//Correction angle of rotation display angle of folded view
     private boolean transparencyColor = false;//1 if the transparency is in color, 0 otherwise
     private int transparent_transparency = 16;//Transparency when drawing a transparent diagram in color
 
@@ -43,14 +39,6 @@ public class FoldedFigure_Drawer implements Foldable {
      * Standard face, -1 means try to find the face which contains 0,0 or select face 1. Can be updated between folds.
      */
     private int startingFaceId = -1;
-
-    public int getStartingFaceId() {
-        return startingFaceId;
-    }
-
-    public void setStartingFaceId(int startingFaceId) {
-        this.startingFaceId = startingFaceId;
-    }
 
     public FoldedFigure_Drawer(FoldedFigure_01 foldedFigure) {
         this.foldedFigure = foldedFigure;
@@ -61,6 +49,14 @@ public class FoldedFigure_Drawer implements Foldable {
         //Camera settings ------------------------------------------------------------------
         foldedFigure_camera_initialize();
         //This is the end of the camera settings ----------------------------------------------------
+    }
+
+    public int getStartingFaceId() {
+        return startingFaceId;
+    }
+
+    public void setStartingFaceId(int startingFaceId) {
+        this.startingFaceId = startingFaceId;
     }
 
     public void foldedFigure_camera_initialize() {
@@ -169,13 +165,13 @@ public class FoldedFigure_Drawer implements Foldable {
     }
 
     @Override
-    public void setTextResult(String textResult) {
-        foldedFigure.text_result = textResult;
+    public String getTextResult() {
+        return foldedFigure.text_result;
     }
 
     @Override
-    public String getTextResult() {
-        return foldedFigure.text_result;
+    public void setTextResult(String textResult) {
+        foldedFigure.text_result = textResult;
     }
 
     public void createTwoColorCreasePattern(Camera camera_of_foldLine_diagram, LineSegmentSet Ss0) throws InterruptedException {//Two-color crease pattern

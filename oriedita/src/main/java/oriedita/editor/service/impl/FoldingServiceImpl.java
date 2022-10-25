@@ -26,7 +26,8 @@ import origami.crease_pattern.LineSegmentSet;
 import origami.crease_pattern.element.Point;
 import origami.folding.FoldedFigure;
 
-import javax.swing.*;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 
 @ApplicationScoped
 public class FoldingServiceImpl implements FoldingService {

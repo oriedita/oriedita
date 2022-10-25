@@ -2,7 +2,12 @@ package origami.crease_pattern;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.tinylog.Logger;
-import origami.crease_pattern.element.*;
+import origami.crease_pattern.element.Line;
+import origami.crease_pattern.element.LineColor;
+import origami.crease_pattern.element.LineSegment;
+import origami.crease_pattern.element.Point;
+import origami.crease_pattern.element.Point_p;
+import origami.crease_pattern.element.Polygon;
 import origami.data.ListArray;
 import origami.data.save.PointSave;
 import origami.folding.element.Face;

@@ -10,7 +10,8 @@ import origami.crease_pattern.FoldLineSet;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
 public abstract class BaseMouseHandlerLineTransform extends BaseMouseHandlerLineSelect {

@@ -4,7 +4,8 @@ import org.lwjgl.PointerBuffer;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.util.tinyfd.TinyFileDialogs;
 
-import java.awt.*;
+import java.awt.FileDialog;
+import java.awt.Frame;
 
 /**
  * Utilities for showing file open/save dialogs.

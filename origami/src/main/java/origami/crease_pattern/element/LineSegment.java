@@ -1,6 +1,6 @@
 package origami.crease_pattern.element;
 
-import java.awt.*;
+import java.awt.Color;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;

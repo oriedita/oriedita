@@ -2,11 +2,11 @@ package oriedita.editor.action;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import oriedita.editor.handler.FoldedFigureOperationMode;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.databinding.FoldedFiguresList;
 import oriedita.editor.drawing.FoldedFigure_Drawer;
+import oriedita.editor.handler.FoldedFigureOperationMode;
 
 import java.awt.event.ActionEvent;
 

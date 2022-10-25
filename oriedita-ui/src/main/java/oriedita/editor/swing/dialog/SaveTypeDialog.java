@@ -3,8 +3,13 @@ package oriedita.editor.swing.dialog;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JPanel;
+import javax.swing.KeyStroke;
+import java.awt.Frame;
+import java.awt.Insets;
 import java.awt.event.KeyEvent;
 
 public class SaveTypeDialog extends JDialog {

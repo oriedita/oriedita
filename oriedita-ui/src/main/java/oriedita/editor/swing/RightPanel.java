@@ -22,8 +22,16 @@ import oriedita.editor.tools.LookAndFeelUtil;
 import oriedita.editor.tools.StringOp;
 import origami.crease_pattern.element.LineColor;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JColorChooser;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Insets;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 

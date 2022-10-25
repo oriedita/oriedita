@@ -1,6 +1,8 @@
 package oriedita.editor.tools;
 
-import javax.swing.*;
+import javax.swing.AbstractButton;
+import javax.swing.JComponent;
+import javax.swing.KeyStroke;
 import java.awt.event.KeyEvent;
 
 public class KeyStrokeUtil {

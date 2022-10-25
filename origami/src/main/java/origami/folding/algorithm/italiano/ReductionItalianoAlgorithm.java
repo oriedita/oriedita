@@ -1,6 +1,11 @@
 package origami.folding.algorithm.italiano;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * One interesting thing about Italiano algorithm is that it can also be used to

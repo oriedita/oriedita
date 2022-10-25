@@ -3,7 +3,8 @@ package oriedita.editor.text;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import origami.crease_pattern.element.Point;
 
-import java.awt.*;
+import java.awt.Graphics;
+import java.awt.Rectangle;
 import java.io.Serializable;
 
 public class Text implements Serializable {

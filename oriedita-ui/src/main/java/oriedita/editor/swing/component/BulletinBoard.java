@@ -7,7 +7,8 @@ import origami.folding.util.IBulletinBoard;
 
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics;
 import java.util.ArrayList;
 
 @ApplicationScoped

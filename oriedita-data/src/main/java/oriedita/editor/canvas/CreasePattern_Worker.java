@@ -9,12 +9,14 @@ import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.save.Save;
 import origami.crease_pattern.FoldLineSet;
 import origami.crease_pattern.LineSegmentSet;
-import origami.crease_pattern.element.*;
+import origami.crease_pattern.element.Circle;
+import origami.crease_pattern.element.LineColor;
+import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.Polygon;
-import origami.crease_pattern.element.*;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics;
 import java.beans.PropertyChangeEvent;
 import java.util.List;
 

@@ -2,8 +2,10 @@ package oriedita.editor.swing.component;
 
 import oriedita.editor.Colors;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.Icon;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Graphics;
 
 public class ColorIcon implements Icon {
     private final Color color;

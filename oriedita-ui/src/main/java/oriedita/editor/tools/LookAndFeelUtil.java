@@ -4,7 +4,7 @@ import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatLaf;
 import com.formdev.flatlaf.FlatLightLaf;
 
-import javax.swing.*;
+import javax.swing.LookAndFeel;
 import java.lang.reflect.InvocationTargetException;
 
 public class LookAndFeelUtil {

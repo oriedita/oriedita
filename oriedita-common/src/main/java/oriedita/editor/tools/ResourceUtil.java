@@ -2,13 +2,17 @@ package oriedita.editor.tools;
 
 import org.tinylog.Logger;
 
-import javax.swing.*;
+import javax.swing.ImageIcon;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.MissingResourceException;
+import java.util.Objects;
+import java.util.Properties;
+import java.util.PropertyResourceBundle;
+import java.util.ResourceBundle;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;

@@ -2,7 +2,11 @@ package origami.crease_pattern.worker.foldlineset;
 
 import org.tinylog.Logger;
 import origami.Epsilon;
-import origami.crease_pattern.*;
+import origami.crease_pattern.FlatFoldabilityViolation;
+import origami.crease_pattern.FoldLineSet;
+import origami.crease_pattern.LittleBigLittleViolation;
+import origami.crease_pattern.OritaCalc;
+import origami.crease_pattern.PointLineMap;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;

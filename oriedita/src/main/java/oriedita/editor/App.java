@@ -7,10 +7,17 @@ import jico.Ico;
 import jico.ImageReadException;
 import org.tinylog.Logger;
 import oriedita.editor.canvas.CreasePattern_Worker;
-import oriedita.editor.databinding.*;
+import oriedita.editor.databinding.AngleSystemModel;
+import oriedita.editor.databinding.ApplicationModel;
+import oriedita.editor.databinding.BackgroundModel;
+import oriedita.editor.databinding.CameraModel;
+import oriedita.editor.databinding.CanvasModel;
+import oriedita.editor.databinding.FileModel;
+import oriedita.editor.databinding.FoldedFigureModel;
+import oriedita.editor.databinding.FoldedFiguresList;
+import oriedita.editor.databinding.GridModel;
 import oriedita.editor.drawing.FoldedFigure_Drawer;
 import oriedita.editor.drawing.FoldedFigure_Worker_Drawer;
-import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.service.ButtonService;
 import oriedita.editor.service.LookAndFeelService;
 import oriedita.editor.service.ResetService;
@@ -19,11 +26,31 @@ import oriedita.editor.swing.Editor;
 import oriedita.editor.swing.dialog.HelpDialog;
 import oriedita.editor.tools.ResourceUtil;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
+import javax.swing.AbstractAction;
+import javax.swing.AbstractButton;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JToolTip;
+import javax.swing.KeyStroke;
+import javax.swing.Popup;
+import javax.swing.PopupFactory;
+import javax.swing.WindowConstants;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Queue;
 
 @ApplicationScoped
 public class App {
@@ -92,6 +119,16 @@ public class App {
         this.angleSystemModel = angleSystemModel;
         this.cameraModel = cameraModel;
         this.resetService = resetService;
+    }
+
+    public static boolean isPointInScreen(Point pos) {
+        for (GraphicsDevice gd : GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()) {
+            if (gd.getDefaultConfiguration().getBounds().contains(pos)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public void start() {
@@ -282,16 +319,6 @@ public class App {
         explanation.setVisible(applicationModel.getHelpVisible());
         //focus back to here after creating dialog
         frame.requestFocus();
-    }
-
-    public static boolean isPointInScreen(Point pos) {
-        for (GraphicsDevice gd : GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()) {
-            if (gd.getDefaultConfiguration().getBounds().contains(pos)) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     private void setData(ApplicationModel applicationModel) {

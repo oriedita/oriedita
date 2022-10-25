@@ -2,10 +2,10 @@ package oriedita.editor.databinding;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import oriedita.editor.handler.FoldedFigureOperationMode;
 import oriedita.editor.canvas.FoldLineAdditionalInputMode;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.canvas.MouseWheelTarget;
+import oriedita.editor.handler.FoldedFigureOperationMode;
 import origami.crease_pattern.element.LineColor;
 
 import java.beans.PropertyChangeListener;

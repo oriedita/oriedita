@@ -20,7 +20,11 @@ import origami.folding.FoldedFigure;
 import origami.folding.element.SubFace;
 import origami.folding.util.SortingBox;
 
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;

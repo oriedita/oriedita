@@ -4,7 +4,11 @@ import origami.data.symmetricMatrix.SymmetricMatrix;
 import origami.folding.constraint.CustomConstraint;
 import origami.folding.util.EquivalenceCondition;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class HierarchyList {//This class is used to record and utilize the hierarchical relationship of faces when folded.

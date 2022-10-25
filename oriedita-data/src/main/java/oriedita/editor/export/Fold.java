@@ -2,7 +2,11 @@ package oriedita.editor.export;
 
 import fold.io.CustomFoldReader;
 import fold.io.CustomFoldWriter;
-import fold.model.*;
+import fold.model.Edge;
+import fold.model.FoldEdgeAssignment;
+import fold.model.FoldFile;
+import fold.model.FoldFrame;
+import fold.model.Vertex;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import oriedita.editor.exception.FileReadingException;

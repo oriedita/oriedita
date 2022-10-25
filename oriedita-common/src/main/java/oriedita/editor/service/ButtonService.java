@@ -1,8 +1,10 @@
 package oriedita.editor.service;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
+import javax.swing.AbstractButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.KeyStroke;
+import java.awt.Container;
 import java.util.Map;
 
 public interface ButtonService {

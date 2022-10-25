@@ -7,7 +7,8 @@ import oriedita.editor.save.TextSave;
 import oriedita.editor.text.Text;
 import origami.crease_pattern.element.Point;
 
-import java.awt.*;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
 

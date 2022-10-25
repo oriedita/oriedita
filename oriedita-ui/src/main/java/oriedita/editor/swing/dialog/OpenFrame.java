@@ -5,8 +5,17 @@ import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.service.ButtonService;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JPanel;
+import java.awt.Color;
+import java.awt.FlowLayout;
+import java.awt.Frame;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.beans.PropertyChangeEvent;
 
 public class OpenFrame extends JDialog {

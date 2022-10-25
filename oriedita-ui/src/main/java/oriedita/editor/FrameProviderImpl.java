@@ -2,13 +2,13 @@ package oriedita.editor;
 
 import jakarta.enterprise.context.ApplicationScoped;
 
-import javax.swing.*;
+import javax.swing.JFrame;
 
 /**
  * Provides a pointer to the main JFrame.
  */
 @ApplicationScoped
-public class FrameProvider {
+public class FrameProviderImpl implements FrameProvider {
     private volatile JFrame frame;
 
     private static final Object lock = new Object();

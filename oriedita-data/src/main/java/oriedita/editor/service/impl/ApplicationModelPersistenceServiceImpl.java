@@ -4,15 +4,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.inject.Named;
-import org.jboss.weld.proxy.WeldClientProxy;
 import org.tinylog.Logger;
 import oriedita.editor.FrameProvider;
 import oriedita.editor.databinding.ApplicationModel;
 import oriedita.editor.json.DefaultObjectMapper;
 import oriedita.editor.service.ApplicationModelPersistenceService;
 
-import javax.swing.*;
+import javax.swing.JOptionPane;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;

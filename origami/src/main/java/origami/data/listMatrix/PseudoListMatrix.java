@@ -2,7 +2,11 @@ package origami.data.listMatrix;
 
 import origami.folding.algorithm.AdditionalEstimationAlgorithm;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 /**
  * The idea of PseudoListMatrix is to store, for each i, the values appear in

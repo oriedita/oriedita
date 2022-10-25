@@ -5,8 +5,8 @@ import jakarta.inject.Inject;
 import oriedita.editor.FrameProvider;
 import oriedita.editor.databinding.FoldedFigureModel;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JColorChooser;
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 
 @ApplicationScoped

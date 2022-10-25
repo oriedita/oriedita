@@ -8,23 +8,32 @@ import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import org.tinylog.Logger;
 import oriedita.editor.Colors;
-import oriedita.editor.action.ActionHandler;
-import oriedita.editor.action.ImportAddAction;
-import oriedita.editor.action.ActionType;
 import oriedita.editor.FrameProvider;
+import oriedita.editor.action.ActionType;
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.canvas.MouseMode;
-import oriedita.editor.databinding.*;
+import oriedita.editor.databinding.ApplicationModel;
+import oriedita.editor.databinding.CanvasModel;
+import oriedita.editor.databinding.FileModel;
+import oriedita.editor.databinding.FoldedFigureModel;
+import oriedita.editor.databinding.FoldedFiguresList;
 import oriedita.editor.datatransfer.SaveTransferable;
 import oriedita.editor.exception.FileReadingException;
 import oriedita.editor.save.Save;
 import oriedita.editor.save.SaveProvider;
-import oriedita.editor.service.*;
+import oriedita.editor.service.ButtonService;
+import oriedita.editor.service.FileSaveService;
+import oriedita.editor.service.LookAndFeelService;
+import oriedita.editor.service.ResetService;
+import oriedita.editor.service.TaskExecutorService;
 import oriedita.editor.tools.LookAndFeelUtil;
-import oriedita.editor.action.ImportAction;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
@@ -36,12 +45,6 @@ import java.util.ArrayList;
 
 @ApplicationScoped
 public class AppMenuBar {
-
-    @Inject
-    @ActionHandler(ActionType.IMPORT) ImportAction importAction;
-    @Inject
-    @ActionHandler(ActionType.IMPORT_ADD) ImportAddAction importAddAction;
-
     private final FrameProvider frameProvider;
     private final TaskExecutorService foldingExecutor;
     private final ApplicationModel applicationModel;

@@ -10,7 +10,8 @@ import oriedita.editor.service.FoldingService;
 import origami.crease_pattern.worker.foldlineset.Check4;
 import origami.folding.FoldedFigure;
 
-import javax.swing.*;
+import javax.swing.JCheckBox;
+import javax.swing.JOptionPane;
 import java.awt.event.ActionEvent;
 
 @ApplicationScoped

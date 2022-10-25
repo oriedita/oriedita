@@ -1,6 +1,6 @@
 package oriedita.editor.tools;
 
-import java.awt.*;
+import java.awt.Color;
 
 public class StringOp {//データ格納用のメモ帳
 

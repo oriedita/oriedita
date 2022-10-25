@@ -4,7 +4,7 @@ import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.drawing.tools.Camera;
 import origami.crease_pattern.element.Point;
 
-import java.awt.*;
+import java.awt.Graphics2D;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.EnumSet;

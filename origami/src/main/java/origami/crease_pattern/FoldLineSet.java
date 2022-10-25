@@ -2,9 +2,12 @@ package origami.crease_pattern;
 
 import org.tinylog.Logger;
 import origami.Epsilon;
+import origami.crease_pattern.element.Circle;
+import origami.crease_pattern.element.LineColor;
+import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.Polygon;
-import origami.crease_pattern.element.*;
+import origami.crease_pattern.element.StraightLine;
 import origami.data.quadTree.QuadTree;
 import origami.data.quadTree.adapter.DivideAdapter;
 import origami.data.quadTree.adapter.LineSegmentListEndPointAdapter;
@@ -13,10 +16,12 @@ import origami.data.quadTree.collector.PointCollector;
 import origami.data.save.LineSegmentSave;
 import origami.folding.util.SortingBox;
 
-import java.awt.*;
+import java.awt.Color;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Queue;
-import java.util.*;
+import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**

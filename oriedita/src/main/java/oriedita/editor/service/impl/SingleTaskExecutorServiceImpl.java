@@ -4,7 +4,13 @@ import jakarta.enterprise.context.ApplicationScoped;
 import oriedita.editor.service.TaskExecutorService;
 import oriedita.editor.task.OrieditaTask;
 
-import java.util.concurrent.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 @ApplicationScoped
 public class SingleTaskExecutorServiceImpl implements TaskExecutorService {
