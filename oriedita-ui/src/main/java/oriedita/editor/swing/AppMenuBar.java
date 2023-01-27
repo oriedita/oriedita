@@ -62,15 +62,15 @@ public class AppMenuBar {
     private JCheckBoxMenuItem showPointRangeCheckBox;//点を探す範囲
     private JCheckBoxMenuItem pointOffsetCheckBox;//点を離すかどうか
     private JCheckBoxMenuItem gridInputAssistCheckBox;//高密度用入力をするかどうか
-    private JCheckBoxMenuItem displayCommentsCheckBox;//文章
-    private JCheckBoxMenuItem displayCpLinesCheckBox;//折線
-    private JCheckBoxMenuItem displayAuxLinesCheckBox;//補助活線cyan
-    private JCheckBoxMenuItem displayLiveAuxLinesCheckBox;//補助画線
-    private JCheckBoxMenuItem displayStandardFaceMarksCheckBox;//Marking lines such as crosses and reference planes
+    private JCheckBoxMenuItem showCommentsCheckbox;//文章
+    private JCheckBoxMenuItem showCpLinesCheckBox;//折線
+    private JCheckBoxMenuItem showAuxLinesCheckBox;//補助活線cyan
+    private JCheckBoxMenuItem showLiveAuxLinesCheckBox;//補助画線
+    private JCheckBoxMenuItem showStandardFaceMarksCheckBox;//Marking lines such as crosses and reference planes
     private JCheckBoxMenuItem cpOnTopCheckBox;//展開図を折り上がり予想図の上に描く
     private JCheckBoxMenuItem darkModeCheckBox;
     private JCheckBoxMenuItem preciseZoomCheckBox;
-    private JCheckBoxMenuItem displaySelfIntersectionCheckBox;
+    private JCheckBoxMenuItem showSelfIntersectionCheckBox;
     private JCheckBoxMenuItem useAdvancedCheck4Display;
     private JCheckBoxMenuItem displayTopPanel;
     private JCheckBoxMenuItem displayBottomPanel;
@@ -147,11 +147,11 @@ public class AppMenuBar {
         buttonService.registerButton(showPointRangeCheckBox, "showPointRangeAction");
         buttonService.registerButton(pointOffsetCheckBox, "pointOffsetAction");
         buttonService.registerButton(gridInputAssistCheckBox, "gridInputAssistAction");
-        buttonService.registerButton(displayCommentsCheckBox, "displayCommentsAction");
-        buttonService.registerButton(displayCpLinesCheckBox, "displayCpLinesAction");
-        buttonService.registerButton(displayAuxLinesCheckBox, "displayAuxLinesAction");
-        buttonService.registerButton(displayLiveAuxLinesCheckBox, "displayLiveAuxLinesAction");
-        buttonService.registerButton(displayStandardFaceMarksCheckBox, "displayStandardFaceMarksAction");
+        buttonService.registerButton(showCommentsCheckbox, "displayCommentsAction");
+        buttonService.registerButton(showCpLinesCheckBox, "displayCpLinesAction");
+        buttonService.registerButton(showAuxLinesCheckBox, "displayAuxLinesAction");
+        buttonService.registerButton(showLiveAuxLinesCheckBox, "displayLiveAuxLinesAction");
+        buttonService.registerButton(showStandardFaceMarksCheckBox, "displayStandardFaceMarksAction");
         buttonService.registerButton(displayTopPanel, "displayTopPanel");
         buttonService.registerButton(displayBottomPanel, "displayBottomPanel");
         buttonService.registerButton(displayLeftPanel, "displayLeftPanel");
@@ -162,7 +162,7 @@ public class AppMenuBar {
         buttonService.registerButton(showAutosaveFolderMenuItem, "showAutosaveFolderAction");
         buttonService.registerButton(darkModeCheckBox, "toggleDarkModeAction");
         buttonService.registerButton(preciseZoomCheckBox, "preciseZoomAction");
-        buttonService.registerButton(displaySelfIntersectionCheckBox, "displaySelfIntersectionAction");
+        buttonService.registerButton(showSelfIntersectionCheckBox, "displaySelfIntersectionAction");
         buttonService.registerButton(useAdvancedCheck4Display, "useAdvancedCheck4DisplayAction");
 
         buttonService.registerButton(copyButton, "copyClipboardAction");
@@ -218,11 +218,11 @@ public class AppMenuBar {
             }
             getData(applicationModel);
         });
-        displayCommentsCheckBox.addActionListener(e -> getData(applicationModel));
-        displayCpLinesCheckBox.addActionListener(e -> getData(applicationModel));
-        displayAuxLinesCheckBox.addActionListener(e -> getData(applicationModel));
-        displayLiveAuxLinesCheckBox.addActionListener(e -> getData(applicationModel));
-        displayStandardFaceMarksCheckBox.addActionListener(e -> getData(applicationModel));
+        showCommentsCheckbox.addActionListener(e -> getData(applicationModel));
+        showCpLinesCheckBox.addActionListener(e -> getData(applicationModel));
+        showAuxLinesCheckBox.addActionListener(e -> getData(applicationModel));
+        showLiveAuxLinesCheckBox.addActionListener(e -> getData(applicationModel));
+        showStandardFaceMarksCheckBox.addActionListener(e -> getData(applicationModel));
         cpOnTopCheckBox.addActionListener(e -> getData(applicationModel));
         toggleHelpMenuItem.addActionListener(e -> applicationModel.toggleHelpVisible());
         showAutosaveFolderMenuItem.addActionListener(e -> {
@@ -267,7 +267,7 @@ public class AppMenuBar {
             }
         });
         preciseZoomCheckBox.addActionListener(e -> applicationModel.togglePreciseZoom());
-        displaySelfIntersectionCheckBox.addActionListener(e -> applicationModel.toggleDisplaySelfIntersection());
+        showSelfIntersectionCheckBox.addActionListener(e -> applicationModel.toggleDisplaySelfIntersection());
         useAdvancedCheck4Display.addActionListener(e -> applicationModel.toggleUseAdvancedCheck4Display());
         displayTopPanel.addActionListener(e -> getData(applicationModel));
         displayBottomPanel.addActionListener(e -> getData(applicationModel));
@@ -402,26 +402,30 @@ public class AppMenuBar {
         viewMenu.add(darkModeCheckBox);
         preciseZoomCheckBox = new JCheckBoxMenuItem("Smooth zoom");
         viewMenu.add(preciseZoomCheckBox);
-        showPointRangeCheckBox = new JCheckBoxMenuItem("Show point range");
-        viewMenu.add(showPointRangeCheckBox);
         pointOffsetCheckBox = new JCheckBoxMenuItem("Offset cursor");
         viewMenu.add(pointOffsetCheckBox);
         gridInputAssistCheckBox = new JCheckBoxMenuItem("Grid input assist");
         viewMenu.add(gridInputAssistCheckBox);
-        displayCommentsCheckBox = new JCheckBoxMenuItem("Display comments");
-        viewMenu.add(displayCommentsCheckBox);
-        displayCpLinesCheckBox = new JCheckBoxMenuItem("Display cp lines");
-        viewMenu.add(displayCpLinesCheckBox);
-        displayAuxLinesCheckBox = new JCheckBoxMenuItem("Display aux lines");
-        viewMenu.add(displayAuxLinesCheckBox);
-        displayLiveAuxLinesCheckBox = new JCheckBoxMenuItem("Display live aux lines");
-        viewMenu.add(displayLiveAuxLinesCheckBox);
-        displayStandardFaceMarksCheckBox = new JCheckBoxMenuItem("Display standard face marks");
-        viewMenu.add(displayStandardFaceMarksCheckBox);
+
+        JMenu showMenuGroup = new JMenu("Show");
+        viewMenu.add(showMenuGroup);
+        showPointRangeCheckBox = new JCheckBoxMenuItem("Mouse range");
+        showMenuGroup.add(showPointRangeCheckBox);
+        showCommentsCheckbox = new JCheckBoxMenuItem("Comments");
+        showMenuGroup.add(showCommentsCheckbox);
+        showCpLinesCheckBox = new JCheckBoxMenuItem("Cp lines");
+        showMenuGroup.add(showCpLinesCheckBox);
+        showAuxLinesCheckBox = new JCheckBoxMenuItem("Aux lines");
+        showMenuGroup.add(showAuxLinesCheckBox);
+        showLiveAuxLinesCheckBox = new JCheckBoxMenuItem("Live aux lines");
+        showMenuGroup.add(showLiveAuxLinesCheckBox);
+        showStandardFaceMarksCheckBox = new JCheckBoxMenuItem("Standard face marks");
+        showMenuGroup.add(showStandardFaceMarksCheckBox);
+        showSelfIntersectionCheckBox = new JCheckBoxMenuItem("Self intersection");
+        showMenuGroup.add(showSelfIntersectionCheckBox);
+
         cpOnTopCheckBox = new JCheckBoxMenuItem("Crease pattern on top");
         viewMenu.add(cpOnTopCheckBox);
-        displaySelfIntersectionCheckBox = new JCheckBoxMenuItem("Display self intersection");
-        viewMenu.add(displaySelfIntersectionCheckBox);
         useAdvancedCheck4Display = new JCheckBoxMenuItem("Use Advanced cAMV display");
         viewMenu.add(useAdvancedCheck4Display);
 
@@ -452,15 +456,15 @@ public class AppMenuBar {
         applicationModel.setDisplayPointSpotlight(showPointRangeCheckBox.isSelected());
         applicationModel.setDisplayPointOffset(pointOffsetCheckBox.isSelected());
         applicationModel.setDisplayGridInputAssist(gridInputAssistCheckBox.isSelected());
-        applicationModel.setDisplayComments(displayCommentsCheckBox.isSelected());
-        applicationModel.setDisplayCpLines(displayCpLinesCheckBox.isSelected());
-        applicationModel.setDisplayAuxLines(displayAuxLinesCheckBox.isSelected());
-        applicationModel.setDisplayLiveAuxLines(displayLiveAuxLinesCheckBox.isSelected());
-        applicationModel.setDisplayMarkings(displayStandardFaceMarksCheckBox.isSelected());
+        applicationModel.setDisplayComments(showCommentsCheckbox.isSelected());
+        applicationModel.setDisplayCpLines(showCpLinesCheckBox.isSelected());
+        applicationModel.setDisplayAuxLines(showAuxLinesCheckBox.isSelected());
+        applicationModel.setDisplayLiveAuxLines(showLiveAuxLinesCheckBox.isSelected());
+        applicationModel.setDisplayMarkings(showStandardFaceMarksCheckBox.isSelected());
         applicationModel.setDisplayCreasePatternOnTop(cpOnTopCheckBox.isSelected());
         applicationModel.setLaf(LookAndFeelUtil.determineLafForDarkMode(darkModeCheckBox.isSelected()));
         applicationModel.setPreciseZoom(preciseZoomCheckBox.isSelected());
-        applicationModel.setDisplaySelfIntersection(displaySelfIntersectionCheckBox.isSelected());
+        applicationModel.setDisplaySelfIntersection(showSelfIntersectionCheckBox.isSelected());
         applicationModel.setAdvancedCheck4Display(useAdvancedCheck4Display.isSelected());
         applicationModel.setDisplayTopPanel(displayTopPanel.isSelected());
         applicationModel.setDisplayBottomPanel(displayBottomPanel.isSelected());
@@ -472,15 +476,15 @@ public class AppMenuBar {
         showPointRangeCheckBox.setSelected(applicationModel.getDisplayPointSpotlight());
         pointOffsetCheckBox.setSelected(applicationModel.getDisplayPointOffset());
         gridInputAssistCheckBox.setSelected(applicationModel.getDisplayGridInputAssist());
-        displayCommentsCheckBox.setSelected(applicationModel.getDisplayComments());
-        displayCpLinesCheckBox.setSelected(applicationModel.getDisplayCpLines());
-        displayAuxLinesCheckBox.setSelected(applicationModel.getDisplayAuxLines());
-        displayLiveAuxLinesCheckBox.setSelected(applicationModel.getDisplayLiveAuxLines());
-        displayStandardFaceMarksCheckBox.setSelected(applicationModel.getDisplayMarkings());
+        showCommentsCheckbox.setSelected(applicationModel.getDisplayComments());
+        showCpLinesCheckBox.setSelected(applicationModel.getDisplayCpLines());
+        showAuxLinesCheckBox.setSelected(applicationModel.getDisplayAuxLines());
+        showLiveAuxLinesCheckBox.setSelected(applicationModel.getDisplayLiveAuxLines());
+        showStandardFaceMarksCheckBox.setSelected(applicationModel.getDisplayMarkings());
         cpOnTopCheckBox.setSelected(applicationModel.getDisplayCreasePatternOnTop());
         darkModeCheckBox.setSelected(applicationModel.getLaf().equals(FlatDarkLaf.class.getName()));
         preciseZoomCheckBox.setSelected(applicationModel.isPreciseZoom());
-        displaySelfIntersectionCheckBox.setSelected(applicationModel.getDisplaySelfIntersection());
+        showSelfIntersectionCheckBox.setSelected(applicationModel.getDisplaySelfIntersection());
         useAdvancedCheck4Display.setSelected(applicationModel.getAdvancedCheck4Display());
         displayTopPanel.setSelected(applicationModel.getDisplayTopPanel());
         displayBottomPanel.setSelected(applicationModel.getDisplayBottomPanel());
