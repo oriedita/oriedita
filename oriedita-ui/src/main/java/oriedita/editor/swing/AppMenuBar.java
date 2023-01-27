@@ -27,7 +27,6 @@ import oriedita.editor.service.LookAndFeelService;
 import oriedita.editor.service.ResetService;
 import oriedita.editor.service.TaskExecutorService;
 import oriedita.editor.tools.LookAndFeelUtil;
-import oriedita.editor.task.TaskExecutor;
 import oriedita.editor.tools.ResourceUtil;
 
 import javax.swing.JCheckBoxMenuItem;
@@ -35,6 +34,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import java.awt.Desktop;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.Transferable;
