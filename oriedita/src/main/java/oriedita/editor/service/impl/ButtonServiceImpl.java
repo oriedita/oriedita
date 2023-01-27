@@ -1,9 +1,19 @@
 package oriedita.editor.service.impl;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Any;
+import jakarta.enterprise.inject.Instance;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import org.tinylog.Logger;
-import oriedita.editor.action.MouseHandlerVoronoiCreate;
+import oriedita.editor.FrameProvider;
+import oriedita.editor.action.ActionType;
+import oriedita.editor.action.OrieditaAction;
 import oriedita.editor.canvas.CreasePattern_Worker;
+import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.databinding.CanvasModel;
+import oriedita.editor.handler.Handles;
+import oriedita.editor.handler.MouseHandlerVoronoiCreate;
 import oriedita.editor.service.ButtonService;
 import oriedita.editor.swing.component.GlyphIcon;
 import oriedita.editor.swing.dialog.HelpDialog;
@@ -12,43 +22,57 @@ import oriedita.editor.tools.KeyStrokeUtil;
 import oriedita.editor.tools.ResourceUtil;
 import oriedita.editor.tools.StringOp;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
-import javax.swing.*;
+import javax.swing.AbstractAction;
+import javax.swing.AbstractButton;
+import javax.swing.InputMap;
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
+import javax.swing.KeyStroke;
+import javax.swing.MenuElement;
 import javax.swing.text.JTextComponent;
-import java.awt.*;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.KeyboardFocusManager;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
-@Singleton
+@ApplicationScoped
 public class ButtonServiceImpl implements ButtonService {
+    private final Instance<OrieditaAction> actions;
     private final HelpDialog explanation;
     private final CreasePattern_Worker mainCreasePatternWorker;
-    public Map<KeyStroke, AbstractButton> helpInputMap = new HashMap<>();
-    private JFrame owner;
-    private final MouseHandlerVoronoiCreate mouseHandlerVoronoiCreate;
+    private Map<KeyStroke, AbstractButton> helpInputMap = new HashMap<>();
+    private FrameProvider owner;
     private final CanvasModel canvasModel;
 
     @Inject
     public ButtonServiceImpl(
-            @Named("mainFrame") JFrame frame,
+            FrameProvider frame,
+            @Any Instance<OrieditaAction> actions,
             HelpDialog explanation,
-            CreasePattern_Worker mainCreasePatternWorker,
-            MouseHandlerVoronoiCreate mouseHandlerVoronoiCreate,
+            @Named("mainCreasePattern_Worker") CreasePattern_Worker mainCreasePatternWorker,
+            @Handles(MouseMode.VORONOI_CREATE_62) MouseHandlerVoronoiCreate mouseHandlerVoronoiCreate,
             CanvasModel canvasModel) {
         this.owner = frame;
+        this.actions = actions;
         this.explanation = explanation;
         this.mainCreasePatternWorker = mainCreasePatternWorker;
-        this.mouseHandlerVoronoiCreate = mouseHandlerVoronoiCreate;
         this.canvasModel = canvasModel;
     }
 
-    @Override public void setOwner(JFrame owner) {
-        this.owner = owner;
+    @Override
+    public void setOwner(JFrame owner) {
     }
 
     public void setTooltip(AbstractButton button, String key) {
@@ -76,7 +100,8 @@ public class ButtonServiceImpl implements ButtonService {
         }
     }
 
-    @Override public void registerLabel(JLabel label, String key) {
+    @Override
+    public void registerLabel(JLabel label, String key) {
         String icon = ResourceUtil.getBundleString("icons", key);
         if (!StringOp.isEmpty(icon)) {
             GlyphIcon glyphIcon = new GlyphIcon(icon, label.getForeground());
@@ -91,10 +116,12 @@ public class ButtonServiceImpl implements ButtonService {
 
     private void addKeyStroke(KeyStroke keyStroke, AbstractButton button, String key) {
         helpInputMap.put(keyStroke, button);
-        owner.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, key);
+        owner.get().getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, key);
     }
 
     @Override public void registerButton(AbstractButton button, String key) {
+
+
         String name = ResourceUtil.getBundleString("name", key);
         String keyStrokeString = ResourceUtil.getBundleString("hotkey", key);
         // String tooltip = ResourceUtil.getBundleString("tooltip", key);
@@ -137,7 +164,7 @@ public class ButtonServiceImpl implements ButtonService {
             if (keyStroke != null) {
                 addKeyStroke(keyStroke, button, key);
             }
-            owner.getRootPane().getActionMap().put(key, new Click(button));
+            owner.get().getRootPane().getActionMap().put(key, new Click(button));
 
             if (!StringOp.isEmpty(icon)) {
                 GlyphIcon glyphIcon = new GlyphIcon(icon, button.getForeground());
@@ -149,26 +176,29 @@ public class ButtonServiceImpl implements ButtonService {
                 button.setIcon(glyphIcon);
 
                 if (button instanceof JCheckBox) {
-                    GlyphIcon selectedGlyphIcon = new GlyphIcon(String.valueOf((char)(icon.toCharArray()[0] + 1)), button.getForeground());
+                    GlyphIcon selectedGlyphIcon = new GlyphIcon(String.valueOf((char) (icon.toCharArray()[0] + 1)), button.getForeground());
                     button.addPropertyChangeListener("foreground", selectedGlyphIcon);
                     button.setSelectedIcon(selectedGlyphIcon);
                 }
             }
         }
 
+        final String fKey = key;
+
         if (!StringOp.isEmpty(help)) {
             button.addActionListener(e -> {
-                explanation.setExplanation(key);
+                explanation.setExplanation(fKey);
 
                 Button_shared_operation();
             });
         }
     }
 
-    @Override public void Button_shared_operation() {
+    @Override
+    public void Button_shared_operation() {
         mainCreasePatternWorker.setDrawingStage(0);
         mainCreasePatternWorker.resetCircleStep();
-        mouseHandlerVoronoiCreate.voronoiLineSet.clear();
+        // TODO RESET VORONOI mouseHandlerVoronoiCreate.getVoronoiLineSet().clear();
 
         canvasModel.markDirty();
     }
@@ -180,10 +210,10 @@ public class ButtonServiceImpl implements ButtonService {
 
     private void addContextMenu(AbstractButton button, String key, KeyStroke keyStroke) {
         JPopupMenu popup = new JPopupMenu();
-        Action addKeybindAction = new AbstractAction() {
+        javax.swing.Action addKeybindAction = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                InputMap map = owner.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+                InputMap map = owner.get().getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
                 KeyStroke stroke = null;
                 for (KeyStroke keyStroke : map.keys()) {
                     if (map.get(keyStroke).equals(key)) {
@@ -192,25 +222,25 @@ public class ButtonServiceImpl implements ButtonService {
                 }
                 KeyStroke currentKeyStroke = stroke;
 
-                new SelectKeyStrokeDialog(owner, button, helpInputMap, currentKeyStroke, newKeyStroke -> {
+                new SelectKeyStrokeDialog(owner.get(), button, helpInputMap, currentKeyStroke, newKeyStroke -> {
                     if (newKeyStroke != null && helpInputMap.containsKey(newKeyStroke) && helpInputMap.get(newKeyStroke) != button) {
                         String conflictingButton = (String) helpInputMap.get(newKeyStroke).getRootPane()
-                                                                        .getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
-                                                                        .get(newKeyStroke);
-                        JOptionPane.showMessageDialog(owner, "Conflicting KeyStroke! Conflicting with " + conflictingButton);
+                                .getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+                                .get(newKeyStroke);
+                        JOptionPane.showMessageDialog(owner.get(), "Conflicting KeyStroke! Conflicting with " + conflictingButton);
                         return false;
                     }
 
                     ResourceUtil.updateBundleKey("hotkey", key, newKeyStroke == null ? "" : newKeyStroke.toString());
 
                     helpInputMap.remove(currentKeyStroke);
-                    owner.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).remove(currentKeyStroke);
+                    owner.get().getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).remove(currentKeyStroke);
 
                     if (newKeyStroke != null) {
                         addKeyStroke(newKeyStroke, button, key);
-                        putValue(Action.NAME, "Change key stroke (Current: " + KeyStrokeUtil.toString(newKeyStroke) + ")");
+                        putValue(javax.swing.Action.NAME, "Change key stroke (Current: " + KeyStrokeUtil.toString(newKeyStroke) + ")");
                     } else {
-                        putValue(Action.NAME, "Change key stroke");
+                        putValue(javax.swing.Action.NAME, "Change key stroke");
                     }
 
                     setTooltip(button, key);
@@ -223,7 +253,7 @@ public class ButtonServiceImpl implements ButtonService {
         if (keyStroke != null) {
             actionName += " (Current: " + KeyStrokeUtil.toString(keyStroke) + ")";
         }
-        addKeybindAction.putValue(Action.NAME, actionName);
+        addKeybindAction.putValue(javax.swing.Action.NAME, actionName);
         popup.add(addKeybindAction);
 
         Point point = new Point();
@@ -247,6 +277,42 @@ public class ButtonServiceImpl implements ButtonService {
                 }
             }
         });
+    }
+
+    @Override
+    public void addDefaultListener(Container component) {
+        Component[] components = component.getComponents();
+
+        for (Component component1 : components) {
+            if (component1 instanceof AbstractButton) {
+                AbstractButton button = (AbstractButton) component1;
+                String key = button.getActionCommand();
+
+                if (key != null && !"".equals(key)) {
+                    ActionType type = ActionType.fromAction(key);
+
+                    if (type != null) {
+                        Optional<OrieditaAction> first = actions.stream().filter(a -> a.getActionType().equals(type)).findFirst();
+                        first.ifPresentOrElse(button::setAction, () -> Logger.warn("No handler for {}", key));
+                    } else {
+                        Logger.warn("No action found for {}", key);
+                    }
+                    registerButton(button, key);
+                }
+            }
+
+            if (component1 instanceof Container) {
+                addDefaultListener((Container) component1);
+            }
+
+            if (component1 instanceof JMenu) {
+                for (MenuElement element : ((JMenu) component1).getSubElements()) {
+                    if (element instanceof Container) {
+                        addDefaultListener((Container) element);
+                    }
+                }
+            }
+        }
     }
 
     public static class Click extends AbstractAction {

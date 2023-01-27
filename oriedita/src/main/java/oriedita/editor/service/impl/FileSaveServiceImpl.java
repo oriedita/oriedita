@@ -1,34 +1,40 @@
 package oriedita.editor.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import fold.FoldFileFormatException;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import org.tinylog.Logger;
 import oriedita.editor.Canvas;
+import oriedita.editor.FrameProvider;
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.canvas.LineStyle;
-import oriedita.editor.canvas.MouseMode;
-import oriedita.editor.databinding.*;
+import oriedita.editor.databinding.ApplicationModel;
+import oriedita.editor.databinding.BackgroundModel;
+import oriedita.editor.databinding.FileModel;
+import oriedita.editor.databinding.FoldedFiguresList;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.exception.FileReadingException;
-import oriedita.editor.export.*;
+import oriedita.editor.export.Cp;
+import oriedita.editor.export.Fold;
+import oriedita.editor.export.Obj;
+import oriedita.editor.export.Orh;
+import oriedita.editor.export.Svg;
 import oriedita.editor.json.DefaultObjectMapper;
 import oriedita.editor.save.BaseSave;
 import oriedita.editor.save.FileVersionTester;
 import oriedita.editor.save.Save;
 import oriedita.editor.save.SaveConverter;
+import oriedita.editor.save.SaveProvider;
 import oriedita.editor.service.FileSaveService;
 import oriedita.editor.service.ResetService;
 import oriedita.editor.swing.dialog.ExportDialog;
 import oriedita.editor.swing.dialog.SaveTypeDialog;
 import oriedita.editor.tools.ResourceUtil;
 
-import javax.imageio.ImageIO;
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
-import javax.swing.*;
-import java.awt.*;
-import java.awt.image.BufferedImage;
+import javax.swing.JOptionPane;
+import java.awt.Image;
+import java.awt.Toolkit;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -40,15 +46,15 @@ import java.util.concurrent.TimeUnit;
 import static oriedita.editor.swing.dialog.FileDialogUtil.openFileDialog;
 import static oriedita.editor.swing.dialog.FileDialogUtil.saveFileDialog;
 
-@Singleton
+@ApplicationScoped
 public class FileSaveServiceImpl implements FileSaveService {
-    private final JFrame frame;
+    private final FrameProvider frame;
     private final Camera creasePatternCamera;
     private final CreasePattern_Worker mainCreasePatternWorker;
+    private final Fold fold;
     private final Canvas canvas;
     private final FileModel fileModel;
     private final ApplicationModel applicationModel;
-    private final CanvasModel canvasModel;
     private final FoldedFiguresList foldedFiguresList;
     private final ResetService resetService;
     private final BackgroundModel backgroundModel;
@@ -57,29 +63,30 @@ public class FileSaveServiceImpl implements FileSaveService {
 
     @Inject
     public FileSaveServiceImpl(
-            @Named("mainFrame") JFrame frame,
+            FrameProvider frame,
             @Named("creasePatternCamera") Camera creasePatternCamera,
-            CreasePattern_Worker mainCreasePatternWorker,
+            @Named("mainCreasePattern_Worker") CreasePattern_Worker mainCreasePatternWorker,
+            Fold fold,
             Canvas canvas,
             FileModel fileModel,
             ApplicationModel applicationModel,
-            CanvasModel canvasModel,
             FoldedFiguresList foldedFiguresList,
             ResetService resetService,
             BackgroundModel backgroundModel) {
         this.frame = frame;
         this.creasePatternCamera = creasePatternCamera;
         this.mainCreasePatternWorker = mainCreasePatternWorker;
+        this.fold = fold;
         this.canvas = canvas;
         this.fileModel = fileModel;
         this.applicationModel = applicationModel;
-        this.canvasModel = canvasModel;
         this.foldedFiguresList = foldedFiguresList;
         this.resetService = resetService;
         this.backgroundModel = backgroundModel;
     }
 
-    @Override public void openFile(File file) throws FileReadingException {
+    @Override
+    public void openFile(File file) throws FileReadingException {
         if (file == null || !file.exists()) {
             return;
         }
@@ -102,7 +109,8 @@ public class FileSaveServiceImpl implements FileSaveService {
         }
     }
 
-    @Override public void openFile() {
+    @Override
+    public void openFile() {
         Logger.info("readFile2Memo() 開始");
 
         if (saveUnsavedFile()) return;
@@ -113,13 +121,13 @@ public class FileSaveServiceImpl implements FileSaveService {
             openFile(file);
         } catch (FileReadingException e) {
             Logger.error(e, "Error during file read");
-            JOptionPane.showMessageDialog(frame, "An error occurred when reading this file", "Read Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(frame.get(), "An error occurred when reading this file", "Read Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
     private boolean saveUnsavedFile() {
         if (!fileModel.isSaved()) {
-            int choice = JOptionPane.showConfirmDialog(frame, "<html>Current file not saved.<br/>Do you want to save it?", "File not saved", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+            int choice = JOptionPane.showConfirmDialog(frame.get(), "<html>Current file not saved.<br/>Do you want to save it?", "File not saved", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
 
             if (choice == JOptionPane.YES_OPTION) {
                 saveFile();
@@ -130,7 +138,8 @@ public class FileSaveServiceImpl implements FileSaveService {
         return false;
     }
 
-    @Override public void importFile() {
+    @Override
+    public void importFile() {
         if (saveUnsavedFile()) return;
 
         Logger.info("readFile2Memo() 開始");
@@ -159,7 +168,8 @@ public class FileSaveServiceImpl implements FileSaveService {
         }
     }
 
-    @Override public void exportFile() {
+    @Override
+    public void exportFile() {
         File exportFile = selectExportFile();
 
         if (exportFile == null) {
@@ -176,68 +186,22 @@ public class FileSaveServiceImpl implements FileSaveService {
 
             Svg.exportFile(mainCreasePatternWorker.getFoldLineSet(), mainCreasePatternWorker.getTextWorker().getTexts(), showText, mainCreasePatternWorker.getCamera(), displayCpLines, lineWidth, intLineWidth, lineStyle, pointSize, foldedFiguresList, exportFile);
         } else if (exportFile.getName().endsWith(".png") || exportFile.getName().endsWith(".jpg") || exportFile.getName().endsWith(".jpeg")) {
-            writeImageFile(exportFile);
+            canvas.writeImageFile(exportFile);
         } else if (exportFile.getName().endsWith(".cp")) {
             Cp.exportFile(mainCreasePatternWorker.getSave_for_export(), exportFile);
         } else if (exportFile.getName().endsWith(".orh")) {
             Orh.exportFile(mainCreasePatternWorker.getSave_for_export_with_applicationModel(), exportFile);
         } else if (exportFile.getName().endsWith(".fold")) {
             try {
-                Fold.exportFile(mainCreasePatternWorker.getForFolding(), exportFile);
-            } catch (InterruptedException | FoldFileFormatException e) {
+                fold.exportFile(mainCreasePatternWorker.getSave_for_export(), mainCreasePatternWorker.getForFolding(), exportFile);
+            } catch (InterruptedException | FileReadingException e) {
                 e.printStackTrace();
             }
         }
     }
 
-    @Override public void writeImageFile(File file) {//i=1　png, 2=jpg
-        if (file != null) {
-            String fname = file.getName();
-
-            String formatName;
-
-            if (fname.endsWith("png")) {
-                formatName = "png";
-            } else if (fname.endsWith("jpg")) {
-                formatName = "jpg";
-            } else {
-                file = new File(fname + ".png");
-                formatName = "png";
-            }
-
-            //	ファイル保存
-
-            try {
-                BufferedImage myImage = canvas.getGraphicsConfiguration().createCompatibleImage(canvas.getSize().width, canvas.getSize().height);
-                Graphics g = myImage.getGraphics();
-
-                canvas.hideOperationFrame = true;
-                canvas.paintComponent(g);
-                canvas.hideOperationFrame = false;
-
-                if (canvasModel.getMouseMode() == MouseMode.OPERATION_FRAME_CREATE_61 && mainCreasePatternWorker.getDrawingStage() == 4) { //枠設定時の枠内のみ書き出し 20180524
-                    int xMin = (int) mainCreasePatternWorker.getOperationFrameBox().getXMin();
-                    int xMax = (int) mainCreasePatternWorker.getOperationFrameBox().getXMax();
-                    int yMin = (int) mainCreasePatternWorker.getOperationFrameBox().getYMin();
-                    int yMax = (int) mainCreasePatternWorker.getOperationFrameBox().getYMax();
-
-                    ImageIO.write(myImage.getSubimage(xMin, yMin, xMax - xMin + 1, yMax - yMin + 1), formatName, file);
-
-                } else {//Full export without frame
-                    Logger.info("2018-529_");
-
-                    ImageIO.write(myImage, formatName, file);
-                }
-            } catch (IOException e) {
-                Logger.error(e, "Writing image file failed");
-            }
-
-            Logger.info("終わりました");
-        }
-    }
-
     public File selectOpenFile() {
-        String fileName = openFileDialog(frame, "Open File", applicationModel.getDefaultDirectory(), new String[]{"*.ori", "*.cp"}, "Supported files (.ori, .cp)");
+        String fileName = openFileDialog(frame.get(), "Open File", applicationModel.getDefaultDirectory(), new String[]{"*.ori", "*.cp"}, "Supported files (.ori, .cp)");
 
         if (fileName == null) {
             return null;
@@ -258,14 +222,15 @@ public class FileSaveServiceImpl implements FileSaveService {
         return selectedFile;
     }
 
-    @Override public File selectSaveFile() {
-        String saveType = SaveTypeDialog.showSaveTypeDialog(frame);
+    @Override
+    public File selectSaveFile() {
+        String saveType = SaveTypeDialog.showSaveTypeDialog(frame.get());
 
         if (saveType == null) {
             return null;
         }
 
-        String fileName = saveFileDialog(frame, "Save As...", applicationModel.getDefaultDirectory(), new String[]{"*" + saveType}, null);
+        String fileName = saveFileDialog(frame.get(), "Save As...", applicationModel.getDefaultDirectory(), new String[]{"*" + saveType}, null);
 
         if (fileName == null) {
             return null;
@@ -285,8 +250,9 @@ public class FileSaveServiceImpl implements FileSaveService {
         return selectedFile;
     }
 
-    @Override public File selectImportFile() {
-        String fileName = openFileDialog(frame, "Import...", applicationModel.getDefaultDirectory(), new String[]{"*.ori", "*.cp", "*.orh", "*.fold"}, "Supported files (.ori, .cp, .orh, .fold)");
+    @Override
+    public File selectImportFile() {
+        String fileName = openFileDialog(frame.get(), "Import...", applicationModel.getDefaultDirectory(), new String[]{"*.ori", "*.cp", "*.orh", "*.fold"}, "Supported files (.ori, .cp, .orh, .fold)");
 
         if (fileName == null) {
             return null;
@@ -303,14 +269,15 @@ public class FileSaveServiceImpl implements FileSaveService {
         return selectedFile;
     }
 
-    @Override public File selectExportFile() {
-        String exportType = ExportDialog.showExportDialog(frame);
+    @Override
+    public File selectExportFile() {
+        String exportType = ExportDialog.showExportDialog(frame.get());
 
         if (exportType == null) {
             return null;
         }
 
-        String fileName = saveFileDialog(frame, "Export...", applicationModel.getDefaultDirectory(), new String[]{"*" + exportType}, null);
+        String fileName = saveFileDialog(frame.get(), "Export...", applicationModel.getDefaultDirectory(), new String[]{"*" + exportType}, null);
 
         if (fileName == null) {
             return null;
@@ -327,11 +294,13 @@ public class FileSaveServiceImpl implements FileSaveService {
         return selectedFile;
     }
 
-    @Override public Save readImportFile(File file) throws FileReadingException {
+    @Override
+    public Save readImportFile(File file) throws FileReadingException {
         return readImportFile(file, true);
     }
 
-    @Override public Save readImportFile(File file, boolean askOnUnknownFormat) throws FileReadingException {
+    @Override
+    public Save readImportFile(File file, boolean askOnUnknownFormat) {
         if (file == null) {
             return null;
         }
@@ -351,7 +320,7 @@ public class FileSaveServiceImpl implements FileSaveService {
                     if (readSave.getClass() == BaseSave.class && versionTester.getVersion() == null) { // happens when the version id is not recognized
                         int result = JOptionPane.NO_OPTION;
                         if (askOnUnknownFormat) {
-                            result = JOptionPane.showConfirmDialog(frame, "This file was created using a newer version of oriedita.\n" +
+                            result = JOptionPane.showConfirmDialog(frame.get(), "This file was created using a newer version of oriedita.\n" +
                                             "Using it with this version of oriedita might remove parts of the file.\n" +
                                             "Do you want to open the file anyways?", "File created in newer version",
                                     JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
@@ -375,7 +344,7 @@ public class FileSaveServiceImpl implements FileSaveService {
             }
 
             if (file.getName().endsWith(".fold")) {
-                save = Fold.importFile(file);
+                save = fold.importFile(file);
             }
 
             if (file.getName().endsWith(".cp")) {
@@ -386,20 +355,21 @@ public class FileSaveServiceImpl implements FileSaveService {
                 save = Orh.importFile(file);
             }
 
-        } catch (IOException | FoldFileFormatException e) {
+        } catch (IOException | FileReadingException e) {
             Logger.error(e, "Opening file failed");
 
-            JOptionPane.showMessageDialog(frame, "Opening of the saved file failed", "Opening failed", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(frame.get(), "Opening of the saved file failed", "Opening failed", JOptionPane.ERROR_MESSAGE);
 
             fileModel.setSavedFileName(null);
 
-            return Save.createInstance();
+            return SaveProvider.createInstance();
         }
 
         return save;
     }
 
-    @Override public void saveFile() {
+    @Override
+    public void saveFile() {
         if (fileModel.getSavedFileName() == null) {
             saveAsFile();
 
@@ -415,7 +385,8 @@ public class FileSaveServiceImpl implements FileSaveService {
         fileModel.setSaved(true);
     }
 
-    @Override public void saveAsFile() {
+    @Override
+    public void saveAsFile() {
         File file = selectSaveFile();
 
         if (file == null) {
@@ -440,18 +411,19 @@ public class FileSaveServiceImpl implements FileSaveService {
             }
         } else if (fname.getName().endsWith(".cp")) {
             if (!save.canSaveAsCp()) {
-                JOptionPane.showMessageDialog(frame, "The saved .cp file does not contain circles, text and yellow aux lines. Save as a .ori file to also save these lines.", "Warning", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(frame.get(), "The saved .cp file does not contain circles, text and yellow aux lines. Save as a .ori file to also save these lines.", "Warning", JOptionPane.WARNING_MESSAGE);
             }
 
             Cp.exportFile(save, fname);
         } else {
-            JOptionPane.showMessageDialog(frame, "Unknown file type, cannot save", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(frame.get(), "Unknown file type, cannot save", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
 
-    @Override public boolean readBackgroundImageFromFile() {
-        String filename = openFileDialog(frame, "Select Image File.", applicationModel.getDefaultDirectory(), new String[]{"*.png", "*.jpg"}, "Supported image formats (.png, .jpg)");
+    @Override
+    public boolean readBackgroundImageFromFile() {
+        String filename = openFileDialog(frame.get(), "Select Image File.", applicationModel.getDefaultDirectory(), new String[]{"*.png", "*.jpg"}, "Supported image formats (.png, .jpg)");
 
         if (filename != null) {
             Toolkit tk = Toolkit.getDefaultToolkit();
@@ -467,7 +439,8 @@ public class FileSaveServiceImpl implements FileSaveService {
         return filename != null;
     }
 
-    @Override public void initAutoSave() {
+    @Override
+    public void initAutoSave() {
         ScheduledThreadPoolExecutor pool = new ScheduledThreadPoolExecutor(1);
 
         autoSavePath = ResourceUtil.getTempDir().resolve("oriedita-autosave-" + df.format(new Date()));

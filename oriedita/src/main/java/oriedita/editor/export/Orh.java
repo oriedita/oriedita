@@ -8,13 +8,20 @@ import oriedita.editor.databinding.FoldedFigureModel;
 import oriedita.editor.databinding.GridModel;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.save.Save;
+import oriedita.editor.save.SaveProvider;
 import oriedita.editor.tools.StringOp;
 import origami.crease_pattern.element.Circle;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 
-import java.awt.*;
-import java.io.*;
+import java.awt.Color;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -25,11 +32,11 @@ import java.util.regex.Pattern;
  * Import and Export Orihime files.
  */
 public class Orh {
-        /**
+    /**
      * Read an Orihime file
      */
     public static Save importFile(File file) throws IOException {
-        Save save = Save.createInstance();
+        Save save = SaveProvider.createInstance();
         Pattern p = Pattern.compile("<(.+)>(.+)</(.+)>");
 
         boolean reading;
@@ -42,7 +49,7 @@ public class Orh {
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String str;
 
-            while ((str = reader.readLine()) != null ) {
+            while ((str = reader.readLine()) != null) {
                 fileLines.add(str);
             }
         }

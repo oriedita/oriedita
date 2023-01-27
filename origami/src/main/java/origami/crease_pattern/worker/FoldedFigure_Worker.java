@@ -1,7 +1,6 @@
 package origami.crease_pattern.worker;
 
 import org.tinylog.Logger;
-import origami.crease_pattern.PointSet;
 import origami.folding.HierarchyList;
 import origami.folding.algorithm.AdditionalEstimationAlgorithm;
 import origami.folding.algorithm.swapping.SubFaceSwappingAlgorithm;
@@ -15,24 +14,24 @@ import origami.folding.util.SortingBox;
  * Responsible for calculating the correct order of subfaces in a folded figure.
  */
 public class FoldedFigure_Worker {
-        public final HierarchyList hierarchyList = new HierarchyList();
+    public final HierarchyList hierarchyList = new HierarchyList();
     public double[] face_rating;
     public SortingBox<Integer> nbox = new SortingBox<>();//20180227 In the nbox, the id of men is paired with men_rating and sorted in ascending order of men_rating.
     public int SubFaceTotal;//SubFaceの数
     //paint 用のint格納用VVVVVVVVVVVVVVVVVVVVVV
     public EquivalenceCondition errorPos = null;
-    int[] i_face_rating;
+    private int[] i_face_rating;
     //  hierarchyList[][]は折る前の展開図のすべての面同士の上下関係を1つの表にまとめたものとして扱う
     //　hierarchyList[i][j]が1なら面iは面jの上側。0なら下側。
     //  hierarchyList[i][j]が-50なら、面iとjは重なが、上下関係は決められていない。
     //hierarchyList[i][j]が-100なら、面iとjは重なるところがない。
-    int SubFace_valid_number;//SubFaceは全て調べなくても、Faceの上下関係は網羅できる。Faceの上下関係を網羅するのに必要なSubFaceの数が優先順位の何番目までかをさがす。
+    int SubFace_valid_number;//The hierarchy of Faces can be covered without examining all SubFaces. Find the number of SubFaces required to cover the hierarchical relationship of Faces up to the priority order.
     public int FaceIdCount_max;//各SubFaceの持つMenidsuuの最大値。すなわち、最も紙に重なりが多いところの枚数。
     //paint 用のint格納用VVVVVVVVVVVVVVVVVVVVVV
     public SubFace[] s0;//SubFace obtained from SubFace_figure
     SubFace[] s1;//Reduced SubFace list, for AEA processing
     public SubFace[] s;//s is s1 sorted in descending order of priority.
-    IBulletinBoard bb;
+    private final IBulletinBoard bb;
     //　ここは  class Jyougehyou_Syokunin  の中です。
     //上下表の初期設定。展開図に1頂点から奇数の折線がでる誤りがある場合0を返す。それが無ければ1000を返す。
     //展開図に山谷折線の拡張による誤りがある場合2を返す。
@@ -41,12 +40,10 @@ public class FoldedFigure_Worker {
     private int top_face_id_ga_maketa_kazu_goukei_without_rated_face = 0;
 
     private SubFaceSwappingAlgorithm swapper;
-    private final FoldedFigure_Configurator configurator;
     private boolean aeaMode;
 
     public FoldedFigure_Worker(IBulletinBoard bb0) {
         bb = bb0;
-        configurator = new FoldedFigure_Configurator(this);
         reset();
     }
 
@@ -69,17 +66,6 @@ public class FoldedFigure_Worker {
         return SubFace_valid_number;
     }
 
-    public void SubFace_configure(PointSet otta_Face_figure, PointSet SubFace_figure) throws InterruptedException {
-        configurator.setFaceFigure(otta_Face_figure);
-        configurator.setSubFaceFigure(SubFace_figure);
-        configurator.SubFace_configure();
-    }
-
-    public HierarchyListStatus HierarchyList_configure(WireFrame_Worker orite) throws InterruptedException {
-        configurator.setWireFrameWorker(orite);
-        return configurator.HierarchyList_configure();
-    }
-
     public int next(int ss) throws InterruptedException {
         int isusumu;//When = 0, SubFace changes (image that digits change).
         int subfaceId;//SubFace id number that has changed
@@ -87,7 +73,7 @@ public class FoldedFigure_Worker {
         //All SubFaces above ss + 1 are set to the initial values. An error occurs when the number of faces included in SubFace is 0.
 
         for (int i = ss + 1; i <= SubFace_valid_number; i++) {
-            s[i].Permutation_first();
+            s[i].resetPermutationGenerator();
         }
         //The overlapping state of the surfaces is changed in order from the one with the largest id number of the SubFace.
         subfaceId = ss;
@@ -107,7 +93,7 @@ public class FoldedFigure_Worker {
         StringBuilder s0 = new StringBuilder();
 
         for (int ss = 1; ss <= imax; ss++) {
-            s0.append(" : ").append(s[ss].get_Permutation_count());
+            s0.append(" : ").append(s[ss].getPermutationCount());
         }
         return s0.toString();
     }
@@ -189,7 +175,7 @@ public class FoldedFigure_Worker {
                     success = AEA.fastRun();
                 }
                 if (!success) {
-                    /**
+                    /*
                      * For some CPs, realtime AEA could return a result other than success (even as
                      * we ran AEA in each step and the current permutation doesn't have any
                      * immediate contradiction, since something might still go wrong in the

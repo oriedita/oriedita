@@ -8,12 +8,16 @@ package origami.data.symmetricMatrix;
  */
 public class BitmapSymmetricMatrix extends SymmetricMatrix {
 
-    /** Size of each entry */
+    /**
+     * Size of each entry
+     */
     private final int bits;
 
     private final int length;
 
-    /** of the form 0b111..1 of length bits */
+    /**
+     * of the form 0b111..1 of length bits
+     */
     private final int mask;
 
     private final int[] data;

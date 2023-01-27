@@ -1,22 +1,24 @@
 package oriedita.editor.factory;
 
-import dagger.Module;
-import dagger.Provides;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Produces;
+import jakarta.inject.Named;
 import oriedita.editor.service.HistoryState;
 import oriedita.editor.service.impl.DequeHistoryState;
 
-import javax.inject.Named;
-import javax.inject.Singleton;
-
-@Module
+@ApplicationScoped
 public class HistoryStateFactory {
-    @Provides @Singleton @Named("normal")
-    public static HistoryState normalHistoryState() {
+    @Produces
+    @ApplicationScoped
+    @Named("normal")
+    public HistoryState normalHistoryState() {
         return new DequeHistoryState();
     }
 
-    @Provides @Singleton @Named("aux")
-    public static HistoryState auxHistoryState() {
+    @Produces
+    @ApplicationScoped
+    @Named("aux")
+    public HistoryState auxHistoryState() {
         return new DequeHistoryState();
     }
 }

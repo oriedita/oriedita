@@ -18,15 +18,26 @@ import origami.folding.algorithm.AdditionalEstimationAlgorithm;
 import origami.folding.algorithm.SubFacePriority;
 import origami.folding.constraint.CustomConstraint;
 import origami.folding.element.SubFace;
+import origami.folding.util.IBulletinBoard;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 /**
  * This class isolates those codes related to configuring {@link FoldedFigure_Worker}.
- * 
+ *
  * @author Mu-Tsun Tsai
  */
 public class FoldedFigure_Configurator {
@@ -36,61 +47,70 @@ public class FoldedFigure_Configurator {
     private int[] frequency;
     private QuadTree qt;
 
-    private PointSet otta_face_figure;
-    private PointSet SubFace_figure;
-    private WireFrame_Worker orite;
+    private PointSet faceFigure;
+    private PointSet subFaceFigure;
+    private WireFrame_Worker wireFrame_worker;
     private AdditionalEstimationAlgorithm AEA;
+    private IBulletinBoard bb;
 
     private boolean[] isReducedSubFace;
 
-    public FoldedFigure_Configurator(FoldedFigure_Worker worker) {
+    public FoldedFigure_Configurator(IBulletinBoard bb, FoldedFigure_Worker worker) {
+        this.bb = bb;
         this.worker = worker;
     }
 
     public void setFaceFigure(PointSet figure) {
-        otta_face_figure = figure;
+        faceFigure = figure;
     }
 
     public void setSubFaceFigure(PointSet figure) {
-        SubFace_figure = figure;
+        subFaceFigure = figure;
     }
 
     public void setWireFrameWorker(WireFrame_Worker worker) {
-        orite = worker;
+        wireFrame_worker = worker;
     }
 
-    public void SubFace_configure() throws InterruptedException {
-        // Make an upper and lower table of faces (the faces in the unfolded view before folding).
-        // This includes the point set of ts2 (which has information on the positional relationship of the faces after folding) and <-------------otta_Face_figure
-        // Use the point set of ts3 (which has the information of SubFace whose surface is subdivided in the wire diagram). <-------------SubFace_figure
-        // Also, use the information on the positional relationship of the surface when folded, which ts1 has.
+    public void configureSubFaces(PointSet faceFigure, PointSet subFaceFigure) throws InterruptedException {
+        setFaceFigure(faceFigure);
+        setSubFaceFigure(subFaceFigure);
+        configureSubfaces();
+    }
 
-        Logger.info("Smenの初期設定");
+    /**
+     * Make an upper and lower table of faces (the faces in the unfolded view before folding).
+     * This includes the point set of ts2 (which has information on the positional relationship of the faces after folding) and <-------------otta_Face_figure
+     * Use the point set of ts3 (which has the information of SubFace whose surface is subdivided in the wire diagram). <-------------subFaceFigure
+     * Also, use the information on the positional relationship of the surface when folded, which ts1 has.
+     */
+    public void configureSubfaces() throws InterruptedException {
+        Logger.info("SubFaces initial setup");
         worker.reset();
-        worker.SubFaceTotal = SubFace_figure.getNumFaces();
+        worker.SubFaceTotal = subFaceFigure.getNumFaces();
 
         worker.s0 = new SubFace[worker.SubFaceTotal + 1];
         worker.s = new SubFace[worker.SubFaceTotal + 1];
 
         for (int i = 0; i < worker.SubFaceTotal + 1; i++) {
-            worker.s0[i] = new SubFace(worker.bb);
+            worker.s0[i] = new SubFace(bb);
             worker.s[i] = worker.s0[i];
         }
 
         //Record the faces contained in each SubFace.
-        Logger.info("各Smenに含まれる面を記録するため、各Smenの内部点を登録");
-        Point[] subFace_insidePoint = new Point[worker.SubFaceTotal + 1];  //<<<<<<<<<<<<<<<<<<<<<<<<<<<オブジェクトの配列を動的に指定
+        Logger.info("Register the interior points of each subFace to record the faces contained in each subFace");
+        Point[] subFace_insidePoint = new Point[worker.SubFaceTotal + 1];
         for (int i = 1; i <= worker.SubFaceTotal; i++) {
-            subFace_insidePoint[i] = SubFace_figure.insidePoint_surface(i);
+            subFace_insidePoint[i] = subFaceFigure.insidePoint_surface(i);
         }
 
         // Also used later in setupEquivalenceConditions
-        qt = new QuadTree(new PointSetFaceAdapter(otta_face_figure), ExpandComparator.instance);
+        qt = new QuadTree(new PointSetFaceAdapter(faceFigure), ExpandComparator.instance);
 
-        Logger.info("各Smenに含まれる面を記録する");
+        Logger.info("Record the faces included in each subFace");
 
         ExecutorService service = Executors.newWorkStealingPool();
-        int faceTotal = otta_face_figure.getNumFaces();
+        int faceTotal = faceFigure.getNumFaces();
         frequency = new int[faceTotal + 1];
 
         for (int i = 1; i <= worker.SubFaceTotal; i++) {
@@ -100,7 +120,7 @@ public class FoldedFigure_Configurator {
                 int s0addFaceTotal = 0;
 
                 for (int j : qt.collect(new PointCollector(subFace_insidePoint[iff]))) {
-                    if (otta_face_figure.inside(subFace_insidePoint[iff], j) == Polygon.Intersection.INSIDE) {
+                    if (faceFigure.inside(subFace_insidePoint[iff], j) == Polygon.Intersection.INSIDE) {
                         s0addFaceId[++s0addFaceTotal] = j;
                     }
                     if (Thread.interrupted()) return;
@@ -148,7 +168,7 @@ public class FoldedFigure_Configurator {
         worker.s1 = reduceSubFaceSet(worker.s0);
         frequency = null;
 
-        //ここまでで、SubFaceTotal＝	SubFace_figure.getMensuu()のままかわりなし。
+        //ここまでで、SubFaceTotal＝	subFaceFigure.getMensuu()のままかわりなし。
         Logger.info("各Smenに含まれる面の数の内で最大のものを求める");
         // Find the largest number of faces in each SubFace.
         worker.FaceIdCount_max = 0;
@@ -172,7 +192,7 @@ public class FoldedFigure_Configurator {
         Collection<Integer> allFaces = cc.getAll();
         Map<Integer, Integer> subfaceIds = new HashMap<>();
         for (int faceId : allFaces) {
-            if (subfaceIds.isEmpty()){
+            if (subfaceIds.isEmpty()) {
                 for (int subfaceId : faceToSubFaceMap.get(faceId)) {
                     if (worker.s[subfaceId].getFaceIdCount() == allFaces.size()) {
                         subfaceIds.put(subfaceId, 1);
@@ -181,7 +201,7 @@ public class FoldedFigure_Configurator {
             } else {
                 for (int subfaceId : faceToSubFaceMap.get(faceId)) {
                     if (subfaceIds.containsKey(subfaceId)) {
-                        subfaceIds.put(subfaceId, subfaceIds.get(subfaceId)+1);
+                        subfaceIds.put(subfaceId, subfaceIds.get(subfaceId) + 1);
                     }
                 }
             }
@@ -258,8 +278,13 @@ public class FoldedFigure_Configurator {
         return reduced.toArray(new SubFace[0]);
     }
 
+    public HierarchyListStatus HierarchyList_configure(WireFrame_Worker orite) throws InterruptedException {
+        setWireFrameWorker(orite);
+        return HierarchyList_configure();
+    }
+
     public HierarchyListStatus HierarchyList_configure() throws InterruptedException {
-        worker.bb.write("           HierarchyList_configure   step1   start ");
+        bb.write("           HierarchyList_configure   step1   start ");
         HierarchyListStatus result = setupHierarchyList();
         if (result != HierarchyListStatus.SUCCESSFUL_1000) {
             return result;
@@ -267,7 +292,7 @@ public class FoldedFigure_Configurator {
 
         // First round of AEA; this will save both time and space later on
         int capacity = worker.FaceIdCount_max * worker.FaceIdCount_max;
-        AEA = new AdditionalEstimationAlgorithm(worker.bb, worker.hierarchyList, worker.s1, capacity);
+        AEA = new AdditionalEstimationAlgorithm(bb, worker.hierarchyList, worker.s1, capacity);
         result = AEA.run(0);
         if (result != HierarchyListStatus.SUCCESSFUL_1000) {
             worker.errorPos = AEA.errorPos;
@@ -275,19 +300,19 @@ public class FoldedFigure_Configurator {
         }
 
         //----------------------------------------------
-        worker.bb.rewrite(10, "           HierarchyList_configure   step2   start ");
+        bb.rewrite(10, "           HierarchyList_configure   step2   start ");
         result = setupEquivalenceConditions();
         if (result != HierarchyListStatus.SUCCESSFUL_1000) return result;
 
         //----------------------------------------------
-        worker.bb.write("           HierarchyList_configure   step3   start ");
+        bb.write("           HierarchyList_configure   step3   start ");
         result = setupUEquivalenceConditions();
         if (result != HierarchyListStatus.SUCCESSFUL_1000) return result;
 
         faceToSubFaceMap = null;
         System.gc();
 
-        worker.bb.write("           HierarchyList_configure   step4   start ");
+        bb.write("           HierarchyList_configure   step4   start ");
         // Second round of AEA
         AEA.removeMode = true; // This time we turn on the remove mode.
         result = AEA.run(0);
@@ -297,7 +322,7 @@ public class FoldedFigure_Configurator {
         }
         AEA = null; // Now we can release the memory
         System.gc();
-        
+
         worker.hierarchyList.sortEquivalenceConditions();
         // Here we can compare and see the huge difference before and after AEA
         Logger.info("３面が関与する突き抜け条件の数　＝　{}", worker.hierarchyList.getEquivalenceConditionTotal());
@@ -308,7 +333,7 @@ public class FoldedFigure_Configurator {
         //*************Saving the results of the first deductive reasoning**************************
         worker.hierarchyList.save();//Save the hierarchical relationship determined from the mountain fold and valley fold information.
         //************************************************************************
-        worker.bb.rewrite(10, "           HierarchyList_configure   step5   start ");
+        bb.rewrite(10, "           HierarchyList_configure   step5   start ");
 
         //s0に優先順位をつける(このときhierarchyListの-100のところが変るところがある)
         Logger.info("Smen(s0)に優先順位をつける");
@@ -318,7 +343,7 @@ public class FoldedFigure_Configurator {
 
         // If any SubFace failed to initialize, then the constraints are impossible.
         for (int i = 1; i <= worker.SubFace_valid_number; i++) {
-            if (worker.s[i].get_Permutation_count() == 0) {
+            if (worker.s[i].getPermutationCount() == 0) {
                 // TODO: we can add impossible constraint indication.
                 return HierarchyListStatus.CONSTRAINT_5;
             }
@@ -332,21 +357,21 @@ public class FoldedFigure_Configurator {
     }
 
     private HierarchyListStatus setupHierarchyList() throws InterruptedException {
-        worker.hierarchyList.setFacesTotal(otta_face_figure.getNumFaces());
+        worker.hierarchyList.setFacesTotal(faceFigure.getNumFaces());
 
         //Put the hierarchical relationship determined from the information of mountain folds and valley folds in the table above and below.
         Logger.info("山折り谷折りの情報から決定される上下関係を上下表に入れる");
         int faceId_min, faceId_max;
-        for (int ib = 1; ib <= orite.getNumLines(); ib++) {
-            faceId_min = orite.lineInFaceBorder_min_request(ib);
-            faceId_max = orite.lineInFaceBorder_max_request(ib);
+        for (int ib = 1; ib <= wireFrame_worker.getNumLines(); ib++) {
+            faceId_min = wireFrame_worker.lineInFaceBorder_min_request(ib);
+            faceId_max = wireFrame_worker.lineInFaceBorder_max_request(ib);
             if (faceId_min != faceId_max) {// In the developed view, there are faces on both sides of the rod ib.
-                int minPos = orite.getIFacePosition(faceId_min);
-                int maxPos = orite.getIFacePosition(faceId_max);
+                int minPos = wireFrame_worker.getIFacePosition(faceId_min);
+                int maxPos = wireFrame_worker.getIFacePosition(faceId_max);
                 if (minPos % 2 == maxPos % 2) {
                     return HierarchyListStatus.UNKNOWN_0;
                 }
-                if (otta_face_figure.getColor(ib) == LineColor.RED_1) {// Red line means mountain fold
+                if (faceFigure.getColor(ib) == LineColor.RED_1) {// Red line means mountain fold
                     if (minPos % 2 == 1) {// The surface Mid_min has the same orientation as the reference surface (the surface faces up)
                         worker.hierarchyList.set(faceId_min, faceId_max, HierarchyList.ABOVE_1);
                     } else {//The surface Mid_max has the same orientation as the reference surface (the surface faces up)
@@ -374,18 +399,18 @@ public class FoldedFigure_Configurator {
         //等価条件を設定する。棒ibを境界として隣接する2つの面im1,im2が有る場合、折り畳み推定した場合に
         //棒ibの一部と重なる位置に有る面imは面im1と面im2に上下方向で挟まれることはない。このことから
         //gj[im1][im]=gj[im2][im]という等価条件が成り立つ。
-        for (int ib = 1; ib <= orite.getNumLines(); ib++) {
+        for (int ib = 1; ib <= wireFrame_worker.getNumLines(); ib++) {
             final int ibf = ib;
             service.execute(() -> {
-                int faceId_min = orite.lineInFaceBorder_min_request(ibf);
-                int faceId_max = orite.lineInFaceBorder_max_request(ibf);
+                int faceId_min = wireFrame_worker.lineInFaceBorder_min_request(ibf);
+                int faceId_max = wireFrame_worker.lineInFaceBorder_max_request(ibf);
                 if (faceId_min != faceId_max) {//展開図において、棒ibの両脇に面がある
-                    Point p = otta_face_figure.getBeginPointFromLineId(ibf);
-                    Point q = otta_face_figure.getEndPointFromLineId(ibf);
+                    Point p = faceFigure.getBeginPointFromLineId(ibf);
+                    Point q = faceFigure.getEndPointFromLineId(ibf);
                     // This qt here is the same instance as in SubFace_configure()
                     for (int im : qt.collect(new LineSegmentCollector(p, q))) {
                         if ((im != faceId_min) && (im != faceId_max)) {
-                            if (otta_face_figure.convex_inside(ibf, im)) {
+                            if (faceFigure.convex_inside(ibf, im)) {
                                 // AEA cannot run in parallel
                                 synchronized (AEA) {
                                     if (Thread.interrupted()) return;
@@ -414,27 +439,27 @@ public class FoldedFigure_Configurator {
     }
 
     private HierarchyListStatus setupUEquivalenceConditions() throws InterruptedException {
-         // Add equivalence condition. There are two adjacent faces im1 and im2 as the boundary of the bar ib,
+        // Add equivalence condition. There are two adjacent faces im1 and im2 as the boundary of the bar ib,
         // Also, there are two adjacent faces im3 and im4 as the boundary of the bar jb, and when ib and jb are parallel and partially overlap, when folding is estimated.
         // The surface of the bar ib and the surface of the surface jb are not aligned with i, j, i, j or j, i, j, i. If this happens,
         // Since there is a mistake in the 3rd place from the beginning, find the number of digits in this 3rd place with SubFace and advance this digit by 1.
 
-        QuadTree qt = new QuadTree(new PointSetLineAdapter(otta_face_figure));
+        QuadTree qt = new QuadTree(new PointSetLineAdapter(faceFigure));
         ExecutorService service = Executors.newWorkStealingPool();
         worker.errorPos = null;
 
-        for (int ib = 1; ib <= orite.getNumLines() - 1; ib++) {
+        for (int ib = 1; ib <= wireFrame_worker.getNumLines() - 1; ib++) {
             final int ibf = ib;
-            final int mi1 = orite.lineInFaceBorder_min_request(ibf);
-            final int mi2 = orite.lineInFaceBorder_max_request(ibf);
+            final int mi1 = wireFrame_worker.lineInFaceBorder_min_request(ibf);
+            final int mi2 = wireFrame_worker.lineInFaceBorder_max_request(ibf);
             if (mi1 != mi2 && mi1 != 0) {
                 service.execute(() -> {
                     for (int jb : qt.getPotentialCollision(ibf)) {
                         if (Thread.interrupted()) break;
-                        int mj1 = orite.lineInFaceBorder_min_request(jb);
-                        int mj2 = orite.lineInFaceBorder_max_request(jb);
+                        int mj1 = wireFrame_worker.lineInFaceBorder_min_request(jb);
+                        int mj2 = wireFrame_worker.lineInFaceBorder_max_request(jb);
                         if (mj1 != mj2 && mj1 != 0) {
-                            if (otta_face_figure.parallel_overlap(ibf, jb)) {
+                            if (faceFigure.parallel_overlap(ibf, jb)) {
                                 if (exist_identical_subFace(mi1, mi2, mj1, mj2)) {
                                     // AEA cannot run in parallel
                                     synchronized (AEA) {

@@ -1,13 +1,13 @@
 package oriedita.editor.task;
 
 import org.tinylog.Logger;
-import origami.crease_pattern.FoldingException;
-import origami.folding.FoldedFigure;
 import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.databinding.FoldedFigureModel;
 import oriedita.editor.databinding.FoldedFiguresList;
 import oriedita.editor.drawing.FoldedFigure_Drawer;
 import oriedita.editor.service.FoldingService;
+import origami.crease_pattern.FoldingException;
+import origami.folding.FoldedFigure;
 
 public class FoldingEstimateSpecificTask implements OrieditaTask {
     private final FoldedFigureModel foldedFigureModel;
@@ -32,28 +32,28 @@ public class FoldingEstimateSpecificTask implements OrieditaTask {
             return;
         }
 
-        if (foldedFigureModel.getFoldedCases() == selectedFigure.foldedFigure.discovered_fold_cases) {
-            selectedFigure.foldedFigure.text_result = "Number of found solutions = " + selectedFigure.foldedFigure.discovered_fold_cases + "  ";
+        if (foldedFigureModel.getFoldedCases() == selectedFigure.getFoldedFigure().discovered_fold_cases) {
+            selectedFigure.getFoldedFigure().text_result = "Number of found solutions = " + selectedFigure.getFoldedFigure().discovered_fold_cases + "  ";
         }
         int objective = foldedFigureModel.getFoldedCases();
         try {
-            while (objective > selectedFigure.foldedFigure.discovered_fold_cases) {
+            while (objective > selectedFigure.getFoldedFigure().discovered_fold_cases) {
                 foldingService.folding_estimated(selectedFigure);
                 canvasModel.markDirty();
 
-                selectedFigure.foldedFigure.estimationOrder = FoldedFigure.EstimationOrder.ORDER_6;
-                if (!selectedFigure.foldedFigure.findAnotherOverlapValid) {
-                    objective = selectedFigure.foldedFigure.discovered_fold_cases;
+                selectedFigure.getFoldedFigure().estimationOrder = FoldedFigure.EstimationOrder.ORDER_6;
+                if (!selectedFigure.getFoldedFigure().findAnotherOverlapValid) {
+                    objective = selectedFigure.getFoldedFigure().discovered_fold_cases;
                 }
             }
         } catch (InterruptedException | FoldingException e) {
-            selectedFigure.foldedFigure.estimated_initialize();
+            selectedFigure.getFoldedFigure().estimated_initialize();
             Logger.error(e, "Folding got cancelled");
         }
 
         long stop = System.currentTimeMillis();
         long L = stop - start;
-        selectedFigure.foldedFigure.text_result = selectedFigure.foldedFigure.text_result + "     Computation time " + L + " msec.";
+        selectedFigure.getFoldedFigure().text_result = selectedFigure.getFoldedFigure().text_result + "     Computation time " + L + " msec.";
 
         canvasModel.markDirty();
     }

@@ -42,6 +42,6 @@ public class QuaternaryConstraint extends Constraint {
 
     @Override
     protected int[][] getChecks() {
-        return new int[][] { { b, c }, { a, c }, { d, b }, { c, a }, { b, d }, { d, a } };
+        return new int[][]{{b, c}, {a, c}, {d, b}, {c, a}, {b, d}, {d, a}};
     }
 }

@@ -1,13 +1,13 @@
 package oriedita.editor.databinding;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import origami.crease_pattern.OritaCalc;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
-@Singleton
+@ApplicationScoped
 public class CameraModel {
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     private double rotation;

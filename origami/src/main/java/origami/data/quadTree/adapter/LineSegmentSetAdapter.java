@@ -6,7 +6,7 @@ import origami.crease_pattern.element.Point;
 /**
  * LineSegmentSetAdapter is a {@link QuadTreeAdapter} that uses all points in a
  * {@link LineSegmentSet} as initial range.
- * 
+ *
  * @author Mu-Tsun Tsai
  */
 public abstract class LineSegmentSetAdapter implements QuadTreeAdapter {

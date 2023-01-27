@@ -10,7 +10,11 @@ import origami.folding.permutation.combination.CombinationGenerator;
 import origami.folding.util.EquivalenceCondition;
 import origami.folding.util.IBulletinBoard;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -34,12 +38,12 @@ public class SubFace {
     private List<EquivalenceCondition> uEquivalenceConditions;
     private Map<Integer, List<EquivalenceCondition>> equivalenceConditions;
 
-    IBulletinBoard bb;
+    private IBulletinBoard bb;
 
     public int swapCounter = 0;
 
-    CombinationGenerator cg;
-    int cgTotal = 0;
+    private CombinationGenerator cg;
+    private int cgTotal = 0;
     private CustomConstraint constraintTopFace;
     private CustomConstraint constraintBottomFace;
 
@@ -93,11 +97,11 @@ public class SubFace {
         return contains(im1) && contains(im2) && contains(im3) && contains(im4);
     }
 
-    public int get_Permutation_count() {
+    public int getPermutationCount() {
         return cgTotal + permutationGenerator.getCount();
     }
 
-    public void Permutation_first() throws InterruptedException {
+    public void resetPermutationGenerator() throws InterruptedException {
         if (getFaceIdCount() > 0) {
             cg = null;
             cgTotal = 0;
@@ -166,7 +170,7 @@ public class SubFace {
             for (int i = 1; i <= faceIdCount; i++) {
                 s0.append(" : ").append(getPermutation(i));
             }
-            bb.rewrite(9, "Tested permutation count : " + get_Permutation_count());
+            bb.rewrite(9, "Tested permutation count : " + getPermutationCount());
             bb.rewrite(10, "Testing permutation " + s0);
         }
         return 0;//There is no permutation that can overlap
@@ -356,7 +360,6 @@ public class SubFace {
     }
 
 
-
     // Enter the information due to the overlap of SubFace's faces in the upper and lower tables
     public void enterStackingOfSubFace(AdditionalEstimationAlgorithm AEA) {
         try {
@@ -365,7 +368,7 @@ public class SubFace {
                     AEA.inferAbove(faceIdList[getPermutation(i)], faceIdList[getPermutation(j)]);
                 }
             }
-        } catch(InferenceFailureException e) {
+        } catch (InferenceFailureException e) {
             // Not supposed to happen
         }
     }
@@ -379,10 +382,12 @@ public class SubFace {
         }
     }
 
-    /** Prepare a guidebook for the permutation generator in SubFace. */
+    /**
+     * Prepare a guidebook for the permutation generator in SubFace.
+     */
     public void setGuideMap(HierarchyList hierarchyList) {
         if (Thread.interrupted()) return;
-        
+
         // We setup faceIdMapArray only for valid subfaces to save memory.
         faceIdMapArray = new int[hierarchyList.getFacesTotal() + 1];
         for (int k : faceIdMap.keySet()) {
@@ -492,7 +497,7 @@ public class SubFace {
     private boolean uecSorted = false;
 
     public Iterable<EquivalenceCondition> getUEquivalenceConditions() {
-        if(!uecSorted) {
+        if (!uecSorted) {
             uEquivalenceConditions.sort(
                     Comparator.comparingInt(EquivalenceCondition::getA).thenComparingInt(EquivalenceCondition::getB)
                             .thenComparingInt(EquivalenceCondition::getC).thenComparingInt(EquivalenceCondition::getD));

@@ -1,10 +1,10 @@
 package origami.data.quadTree.adapter;
 
-import java.util.List;
-
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami.data.quadTree.QuadTreeItem;
+
+import java.util.List;
 
 public class PointLineMapAdapter implements QuadTreeAdapter {
 

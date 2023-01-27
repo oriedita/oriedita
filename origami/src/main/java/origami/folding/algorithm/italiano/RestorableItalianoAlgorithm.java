@@ -3,7 +3,7 @@ package origami.folding.algorithm.italiano;
 /**
  * RestorableItalianoAlgorithm allows the entire state of the algorithm to be
  * saved and restored.
- * 
+ *
  * @author Mu-Tsun Tsai
  */
 public class RestorableItalianoAlgorithm extends ItalianoAlgorithm {

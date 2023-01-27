@@ -12,7 +12,7 @@ import java.util.Iterator;
  * minimal heap instead of BST to achieve the ordering functionality, since in
  * our use case we'll only iterate over the item list once and heap can do that
  * in fewer operations than BST.
- * 
+ *
  * @author Mu-Tsun Tsai
  */
 public class StaticMinHeap implements Iterable<Integer> {

@@ -1,15 +1,14 @@
 package oriedita.editor.databinding;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import origami.Epsilon;
-import origami.crease_pattern.OritaCalc;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.Serializable;
 
-@Singleton
+@ApplicationScoped
 public class GridModel implements Serializable {
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     private int intervalGridSize;
@@ -24,6 +23,8 @@ public class GridModel implements Serializable {
     private State baseState;
     private int verticalScalePosition;
     private int horizontalScalePosition;
+
+    private boolean drawDiagonalGridlines;
 
     @Inject
     public GridModel() {
@@ -49,6 +50,8 @@ public class GridModel implements Serializable {
 
         intervalGridSize = 5;
 
+        drawDiagonalGridlines = false;
+
         resetGridX();
         resetGridY();
 
@@ -67,6 +70,15 @@ public class GridModel implements Serializable {
 
     public void advanceBaseState() {
         setBaseState(baseState.advance());
+    }
+
+    public boolean getDrawDiagonalGridlines() {
+        return drawDiagonalGridlines;
+    }
+
+    public void setDrawDiagonalGridlines(boolean newVal) {
+        this.drawDiagonalGridlines = newVal;
+        this.pcs.firePropertyChange("drawDiagonalGridlines", !newVal, newVal);
     }
 
     public int getVerticalScalePosition() {
@@ -220,13 +232,7 @@ public class GridModel implements Serializable {
     public void setGridAngle(final double gridAngle) {
         double oldAngle = this.gridAngle;
         double newAngle = gridAngle;
-        if (Math.abs(OritaCalc.angle_between_0_360(this.gridAngle)) < Epsilon.UNKNOWN_01) {
-            newAngle = 90.0;
-        }
-        if (Math.abs(OritaCalc.angle_between_0_360(this.gridAngle - 180.0)) < Epsilon.UNKNOWN_01) {
-            newAngle = 90.0;
-        }
-        if (Math.abs(OritaCalc.angle_between_0_360(this.gridAngle - 360.0)) < Epsilon.UNKNOWN_01) {
+        if (newAngle < Epsilon.UNKNOWN_01 || newAngle > 180.0 - Epsilon.UNKNOWN_01) {
             newAngle = 90.0;
         }
 
@@ -298,6 +304,8 @@ public class GridModel implements Serializable {
         baseState = gridModel.getBaseState();
         verticalScalePosition = gridModel.getVerticalScalePosition();
         horizontalScalePosition = gridModel.getHorizontalScalePosition();
+
+        drawDiagonalGridlines = gridModel.getDrawDiagonalGridlines();
 
         this.pcs.firePropertyChange(null, null, null);
     }

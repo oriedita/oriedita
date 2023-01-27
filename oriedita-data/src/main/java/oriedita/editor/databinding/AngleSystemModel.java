@@ -1,14 +1,13 @@
 package oriedita.editor.databinding;
 
 
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
-@Singleton
+@ApplicationScoped
 public class AngleSystemModel {
     private double angleA;
     private double angleB;
@@ -238,6 +237,17 @@ public class AngleSystemModel {
         currentAngleSystemDivider = 0;
 
         this.pcs.firePropertyChange(null, null, null);
+    }
+
+    public double[] getAngles() {
+        return new double[]{
+                currentAngleA,
+                currentAngleB,
+                currentAngleC,
+                360 - currentAngleA,
+                360 - currentAngleB,
+                360 - currentAngleC,
+        };
     }
 
     public enum AngleSystemInputType {

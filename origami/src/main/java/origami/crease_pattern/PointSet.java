@@ -2,37 +2,43 @@ package origami.crease_pattern;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.tinylog.Logger;
-import origami.crease_pattern.element.*;
+import origami.crease_pattern.element.Line;
+import origami.crease_pattern.element.LineColor;
+import origami.crease_pattern.element.LineSegment;
+import origami.crease_pattern.element.Point;
+import origami.crease_pattern.element.Point_p;
+import origami.crease_pattern.element.Polygon;
 import origami.data.ListArray;
 import origami.data.save.PointSave;
 import origami.folding.element.Face;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A collection of points.
- *
+ * <p>
  * Every line can be part of a line and/or a face.
  */
 public class PointSet implements Serializable {
-        int numFaces_temp;
+    int numFaces_temp;
 
-    int numPoints;               //Total number of points actually used
-    int numLines;               //Total number of lines actually used
-    int numFaces;               //Total number of faces actually used
+    private int numPoints;               //Total number of points actually used
+    private int numLines;               //Total number of lines actually used
+    private int numFaces;               //Total number of faces actually used
 
-    Point_p[] points;//Instantiation of points
-    Line[] lines;//Instantiation of lines
+    private Point_p[] points;//Instantiation of points
+    private Line[] lines;//Instantiation of lines
     @JsonIgnore
-    int[] lineInFaceBorder_min;
+    private int[] lineInFaceBorder_min;
     @JsonIgnore
-    int[] lineInFaceBorder_max;
+    private int[] lineInFaceBorder_max;
 
-    Face[] faces; //Face instantiation
+    private Face[] faces; //Face instantiation
 
     @JsonIgnore
-    List<List<Integer>> point_linking;//point_linking [i] [j] is the number of points connected to t [i]. The number of Tem is stored in t [0].
+    private List<List<Integer>> point_linking;//point_linking [i] [j] is the number of points connected to t [i]. The number of Tem is stored in t [0].
 
     public PointSet() {
         reset();
@@ -295,7 +301,7 @@ public class PointSet implements Serializable {
 
     public void setPoint(int i, Point tn) {
         points[i].set(tn);
-    }                                                        //   <<<------------
+    }
 
     public void addPoint(Point p) {
         numPoints = numPoints + 1;
@@ -411,7 +417,7 @@ public class PointSet implements Serializable {
 
         int euler = numFaces - numLines + numPoints;
         if (euler != 1) {
-            /**
+            /*
              * Technically speaking, if this happens, then there's something wrong caused by
              * the rounding error and we cannot possibly expect a valid folding result even
              * if the rest of the algorithm reports a solution. So let's hope that this
@@ -449,9 +455,9 @@ public class PointSet implements Serializable {
 
         // Registration of both sides of line
         for (int i = 1; i <= numLines; i++) {
-            int min =  numFaces + 1, max = 0;
+            int min = numFaces + 1, max = 0;
             int cursor = head[lines[i].getBegin()];
-            while(cursor != 0) {
+            while (cursor != 0) {
                 int id = list.get(cursor);
                 if (lineInFaceBorder(id, i)) {
                     if (min > id) min = id;
@@ -467,17 +473,23 @@ public class PointSet implements Serializable {
         }
     }
 
-    //Boundary of lines Boundary surface (two sides in yellow) Here, faceId of the proliferating branch of faceId was made.
+    /**
+     * Boundary of lines Boundary surface (two sides in yellow) Here, faceId of the proliferating branch of faceId was made.
+     */
     public int lineInFaceBorder_min_lookup(int lineId) {
         return lineInFaceBorder_min[lineId];
     }
 
-    //Returns the faceId with the larger faceId of the faces containing the bar lineId as the boundary (there are up to two faces). Returns 0 if there is no face containing the line as the boundary
+    /**
+     * Returns the faceId with the larger faceId of the faces containing the bar lineId as the boundary (there are up to two faces). Returns 0 if there is no face containing the line as the boundary
+     */
     public int lineInFaceBorder_max_lookup(int lineId) {
         return lineInFaceBorder_max[lineId];
     }
 
-    /** Determines if two Faces are identical, in the way that their points match index by index. */
+    /**
+     * Determines if two Faces are identical, in the way that their points match index by index.
+     */
     private boolean equals(Face m, Face n) {
         if (m.getNumPoints() != n.getNumPoints()) {
             return false;
@@ -520,7 +532,7 @@ public class PointSet implements Serializable {
 
     public ListArray getPointToLineMap() {
         ListArray map = new ListArray(numPoints, numLines * 5);
-        for(int i = 1; i <= numLines; i++) {
+        for (int i = 1; i <= numLines; i++) {
             map.add(lines[i].getBegin(), i);
             map.add(lines[i].getEnd(), i);
         }
@@ -533,7 +545,7 @@ public class PointSet implements Serializable {
         for (int i = 1; i <= pm; i++) {
             ma = faces[m].getPointId(i);
             mb = faces[m].getPointId(i % pm + 1);
-            
+
             for (int j = 1; j <= pn; j++) {
                 na = faces[n].getPointId(j);
                 nb = faces[n].getPointId(j % pn + 1);
@@ -663,7 +675,7 @@ public class PointSet implements Serializable {
 
     public void setSave(PointSave save) {
         for (int i = 0; i < save.getPoints().size(); i++) {
-            points[i+1].set(save.getPoints().get(i));
+            points[i + 1].set(save.getPoints().get(i));
         }
     }
 }

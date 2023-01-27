@@ -1,20 +1,20 @@
 package origami.data.quadTree.adapter;
 
-import java.util.List;
-import java.util.function.Function;
-
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami.data.quadTree.QuadTreeItem;
 
-public class LineSegmentListEndPointAdapter implements  QuadTreeAdapter {
+import java.util.List;
+import java.util.function.Function;
+
+public class LineSegmentListEndPointAdapter implements QuadTreeAdapter {
 
     private final List<LineSegment> list;
     private final Function<LineSegment, Point> factory;
 
     public LineSegmentListEndPointAdapter(List<LineSegment> list, Function<LineSegment, Point> factory) {
         this.list = list;
-        this.factory= factory;
+        this.factory = factory;
     }
 
     @Override

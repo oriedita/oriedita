@@ -1,15 +1,15 @@
 package origami.data.quadTree.adapter;
 
-import java.util.function.BiFunction;
-
 import origami.crease_pattern.LineSegmentSet;
 import origami.crease_pattern.element.Point;
 import origami.data.quadTree.QuadTreeItem;
 
+import java.util.function.BiFunction;
+
 /**
  * LineSegmentEndPointAdapter adapts of of the end points of the lines in a
  * {@link LineSegmentSet}.
- * 
+ *
  * @author Mu-Tsun Tsai
  */
 public class LineSegmentEndPointAdapter implements QuadTreeAdapter {

@@ -12,7 +12,7 @@
 | `kousi` | koushi | `grid` | 格子 |
 | `en` | | `circle` | 円 |
 | `zu` | | `figure` / `drawing` | 図
-| `syuokunin` | shokunin | `worker` | 職人 
+| `syuokunin` | shokunin | `worker` | 職人
 | `jyuufuku` | juufuku | `overlapping` | 重複
 | `tenkaizu` | | `crease pattern` | 展開図 | Wireframe is probably a better translation
 | `hikonshi` | | `basic` | 基本 | Not sure/ complete

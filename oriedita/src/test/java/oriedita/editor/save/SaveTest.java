@@ -1,5 +1,7 @@
 package oriedita.editor.save;
 
+import jakarta.enterprise.inject.Instance;
+import jakarta.enterprise.util.TypeLiteral;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -8,13 +10,19 @@ import org.junit.jupiter.params.provider.CsvSource;
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.canvas.TextWorker;
 import oriedita.editor.canvas.impl.CreasePattern_Worker_Impl;
-import oriedita.editor.databinding.*;
+import oriedita.editor.databinding.ApplicationModel;
+import oriedita.editor.databinding.CanvasModel;
+import oriedita.editor.databinding.FileModel;
+import oriedita.editor.databinding.FoldedFigureModel;
+import oriedita.editor.databinding.FoldedFiguresList;
+import oriedita.editor.databinding.GridModel;
+import oriedita.editor.databinding.SelectedTextModel;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.exception.FileReadingException;
 import oriedita.editor.service.FileSaveService;
 import oriedita.editor.service.ResetService;
-import oriedita.editor.service.impl.FileSaveServiceImpl;
 import oriedita.editor.service.impl.DequeHistoryState;
+import oriedita.editor.service.impl.FileSaveServiceImpl;
 import oriedita.editor.service.impl.SingleTaskExecutorServiceImpl;
 import oriedita.editor.text.Text;
 import origami.Epsilon;
@@ -25,7 +33,9 @@ import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 
 import java.io.File;
+import java.lang.annotation.Annotation;
 import java.net.URISyntaxException;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
@@ -33,6 +43,64 @@ import java.util.Objects;
  * Test if the current version of the save is compatible with the previous version.
  */
 public class SaveTest {
+
+    private static class MockInstance<T> implements Instance<T> {
+        private final T val;
+
+        public MockInstance(T val) {
+            this.val = val;
+        }
+
+        @Override
+        public Instance<T> select(Annotation... qualifiers) {
+            return null;
+        }
+
+        @Override
+        public <U extends T> Instance<U> select(Class<U> subtype, Annotation... qualifiers) {
+            return null;
+        }
+
+        @Override
+        public <U extends T> Instance<U> select(TypeLiteral<U> subtype, Annotation... qualifiers) {
+            return null;
+        }
+
+        @Override
+        public boolean isUnsatisfied() {
+            return false;
+        }
+
+        @Override
+        public boolean isAmbiguous() {
+            return false;
+        }
+
+        @Override
+        public void destroy(T instance) {
+
+        }
+
+        @Override
+        public Handle<T> getHandle() {
+            return null;
+        }
+
+        @Override
+        public Iterable<? extends Handle<T>> handles() {
+            return null;
+        }
+
+        @Override
+        public T get() {
+            return val;
+        }
+
+        @Override
+        public Iterator<T> iterator() {
+            return null;
+        }
+    }
 
     private FileSaveService fileSaveService;
     private CreasePattern_Worker mainCreasePatternWorker;
@@ -49,9 +117,19 @@ public class SaveTest {
         FoldedFigureModel foldedFigureModel = new FoldedFigureModel();
         SelectedTextModel textModel = new SelectedTextModel();
         TextWorker textWorker = new TextWorker();
-        mainCreasePatternWorker = new CreasePattern_Worker_Impl(creasePatternCamera, new DequeHistoryState(), new DequeHistoryState(), new FoldLineSet(), new FoldLineSet(), new SingleTaskExecutorServiceImpl(), canvasModel, applicationModel, gridModel, foldedFigureModel, fileModel, null, textWorker, textModel);
-        ResetService resetService = () -> {};
-        fileSaveService = new FileSaveServiceImpl(null, creasePatternCamera, mainCreasePatternWorker, null, fileModel, applicationModel, canvasModel, new FoldedFiguresList(), resetService, null);
+        mainCreasePatternWorker = new CreasePattern_Worker_Impl(creasePatternCamera, new DequeHistoryState(), new DequeHistoryState(), new FoldLineSet(), new FoldLineSet(), new SingleTaskExecutorServiceImpl(), canvasModel, applicationModel, gridModel, foldedFigureModel, fileModel, textWorker, textModel);
+        ResetService resetService = new ResetService() {
+            @Override
+            public void developmentView_initialization() {
+
+            }
+
+            @Override
+            public void Button_shared_operation() {
+
+            }
+        };
+        fileSaveService = new FileSaveServiceImpl(null, creasePatternCamera, mainCreasePatternWorker, null, null, fileModel, applicationModel, new FoldedFiguresList(), resetService, null);
     }
 
     @ParameterizedTest

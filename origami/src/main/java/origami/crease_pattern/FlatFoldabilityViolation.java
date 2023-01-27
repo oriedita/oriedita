@@ -28,6 +28,7 @@ public class FlatFoldabilityViolation {
     public enum Rule {
         NUMBER_OF_FOLDS, ANGLES, MAEKAWA, LITTLE_BIG_LITTLE, NONE
     }
+
     public enum Color {
         NOT_ENOUGH_MOUNTAIN, NOT_ENOUGH_VALLEY, EQUAL, CORRECT, UNKNOWN
     }

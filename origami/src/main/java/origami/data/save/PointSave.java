@@ -6,6 +6,7 @@ import java.util.List;
 
 /**
  * Savefile containing points
+ *
  * @see origami.crease_pattern.PointSet
  */
 public interface PointSave {

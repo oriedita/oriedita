@@ -1,15 +1,20 @@
 package oriedita.editor.service.impl;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import oriedita.editor.canvas.CreasePattern_Worker;
-import oriedita.editor.databinding.*;
+import oriedita.editor.databinding.AngleSystemModel;
+import oriedita.editor.databinding.CameraModel;
+import oriedita.editor.databinding.CanvasModel;
+import oriedita.editor.databinding.FoldedFigureModel;
+import oriedita.editor.databinding.FoldedFiguresList;
+import oriedita.editor.databinding.GridModel;
+import oriedita.editor.databinding.InternalDivisionRatioModel;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.service.ResetService;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
-
-@Singleton
+@ApplicationScoped
 public class ResetServiceImpl implements ResetService {
     private final CreasePattern_Worker mainCreasePatternWorker;
     private final Camera creasePatternCamera;
@@ -22,15 +27,15 @@ public class ResetServiceImpl implements ResetService {
     private final FoldedFiguresList foldedFiguresList;
 
     @Inject
-    public ResetServiceImpl(CreasePattern_Worker mainCreasePatternWorker,
-                        @Named("creasePatternCamera") Camera creasePatternCamera,
-                        CanvasModel canvasModel,
-                        InternalDivisionRatioModel internalDivisionRatioModel,
-                        FoldedFigureModel foldedFigureModel,
-                        GridModel gridModel,
-                        AngleSystemModel angleSystemModel,
-                        CameraModel creasePatternCameraModel,
-                        FoldedFiguresList foldedFiguresList) {
+    public ResetServiceImpl(@Named("mainCreasePattern_Worker") CreasePattern_Worker mainCreasePatternWorker,
+                            @Named("creasePatternCamera") Camera creasePatternCamera,
+                            CanvasModel canvasModel,
+                            InternalDivisionRatioModel internalDivisionRatioModel,
+                            FoldedFigureModel foldedFigureModel,
+                            GridModel gridModel,
+                            AngleSystemModel angleSystemModel,
+                            CameraModel creasePatternCameraModel,
+                            FoldedFiguresList foldedFiguresList) {
         this.mainCreasePatternWorker = mainCreasePatternWorker;
         this.creasePatternCamera = creasePatternCamera;
         this.canvasModel = canvasModel;
@@ -67,5 +72,14 @@ public class ResetServiceImpl implements ResetService {
         creasePatternCameraModel.reset();
 
         foldedFiguresList.removeAllElements();
+    }
+
+    @Override
+    public void Button_shared_operation() {
+        mainCreasePatternWorker.setDrawingStage(0);
+        mainCreasePatternWorker.resetCircleStep();
+        // TODO Reset Voronoi
+
+        canvasModel.markDirty();
     }
 }

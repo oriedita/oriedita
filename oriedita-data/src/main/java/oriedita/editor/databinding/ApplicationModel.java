@@ -1,11 +1,14 @@
 package oriedita.editor.databinding;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import oriedita.editor.Colors;
 import oriedita.editor.canvas.LineStyle;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.Point;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.File;
@@ -17,7 +20,7 @@ import java.util.stream.Collectors;
 /**
  * This model is saved to disk and restored when the application starts.
  */
-@Singleton
+@ApplicationScoped
 public class ApplicationModel implements Serializable {
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     private boolean displayPointSpotlight;
@@ -71,13 +74,13 @@ public class ApplicationModel implements Serializable {
         reset();
     }
 
-    public void setFoldWarning(boolean foldWarning){
+    public void setFoldWarning(boolean foldWarning) {
         boolean oldFoldWarning = this.foldWarning;
         this.foldWarning = foldWarning;
         this.pcs.firePropertyChange("foldWarning", oldFoldWarning, foldWarning);
     }
 
-    public boolean getFoldWarning(){
+    public boolean getFoldWarning() {
         return foldWarning;
     }
 

@@ -1,24 +1,34 @@
 package origami.folding.permutation;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * This is the base class for different permutation generator implementations.
- * 
+ *
  * @author Mu-Tsun Tsai
  */
 public abstract class PermutationGenerator {
 
-    /** Number of valid permutations found. */
+    /**
+     * Number of valid permutations found.
+     */
     protected int count;
 
-    /** Total number of digits. */
+    /**
+     * Total number of digits.
+     */
     protected final int numDigits;
 
-    /** digits[i] gives the element at position i. */
+    /**
+     * digits[i] gives the element at position i.
+     */
     protected final int[] digits;
 
-    /** map[i] gives the position of element i. */
+    /**
+     * map[i] gives the position of element i.
+     */
     protected final int[] map;
 
     protected Set<Integer> topIndices;
@@ -42,19 +52,29 @@ public abstract class PermutationGenerator {
         return digits[digit];
     }
 
-    /** Remember to reset at the end of initialization. */
+    /**
+     * Remember to reset at the end of initialization.
+     */
     public abstract void initialize() throws InterruptedException;
 
-    /** Reset to the first valid permutation. */
+    /**
+     * Reset to the first valid permutation.
+     */
     public abstract void reset() throws InterruptedException;
 
-    /** Clear all temporary guides. */
+    /**
+     * Clear all temporary guides.
+     */
     public abstract void clearTempGuide();
 
-    /** Returns the lowest digit that was changed in the process. */
+    /**
+     * Returns the lowest digit that was changed in the process.
+     */
     public abstract int next(int digit) throws InterruptedException;
 
-    /** Add a constraint saying that "from" must appear before "to". */
+    /**
+     * Add a constraint saying that "from" must appear before "to".
+     */
     public abstract void addGuide(int from, int to);
 
     /**

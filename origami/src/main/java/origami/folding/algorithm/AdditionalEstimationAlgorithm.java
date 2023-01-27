@@ -1,7 +1,5 @@
 package origami.folding.algorithm;
 
-import java.util.Iterator;
-
 import org.tinylog.Logger;
 import origami.crease_pattern.worker.FoldedFigure_Worker.HierarchyListStatus;
 import origami.data.StackArray;
@@ -13,12 +11,14 @@ import origami.folding.element.SubFace;
 import origami.folding.util.EquivalenceCondition;
 import origami.folding.util.IBulletinBoard;
 
+import java.util.Iterator;
+
 /**
  * This class is the result of refactoring the original additional_estimation().
  * It does basically the same thing, but greatly improves readability. It also
  * improves the performance by removing outer loops that are theoretically
  * redundant.
- * 
+ *
  * @author Mu-Tsun Tsai
  */
 public class AdditionalEstimationAlgorithm {
@@ -150,7 +150,9 @@ public class AdditionalEstimationAlgorithm {
         return HierarchyListStatus.SUCCESSFUL_1000;
     }
 
-    /** This is a faster version of run(). */
+    /**
+     * This is a faster version of run().
+     */
     public boolean fastRun() {
         try {
             flush();
@@ -275,7 +277,9 @@ public class AdditionalEstimationAlgorithm {
         return (changes << 1) | removeFlag;
     }
 
-    /** Make inference that i > j. */
+    /**
+     * Make inference that i > j.
+     */
     private int tryInferAbove(int i, int j) throws InferenceFailureException {
         if (hierarchyList.get(i, j) == BELOW) {
             throw new InferenceFailureException(i, j);
@@ -283,7 +287,9 @@ public class AdditionalEstimationAlgorithm {
         return inferAbove(i, j) ? 1 : 0;
     }
 
-    /** Caller of this method must be certain that no error will occur. */
+    /**
+     * Caller of this method must be certain that no error will occur.
+     */
     public boolean inferAbove(int i, int j) throws InferenceFailureException {
         if (hierarchyList.isEmpty(i, j)) {
             hierarchyList.set(i, j, ABOVE);
@@ -295,7 +301,7 @@ public class AdditionalEstimationAlgorithm {
                 // returned list is actually exactly what we need, since a SubFace s is added to
                 // List[i][x] only if it contains Face i, and similarly it is added to
                 // List[x][j] only if it contains Face j.
-                if(!IA[s].tryAdd(subFaces[s].FaceIdIndex(i), subFaces[s].FaceIdIndex(j))) {
+                if (!IA[s].tryAdd(subFaces[s].FaceIdIndex(i), subFaces[s].FaceIdIndex(j))) {
                     throw new InferenceFailureException(i, j);
                 }
             }

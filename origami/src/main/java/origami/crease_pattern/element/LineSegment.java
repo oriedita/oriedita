@@ -1,6 +1,6 @@
 package origami.crease_pattern.element;
 
-import java.awt.*;
+import java.awt.Color;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -11,11 +11,11 @@ public class LineSegment implements Serializable, Cloneable {
 
     protected final Point a = new Point(); //Branch a point
     protected final Point b = new Point(); //Branch b point
-    ActiveState active;//0 is inactive. 1 is active in a. 2 is active in b. 3 is active in both a and b.
-    LineColor color;//Color specification 　0=black,1=blue,2=red.
+    protected ActiveState active;//0 is inactive. 1 is active in a. 2 is active in b. 3 is active in both a and b.
+    protected LineColor color;//Color specification 　0=black,1=blue,2=red.
 
-    int customized = 0;//Custom property parameters
-    Color customizedColor = DEFAULT_COLOR;//Color if custom made
+    protected int customized = 0;//Custom property parameters
+    protected Color customizedColor = DEFAULT_COLOR;//Color if custom made
 
     protected int selected;//0 is not selected. 1 or more is set appropriately according to the situation
 
@@ -118,18 +118,21 @@ public class LineSegment implements Serializable, Cloneable {
     public int determineMaxX() {
         return Math.max((int) Math.ceil(a.x), (int) Math.ceil(b.x));
     }
+
     /**
      * The smaller one when truncating the x-coordinate of the end point
      */
     public int determineMinX() {
         return Math.min((int) Math.floor(a.x), (int) Math.floor(b.x));
     }
+
     /**
      * Larger when rounding up the y-coordinate of the end point
      */
     public int determineMaxY() {
         return Math.max((int) Math.ceil(a.y), (int) Math.ceil(b.y));
     }
+
     /**
      * The smaller one when truncating the y coordinate of the end point
      */

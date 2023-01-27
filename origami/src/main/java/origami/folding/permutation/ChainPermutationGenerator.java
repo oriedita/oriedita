@@ -6,11 +6,11 @@ package origami.folding.permutation;
  * reduce half of the work searching for next available element. It is also
  * equipped with an improved PairGuide to help skipping vast amount of
  * permutations that won't work.
- * 
+ * <p>
  * The idea behind ChainPermutationGenerator is that it locks the ordering of
  * the longest chain found in the given {@link PairGuide}. This reduces as much
  * as l! iterations, where l is the length of the chain.
- * 
+ *
  * @author Mu-Tsun Tsai
  */
 public class ChainPermutationGenerator extends PermutationGenerator {
@@ -122,7 +122,7 @@ public class ChainPermutationGenerator extends PermutationGenerator {
         while (curIndex < numDigits) {
             int swapIndex = swapHistory[curIndex];
             int curDigit = 0;
-            int maxIndex =  numDigits - lockRemain + 1;
+            int maxIndex = numDigits - lockRemain + 1;
 
             // Find the next available element.
             do {

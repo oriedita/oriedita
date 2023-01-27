@@ -1,6 +1,6 @@
 package oriedita.editor;
 
-import java.awt.*;
+import java.awt.Color;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -57,7 +57,8 @@ public class Colors {
 
     /**
      * Reverse lookup of colors. Find key in darkColorMap when going from light to dark, find value in darkColormap when going from dark to light.
-     * @param color Current color
+     *
+     * @param color  Current color
      * @param isDark The desired mode for this color to be in.
      * @return Restored color
      */

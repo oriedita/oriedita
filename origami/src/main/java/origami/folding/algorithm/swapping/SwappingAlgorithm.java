@@ -1,12 +1,14 @@
 package origami.folding.algorithm.swapping;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * This is the base class for swapping algorithms. Swapping algorithms now is
  * used both on SubFaces and on Constraints, so we create a generic algorithm
  * for both of them.
- * 
+ *
  * @author Mu-Tsun Tsai
  */
 public class SwappingAlgorithm<T> {
@@ -26,12 +28,16 @@ public class SwappingAlgorithm<T> {
     private final Set<T> visited = new HashSet<>();
     private int hash;
 
-    /** Records a dead-end. */
+    /**
+     * Records a dead-end.
+     */
     public void record(int index) {
         high = index;
     }
 
-    /** Performs the swap. */
+    /**
+     * Performs the swap.
+     */
     public final void process(T[] s, int max) {
         if (high < 2) return;
 

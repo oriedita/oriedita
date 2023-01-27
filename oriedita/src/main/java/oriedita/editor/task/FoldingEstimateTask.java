@@ -1,22 +1,22 @@
 package oriedita.editor.task;
 
 import org.tinylog.Logger;
+import oriedita.editor.Foldable;
+import oriedita.editor.databinding.CanvasModel;
+import oriedita.editor.drawing.tools.Camera;
+import oriedita.editor.swing.component.BulletinBoard;
 import origami.crease_pattern.LineSegmentSet;
 import origami.folding.FoldedFigure;
-import oriedita.editor.swing.component.BulletinBoard;
-import oriedita.editor.databinding.CanvasModel;
-import oriedita.editor.drawing.FoldedFigure_Drawer;
-import oriedita.editor.drawing.tools.Camera;
 
-public class FoldingEstimateTask implements OrieditaTask{
+public class FoldingEstimateTask implements OrieditaTask {
     private final BulletinBoard bulletinBoard;
     private final CanvasModel canvasModel;
     private final LineSegmentSet lineSegmentsForFolding;
-    private final FoldedFigure_Drawer selectedFigure;
+    private final Foldable selectedFigure;
     private final FoldedFigure.EstimationOrder estimationOrder;
     private final Camera creasePatternCamera;
 
-    public FoldingEstimateTask(Camera creasePatternCamera, BulletinBoard bulletinBoard, CanvasModel canvasModel, LineSegmentSet lineSegmentsForFolding, FoldedFigure_Drawer selectedFigure, FoldedFigure.EstimationOrder estimationOrder) {
+    public FoldingEstimateTask(Camera creasePatternCamera, BulletinBoard bulletinBoard, CanvasModel canvasModel, LineSegmentSet lineSegmentsForFolding, Foldable selectedFigure, FoldedFigure.EstimationOrder estimationOrder) {
         this.creasePatternCamera = creasePatternCamera;
         this.bulletinBoard = bulletinBoard;
         this.canvasModel = canvasModel;
@@ -39,10 +39,10 @@ public class FoldingEstimateTask implements OrieditaTask{
         }
 
         try {
-            selectedFigure.foldedFigure.estimationOrder = estimationOrder;
+            selectedFigure.setEstimationOrder(estimationOrder);
             selectedFigure.folding_estimated(creasePatternCamera, lineSegmentsForFolding);
         } catch (Exception e) {
-            selectedFigure.foldedFigure.estimated_initialize();
+            selectedFigure.estimated_initialize();
             bulletinBoard.clear();
 
             Logger.error(e, "Folding estimation got interrupted.");
@@ -52,7 +52,7 @@ public class FoldingEstimateTask implements OrieditaTask{
 
         long stop = System.currentTimeMillis();
         long L = stop - start;
-        selectedFigure.foldedFigure.text_result = selectedFigure.foldedFigure.text_result + "     Computation time " + L + " msec.";
+        selectedFigure.setTextResult(selectedFigure.getTextResult() + "     Computation time " + L + " msec.");
 
         canvasModel.markDirty();
     }

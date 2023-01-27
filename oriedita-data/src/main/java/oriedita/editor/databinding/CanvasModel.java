@@ -1,19 +1,19 @@
 package oriedita.editor.databinding;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
-import oriedita.editor.canvas.MouseWheelTarget;
-import oriedita.editor.action.FoldedFigureOperationMode;
-import origami.crease_pattern.element.LineColor;
-import oriedita.editor.canvas.MouseMode;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import oriedita.editor.canvas.FoldLineAdditionalInputMode;
+import oriedita.editor.canvas.MouseMode;
+import oriedita.editor.canvas.MouseWheelTarget;
+import oriedita.editor.handler.FoldedFigureOperationMode;
+import origami.crease_pattern.element.LineColor;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.Serializable;
+import java.util.concurrent.atomic.AtomicBoolean;
 
-@Singleton
+@ApplicationScoped
 public class CanvasModel implements Serializable {
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     private LineColor lineColor;
@@ -23,11 +23,18 @@ public class CanvasModel implements Serializable {
     private FoldLineAdditionalInputMode foldLineAdditionalInputMode;
     private FoldLineAdditionalInputMode foldLineAdditionalInputMode_old;
 
+    public AtomicBoolean getW_image_running() {
+        return w_image_running;
+    }
+
+    private final AtomicBoolean w_image_running = new AtomicBoolean(false); // Folding together execution. If a single image export is in progress, it will be true.
+
     private MouseWheelTarget mouseInCpOrFoldedFigure;
 
     public void markDirty() {
         this.pcs.firePropertyChange("dirty", false, true);
     }
+
     public boolean getToggleLineColor() {
         return toggleLineColor;
     }

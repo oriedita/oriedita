@@ -1,19 +1,18 @@
 package oriedita.editor.service.impl;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import org.tinylog.Logger;
 import oriedita.editor.canvas.MouseWheelTarget;
-import oriedita.editor.service.FoldedFigureCanvasSelectService;
-import origami.crease_pattern.element.Point;
-import origami.folding.FoldedFigure;
 import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.databinding.FoldedFigureModel;
 import oriedita.editor.databinding.FoldedFiguresList;
 import oriedita.editor.drawing.FoldedFigure_Drawer;
+import oriedita.editor.service.FoldedFigureCanvasSelectService;
+import origami.crease_pattern.element.Point;
+import origami.folding.FoldedFigure;
 
-@Singleton
+@ApplicationScoped
 public class FoldedFigureCanvasSelectServiceImpl implements FoldedFigureCanvasSelectService {
     private final FoldedFiguresList foldedFiguresList;
     private final FoldedFigureModel foldedFigureModel;
@@ -26,7 +25,8 @@ public class FoldedFigureCanvasSelectServiceImpl implements FoldedFigureCanvasSe
         this.canvasModel = canvasModel;
     }
 
-    @Override public MouseWheelTarget pointInCreasePatternOrFoldedFigure(Point p) {//A function that determines which of the development and folding views the Ten obtained with the mouse points to.
+    @Override
+    public MouseWheelTarget pointInCreasePatternOrFoldedFigure(Point p) {//A function that determines which of the development and folding views the Ten obtained with the mouse points to.
         //20171216
         //hyouji_flg==2,ip4==0  omote
         //hyouji_flg==2,ip4==1	ura
@@ -55,7 +55,7 @@ public class FoldedFigureCanvasSelectServiceImpl implements FoldedFigureCanvasSe
         FoldedFigure OZi;
         for (int i = 0; i < foldedFiguresList.getSize(); i++) {
             drawer = foldedFiguresList.getElementAt(i);
-            OZi = drawer.foldedFigure;
+            OZi = drawer.getFoldedFigure();
 
             int OZ_display_mode = 0;//No fold-up diagram display
             if ((OZi.displayStyle == FoldedFigure.DisplayStyle.WIRE_2) && (OZi.ip4 == FoldedFigure.State.FRONT_0)) {
@@ -97,28 +97,28 @@ public class FoldedFigureCanvasSelectServiceImpl implements FoldedFigureCanvasSe
                 OZ_display_mode = 4;
             }//	omote & ura & omote2 & ura2
 
-            if (drawer.wireFrame_worker_drawer2.isInsideFront(p) > 0) {
+            if (drawer.getWireFrame_worker_drawer2().isInsideFront(p) > 0) {
                 if (((OZ_display_mode == 1) || (OZ_display_mode == 3)) || (OZ_display_mode == 4)) {
                     temp_i_cp_or_oriagari = MouseWheelTarget.FOLDED_FRONT_1;
                     tempFoldedFigureIndex = i;
                 }
             }
 
-            if (drawer.wireFrame_worker_drawer2.isInsideRear(p) > 0) {
+            if (drawer.getWireFrame_worker_drawer2().isInsideRear(p) > 0) {
                 if (((OZ_display_mode == 2) || (OZ_display_mode == 3)) || (OZ_display_mode == 4)) {
                     temp_i_cp_or_oriagari = MouseWheelTarget.FOLDED_BACK_2;
                     tempFoldedFigureIndex = i;
                 }
             }
 
-            if (drawer.wireFrame_worker_drawer2.isInsideTransparentFront(p) > 0) {
+            if (drawer.getWireFrame_worker_drawer2().isInsideTransparentFront(p) > 0) {
                 if (OZ_display_mode == 4) {
                     temp_i_cp_or_oriagari = MouseWheelTarget.TRANSPARENT_FRONT_3;
                     tempFoldedFigureIndex = i;
                 }
             }
 
-            if (drawer.wireFrame_worker_drawer2.isInsideTransparentRear(p) > 0) {
+            if (drawer.getWireFrame_worker_drawer2().isInsideTransparentRear(p) > 0) {
                 if (OZ_display_mode == 4) {
                     temp_i_cp_or_oriagari = MouseWheelTarget.TRANSPARENT_BACK_4;
                     tempFoldedFigureIndex = i;

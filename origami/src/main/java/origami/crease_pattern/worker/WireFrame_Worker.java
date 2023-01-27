@@ -2,9 +2,10 @@ package origami.crease_pattern.worker;
 
 import org.tinylog.Logger;
 import origami.crease_pattern.FoldingException;
-import origami.crease_pattern.element.LineColor;
-import origami.folding.util.AverageCoordinates;
+import origami.crease_pattern.LineSegmentSet;
 import origami.crease_pattern.OritaCalc;
+import origami.crease_pattern.PointSet;
+import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.Point;
 import origami.data.ListArray;
 import origami.data.quadTree.QuadTree;
@@ -12,18 +13,18 @@ import origami.data.quadTree.adapter.InitialAdapter;
 import origami.data.quadTree.adapter.PointSetFaceAdapter;
 import origami.data.quadTree.adapter.PointSetPointAdapter;
 import origami.data.quadTree.collector.PointCollector;
-import origami.crease_pattern.LineSegmentSet;
-import origami.crease_pattern.PointSet;
+import origami.folding.util.AverageCoordinates;
 
-import java.util.*;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 public class WireFrame_Worker {
-        //This crease pattern craftsman class has only one PointStore c as a crease pattern.
+    //This crease pattern craftsman class has only one PointStore c as a crease pattern.
     //PointSet obtained as a result of folding etc. should be returned to the outside and not held by oneself.
     double r;                   //Criteria for determining the radius of the circles at both ends of the straight line of the basic branch structure and the proximity of the branches to various points
     PointSet pointSet = new PointSet();    //Development view
     //Definition of variables used in VVVVVVVVVVVV oritatami and oekaki VVVVVVVVVVVVVVVVVVVVVVVVVVVV
-    int[] iFacePosition;//Indicates how far a surface is from the reference surface. Enter a value such as 1, next to the reference plane, 2, next to the reference plane, and 3 next to it.
+    int[] facePosition;//Indicates how far a surface is from the reference surface. Enter a value such as 1, next to the reference plane, 2, next to the reference plane, and 3 next to it.
     int startingFaceId = -1;
     int[] nextFaceId;//The id of the surface (reference surface side) next to a certain surface
     int[] associatedLineId;//The id of the bar between one side and the next side (reference plane side)
@@ -43,7 +44,7 @@ public class WireFrame_Worker {
         for (int i = 0; i <= numPoints; i++) {
             tnew[i] = new AverageCoordinates();
         }
-        iFacePosition = new int[numFaces + 1];
+        facePosition = new int[numFaces + 1];
         nextFaceId = new int[numFaces + 1];         //The id of the surface (reference surface side) next to a certain surface
         associatedLineId = new int[numFaces + 1];         //The id of the bar between one surface and the next surface (reference surface side)
     }
@@ -94,7 +95,7 @@ public class WireFrame_Worker {
     }
 
     public int getIFacePosition(int i) {
-        return iFacePosition[i];
+        return facePosition[i];
     }
 
     /**
@@ -103,7 +104,7 @@ public class WireFrame_Worker {
     public PointSet folding() throws InterruptedException, FoldingException {//Folding estimate
         // The code that was previously here is identical to getFacePositions
         PointSet pointSet = getFacePositions();
-  
+
         Logger.info("折ったときの点の位置を求める。");
         // Find the position of the point when folded.
         // If the point it is included in the face im
@@ -148,11 +149,11 @@ public class WireFrame_Worker {
         for (int i = 0; i <= pointSet.getNumFaces(); i++) {
             nextFaceId[i] = 0;
             associatedLineId[i] = 0;
-            iFacePosition[i] = 0;
+            facePosition[i] = 0;
         }
         //Grasp the positional relationship between the faces in preparation for folding
         Logger.info("折りたたみの準備として面同士の位置関係を把握する");
-        iFacePosition[startingFaceId] = 1;
+        facePosition[startingFaceId] = 1;
 
         int depth = 1;
         int remaining_facesTotal = pointSet.getNumFaces() - 1;
@@ -165,11 +166,11 @@ public class WireFrame_Worker {
             SortedSet<Integer> nextRound = new TreeSet<>();
             for (int i : currentRound) {
                 for (int j : qt.getPotentialCollision(i, 0)) {
-                    if (iFacePosition[j] != 0) continue;
+                    if (facePosition[j] != 0) continue;
                     int mth = pointSet.findAdjacentLine(i, j, map);
                     if (mth > 0) {
                         nextRound.add(j);
-                        iFacePosition[j] = depth + 1;
+                        facePosition[j] = depth + 1;
                         nextFaceId[j] = i;
                         associatedLineId[j] = mth;
                         remaining_facesTotal--;
@@ -216,13 +217,13 @@ public class WireFrame_Worker {
 
         //Next, define the lines in PointSet.
         defineLines(lineSegmentSet);
-        
+
         //Then generate a surface within PointSet.
         pointSet.FaceOccurrence();
     }
 
     private void definePointSet(LineSegmentSet lineSegmentSet) throws InterruptedException {
-        Logger.info("線分集合->点集合：点集合内で点の定義");
+        Logger.info("Line set->Point set: Define points in point set");
         boolean found;
         Point ti;
 
@@ -258,7 +259,7 @@ public class WireFrame_Worker {
         Logger.info(numPoints);
 
         int numLines = lineSegmentSet.getNumLineSegments();
-        
+
         // Euler's formula says F - E + V = 1 (for bounded faces)
         int supposedNumFaces = numLines - numPoints + 1;
         /**
@@ -278,7 +279,7 @@ public class WireFrame_Worker {
     }
 
     private void defineLines(LineSegmentSet lineSegmentSet) throws InterruptedException {
-        Logger.info("線分集合->点集合：点集合内で棒の定義");
+        Logger.info("Line set->Point set: Defining a line in the point set");
 
         QuadTree qt = new QuadTree(new PointSetPointAdapter(pointSet));
         for (int n = 0; n < lineSegmentSet.getNumLineSegments(); n++) {
@@ -316,7 +317,6 @@ public class WireFrame_Worker {
     public int lineInFaceBorder_max_request(int lineId) {
         return pointSet.lineInFaceBorder_max_lookup(lineId);
     }
-
 
 
     public int getSelectedPointsNum() {

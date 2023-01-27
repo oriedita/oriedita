@@ -33,7 +33,7 @@ public class TernaryConstraint extends Constraint {
     }
 
     @Override
-    protected int[][] getChecks()  {
-        return new int[][] { { a, b }, { d, a } };
+    protected int[][] getChecks() {
+        return new int[][]{{a, b}, {d, a}};
     }
 }

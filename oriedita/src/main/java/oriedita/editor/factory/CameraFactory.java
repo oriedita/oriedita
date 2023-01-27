@@ -1,17 +1,15 @@
 package oriedita.editor.factory;
 
-import dagger.Module;
-import dagger.Provides;
-import oriedita.editor.databinding.*;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Produces;
+import jakarta.inject.Named;
+import oriedita.editor.databinding.CameraModel;
 import oriedita.editor.drawing.tools.Camera;
 
-import javax.inject.Named;
-import javax.inject.Singleton;
-
-@Module
-public abstract class CameraFactory {
-    @Provides
-    @Singleton
+@ApplicationScoped
+public class CameraFactory {
+    @Produces
+    @ApplicationScoped
     @Named("creasePatternCamera")
     public static Camera creasePatternCamera(CameraModel cameraModel) {
         Camera creasePatternCamera = new Camera();

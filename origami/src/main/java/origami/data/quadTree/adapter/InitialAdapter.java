@@ -6,7 +6,7 @@ import origami.data.quadTree.QuadTreeItem;
 
 /**
  * InitialAdapter is used for gathering the initial {@link PointSet}.
- * 
+ *
  * @author Mu-Tsun Tsai
  */
 public class InitialAdapter extends LineSegmentSetAdapter {

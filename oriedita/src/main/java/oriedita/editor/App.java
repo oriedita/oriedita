@@ -1,10 +1,21 @@
 package oriedita.editor;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import jico.Ico;
 import jico.ImageReadException;
 import org.tinylog.Logger;
 import oriedita.editor.canvas.CreasePattern_Worker;
-import oriedita.editor.databinding.*;
+import oriedita.editor.databinding.AngleSystemModel;
+import oriedita.editor.databinding.ApplicationModel;
+import oriedita.editor.databinding.BackgroundModel;
+import oriedita.editor.databinding.CameraModel;
+import oriedita.editor.databinding.CanvasModel;
+import oriedita.editor.databinding.FileModel;
+import oriedita.editor.databinding.FoldedFigureModel;
+import oriedita.editor.databinding.FoldedFiguresList;
+import oriedita.editor.databinding.GridModel;
 import oriedita.editor.drawing.FoldedFigure_Drawer;
 import oriedita.editor.drawing.FoldedFigure_Worker_Drawer;
 import oriedita.editor.service.ButtonService;
@@ -15,19 +26,33 @@ import oriedita.editor.swing.Editor;
 import oriedita.editor.swing.dialog.HelpDialog;
 import oriedita.editor.tools.ResourceUtil;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
+import javax.swing.AbstractAction;
+import javax.swing.AbstractButton;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JToolTip;
+import javax.swing.KeyStroke;
+import javax.swing.Popup;
+import javax.swing.PopupFactory;
+import javax.swing.WindowConstants;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Queue;
 
-@Singleton
+@ApplicationScoped
 public class App {
     private final ApplicationModel applicationModel;
     private final CanvasModel canvasModel;
@@ -40,6 +65,10 @@ public class App {
     private final LookAndFeelService lookAndFeelService;
     private final Editor editor;
     private final AppMenuBar appMenuBar;
+    private final GridModel gridModel;
+    private final BackgroundModel backgroundModel;
+    private final AngleSystemModel angleSystemModel;
+    private final CameraModel cameraModel;
     private final ResetService resetService;
     // ------------------------------------------------------------------------
     // Buffer screen settings VVVVVVVVVVVVVVVVVVVVVVVVV
@@ -49,26 +78,30 @@ public class App {
     //画像出力するため20170107_oldと書かれた行をコメントアウトし、20170107_newの行を有効にした。
     //画像出力不要で元にもどすなら、20170107_oldと書かれた行を有効にし、20170107_newの行をコメントアウトにすればよい。（この変更はOrihime.javaの中だけに2箇所ある）
     // オフスクリーン
-    JFrame frame;
+    FrameProvider frameProvider;
 
     @Inject
     public App(
-            @Named("mainFrame") JFrame frame,
+            FrameProvider frameProvider,
             LookAndFeelService lookAndFeelService,
             ApplicationModel applicationModel,
             CanvasModel canvasModel,
             FoldedFigureModel foldedFigureModel,
             FileModel fileModel,
             FoldedFiguresList foldedFiguresList,
-            CreasePattern_Worker mainCreasePatternWorker,
+            @Named("mainCreasePattern_Worker") CreasePattern_Worker mainCreasePatternWorker,
             Canvas canvas,
             HelpDialog explanation,
             ButtonService buttonService,
             Editor editor,
             AppMenuBar appMenuBar,
+            GridModel gridModel,
+            BackgroundModel backgroundModel,
+            AngleSystemModel angleSystemModel,
+            CameraModel cameraModel,
             ResetService resetService
     ) {
-        this.frame = frame;
+        this.frameProvider = frameProvider;
         this.lookAndFeelService = lookAndFeelService;
         this.applicationModel = applicationModel;
         this.canvasModel = canvasModel;
@@ -81,10 +114,33 @@ public class App {
         this.buttonService = buttonService;
         this.editor = editor;
         this.appMenuBar = appMenuBar;
+        this.gridModel = gridModel;
+        this.backgroundModel = backgroundModel;
+        this.angleSystemModel = angleSystemModel;
+        this.cameraModel = cameraModel;
         this.resetService = resetService;
     }
 
+    public static boolean isPointInScreen(Point pos) {
+        for (GraphicsDevice gd : GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()) {
+            if (gd.getDefaultConfiguration().getBounds().contains(pos)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public void start() {
+        canvas.init();
+        // ---
+        // Bind model to ui
+        backgroundModel.addPropertyChangeListener(editor.getTopPanel());
+        applicationModel.addPropertyChangeListener(editor.getTopPanel());
+        cameraModel.addPropertyChangeListener(editor.getTopPanel());
+        // ---
+
+        JFrame frame = frameProvider.get();
         frame.setTitle("Oriedita " + ResourceUtil.getVersionFromManifest());//Specify the title and execute the constructor
 
         frame.addWindowStateListener(new WindowAdapter() {
@@ -127,14 +183,14 @@ public class App {
 
         foldedFiguresList.removeAllElements();
 
-        canvas.creasePatternCamera.setCameraPositionX(0.0);
-        canvas.creasePatternCamera.setCameraPositionY(0.0);
-        canvas.creasePatternCamera.setCameraAngle(0.0);
-        canvas.creasePatternCamera.setCameraMirror(1.0);
-        canvas.creasePatternCamera.setCameraZoomX(1.0);
-        canvas.creasePatternCamera.setCameraZoomY(1.0);
-        canvas.creasePatternCamera.setDisplayPositionX(350.0);
-        canvas.creasePatternCamera.setDisplayPositionY(350.0);
+        canvas.getCreasePatternCamera().setCameraPositionX(0.0);
+        canvas.getCreasePatternCamera().setCameraPositionY(0.0);
+        canvas.getCreasePatternCamera().setCameraAngle(0.0);
+        canvas.getCreasePatternCamera().setCameraMirror(1.0);
+        canvas.getCreasePatternCamera().setCameraZoomX(1.0);
+        canvas.getCreasePatternCamera().setCameraZoomY(1.0);
+        canvas.getCreasePatternCamera().setDisplayPositionX(350.0);
+        canvas.getCreasePatternCamera().setDisplayPositionY(350.0);
 
         try {
             frame.setIconImages(Ico.read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("oriedita.ico"))));
@@ -193,7 +249,8 @@ public class App {
             }
         });
 
-        frame.setJMenuBar(appMenuBar);
+        appMenuBar.init();
+        frame.setJMenuBar(appMenuBar.getAppMenuBarUI());
 
         applicationModel.addPropertyChangeListener(e -> {
             for (int i = 0; i < foldedFiguresList.getSize(); i++) {
@@ -203,6 +260,13 @@ public class App {
             FoldedFigure_Worker_Drawer.setStaticData(applicationModel);
             setData(applicationModel);
         });
+
+
+        applicationModel.addPropertyChangeListener(e -> mainCreasePatternWorker.setData(e, applicationModel));
+        gridModel.addPropertyChangeListener(e -> mainCreasePatternWorker.setGridConfigurationData(gridModel));
+        angleSystemModel.addPropertyChangeListener(e -> mainCreasePatternWorker.setData(angleSystemModel));
+        canvasModel.addPropertyChangeListener(e -> mainCreasePatternWorker.setData(canvasModel));
+        fileModel.addPropertyChangeListener(e -> mainCreasePatternWorker.setTitle(fileModel.determineFrameTitle()));
 
         applicationModel.reload();
 
@@ -227,7 +291,7 @@ public class App {
 
         buttonService.Button_shared_operation();
 
-        mainCreasePatternWorker.setCamera(canvas.creasePatternCamera);
+        mainCreasePatternWorker.setCamera(canvas.getCreasePatternCamera());
 
         mainCreasePatternWorker.record();
         mainCreasePatternWorker.auxRecord();
@@ -235,7 +299,7 @@ public class App {
         lookAndFeelService.updateButtonIcons();
 
 
-        if (applicationModel.getWindowPosition() != null) {
+        if (applicationModel.getWindowPosition() != null && isPointInScreen(applicationModel.getWindowPosition())) {
             frame.setLocation(applicationModel.getWindowPosition());
         } else {
             frame.setLocationRelativeTo(null);
@@ -250,8 +314,7 @@ public class App {
 
         frame.setVisible(true);
 
-
-        explanation.start(canvas.getLocationOnScreen(), canvas.getSize());
+        explanation.start(canvas.getCanvasImpl().getLocationOnScreen(), canvas.getCanvasImpl().getSize());
 
         explanation.setVisible(applicationModel.getHelpVisible());
         //focus back to here after creating dialog

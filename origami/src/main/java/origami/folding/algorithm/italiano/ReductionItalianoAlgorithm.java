@@ -1,6 +1,11 @@
 package origami.folding.algorithm.italiano;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * One interesting thing about Italiano algorithm is that it can also be used to
@@ -8,7 +13,7 @@ import java.util.*;
  * each source node. These trees together form a structure that is pretty close
  * to transitive reduction, and with just a bit more work we can obtain the
  * actual reduction.
- * 
+ *
  * @author Mu-Tsun Tsai
  */
 public class ReductionItalianoAlgorithm extends TraceableItalianoAlgorithm {
