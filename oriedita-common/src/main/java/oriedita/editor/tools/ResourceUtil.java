@@ -35,7 +35,7 @@ public class ResourceUtil {
     }
 
     public static Path getTempDir() {
-        return Paths.get(System.getProperty("java.io.tmpdir"));
+        return Paths.get(System.getProperty("java.io.tmpdir")).resolve("oriedita");
     }
 
     public static String getVersionFromManifest() {
