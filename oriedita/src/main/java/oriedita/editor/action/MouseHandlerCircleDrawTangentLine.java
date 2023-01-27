@@ -28,12 +28,12 @@ public class MouseHandlerCircleDrawTangentLine extends BaseMouseHandler {
     //マウス操作(ボタンを押したとき)時の作業
     public void mousePressed(Point p0) {
         Point p = new Point();
-        p.set(d.camera.TV2object(p0));
+        p.set(d.getCamera().TV2object(p0));
         closest_circumference.set(d.getClosestCircleMidpoint(p));
 
-        if (d.circleStep.size() == 0 || d.circleStep.size() == 1) {
-            d.lineStep.clear();
-            if (OritaCalc.distance_circumference(p, closest_circumference) > d.selectionDistance) {
+        if (d.getCircleStep().size() == 0 || d.getCircleStep().size() == 1) {
+            d.getLineStep().clear();
+            if (OritaCalc.distance_circumference(p, closest_circumference) > d.getSelectionDistance()) {
                 return;
             }
 
@@ -41,16 +41,16 @@ public class MouseHandlerCircleDrawTangentLine extends BaseMouseHandler {
             stepCircle.set(closest_circumference);
             stepCircle.setColor(LineColor.GREEN_6);
 
-            d.circleStep.add(stepCircle);
-        } else if (d.lineStep.size() > 1) {//			i_egaki_dankai=0;i_circle_drawing_stage=1;
+            d.getCircleStep().add(stepCircle);
+        } else if (d.getLineStep().size() > 1) {//			i_egaki_dankai=0;i_circle_drawing_stage=1;
             LineSegment closest_step_lineSegment = new LineSegment();
-            closest_step_lineSegment.set(d.get_moyori_step_lineSegment(p, 1, d.lineStep.size()));
+            closest_step_lineSegment.set(d.get_moyori_step_lineSegment(p, 1, d.getLineStep().size()));
 
-            if (OritaCalc.determineLineSegmentDistance(p, closest_step_lineSegment) > d.selectionDistance) {
+            if (OritaCalc.determineLineSegmentDistance(p, closest_step_lineSegment) > d.getSelectionDistance()) {
                 return;
             }
 
-            d.lineStep.clear();
+            d.getLineStep().clear();
 
             d.lineStepAdd(closest_step_lineSegment);
         }
@@ -62,9 +62,9 @@ public class MouseHandlerCircleDrawTangentLine extends BaseMouseHandler {
 
     //マウス操作(ボタンを離したとき)を行う関数
     public void mouseReleased(Point p0) {
-        if ((d.lineStep.size() == 0) && (d.circleStep.size() == 2)) {
-            Circle firstCircle = d.circleStep.get(0);
-            Circle secondCircle = d.circleStep.get(1);
+        if ((d.getLineStep().size() == 0) && (d.getCircleStep().size() == 2)) {
+            Circle firstCircle = d.getCircleStep().get(0);
+            Circle secondCircle = d.getCircleStep().get(1);
 
             Point c1 = new Point();
             c1.set(firstCircle.determineCenter());
@@ -82,12 +82,12 @@ public class MouseHandlerCircleDrawTangentLine extends BaseMouseHandler {
             double yp = y2 - y1;
 
             if (c1.distance(c2) < Epsilon.UNKNOWN_1EN6) {
-                d.circleStep.clear();
+                d.getCircleStep().clear();
                 return;
             }//接線0本の場合
 
             if ((xp * xp + yp * yp) < (r1 - r2) * (r1 - r2)) {
-                d.circleStep.clear();
+                d.getCircleStep().clear();
                 return;
             }//接線0本の場合
 
@@ -181,14 +181,14 @@ public class MouseHandlerCircleDrawTangentLine extends BaseMouseHandler {
             }
         }
 
-        if (d.lineStep.size() == 1) {
-            d.circleStep.clear();
+        if (d.getLineStep().size() == 1) {
+            d.getCircleStep().clear();
 
-            LineSegment s = d.lineStep.get(0);
-            s.setColor(d.lineColor);
+            LineSegment s = d.getLineStep().get(0);
+            s.setColor(d.getLineColor());
             d.addLineSegment(s);
 
-            d.lineStep.clear();
+            d.getLineStep().clear();
             d.record();
         }
     }

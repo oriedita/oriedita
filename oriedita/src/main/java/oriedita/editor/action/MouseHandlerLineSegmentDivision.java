@@ -21,15 +21,15 @@ public class MouseHandlerLineSegmentDivision extends BaseMouseHandlerInputRestri
     //マウス操作(mouseMode==27線分入力　でボタンを押したとき)時の作業----------------------------------------------------
     public void mousePressed(Point p0) {
         Point p = new Point();
-        p.set(d.camera.TV2object(p0));
+        p.set(d.getCamera().TV2object(p0));
         Point closest_point = d.getClosestPoint(p);
-        if (p.distance(closest_point) < d.selectionDistance) {
-            d.lineStepAdd(new LineSegment(p, closest_point, d.lineColor));
-            d.lineStep.get(0).setActive(LineSegment.ActiveState.ACTIVE_B_2);
+        if (p.distance(closest_point) < d.getSelectionDistance()) {
+            d.lineStepAdd(new LineSegment(p, closest_point, d.getLineColor()));
+            d.getLineStep().get(0).setActive(LineSegment.ActiveState.ACTIVE_B_2);
             return;
         }
-        d.lineStepAdd(new LineSegment(p, p, d.lineColor));
-        d.lineStep.get(0).setActive(LineSegment.ActiveState.ACTIVE_B_2);
+        d.lineStepAdd(new LineSegment(p, p, d.getLineColor()));
+        d.getLineStep().get(0).setActive(LineSegment.ActiveState.ACTIVE_B_2);
     }
 
 
@@ -38,14 +38,14 @@ public class MouseHandlerLineSegmentDivision extends BaseMouseHandlerInputRestri
     //マウス操作(mouseMode==27線分入力　でドラッグしたとき)を行う関数----------------------------------------------------
     public void mouseDragged(Point p0) {
         Point p = new Point();
-        p.set(d.camera.TV2object(p0));
-        d.lineStep.get(0).setA(p);
-        if (d.gridInputAssist) {
-            d.lineCandidate.clear();
+        p.set(d.getCamera().TV2object(p0));
+        d.getLineStep().get(0).setA(p);
+        if (d.getGridInputAssist()) {
+            d.getLineCandidate().clear();
             Point closestPoint = d.getClosestPoint(p);
-            if (p.distance(closestPoint) < d.selectionDistance) {
-                d.lineCandidate.add(new LineSegment(closestPoint, closestPoint, d.lineColor));
-                d.lineStep.get(0).setA(d.lineStep.get(0).getA());
+            if (p.distance(closestPoint) < d.getSelectionDistance()) {
+                d.getLineCandidate().add(new LineSegment(closestPoint, closestPoint, d.getLineColor()));
+                d.getLineStep().get(0).setA(d.getLineStep().get(0).getA());
             }
         }
     }
@@ -53,28 +53,28 @@ public class MouseHandlerLineSegmentDivision extends BaseMouseHandlerInputRestri
     //マウス操作(mouseMode==27線分入力　でボタンを離したとき)を行う関数----------------------------------------------------
     public void mouseReleased(Point p0) {
         Point p = new Point();
-        p.set(d.camera.TV2object(p0));
+        p.set(d.getCamera().TV2object(p0));
 
-        d.lineStep.get(0).setA(p);
+        d.getLineStep().get(0).setA(p);
 
         Point closestPoint = d.getClosestPoint(p);
 
-        if (p.distance(closestPoint) <= d.selectionDistance) {
-            d.lineStep.get(0).setA(closestPoint);
+        if (p.distance(closestPoint) <= d.getSelectionDistance()) {
+            d.getLineStep().get(0).setA(closestPoint);
         }
-        if (Epsilon.high.gt0(d.lineStep.get(0).determineLength())) {
-            for (int i = 0; i <= d.foldLineDividingNumber - 1; i++) {
-                double ax = ((double) (d.foldLineDividingNumber - i) * d.lineStep.get(0).determineAX() + (double) i * d.lineStep.get(0).determineBX()) / ((double) d.foldLineDividingNumber);
-                double ay = ((double) (d.foldLineDividingNumber - i) * d.lineStep.get(0).determineAY() + (double) i * d.lineStep.get(0).determineBY()) / ((double) d.foldLineDividingNumber);
-                double bx = ((double) (d.foldLineDividingNumber - i - 1) * d.lineStep.get(0).determineAX() + (double) (i + 1) * d.lineStep.get(0).determineBX()) / ((double) d.foldLineDividingNumber);
-                double by = ((double) (d.foldLineDividingNumber - i - 1) * d.lineStep.get(0).determineAY() + (double) (i + 1) * d.lineStep.get(0).determineBY()) / ((double) d.foldLineDividingNumber);
+        if (Epsilon.high.gt0(d.getLineStep().get(0).determineLength())) {
+            for (int i = 0; i <= d.getFoldLineDividingNumber() - 1; i++) {
+                double ax = ((double) (d.getFoldLineDividingNumber() - i) * d.getLineStep().get(0).determineAX() + (double) i * d.getLineStep().get(0).determineBX()) / ((double) d.getFoldLineDividingNumber());
+                double ay = ((double) (d.getFoldLineDividingNumber() - i) * d.getLineStep().get(0).determineAY() + (double) i * d.getLineStep().get(0).determineBY()) / ((double) d.getFoldLineDividingNumber());
+                double bx = ((double) (d.getFoldLineDividingNumber() - i - 1) * d.getLineStep().get(0).determineAX() + (double) (i + 1) * d.getLineStep().get(0).determineBX()) / ((double) d.getFoldLineDividingNumber());
+                double by = ((double) (d.getFoldLineDividingNumber() - i - 1) * d.getLineStep().get(0).determineAY() + (double) (i + 1) * d.getLineStep().get(0).determineBY()) / ((double) d.getFoldLineDividingNumber());
                 LineSegment s_ad = new LineSegment(ax, ay, bx, by);
-                s_ad.setColor(d.lineColor);
+                s_ad.setColor(d.getLineColor());
                 d.addLineSegment(s_ad);
             }
             d.record();
         }
 
-        d.lineStep.clear();
+        d.getLineStep().clear();
     }
 }

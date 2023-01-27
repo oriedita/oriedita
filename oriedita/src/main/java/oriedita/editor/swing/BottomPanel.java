@@ -5,7 +5,7 @@ import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import org.tinylog.Logger;
 import oriedita.editor.Canvas;
-import oriedita.editor.action.MouseHandlerModifyCalculatedShape;
+import oriedita.editor.action.FoldedFigureOperationMode;
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.databinding.*;
@@ -13,10 +13,10 @@ import oriedita.editor.drawing.FoldedFigure_Drawer;
 import oriedita.editor.service.ButtonService;
 import oriedita.editor.service.FileSaveService;
 import oriedita.editor.service.FoldingService;
+import oriedita.editor.service.TaskExecutorService;
 import oriedita.editor.swing.component.*;
 import oriedita.editor.task.FoldingEstimateSave100Task;
 import oriedita.editor.task.FoldingEstimateSpecificTask;
-import oriedita.editor.task.TaskExecutor;
 import oriedita.editor.tools.StringOp;
 import origami.folding.FoldedFigure;
 
@@ -62,6 +62,8 @@ public class BottomPanel {
 
     @Inject
     public BottomPanel(@Named("mainFrame") JFrame frame,
+                       @Named("camvExecutor") TaskExecutorService camvTaskExecutor,
+                       @Named("foldingExecutor") TaskExecutorService foldingTaskExecutor,
                        ButtonService buttonService,
                        MeasuresModel measuresModel,
                        CanvasModel canvasModel,
@@ -111,11 +113,11 @@ public class BottomPanel {
 
             if (!applicationModel.getFoldWarning()) {
                 try {
-                    mainCreasePatternWorker.foldLineSet.check4();
+                    mainCreasePatternWorker.getFoldLineSet().check4();
                 } catch (InterruptedException bruh) {
                     Logger.info("Warning window broke");
                 }
-                if (!mainCreasePatternWorker.foldLineSet.getViolations().isEmpty()) {
+                if (!mainCreasePatternWorker.getFoldLineSet().getViolations().isEmpty()) {
                     JCheckBox checkbox = new JCheckBox("Don't show this again");
                     Object[] params = {"Detected errors in flat foldability. Continue to fold?", checkbox};
                     int warningResult = JOptionPane.showConfirmDialog(null, params, "Warning", JOptionPane.YES_NO_OPTION);
@@ -131,13 +133,13 @@ public class BottomPanel {
             }
         });
         anotherSolutionButton.addActionListener(e -> {
-            FoldedFigure_Drawer selectedItem = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();
+            FoldedFigure_Drawer selectedItem = foldedFiguresList.getActiveItem();
             if (selectedItem != null) {
                 foldingService.foldAnother(selectedItem);
             }
         });
         flipButton.addActionListener(e -> {
-            FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();
+            FoldedFigure_Drawer selectedFigure = foldedFiguresList.getActiveItem();
             if (selectedFigure != null) {
                 foldedFigureModel.advanceState();
 
@@ -147,11 +149,11 @@ public class BottomPanel {
             }
         });
         As100Button.addActionListener(e -> {
-            FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();
+            FoldedFigure_Drawer selectedFigure = foldedFiguresList.getActiveItem();
             if (selectedFigure != null && selectedFigure.foldedFigure.findAnotherOverlapValid) {
                 selectedFigure.foldedFigure.estimationOrder = FoldedFigure.EstimationOrder.ORDER_6;
 
-                TaskExecutor.executeTask("Folding Estimate Save 100", new FoldingEstimateSave100Task(canvas, foldingService, fileSaveService, foldedFiguresList));
+                foldingTaskExecutor.executeTask(new FoldingEstimateSave100Task(canvas, foldingService, fileSaveService, foldedFiguresList));
             }
         });
         goToFoldedFigureButton.addActionListener(e -> {
@@ -163,7 +165,7 @@ public class BottomPanel {
 
             foldedFigureModel.setFoldedCases(newFoldedCases);
 
-            FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();
+            FoldedFigure_Drawer selectedFigure = foldedFiguresList.getActiveItem();
 
             if (selectedFigure == null) {
                 return;
@@ -176,7 +178,7 @@ public class BottomPanel {
                 //1例目の折り上がり予想はi_suitei_meirei=5を指定、2例目以降の折り上がり予想はi_suitei_meirei=6で実施される
             }
 
-            TaskExecutor.executeTask("Folding Estimate Specific", new FoldingEstimateSpecificTask(foldedFigureModel, foldingService, canvasModel, foldedFiguresList));
+            foldingTaskExecutor.executeTask(new FoldingEstimateSpecificTask(foldedFigureModel, foldingService, canvasModel, foldedFiguresList));
         });
         goToFoldedFigureTextField.addActionListener(e -> goToFoldedFigureButton.doClick());
         constraintButton.addActionListener(e -> {
@@ -184,22 +186,22 @@ public class BottomPanel {
         });
 
         undoRedo.addUndoActionListener(e -> {
-            FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();
+            FoldedFigure_Drawer selectedFigure = foldedFiguresList.getActiveItem();
 
             if (selectedFigure != null) {
                 selectedFigure.undo();
             }
         });
         undoRedo.addRedoActionListener(e -> {
-            FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();
+            FoldedFigure_Drawer selectedFigure = foldedFiguresList.getActiveItem();
 
             if (selectedFigure != null) {
                 selectedFigure.redo();
             }
         });
         oriagari_sousaButton.addActionListener(e -> {
-            canvasModel.setFoldedFigureOperationMode(MouseHandlerModifyCalculatedShape.FoldedFigureOperationMode.MODE_1);
-            FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();
+            canvasModel.setFoldedFigureOperationMode(FoldedFigureOperationMode.MODE_1);
+            FoldedFigure_Drawer selectedFigure = foldedFiguresList.getActiveItem();
 
             if (selectedFigure != null) {
                 selectedFigure.foldedFigure.setAllPointStateFalse();
@@ -209,8 +211,8 @@ public class BottomPanel {
             canvasModel.setMouseMode(MouseMode.MODIFY_CALCULATED_SHAPE_101);
         });
         oriagari_sousa_2Button.addActionListener(e -> {
-            canvasModel.setFoldedFigureOperationMode(MouseHandlerModifyCalculatedShape.FoldedFigureOperationMode.MODE_2);
-            FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();
+            canvasModel.setFoldedFigureOperationMode(FoldedFigureOperationMode.MODE_2);
+            FoldedFigure_Drawer selectedFigure = foldedFiguresList.getActiveItem();
 
             if (selectedFigure != null) {
                 selectedFigure.foldedFigure.setAllPointStateFalse();
@@ -248,8 +250,8 @@ public class BottomPanel {
             }
         });
         haltButton.addActionListener(e -> {
-            TaskExecutor.stopTask();
-            mainCreasePatternWorker.camvTask.cancel(true);
+            camvTaskExecutor.stopTask();
+            foldingTaskExecutor.stopTask();
         });
         trashButton.addActionListener(e -> {
             if (foldedFiguresList.getSize() == 0) {
@@ -425,8 +427,8 @@ public class BottomPanel {
             MouseMode m = data.getMouseMode();
 
             foldedFigureMoveButton.setSelected(m == MouseMode.MOVE_CALCULATED_SHAPE_102);
-            oriagari_sousaButton.setSelected(data.getFoldedFigureOperationMode() == MouseHandlerModifyCalculatedShape.FoldedFigureOperationMode.MODE_1 && m == MouseMode.MODIFY_CALCULATED_SHAPE_101);
-            oriagari_sousa_2Button.setSelected(data.getFoldedFigureOperationMode() == MouseHandlerModifyCalculatedShape.FoldedFigureOperationMode.MODE_2 && m == MouseMode.MODIFY_CALCULATED_SHAPE_101);
+            oriagari_sousaButton.setSelected(data.getFoldedFigureOperationMode() == FoldedFigureOperationMode.MODE_1 && m == MouseMode.MODIFY_CALCULATED_SHAPE_101);
+            oriagari_sousa_2Button.setSelected(data.getFoldedFigureOperationMode() == FoldedFigureOperationMode.MODE_2 && m == MouseMode.MODIFY_CALCULATED_SHAPE_101);
         }
     }
 

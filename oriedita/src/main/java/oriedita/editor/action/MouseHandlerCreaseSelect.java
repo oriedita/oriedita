@@ -85,15 +85,15 @@ public class MouseHandlerCreaseSelect extends BaseMouseHandlerBoxSelect {
     //マウス操作(mouseMode==19  select　でボタンを押したとき)時の作業----------------------------------------------------
     public void mousePressed(Point p0) {
         Logger.info("19  select_");
-        Logger.info("i_egaki_dankai=" + d.lineStep.size());
+        Logger.info("i_egaki_dankai=" + d.getLineStep().size());
 
         Point p = new Point();
 
-        if (d.lineStep.size() == 0) {//i_select_modeを決める
-            p.set(d.camera.TV2object(p0));
+        if (d.getLineStep().size() == 0) {//i_select_modeを決める
+            p.set(d.getCamera().TV2object(p0));
         }
 
-        switch (d.i_select_mode) {
+        switch (d.getI_select_mode()) {
             case NORMAL_0:
                 super.mousePressed(p0);
                 break;
@@ -120,7 +120,7 @@ public class MouseHandlerCreaseSelect extends BaseMouseHandlerBoxSelect {
     //マウス操作(mouseMode==19 select　でドラッグしたとき)を行う関数----------------------------------------------------
     public void mouseDragged(Point p0) {
         //mDragged_A_box_select( p0);
-        switch (d.i_select_mode) {
+        switch (d.getI_select_mode()) {
             case NORMAL_0:
                 super.mouseDragged(p0);
                 break;
@@ -144,7 +144,7 @@ public class MouseHandlerCreaseSelect extends BaseMouseHandlerBoxSelect {
 
     //マウス操作(mouseMode==19 select　でボタンを離したとき)を行う関数----------------------------------------------------
     public void mouseReleased(Point p0) {
-        switch (d.i_select_mode) {
+        switch (d.getI_select_mode()) {
             case NORMAL_0:
                 mReleased_A_box_select(p0);
                 break;
@@ -168,14 +168,14 @@ public class MouseHandlerCreaseSelect extends BaseMouseHandlerBoxSelect {
 
     public void mReleased_A_box_select(Point p0) {
         super.mouseReleased(p0);
-        d.lineStep.clear();
+        d.getLineStep().clear();
 
         d.select(selectionStart, p0);
         if (selectionStart.distance(p0) <= Epsilon.UNKNOWN_1EN6) {
             Point p = new Point();
-            p.set(d.camera.TV2object(p0));
-            if (d.foldLineSet.closestLineSegmentDistance(p) < d.selectionDistance) {//点pに最も近い線分の番号での、その距離を返す	public double mottomo_tikai_senbun_kyori(Ten p)
-                d.foldLineSet.closestLineSegmentSearch(p).setSelected(2);
+            p.set(d.getCamera().TV2object(p0));
+            if (d.getFoldLineSet().closestLineSegmentDistance(p) < d.getSelectionDistance()) {//点pに最も近い線分の番号での、その距離を返す	public double mottomo_tikai_senbun_kyori(Ten p)
+                d.getFoldLineSet().closestLineSegmentSearch(p).setSelected(2);
             }
         }
     }

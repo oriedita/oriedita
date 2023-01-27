@@ -10,9 +10,8 @@ import oriedita.editor.databinding.*;
 import oriedita.editor.datatransfer.SaveTransferable;
 import oriedita.editor.exception.FileReadingException;
 import oriedita.editor.save.Save;
-import oriedita.editor.service.ButtonService;
-import oriedita.editor.service.FileSaveService;
-import oriedita.editor.service.ResetService;
+import oriedita.editor.service.*;
+import oriedita.editor.tools.LookAndFeelUtil;
 import oriedita.editor.task.TaskExecutor;
 import oriedita.editor.tools.ResourceUtil;
 
@@ -33,6 +32,7 @@ import java.util.ArrayList;
 @Singleton
 public class AppMenuBar extends JMenuBar {
     private final JFrame frame;
+    private final TaskExecutorService foldingExecutor;
     private final FileSaveService fileSaveService;
     private final FileModel fileModel;
     private JCheckBoxMenuItem showPointRangeCheckBox;//点を探す範囲
@@ -76,7 +76,9 @@ public class AppMenuBar extends JMenuBar {
 
     @Inject
     public AppMenuBar(@Named("mainFrame") JFrame frame,
+                      @Named("foldingExecutor") TaskExecutorService foldingExecutor,
                       ApplicationModel applicationModel,
+                      LookAndFeelService lookAndFeelService,
                       FileSaveService fileSaveService,
                       ButtonService buttonService,
                       CanvasModel canvasModel,
@@ -86,6 +88,7 @@ public class AppMenuBar extends JMenuBar {
                       ResetService resetService,
                       FoldedFiguresList foldedFiguresList) {
         this.frame = frame;
+        this.foldingExecutor = foldingExecutor;
         this.fileSaveService = fileSaveService;
         this.fileModel = fileModel;
 
@@ -231,7 +234,7 @@ public class AppMenuBar extends JMenuBar {
             }
         });
         darkModeCheckBox.addActionListener(e -> {
-            applicationModel.toggleDarkMode();
+            lookAndFeelService.toggleDarkMode();
 
             if (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(frame, "Restore custom colors in grid and folded figure for this color scheme?", "Restore colors", JOptionPane.YES_NO_OPTION)) {
                 if (FlatLaf.isLafDark()) {
@@ -261,7 +264,7 @@ public class AppMenuBar extends JMenuBar {
             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 
             Save save = Save.createInstance();
-            mainCreasePatternWorker.foldLineSet.getSaveForSelectFolding(save);
+            mainCreasePatternWorker.getFoldLineSet().getSaveForSelectFolding(save);
 
             clipboard.setContents(new SaveTransferable(save), (clipboard1, contents) -> {});
         });
@@ -269,12 +272,12 @@ public class AppMenuBar extends JMenuBar {
             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 
             Save save = Save.createInstance();
-            mainCreasePatternWorker.foldLineSet.getSaveForSelectFolding(save);
+            mainCreasePatternWorker.getFoldLineSet().getSaveForSelectFolding(save);
 
 
             clipboard.setContents(new SaveTransferable(save), (clipboard1, contents) -> {});
 
-            mainCreasePatternWorker.foldLineSet.delSelectedLineSegmentFast();
+            mainCreasePatternWorker.getFoldLineSet().delSelectedLineSegmentFast();
 
             mainCreasePatternWorker.record();
         });
@@ -432,7 +435,7 @@ public class AppMenuBar extends JMenuBar {
         applicationModel.setDisplayLiveAuxLines(displayLiveAuxLinesCheckBox.isSelected());
         applicationModel.setDisplayMarkings(displayStandardFaceMarksCheckBox.isSelected());
         applicationModel.setDisplayCreasePatternOnTop(cpOnTopCheckBox.isSelected());
-        applicationModel.setDarkMode(darkModeCheckBox.isSelected());
+        applicationModel.setLaf(LookAndFeelUtil.determineLafForDarkMode(darkModeCheckBox.isSelected()));
         applicationModel.setPreciseZoom(preciseZoomCheckBox.isSelected());
         applicationModel.setDisplaySelfIntersection(displaySelfIntersectionCheckBox.isSelected());
         applicationModel.setAdvancedCheck4Display(useAdvancedCheck4Display.isSelected());
@@ -494,16 +497,16 @@ public class AppMenuBar extends JMenuBar {
                 case JOptionPane.YES_OPTION:
                     fileSaveService.saveFile();
 
-                    TaskExecutor.stopTask();
+                    foldingExecutor.stopTask();
                     System.exit(0);
                 case JOptionPane.NO_OPTION:
-                    TaskExecutor.stopTask();
+                    foldingExecutor.stopTask();
                     System.exit(0);
                 case JOptionPane.CANCEL_OPTION:
                     break;
             }
         } else {
-            TaskExecutor.stopTask();
+            foldingExecutor.stopTask();
             System.exit(0);
         }
     }

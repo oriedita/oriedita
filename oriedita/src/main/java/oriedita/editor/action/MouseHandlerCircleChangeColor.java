@@ -28,7 +28,7 @@ public class MouseHandlerCircleChangeColor extends BaseMouseHandlerBoxSelect {
     //マウス操作(mouseMode==59 "特注プロパティ指定" でボタンを離したとき)を行う関数----------------------------------------------------
     public void mouseReleased(Point p0) {//補助活線と円
         super.mouseReleased(p0);
-        d.lineStep.clear();
+        d.getLineStep().clear();
         if (selectionStart.distance(p0) > Epsilon.UNKNOWN_1EN6) {//現状では削除しないときもUNDO用に記録されてしまう20161218
 
             if (d.change_property_in_4kakukei(selectionStart, p0)) {
@@ -37,25 +37,25 @@ public class MouseHandlerCircleChangeColor extends BaseMouseHandlerBoxSelect {
 
         if (selectionStart.distance(p0) <= Epsilon.UNKNOWN_1EN6) {
             Point p = new Point();
-            p.set(d.camera.TV2object(p0));
+            p.set(d.getCamera().TV2object(p0));
             double rs_min;
-            rs_min = d.foldLineSet.closestLineSegmentDistance(p);//点pに最も近い補助活線の番号での、その距離を返す
+            rs_min = d.getFoldLineSet().closestLineSegmentDistance(p);//点pに最も近い補助活線の番号での、その距離を返す
             double re_min;
-            re_min = d.foldLineSet.closestCircleDistance(p);//点pに最も近い円の番号での、その距離を返す	public double mottomo_tikai_en_kyori(Ten p)
+            re_min = d.getFoldLineSet().closestCircleDistance(p);//点pに最も近い円の番号での、その距離を返す	public double mottomo_tikai_en_kyori(Ten p)
 
             if (rs_min <= re_min) {
-                if (rs_min < d.selectionDistance) {//点pに最も近い線分の番号での、その距離を返す	public double mottomo_tikai_senbun_kyori(Ten p)
-                    LineSegment closestLineSegment = d.foldLineSet.closestLineSegmentSearchReversedOrder(p);
+                if (rs_min < d.getSelectionDistance()) {//点pに最も近い線分の番号での、その距離を返す	public double mottomo_tikai_senbun_kyori(Ten p)
+                    LineSegment closestLineSegment = d.getFoldLineSet().closestLineSegmentSearchReversedOrder(p);
                     if (closestLineSegment.getColor() == LineColor.CYAN_3) {
                         closestLineSegment.setCustomized(1);
-                        closestLineSegment.setCustomizedColor(d.customCircleColor);
+                        closestLineSegment.setCustomizedColor(d.getCustomCircleColor());
                         //en_seiri();kiroku();
                     }
                 }
             } else {
-                if (re_min < d.selectionDistance) {
-                    d.foldLineSet.setCircleCustomized(d.foldLineSet.closest_circle_search_reverse_order(p), 1);
-                    d.foldLineSet.setCircleCustomizedColor(d.foldLineSet.closest_circle_search_reverse_order(p), d.customCircleColor);
+                if (re_min < d.getSelectionDistance()) {
+                    d.getFoldLineSet().setCircleCustomized(d.getFoldLineSet().closest_circle_search_reverse_order(p), 1);
+                    d.getFoldLineSet().setCircleCustomizedColor(d.getFoldLineSet().closest_circle_search_reverse_order(p), d.getCustomCircleColor());
                 }
             }
         }

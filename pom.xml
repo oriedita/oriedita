@@ -89,5 +89,7 @@
         <module>fold</module>
         <module>origami</module>
         <module>oriedita</module>
+        <module>oriedita-data</module>
+        <module>oriedita-common</module>
     </modules>
 </project>

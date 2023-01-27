@@ -14,6 +14,7 @@ import oriedita.editor.service.ButtonService;
 import oriedita.editor.service.HistoryState;
 import oriedita.editor.swing.component.ColorIcon;
 import oriedita.editor.swing.dialog.OpenFrame;
+import oriedita.editor.tools.LookAndFeelUtil;
 import oriedita.editor.tools.StringOp;
 import origami.crease_pattern.element.LineColor;
 
@@ -701,7 +702,7 @@ public class RightPanel {
         c_colButton.setIcon(new ColorIcon(data.getCircleCustomizedColor()));
         cAMVCheckBox.setSelected(data.getCheck4Enabled());
 
-        darkMode = data.determineLafDark();
+        darkMode = LookAndFeelUtil.determineLafDark(data.getLaf());
 
         if (darkMode) {
             colOrangeButton.setForeground(Color.black);

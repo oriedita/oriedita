@@ -30,27 +30,27 @@ public class MouseHandlerDrawCreaseSymmetric extends BaseMouseHandlerInputRestri
     //マウス操作(mouseMode==12鏡映モード　でボタンを押したとき)時の作業----------------------------------------------------
     public void mousePressed(Point p0) {
         Point p = new Point();
-        p.set(d.camera.TV2object(p0));
+        p.set(d.getCamera().TV2object(p0));
 
-        if (d.lineStep.size() == 0) {    //第1段階として、点を選択
+        if (d.getLineStep().size() == 0) {    //第1段階として、点を選択
             Point closest_point = d.getClosestPoint(p);
-            if (p.distance(closest_point) < d.selectionDistance) {
+            if (p.distance(closest_point) < d.getSelectionDistance()) {
                 d.lineStepAdd(new LineSegment(closest_point, closest_point, LineColor.MAGENTA_5));
             }
-        } else if (d.lineStep.size() == 1) {    //第2段階として、点を選択
+        } else if (d.getLineStep().size() == 1) {    //第2段階として、点を選択
             Point closest_point = d.getClosestPoint(p);
-            if (p.distance(closest_point) < d.selectionDistance) {
-                d.lineStepAdd(new LineSegment(closest_point, closest_point, LineColor.fromNumber(d.lineStep.size() + 1)));
+            if (p.distance(closest_point) < d.getSelectionDistance()) {
+                d.lineStepAdd(new LineSegment(closest_point, closest_point, LineColor.fromNumber(d.getLineStep().size() + 1)));
 
-                d.lineStep.get(0).setB(d.lineStep.get(1).getB());
+                d.getLineStep().get(0).setB(d.getLineStep().get(1).getB());
             } else {
-                d.lineStep.clear();
+                d.getLineStep().clear();
                 canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.NORMAL_0);//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
                 return;
             }
 
-            if (Epsilon.high.le0(d.lineStep.get(0).determineLength())) {
-                d.lineStep.clear();
+            if (Epsilon.high.le0(d.getLineStep().get(0).determineLength())) {
+                d.getLineStep().clear();
                 canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.NORMAL_0);//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
             }
         }
@@ -63,29 +63,29 @@ public class MouseHandlerDrawCreaseSymmetric extends BaseMouseHandlerInputRestri
     //マウス操作(mouseMode==12鏡映モード　でボタンを離したとき)を行う関数----------------------------------------------------
     public void mouseReleased(Point p0) {
         LineSegment adds = new LineSegment();
-        if (d.lineStep.size() == 2) {
+        if (d.getLineStep().size() == 2) {
             canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.NORMAL_0);//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
-            int old_sousuu = d.foldLineSet.getTotal();
+            int old_sousuu = d.getFoldLineSet().getTotal();
 
-            for (int i = 1; i <= d.foldLineSet.getTotal(); i++) {
-                LineSegment s = d.foldLineSet.get(i);
+            for (int i = 1; i <= d.getFoldLineSet().getTotal(); i++) {
+                LineSegment s = d.getFoldLineSet().get(i);
                 if (s.getSelected() == 2) {
-                    adds.set(OritaCalc.findLineSymmetryLineSegment(s, d.lineStep.get(0)));
+                    adds.set(OritaCalc.findLineSymmetryLineSegment(s, d.getLineStep().get(0)));
                     adds.setColor(s.getColor());
 
-                    d.foldLineSet.addLine(adds);
+                    d.getFoldLineSet().addLine(adds);
                 }
             }
 
-            int new_sousuu = d.foldLineSet.getTotal();
+            int new_sousuu = d.getFoldLineSet().getTotal();
 
-            d.foldLineSet.divideLineSegmentWithNewLines(old_sousuu, new_sousuu);
+            d.getFoldLineSet().divideLineSegmentWithNewLines(old_sousuu, new_sousuu);
 
-            d.foldLineSet.unselect_all();
+            d.getFoldLineSet().unselect_all();
             d.record();
             canvasModel.setMouseMode(MouseMode.CREASE_SELECT_19);
 
-            d.lineStep.clear();
+            d.getLineStep().clear();
         }
     }
 }

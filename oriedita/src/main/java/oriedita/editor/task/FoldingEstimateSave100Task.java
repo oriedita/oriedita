@@ -10,7 +10,7 @@ import oriedita.editor.service.FoldingService;
 
 import java.io.File;
 
-public class FoldingEstimateSave100Task implements Runnable {
+public class FoldingEstimateSave100Task implements OrieditaTask {
 
     private final Canvas canvas;
     private final FoldingService foldingService;
@@ -29,7 +29,7 @@ public class FoldingEstimateSave100Task implements Runnable {
         long start = System.currentTimeMillis();
 
         File file = fileSaveService.selectExportFile();
-        FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();
+        FoldedFigure_Drawer selectedFigure = foldedFiguresList.getActiveItem();
 
         if (selectedFigure == null) {
             return;
@@ -72,5 +72,10 @@ public class FoldingEstimateSave100Task implements Runnable {
         selectedFigure.foldedFigure.text_result = selectedFigure.foldedFigure.text_result + "     Computation time " + L + " msec.";
 
         canvas.repaint();
+    }
+
+    @Override
+    public String getName() {
+        return "Folding Estimate Save 100";
     }
 }

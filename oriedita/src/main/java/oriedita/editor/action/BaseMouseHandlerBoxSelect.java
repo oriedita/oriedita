@@ -25,13 +25,13 @@ public abstract class BaseMouseHandlerBoxSelect extends BaseMouseHandler {
         selectionStart.set(p0);
 
         Point p = new Point();
-        p.set(d.camera.TV2object(p0));
+        p.set(d.getCamera().TV2object(p0));
         lines = new LineSegment[4];
         lines[0] = new LineSegment(p, p, LineColor.MAGENTA_5);
         lines[1] = new LineSegment(p, p, LineColor.MAGENTA_5);
         lines[2] = new LineSegment(p, p, LineColor.MAGENTA_5);
         lines[3] = new LineSegment(p, p, LineColor.MAGENTA_5);
-        d.lineStep.clear();
+        d.getLineStep().clear();
     }
 
     @Override
@@ -39,10 +39,10 @@ public abstract class BaseMouseHandlerBoxSelect extends BaseMouseHandler {
         Point p19_2 = new Point(selectionStart.getX(), p0.getY());
         Point p19_4 = new Point(p0.getX(), selectionStart.getY());
 
-        Point p19_a = new Point(d.camera.TV2object(selectionStart));
-        Point p19_b = new Point(d.camera.TV2object(p19_2));
-        Point p19_c = new Point(d.camera.TV2object(p0));
-        Point p19_d = new Point(d.camera.TV2object(p19_4));
+        Point p19_a = new Point(d.getCamera().TV2object(selectionStart));
+        Point p19_b = new Point(d.getCamera().TV2object(p19_2));
+        Point p19_c = new Point(d.getCamera().TV2object(p0));
+        Point p19_d = new Point(d.getCamera().TV2object(p19_4));
 
         lines[0].set(p19_a, p19_b);
         lines[1].set(p19_b, p19_c);
@@ -60,7 +60,7 @@ public abstract class BaseMouseHandlerBoxSelect extends BaseMouseHandler {
         for (LineSegment line : lines) {
             if (line != null) {
                 line.setActive(LineSegment.ActiveState.ACTIVE_BOTH_3);
-                DrawingUtil.drawLineStep(g2, line, camera, settings.getLineWidth(), d.gridInputAssist);
+                DrawingUtil.drawLineStep(g2, line, camera, settings.getLineWidth(), d.getGridInputAssist());
             }
         }
     }

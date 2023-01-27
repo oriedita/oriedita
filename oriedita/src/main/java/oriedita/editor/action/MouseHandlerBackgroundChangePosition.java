@@ -30,25 +30,25 @@ public class MouseHandlerBackgroundChangePosition extends BaseMouseHandler {
     //マウス操作(ボタンを押したとき)時の作業
     public void mousePressed(Point p0) {
         Point p = new Point();
-        p.set(d.camera.TV2object(p0));
+        p.set(d.getCamera().TV2object(p0));
 
-        if (d.lineStep.size() == 3) {
+        if (d.getLineStep().size() == 3) {
             Point closestPoint = d.getClosestPoint(p);
 
-            if (p.distance(closestPoint) < d.selectionDistance) {
+            if (p.distance(closestPoint) < d.getSelectionDistance()) {
                 p.set(closestPoint);
             }
             d.lineStepAdd(new LineSegment(p, p, LineColor.ORANGE_4));
-        } else if (d.lineStep.size() == 2) {
+        } else if (d.getLineStep().size() == 2) {
             Point closestPoint = d.getClosestPoint(p);
 
-            if (p.distance(closestPoint) < d.selectionDistance) {
+            if (p.distance(closestPoint) < d.getSelectionDistance()) {
                 p.set(closestPoint);
             }
             d.lineStepAdd(new LineSegment(p, p, LineColor.CYAN_3));
-        } else if (d.lineStep.size() == 1) {
+        } else if (d.getLineStep().size() == 1) {
             d.lineStepAdd(new LineSegment(p, p, LineColor.BLUE_2));
-        } else if (d.lineStep.size() == 0) {
+        } else if (d.getLineStep().size() == 0) {
             d.lineStepAdd(new LineSegment(p, p, LineColor.RED_1));
         }
     }
@@ -65,23 +65,23 @@ public class MouseHandlerBackgroundChangePosition extends BaseMouseHandler {
 
     //マウス操作(ボタンを離したとき)を行う関数
     public void mouseReleased(Point p0) {
-        if (d.lineStep.size() == 4) {
+        if (d.getLineStep().size() == 4) {
             LineSegment s_1 = new LineSegment();
-            s_1.set(d.lineStep.get(0));
+            s_1.set(d.getLineStep().get(0));
             LineSegment s_2 = new LineSegment();
-            s_2.set(d.lineStep.get(1));
+            s_2.set(d.getLineStep().get(1));
             LineSegment s_3 = new LineSegment();
-            s_3.set(d.lineStep.get(2));
+            s_3.set(d.getLineStep().get(2));
             LineSegment s_4 = new LineSegment();
-            s_4.set(d.lineStep.get(3));
+            s_4.set(d.getLineStep().get(3));
             buttonService.Button_shared_operation();
 
             backgroundModel.setLockBackground(false);
 
-            Polygon polygon = new Polygon(d.camera.object2TV(s_1.getA()),
-                    d.camera.object2TV(s_2.getA()),
-                    d.camera.object2TV(s_3.getA()),
-                    d.camera.object2TV(s_4.getA()));
+            Polygon polygon = new Polygon(d.getCamera().object2TV(s_1.getA()),
+                    d.getCamera().object2TV(s_2.getA()),
+                    d.getCamera().object2TV(s_3.getA()),
+                    d.getCamera().object2TV(s_4.getA()));
 
             backgroundModel.setBackgroundPosition(polygon);
         }

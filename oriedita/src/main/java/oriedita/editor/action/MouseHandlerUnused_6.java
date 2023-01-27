@@ -26,10 +26,10 @@ public class MouseHandlerUnused_6 extends BaseMouseHandler {
     //マウス操作(ボタンを押したとき)時の作業
     public void mousePressed(Point p0) {
         Point p = new Point();
-        p.set(d.camera.TV2object(p0));
+        p.set(d.getCamera().TV2object(p0));
         Point closestPoint = d.getClosestPoint(p);
-        if (p.distance(closestPoint) < d.selectionDistance) {
-            d.lineStepAdd(new LineSegment(closestPoint, closestPoint, LineColor.fromNumber(d.lineStep.size() + 1)));
+        if (p.distance(closestPoint) < d.getSelectionDistance()) {
+            d.lineStepAdd(new LineSegment(closestPoint, closestPoint, LineColor.fromNumber(d.getLineStep().size() + 1)));
         }
     }
 
@@ -39,8 +39,8 @@ public class MouseHandlerUnused_6 extends BaseMouseHandler {
 
     //マウス操作(ボタンを離したとき)を行う関数
     public void mouseReleased(Point p0) {
-        if (d.lineStep.size() == 3) {
-            d.lineStep.clear();
+        if (d.getLineStep().size() == 3) {
+            d.getLineStep().clear();
         }
     }
 }

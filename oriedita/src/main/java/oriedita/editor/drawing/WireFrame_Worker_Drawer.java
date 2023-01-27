@@ -4,6 +4,7 @@ import oriedita.editor.Colors;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.save.Save;
 import oriedita.editor.service.HistoryState;
+import oriedita.editor.service.impl.DequeHistoryState;
 import origami.crease_pattern.PointSet;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
@@ -24,7 +25,7 @@ public class WireFrame_Worker_Drawer {
     Camera cam_rear = new Camera();
     Camera cam_transparent_front = new Camera();
     Camera cam_transparent_rear = new Camera();
-    HistoryState history = new HistoryState();
+    HistoryState history = new DequeHistoryState();
 
     public WireFrame_Worker_Drawer(WireFrame_Worker wireFrame_worker) {
         this.wireFrame_worker = wireFrame_worker;

@@ -50,10 +50,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Set up JDK 16
+      - name: Set up JDK 17
         uses: actions/setup-java@v2
         with:
-          java-version: '16'
+          java-version: '17'
           distribution: 'adopt'
           cache: maven
 
@@ -61,8 +61,8 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ~/.m2
-          key: ${{ runner.os }}-java16-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-java16-m2
+          key: ${{ runner.os }}-java17-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-java17-m2
 
       - id: get_version
         uses: battila7/get-version-action@v2
@@ -129,18 +129,18 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Set up JDK 16
+      - name: Set up JDK 17
         uses: actions/setup-java@v2
         with:
-          java-version: '16'
+          java-version: '17'
           distribution: 'adopt'
           cache: maven
       - name: Cache Maven packages
         uses: actions/cache@v2
         with:
           path: ~/.m2
-          key: ${{ runner.os }}-java16-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-java16-m2
+          key: ${{ runner.os }}-java17-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-java17-m2
 
       - id: get_version
         uses: battila7/get-version-action@v2
@@ -205,10 +205,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Set up JDK 16
+      - name: Set up JDK 17
         uses: actions/setup-java@v2
         with:
-          java-version: '16'
+          java-version: '17'
           distribution: 'adopt'
           cache: maven
 
@@ -216,8 +216,8 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ~/.m2
-          key: ${{ runner.os }}-java16-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-java16-m2
+          key: ${{ runner.os }}-java17-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-java17-m2
 
       - id: get_version
         uses: battila7/get-version-action@v2
@@ -240,17 +240,14 @@ jobs:
           jpackage `
             @build/jpackage-common.txt `
             @build/jpackage-common-mac.txt `
-            --dest ci-build/portable `
+            --dest ci-build `
             --type app-image `
             --name "Oriedita" `
             --app-version ${{ steps.get_version.outputs.major }}.${{ steps.get_version.outputs.minor }}.${{ steps.get_version.outputs.patch }} `
-            --main-jar oriedita-${{ steps.get_version.outputs.version-without-v }}.jar `
-
-      - name: Create zip for portable executable (Mac)
-        uses: papeloto/action-zip@v1
-        with:
-          files: 'ci-build/portable'
-          dest: ci-build/Oriedita Portable (Mac) ${{ steps.get_version.outputs.version-without-v }}.zip
+            --main-jar oriedita-${{ steps.get_version.outputs.version-without-v }}.jar
+          pushd ci-build
+          zip -r "Oriedita Portable (Mac) ${{ steps.get_version.outputs.version-without-v }}.zip" Oriedita.app
+          popd
 
       - name: Create DMG (Mac)
         run: |

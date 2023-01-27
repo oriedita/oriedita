@@ -28,10 +28,10 @@ public class MouseHandlerCircleDrawThreePoint extends BaseMouseHandler {
 
     public void mousePressed(Point p0) {
         Point p = new Point();
-        p.set(d.camera.TV2object(p0));
+        p.set(d.getCamera().TV2object(p0));
         Point closest_point = d.getClosestPoint(p);
-        if (p.distance(closest_point) < d.selectionDistance) {
-            d.lineStepAdd(new LineSegment(closest_point, closest_point, LineColor.fromNumber(d.lineStep.size() + 1)));
+        if (p.distance(closest_point) < d.getSelectionDistance()) {
+            d.lineStepAdd(new LineSegment(closest_point, closest_point, LineColor.fromNumber(d.getLineStep().size() + 1)));
         }
     }
 
@@ -41,16 +41,16 @@ public class MouseHandlerCircleDrawThreePoint extends BaseMouseHandler {
 
     //マウス操作(ボタンを離したとき)を行う関数
     public void mouseReleased(Point p0) {
-        if (d.lineStep.size() == 3) {
-            LineSegment sen1 = new LineSegment(d.lineStep.get(0).getA(), d.lineStep.get(1).getA());
+        if (d.getLineStep().size() == 3) {
+            LineSegment sen1 = new LineSegment(d.getLineStep().get(0).getA(), d.getLineStep().get(1).getA());
             if (Epsilon.high.le0(sen1.determineLength())) {
                 return;
             }
-            LineSegment sen2 = new LineSegment(d.lineStep.get(1).getA(), d.lineStep.get(2).getA());
+            LineSegment sen2 = new LineSegment(d.getLineStep().get(1).getA(), d.getLineStep().get(2).getA());
             if (Epsilon.high.le0(sen2.determineLength())) {
                 return;
             }
-            LineSegment sen3 = new LineSegment(d.lineStep.get(2).getA(), d.lineStep.get(0).getA());
+            LineSegment sen3 = new LineSegment(d.getLineStep().get(2).getA(), d.getLineStep().get(0).getA());
             if (Epsilon.high.le0(sen3.determineLength())) {
                 return;
             }
@@ -89,10 +89,10 @@ public class MouseHandlerCircleDrawThreePoint extends BaseMouseHandler {
             t1.orthogonalize(OritaCalc.internalDivisionRatio(sen1.getA(), sen1.getB(), 1.0, 1.0));
             StraightLine t2 = new StraightLine(sen2);
             t2.orthogonalize(OritaCalc.internalDivisionRatio(sen2.getA(), sen2.getB(), 1.0, 1.0));
-            d.addCircle(OritaCalc.findIntersection(t1, t2), OritaCalc.distance(d.lineStep.get(0).getA(), OritaCalc.findIntersection(t1, t2)), LineColor.CYAN_3);
+            d.addCircle(OritaCalc.findIntersection(t1, t2), OritaCalc.distance(d.getLineStep().get(0).getA(), OritaCalc.findIntersection(t1, t2)), LineColor.CYAN_3);
             d.record();
 
-            d.lineStep.clear();
+            d.getLineStep().clear();
         }
     }
 }

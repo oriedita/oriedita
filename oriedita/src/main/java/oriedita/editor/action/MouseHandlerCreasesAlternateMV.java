@@ -30,12 +30,12 @@ public class MouseHandlerCreasesAlternateMV extends BaseMouseHandlerInputRestric
     //マウス操作(mouseMode==36　でボタンを押したとき)時の作業----------------------------------------------------
     public void mousePressed(Point p0) {
         Point p = new Point();
-        p.set(d.camera.TV2object(p0));
+        p.set(d.getCamera().TV2object(p0));
         Point closestPoint = d.getClosestPoint(p);
-        if (p.distance(closestPoint) > d.selectionDistance) {
+        if (p.distance(closestPoint) > d.getSelectionDistance()) {
             closestPoint.set(p);
         }
-        d.lineStepAdd(new LineSegment(p, closestPoint, d.lineColor));
+        d.lineStepAdd(new LineSegment(p, closestPoint, d.getLineColor()));
     }
 
     //マウス操作(mouseMode==36　でドラッグしたとき)を行う関数----------------------------------------------------
@@ -48,18 +48,18 @@ public class MouseHandlerCreasesAlternateMV extends BaseMouseHandlerInputRestric
     public void mouseReleased(Point p0) {
         SortingBox<LineSegment> nbox = new SortingBox<>();
 
-        if (d.lineStep.size() == 1) {
+        if (d.getLineStep().size() == 1) {
             Point p = new Point();
-            p.set(d.camera.TV2object(p0));
+            p.set(d.getCamera().TV2object(p0));
             Point closestPoint = d.getClosestPoint(p);
-            if (p.distance(closestPoint) > d.selectionDistance) {
+            if (p.distance(closestPoint) > d.getSelectionDistance()) {
                 closestPoint.set(p);
             }
-            d.lineStep.get(0).setA(closestPoint);
-            if (Epsilon.high.gt0(d.lineStep.get(0).determineLength())) {
-                for (int i = 1; i <= d.foldLineSet.getTotal(); i++) {
-                    LineSegment s = d.foldLineSet.get(i);
-                    LineSegment.Intersection i_senbun_kousa_hantei = OritaCalc.determineLineSegmentIntersection(s, d.lineStep.get(0), Epsilon.UNKNOWN_1EN4);
+            d.getLineStep().get(0).setA(closestPoint);
+            if (Epsilon.high.gt0(d.getLineStep().get(0).determineLength())) {
+                for (int i = 1; i <= d.getFoldLineSet().getTotal(); i++) {
+                    LineSegment s = d.getFoldLineSet().get(i);
+                    LineSegment.Intersection i_senbun_kousa_hantei = OritaCalc.determineLineSegmentIntersection(s, d.getLineStep().get(0), Epsilon.UNKNOWN_1EN4);
                     int i_jikkou = 0;
                     if (i_senbun_kousa_hantei == LineSegment.Intersection.INTERSECTS_1) {
                         i_jikkou = 1;
@@ -72,13 +72,13 @@ public class MouseHandlerCreasesAlternateMV extends BaseMouseHandlerInputRestric
                     }
 
                     if (i_jikkou == 1) {
-                        nbox.addByWeight(s, OritaCalc.distance(d.lineStep.get(0).getB(), OritaCalc.findIntersection(s, d.lineStep.get(0))));
+                        nbox.addByWeight(s, OritaCalc.distance(d.getLineStep().get(0).getB(), OritaCalc.findIntersection(s, d.getLineStep().get(0))));
                     }
                 }
 
                 Logger.info("i_d_sousuu" + nbox.getTotal());
 
-                LineColor icol_temp = d.lineColor;
+                LineColor icol_temp = d.getLineColor();
 
                 for (int i = 1; i <= nbox.getTotal(); i++) {
                     nbox.getValue(i).setColor(icol_temp);
@@ -93,7 +93,7 @@ public class MouseHandlerCreasesAlternateMV extends BaseMouseHandlerInputRestric
                 d.record();
             }
 
-            d.lineStep.clear();
+            d.getLineStep().clear();
         }
     }
 }

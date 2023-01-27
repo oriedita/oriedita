@@ -22,7 +22,7 @@ public class MouseHandlerSelectLineIntersecting extends BaseMouseHandlerLineSele
     public void mouseReleased(Point p0) {
         if (Epsilon.high.gt0(selectionLine.determineLength())) {
             //やりたい動作はここに書く
-            d.foldLineSet.select_lX(selectionLine, "select_lX");//lXは小文字のエルと大文字のエックス
+            d.getFoldLineSet().select_lX(selectionLine, "select_lX");//lXは小文字のエルと大文字のエックス
         }
         super.mouseReleased(p0);
     }

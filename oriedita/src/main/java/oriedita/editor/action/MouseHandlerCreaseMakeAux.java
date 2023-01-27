@@ -28,7 +28,7 @@ public class MouseHandlerCreaseMakeAux extends BaseMouseHandlerBoxSelect {
     //マウス操作(mouseMode==60 でボタンを離したとき)を行う関数----------------------------------------------------
     public void mouseReleased(Point p0) {
         super.mouseReleased(p0);
-        d.lineStep.clear();
+        d.getLineStep().clear();
 
         if (selectionStart.distance(p0) > Epsilon.UNKNOWN_1EN6) {
             if (d.insideToAux(selectionStart, p0)) {
@@ -36,15 +36,15 @@ public class MouseHandlerCreaseMakeAux extends BaseMouseHandlerBoxSelect {
             }//この関数は不完全なのでまだ未公開20171126
         } else {
             Point p = new Point();
-            p.set(d.camera.TV2object(p0));
-            if (d.foldLineSet.closestLineSegmentDistance(p) < d.selectionDistance) {//点pに最も近い線分の番号での、その距離を返す	public double closestLineSegmentDistance(Ten p)
-                LineSegment closestLineSegment = d.foldLineSet.closestLineSegmentSearchReversedOrder(p);
+            p.set(d.getCamera().TV2object(p0));
+            if (d.getFoldLineSet().closestLineSegmentDistance(p) < d.getSelectionDistance()) {//点pに最も近い線分の番号での、その距離を返す	public double closestLineSegmentDistance(Ten p)
+                LineSegment closestLineSegment = d.getFoldLineSet().closestLineSegmentSearchReversedOrder(p);
                 if (closestLineSegment.getColor().getNumber() < 3) {
                     LineSegment add_sen = new LineSegment();
                     add_sen.set(closestLineSegment);
                     add_sen.setColor(LineColor.CYAN_3);
 
-                    d.foldLineSet.deleteLineSegment_vertex(closestLineSegment);
+                    d.getFoldLineSet().deleteLineSegment_vertex(closestLineSegment);
                     d.addLineSegment(add_sen);
 
                     d.organizeCircles();

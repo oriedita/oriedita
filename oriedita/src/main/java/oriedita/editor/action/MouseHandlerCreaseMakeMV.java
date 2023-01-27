@@ -27,13 +27,13 @@ public class MouseHandlerCreaseMakeMV extends BaseMouseHandlerInputRestricted {
     //マウス操作(mouseMode==34　でボタンを押したとき)時の作業----------------------------------------------------
     public void mousePressed(Point p0) {
         Point p = new Point();
-        p.set(d.camera.TV2object(p0));
+        p.set(d.getCamera().TV2object(p0));
         Point closest_point = d.getClosestPoint(p);
-        if (p.distance(closest_point) > d.selectionDistance) {
-            d.lineStep.clear();
+        if (p.distance(closest_point) > d.getSelectionDistance()) {
+            d.getLineStep().clear();
             return;
         }
-        d.lineStepAdd(new LineSegment(p, closest_point, d.lineColor));
+        d.lineStepAdd(new LineSegment(p, closest_point, d.getLineColor()));
     }
 
     //マウス操作(mouseMode==34　でドラッグしたとき)を行う関数----------------------------------------------------
@@ -48,21 +48,21 @@ public class MouseHandlerCreaseMakeMV extends BaseMouseHandlerInputRestricted {
     public void mouseReleased(Point p0) {
         SortingBox<LineSegment> nbox = new SortingBox<>();
 
-        if (d.lineStep.size() == 1) {
+        if (d.getLineStep().size() == 1) {
             Point p = new Point();
-            p.set(d.camera.TV2object(p0));
+            p.set(d.getCamera().TV2object(p0));
             Point closest_point = d.getClosestPoint(p);
-            d.lineStep.get(0).setA(closest_point);
-            if (p.distance(closest_point) <= d.selectionDistance) {
-                if (Epsilon.high.gt0(d.lineStep.get(0).determineLength())) {
-                    for (int i = 1; i <= d.foldLineSet.getTotal(); i++) {
-                        LineSegment s = d.foldLineSet.get(i);
-                        if (OritaCalc.isLineSegmentOverlapping(s, d.lineStep.get(0))) {
-                            nbox.addByWeight(s, OritaCalc.determineLineSegmentDistance(d.lineStep.get(0).getB(), s));
+            d.getLineStep().get(0).setA(closest_point);
+            if (p.distance(closest_point) <= d.getSelectionDistance()) {
+                if (Epsilon.high.gt0(d.getLineStep().get(0).determineLength())) {
+                    for (int i = 1; i <= d.getFoldLineSet().getTotal(); i++) {
+                        LineSegment s = d.getFoldLineSet().get(i);
+                        if (OritaCalc.isLineSegmentOverlapping(s, d.getLineStep().get(0))) {
+                            nbox.addByWeight(s, OritaCalc.determineLineSegmentDistance(d.getLineStep().get(0).getB(), s));
                         }
                     }
 
-                    LineColor icol_temp = d.lineColor;
+                    LineColor icol_temp = d.getLineColor();
 
                     for (int i = 1; i <= nbox.getTotal(); i++) {
                         nbox.getValue(i).setColor(icol_temp);
@@ -76,7 +76,7 @@ public class MouseHandlerCreaseMakeMV extends BaseMouseHandlerInputRestricted {
                     d.record();
                 }
             }
-            d.lineStep.clear();
+            d.getLineStep().clear();
         }
     }
 }

@@ -34,14 +34,14 @@ public class MouseHandlerCreaseCopy extends BaseMouseHandlerLineTransform {
             FoldLineSet ori_s_temp = lines;
             ori_s_temp.move(delta.getX(), delta.getY());
 
-            int sousuu_old = d.foldLineSet.getTotal();
+            int sousuu_old = d.getFoldLineSet().getTotal();
             Save save1 = Save.createInstance();
             ori_s_temp.getSave(save1);
-            d.foldLineSet.addSave(save1);
-            int sousuu_new = d.foldLineSet.getTotal();
-            d.foldLineSet.divideLineSegmentWithNewLines(sousuu_old, sousuu_new);
+            d.getFoldLineSet().addSave(save1);
+            int sousuu_new = d.getFoldLineSet().getTotal();
+            d.getFoldLineSet().divideLineSegmentWithNewLines(sousuu_old, sousuu_new);
 
-            d.foldLineSet.unselect_all();
+            d.getFoldLineSet().unselect_all();
             d.record();
 
             canvasModel.setMouseMode(MouseMode.CREASE_SELECT_19);

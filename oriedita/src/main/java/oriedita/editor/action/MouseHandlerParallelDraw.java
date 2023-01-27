@@ -22,7 +22,7 @@ public class MouseHandlerParallelDraw extends BaseMouseHandlerInputRestricted {
 
     //マウス操作(マウスを動かしたとき)を行う関数
     public void mouseMoved(Point p0) {
-        if (d.lineStep.size() == 0) {
+        if (d.getLineStep().size() == 0) {
             super.mouseMoved(p0);
         }
     }
@@ -33,24 +33,24 @@ public class MouseHandlerParallelDraw extends BaseMouseHandlerInputRestricted {
     //マウス操作(ボタンを押したとき)時の作業
     public void mousePressed(Point p0) {
         Point p = new Point();
-        p.set(d.camera.TV2object(p0));
-        if (d.lineStep.size() == 0) {
+        p.set(d.getCamera().TV2object(p0));
+        if (d.getLineStep().size() == 0) {
             Point closestPoint = d.getClosestPoint(p);
 
-            if (p.distance(closestPoint) < d.selectionDistance) {
-                d.lineStepAdd(new LineSegment(closestPoint, closestPoint, d.lineColor));
+            if (p.distance(closestPoint) < d.getSelectionDistance()) {
+                d.lineStepAdd(new LineSegment(closestPoint, closestPoint, d.getLineColor()));
             }
-        } else if (d.lineStep.size() == 1) {
+        } else if (d.getLineStep().size() == 1) {
             LineSegment closestLineSegment = new LineSegment();
             closestLineSegment.set(d.getClosestLineSegment(p));
-            if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.selectionDistance) {
+            if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.getSelectionDistance()) {
                 closestLineSegment.setColor(LineColor.GREEN_6);
                 d.lineStepAdd(closestLineSegment);
             }
-        } else if (d.lineStep.size() == 2) {
+        } else if (d.getLineStep().size() == 2) {
             LineSegment closestLineSegment = new LineSegment();
             closestLineSegment.set(d.getClosestLineSegment(p));
-            if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.selectionDistance) {
+            if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.getSelectionDistance()) {
                 closestLineSegment.setColor(LineColor.GREEN_6);
                 d.lineStepAdd(closestLineSegment);
             }
@@ -63,19 +63,19 @@ public class MouseHandlerParallelDraw extends BaseMouseHandlerInputRestricted {
 
     //マウス操作(ボタンを離したとき)を行う関数
     public void mouseReleased(Point p0) {
-        if (d.lineStep.size() == 3) {
-            LineSegment s0 = d.lineStep.get(0);
-            LineSegment s1 = d.lineStep.get(1);
-            LineSegment s2 = d.lineStep.get(2);
+        if (d.getLineStep().size() == 3) {
+            LineSegment s0 = d.getLineStep().get(0);
+            LineSegment s1 = d.getLineStep().get(1);
+            LineSegment s2 = d.getLineStep().get(2);
 
             s0.setB(new Point(s0.determineAX() + s1.determineBX() - s1.determineAX(), s0.determineAY() + s1.determineBY() - s1.determineAY()));
 
-            if (s_step_additional_intersection(2, s0, s2, d.lineColor) > 0) {
+            if (s_step_additional_intersection(2, s0, s2, d.getLineColor()) > 0) {
                 d.addLineSegment(s2);
                 d.record();
             }
 
-            d.lineStep.clear();
+            d.getLineStep().clear();
         }
     }
 
@@ -106,7 +106,7 @@ public class MouseHandlerParallelDraw extends BaseMouseHandlerInputRestricted {
         LineSegment add_sen = new LineSegment(cross_point, s_o.getA(), icolo);
 
         if (Epsilon.high.gt0(add_sen.determineLength())) {
-            d.lineStep.get(i_e_d).set(add_sen);
+            d.getLineStep().get(i_e_d).set(add_sen);
             return 1;
         }
 

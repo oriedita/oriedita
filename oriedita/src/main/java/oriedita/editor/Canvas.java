@@ -3,16 +3,16 @@ package oriedita.editor;
 import org.tinylog.Logger;
 import oriedita.editor.action.DrawingSettings;
 import oriedita.editor.action.MouseModeHandler;
+import oriedita.editor.canvas.MouseWheelTarget;
 import oriedita.editor.canvas.*;
 import oriedita.editor.databinding.*;
 import oriedita.editor.drawing.FoldedFigure_Drawer;
 import oriedita.editor.drawing.tools.Background_camera;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.service.FoldedFigureCanvasSelectService;
+import oriedita.editor.service.TaskExecutorService;
 import oriedita.editor.swing.component.BulletinBoard;
 import oriedita.editor.swing.component.TextEditingArea;
-import oriedita.editor.task.TaskExecutor;
-import oriedita.editor.text.Text;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.Polygon;
 import origami.folding.FoldedFigure;
@@ -37,6 +37,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Singleton
 public class Canvas extends JPanel implements MouseListener, MouseMotionListener, MouseWheelListener {
 
+    private final TaskExecutorService foldingExecutor;
     private final CreasePattern_Worker mainCreasePatternWorker;
     private final FoldedFiguresList foldedFiguresList;
     private final BackgroundModel backgroundModel;
@@ -98,6 +99,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
     @Inject
     public Canvas(@Named("creasePatternCamera") Camera creasePatternCamera,
                   @Named("mainFrame") JFrame frame,
+                  @Named("foldingExecutor") TaskExecutorService foldingExecutor,
                   CreasePattern_Worker mainCreasePatternWorker,
                   FoldedFiguresList foldedFiguresList,
                   BackgroundModel backgroundModel,
@@ -114,6 +116,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                   SelectedTextModel textModel) {
         this.creasePatternCamera = creasePatternCamera;
         this.frame = frame;
+        this.foldingExecutor = foldingExecutor;
         this.mainCreasePatternWorker = mainCreasePatternWorker;
         this.foldedFiguresList = foldedFiguresList;
         this.backgroundModel = backgroundModel;
@@ -237,7 +240,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
             OZi.wireFrame_worker_drawer1.setCamera(creasePatternCamera);
         }
 
-        FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();
+        FoldedFigure_Drawer selectedFigure = foldedFiguresList.getActiveItem();
 
         if (selectedFigure != null) {
 //VVVVVVVVVVVVVVV以下のts2へのカメラセットはOriagari_zuのoekakiで実施しているので以下の5行はなくてもいいはず　20180225
@@ -315,10 +318,10 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                 bufferGraphics.drawString("(" + ix_ind + "," + iy_ind + ")", (int) p_mouse_TV_position.getX() + 25, (int) p_mouse_TV_position.getY() + 20); //この表示内容はvoid kekka_syoriで決められる。
             }
 
-            if (TaskExecutor.isTaskRunning()) {
+            if (foldingExecutor.isTaskRunning()) {
                 bufferGraphics.setColor(Colors.get(Color.red));
 
-                bufferGraphics.drawString(TaskExecutor.getTaskName() + " Under Calculation. If you want to cancel calculation, uncheck [check A + MV]on right side and press the brake button (bicycle brake icon) on lower side.", 10, 69); //この表示内容はvoid kekka_syoriで決められる。
+                bufferGraphics.drawString(foldingExecutor.getTaskName() + " Under Calculation. If you want to cancel calculation, uncheck [check A + MV]on right side and press the brake button (bicycle brake icon) on lower side.", 10, 69); //この表示内容はvoid kekka_syoriで決められる。
                 bufferGraphics.drawString("計算中。　なお、計算を取り消し通常状態に戻りたいなら、右辺の[check A+MV]のチェックをはずし、ブレーキボタン（下辺の、自転車のブレーキのアイコン）を押す。 ", 10, 83); //この表示内容はvoid kekka_syoriで決められる。
             }
 
@@ -426,7 +429,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
                 Logger.info("i_cp_or_oriagari = " + target);
 
-                FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();
+                FoldedFigure_Drawer selectedFigure = foldedFiguresList.getActiveItem();
 
                 switch (target) {
                     case CREASE_PATTERN_0: // 展開図移動。
@@ -453,7 +456,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                 mainCreasePatternWorker.setCamera(creasePatternCamera);
                 activeMouseHandler.reset();
                 if (activeMouseHandler.getMouseMode() != MouseMode.LINE_SEGMENT_DELETE_3) {
-                    mainCreasePatternWorker.i_foldLine_additional = FoldLineAdditionalInputMode.BOTH_4;
+                    mainCreasePatternWorker.setFoldLineAdditional(FoldLineAdditionalInputMode.BOTH_4);
                 }
                 mouseModeHandlers.get(MouseMode.LINE_SEGMENT_DELETE_3).mousePressed(p, e);
                 activeMouseHandler = mouseModeHandlers.get(MouseMode.LINE_SEGMENT_DELETE_3);
@@ -489,7 +492,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                 case MouseEvent.BUTTON1:
                     break;
                 case MouseEvent.BUTTON2:
-                    FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();
+                    FoldedFigure_Drawer selectedFigure = foldedFiguresList.getActiveItem();
 
                     switch (canvasModel.getMouseInCpOrFoldedFigure()) {
                         case CREASE_PATTERN_0: // 展開図移動。
@@ -566,7 +569,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                     //
                     break;
                 case MouseEvent.BUTTON2:
-                    FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();
+                    FoldedFigure_Drawer selectedFigure = foldedFiguresList.getActiveItem();
                     switch (canvasModel.getMouseInCpOrFoldedFigure()) {
                         case CREASE_PATTERN_0:
                             creasePatternCamera.displayPositionMove(mouse_temp0.other_Point_position(p));
@@ -783,11 +786,4 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         return new Point(e.getX() - (int) offset, e.getY() - (int) offset);
     }
 
-    public enum MouseWheelTarget {
-        CREASE_PATTERN_0,
-        FOLDED_FRONT_1,
-        FOLDED_BACK_2,
-        TRANSPARENT_FRONT_3,
-        TRANSPARENT_BACK_4,
-    }
 }

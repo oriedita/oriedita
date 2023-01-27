@@ -33,7 +33,7 @@ public class MouseHandlerCreaseToggleMV extends BaseMouseHandlerBoxSelect {
      */
     public void mouseReleased(Point p0) {
         super.mouseReleased(p0);
-        d.lineStep.clear();
+        d.getLineStep().clear();
 
         if (selectionStart.distance(p0) > Epsilon.UNKNOWN_1EN6) {//
             if (d.MV_change(selectionStart, p0) != 0) {
@@ -43,9 +43,9 @@ public class MouseHandlerCreaseToggleMV extends BaseMouseHandlerBoxSelect {
 
         if (selectionStart.distance(p0) <= Epsilon.UNKNOWN_1EN6) {//
             Point p = new Point();
-            p.set(d.camera.TV2object(p0));
-            if (d.foldLineSet.closestLineSegmentDistance(p) < d.selectionDistance) {//点pに最も近い線分の番号での、その距離を返す	public double mottomo_tikai_senbun_kyori(Ten p)
-                LineSegment s = d.foldLineSet.closestLineSegmentSearch(p);
+            p.set(d.getCamera().TV2object(p0));
+            if (d.getFoldLineSet().closestLineSegmentDistance(p) < d.getSelectionDistance()) {//点pに最も近い線分の番号での、その距離を返す	public double mottomo_tikai_senbun_kyori(Ten p)
+                LineSegment s = d.getFoldLineSet().closestLineSegmentSearch(p);
                 LineColor ic_temp = s.getColor();
                 if (ic_temp == LineColor.RED_1) {
                     s.setColor(LineColor.BLUE_2);

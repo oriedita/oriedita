@@ -158,7 +158,7 @@ public class App {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (popups.isEmpty()) {
-                    for (Map.Entry<KeyStroke, AbstractButton> entry : buttonService.helpInputMap.entrySet()) {
+                    for (Map.Entry<KeyStroke, AbstractButton> entry : buttonService.getHelpInputMap().entrySet()) {
                         AbstractButton button = entry.getValue();
                         KeyStroke keyStroke = entry.getKey();
 
@@ -207,7 +207,7 @@ public class App {
         applicationModel.reload();
 
         foldedFigureModel.addPropertyChangeListener(e -> {
-            FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();
+            FoldedFigure_Drawer selectedFigure = foldedFiguresList.getActiveItem();
 
             if (selectedFigure != null) {
                 selectedFigure.setData(foldedFigureModel);

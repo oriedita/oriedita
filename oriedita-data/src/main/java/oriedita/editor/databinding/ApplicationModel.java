@@ -1,20 +1,15 @@
 package oriedita.editor.databinding;
 
-import com.formdev.flatlaf.FlatDarkLaf;
-import com.formdev.flatlaf.FlatLaf;
-import com.formdev.flatlaf.FlatLightLaf;
 import oriedita.editor.Colors;
 import oriedita.editor.canvas.LineStyle;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import javax.swing.*;
 import java.awt.*;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.File;
 import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -291,7 +286,7 @@ public class ApplicationModel implements Serializable {
 
         showInvisibleTextWarning = true;
 
-        laf = FlatLightLaf.class.getName();
+        laf = "com.formdev.flatlaf.FlatLightLaf";
 
         this.pcs.firePropertyChange(null, null, null);
     }
@@ -672,33 +667,6 @@ public class ApplicationModel implements Serializable {
 
     public void toggleHelpVisible() {
         setHelpVisible(!helpVisible);
-    }
-
-    public void toggleDarkMode() {
-        if (laf.equals(FlatLightLaf.class.getName())) {
-            setLaf(FlatDarkLaf.class.getName());
-        } else {
-            setLaf(FlatLightLaf.class.getName());
-        }
-    }
-
-    public void setDarkMode(boolean darkMode) {
-        if (darkMode) {
-            setLaf(FlatDarkLaf.class.getName());
-        } else {
-            setLaf(FlatLightLaf.class.getName());
-        }
-    }
-
-    public boolean determineLafDark() {
-        try {
-            Class<?> lnfClass = Class.forName(laf);
-
-            LookAndFeel lookAndFeel = (LookAndFeel) lnfClass.getDeclaredConstructor().newInstance();
-            return lookAndFeel instanceof FlatLaf && ((FlatLaf) lookAndFeel).isDark();
-        } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
-            return false;
-        }
     }
 
     public void togglePreciseZoom() {

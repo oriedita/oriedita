@@ -2,11 +2,12 @@ package oriedita.editor.databinding;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+
+import oriedita.editor.canvas.MouseWheelTarget;
+import oriedita.editor.action.FoldedFigureOperationMode;
 import origami.crease_pattern.element.LineColor;
-import oriedita.editor.Canvas;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.canvas.FoldLineAdditionalInputMode;
-import oriedita.editor.action.MouseHandlerModifyCalculatedShape;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -22,7 +23,7 @@ public class CanvasModel implements Serializable {
     private FoldLineAdditionalInputMode foldLineAdditionalInputMode;
     private FoldLineAdditionalInputMode foldLineAdditionalInputMode_old;
 
-    private Canvas.MouseWheelTarget mouseInCpOrFoldedFigure;
+    private MouseWheelTarget mouseInCpOrFoldedFigure;
 
     public void markDirty() {
         this.pcs.firePropertyChange("dirty", false, true);
@@ -44,14 +45,14 @@ public class CanvasModel implements Serializable {
      */
     private SelectionOperationMode selectionOperationMode;
 
-    private MouseHandlerModifyCalculatedShape.FoldedFigureOperationMode foldedFigureOperationMode;
+    private FoldedFigureOperationMode foldedFigureOperationMode;
 
-    public MouseHandlerModifyCalculatedShape.FoldedFigureOperationMode getFoldedFigureOperationMode() {
+    public FoldedFigureOperationMode getFoldedFigureOperationMode() {
         return foldedFigureOperationMode;
     }
 
-    public void setFoldedFigureOperationMode(MouseHandlerModifyCalculatedShape.FoldedFigureOperationMode foldedFigureOperationMode) {
-        MouseHandlerModifyCalculatedShape.FoldedFigureOperationMode oldI_foldedFigure_operation_mode = this.foldedFigureOperationMode;
+    public void setFoldedFigureOperationMode(FoldedFigureOperationMode foldedFigureOperationMode) {
+        FoldedFigureOperationMode oldI_foldedFigure_operation_mode = this.foldedFigureOperationMode;
         this.foldedFigureOperationMode = foldedFigureOperationMode;
         this.pcs.firePropertyChange("foldedFigureOperationMode", oldI_foldedFigure_operation_mode, foldedFigureOperationMode);
     }
@@ -166,7 +167,7 @@ public class CanvasModel implements Serializable {
 
         toggleLineColor = false;
 
-        mouseInCpOrFoldedFigure = Canvas.MouseWheelTarget.CREASE_PATTERN_0;
+        mouseInCpOrFoldedFigure = MouseWheelTarget.CREASE_PATTERN_0;
 
         this.pcs.firePropertyChange(null, null, null);
     }
@@ -185,12 +186,12 @@ public class CanvasModel implements Serializable {
         this.pcs.firePropertyChange(null, null, null);
     }
 
-    public Canvas.MouseWheelTarget getMouseInCpOrFoldedFigure() {
+    public MouseWheelTarget getMouseInCpOrFoldedFigure() {
         return mouseInCpOrFoldedFigure;
     }
 
-    public void setMouseInCpOrFoldedFigure(Canvas.MouseWheelTarget mouseInCpOrFoldedFigure) {
-        Canvas.MouseWheelTarget oldMouseInCpOrFoldedFigure = this.mouseInCpOrFoldedFigure;
+    public void setMouseInCpOrFoldedFigure(MouseWheelTarget mouseInCpOrFoldedFigure) {
+        MouseWheelTarget oldMouseInCpOrFoldedFigure = this.mouseInCpOrFoldedFigure;
         this.mouseInCpOrFoldedFigure = mouseInCpOrFoldedFigure;
         this.pcs.firePropertyChange("mouseInCpOrFoldedFigure", oldMouseInCpOrFoldedFigure, mouseInCpOrFoldedFigure);
     }

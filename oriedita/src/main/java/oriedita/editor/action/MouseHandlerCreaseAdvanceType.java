@@ -29,10 +29,10 @@ public class MouseHandlerCreaseAdvanceType extends BaseMouseHandler {
 
     public void mousePressed(Point p0) {    //マウス操作(mouseMode==4線_変換　でボタンを押したとき)時の作業
         Point p = new Point();
-        p.set(d.camera.TV2object(p0));
+        p.set(d.getCamera().TV2object(p0));
         lineSegment = null;
-        if (d.foldLineSet.closestLineSegmentDistance(p) < d.selectionDistance) {//点pに最も近い線分の番号での、その距離を返す	public double mottomo_tikai_senbun_kyori(Ten p)
-            lineSegment = d.foldLineSet.closestLineSegmentSearch(p);
+        if (d.getFoldLineSet().closestLineSegmentDistance(p) < d.getSelectionDistance()) {//点pに最も近い線分の番号での、その距離を返す	public double mottomo_tikai_senbun_kyori(Ten p)
+            lineSegment = d.getFoldLineSet().closestLineSegmentSearch(p);
             LineSegment s01 = new LineSegment();
             s01.set(OritaCalc.lineSegment_double(lineSegment, 0.01));
             lineSegment.setB(s01.getB());
@@ -52,7 +52,7 @@ public class MouseHandlerCreaseAdvanceType extends BaseMouseHandler {
     //マウス操作(mouseMode==30 除け_線_変換　でボタンを離したとき)を行う関数（背景に展開図がある場合用）
     public void mouseReleased(Point p0) {
         Point p = new Point();
-        p.set(d.camera.TV2object(p0));
+        p.set(d.getCamera().TV2object(p0));
 
         if (lineSegment != null) {
             LineSegment s01 = new LineSegment();

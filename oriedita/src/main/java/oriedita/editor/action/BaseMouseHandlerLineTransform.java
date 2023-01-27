@@ -37,7 +37,7 @@ public abstract class BaseMouseHandlerLineTransform extends BaseMouseHandlerLine
         delta = new Point(0,0);
         FoldLineSet ori_s_temp = new FoldLineSet();    //セレクトされた折線だけ取り出すために使う
         Save save = Save.createInstance();
-        d.foldLineSet.getMemoSelectOption(save, 2);
+        d.getFoldLineSet().getMemoSelectOption(save, 2);
         ori_s_temp.setSave(save);
         lines = ori_s_temp;
         active = true;
@@ -63,7 +63,7 @@ public abstract class BaseMouseHandlerLineTransform extends BaseMouseHandlerLine
                 -selectionLine.determineBX() + selectionLine.determineAX(),
                 -selectionLine.determineBY() + selectionLine.determineAY()
         );
-        d.lineStep.clear();
+        d.getLineStep().clear();
         active = false;
         image = null;
         cacheTooBig = false;
@@ -153,7 +153,7 @@ public abstract class BaseMouseHandlerLineTransform extends BaseMouseHandlerLine
                 s2.set(s);
                 s2.set(pa, pb);
                 DrawingUtil.drawCpLine(g2, s2, camera, settings.getLineStyle(), settings.getLineWidth(),
-                        d.pointSize, settings.getWidth(), settings.getHeight());
+                        d.getPointSize(), settings.getWidth(), settings.getHeight());
             }
         }
     }
@@ -168,7 +168,7 @@ public abstract class BaseMouseHandlerLineTransform extends BaseMouseHandlerLine
         g.setBackground(new Color(0f,0,0,0));
         for (int i = 1; i <= ori_s_temp.getTotal(); i++) {
             DrawingUtil.drawCpLine(g, ori_s_temp.get(i), camera, settings.getLineStyle(),
-                    settings.getLineWidth(), d.pointSize, image.getWidth(), image.getHeight());
+                    settings.getLineWidth(), d.getPointSize(), image.getWidth(), image.getHeight());
         }
     }
 

@@ -14,26 +14,26 @@ public abstract class BaseMouseHandlerPolygon extends BaseMouseHandler {
     @Override
     public void mouseMoved(Point p0) {
 //マウス操作(マウスを動かしたとき)を行う関数
-        if (d.gridInputAssist) {
-            d.lineCandidate.clear();
+        if (d.getGridInputAssist()) {
+            d.getLineCandidate().clear();
             Point p = new Point();
-            p.set(d.camera.TV2object(p0));
+            p.set(d.getCamera().TV2object(p0));
 
             LineSegment candidate = new LineSegment();
             candidate.setActive(LineSegment.ActiveState.ACTIVE_BOTH_3);
             Point closest_point = d.getClosestPoint(p);
-            if (p.distance(closest_point) > p.distance(d.lineStep.get(0).getA())) {
-                closest_point.set(d.lineStep.get(0).getA());
+            if (p.distance(closest_point) > p.distance(d.getLineStep().get(0).getA())) {
+                closest_point.set(d.getLineStep().get(0).getA());
             }
 
-            if (p.distance(closest_point) < d.selectionDistance) {
+            if (p.distance(closest_point) < d.getSelectionDistance()) {
                 candidate.set(closest_point, closest_point);
             } else {
                 candidate.set(p, p);
             }
 
             candidate.setColor(LineColor.MAGENTA_5);
-            d.lineCandidate.add(candidate);
+            d.getLineCandidate().add(candidate);
         }
     }
 
@@ -41,23 +41,23 @@ public abstract class BaseMouseHandlerPolygon extends BaseMouseHandler {
     public void mousePressed(Point p0) {
         if (polygonCompleted) {
             polygonCompleted = false;
-            d.lineStep.clear();
+            d.getLineStep().clear();
         }
 
         LineSegment s = new LineSegment();
         s.setColor(LineColor.MAGENTA_5);
         Point p = new Point();
-        p.set(d.camera.TV2object(p0));
+        p.set(d.getCamera().TV2object(p0));
 
-        if (d.lineStep.size() == 0) {
+        if (d.getLineStep().size() == 0) {
             Point closest_point = d.getClosestPoint(p);
-            if (p.distance(closest_point) > d.selectionDistance) {
+            if (p.distance(closest_point) > d.getSelectionDistance()) {
                 closest_point.set(p);
             }
             s.set(closest_point, p);
 
         } else {//ここでi_egaki_dankai=0となることはない。
-            s.set(d.lineStep.get(d.lineStep.size() - 1).getB(), p);
+            s.set(d.getLineStep().get(d.getLineStep().size() - 1).getB(), p);
         }
 
         d.lineStepAdd(s);
@@ -66,56 +66,56 @@ public abstract class BaseMouseHandlerPolygon extends BaseMouseHandler {
     @Override
     public void mouseDragged(Point p0) {
         Point p = new Point();
-        p.set(d.camera.TV2object(p0));
+        p.set(d.getCamera().TV2object(p0));
 
-        d.lineStep.get(d.lineStep.size() - 1).setB(p);
+        d.getLineStep().get(d.getLineStep().size() - 1).setB(p);
 
 
-        if (d.gridInputAssist) {
-            d.lineCandidate.clear();
+        if (d.getGridInputAssist()) {
+            d.getLineCandidate().clear();
 
             LineSegment candidate = new LineSegment();
             candidate.setActive(LineSegment.ActiveState.ACTIVE_BOTH_3);
             Point closest_point = d.getClosestPoint(p);
-            if (p.distance(closest_point) > p.distance(d.lineStep.get(0).getA())) {
-                closest_point.set(d.lineStep.get(0).getA());
+            if (p.distance(closest_point) > p.distance(d.getLineStep().get(0).getA())) {
+                closest_point.set(d.getLineStep().get(0).getA());
             }
 
 
-            if (p.distance(closest_point) < d.selectionDistance) {
+            if (p.distance(closest_point) < d.getSelectionDistance()) {
                 candidate.set(closest_point, closest_point);
             } else {
                 candidate.set(p, p);
             }
             candidate.setColor(LineColor.MAGENTA_5);
 
-            d.lineCandidate.add(candidate);
+            d.getLineCandidate().add(candidate);
 
-            d.lineStep.get(d.lineStep.size() - 1).setB(candidate.getA());
+            d.getLineStep().get(d.getLineStep().size() - 1).setB(candidate.getA());
         }
     }
 
     @Override
     public void mouseReleased(Point p0) {
         Point p = new Point();
-        p.set(d.camera.TV2object(p0));
+        p.set(d.getCamera().TV2object(p0));
         Point closest_point = d.getClosestPoint(p);
-        if (p.distance(closest_point) > d.selectionDistance) {
+        if (p.distance(closest_point) > d.getSelectionDistance()) {
             closest_point.set(p);
         }
 
-        d.lineStep.get(d.lineStep.size() - 1).setB(closest_point);
+        d.getLineStep().get(d.getLineStep().size() - 1).setB(closest_point);
 
-        if (d.lineStep.size() >= 2) {
-            if (p.distance(d.lineStep.get(0).getA()) <= d.selectionDistance) {
-                d.lineStep.get(d.lineStep.size() - 1).setB(d.lineStep.get(0).getA());
+        if (d.getLineStep().size() >= 2) {
+            if (p.distance(d.getLineStep().get(0).getA()) <= d.getSelectionDistance()) {
+                d.getLineStep().get(d.getLineStep().size() - 1).setB(d.getLineStep().get(0).getA());
                 //i_O_F_C=1;
                 polygonCompleted = true;
             }
         }
 
         if (polygonCompleted) {
-            List<LineSegment> lineStep = d.lineStep;
+            List<LineSegment> lineStep = d.getLineStep();
             Polygon polygon = new Polygon(lineStep.size());
             int index = 1;
             for (LineSegment lineSegment : lineStep) {
@@ -124,10 +124,10 @@ public abstract class BaseMouseHandlerPolygon extends BaseMouseHandler {
 
             //各動作モードで独自に行う作業は以下に条件分けして記述する
             if (getMouseMode() == MouseMode.SELECT_POLYGON_66) {
-                d.foldLineSet.select_Takakukei(polygon, "select");
+                d.getFoldLineSet().select_Takakukei(polygon, "select");
             }//66 66 66 66 66 多角形を入力し、それに全体が含まれる折線をselectする
             if (getMouseMode() == MouseMode.UNSELECT_POLYGON_67) {
-                d.foldLineSet.select_Takakukei(polygon, "unselectAction");
+                d.getFoldLineSet().select_Takakukei(polygon, "unselectAction");
             }//67 67 67 67 67 多角形を入力し、それに全体が含まれる折線を折線をunselectする
             //各動作モードで独自に行う作業はここまで
         }

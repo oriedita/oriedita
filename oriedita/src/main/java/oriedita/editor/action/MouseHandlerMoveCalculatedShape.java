@@ -52,7 +52,7 @@ public class MouseHandlerMoveCalculatedShape implements MouseModeHandler {
     public void mousePressed(Point p0) {
         foldedFigureCanvasSelectService.pointInCreasePatternOrFoldedFigure(p0);
 
-        FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();
+        FoldedFigure_Drawer selectedFigure = foldedFiguresList.getActiveItem();
 
         switch (canvasModel.getMouseInCpOrFoldedFigure()) {
             case CREASE_PATTERN_0:
@@ -77,7 +77,7 @@ public class MouseHandlerMoveCalculatedShape implements MouseModeHandler {
 
     @Override
     public void mouseDragged(Point p0) {
-        FoldedFigure_Drawer selectedFigure = (FoldedFigure_Drawer) foldedFiguresList.getSelectedItem();
+        FoldedFigure_Drawer selectedFigure = foldedFiguresList.getActiveItem();
 
         switch (canvasModel.getMouseInCpOrFoldedFigure()) {
             case CREASE_PATTERN_0:
