@@ -26,6 +26,7 @@ import oriedita.editor.service.FileSaveService;
 import oriedita.editor.service.LookAndFeelService;
 import oriedita.editor.service.ResetService;
 import oriedita.editor.service.TaskExecutorService;
+import oriedita.editor.swing.dialog.PreferenceDialog;
 import oriedita.editor.tools.LookAndFeelUtil;
 import oriedita.editor.tools.ResourceUtil;
 
@@ -35,6 +36,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import java.awt.Desktop;
+import java.awt.Dialog;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.Transferable;
@@ -81,6 +83,7 @@ public class AppMenuBar {
     private JMenuItem saveButton;
     private JMenuItem saveAsButton;
     private JMenuItem exportButton;
+    private JMenuItem prefButton;
     private JMenuItem exitButton;
     private JMenuItem toggleHelpMenuItem;
     private JMenuItem showConfigFolderMenuItem;
@@ -143,6 +146,7 @@ public class AppMenuBar {
         buttonService.registerButton(saveButton, "saveAction");
         buttonService.registerButton(saveAsButton, "saveAsAction");
         buttonService.registerButton(exportButton, "exportAction");
+        buttonService.registerButton(prefButton, "prefAction");
         buttonService.registerButton(exitButton, "exitAction");
         buttonService.registerButton(showPointRangeCheckBox, "showPointRangeAction");
         buttonService.registerButton(pointOffsetCheckBox, "pointOffsetAction");
@@ -206,6 +210,12 @@ public class AppMenuBar {
             }//枠設定時(==61)には、その枠を消さないためにes1.set_i_egaki_dankaiを０にしないでおく　20180524
 
             fileSaveService.exportFile();
+        });
+        prefButton.addActionListener(e -> {
+            PreferenceDialog d = new PreferenceDialog();
+            d.setSize(450, 550);
+//            d.setResizable(false);
+            d.setVisible(true);
         });
         exitButton.addActionListener(e -> closing());
         showPointRangeCheckBox.addActionListener(e -> getData(applicationModel));
@@ -370,6 +380,9 @@ public class AppMenuBar {
         fileMenu.add(importAddButton);
 
         fileMenu.addSeparator();
+
+        prefButton = new JMenuItem("Preference");
+        fileMenu.add(prefButton);
 
         exitButton = new JMenuItem("Exit");
         fileMenu.add(exitButton);
