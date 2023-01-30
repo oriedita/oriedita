@@ -16,12 +16,16 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.zip.DeflaterOutputStream;
+import java.util.zip.InflaterInputStream;
 
 @ApplicationScoped
 public class DequeHistoryState implements HistoryState {
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
-    int undoTotal = 1000;//Number of times you can undo up to how many times ago
+    final int UNDO_TOTAL_MAX = 1000;
+    int undoTotal = 50; // Number of times you can undo up to how many times ago
+                        // is increased automatically up to UNDO_TOTAL_MAX if enough ram is available
     Deque<byte[]> history = new ArrayDeque<>();
     Deque<byte[]> future = new ArrayDeque<>();
     byte[] current;
@@ -52,6 +56,7 @@ public class DequeHistoryState implements HistoryState {
     @Override
     public void record(Save s0) {
         if (current != null) history.addFirst(current);
+        updateUndoTotal();
         try {
             current = convertToBytes(s0);
         } catch (IOException e) {
@@ -68,17 +73,34 @@ public class DequeHistoryState implements HistoryState {
         this.pcs.firePropertyChange(null, null, null);
     }
 
+    private void updateUndoTotal() {
+        long entrySize = 0;
+        if (current != null) {
+            entrySize = current.length;
+        }
+        entrySize = Math.max(entrySize, 100000);
+        long freeMemory = Runtime.getRuntime().freeMemory();
+        Logger.info("Free Memory: {}, Last undo entry size: {}, max undo entries: {}, current undo entries: {}",
+                freeMemory, entrySize, undoTotal, history.size());
+        if (freeMemory < entrySize*30) {
+            undoTotal = (int) (undoTotal * 0.9) + 2; // never goes below 20
+        } else if ( undoTotal < UNDO_TOTAL_MAX && freeMemory > entrySize*80) {
+            undoTotal += 2;
+        }
+    }
+
     private byte[] convertToBytes(Object object) throws IOException {
         try (ByteArrayOutputStream bos = new ByteArrayOutputStream();
-             ObjectOutputStream out = new ObjectOutputStream(bos)) {
+             DeflaterOutputStream comp = new DeflaterOutputStream(bos);
+             ObjectOutputStream out = new ObjectOutputStream(comp)) {
             out.writeObject(object);
             return bos.toByteArray();
         }
     }
-
     private Object convertFromBytes(byte[] bytes) throws IOException, ClassNotFoundException {
         try (ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
-             ObjectInputStream in = new ObjectInputStream(bis)) {
+             InflaterInputStream decomp = new InflaterInputStream(bis);
+             ObjectInputStream in = new ObjectInputStream(decomp)) {
             return in.readObject();
         }
     }
