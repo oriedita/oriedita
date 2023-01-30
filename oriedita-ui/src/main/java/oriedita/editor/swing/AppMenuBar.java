@@ -213,7 +213,7 @@ public class AppMenuBar {
         });
         prefButton.addActionListener(e -> {
             PreferenceDialog d = new PreferenceDialog();
-            d.setSize(450, 525);
+            d.setSize(450, 550);
             d.setResizable(false);
             d.setVisible(true);
         });
