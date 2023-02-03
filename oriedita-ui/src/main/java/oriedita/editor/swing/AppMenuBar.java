@@ -95,6 +95,7 @@ public class AppMenuBar {
     private JMenuItem pasteButton;
     private JMenuItem pasteOffsetButton;
     private AppMenuBarUI appMenuBarUI;
+//    private final PreferenceDialog preferenceDialog;
     @Inject
     public AppMenuBar(
             FrameProvider frameProvider,
@@ -109,6 +110,7 @@ public class AppMenuBar {
             FoldedFigureModel foldedFigureModel,
             ResetService resetService,
             FoldedFiguresList foldedFiguresList
+//            PreferenceDialog preferenceDialog
     ) {
         this.frameProvider = frameProvider;
         this.foldingExecutor = foldingExecutor;
@@ -122,6 +124,7 @@ public class AppMenuBar {
         this.foldedFigureModel = foldedFigureModel;
         this.resetService = resetService;
         this.foldedFiguresList = foldedFiguresList;
+//        this.preferenceDialog = preferenceDialog;
     }
 
     public void init() {
@@ -212,9 +215,10 @@ public class AppMenuBar {
             fileSaveService.exportFile();
         });
         prefButton.addActionListener(e -> {
-            PreferenceDialog d = new PreferenceDialog();
-            d.setSize(450, 550);
+            PreferenceDialog d = new PreferenceDialog(applicationModel);
+            d.setSize(350, 500);
             d.setResizable(false);
+            d.setData(applicationModel);
             d.setVisible(true);
         });
         exitButton.addActionListener(e -> closing());

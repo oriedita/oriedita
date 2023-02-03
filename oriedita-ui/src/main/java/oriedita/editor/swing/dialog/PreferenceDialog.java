@@ -1,8 +1,14 @@
 package oriedita.editor.swing.dialog;
 
+import com.formdev.flatlaf.FlatDarkLaf;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import oriedita.editor.canvas.LineStyle;
+import oriedita.editor.databinding.ApplicationModel;
+import oriedita.editor.tools.LookAndFeelUtil;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -17,10 +23,14 @@ import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputMethodEvent;
+import java.awt.event.InputMethodListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
+
+@ApplicationScoped
 public class PreferenceDialog extends JDialog {
     private JPanel contentPane;
     private JButton buttonOK;
@@ -37,15 +47,15 @@ public class PreferenceDialog extends JDialog {
     private JCheckBox markingsCB;
     private JCheckBox cpOnTopCB;
     private JCheckBox foldingProgressCB;
-    private JCheckBox selfIntersectionB;
+    private JCheckBox selfIntersectionCB;
     private JCheckBox topPanelCB;
     private JCheckBox bottomPanelCB;
     private JCheckBox leftPanelCB;
     private JCheckBox rightPanelCB;
-    private JCheckBox presizeZoomCheckBox;
+    private JCheckBox presizeZoomCB;
     private JCheckBox antiAliasCB;
     private JCheckBox mousewheelMovesCPCB;
-    private JTextField antiAliasTF;
+    private JTextField lineWidthTF;
     private JTextField auxLineTF;
     private JTextField pointSizeTF;
     private JTextField lineStyleTF;
@@ -53,17 +63,169 @@ public class PreferenceDialog extends JDialog {
     private JCheckBox foldWarningCB;
     private JPanel displayPanel;
     private JPanel panelsPanel;
-    private JPanel appearancePanel;
+    private JPanel appearance1Panel;
     private JPanel behaviorPanel;
     private JPanel firstColumn;
     private JPanel secondColumn;
     private JCheckBox darkModeCheckBox;
-    private JCheckBox toggleHelpCheckBox;
+    private JCheckBox toggleHelpCB;
+    private JPanel appearance2Panel;
+    private JPanel appearancePanel;
+    private final ApplicationModel applicationModel;
+    private final ApplicationModel tempModel;
 
-    public PreferenceDialog() {
+
+    public void setData(ApplicationModel applicationModel) {
+        spotlightCB.setSelected(applicationModel.getDisplayPointSpotlight());
+        offsetCB.setSelected(applicationModel.getDisplayPointOffset());
+        inputAssistCB.setSelected(applicationModel.getDisplayGridInputAssist());
+        commentCB.setSelected(applicationModel.getDisplayComments());
+        cpLinesCB.setSelected(applicationModel.getDisplayCpLines());
+        auxLinesCB.setSelected(applicationModel.getDisplayAuxLines());
+        liveAuxCB.setSelected(applicationModel.getDisplayLiveAuxLines());
+        markingsCB.setSelected(applicationModel.getDisplayMarkings());
+        cpOnTopCB.setSelected(applicationModel.getDisplayCreasePatternOnTop());
+        foldingProgressCB.setSelected(applicationModel.getDisplayFoldingProgress());
+        foldWarningCB.setSelected(applicationModel.getFoldWarning());
+        toggleHelpCB.setSelected(applicationModel.getHelpVisible());
+        darkModeCheckBox.setSelected(applicationModel.getLaf().equals(FlatDarkLaf.class.getName()));
+        presizeZoomCB.setSelected(applicationModel.isPreciseZoom());
+        mousewheelMovesCPCB.setSelected(applicationModel.getMouseWheelMovesCreasePattern());
+        selfIntersectionCB.setSelected(applicationModel.getDisplaySelfIntersection());
+        antiAliasCB.setSelected(applicationModel.getAntiAlias());
+        displayNumbersCB.setSelected(applicationModel.getDisplayNumbers());
+        lineWidthTF.setText(Integer.toString(applicationModel.getLineWidth()));
+        auxLineTF.setText(Integer.toString(applicationModel.getAuxLineWidth()));
+        pointSizeTF.setText(Integer.toString(applicationModel.getPointSize()));
+        lineStyleTF.setText(applicationModel.getLineStyle().toString());
+        topPanelCB.setSelected(applicationModel.getDisplayTopPanel());
+        bottomPanelCB.setSelected(applicationModel.getDisplayBottomPanel());
+        leftPanelCB.setSelected(applicationModel.getDisplayLeftPanel());
+        rightPanelCB.setSelected(applicationModel.getDisplayRightPanel());
+    }
+
+//    public void getData(ApplicationModel applicationModel) {
+//        applicationModel.setDisplayPointSpotlight(spotlightCB.isSelected());
+//        applicationModel.setDisplayPointOffset(offsetCB.isSelected());
+//        applicationModel.setDisplayGridInputAssist(inputAssistCB.isSelected());
+//        applicationModel.setDisplayComments(commentCB.isSelected());
+//        applicationModel.setDisplayCpLines(cpLinesCB.isSelected());
+//        applicationModel.setDisplayAuxLines(auxLinesCB.isSelected());
+//        applicationModel.setDisplayLiveAuxLines(liveAuxCB.isSelected());
+//        applicationModel.setDisplayMarkings(markingsCB.isSelected());
+//        applicationModel.setDisplayCreasePatternOnTop(cpOnTopCB.isSelected());
+//        applicationModel.setDisplayFoldingProgress(foldingProgressCB.isSelected());
+//        applicationModel.setFoldWarning(foldWarningCB.isSelected());
+//        applicationModel.setHelpVisible(toggleHelpCB.isSelected());
+//        applicationModel.setLaf(LookAndFeelUtil.determineLafForDarkMode(darkModeCheckBox.isSelected()));
+//        applicationModel.setPreciseZoom(presizeZoomCB.isSelected());
+//        applicationModel.setMouseWheelMovesCreasePattern(mousewheelMovesCPCB.isSelected());
+//        applicationModel.setDisplaySelfIntersection(selfIntersectionCB.isSelected());
+//        applicationModel.setAntiAlias(antiAliasCB.isSelected());
+//        applicationModel.setDisplayNumbers(displayNumbersCB.isSelected());
+//        applicationModel.setLineWidth(Integer.parseInt(lineWidthTF.getText()));
+//        applicationModel.setAuxLineWidth(Integer.parseInt(auxLineTF.getText()));
+//        applicationModel.setPointSize(Integer.parseInt(pointSizeTF.getText()));
+//        applicationModel.setLineStyle(LineStyle.from(lineWidthTF.getText()));
+//        applicationModel.setDisplayTopPanel(topPanelCB.isSelected());
+//        applicationModel.setDisplayBottomPanel(bottomPanelCB.isSelected());
+//        applicationModel.setDisplayLeftPanel(leftPanelCB.isSelected());
+//        applicationModel.setDisplayRightPanel(rightPanelCB.isSelected());
+//    }
+
+    @Inject
+    public PreferenceDialog(ApplicationModel appModel) {
+        this.applicationModel = appModel;
+        this.tempModel = new ApplicationModel();
+        this.tempModel.set(appModel);
+        setData(applicationModel);
         setContentPane(contentPane);
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
+
+        spotlightCB.addActionListener(e -> applicationModel.setDisplayPointSpotlight(spotlightCB.isSelected()));
+        offsetCB.addActionListener(e -> applicationModel.setDisplayPointOffset(offsetCB.isSelected()));
+        inputAssistCB.addActionListener(e -> applicationModel.setDisplayGridInputAssist(inputAssistCB.isSelected()));
+        commentCB.addActionListener(e -> applicationModel.setDisplayComments(commentCB.isSelected()));
+        cpLinesCB.addActionListener(e -> applicationModel.setDisplayCpLines(cpLinesCB.isSelected()));
+        auxLinesCB.addActionListener(e -> applicationModel.setDisplayAuxLines(auxLinesCB.isSelected()));
+        liveAuxCB.addActionListener(e -> applicationModel.setDisplayLiveAuxLines(liveAuxCB.isSelected()));
+        markingsCB.addActionListener(e -> applicationModel.setDisplayMarkings(markingsCB.isSelected()));
+        cpOnTopCB.addActionListener(e -> applicationModel.setDisplayCreasePatternOnTop(cpOnTopCB.isSelected()));
+        foldingProgressCB.addActionListener(e -> applicationModel.setDisplayFoldingProgress(foldingProgressCB.isSelected()));
+        selfIntersectionCB.addActionListener(e -> applicationModel.setDisplaySelfIntersection(selfIntersectionCB.isSelected()));
+        foldWarningCB.addActionListener(e -> applicationModel.setFoldWarning(foldWarningCB.isSelected()));
+        toggleHelpCB.addActionListener(e -> applicationModel.setHelpVisible(toggleHelpCB.isSelected()));
+        presizeZoomCB.addActionListener(e -> applicationModel.setPreciseZoom(presizeZoomCB.isSelected()));
+        toggleHelpCB.addActionListener(e -> applicationModel.setHelpVisible(toggleHelpCB.isSelected()));
+        mousewheelMovesCPCB.addActionListener(e -> applicationModel.setMouseWheelMovesCreasePattern(mousewheelMovesCPCB.isSelected()));
+        darkModeCheckBox.addActionListener(e -> applicationModel.setLaf(LookAndFeelUtil.determineLafForDarkMode(darkModeCheckBox.isSelected())));
+        antiAliasCB.addActionListener(e -> applicationModel.setAntiAlias(antiAliasCB.isSelected()));
+        displayNumbersCB.addActionListener(e -> applicationModel.setDisplayNumbers(displayNumbersCB.isSelected()));
+        lineWidthTF.addInputMethodListener(new InputMethodListener() {
+            @Override
+            public void inputMethodTextChanged(InputMethodEvent event) {
+                applicationModel.setLineWidth(Integer.parseInt(lineWidthTF.getText()));
+            }
+
+            @Override
+            public void caretPositionChanged(InputMethodEvent event) {
+
+            }
+
+//            public void actionPerformed(ActionEvent e) {
+//                applicationModel.setLineWidth(Integer.parseInt(lineWidthTF.getText()));
+//            }
+        });
+        auxLineTF.addInputMethodListener(new InputMethodListener() {
+            @Override
+            public void inputMethodTextChanged(InputMethodEvent event) {
+                applicationModel.setAuxLineWidth(Integer.parseInt(auxLineTF.getText()));
+            }
+
+            @Override
+            public void caretPositionChanged(InputMethodEvent event) {
+
+            }
+
+//            public void actionPerformed(ActionEvent e) {
+//                applicationModel.setAuxLineWidth(Integer.parseInt(auxLineTF.getText()));
+//            }
+        });
+        pointSizeTF.addInputMethodListener(new InputMethodListener() {
+            @Override
+            public void inputMethodTextChanged(InputMethodEvent event) {
+                applicationModel.setPointSize(Integer.parseInt(pointSizeTF.getText()));
+            }
+
+            @Override
+            public void caretPositionChanged(InputMethodEvent event) {
+
+            }
+
+//            public void actionPerformed(ActionEvent e) {
+//                applicationModel.setPointSize(Integer.parseInt(pointSizeTF.getText()));
+//            }
+        });
+        lineStyleTF.addInputMethodListener(new InputMethodListener() {
+            @Override
+            public void inputMethodTextChanged(InputMethodEvent event) {
+                applicationModel.setLineStyle(LineStyle.from(lineWidthTF.getText()));
+            }
+
+            @Override
+            public void caretPositionChanged(InputMethodEvent event) {
+
+            }
+
+//            public void actionPerformed(ActionEvent e) {
+//                applicationModel.setLineStyle(LineStyle.from(lineWidthTF.getText()));
+//            }
+        });
+        topPanelCB.addActionListener(e -> applicationModel.setDisplayTopPanel(topPanelCB.isSelected()));
+        bottomPanelCB.addActionListener(e -> applicationModel.setDisplayBottomPanel(bottomPanelCB.isSelected()));
+        leftPanelCB.addActionListener(e -> applicationModel.setDisplayLeftPanel(leftPanelCB.isSelected()));
+        rightPanelCB.addActionListener(e -> applicationModel.setDisplayRightPanel(rightPanelCB.isSelected()));
 
         buttonOK.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -99,16 +261,17 @@ public class PreferenceDialog extends JDialog {
     }
 
     private void onCancel() {
-        // add your code here if necessary
+        setData(tempModel);
+        applicationModel.set(tempModel);
         dispose();
     }
 
-    public static void main(String[] args) {
-        PreferenceDialog dialog = new PreferenceDialog();
-        dialog.pack();
-        dialog.setVisible(true);
-        System.exit(0);
-    }
+//    public static void main(String[] args) {
+//        PreferenceDialog dialog = new PreferenceDialog();
+//        dialog.pack();
+//        dialog.setVisible(true);
+//        System.exit(0);
+//    }
 
     {
 // GUI initializer generated by IntelliJ IDEA GUI Designer
@@ -131,11 +294,11 @@ public class PreferenceDialog extends JDialog {
         contentPane.setPreferredSize(new Dimension(450, 550));
         bottomPanel = new JPanel();
         bottomPanel.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 0, 0), -1, -1));
-        contentPane.add(bottomPanel, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, 1, null, null, null, 0, false));
+        contentPane.add(bottomPanel, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         final Spacer spacer1 = new Spacer();
         bottomPanel.add(spacer1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
         final JPanel panel1 = new JPanel();
-        panel1.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 0, 0), -1, -1, true, false));
+        panel1.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 0, 0), -1, -1));
         bottomPanel.add(panel1, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         buttonOK = new JButton();
         buttonOK.setText("OK");
@@ -144,22 +307,23 @@ public class PreferenceDialog extends JDialog {
         buttonCancel.setText("Cancel");
         panel1.add(buttonCancel, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         topPanel = new JPanel();
-        topPanel.setLayout(new GridLayoutManager(2, 2, new Insets(0, 0, 0, 0), -1, -1));
-        contentPane.add(topPanel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_NORTH, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        topPanel.setLayout(new GridLayoutManager(1, 3, new Insets(0, 0, 0, 0), -1, -1));
+        contentPane.add(topPanel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         firstColumn = new JPanel();
-        firstColumn.setLayout(new GridLayoutManager(3, 1, new Insets(10, 0, 0, 0), -1, -1));
-        topPanel.add(firstColumn, new GridConstraints(0, 0, 2, 1, GridConstraints.ANCHOR_NORTHWEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        firstColumn.setLayout(new GridLayoutManager(3, 1, new Insets(10, 0, 0, 0), 1, 1));
+        topPanel.add(firstColumn, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         displayPanel = new JPanel();
-        displayPanel.setLayout(new GridLayoutManager(15, 1, new Insets(0, 0, 0, 0), -1, -1));
+        displayPanel.setLayout(new GridLayoutManager(14, 1, new Insets(0, 0, 20, 0), -1, -1));
+        displayPanel.setEnabled(true);
         displayPanel.setForeground(new Color(-4473925));
         displayPanel.setOpaque(true);
-        firstColumn.add(displayPanel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_VERTICAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        firstColumn.add(displayPanel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         final JLabel label1 = new JLabel();
-        label1.setText("Display");
-        displayPanel.add(label1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(169, 16), null, 0, false));
+        label1.setText("DISPLAY\n");
+        displayPanel.add(label1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, new Dimension(169, 16), null, 0, false));
         spotlightCB = new JCheckBox();
         spotlightCB.setText("Point spotlight");
-        displayPanel.add(spotlightCB, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(169, 21), null, 0, false));
+        displayPanel.add(spotlightCB, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(169, 21), null, 0, false));
         offsetCB = new JCheckBox();
         offsetCB.setText("Point offset");
         displayPanel.add(offsetCB, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(169, 21), null, 0, false));
@@ -174,7 +338,7 @@ public class PreferenceDialog extends JDialog {
         displayPanel.add(cpLinesCB, new GridConstraints(5, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(169, 21), null, 0, false));
         auxLinesCB = new JCheckBox();
         auxLinesCB.setText("Aux lines");
-        displayPanel.add(auxLinesCB, new GridConstraints(6, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(169, 21), null, 0, false));
+        displayPanel.add(auxLinesCB, new GridConstraints(6, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(169, 21), null, 0, false));
         liveAuxCB = new JCheckBox();
         liveAuxCB.setText("Live aux lines");
         displayPanel.add(liveAuxCB, new GridConstraints(7, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(169, 21), null, 0, false));
@@ -187,102 +351,104 @@ public class PreferenceDialog extends JDialog {
         foldingProgressCB = new JCheckBox();
         foldingProgressCB.setText("Folding progress");
         displayPanel.add(foldingProgressCB, new GridConstraints(10, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(169, 21), null, 0, false));
-        selfIntersectionB = new JCheckBox();
-        selfIntersectionB.setText("Self intersection");
-        displayPanel.add(selfIntersectionB, new GridConstraints(11, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(169, 21), null, 0, false));
-        final Spacer spacer2 = new Spacer();
-        displayPanel.add(spacer2, new GridConstraints(14, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        selfIntersectionCB = new JCheckBox();
+        selfIntersectionCB.setText("Self intersection");
+        displayPanel.add(selfIntersectionCB, new GridConstraints(11, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(169, 21), null, 0, false));
         foldWarningCB = new JCheckBox();
         foldWarningCB.setText("Fold warning");
         displayPanel.add(foldWarningCB, new GridConstraints(12, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        toggleHelpCheckBox = new JCheckBox();
-        toggleHelpCheckBox.setText("Toggle help");
-        displayPanel.add(toggleHelpCheckBox, new GridConstraints(13, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        toggleHelpCB = new JCheckBox();
+        toggleHelpCB.setText("Help");
+        displayPanel.add(toggleHelpCB, new GridConstraints(13, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         behaviorPanel = new JPanel();
-        behaviorPanel.setLayout(new GridLayoutManager(4, 1, new Insets(20, 0, 0, 0), -1, -1));
-        firstColumn.add(behaviorPanel, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_VERTICAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        behaviorPanel.setLayout(new GridLayoutManager(3, 1, new Insets(0, 0, 20, 0), -1, -1));
+        firstColumn.add(behaviorPanel, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         final JLabel label2 = new JLabel();
-        label2.setText("Behavior");
+        label2.setText("BEHAVIOR");
         behaviorPanel.add(label2, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         mousewheelMovesCPCB = new JCheckBox();
         mousewheelMovesCPCB.setText("Mousewheel moves CP");
         behaviorPanel.add(mousewheelMovesCPCB, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        final Spacer spacer3 = new Spacer();
-        behaviorPanel.add(spacer3, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
-        presizeZoomCheckBox = new JCheckBox();
-        presizeZoomCheckBox.setText("Presize zoom");
-        behaviorPanel.add(presizeZoomCheckBox, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        final Spacer spacer4 = new Spacer();
-        firstColumn.add(spacer4, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        presizeZoomCB = new JCheckBox();
+        presizeZoomCB.setText("Presize zoom");
+        behaviorPanel.add(presizeZoomCB, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final Spacer spacer2 = new Spacer();
+        firstColumn.add(spacer2, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         secondColumn = new JPanel();
-        secondColumn.setLayout(new GridLayoutManager(2, 1, new Insets(10, 40, 0, 0), -1, -1));
-        topPanel.add(secondColumn, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_NORTHWEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-        appearancePanel = new JPanel();
-        appearancePanel.setLayout(new GridLayoutManager(9, 2, new Insets(0, 0, 0, 0), -1, -1));
-        secondColumn.add(appearancePanel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-        final JLabel label3 = new JLabel();
-        label3.setText("Appearance");
-        appearancePanel.add(label3, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        final Spacer spacer5 = new Spacer();
-        appearancePanel.add(spacer5, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
-        final JLabel label4 = new JLabel();
-        label4.setText("Line width:");
-        appearancePanel.add(label4, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        antiAliasTF = new JTextField();
-        antiAliasTF.setToolTipText("Input an integer");
-        appearancePanel.add(antiAliasTF, new GridConstraints(4, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, new Dimension(87, 30), null, 0, false));
-        final JLabel label5 = new JLabel();
-        label5.setText("Aux line width:");
-        appearancePanel.add(label5, new GridConstraints(5, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        auxLineTF = new JTextField();
-        auxLineTF.setText("");
-        auxLineTF.setToolTipText("Input an integer");
-        appearancePanel.add(auxLineTF, new GridConstraints(5, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, new Dimension(87, 30), null, 0, false));
-        final JLabel label6 = new JLabel();
-        label6.setText("Point size:");
-        appearancePanel.add(label6, new GridConstraints(6, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        pointSizeTF = new JTextField();
-        pointSizeTF.setToolTipText("Input an integer");
-        appearancePanel.add(pointSizeTF, new GridConstraints(6, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, new Dimension(87, 30), null, 0, false));
-        final JLabel label7 = new JLabel();
-        label7.setText("Line style:");
-        appearancePanel.add(label7, new GridConstraints(7, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        lineStyleTF = new JTextField();
-        lineStyleTF.setToolTipText("unsure");
-        appearancePanel.add(lineStyleTF, new GridConstraints(7, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, new Dimension(87, 30), null, 0, false));
-        final Spacer spacer6 = new Spacer();
-        appearancePanel.add(spacer6, new GridConstraints(8, 0, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
-        antiAliasCB = new JCheckBox();
-        antiAliasCB.setText("Anti-alias");
-        appearancePanel.add(antiAliasCB, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        displayNumbersCB = new JCheckBox();
-        displayNumbersCB.setText("Display numbers");
-        appearancePanel.add(displayNumbersCB, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        darkModeCheckBox = new JCheckBox();
-        darkModeCheckBox.setText("Dark mode");
-        appearancePanel.add(darkModeCheckBox, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        secondColumn.setLayout(new GridLayoutManager(3, 1, new Insets(10, 10, 0, 0), 1, 1));
+        topPanel.add(secondColumn, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_VERTICAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         panelsPanel = new JPanel();
-        panelsPanel.setLayout(new GridLayoutManager(6, 1, new Insets(20, 0, 0, 0), -1, -1));
+        panelsPanel.setLayout(new GridLayoutManager(5, 1, new Insets(0, 0, 20, 0), 1, 1));
         secondColumn.add(panelsPanel, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-        final JLabel label8 = new JLabel();
-        label8.setText("Panels");
-        panelsPanel.add(label8, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(169, 16), null, 0, false));
+        final JLabel label3 = new JLabel();
+        label3.setText("PANELS");
+        panelsPanel.add(label3, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         topPanelCB = new JCheckBox();
         topPanelCB.setText("Top panel");
-        panelsPanel.add(topPanelCB, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(169, 21), null, 0, false));
+        panelsPanel.add(topPanelCB, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         bottomPanelCB = new JCheckBox();
         bottomPanelCB.setText("Bottom panel");
-        panelsPanel.add(bottomPanelCB, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(169, 21), null, 0, false));
+        panelsPanel.add(bottomPanelCB, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         leftPanelCB = new JCheckBox();
         leftPanelCB.setText("Left panel");
-        panelsPanel.add(leftPanelCB, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(169, 21), null, 0, false));
+        panelsPanel.add(leftPanelCB, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         rightPanelCB = new JCheckBox();
         rightPanelCB.setText("Right panel");
-        panelsPanel.add(rightPanelCB, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(169, 21), null, 0, false));
-        final Spacer spacer7 = new Spacer();
-        panelsPanel.add(spacer7, new GridConstraints(5, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
-        final Spacer spacer8 = new Spacer();
-        topPanel.add(spacer8, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        panelsPanel.add(rightPanelCB, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        appearancePanel = new JPanel();
+        appearancePanel.setLayout(new GridLayoutManager(2, 1, new Insets(0, 0, 20, 0), -1, -1));
+        secondColumn.add(appearancePanel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        appearance1Panel = new JPanel();
+        appearance1Panel.setLayout(new GridLayoutManager(4, 1, new Insets(0, 0, 7, 0), 1, 1));
+        appearancePanel.add(appearance1Panel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        final JLabel label4 = new JLabel();
+        label4.setText("APPEARANCE");
+        appearance1Panel.add(label4, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        antiAliasCB = new JCheckBox();
+        antiAliasCB.setText("Anti-alias");
+        appearance1Panel.add(antiAliasCB, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        displayNumbersCB = new JCheckBox();
+        displayNumbersCB.setText("Display numbers");
+        appearance1Panel.add(displayNumbersCB, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_VERTICAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        darkModeCheckBox = new JCheckBox();
+        darkModeCheckBox.setText("Dark mode");
+        appearance1Panel.add(darkModeCheckBox, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        appearance2Panel = new JPanel();
+        appearance2Panel.setLayout(new GridLayoutManager(4, 2, new Insets(0, 0, 0, 0), 1, 1));
+        appearancePanel.add(appearance2Panel, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        final JLabel label5 = new JLabel();
+        label5.setText(" Line width: ");
+        appearance2Panel.add(label5, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        lineWidthTF = new JTextField();
+        lineWidthTF.setColumns(2);
+        lineWidthTF.setToolTipText("Input an integer");
+        appearance2Panel.add(lineWidthTF, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, new Dimension(30, -1), null, null, 0, false));
+        final JLabel label6 = new JLabel();
+        label6.setText(" Aux line width: ");
+        appearance2Panel.add(label6, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        auxLineTF = new JTextField();
+        auxLineTF.setColumns(2);
+        auxLineTF.setText("");
+        auxLineTF.setToolTipText("Input an integer");
+        appearance2Panel.add(auxLineTF, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, 1, new Dimension(30, -1), null, null, 0, false));
+        final JLabel label7 = new JLabel();
+        label7.setText(" Point size: ");
+        appearance2Panel.add(label7, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        pointSizeTF = new JTextField();
+        pointSizeTF.setColumns(2);
+        pointSizeTF.setToolTipText("Input an integer");
+        appearance2Panel.add(pointSizeTF, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, 1, new Dimension(30, -1), null, null, 0, false));
+        final JLabel label8 = new JLabel();
+        label8.setText(" Line style: ");
+        appearance2Panel.add(label8, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        lineStyleTF = new JTextField();
+        lineStyleTF.setColumns(2);
+        lineStyleTF.setToolTipText("unsure");
+        appearance2Panel.add(lineStyleTF, new GridConstraints(3, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, new Dimension(30, -1), null, null, 0, false));
+        final Spacer spacer3 = new Spacer();
+        secondColumn.add(spacer3, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        final Spacer spacer4 = new Spacer();
+        topPanel.add(spacer4, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
     }
 
     /**
