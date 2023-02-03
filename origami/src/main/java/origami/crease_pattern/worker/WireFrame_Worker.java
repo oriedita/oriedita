@@ -5,6 +5,7 @@ import origami.crease_pattern.FoldingException;
 import origami.crease_pattern.LineSegmentSet;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.PointSet;
+import origami.crease_pattern.element.Line;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.Point;
 import origami.data.ListArray;
@@ -207,6 +208,12 @@ public class WireFrame_Worker {
     public LineSegmentSet getLineStore() {
         //Instantiation of basic branch structure
         return new LineSegmentSet(pointSet);
+    }
+
+    public void setLineSegmentSetWithoutFaceOccurence(LineSegmentSet lineSegmentSet) throws InterruptedException {
+        reset();
+        definePointSet(lineSegmentSet);
+        defineLines(lineSegmentSet);
     }
 
     public void setLineSegmentSet(LineSegmentSet lineSegmentSet) throws InterruptedException {

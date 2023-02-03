@@ -160,8 +160,7 @@ public class Fold {
 
     public OrieditaFoldFile toFoldSave(Save save, LineSegmentSet lineSegmentSet) throws InterruptedException {
         WireFrame_Worker wireFrame_worker = new WireFrame_Worker(3.0);
-        wireFrame_worker.setLineSegmentSet(lineSegmentSet);
-
+        wireFrame_worker.setLineSegmentSetWithoutFaceOccurence(lineSegmentSet);
         PointSet pointSet = wireFrame_worker.get();
 
         OrieditaFoldFile foldFile = new OrieditaFoldFile();
