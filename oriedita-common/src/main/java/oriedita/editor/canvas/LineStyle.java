@@ -38,4 +38,8 @@ public enum LineStyle {
     public String toString() {
         return Integer.toString(type);
     }
+
+    public int getType(){
+        return this.type;
+    }
 }

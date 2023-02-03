@@ -103,6 +103,7 @@ public class PreferenceDialog extends JDialog {
         lineWidthTF.setText(Integer.toString(applicationModel.getLineWidth()));
         auxLineTF.setText(Integer.toString(applicationModel.getAuxLineWidth()));
         pointSizeTF.setText(Integer.toString(applicationModel.getPointSize()));
+        lineStyleDropBox.setSelectedIndex(applicationModel.getLineStyle().getType() - 1);
         topPanelCB.setSelected(applicationModel.getDisplayTopPanel());
         bottomPanelCB.setSelected(applicationModel.getDisplayBottomPanel());
         leftPanelCB.setSelected(applicationModel.getDisplayLeftPanel());
@@ -192,9 +193,9 @@ public class PreferenceDialog extends JDialog {
         });
         lineStyleDropBox.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                int index = lineStyleDropBox.getSelectedIndex();
-                applicationModel.setLineStyle(LineStyle.from(index + 1));
-                lineStyleDropBox.setSelectedIndex(index);
+                int index = lineStyleDropBox.getSelectedIndex() + 1;
+                applicationModel.setLineStyle(LineStyle.from(index));
+                lineStyleDropBox.setSelectedIndex(applicationModel.getLineStyle().getType() - 1);
             }
         });
         topPanelCB.addActionListener(e -> applicationModel.setDisplayTopPanel(topPanelCB.isSelected()));
