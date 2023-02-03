@@ -470,14 +470,13 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
             h_cam.parameter_calculation();
         }
 
-        AffineTransform at = new AffineTransform();
-        at.rotate(h_cam.getAngle() * Math.PI / 180.0, h_cam.getRotationX(), h_cam.getRotationY());
-        g2h.setTransform(at);
+
+        g2h.rotate(h_cam.getAngle() * Math.PI / 180.0, h_cam.getRotationX(), h_cam.getRotationY());
 
         g2h.drawImage(imgh, h_cam.getX0(), h_cam.getY0(), h_cam.getX1(), h_cam.getY1(), canvasUI);
 
-        at.rotate(-h_cam.getAngle() * Math.PI / 180.0, h_cam.getRotationX(), h_cam.getRotationY());
-        g2h.setTransform(at);
+        g2h.rotate(-h_cam.getAngle() * Math.PI / 180.0, h_cam.getRotationX(), h_cam.getRotationY());
+
 
     }
 
