@@ -20,13 +20,7 @@ public interface MouseModeHandler {
             if (mouseButton == MouseEvent.BUTTON1) {
                 features.add(BUTTON_1);
             }
-            if (e.getButton() == MouseEvent.BUTTON1) {
-                features.add(BUTTON_1);
-            }
             if (mouseButton == MouseEvent.BUTTON3) {
-                features.add(BUTTON_3);
-            }
-            if (e.getButton() == MouseEvent.BUTTON3) {
                 features.add(BUTTON_3);
             }
             if (features.isEmpty()) {
