@@ -19,16 +19,16 @@ public class MapTextAdapter implements Adapter<Map<MapTextAdapter.TextFields, Ob
             return null;
         }
 
-        BigDecimal x = (BigDecimal) coord.get(0);
-        BigDecimal y = (BigDecimal) coord.get(1);
+        double x = (double) coord.get(0);
+        double y = (double) coord.get(1);
 
-        return new Text(x.doubleValue(), y.doubleValue(), textVal);
+        return new Text(x, y, textVal);
     }
 
     @Override
     public Map<MapTextAdapter.TextFields, Object> convertBack(Text text, Map<MapTextAdapter.TextFields, Object> to) {
         Map<MapTextAdapter.TextFields, Object> output = new HashMap<>();
-        output.put(MapTextAdapter.TextFields.texts_coords, Arrays.asList(BigDecimal.valueOf(text.getX()), BigDecimal.valueOf(text.getY())));
+        output.put(MapTextAdapter.TextFields.texts_coords, Arrays.asList(text.getX(), text.getY()));
         output.put(MapTextAdapter.TextFields.texts_text, text.getText());
 
         return output;

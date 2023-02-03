@@ -15,7 +15,7 @@ public class MapCircleAdapter implements Adapter<Map<MapCircleAdapter.CircleFiel
     public Circle convert(Map<CircleFields, Object> map, Circle to) {
         Circle circle = new Circle();
         List<?> coord = (List<?>) map.get(CircleFields.circles_coords);
-        BigDecimal radius = (BigDecimal) map.get(CircleFields.circles_radii);
+        Double radius = (Double) map.get(CircleFields.circles_radii);
         String color = (String) map.get(CircleFields.circles_colors);
 
         if (coord == null || radius == null) {
@@ -25,12 +25,12 @@ public class MapCircleAdapter implements Adapter<Map<MapCircleAdapter.CircleFiel
         if (color != null) {
             circle.setColor(LineColor.from(color));
         }
-        circle.setR(radius.doubleValue());
-        BigDecimal x = (BigDecimal) coord.get(0);
-        BigDecimal y = (BigDecimal) coord.get(1);
+        circle.setR(radius);
+        double x = (double) coord.get(0);
+        double y = (double) coord.get(1);
 
-        circle.setX(x.doubleValue());
-        circle.setY(y.doubleValue());
+        circle.setX(x);
+        circle.setY(y);
 
         return circle;
     }
@@ -38,8 +38,8 @@ public class MapCircleAdapter implements Adapter<Map<MapCircleAdapter.CircleFiel
     @Override
     public Map<CircleFields, Object> convertBack(Circle circle, Map<CircleFields, Object> to) {
         Map<CircleFields, Object> output = new HashMap<>();
-        output.put(CircleFields.circles_coords, Arrays.asList(BigDecimal.valueOf(circle.getX()), BigDecimal.valueOf(circle.getY())));
-        output.put(CircleFields.circles_radii, BigDecimal.valueOf(circle.getR()));
+        output.put(CircleFields.circles_coords, Arrays.asList(circle.getX(), circle.getY()));
+        output.put(CircleFields.circles_radii, circle.getR());
         output.put(CircleFields.circles_colors, circle.getColor().toString());
 
         return output;

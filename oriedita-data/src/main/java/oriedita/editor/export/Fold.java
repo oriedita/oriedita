@@ -146,6 +146,9 @@ public class Fold {
     public void exportFile(Save save, File file) throws FileReadingException, InterruptedException {
         LineSegmentSet s = new LineSegmentSet();
         s.setSave(save);
+        if (s.getNumLineSegments() == 0) {
+            s.addLine(new Point(0,0), new Point(0,0), LineColor.BLACK_0);
+        }
         exportFile(save, s, file);
     }
 
