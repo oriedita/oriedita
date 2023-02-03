@@ -342,10 +342,12 @@ public class TopPanel implements PropertyChangeListener {
         readBackgroundButton.setText("Select");
         panel6.add(readBackgroundButton, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         backgroundToggleButton = new JCheckBox();
+        backgroundToggleButton.setActionCommand("backgroundToggleAction");
         backgroundToggleButton.setEnabled(false);
         backgroundToggleButton.setText("Show");
         panel6.add(backgroundToggleButton, new GridConstraints(0, 4, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_VERTICAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         backgroundLockButton = new JCheckBox();
+        backgroundLockButton.setActionCommand("backgroundLockAction");
         backgroundLockButton.setEnabled(false);
         backgroundLockButton.setText("Lock");
         panel6.add(backgroundLockButton, new GridConstraints(0, 5, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_VERTICAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, new Dimension(46, 21), null, 0, false));
