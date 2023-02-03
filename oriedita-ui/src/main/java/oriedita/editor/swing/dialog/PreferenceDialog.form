@@ -3,7 +3,7 @@
   <grid id="cbd77" binding="contentPane" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="10" left="10" bottom="10" right="10"/>
     <constraints>
-      <xy x="13" y="12" width="450" height="550"/>
+      <xy x="13" y="12" width="560" height="550"/>
     </constraints>
     <properties>
       <minimumSize width="450" height="550"/>
@@ -277,7 +277,7 @@
                 <children>
                   <component id="d57aa" class="javax.swing.JLabel">
                     <constraints>
-                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
                       <text value="PANELS"/>
@@ -367,7 +367,7 @@
                       </component>
                     </children>
                   </grid>
-                  <grid id="57c2f" binding="appearance2Panel" layout-manager="GridLayoutManager" row-count="4" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="1" vgap="1">
+                  <grid id="57c2f" binding="appearance2Panel" layout-manager="GridLayoutManager" row-count="4" column-count="4" same-size-horizontally="false" same-size-vertically="false" hgap="1" vgap="1">
                     <margin top="0" left="0" bottom="0" right="0"/>
                     <constraints>
                       <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -385,12 +385,11 @@
                       </component>
                       <component id="3cfb4" class="javax.swing.JTextField" binding="lineWidthTF">
                         <constraints>
-                          <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
-                            <minimum-size width="30" height="-1"/>
-                          </grid>
+                          <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                         </constraints>
                         <properties>
-                          <columns value="2"/>
+                          <columns value="1"/>
+                          <enabled value="false"/>
                           <toolTipText value="Input an integer"/>
                         </properties>
                       </component>
@@ -404,12 +403,11 @@
                       </component>
                       <component id="b01c8" class="javax.swing.JTextField" binding="auxLineTF">
                         <constraints>
-                          <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="1" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false">
-                            <minimum-size width="30" height="-1"/>
-                          </grid>
+                          <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="1" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                         </constraints>
                         <properties>
-                          <columns value="2"/>
+                          <columns value="1"/>
+                          <enabled value="false"/>
                           <text value=""/>
                           <toolTipText value="Input an integer"/>
                         </properties>
@@ -424,12 +422,11 @@
                       </component>
                       <component id="5f3c0" class="javax.swing.JTextField" binding="pointSizeTF">
                         <constraints>
-                          <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="1" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false">
-                            <minimum-size width="30" height="-1"/>
-                          </grid>
+                          <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="1" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                         </constraints>
                         <properties>
-                          <columns value="2"/>
+                          <columns value="1"/>
+                          <enabled value="false"/>
                           <toolTipText value="Input an integer"/>
                         </properties>
                       </component>
@@ -441,15 +438,66 @@
                           <text value=" Line style: "/>
                         </properties>
                       </component>
-                      <component id="3b450" class="javax.swing.JTextField" binding="lineStyleTF">
+                      <component id="f470" class="javax.swing.JComboBox" binding="lineStyleDropBox">
                         <constraints>
-                          <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false">
-                            <minimum-size width="30" height="-1"/>
-                          </grid>
+                          <grid row="3" column="1" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
                         </constraints>
                         <properties>
-                          <columns value="2"/>
-                          <toolTipText value="unsure"/>
+                          <model>
+                            <item value="Color solid"/>
+                            <item value="Color dashes"/>
+                            <item value="BW - 1 dot/dash"/>
+                            <item value="BW - 2 dots/dash"/>
+                          </model>
+                          <toolTipText value="Select line style"/>
+                        </properties>
+                      </component>
+                      <component id="602b6" class="javax.swing.JButton" binding="lineWidthMinus">
+                        <constraints>
+                          <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties>
+                          <text value="-"/>
+                        </properties>
+                      </component>
+                      <component id="444c6" class="javax.swing.JButton" binding="auxLinePlus">
+                        <constraints>
+                          <grid row="1" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties>
+                          <text value="+"/>
+                        </properties>
+                      </component>
+                      <component id="99dc4" class="javax.swing.JButton" binding="auxLineMinus">
+                        <constraints>
+                          <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties>
+                          <text value="-"/>
+                        </properties>
+                      </component>
+                      <component id="717b6" class="javax.swing.JButton" binding="lineWidthPlus">
+                        <constraints>
+                          <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties>
+                          <text value="+"/>
+                        </properties>
+                      </component>
+                      <component id="dd29d" class="javax.swing.JButton" binding="pointSizePlus">
+                        <constraints>
+                          <grid row="2" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties>
+                          <text value="+"/>
+                        </properties>
+                      </component>
+                      <component id="b6657" class="javax.swing.JButton" binding="pointSizeMinus">
+                        <constraints>
+                          <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties>
+                          <text value="-"/>
                         </properties>
                       </component>
                     </children>

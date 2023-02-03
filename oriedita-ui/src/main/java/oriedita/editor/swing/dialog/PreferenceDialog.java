@@ -10,8 +10,10 @@ import oriedita.editor.canvas.LineStyle;
 import oriedita.editor.databinding.ApplicationModel;
 import oriedita.editor.tools.LookAndFeelUtil;
 
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -23,8 +25,6 @@ import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.InputMethodEvent;
-import java.awt.event.InputMethodListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -58,7 +58,6 @@ public class PreferenceDialog extends JDialog {
     private JTextField lineWidthTF;
     private JTextField auxLineTF;
     private JTextField pointSizeTF;
-    private JTextField lineStyleTF;
     private JCheckBox displayNumbersCB;
     private JCheckBox foldWarningCB;
     private JPanel displayPanel;
@@ -71,6 +70,13 @@ public class PreferenceDialog extends JDialog {
     private JCheckBox toggleHelpCB;
     private JPanel appearance2Panel;
     private JPanel appearancePanel;
+    private JComboBox lineStyleDropBox;
+    private JButton lineWidthPlus;
+    private JButton auxLinePlus;
+    private JButton pointSizePlus;
+    private JButton lineWidthMinus;
+    private JButton auxLineMinus;
+    private JButton pointSizeMinus;
     private final ApplicationModel applicationModel;
     private final ApplicationModel tempModel;
 
@@ -97,41 +103,11 @@ public class PreferenceDialog extends JDialog {
         lineWidthTF.setText(Integer.toString(applicationModel.getLineWidth()));
         auxLineTF.setText(Integer.toString(applicationModel.getAuxLineWidth()));
         pointSizeTF.setText(Integer.toString(applicationModel.getPointSize()));
-        lineStyleTF.setText(applicationModel.getLineStyle().toString());
         topPanelCB.setSelected(applicationModel.getDisplayTopPanel());
         bottomPanelCB.setSelected(applicationModel.getDisplayBottomPanel());
         leftPanelCB.setSelected(applicationModel.getDisplayLeftPanel());
         rightPanelCB.setSelected(applicationModel.getDisplayRightPanel());
     }
-
-//    public void getData(ApplicationModel applicationModel) {
-//        applicationModel.setDisplayPointSpotlight(spotlightCB.isSelected());
-//        applicationModel.setDisplayPointOffset(offsetCB.isSelected());
-//        applicationModel.setDisplayGridInputAssist(inputAssistCB.isSelected());
-//        applicationModel.setDisplayComments(commentCB.isSelected());
-//        applicationModel.setDisplayCpLines(cpLinesCB.isSelected());
-//        applicationModel.setDisplayAuxLines(auxLinesCB.isSelected());
-//        applicationModel.setDisplayLiveAuxLines(liveAuxCB.isSelected());
-//        applicationModel.setDisplayMarkings(markingsCB.isSelected());
-//        applicationModel.setDisplayCreasePatternOnTop(cpOnTopCB.isSelected());
-//        applicationModel.setDisplayFoldingProgress(foldingProgressCB.isSelected());
-//        applicationModel.setFoldWarning(foldWarningCB.isSelected());
-//        applicationModel.setHelpVisible(toggleHelpCB.isSelected());
-//        applicationModel.setLaf(LookAndFeelUtil.determineLafForDarkMode(darkModeCheckBox.isSelected()));
-//        applicationModel.setPreciseZoom(presizeZoomCB.isSelected());
-//        applicationModel.setMouseWheelMovesCreasePattern(mousewheelMovesCPCB.isSelected());
-//        applicationModel.setDisplaySelfIntersection(selfIntersectionCB.isSelected());
-//        applicationModel.setAntiAlias(antiAliasCB.isSelected());
-//        applicationModel.setDisplayNumbers(displayNumbersCB.isSelected());
-//        applicationModel.setLineWidth(Integer.parseInt(lineWidthTF.getText()));
-//        applicationModel.setAuxLineWidth(Integer.parseInt(auxLineTF.getText()));
-//        applicationModel.setPointSize(Integer.parseInt(pointSizeTF.getText()));
-//        applicationModel.setLineStyle(LineStyle.from(lineWidthTF.getText()));
-//        applicationModel.setDisplayTopPanel(topPanelCB.isSelected());
-//        applicationModel.setDisplayBottomPanel(bottomPanelCB.isSelected());
-//        applicationModel.setDisplayLeftPanel(leftPanelCB.isSelected());
-//        applicationModel.setDisplayRightPanel(rightPanelCB.isSelected());
-//    }
 
     @Inject
     public PreferenceDialog(ApplicationModel appModel) {
@@ -142,6 +118,16 @@ public class PreferenceDialog extends JDialog {
         setContentPane(contentPane);
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
+
+        if (applicationModel.getLineWidth() <= 0) {
+            lineWidthMinus.setEnabled(false);
+        }
+        if (applicationModel.getAuxLineWidth() <= 0) {
+            auxLineMinus.setEnabled(false);
+        }
+        if (applicationModel.getPointSize() <= 0) {
+            pointSizeMinus.setEnabled(false);
+        }
 
         spotlightCB.addActionListener(e -> applicationModel.setDisplayPointSpotlight(spotlightCB.isSelected()));
         offsetCB.addActionListener(e -> applicationModel.setDisplayPointOffset(offsetCB.isSelected()));
@@ -162,65 +148,54 @@ public class PreferenceDialog extends JDialog {
         darkModeCheckBox.addActionListener(e -> applicationModel.setLaf(LookAndFeelUtil.determineLafForDarkMode(darkModeCheckBox.isSelected())));
         antiAliasCB.addActionListener(e -> applicationModel.setAntiAlias(antiAliasCB.isSelected()));
         displayNumbersCB.addActionListener(e -> applicationModel.setDisplayNumbers(displayNumbersCB.isSelected()));
-        lineWidthTF.addInputMethodListener(new InputMethodListener() {
-            @Override
-            public void inputMethodTextChanged(InputMethodEvent event) {
-                applicationModel.setLineWidth(Integer.parseInt(lineWidthTF.getText()));
-            }
-
-            @Override
-            public void caretPositionChanged(InputMethodEvent event) {
-
-            }
-
-//            public void actionPerformed(ActionEvent e) {
-//                applicationModel.setLineWidth(Integer.parseInt(lineWidthTF.getText()));
-//            }
+        lineWidthPlus.addActionListener(e -> {
+            applicationModel.setLineWidth(Integer.parseInt(lineWidthTF.getText()) + 1);
+            lineWidthTF.setText(Integer.toString(applicationModel.getLineWidth()));
+            lineWidthMinus.setEnabled(true);
         });
-        auxLineTF.addInputMethodListener(new InputMethodListener() {
-            @Override
-            public void inputMethodTextChanged(InputMethodEvent event) {
-                applicationModel.setAuxLineWidth(Integer.parseInt(auxLineTF.getText()));
+        lineWidthMinus.addActionListener(e -> {
+            if (applicationModel.getLineWidth() > 0) {
+                applicationModel.setLineWidth(Integer.parseInt(lineWidthTF.getText()) - 1);
+                if (applicationModel.getLineWidth() <= 0) {
+                    lineWidthMinus.setEnabled(false);
+                }
+                lineWidthTF.setText(Integer.toString(applicationModel.getLineWidth()));
             }
-
-            @Override
-            public void caretPositionChanged(InputMethodEvent event) {
-
-            }
-
-//            public void actionPerformed(ActionEvent e) {
-//                applicationModel.setAuxLineWidth(Integer.parseInt(auxLineTF.getText()));
-//            }
         });
-        pointSizeTF.addInputMethodListener(new InputMethodListener() {
-            @Override
-            public void inputMethodTextChanged(InputMethodEvent event) {
-                applicationModel.setPointSize(Integer.parseInt(pointSizeTF.getText()));
-            }
-
-            @Override
-            public void caretPositionChanged(InputMethodEvent event) {
-
-            }
-
-//            public void actionPerformed(ActionEvent e) {
-//                applicationModel.setPointSize(Integer.parseInt(pointSizeTF.getText()));
-//            }
+        auxLinePlus.addActionListener(e -> {
+            applicationModel.setAuxLineWidth(Integer.parseInt(auxLineTF.getText()) + 1);
+            auxLineTF.setText(Integer.toString(applicationModel.getAuxLineWidth()));
+            auxLineMinus.setEnabled(true);
         });
-        lineStyleTF.addInputMethodListener(new InputMethodListener() {
-            @Override
-            public void inputMethodTextChanged(InputMethodEvent event) {
-                applicationModel.setLineStyle(LineStyle.from(lineWidthTF.getText()));
+        auxLineMinus.addActionListener(e -> {
+            if (applicationModel.getAuxLineWidth() > 0) {
+                applicationModel.setAuxLineWidth(Integer.parseInt(auxLineTF.getText()) - 1);
+                if (applicationModel.getAuxLineWidth() <= 0) {
+                    auxLineMinus.setEnabled(false);
+                }
+                auxLineTF.setText(Integer.toString(applicationModel.getAuxLineWidth()));
             }
-
-            @Override
-            public void caretPositionChanged(InputMethodEvent event) {
-
+        });
+        pointSizePlus.addActionListener(e -> {
+            applicationModel.setPointSize(Integer.parseInt(pointSizeTF.getText()) + 1);
+            pointSizeTF.setText(Integer.toString(applicationModel.getPointSize()));
+            pointSizeMinus.setEnabled(true);
+        });
+        pointSizeMinus.addActionListener(e -> {
+            if (applicationModel.getPointSize() > 0) {
+                applicationModel.setPointSize(Integer.parseInt(pointSizeTF.getText()) - 1);
+                if (applicationModel.getPointSize() <= 0) {
+                    pointSizeMinus.setEnabled(false);
+                }
+                pointSizeTF.setText(Integer.toString(applicationModel.getPointSize()));
             }
-
-//            public void actionPerformed(ActionEvent e) {
-//                applicationModel.setLineStyle(LineStyle.from(lineWidthTF.getText()));
-//            }
+        });
+        lineStyleDropBox.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                int index = lineStyleDropBox.getSelectedIndex();
+                applicationModel.setLineStyle(LineStyle.from(index + 1));
+                lineStyleDropBox.setSelectedIndex(index);
+            }
         });
         topPanelCB.addActionListener(e -> applicationModel.setDisplayTopPanel(topPanelCB.isSelected()));
         bottomPanelCB.addActionListener(e -> applicationModel.setDisplayBottomPanel(bottomPanelCB.isSelected()));
@@ -382,7 +357,7 @@ public class PreferenceDialog extends JDialog {
         secondColumn.add(panelsPanel, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         final JLabel label3 = new JLabel();
         label3.setText("PANELS");
-        panelsPanel.add(label3, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        panelsPanel.add(label3, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         topPanelCB = new JCheckBox();
         topPanelCB.setText("Top panel");
         panelsPanel.add(topPanelCB, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
@@ -414,37 +389,63 @@ public class PreferenceDialog extends JDialog {
         darkModeCheckBox.setText("Dark mode");
         appearance1Panel.add(darkModeCheckBox, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         appearance2Panel = new JPanel();
-        appearance2Panel.setLayout(new GridLayoutManager(4, 2, new Insets(0, 0, 0, 0), 1, 1));
+        appearance2Panel.setLayout(new GridLayoutManager(4, 4, new Insets(0, 0, 0, 0), 1, 1));
         appearancePanel.add(appearance2Panel, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         final JLabel label5 = new JLabel();
         label5.setText(" Line width: ");
         appearance2Panel.add(label5, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         lineWidthTF = new JTextField();
-        lineWidthTF.setColumns(2);
+        lineWidthTF.setColumns(1);
+        lineWidthTF.setEnabled(false);
         lineWidthTF.setToolTipText("Input an integer");
-        appearance2Panel.add(lineWidthTF, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, new Dimension(30, -1), null, null, 0, false));
+        appearance2Panel.add(lineWidthTF, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         final JLabel label6 = new JLabel();
         label6.setText(" Aux line width: ");
         appearance2Panel.add(label6, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         auxLineTF = new JTextField();
-        auxLineTF.setColumns(2);
+        auxLineTF.setColumns(1);
+        auxLineTF.setEnabled(false);
         auxLineTF.setText("");
         auxLineTF.setToolTipText("Input an integer");
-        appearance2Panel.add(auxLineTF, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, 1, new Dimension(30, -1), null, null, 0, false));
+        appearance2Panel.add(auxLineTF, new GridConstraints(1, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
         final JLabel label7 = new JLabel();
         label7.setText(" Point size: ");
         appearance2Panel.add(label7, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         pointSizeTF = new JTextField();
-        pointSizeTF.setColumns(2);
+        pointSizeTF.setColumns(1);
+        pointSizeTF.setEnabled(false);
         pointSizeTF.setToolTipText("Input an integer");
-        appearance2Panel.add(pointSizeTF, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, 1, new Dimension(30, -1), null, null, 0, false));
+        appearance2Panel.add(pointSizeTF, new GridConstraints(2, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
         final JLabel label8 = new JLabel();
         label8.setText(" Line style: ");
         appearance2Panel.add(label8, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        lineStyleTF = new JTextField();
-        lineStyleTF.setColumns(2);
-        lineStyleTF.setToolTipText("unsure");
-        appearance2Panel.add(lineStyleTF, new GridConstraints(3, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, new Dimension(30, -1), null, null, 0, false));
+        lineStyleDropBox = new JComboBox();
+        final DefaultComboBoxModel defaultComboBoxModel1 = new DefaultComboBoxModel();
+        defaultComboBoxModel1.addElement("Color solid");
+        defaultComboBoxModel1.addElement("Color dashes");
+        defaultComboBoxModel1.addElement("BW - 1 dot/dash");
+        defaultComboBoxModel1.addElement("BW - 2 dots/dash");
+        lineStyleDropBox.setModel(defaultComboBoxModel1);
+        lineStyleDropBox.setToolTipText("Select line style");
+        appearance2Panel.add(lineStyleDropBox, new GridConstraints(3, 1, 1, 3, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        lineWidthMinus = new JButton();
+        lineWidthMinus.setText("-");
+        appearance2Panel.add(lineWidthMinus, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        auxLinePlus = new JButton();
+        auxLinePlus.setText("+");
+        appearance2Panel.add(auxLinePlus, new GridConstraints(1, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        auxLineMinus = new JButton();
+        auxLineMinus.setText("-");
+        appearance2Panel.add(auxLineMinus, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        lineWidthPlus = new JButton();
+        lineWidthPlus.setText("+");
+        appearance2Panel.add(lineWidthPlus, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        pointSizePlus = new JButton();
+        pointSizePlus.setText("+");
+        appearance2Panel.add(pointSizePlus, new GridConstraints(2, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        pointSizeMinus = new JButton();
+        pointSizeMinus.setText("-");
+        appearance2Panel.add(pointSizeMinus, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final Spacer spacer3 = new Spacer();
         secondColumn.add(spacer3, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         final Spacer spacer4 = new Spacer();
