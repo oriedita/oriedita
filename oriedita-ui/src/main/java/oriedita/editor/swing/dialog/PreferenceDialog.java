@@ -86,6 +86,9 @@ public class PreferenceDialog extends JDialog {
     private JButton pointSizeMinus;
     private JButton gridColorButton;
     private JButton gridScaleColorButton;
+    private JButton gridWidthMinus;
+    private JButton gridWidthPlus;
+    private JTextField gridWidthTF;
     private final ApplicationModel applicationModel;
     private final ApplicationModel tempModel;
     private final LookAndFeelService lookAndFeelService;
@@ -115,6 +118,7 @@ public class PreferenceDialog extends JDialog {
         lineWidthTF.setText(Integer.toString(applicationModel.getLineWidth()));
         auxLineTF.setText(Integer.toString(applicationModel.getAuxLineWidth()));
         pointSizeTF.setText(Integer.toString(applicationModel.getPointSize()));
+        gridWidthTF.setText(Integer.toString(applicationModel.getGridLineWidth()));
         gridColorButton.setIcon(new ColorIcon(applicationModel.getGridColor()));
         gridScaleColorButton.setIcon(new ColorIcon(applicationModel.getGridScaleColor()));
         lineStyleDropBox.setSelectedIndex(applicationModel.getLineStyle().getType() - 1);
@@ -145,6 +149,9 @@ public class PreferenceDialog extends JDialog {
         }
         if (applicationModel.getPointSize() <= 0) {
             pointSizeMinus.setEnabled(false);
+        }
+        if (applicationModel.getGridLineWidth() <= 1) {
+            gridWidthMinus.setEnabled(false);
         }
 
         spotlightCB.addActionListener(e -> applicationModel.setDisplayPointSpotlight(spotlightCB.isSelected()));
@@ -224,6 +231,20 @@ public class PreferenceDialog extends JDialog {
                     pointSizeMinus.setEnabled(false);
                 }
                 pointSizeTF.setText(Integer.toString(applicationModel.getPointSize()));
+            }
+        });
+        gridWidthPlus.addActionListener(e -> {
+            applicationModel.setGridLineWidth(Integer.parseInt(gridWidthTF.getText()) + 1);
+            gridWidthTF.setText(Integer.toString(applicationModel.getGridLineWidth()));
+            gridWidthMinus.setEnabled(true);
+        });
+        gridWidthMinus.addActionListener(e -> {
+            if (applicationModel.getGridLineWidth() > 0) {
+                applicationModel.setGridLineWidth(Integer.parseInt(gridWidthTF.getText()) - 1);
+                if (applicationModel.getGridLineWidth() <= 1) {
+                    gridWidthMinus.setEnabled(false);
+                }
+                gridWidthTF.setText(Integer.toString(applicationModel.getGridLineWidth()));
             }
         });
         gridColorButton.addActionListener(new ActionListener() {
@@ -442,7 +463,7 @@ public class PreferenceDialog extends JDialog {
         darkModeCheckBox.setText("Dark mode");
         appearance1Panel.add(darkModeCheckBox, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         appearance2Panel = new JPanel();
-        appearance2Panel.setLayout(new GridLayoutManager(6, 4, new Insets(0, 0, 0, 0), 1, 1));
+        appearance2Panel.setLayout(new GridLayoutManager(7, 4, new Insets(0, 0, 0, 0), 1, 1));
         appearancePanel.add(appearance2Panel, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         final JLabel label5 = new JLabel();
         label5.setText(" Line width: ");
@@ -451,7 +472,7 @@ public class PreferenceDialog extends JDialog {
         lineWidthTF.setColumns(1);
         lineWidthTF.setEnabled(false);
         lineWidthTF.setToolTipText("Input an integer");
-        appearance2Panel.add(lineWidthTF, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        appearance2Panel.add(lineWidthTF, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, new Dimension(35, 30), null, 0, false));
         final JLabel label6 = new JLabel();
         label6.setText(" Live aux width: ");
         appearance2Panel.add(label6, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
@@ -460,7 +481,7 @@ public class PreferenceDialog extends JDialog {
         auxLineTF.setEnabled(false);
         auxLineTF.setText("");
         auxLineTF.setToolTipText("Input an integer");
-        appearance2Panel.add(auxLineTF, new GridConstraints(1, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+        appearance2Panel.add(auxLineTF, new GridConstraints(1, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, new Dimension(35, 30), null, 0, false));
         final JLabel label7 = new JLabel();
         label7.setText(" Point size: ");
         appearance2Panel.add(label7, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
@@ -468,10 +489,10 @@ public class PreferenceDialog extends JDialog {
         pointSizeTF.setColumns(1);
         pointSizeTF.setEnabled(false);
         pointSizeTF.setToolTipText("Input an integer");
-        appearance2Panel.add(pointSizeTF, new GridConstraints(2, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+        appearance2Panel.add(pointSizeTF, new GridConstraints(2, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, new Dimension(35, 30), null, 0, false));
         final JLabel label8 = new JLabel();
         label8.setText(" Line style: ");
-        appearance2Panel.add(label8, new GridConstraints(5, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        appearance2Panel.add(label8, new GridConstraints(6, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         lineStyleDropBox = new JComboBox();
         final DefaultComboBoxModel defaultComboBoxModel1 = new DefaultComboBoxModel();
         defaultComboBoxModel1.addElement("Color solid");
@@ -480,37 +501,52 @@ public class PreferenceDialog extends JDialog {
         defaultComboBoxModel1.addElement("BW - 2 dots/dash");
         lineStyleDropBox.setModel(defaultComboBoxModel1);
         lineStyleDropBox.setToolTipText("Select line style");
-        appearance2Panel.add(lineStyleDropBox, new GridConstraints(5, 1, 1, 3, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        appearance2Panel.add(lineStyleDropBox, new GridConstraints(6, 1, 1, 3, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         lineWidthMinus = new JButton();
         lineWidthMinus.setText("-");
-        appearance2Panel.add(lineWidthMinus, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        appearance2Panel.add(lineWidthMinus, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(25, 30), null, 0, false));
         auxLinePlus = new JButton();
         auxLinePlus.setText("+");
-        appearance2Panel.add(auxLinePlus, new GridConstraints(1, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        appearance2Panel.add(auxLinePlus, new GridConstraints(1, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_VERTICAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         auxLineMinus = new JButton();
         auxLineMinus.setText("-");
-        appearance2Panel.add(auxLineMinus, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        appearance2Panel.add(auxLineMinus, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(25, 30), null, 0, false));
         lineWidthPlus = new JButton();
         lineWidthPlus.setText("+");
-        appearance2Panel.add(lineWidthPlus, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        appearance2Panel.add(lineWidthPlus, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_VERTICAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         pointSizePlus = new JButton();
         pointSizePlus.setText("+");
-        appearance2Panel.add(pointSizePlus, new GridConstraints(2, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        appearance2Panel.add(pointSizePlus, new GridConstraints(2, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_VERTICAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         pointSizeMinus = new JButton();
         pointSizeMinus.setText("-");
-        appearance2Panel.add(pointSizeMinus, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        appearance2Panel.add(pointSizeMinus, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(25, 30), null, 0, false));
         final JLabel label9 = new JLabel();
         label9.setText(" Main grid color:");
-        appearance2Panel.add(label9, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        appearance2Panel.add(label9, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         gridColorButton = new JButton();
-        gridColorButton.setText("color");
-        appearance2Panel.add(gridColorButton, new GridConstraints(3, 1, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        gridColorButton.setText("Color");
+        appearance2Panel.add(gridColorButton, new GridConstraints(4, 1, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JLabel label10 = new JLabel();
         label10.setText(" Sub grid color:");
-        appearance2Panel.add(label10, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        appearance2Panel.add(label10, new GridConstraints(5, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         gridScaleColorButton = new JButton();
         gridScaleColorButton.setText("Color");
-        appearance2Panel.add(gridScaleColorButton, new GridConstraints(4, 1, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        appearance2Panel.add(gridScaleColorButton, new GridConstraints(5, 1, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final JLabel label11 = new JLabel();
+        label11.setText(" Grid width:");
+        appearance2Panel.add(label11, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        gridWidthMinus = new JButton();
+        gridWidthMinus.setText("-");
+        appearance2Panel.add(gridWidthMinus, new GridConstraints(3, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(25, 30), null, 0, false));
+        gridWidthPlus = new JButton();
+        gridWidthPlus.setText("+");
+        appearance2Panel.add(gridWidthPlus, new GridConstraints(3, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_VERTICAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        gridWidthTF = new JTextField();
+        gridWidthTF.setColumns(1);
+        gridWidthTF.setEnabled(false);
+        gridWidthTF.setText("");
+        gridWidthTF.setToolTipText("Input an integer");
+        appearance2Panel.add(gridWidthTF, new GridConstraints(3, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, new Dimension(35, 30), null, 0, false));
         final Spacer spacer3 = new Spacer();
         secondColumn.add(spacer3, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         final Spacer spacer4 = new Spacer();
