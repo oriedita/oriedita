@@ -5,10 +5,12 @@ import au.com.origin.snapshots.junit5.SnapshotExtension;
 import fold.io.CustomFoldReader;
 import fold.io.CustomFoldWriter;
 import fold.model.FoldFile;
+import org.json.JSONException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.skyscreamer.jsonassert.JSONAssert;
+import oriedita.editor.exception.FileReadingException;
 import oriedita.editor.export.Fold;
 import oriedita.editor.text.Text;
 import origami.crease_pattern.LineSegmentSet;
@@ -16,7 +18,9 @@ import origami.crease_pattern.element.Circle;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,6 +52,24 @@ public class FoldTest {
             CustomFoldWriter<FoldFile> foldFileCustomFoldWriter = new CustomFoldWriter<>(fileOutputStream);
             foldFileCustomFoldWriter.write(foldFile);
         }
+
+        String expected = Files.readString(saveFile.toPath());
+        String actual = Files.readString(exportFile.toPath());
+
+        JSONAssert.assertEquals(expected, actual, true);
+    }
+
+    @Test
+    public void testExportAndImport() throws IOException, JSONException, FileReadingException, InterruptedException {
+        File saveFile = new File(Objects.requireNonNull(getClass().getClassLoader().getResource("fold/oriedita.fold")).getFile());
+
+        Fold f = new Fold();
+        Save foldSave = f.importFile(saveFile);
+
+
+        File exportFile = File.createTempFile("export", ".fold");
+
+        f.exportFile(foldSave, exportFile);
 
         String expected = Files.readString(saveFile.toPath());
         String actual = Files.readString(exportFile.toPath());
@@ -101,10 +123,8 @@ public class FoldTest {
 
         Fold f = new Fold();
 
-        LineSegmentSet lineSegmentSet = new LineSegmentSet();
-        lineSegmentSet.reset(1);
         File tempFile = File.createTempFile("fold", "fold");
-        f.exportFile(save, lineSegmentSet, tempFile);
+        f.exportFile(save, tempFile);
 
         expect.serializer("json").toMatchSnapshot(Files.readString(tempFile.toPath()));
     }
@@ -149,10 +169,8 @@ public class FoldTest {
 
         Fold f = new Fold();
 
-        LineSegmentSet lineSegmentSet = new LineSegmentSet();
-        lineSegmentSet.reset(1);
         File tempFile = File.createTempFile("fold", "fold");
-        f.exportFile(save, lineSegmentSet, tempFile);
+        f.exportFile(save, tempFile);
 
         expect.serializer("json").toMatchSnapshot(Files.readString(tempFile.toPath()));
     }

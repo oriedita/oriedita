@@ -134,13 +134,25 @@ public class Fold {
     }
 
 
-    public void exportFile(Save save, LineSegmentSet lineSegmentSet, File file) throws InterruptedException, FileReadingException {
+    private void exportFile(Save save, LineSegmentSet lineSegmentSet, File file) throws InterruptedException, FileReadingException {
         try (FileOutputStream fileOutputStream = new FileOutputStream(file)) {
             CustomFoldWriter<FoldFile> foldFileCustomFoldWriter = new CustomFoldWriter<>(fileOutputStream);
             foldFileCustomFoldWriter.write(toFoldSave(save, lineSegmentSet));
         } catch (IOException e) {
             throw new FileReadingException(e);
         }
+    }
+
+    public void exportFile(Save save, File file) throws FileReadingException, InterruptedException {
+        LineSegmentSet s = new LineSegmentSet();
+        s.setSave(save);
+        exportFile(save, s, file);
+    }
+
+    public OrieditaFoldFile toFoldSave(Save save) throws InterruptedException {
+        LineSegmentSet s = new LineSegmentSet();
+        s.setSave(save);
+        return toFoldSave(save, s);
     }
 
     public OrieditaFoldFile toFoldSave(Save save, LineSegmentSet lineSegmentSet) throws InterruptedException {

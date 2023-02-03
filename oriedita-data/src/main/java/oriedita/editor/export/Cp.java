@@ -26,7 +26,7 @@ public class Cp {
     public static void exportFile(Save save, File file) {
         try (FileWriter fw = new FileWriter(file); BufferedWriter bw = new BufferedWriter(fw); PrintWriter pw = new PrintWriter(bw); OutputStream os = new FileOutputStream(file)) {
             CreasePatternWriter creasePatternWriter = new CreasePatternWriter(os);
-            creasePatternWriter.write(new Fold().toFoldSave(save, new LineSegmentSet()));
+            creasePatternWriter.write(new Fold().toFoldSave(save));
         } catch (IOException | InterruptedException e) {
             Logger.error(e, "Error exporting cp file");
         }
