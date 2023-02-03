@@ -13,11 +13,12 @@ import oriedita.editor.canvas.LineStyle;
 import oriedita.editor.databinding.ApplicationModel;
 import oriedita.editor.databinding.FoldedFigureModel;
 import oriedita.editor.service.LookAndFeelService;
-import oriedita.editor.tools.LookAndFeelUtil;
+import oriedita.editor.swing.component.ColorIcon;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JColorChooser;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
@@ -83,6 +84,8 @@ public class PreferenceDialog extends JDialog {
     private JButton lineWidthMinus;
     private JButton auxLineMinus;
     private JButton pointSizeMinus;
+    private JButton gridColorButton;
+    private JButton gridScaleColorButton;
     private final ApplicationModel applicationModel;
     private final ApplicationModel tempModel;
     private final LookAndFeelService lookAndFeelService;
@@ -112,6 +115,8 @@ public class PreferenceDialog extends JDialog {
         lineWidthTF.setText(Integer.toString(applicationModel.getLineWidth()));
         auxLineTF.setText(Integer.toString(applicationModel.getAuxLineWidth()));
         pointSizeTF.setText(Integer.toString(applicationModel.getPointSize()));
+        gridColorButton.setIcon(new ColorIcon(applicationModel.getGridColor()));
+        gridScaleColorButton.setIcon(new ColorIcon(applicationModel.getGridScaleColor()));
         lineStyleDropBox.setSelectedIndex(applicationModel.getLineStyle().getType() - 1);
         topPanelCB.setSelected(applicationModel.getDisplayTopPanel());
         bottomPanelCB.setSelected(applicationModel.getDisplayBottomPanel());
@@ -219,6 +224,26 @@ public class PreferenceDialog extends JDialog {
                     pointSizeMinus.setEnabled(false);
                 }
                 pointSizeTF.setText(Integer.toString(applicationModel.getPointSize()));
+            }
+        });
+        gridColorButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                Color gridColor = JColorChooser.showDialog(frameProvider.get(), "F_col", Color.white);
+
+                if (gridColor != null) {
+                    applicationModel.setGridColor(gridColor);
+                    gridColorButton.setIcon(new ColorIcon(applicationModel.getGridColor()));
+                }
+            }
+        });
+        gridScaleColorButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                Color gridScaleColor = JColorChooser.showDialog(frameProvider.get(), "F_col", Color.white);
+
+                if (gridScaleColor != null) {
+                    applicationModel.setGridScaleColor(gridScaleColor);
+                    gridScaleColorButton.setIcon(new ColorIcon(applicationModel.getGridScaleColor()));
+                }
             }
         });
         lineStyleDropBox.addActionListener(e -> {
@@ -417,7 +442,7 @@ public class PreferenceDialog extends JDialog {
         darkModeCheckBox.setText("Dark mode");
         appearance1Panel.add(darkModeCheckBox, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         appearance2Panel = new JPanel();
-        appearance2Panel.setLayout(new GridLayoutManager(4, 4, new Insets(0, 0, 0, 0), 1, 1));
+        appearance2Panel.setLayout(new GridLayoutManager(6, 4, new Insets(0, 0, 0, 0), 1, 1));
         appearancePanel.add(appearance2Panel, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         final JLabel label5 = new JLabel();
         label5.setText(" Line width: ");
@@ -446,7 +471,7 @@ public class PreferenceDialog extends JDialog {
         appearance2Panel.add(pointSizeTF, new GridConstraints(2, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
         final JLabel label8 = new JLabel();
         label8.setText(" Line style: ");
-        appearance2Panel.add(label8, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        appearance2Panel.add(label8, new GridConstraints(5, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         lineStyleDropBox = new JComboBox();
         final DefaultComboBoxModel defaultComboBoxModel1 = new DefaultComboBoxModel();
         defaultComboBoxModel1.addElement("Color solid");
@@ -455,7 +480,7 @@ public class PreferenceDialog extends JDialog {
         defaultComboBoxModel1.addElement("BW - 2 dots/dash");
         lineStyleDropBox.setModel(defaultComboBoxModel1);
         lineStyleDropBox.setToolTipText("Select line style");
-        appearance2Panel.add(lineStyleDropBox, new GridConstraints(3, 1, 1, 3, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        appearance2Panel.add(lineStyleDropBox, new GridConstraints(5, 1, 1, 3, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         lineWidthMinus = new JButton();
         lineWidthMinus.setText("-");
         appearance2Panel.add(lineWidthMinus, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
@@ -474,6 +499,18 @@ public class PreferenceDialog extends JDialog {
         pointSizeMinus = new JButton();
         pointSizeMinus.setText("-");
         appearance2Panel.add(pointSizeMinus, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final JLabel label9 = new JLabel();
+        label9.setText(" Main grid color:");
+        appearance2Panel.add(label9, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        gridColorButton = new JButton();
+        gridColorButton.setText("color");
+        appearance2Panel.add(gridColorButton, new GridConstraints(3, 1, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final JLabel label10 = new JLabel();
+        label10.setText(" Sub grid color:");
+        appearance2Panel.add(label10, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        gridScaleColorButton = new JButton();
+        gridScaleColorButton.setText("Color");
+        appearance2Panel.add(gridScaleColorButton, new GridConstraints(4, 1, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final Spacer spacer3 = new Spacer();
         secondColumn.add(spacer3, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         final Spacer spacer4 = new Spacer();
