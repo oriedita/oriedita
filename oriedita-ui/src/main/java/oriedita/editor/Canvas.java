@@ -239,7 +239,7 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
             //Logger.info("paint　+++++++++++++++++++++　背景表示");
             //背景表示
             Image backgroundImage = backgroundModel.getBackgroundImage();
-
+            updateBackgroundCamera();
             if ((backgroundImage != null) && backgroundModel.isDisplayBackground()) {
                 int iw = backgroundImage.getWidth(canvasUI);//イメージの幅を取得
                 int ih = backgroundImage.getHeight(canvasUI);//イメージの高さを取得
@@ -455,6 +455,14 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
         canvasUI.repaint();
     }
 
+    public void updateBackgroundCamera() {
+        if (backgroundModel.isLockBackground()) {
+            h_cam.setCamera(creasePatternCamera);
+            h_cam.h3_and_h4_calculation();
+            h_cam.parameter_calculation();
+        }
+    }
+
     public void drawBackground(Graphics2D g2h, Image imgh) {//引数はカメラ設定、線幅、画面X幅、画面y高さ
         //背景画を、画像の左上はしを、ウィンドウの(0,0)に合わせて回転や拡大なしで表示した場合を基準状態とする。
         //背景画上の点h1を中心としてa倍拡大する。次に、h1を展開図上の点h3と重なるように背景画を平行移動する。
@@ -464,11 +472,7 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
         //
 
         //最初に
-        if (backgroundModel.isLockBackground()) {
-            h_cam.setCamera(creasePatternCamera);
-            h_cam.h3_and_h4_calculation();
-            h_cam.parameter_calculation();
-        }
+
 
 
         g2h.rotate(h_cam.getAngle() * Math.PI / 180.0, h_cam.getRotationX(), h_cam.getRotationY());

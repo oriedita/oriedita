@@ -49,6 +49,7 @@ public class BackgroundTrimAction extends AbstractOrieditaAction{
             canvas.getH_cam().setBackgroundWidth(iw);
             canvas.getH_cam().setBackgroundHeight(ih);
 
+            canvas.updateBackgroundCamera();
             canvas.drawBackground(g2_background, backgroundImage);
         }
 
