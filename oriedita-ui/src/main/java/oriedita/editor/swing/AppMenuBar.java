@@ -215,7 +215,7 @@ public class AppMenuBar {
             fileSaveService.exportFile();
         });
         prefButton.addActionListener(e -> {
-            PreferenceDialog d = new PreferenceDialog(applicationModel);
+            PreferenceDialog d = new PreferenceDialog(applicationModel, lookAndFeelService, frameProvider, foldedFigureModel);
             d.setSize(450, 500);
             d.setResizable(false);
             d.setData(applicationModel);

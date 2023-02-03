@@ -1,13 +1,18 @@
 package oriedita.editor.swing.dialog;
 
 import com.formdev.flatlaf.FlatDarkLaf;
+import com.formdev.flatlaf.FlatLaf;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import oriedita.editor.Colors;
+import oriedita.editor.FrameProvider;
 import oriedita.editor.canvas.LineStyle;
 import oriedita.editor.databinding.ApplicationModel;
+import oriedita.editor.databinding.FoldedFigureModel;
+import oriedita.editor.service.LookAndFeelService;
 import oriedita.editor.tools.LookAndFeelUtil;
 
 import javax.swing.DefaultComboBoxModel;
@@ -17,6 +22,7 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
@@ -52,7 +58,7 @@ public class PreferenceDialog extends JDialog {
     private JCheckBox bottomPanelCB;
     private JCheckBox leftPanelCB;
     private JCheckBox rightPanelCB;
-    private JCheckBox presizeZoomCB;
+    private JCheckBox preciseZoomCB;
     private JCheckBox antiAliasCB;
     private JCheckBox mousewheelMovesCPCB;
     private JTextField lineWidthTF;
@@ -79,6 +85,9 @@ public class PreferenceDialog extends JDialog {
     private JButton pointSizeMinus;
     private final ApplicationModel applicationModel;
     private final ApplicationModel tempModel;
+    private final LookAndFeelService lookAndFeelService;
+    private final FrameProvider frameProvider;
+    private final FoldedFigureModel foldedFigureModel;
 
 
     public void setData(ApplicationModel applicationModel) {
@@ -95,7 +104,7 @@ public class PreferenceDialog extends JDialog {
         foldWarningCB.setSelected(applicationModel.getFoldWarning());
         toggleHelpCB.setSelected(applicationModel.getHelpVisible());
         darkModeCheckBox.setSelected(applicationModel.getLaf().equals(FlatDarkLaf.class.getName()));
-        presizeZoomCB.setSelected(applicationModel.isPreciseZoom());
+        preciseZoomCB.setSelected(applicationModel.isPreciseZoom());
         mousewheelMovesCPCB.setSelected(applicationModel.getMouseWheelMovesCreasePattern());
         selfIntersectionCB.setSelected(applicationModel.getDisplaySelfIntersection());
         antiAliasCB.setSelected(applicationModel.getAntiAlias());
@@ -111,10 +120,13 @@ public class PreferenceDialog extends JDialog {
     }
 
     @Inject
-    public PreferenceDialog(ApplicationModel appModel) {
+    public PreferenceDialog(ApplicationModel appModel, LookAndFeelService lookAndFeelService, FrameProvider frameProvider, FoldedFigureModel foldedFigureModel) {
         this.applicationModel = appModel;
         this.tempModel = new ApplicationModel();
         this.tempModel.set(appModel);
+        this.lookAndFeelService = lookAndFeelService;
+        this.frameProvider = frameProvider;
+        this.foldedFigureModel = foldedFigureModel;
         setData(applicationModel);
         setContentPane(contentPane);
         setModal(true);
@@ -143,10 +155,28 @@ public class PreferenceDialog extends JDialog {
         selfIntersectionCB.addActionListener(e -> applicationModel.setDisplaySelfIntersection(selfIntersectionCB.isSelected()));
         foldWarningCB.addActionListener(e -> applicationModel.setFoldWarning(foldWarningCB.isSelected()));
         toggleHelpCB.addActionListener(e -> applicationModel.setHelpVisible(toggleHelpCB.isSelected()));
-        presizeZoomCB.addActionListener(e -> applicationModel.setPreciseZoom(presizeZoomCB.isSelected()));
+        preciseZoomCB.addActionListener(e -> applicationModel.setPreciseZoom(preciseZoomCB.isSelected()));
         toggleHelpCB.addActionListener(e -> applicationModel.setHelpVisible(toggleHelpCB.isSelected()));
         mousewheelMovesCPCB.addActionListener(e -> applicationModel.setMouseWheelMovesCreasePattern(mousewheelMovesCPCB.isSelected()));
-        darkModeCheckBox.addActionListener(e -> applicationModel.setLaf(LookAndFeelUtil.determineLafForDarkMode(darkModeCheckBox.isSelected())));
+        darkModeCheckBox.addActionListener(e -> {
+            lookAndFeelService.toggleDarkMode();
+
+            if (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(frameProvider.get(), "Restore custom colors in grid and folded figure for this color scheme?", "Restore colors", JOptionPane.YES_NO_OPTION)) {
+                if (FlatLaf.isLafDark()) {
+                    applicationModel.setGridColor(Colors.GRID_LINE_DARK);
+                    applicationModel.setGridScaleColor(Colors.GRID_SCALE_DARK);
+
+                    foldedFigureModel.setFrontColor(Colors.FIGURE_FRONT_DARK);
+                    foldedFigureModel.setBackColor(Colors.FIGURE_BACK_DARK);
+                } else {
+                    applicationModel.setGridColor(Colors.GRID_LINE);
+                    applicationModel.setGridScaleColor(Colors.GRID_SCALE);
+
+                    foldedFigureModel.setFrontColor(Colors.FIGURE_FRONT);
+                    foldedFigureModel.setBackColor(Colors.FIGURE_BACK);
+                }
+            }
+        });
         antiAliasCB.addActionListener(e -> applicationModel.setAntiAlias(antiAliasCB.isSelected()));
         displayNumbersCB.addActionListener(e -> applicationModel.setDisplayNumbers(displayNumbersCB.isSelected()));
         lineWidthPlus.addActionListener(e -> {
@@ -191,12 +221,9 @@ public class PreferenceDialog extends JDialog {
                 pointSizeTF.setText(Integer.toString(applicationModel.getPointSize()));
             }
         });
-        lineStyleDropBox.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                int index = lineStyleDropBox.getSelectedIndex() + 1;
-                applicationModel.setLineStyle(LineStyle.from(index));
-                lineStyleDropBox.setSelectedIndex(applicationModel.getLineStyle().getType() - 1);
-            }
+        lineStyleDropBox.addActionListener(e -> {
+            applicationModel.setLineStyle(LineStyle.from(lineStyleDropBox.getSelectedIndex() + 1));
+            lineStyleDropBox.setSelectedIndex(applicationModel.getLineStyle().getType() - 1);
         });
         topPanelCB.addActionListener(e -> applicationModel.setDisplayTopPanel(topPanelCB.isSelected()));
         bottomPanelCB.addActionListener(e -> applicationModel.setDisplayBottomPanel(bottomPanelCB.isSelected()));
@@ -345,9 +372,9 @@ public class PreferenceDialog extends JDialog {
         mousewheelMovesCPCB = new JCheckBox();
         mousewheelMovesCPCB.setText("Mousewheel moves CP");
         behaviorPanel.add(mousewheelMovesCPCB, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        presizeZoomCB = new JCheckBox();
-        presizeZoomCB.setText("Presize zoom");
-        behaviorPanel.add(presizeZoomCB, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        preciseZoomCB = new JCheckBox();
+        preciseZoomCB.setText("Precise zoom");
+        behaviorPanel.add(preciseZoomCB, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final Spacer spacer2 = new Spacer();
         firstColumn.add(spacer2, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         secondColumn = new JPanel();
@@ -401,7 +428,7 @@ public class PreferenceDialog extends JDialog {
         lineWidthTF.setToolTipText("Input an integer");
         appearance2Panel.add(lineWidthTF, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         final JLabel label6 = new JLabel();
-        label6.setText(" Aux line width: ");
+        label6.setText(" Live aux width: ");
         appearance2Panel.add(label6, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         auxLineTF = new JTextField();
         auxLineTF.setColumns(1);
