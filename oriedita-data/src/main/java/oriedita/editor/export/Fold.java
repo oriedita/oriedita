@@ -134,7 +134,7 @@ public class Fold {
     }
 
 
-    public void exportFile(Save save, LineSegmentSet lineSegmentSet, File file) throws InterruptedException, FileReadingException {
+    private void exportFile(Save save, LineSegmentSet lineSegmentSet, File file) throws InterruptedException, FileReadingException {
         try (FileOutputStream fileOutputStream = new FileOutputStream(file)) {
             CustomFoldWriter<FoldFile> foldFileCustomFoldWriter = new CustomFoldWriter<>(fileOutputStream);
             foldFileCustomFoldWriter.write(toFoldSave(save, lineSegmentSet));
@@ -143,10 +143,24 @@ public class Fold {
         }
     }
 
+    public void exportFile(Save save, File file) throws FileReadingException, InterruptedException {
+        LineSegmentSet s = new LineSegmentSet();
+        s.setSave(save);
+        if (s.getNumLineSegments() == 0) {
+            s.addLine(new Point(0,0), new Point(0,0), LineColor.BLACK_0);
+        }
+        exportFile(save, s, file);
+    }
+
+    public OrieditaFoldFile toFoldSave(Save save) throws InterruptedException {
+        LineSegmentSet s = new LineSegmentSet();
+        s.setSave(save);
+        return toFoldSave(save, s);
+    }
+
     public OrieditaFoldFile toFoldSave(Save save, LineSegmentSet lineSegmentSet) throws InterruptedException {
         WireFrame_Worker wireFrame_worker = new WireFrame_Worker(3.0);
-        wireFrame_worker.setLineSegmentSet(lineSegmentSet);
-
+        wireFrame_worker.setLineSegmentSetWithoutFaceOccurence(lineSegmentSet);
         PointSet pointSet = wireFrame_worker.get();
 
         OrieditaFoldFile foldFile = new OrieditaFoldFile();

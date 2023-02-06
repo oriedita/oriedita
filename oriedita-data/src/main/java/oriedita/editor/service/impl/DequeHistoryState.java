@@ -94,6 +94,7 @@ public class DequeHistoryState implements HistoryState {
              DeflaterOutputStream comp = new DeflaterOutputStream(bos);
              ObjectOutputStream out = new ObjectOutputStream(comp)) {
             out.writeObject(object);
+            out.close();
             return bos.toByteArray();
         }
     }

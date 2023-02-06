@@ -315,6 +315,7 @@
               <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="8" fill="2" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
+              <actionCommand value="backgroundToggleAction"/>
               <enabled value="false"/>
               <text value="Show"/>
             </properties>
@@ -326,6 +327,7 @@
               </grid>
             </constraints>
             <properties>
+              <actionCommand value="backgroundLockAction"/>
               <enabled value="false"/>
               <text value="Lock"/>
             </properties>

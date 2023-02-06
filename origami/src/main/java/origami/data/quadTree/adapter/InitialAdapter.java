@@ -1,6 +1,7 @@
 package origami.data.quadTree.adapter;
 
 import origami.crease_pattern.LineSegmentSet;
+import origami.crease_pattern.PointSet;
 import origami.crease_pattern.element.Point;
 import origami.data.quadTree.QuadTreeItem;
 
@@ -15,9 +16,13 @@ public class InitialAdapter extends LineSegmentSetAdapter {
     int addPointNum = 0;
 
     public InitialAdapter(LineSegmentSet set) {
-        super(set);
         // If you do not add +1 you will get an error when the number of faces is 1.
-        addPoint = new Point[set.getNumLineSegments() + 1];
+        this(set, set.getNumLineSegments()+1);
+    }
+
+    public InitialAdapter(LineSegmentSet set, int capacity) {
+        super(set);
+        addPoint = new Point[capacity];
     }
 
     @Override

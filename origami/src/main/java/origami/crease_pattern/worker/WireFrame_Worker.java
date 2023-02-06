@@ -209,6 +209,12 @@ public class WireFrame_Worker {
         return new LineSegmentSet(pointSet);
     }
 
+    public void setLineSegmentSetWithoutFaceOccurence(LineSegmentSet lineSegmentSet) throws InterruptedException {
+        reset();
+        definePointSet(lineSegmentSet);
+        defineLines(lineSegmentSet);
+    }
+
     public void setLineSegmentSet(LineSegmentSet lineSegmentSet) throws InterruptedException {
         reset();
 
@@ -227,7 +233,7 @@ public class WireFrame_Worker {
         boolean found;
         Point ti;
 
-        InitialAdapter adapter = new InitialAdapter(lineSegmentSet);
+        InitialAdapter adapter = new InitialAdapter(lineSegmentSet, lineSegmentSet.getNumLineSegments()*2);
         QuadTree qt = new QuadTree(adapter);
 
         for (int i = 0; i < lineSegmentSet.getNumLineSegments(); i++) {
