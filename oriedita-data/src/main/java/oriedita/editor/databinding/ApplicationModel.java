@@ -4,7 +4,9 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import oriedita.editor.Colors;
 import oriedita.editor.canvas.LineStyle;
+import oriedita.editor.handler.CustomLineTypes;
 
+import javax.swing.plaf.basic.BasicTreeUI;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Frame;
@@ -66,8 +68,9 @@ public class ApplicationModel implements Serializable {
     private Color gridScaleColor;
     private int gridLineWidth;
     private boolean displayNumbers;
-
     private boolean foldWarning;
+    private CustomLineTypes customFromLineType;
+    private CustomLineTypes customToLineType;
 
     @Inject
     public ApplicationModel() {
@@ -82,6 +85,26 @@ public class ApplicationModel implements Serializable {
 
     public boolean getFoldWarning() {
         return foldWarning;
+    }
+
+    public void setCustomFromLineType(CustomLineTypes customFromLineType){
+        CustomLineTypes oldCustomFromLineType = this.customFromLineType;
+        this.customFromLineType = customFromLineType;
+        this.pcs.firePropertyChange("customFromLineType", oldCustomFromLineType, customFromLineType);
+    }
+
+    public CustomLineTypes getCustomFromLineType(){
+        return customFromLineType;
+    }
+
+    public void setCustomToLineType(CustomLineTypes customToLineType){
+        CustomLineTypes oldCustomToLineType = this.customToLineType;
+        this.customToLineType = customToLineType;
+        this.pcs.firePropertyChange("customToLineType", oldCustomToLineType, customToLineType);
+    }
+
+    public CustomLineTypes getCustomToLineType(){
+        return customToLineType;
     }
 
     public boolean getDisplayNumbers() {
@@ -290,6 +313,9 @@ public class ApplicationModel implements Serializable {
         showInvisibleTextWarning = true;
 
         laf = "com.formdev.flatlaf.FlatLightLaf";
+
+        customFromLineType = CustomLineTypes.ANY;
+        customToLineType = CustomLineTypes.EGDE;
 
         this.pcs.firePropertyChange(null, null, null);
     }

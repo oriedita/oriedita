@@ -116,7 +116,7 @@ public class RightPanel {
         applicationModel.addPropertyChangeListener(e -> setData(applicationModel));
         angleSystemModel.addPropertyChangeListener(e -> setData(angleSystemModel));
         measuresModel.addPropertyChangeListener(e -> setData(measuresModel));
-        canvasModel.addPropertyChangeListener(e -> setData(e, canvasModel));
+        canvasModel.addPropertyChangeListener(e -> setData(e, canvasModel, applicationModel));
 
         auxHistoryState.addPropertyChangeListener(e -> setData(auxHistoryState));
 
@@ -377,7 +377,7 @@ public class RightPanel {
         measuredAngle3TextField.addActionListener(e -> measuresModel.setMeasuredAngle3(StringOp.String2double(measuredAngle3TextField.getText(), measuresModel.getMeasuredAngle3())));
 
         ad_fncButton.addActionListener(e -> {
-            openFrame = new OpenFrame("additionalFrame", frameProvider.get(), canvasModel, mainCreasePatternWorker, buttonService);
+            openFrame = new OpenFrame("additionalFrame", frameProvider.get(), canvasModel, mainCreasePatternWorker, buttonService, applicationModel);
 
             openFrame.setData(null, canvasModel);
 
@@ -710,8 +710,10 @@ public class RightPanel {
     }
 
     public void setData(ApplicationModel data) {
+        if (openFrame != null) openFrame.setData(data);
         c_colButton.setIcon(new ColorIcon(data.getCircleCustomizedColor()));
         cAMVCheckBox.setSelected(data.getCheck4Enabled());
+
 
         darkMode = LookAndFeelUtil.determineLafDark(data.getLaf());
 
@@ -724,7 +726,7 @@ public class RightPanel {
         }
     }
 
-    public void setData(PropertyChangeEvent e, CanvasModel data) {
+    public void setData(PropertyChangeEvent e, CanvasModel data, ApplicationModel applicationModel) {
         if (openFrame != null) openFrame.setData(e, data);
 
         if (e.getPropertyName() == null || e.getPropertyName().equals("mouseMode") || e.getPropertyName().equals("foldLineAdditionalInputMode")) {
