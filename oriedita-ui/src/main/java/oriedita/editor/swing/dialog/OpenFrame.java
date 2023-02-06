@@ -64,6 +64,7 @@ public class OpenFrame extends JDialog {
         buttonService.registerButton(del_lButton, "del_lAction");
         buttonService.registerButton(del_l_XButton, "del_l_XAction");
         buttonService.registerButton(selectAnd3ClickCheckBox, "selectAnd3ClickAction");
+        buttonService.registerButton(replace_lineButton, "replace_lineButton");
 
         o_F_checkButton.addActionListener(e -> canvasModel.setMouseMode(MouseMode.FLAT_FOLDABLE_CHECK_63));
         foldableLinePlusGridInputButton.addActionListener(e -> {
