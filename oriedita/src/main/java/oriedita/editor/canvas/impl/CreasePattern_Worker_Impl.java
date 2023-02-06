@@ -920,6 +920,10 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     }
 
     @Override
+    public boolean insideToReplace(Point p0a, Point p0b, int from, int to){
+        return foldLineSet.insideToReplace(createBox(p0a, p0b), from, to);
+    }
+    @Override
     public void setFoldLineAdditional(FoldLineAdditionalInputMode i) {
         i_foldLine_additional = i;
     }

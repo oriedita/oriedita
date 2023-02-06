@@ -422,6 +422,30 @@ public class FoldLineSet {
         return i_r;
     }
 
+    public boolean insideToReplace(Polygon b, int from, int to){
+        boolean i_r = false;
+
+        for (int i = 1; i <= total; i++){
+            LineSegment s;
+            s = lineSegments.get(i);
+            if(b.totu_boundary_inside(s)){
+                // From "Any"
+                if(from == -1){
+                    s.setColor(LineColor.fromNumber(to));
+                    i_r = true;
+                }
+                // From other line types
+                else {
+                    if(s.getColor().getNumber() == from){
+                        s.setColor(LineColor.fromNumber(to));
+                        i_r = true;
+                    }
+                }
+            }
+        }
+        return i_r;
+    }
+
     public boolean deleteInsideLine(LineSegment s_step1, String Dousa_mode) {
         //"l"  lXは小文字のエル。Senbun s_step1と重複する部分のある線分を削除するモード。
         //"lX" lXは小文字のエルと大文字のエックス。Senbun s_step1と重複する部分のある線分やX交差する線分を削除するモード。

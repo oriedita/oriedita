@@ -4,3 +4,4 @@ public enum FoldedFigureOperationMode {
     MODE_1,
     MODE_2,
 }
+
