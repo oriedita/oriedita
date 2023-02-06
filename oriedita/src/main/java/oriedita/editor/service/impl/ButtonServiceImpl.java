@@ -24,6 +24,7 @@ import oriedita.editor.tools.StringOp;
 
 import javax.swing.AbstractAction;
 import javax.swing.AbstractButton;
+import javax.swing.Action;
 import javax.swing.InputMap;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
@@ -121,7 +122,6 @@ public class ButtonServiceImpl implements ButtonService {
 
     @Override public void registerButton(AbstractButton button, String key) {
 
-
         String name = ResourceUtil.getBundleString("name", key);
         String keyStrokeString = ResourceUtil.getBundleString("hotkey", key);
         // String tooltip = ResourceUtil.getBundleString("tooltip", key);
@@ -188,15 +188,22 @@ public class ButtonServiceImpl implements ButtonService {
         if (!StringOp.isEmpty(help)) {
             button.addActionListener(e -> {
                 explanation.setExplanation(fKey);
-
-                Button_shared_operation();
+                Action action = button.getAction();
+                if (action instanceof OrieditaAction) {
+                    OrieditaAction oAction = (OrieditaAction) action;
+                    Button_shared_operation(oAction.resetLineStep());
+                } else {
+                    Button_shared_operation(true);
+                }
             });
         }
     }
 
     @Override
-    public void Button_shared_operation() {
-        mainCreasePatternWorker.setDrawingStage(0);
+    public void Button_shared_operation(boolean resetLineStep) {
+        if (resetLineStep) {
+            mainCreasePatternWorker.setDrawingStage(0);
+        }
         mainCreasePatternWorker.resetCircleStep();
         // TODO RESET VORONOI mouseHandlerVoronoiCreate.getVoronoiLineSet().clear();
 

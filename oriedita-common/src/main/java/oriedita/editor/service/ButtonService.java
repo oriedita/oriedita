@@ -14,7 +14,11 @@ public interface ButtonService {
 
     void registerButton(AbstractButton button, String key);
 
-    void Button_shared_operation();
+    void Button_shared_operation(boolean resetLineStep);
+
+    default void Button_shared_operation() {
+        Button_shared_operation(true);
+    }
 
     Map<KeyStroke, AbstractButton> getHelpInputMap();
 

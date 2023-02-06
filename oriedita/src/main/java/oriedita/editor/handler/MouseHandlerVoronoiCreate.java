@@ -68,6 +68,9 @@ public class MouseHandlerVoronoiCreate extends BaseMouseHandler {
 
     //マウス操作(mouseMode==62ボロノイ　でボタンを押したとき)時の作業----------------------------------------------------
     public void mousePressed(Point p0) {
+        if (d.getLineStep().isEmpty()) {
+            reset();
+        }
         Point p = new Point();
         p.set(d.getCamera().TV2object(p0));
 
@@ -233,6 +236,13 @@ public class MouseHandlerVoronoiCreate extends BaseMouseHandler {
             s.setColor(LineColor.MAGENTA_5);
             d.getLineStep().add(s);
         }
+    }
+
+    @Override
+    public void reset() {
+        super.reset();
+        voronoiLineSet.clear();
+        lineSegment_voronoi_onePoint.clear();
     }
 
     List<LineSegment> s_step_no_1_top_continue_no_point_no_number() {//line_step [i] returns the number of Point (length 0) from the beginning. Returns 0 if there are no dots

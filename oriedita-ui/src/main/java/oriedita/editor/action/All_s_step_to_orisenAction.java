@@ -20,10 +20,16 @@ public class All_s_step_to_orisenAction extends AbstractOrieditaAction {
     }
 
     @Override
+    public boolean resetLineStep() {
+        return false;
+    }
+
+    @Override
     public void actionPerformed(ActionEvent e) {
         Logger.info("i_egaki_dankai = " + mainCreasePatternWorker.getDrawingStage());
         Logger.info("i_kouho_dankai = " + mainCreasePatternWorker.getCandidateSize());
 
         mainCreasePatternWorker.all_s_step_to_orisen();
+        mainCreasePatternWorker.getLineStep().clear();
     }
 }
