@@ -5,7 +5,6 @@ import origami.crease_pattern.FoldingException;
 import origami.crease_pattern.LineSegmentSet;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.PointSet;
-import origami.crease_pattern.element.Line;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.Point;
 import origami.data.ListArray;
@@ -234,7 +233,7 @@ public class WireFrame_Worker {
         boolean found;
         Point ti;
 
-        InitialAdapter adapter = new InitialAdapter(lineSegmentSet);
+        InitialAdapter adapter = new InitialAdapter(lineSegmentSet, lineSegmentSet.getNumLineSegments()*2);
         QuadTree qt = new QuadTree(adapter);
 
         for (int i = 0; i < lineSegmentSet.getNumLineSegments(); i++) {

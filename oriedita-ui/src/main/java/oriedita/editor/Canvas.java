@@ -56,7 +56,6 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
@@ -504,7 +503,7 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
     //マウス操作(ボタンを押したとき)を行う関数----------------------------------------------------
     public void mousePressed(MouseEvent e) {
         Point p = e2p(e);
-
+        canvasUI.requestFocus();
         mouseDraggedValid = true;
         mouseReleasedValid = true;
 
