@@ -238,12 +238,12 @@ public class PreferenceDialog extends JDialog {
             public void mouseDragged(MouseEvent e) {
                 tempTransparency = applicationModel.getCheck4ColorTransparency() + (e.getX() / ck4XStart) * 10;
                 tempTransparency -= tempTransparency % 10;
-                if (tempTransparency <= 50) {
-                    tempTransparency = 50;
-                } else if (tempTransparency >= 250) {
-                    tempTransparency = 250;
-                }
                 tempTransparency = (tempTransparency / 5) * 2;
+                if (tempTransparency <= 20) {
+                    tempTransparency = 20;
+                } else if (tempTransparency >= 100) {
+                    tempTransparency = 100;
+                }
                 ck4Slider.setValue(tempTransparency);
             }
 
