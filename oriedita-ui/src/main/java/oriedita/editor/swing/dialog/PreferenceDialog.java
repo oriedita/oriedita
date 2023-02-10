@@ -31,7 +31,6 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Insets;
-import java.awt.Window;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -108,8 +107,6 @@ public class PreferenceDialog extends JDialog {
     private int tempTransparency;
     private final ApplicationModel applicationModel;
     private final ApplicationModel tempModel;
-    private final LookAndFeelService lookAndFeelService;
-    private final FrameProvider frameProvider;
     private final FoldedFigureModel foldedFigureModel;
     private final FoldedFigureModel tempfoldedModel;
 
@@ -159,10 +156,6 @@ public class PreferenceDialog extends JDialog {
         this.applicationModel = appModel;
         this.tempModel = new ApplicationModel();
         this.tempModel.set(appModel);
-
-        this.lookAndFeelService = lookAndFeelService;
-        this.frameProvider = frameProvider;
-
         this.foldedFigureModel = foldedFigureModel;
         this.tempfoldedModel = new FoldedFigureModel();
         this.tempfoldedModel.set(foldedFigureModel);
@@ -211,16 +204,8 @@ public class PreferenceDialog extends JDialog {
                 ck4Slider.setVisible(false);
                 ck4TF.setText(Integer.toString(tempTransparency));
                 applicationModel.setCheck4ColorTransparency((tempTransparency / 2) * 5);
-                if (tempTransparency > 20) {
-                    ck4Minus.setEnabled(true);
-                } else {
-                    ck4Minus.setEnabled(false);
-                }
-                if (tempTransparency < 100) {
-                    ck4Plus.setEnabled(true);
-                } else {
-                    ck4Plus.setEnabled(false);
-                }
+                ck4Minus.setEnabled(tempTransparency > 20);
+                ck4Plus.setEnabled(tempTransparency < 100);
             }
 
             @Override
