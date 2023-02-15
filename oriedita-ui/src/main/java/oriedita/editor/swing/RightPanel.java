@@ -33,6 +33,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
 
 @ApplicationScoped
@@ -397,6 +399,12 @@ public class RightPanel {
         angleCTextField.addActionListener(listener1);
         angleBTextField.addActionListener(listener1);
         polygonSizeTextField.addActionListener(e -> polygonSizeSetButton.doClick());
+        polygonSizeTextField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                polygonSizeTextField.setEditable((e.getKeyChar() >= '0' && e.getKeyChar() <= '9') || e.getKeyChar() == KeyEvent.VK_BACK_SPACE);
+            }
+        });
     }
 
     private void setData(HistoryState auxHistoryState) {
