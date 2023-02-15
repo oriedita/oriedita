@@ -48,6 +48,7 @@ import javax.swing.border.LineBorder;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Insets;
+import java.awt.RenderingHints;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
@@ -383,7 +384,7 @@ public class LeftPanel {
         lineSegmentDivisionTextField.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
-                lineSegmentDivisionTextField.setEditable((e.getKeyChar() >= '0' && e.getKeyChar() <= '9') || e.getKeyChar() == KeyEvent.VK_BACK_SPACE);
+                lineSegmentDivisionTextField.setEditable(onlyInt(e));
             }
         });
         senbun_b_nyuryokuButton.addActionListener(e -> {
@@ -588,7 +589,7 @@ public class LeftPanel {
         gridSizeTextField.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
-                gridSizeTextField.setEditable((e.getKeyChar() >= '0' && e.getKeyChar() <= '9') || e.getKeyChar() == KeyEvent.VK_BACK_SPACE);
+                gridSizeTextField.setEditable(onlyInt(e));
             }
         });
         gridSizeIncreaseButton.addActionListener(e -> gridModel.setGridSize(gridModel.getGridSize() * 2));
@@ -609,7 +610,7 @@ public class LeftPanel {
         intervalGridSizeTextField.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
-                intervalGridSizeTextField.setEditable((e.getKeyChar() >= '0' && e.getKeyChar() <= '9') || e.getKeyChar() == KeyEvent.VK_BACK_SPACE);
+                intervalGridSizeTextField.setEditable(onlyInt(e));
             }
         });
         moveIntervalGridHorizontal.addActionListener(e -> gridModel.changeVerticalScalePosition());
@@ -620,12 +621,54 @@ public class LeftPanel {
                 applicationModel.setGridScaleColor(color);
             }
         });
+        gridXATextField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                gridXATextField.setEditable(onlyDouble(e, gridXATextField));
+            }
+        });
+        gridXBTextField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                gridXBTextField.setEditable(onlyDouble(e, gridXBTextField));
+            }
+        });
+        gridXCTextField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                gridXCTextField.setEditable(onlyDouble(e, gridXCTextField));
+            }
+        });
+        gridYATextField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                gridYATextField.setEditable(onlyDouble(e, gridYATextField));
+            }
+        });
+        gridYBTextField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                gridYBTextField.setEditable(onlyDouble(e, gridYBTextField));
+            }
+        });
+        gridYCTextField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                gridYCTextField.setEditable(onlyDouble(e, gridYCTextField));
+            }
+        });
         setGridParametersButton.addActionListener(e -> {
             getData(gridModel);
             // Update the view if the grid angle got reset
             setData(gridModel);
         });
         gridAngleTextField.addActionListener(e -> setGridParametersButton.doClick());
+        gridAngleTextField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                gridAngleTextField.setEditable(onlyDouble(e, gridAngleTextField));
+            }
+        });
         resetGridButton.addActionListener(e -> gridModel.reset());
         drawDiagonalGridlinesCheckBox.addActionListener(e -> gridModel.setDrawDiagonalGridlines(drawDiagonalGridlinesCheckBox.isSelected()));
     }
@@ -660,6 +703,14 @@ public class LeftPanel {
         gridAngleTextField.setText(String.valueOf(data.getGridAngle()));
 
         gridSizeDecreaseButton.setEnabled(data.getGridSize() != 1);
+    }
+
+    public boolean onlyInt(KeyEvent e) {
+        return (e.getKeyChar() >= '0' && e.getKeyChar() <= '9') || e.getKeyChar() == KeyEvent.VK_BACK_SPACE;
+    }
+
+    public boolean onlyDouble(KeyEvent e, JTextField tf) {
+        return (e.getKeyChar() >= '0' && e.getKeyChar() <= '9') || e.getKeyChar() == KeyEvent.VK_BACK_SPACE || (e.getKeyChar() == '.' && !tf.getText().contains("."));
     }
 
     {

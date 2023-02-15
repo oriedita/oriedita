@@ -392,17 +392,53 @@ public class RightPanel {
         });
         ActionListener listener = e -> restrictedAngleSetDEFButton.doClick();
         angleDTextField.addActionListener(listener);
+        angleDTextField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                angleDTextField.setEditable(onlyDouble(e, angleDTextField));
+            }
+        });
         angleETextField.addActionListener(listener);
+        angleETextField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                angleETextField.setEditable(onlyDouble(e, angleETextField));
+            }
+        });
         angleFTextField.addActionListener(listener);
+        angleFTextField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                angleFTextField.setEditable(onlyDouble(e, angleFTextField));
+            }
+        });
         ActionListener listener1 = e -> restrictedAngleABCSetButton.doClick();
         angleATextField.addActionListener(listener1);
+        angleATextField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                angleATextField.setEditable(onlyDouble(e, angleATextField));
+            }
+        });
         angleCTextField.addActionListener(listener1);
+        angleCTextField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                angleCTextField.setEditable(onlyDouble(e, angleCTextField));
+            }
+        });
         angleBTextField.addActionListener(listener1);
+        angleBTextField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                angleBTextField.setEditable(onlyDouble(e, angleBTextField));
+            }
+        });
         polygonSizeTextField.addActionListener(e -> polygonSizeSetButton.doClick());
         polygonSizeTextField.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
-                polygonSizeTextField.setEditable((e.getKeyChar() >= '0' && e.getKeyChar() <= '9') || e.getKeyChar() == KeyEvent.VK_BACK_SPACE);
+                polygonSizeTextField.setEditable(onlyInt(e));
             }
         });
     }
@@ -410,6 +446,14 @@ public class RightPanel {
     private void setData(HistoryState auxHistoryState) {
         h_undoButton.setEnabled(auxHistoryState.canUndo());
         h_redoButton.setEnabled(auxHistoryState.canRedo());
+    }
+
+    public boolean onlyInt(KeyEvent e) {
+        return (e.getKeyChar() >= '0' && e.getKeyChar() <= '9') || e.getKeyChar() == KeyEvent.VK_BACK_SPACE;
+    }
+
+    public boolean onlyDouble(KeyEvent e, JTextField tf) {
+        return (e.getKeyChar() >= '0' && e.getKeyChar() <= '9') || e.getKeyChar() == KeyEvent.VK_BACK_SPACE || (e.getKeyChar() == '.' && !tf.getText().contains("."));
     }
 
     /**
@@ -529,6 +573,7 @@ public class RightPanel {
         l1Button.setText("L1=");
         panel6.add(l1Button, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, 1, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         measuredLength1TextField = new JTextField();
+        measuredLength1TextField.setEditable(false);
         measuredLength1TextField.setOpaque(true);
         measuredLength1TextField.setText("0.0");
         panel6.add(measuredLength1TextField, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
@@ -537,6 +582,7 @@ public class RightPanel {
         l2Button.setText("L2=");
         panel6.add(l2Button, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, 1, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         measuredLength2TextField = new JTextField();
+        measuredLength2TextField.setEditable(false);
         measuredLength2TextField.setOpaque(true);
         measuredLength2TextField.setText("0.0");
         panel6.add(measuredLength2TextField, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
@@ -545,14 +591,17 @@ public class RightPanel {
         a3Button.setText("A3=");
         panel6.add(a3Button, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, 1, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         measuredAngle3TextField = new JTextField();
+        measuredAngle3TextField.setEditable(false);
         measuredAngle3TextField.setOpaque(true);
         measuredAngle3TextField.setText("0.0");
         panel6.add(measuredAngle3TextField, new GridConstraints(4, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         measuredAngle2TextField = new JTextField();
+        measuredAngle2TextField.setEditable(false);
         measuredAngle2TextField.setOpaque(true);
         measuredAngle2TextField.setText("0.0");
         panel6.add(measuredAngle2TextField, new GridConstraints(3, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         measuredAngle1TextField = new JTextField();
+        measuredAngle1TextField.setEditable(false);
         measuredAngle1TextField.setOpaque(true);
         measuredAngle1TextField.setText("0.0");
         panel6.add(measuredAngle1TextField, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
