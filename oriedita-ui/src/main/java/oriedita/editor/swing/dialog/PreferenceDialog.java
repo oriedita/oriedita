@@ -162,7 +162,6 @@ public class PreferenceDialog extends JDialog {
         setData(applicationModel);
         setContentPane($$$getRootComponent$$$());
         setDefaultCloseOperation(HIDE_ON_CLOSE);
-//        setModal(true);
         getRootPane().setDefaultButton(buttonOK);
 
         ck4Slider.setVisible(false);
