@@ -48,12 +48,14 @@ import javax.swing.border.LineBorder;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Insets;
+import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
 import java.util.Arrays;
 
 @ApplicationScoped
 public class LeftPanel {
-    @Inject @ActionHandler(ActionType.lineWidthDecreaseAction)
+    @Inject
+    @ActionHandler(ActionType.lineWidthDecreaseAction)
     LineWidthDecreaseAction lineWidthDecreaseAction;
     private final FrameProvider frameProvider;
     private final HistoryState historyState;
@@ -192,8 +194,6 @@ public class LeftPanel {
         this.drawCreaseFreeAction = drawCreaseFreeAction;
         this.foldingService = foldingService;
         this.foldedFiguresList = foldedFiguresList;
-
-
     }
 
     public void init() {
@@ -377,6 +377,7 @@ public class LeftPanel {
             canvasModel.setMouseModeAfterColorSelection(MouseMode.LINE_SEGMENT_DIVISION_27);
         });
         lineSegmentDivisionTextField.addActionListener(e -> lineSegmentDivisionSetButton.doClick());
+        lineSegmentDivisionTextField.addKeyListener(new OnlyIntAdapter(lineSegmentDivisionTextField));
         senbun_b_nyuryokuButton.addActionListener(e -> {
             getData(applicationModel);
 
@@ -576,6 +577,7 @@ public class LeftPanel {
         });
         gridSizeSetButton.addActionListener(e -> getData(gridModel));
         gridSizeTextField.addActionListener(e -> gridSizeSetButton.doClick());
+        gridSizeTextField.addKeyListener(new OnlyIntAdapter(gridSizeTextField));
         gridSizeIncreaseButton.addActionListener(e -> gridModel.setGridSize(gridModel.getGridSize() * 2));
         gridColorButton.addActionListener(e -> {
             //以下にやりたいことを書く
@@ -591,6 +593,7 @@ public class LeftPanel {
         moveIntervalGridVerticalButton.addActionListener(e -> gridModel.changeHorizontalScalePosition());
         setIntervalGridSizeButton.addActionListener(e -> getData(gridModel));
         intervalGridSizeTextField.addActionListener(e -> setIntervalGridSizeButton.doClick());
+        intervalGridSizeTextField.addKeyListener(new OnlyIntAdapter(intervalGridSizeTextField));
         moveIntervalGridHorizontal.addActionListener(e -> gridModel.changeVerticalScalePosition());
         intervalGridColorButton.addActionListener(e -> {
             //以下にやりたいことを書く
@@ -599,12 +602,19 @@ public class LeftPanel {
                 applicationModel.setGridScaleColor(color);
             }
         });
+        gridXATextField.addKeyListener(new OnlyDoubleAdapter(gridXATextField));
+        gridXBTextField.addKeyListener(new OnlyDoubleAdapter(gridXBTextField));
+        gridXCTextField.addKeyListener(new OnlyDoubleAdapter(gridXCTextField));
+        gridYATextField.addKeyListener(new OnlyDoubleAdapter(gridYATextField));
+        gridYBTextField.addKeyListener(new OnlyDoubleAdapter(gridYBTextField));
+        gridYCTextField.addKeyListener(new OnlyDoubleAdapter(gridXCTextField));
         setGridParametersButton.addActionListener(e -> {
             getData(gridModel);
             // Update the view if the grid angle got reset
             setData(gridModel);
         });
         gridAngleTextField.addActionListener(e -> setGridParametersButton.doClick());
+        gridAngleTextField.addKeyListener(new OnlyDoubleAdapter(gridAngleTextField));
         resetGridButton.addActionListener(e -> gridModel.reset());
         drawDiagonalGridlinesCheckBox.addActionListener(e -> gridModel.setDrawDiagonalGridlines(drawDiagonalGridlinesCheckBox.isSelected()));
     }
