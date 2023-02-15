@@ -392,68 +392,25 @@ public class RightPanel {
         });
         ActionListener listener = e -> restrictedAngleSetDEFButton.doClick();
         angleDTextField.addActionListener(listener);
-        angleDTextField.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent e) {
-                angleDTextField.setEditable(onlyDouble(e, angleDTextField));
-            }
-        });
+        angleDTextField.addKeyListener(new OnlyDoubleAdapter(angleDTextField));
         angleETextField.addActionListener(listener);
-        angleETextField.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent e) {
-                angleETextField.setEditable(onlyDouble(e, angleETextField));
-            }
-        });
+        angleETextField.addKeyListener(new OnlyDoubleAdapter(angleETextField));
         angleFTextField.addActionListener(listener);
-        angleFTextField.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent e) {
-                angleFTextField.setEditable(onlyDouble(e, angleFTextField));
-            }
-        });
+        angleFTextField.addKeyListener(new OnlyDoubleAdapter(angleFTextField));
         ActionListener listener1 = e -> restrictedAngleABCSetButton.doClick();
         angleATextField.addActionListener(listener1);
-        angleATextField.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent e) {
-                angleATextField.setEditable(onlyDouble(e, angleATextField));
-            }
-        });
+        angleATextField.addKeyListener(new OnlyDoubleAdapter(angleATextField));
         angleCTextField.addActionListener(listener1);
-        angleCTextField.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent e) {
-                angleCTextField.setEditable(onlyDouble(e, angleCTextField));
-            }
-        });
+        angleCTextField.addKeyListener(new OnlyDoubleAdapter(angleCTextField));
         angleBTextField.addActionListener(listener1);
-        angleBTextField.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent e) {
-                angleBTextField.setEditable(onlyDouble(e, angleBTextField));
-            }
-        });
+        angleBTextField.addKeyListener(new OnlyDoubleAdapter(angleBTextField));
         polygonSizeTextField.addActionListener(e -> polygonSizeSetButton.doClick());
-        polygonSizeTextField.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent e) {
-                polygonSizeTextField.setEditable(onlyInt(e));
-            }
-        });
+        polygonSizeTextField.addKeyListener(new OnlyIntAdapter(polygonSizeTextField));
     }
 
     private void setData(HistoryState auxHistoryState) {
         h_undoButton.setEnabled(auxHistoryState.canUndo());
         h_redoButton.setEnabled(auxHistoryState.canRedo());
-    }
-
-    public boolean onlyInt(KeyEvent e) {
-        return (e.getKeyChar() >= '0' && e.getKeyChar() <= '9') || e.getKeyChar() == KeyEvent.VK_BACK_SPACE;
-    }
-
-    public boolean onlyDouble(KeyEvent e, JTextField tf) {
-        return (e.getKeyChar() >= '0' && e.getKeyChar() <= '9') || e.getKeyChar() == KeyEvent.VK_BACK_SPACE || (e.getKeyChar() == '.' && !tf.getText().contains("."));
     }
 
     /**

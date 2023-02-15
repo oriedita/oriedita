@@ -48,8 +48,6 @@ import javax.swing.border.LineBorder;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Insets;
-import java.awt.RenderingHints;
-import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
 import java.util.Arrays;
@@ -196,8 +194,6 @@ public class LeftPanel {
         this.drawCreaseFreeAction = drawCreaseFreeAction;
         this.foldingService = foldingService;
         this.foldedFiguresList = foldedFiguresList;
-
-
     }
 
     public void init() {
@@ -381,12 +377,7 @@ public class LeftPanel {
             canvasModel.setMouseModeAfterColorSelection(MouseMode.LINE_SEGMENT_DIVISION_27);
         });
         lineSegmentDivisionTextField.addActionListener(e -> lineSegmentDivisionSetButton.doClick());
-        lineSegmentDivisionTextField.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent e) {
-                lineSegmentDivisionTextField.setEditable(onlyInt(e));
-            }
-        });
+        lineSegmentDivisionTextField.addKeyListener(new OnlyIntAdapter(lineSegmentDivisionTextField));
         senbun_b_nyuryokuButton.addActionListener(e -> {
             getData(applicationModel);
 
@@ -586,12 +577,7 @@ public class LeftPanel {
         });
         gridSizeSetButton.addActionListener(e -> getData(gridModel));
         gridSizeTextField.addActionListener(e -> gridSizeSetButton.doClick());
-        gridSizeTextField.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent e) {
-                gridSizeTextField.setEditable(onlyInt(e));
-            }
-        });
+        gridSizeTextField.addKeyListener(new OnlyIntAdapter(gridSizeTextField));
         gridSizeIncreaseButton.addActionListener(e -> gridModel.setGridSize(gridModel.getGridSize() * 2));
         gridColorButton.addActionListener(e -> {
             //以下にやりたいことを書く
@@ -607,12 +593,7 @@ public class LeftPanel {
         moveIntervalGridVerticalButton.addActionListener(e -> gridModel.changeHorizontalScalePosition());
         setIntervalGridSizeButton.addActionListener(e -> getData(gridModel));
         intervalGridSizeTextField.addActionListener(e -> setIntervalGridSizeButton.doClick());
-        intervalGridSizeTextField.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent e) {
-                intervalGridSizeTextField.setEditable(onlyInt(e));
-            }
-        });
+        intervalGridSizeTextField.addKeyListener(new OnlyIntAdapter(intervalGridSizeTextField));
         moveIntervalGridHorizontal.addActionListener(e -> gridModel.changeVerticalScalePosition());
         intervalGridColorButton.addActionListener(e -> {
             //以下にやりたいことを書く
@@ -621,54 +602,19 @@ public class LeftPanel {
                 applicationModel.setGridScaleColor(color);
             }
         });
-        gridXATextField.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent e) {
-                gridXATextField.setEditable(onlyDouble(e, gridXATextField));
-            }
-        });
-        gridXBTextField.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent e) {
-                gridXBTextField.setEditable(onlyDouble(e, gridXBTextField));
-            }
-        });
-        gridXCTextField.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent e) {
-                gridXCTextField.setEditable(onlyDouble(e, gridXCTextField));
-            }
-        });
-        gridYATextField.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent e) {
-                gridYATextField.setEditable(onlyDouble(e, gridYATextField));
-            }
-        });
-        gridYBTextField.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent e) {
-                gridYBTextField.setEditable(onlyDouble(e, gridYBTextField));
-            }
-        });
-        gridYCTextField.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent e) {
-                gridYCTextField.setEditable(onlyDouble(e, gridYCTextField));
-            }
-        });
+        gridXATextField.addKeyListener(new OnlyDoubleAdapter(gridXATextField));
+        gridXBTextField.addKeyListener(new OnlyDoubleAdapter(gridXBTextField));
+        gridXCTextField.addKeyListener(new OnlyDoubleAdapter(gridXCTextField));
+        gridYATextField.addKeyListener(new OnlyDoubleAdapter(gridYATextField));
+        gridYBTextField.addKeyListener(new OnlyDoubleAdapter(gridYBTextField));
+        gridYCTextField.addKeyListener(new OnlyDoubleAdapter(gridXCTextField));
         setGridParametersButton.addActionListener(e -> {
             getData(gridModel);
             // Update the view if the grid angle got reset
             setData(gridModel);
         });
         gridAngleTextField.addActionListener(e -> setGridParametersButton.doClick());
-        gridAngleTextField.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent e) {
-                gridAngleTextField.setEditable(onlyDouble(e, gridAngleTextField));
-            }
-        });
+        gridAngleTextField.addKeyListener(new OnlyDoubleAdapter(gridAngleTextField));
         resetGridButton.addActionListener(e -> gridModel.reset());
         drawDiagonalGridlinesCheckBox.addActionListener(e -> gridModel.setDrawDiagonalGridlines(drawDiagonalGridlinesCheckBox.isSelected()));
     }
@@ -703,14 +649,6 @@ public class LeftPanel {
         gridAngleTextField.setText(String.valueOf(data.getGridAngle()));
 
         gridSizeDecreaseButton.setEnabled(data.getGridSize() != 1);
-    }
-
-    public boolean onlyInt(KeyEvent e) {
-        return (e.getKeyChar() >= '0' && e.getKeyChar() <= '9') || e.getKeyChar() == KeyEvent.VK_BACK_SPACE;
-    }
-
-    public boolean onlyDouble(KeyEvent e, JTextField tf) {
-        return (e.getKeyChar() >= '0' && e.getKeyChar() <= '9') || e.getKeyChar() == KeyEvent.VK_BACK_SPACE || (e.getKeyChar() == '.' && !tf.getText().contains("."));
     }
 
     {
