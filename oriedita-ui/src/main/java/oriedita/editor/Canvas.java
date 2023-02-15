@@ -756,6 +756,9 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
 
             if (target == MouseWheelTarget.CREASE_PATTERN_0) {
                 creasePatternCameraModel.zoomBy(scrollDistance);
+                for (FoldedFigure_Drawer foldedFigure_drawer : foldedFiguresList.getItems()) {
+                    foldedFigure_drawer.scale(1, creasePatternCamera.object2TV(creasePatternCamera.getCameraPosition()));
+                }
                 foldedFigureModel.zoomBy(scrollDistance);
                 // Move all other objects along.
                 for (FoldedFigure_Drawer foldedFigure_drawer : foldedFiguresList.getItems()) {
