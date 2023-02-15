@@ -6,7 +6,6 @@ import oriedita.editor.Colors;
 import oriedita.editor.canvas.LineStyle;
 import oriedita.editor.handler.CustomLineTypes;
 
-import javax.swing.plaf.basic.BasicTreeUI;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Frame;
@@ -71,6 +70,8 @@ public class ApplicationModel implements Serializable {
     private boolean foldWarning;
     private CustomLineTypes customFromLineType;
     private CustomLineTypes customToLineType;
+
+    private boolean moveFoldedModelWithCp;
 
     @Inject
     public ApplicationModel() {
@@ -317,9 +318,20 @@ public class ApplicationModel implements Serializable {
         customFromLineType = CustomLineTypes.ANY;
         customToLineType = CustomLineTypes.EGDE;
 
+        moveFoldedModelWithCp = true;
+
         this.pcs.firePropertyChange(null, null, null);
     }
 
+    public boolean getMoveFoldedModelWithCp() {
+        return moveFoldedModelWithCp;
+    }
+
+    public void setMoveFoldedModelWithCp(boolean moveFoldedModelWithCp) {
+        boolean oldValue = this.moveFoldedModelWithCp;
+        this.moveFoldedModelWithCp = moveFoldedModelWithCp;
+        pcs.firePropertyChange("moveFoldedModelWithCp", oldValue, moveFoldedModelWithCp);
+    }
 
     public int getAuxLineWidth() {
         return auxLineWidth;
@@ -690,6 +702,11 @@ public class ApplicationModel implements Serializable {
 
         laf = applicationModel.getLaf();
         recentFileList = applicationModel.getRecentFileList().stream().filter(File::exists).collect(Collectors.toList());
+
+        customFromLineType = applicationModel.getCustomFromLineType();
+        customToLineType = applicationModel.getCustomToLineType();
+
+        moveFoldedModelWithCp = applicationModel.getMoveFoldedModelWithCp();
 
         this.pcs.firePropertyChange(null, null, null);
     }
