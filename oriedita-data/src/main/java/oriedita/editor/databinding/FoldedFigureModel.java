@@ -100,6 +100,18 @@ public class FoldedFigureModel implements Serializable {
         this.pcs.firePropertyChange(null, null, null);
     }
 
+    public void restorePrefDefaults(){
+        antiAlias = true;
+
+        this.pcs.firePropertyChange(null, null, null);
+    }
+
+    public boolean isSame (FoldedFigureModel foldedFigureModel){
+        if(antiAlias == foldedFigureModel.getAntiAlias()){
+            return true;
+        } else { return false; }
+    }
+
     public Color getFrontColor() {
         return frontColor;
     }
