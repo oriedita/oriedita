@@ -34,8 +34,8 @@ public class BaseSave implements Save {
     }
 
     public void setApplicationModel(ApplicationModel applicationModel) {
-        this.applicationModel = new ApplicationModel();
         if (applicationModel != null) {
+            this.applicationModel = new ApplicationModel();
             this.applicationModel.set(applicationModel);
         }
     }
