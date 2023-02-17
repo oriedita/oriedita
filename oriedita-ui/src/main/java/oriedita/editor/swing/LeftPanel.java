@@ -607,7 +607,7 @@ public class LeftPanel {
         gridXCTextField.addKeyListener(new OnlyDoubleAdapter(gridXCTextField));
         gridYATextField.addKeyListener(new OnlyDoubleAdapter(gridYATextField));
         gridYBTextField.addKeyListener(new OnlyDoubleAdapter(gridYBTextField));
-        gridYCTextField.addKeyListener(new OnlyDoubleAdapter(gridXCTextField));
+        gridYCTextField.addKeyListener(new OnlyDoubleAdapter(gridYCTextField));
         setGridParametersButton.addActionListener(e -> {
             getData(gridModel);
             // Update the view if the grid angle got reset
