@@ -48,6 +48,12 @@ public class MouseHandlerCreaseSelect extends BaseMouseHandlerBoxSelect {
     }
 
     @Override
+    public void reset() {
+        super.reset();
+        canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.NORMAL_0);
+    }
+
+    @Override
     public void mouseMoved(Point p0) {
 
     }
