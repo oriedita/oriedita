@@ -136,17 +136,11 @@ public class TopPanel implements PropertyChangeListener {
         mouseSettingsCheckBox.addActionListener(e -> applicationModel.setMouseWheelMovesCreasePattern(mouseSettingsCheckBox.isSelected()));
 
         ratioATextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(ratioATextField));
-        ratioATextField.addFocusListener(new InputFocusAdapter(ratioATextField));
         ratioBTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(ratioBTextField));
-        ratioBTextField.addFocusListener(new InputFocusAdapter(ratioBTextField));
         ratioCTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(ratioCTextField));
-        ratioCTextField.addFocusListener(new InputFocusAdapter(ratioCTextField));
         ratioDTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(ratioDTextField));
-        ratioDTextField.addFocusListener(new InputFocusAdapter(ratioDTextField));
         ratioETextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(ratioETextField));
-        ratioETextField.addFocusListener(new InputFocusAdapter(ratioETextField));
         ratioFTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(ratioFTextField));
-        ratioFTextField.addFocusListener(new InputFocusAdapter(ratioFTextField));
 
 
         scaleFactorSetButton.addActionListener(e -> {
@@ -170,7 +164,6 @@ public class TopPanel implements PropertyChangeListener {
         });
         scaleFactorTextField.addActionListener(e -> scaleFactorSetButton.doClick());
         scaleFactorTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(scaleFactorTextField));
-        scaleFactorTextField.addFocusListener(new InputFocusAdapter(scaleFactorTextField));
         creasePatternZoomInButton.addActionListener(e -> {
             creasePatternCameraModel.zoomIn();
 
@@ -192,7 +185,6 @@ public class TopPanel implements PropertyChangeListener {
         rotationSetButton.addActionListener(e -> creasePatternCameraModel.setRotation(measuresModel.string2double(rotationTextField.getText(), creasePatternCameraModel.getRotation())));
         rotationTextField.addActionListener(e -> rotationSetButton.doClick());
         rotationTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(rotationTextField));
-        rotationTextField.addFocusListener(new InputFocusAdapter(rotationTextField));
         rotateClockwiseButton.addActionListener(e -> creasePatternCameraModel.decreaseRotation());
         transparentButton.addActionListener(e -> canvas.createTransparentBackground());
         backgroundSetPositionButton.addActionListener(e -> {
