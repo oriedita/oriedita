@@ -1,21 +1,42 @@
 package oriedita.editor.swing;
 
 import javax.swing.JTextField;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import java.awt.Color;
+import java.util.regex.Pattern;
 
-public class OnlyDoubleAdapter extends KeyAdapter {
-    private JTextField tf;
+public class OnlyDoubleAdapter implements DocumentListener {
+    private final JTextField tf;
 
     public OnlyDoubleAdapter(JTextField tf) {
         this.tf = tf;
     }
 
-    public void keyPressed(KeyEvent e) {
-        tf.setEditable(onlyDouble(e, tf));
+    @Override
+    public void insertUpdate(DocumentEvent e) {
+        keyPressed();
     }
 
-    public boolean onlyDouble(KeyEvent e, JTextField tf) {
-        return (e.getKeyChar() >= '0' && e.getKeyChar() <= '9') || e.getKeyChar() == KeyEvent.VK_BACK_SPACE || (e.getKeyChar() == '.' && !tf.getText().contains("."));
+    @Override
+    public void removeUpdate(DocumentEvent e) {
+        keyPressed();
+    }
+
+    @Override
+    public void changedUpdate(DocumentEvent e) {
+        keyPressed();
+    }
+
+    public void keyPressed() {
+        if(!onlyDouble(tf)){
+            tf.setBackground(new Color(255, 153, 153));
+        }
+        else {
+            tf.setBackground(new Color(255, 255, 255));}
+    }
+
+    public boolean onlyDouble(JTextField tf) {
+        return Pattern.compile("^-?\\d+(\\.\\d+)?$").matcher(tf.getText()).matches();
     }
 }
