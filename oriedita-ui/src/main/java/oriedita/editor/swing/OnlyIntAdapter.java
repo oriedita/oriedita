@@ -1,6 +1,10 @@
 package oriedita.editor.swing;
 
+import com.formdev.flatlaf.FlatLaf;
+import oriedita.editor.Colors;
+
 import javax.swing.JTextField;
+import javax.swing.UIManager;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.Color;
@@ -29,14 +33,15 @@ public class OnlyIntAdapter implements DocumentListener {
     }
 
     public void keyPressed() {
-        if(!onlyDouble(tf)){
-            tf.setBackground(new Color(255, 153, 153));
+        if(!onlyInt(tf)){
+            tf.setBackground(Colors.get(FlatLaf.isLafDark() ? Colors.INVALID_INPUT_DARK : Colors.INVALID_INPUT));
         }
         else {
-            tf.setBackground(new Color(255, 255, 255));}
+            tf.setBackground(UIManager.getColor("TextField.background"));
+        }
     }
 
-    public boolean onlyDouble(JTextField tf) {
+    public boolean onlyInt(JTextField tf) {
         return Pattern.compile("^-?\\d+$").matcher(tf.getText()).matches();
     }
 }
