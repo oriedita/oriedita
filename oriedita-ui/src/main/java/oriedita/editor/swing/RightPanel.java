@@ -33,8 +33,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
 
 @ApplicationScoped
@@ -392,20 +390,20 @@ public class RightPanel {
         });
         ActionListener listener = e -> restrictedAngleSetDEFButton.doClick();
         angleDTextField.addActionListener(listener);
-        angleDTextField.addKeyListener(new OnlyDoubleAdapter(angleDTextField));
+        angleDTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(angleDTextField));
         angleETextField.addActionListener(listener);
-        angleETextField.addKeyListener(new OnlyDoubleAdapter(angleETextField));
+        angleETextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(angleETextField));
         angleFTextField.addActionListener(listener);
-        angleFTextField.addKeyListener(new OnlyDoubleAdapter(angleFTextField));
+        angleFTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(angleFTextField));
         ActionListener listener1 = e -> restrictedAngleABCSetButton.doClick();
         angleATextField.addActionListener(listener1);
-        angleATextField.addKeyListener(new OnlyDoubleAdapter(angleATextField));
+        angleATextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(angleATextField));
         angleCTextField.addActionListener(listener1);
-        angleCTextField.addKeyListener(new OnlyDoubleAdapter(angleCTextField));
+        angleCTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(angleCTextField));
         angleBTextField.addActionListener(listener1);
-        angleBTextField.addKeyListener(new OnlyDoubleAdapter(angleBTextField));
+        angleBTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(angleBTextField));
         polygonSizeTextField.addActionListener(e -> polygonSizeSetButton.doClick());
-        polygonSizeTextField.addKeyListener(new OnlyIntAdapter(polygonSizeTextField));
+        polygonSizeTextField.getDocument().addDocumentListener(new OnlyIntAdapter(polygonSizeTextField));
     }
 
     private void setData(HistoryState auxHistoryState) {

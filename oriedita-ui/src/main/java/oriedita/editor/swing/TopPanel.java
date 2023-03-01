@@ -135,6 +135,14 @@ public class TopPanel implements PropertyChangeListener {
 
         mouseSettingsCheckBox.addActionListener(e -> applicationModel.setMouseWheelMovesCreasePattern(mouseSettingsCheckBox.isSelected()));
 
+        ratioATextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(ratioATextField));
+        ratioBTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(ratioBTextField));
+        ratioCTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(ratioCTextField));
+        ratioDTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(ratioDTextField));
+        ratioETextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(ratioETextField));
+        ratioFTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(ratioFTextField));
+
+
         scaleFactorSetButton.addActionListener(e -> {
             double d_syukusyaku_keisuu_old = creasePatternCameraModel.getScale();
 
@@ -155,6 +163,7 @@ public class TopPanel implements PropertyChangeListener {
             }
         });
         scaleFactorTextField.addActionListener(e -> scaleFactorSetButton.doClick());
+        scaleFactorTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(scaleFactorTextField));
         creasePatternZoomInButton.addActionListener(e -> {
             creasePatternCameraModel.zoomIn();
 
@@ -175,6 +184,7 @@ public class TopPanel implements PropertyChangeListener {
         rotateAnticlockwiseButton.addActionListener(e -> creasePatternCameraModel.increaseRotation());
         rotationSetButton.addActionListener(e -> creasePatternCameraModel.setRotation(measuresModel.string2double(rotationTextField.getText(), creasePatternCameraModel.getRotation())));
         rotationTextField.addActionListener(e -> rotationSetButton.doClick());
+        rotationTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(rotationTextField));
         rotateClockwiseButton.addActionListener(e -> creasePatternCameraModel.decreaseRotation());
         transparentButton.addActionListener(e -> canvas.createTransparentBackground());
         backgroundSetPositionButton.addActionListener(e -> {

@@ -124,9 +124,8 @@ public class BottomPanel {
             taskService.executeFoldingEstimateSpecificTask();
         });
         goToFoldedFigureTextField.addActionListener(e -> goToFoldedFigureButton.doClick());
-        constraintButton.addActionListener(e -> {
-            canvasModel.setMouseMode(MouseMode.ADD_FOLDING_CONSTRAINT);
-        });
+        goToFoldedFigureTextField.getDocument().addDocumentListener(new OnlyIntAdapter(goToFoldedFigureTextField));
+        constraintButton.addActionListener(e -> canvasModel.setMouseMode(MouseMode.ADD_FOLDING_CONSTRAINT));
 
         undoRedo.addUndoActionListener(e -> {
             FoldedFigure_Drawer selectedFigure = foldedFiguresList.getActiveItem();
