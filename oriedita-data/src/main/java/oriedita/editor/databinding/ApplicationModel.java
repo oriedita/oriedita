@@ -6,6 +6,7 @@ import oriedita.editor.Colors;
 import oriedita.editor.canvas.LineStyle;
 import oriedita.editor.handler.CustomLineTypes;
 
+import javax.swing.plaf.basic.BasicTreeUI;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Frame;
@@ -70,6 +71,7 @@ public class ApplicationModel implements Serializable {
     private boolean foldWarning;
     private CustomLineTypes customFromLineType;
     private CustomLineTypes customToLineType;
+    private int check4ColorTransparency;
     private double zoomSpeed;
     private boolean moveFoldedModelWithCp;
 
@@ -97,6 +99,16 @@ public class ApplicationModel implements Serializable {
 
     public boolean getFoldWarning() {
         return foldWarning;
+    }
+
+    public void setCheck4ColorTransparency(int check4ColorTransparency){
+        int oldCheck4ColorTransparency = this.check4ColorTransparency;
+        this.check4ColorTransparency = check4ColorTransparency;
+        this.pcs.firePropertyChange("check4ColorTransparerncy", oldCheck4ColorTransparency, check4ColorTransparency);
+    }
+
+    public int getCheck4ColorTransparency(){
+        return check4ColorTransparency;
     }
 
     public void setCustomFromLineType(CustomLineTypes customFromLineType){
@@ -286,6 +298,7 @@ public class ApplicationModel implements Serializable {
         displayFoldingProgress = false;
         mouseWheelMovesCreasePattern = true;
         displaySelfIntersection = true;
+        check4ColorTransparency = 100;
         lineWidth = 1;
         pointSize = 1;
         lineStyle = LineStyle.COLOR;
@@ -345,6 +358,76 @@ public class ApplicationModel implements Serializable {
         this.moveFoldedModelWithCp = moveFoldedModelWithCp;
         pcs.firePropertyChange("moveFoldedModelWithCp", oldValue, moveFoldedModelWithCp);
     }
+    public void restorePrefDefaults(){
+        //Unsure of displayPointSpotlight, displayPointOffset, and displayGridInputAssist defaults
+        displayComments = true;
+        displayCpLines = true;
+        displayAuxLines = true;
+        displayLiveAuxLines = true;
+        displayMarkings = true;
+        displayCreasePatternOnTop = false;
+        displayFoldingProgress = false;
+        displaySelfIntersection = true;
+        foldWarning = false;
+        helpVisible = true;
+
+        preciseZoom = true;
+        mouseWheelMovesCreasePattern = true;
+
+        antiAlias = false;
+        laf = "com.formdev.flatlaf.FlatLightLaf";
+        //Unsure of displayNumber default
+        check4ColorTransparency = 100;
+        lineWidth = 1;
+        auxLineWidth = 3;
+        pointSize = 1;
+        gridLineWidth = 1;
+        gridColor = Colors.GRID_LINE;
+        gridScaleColor = Colors.GRID_SCALE;
+        lineStyle = LineStyle.COLOR;
+
+        displayTopPanel = true;
+        displayBottomPanel = true;
+        displayLeftPanel = true;
+        displayRightPanel = true;
+
+        this.pcs.firePropertyChange(null, null, null);
+    }
+
+    public boolean isSame(ApplicationModel applicationModel) {
+        if(displayPointSpotlight == applicationModel.getDisplayPointSpotlight()
+                && displayPointOffset == applicationModel.getDisplayPointOffset()
+                && displayGridInputAssist == applicationModel.getDisplayGridInputAssist()
+                && displayComments == applicationModel.getDisplayComments()
+                && displayCpLines == applicationModel.getDisplayCpLines()
+                && displayAuxLines == applicationModel.getDisplayAuxLines()
+                && displayLiveAuxLines == applicationModel.getDisplayLiveAuxLines()
+                && displayMarkings == applicationModel.getDisplayMarkings()
+                && displayCreasePatternOnTop == applicationModel.getDisplayCreasePatternOnTop()
+                && displayFoldingProgress == applicationModel.getDisplayFoldingProgress()
+                && displaySelfIntersection == applicationModel.getDisplaySelfIntersection()
+                && check4ColorTransparency == applicationModel.getCheck4ColorTransparency()
+                && lineWidth == applicationModel.getLineWidth()
+                && auxLineWidth == applicationModel.getAuxLineWidth()
+                && pointSize == applicationModel.getPointSize()
+                && lineStyle == applicationModel.getLineStyle()
+                && antiAlias == applicationModel.getAntiAlias()
+                && mouseWheelMovesCreasePattern == applicationModel.getMouseWheelMovesCreasePattern()
+                && helpVisible == applicationModel.getHelpVisible()
+                && preciseZoom == applicationModel.isPreciseZoom()
+                && foldWarning == applicationModel.getFoldWarning()
+                && gridColor == applicationModel.getGridColor()
+                && gridScaleColor == applicationModel.getGridScaleColor()
+                && gridLineWidth == applicationModel.getGridLineWidth()
+                && displayTopPanel == applicationModel.getDisplayTopPanel()
+                && displayBottomPanel == applicationModel.getDisplayBottomPanel()
+                && displayRightPanel == applicationModel.getDisplayRightPanel()
+                && displayLeftPanel == applicationModel.getDisplayLeftPanel()
+                && laf == applicationModel.getLaf()){
+            return true;
+        } else { return false; }
+    }
+
 
     public int getAuxLineWidth() {
         return auxLineWidth;
@@ -681,6 +764,7 @@ public class ApplicationModel implements Serializable {
         displayFoldingProgress = applicationModel.getDisplayFoldingProgress();
         displaySelfIntersection = applicationModel.getDisplaySelfIntersection();
         advancedCheck4Display = applicationModel.getAdvancedCheck4Display();
+        check4ColorTransparency = applicationModel.getCheck4ColorTransparency();
         lineWidth = applicationModel.getLineWidth();
         auxLineWidth = applicationModel.getAuxLineWidth();
         pointSize = applicationModel.getPointSize();

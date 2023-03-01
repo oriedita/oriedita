@@ -17,6 +17,9 @@ public class Colors {
     public static final Color FIGURE_FRONT = new Color(255, 255, 50);
     public static final Color FIGURE_BACK = new Color(233, 233, 233);
 
+    public static final Color INVALID_INPUT = new Color(255, 153, 153);
+    public static final Color INVALID_INPUT_DARK = new Color(160, 60, 80);
+
     private static final Map<Color, Color> colorMap;
     private static final Map<Color, Color> darkColorMap;
 

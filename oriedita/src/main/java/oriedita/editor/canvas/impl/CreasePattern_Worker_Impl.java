@@ -488,7 +488,7 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
         if (check4) {
             for (FlatFoldabilityViolation violation : foldLineSet.getViolations()) {
                 DrawingUtil.drawViolation(g2, camera.object2TV(violation.getPoint()), violation,
-                        check4ColorTransparency, applicationModel.getAdvancedCheck4Display());
+                        applicationModel.getCheck4ColorTransparency(), applicationModel.getAdvancedCheck4Display());
             }
 
             if (displayComments) {

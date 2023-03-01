@@ -36,7 +36,6 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import java.awt.Desktop;
-import java.awt.Dialog;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.Transferable;
@@ -96,6 +95,7 @@ public class AppMenuBar {
     private JMenuItem pasteButton;
     private JMenuItem pasteOffsetButton;
     private AppMenuBarUI appMenuBarUI;
+    private PreferenceDialog preferenceDialog;
     @Inject
     public AppMenuBar(
             FrameProvider frameProvider,
@@ -214,11 +214,13 @@ public class AppMenuBar {
             fileSaveService.exportFile();
         });
         prefButton.addActionListener(e -> {
-            PreferenceDialog d = new PreferenceDialog(applicationModel, lookAndFeelService, frameProvider, foldedFigureModel);
-            d.setSize(475, 525);
-            d.setResizable(true);
-            d.setData(applicationModel);
-            d.setVisible(true);
+            preferenceDialog = new PreferenceDialog(applicationModel, lookAndFeelService, frameProvider, foldedFigureModel, "Preferences", frameProvider.get());
+            preferenceDialog.setSize(475, 575);
+            preferenceDialog.setResizable(true);
+            preferenceDialog.setData(applicationModel);
+            preferenceDialog.setLocationRelativeTo(prefButton);
+            preferenceDialog.setAlwaysOnTop(false);
+            preferenceDialog.setVisible(true);
         });
         exitButton.addActionListener(e -> closing());
         showPointRangeCheckBox.addActionListener(e -> getData(applicationModel));
@@ -385,7 +387,7 @@ public class AppMenuBar {
 
         fileMenu.addSeparator();
 
-        prefButton = new JMenuItem("Preference");
+        prefButton = new JMenuItem("Preferences");
         fileMenu.add(prefButton);
 
         exitButton = new JMenuItem("Exit");

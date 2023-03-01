@@ -6,6 +6,7 @@ import oriedita.editor.databinding.ApplicationModel;
 import oriedita.editor.databinding.FoldedFigureModel;
 import oriedita.editor.databinding.MeasuresModel;
 import oriedita.editor.service.ButtonService;
+import oriedita.editor.swing.OnlyDoubleAdapter;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -33,6 +34,7 @@ public class FoldedFigureResize extends JPanel {
         foldedFigureSizeDecreaseButton.addActionListener(e -> foldedFigureModel.zoomOut(applicationModel.getZoomSpeed()));
         foldedFigureSizeIncreaseButton.addActionListener(e -> foldedFigureModel.zoomIn(applicationModel.getZoomSpeed()));
         foldedFigureSizeTextField.addActionListener(e -> foldedFigureSizeSetButton.doClick());
+        foldedFigureSizeTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(foldedFigureSizeTextField));
     }
 
     {

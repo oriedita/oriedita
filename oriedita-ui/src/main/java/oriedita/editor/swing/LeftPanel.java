@@ -53,7 +53,8 @@ import java.util.Arrays;
 
 @ApplicationScoped
 public class LeftPanel {
-    @Inject @ActionHandler(ActionType.lineWidthDecreaseAction)
+    @Inject
+    @ActionHandler(ActionType.lineWidthDecreaseAction)
     LineWidthDecreaseAction lineWidthDecreaseAction;
     private final FrameProvider frameProvider;
     private final HistoryState historyState;
@@ -192,8 +193,6 @@ public class LeftPanel {
         this.drawCreaseFreeAction = drawCreaseFreeAction;
         this.foldingService = foldingService;
         this.foldedFiguresList = foldedFiguresList;
-
-
     }
 
     public void init() {
@@ -291,12 +290,8 @@ public class LeftPanel {
         buttonService.registerLabel(gridYSqrtLabel, "labelSqrt");
 
 
-        undoRedo.addUndoActionListener(e -> {
-            mainCreasePatternWorker.undo();
-        });
-        undoRedo.addRedoActionListener(e -> {
-            mainCreasePatternWorker.redo();
-        });
+        undoRedo.addUndoActionListener(e -> mainCreasePatternWorker.undo());
+        undoRedo.addRedoActionListener(e -> mainCreasePatternWorker.redo());
         colRedButton.addActionListener(e -> canvasModel.setLineColor(LineColor.RED_1));
         colBlueButton.addActionListener(e -> canvasModel.setLineColor(LineColor.BLUE_2));
         colBlackButton.addActionListener(e -> canvasModel.setLineColor(LineColor.BLACK_0));
@@ -377,6 +372,7 @@ public class LeftPanel {
             canvasModel.setMouseModeAfterColorSelection(MouseMode.LINE_SEGMENT_DIVISION_27);
         });
         lineSegmentDivisionTextField.addActionListener(e -> lineSegmentDivisionSetButton.doClick());
+        lineSegmentDivisionTextField.getDocument().addDocumentListener(new OnlyIntAdapter(lineSegmentDivisionTextField));
         senbun_b_nyuryokuButton.addActionListener(e -> {
             getData(applicationModel);
 
@@ -385,18 +381,10 @@ public class LeftPanel {
 
             mainCreasePatternWorker.unselect_all(false);
         });
-        selectButton.addActionListener(e -> {
-            canvasModel.setMouseMode(MouseMode.CREASE_SELECT_19);
-        });
-        selectAllButton.addActionListener(e -> {
-            mainCreasePatternWorker.select_all();
-        });
-        unselectButton.addActionListener(e -> {
-            canvasModel.setMouseMode(MouseMode.CREASE_UNSELECT_20);
-        });
-        unselectAllButton.addActionListener(e -> {
-            mainCreasePatternWorker.unselect_all();
-        });
+        selectButton.addActionListener(e -> canvasModel.setMouseMode(MouseMode.CREASE_SELECT_19));
+        selectAllButton.addActionListener(e -> mainCreasePatternWorker.select_all());
+        unselectButton.addActionListener(e -> canvasModel.setMouseMode(MouseMode.CREASE_UNSELECT_20));
+        unselectAllButton.addActionListener(e -> mainCreasePatternWorker.unselect_all());
         moveButton.addActionListener(e -> {
             canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.MOVE_1);
             canvasModel.setMouseMode(MouseMode.CREASE_MOVE_21);
@@ -525,15 +513,9 @@ public class LeftPanel {
             mainCreasePatternWorker.v_del_all_cc();
             Logger.info("mainDrawingWorker.v_del_all_cc()");
         });
-        correctCpBeforeFoldingCheckBox.addActionListener(e -> {
-            applicationModel.setCorrectCpBeforeFolding(correctCpBeforeFoldingCheckBox.isSelected());
-        });
-        selectPersistentCheckBox.addActionListener(e -> {
-            applicationModel.setSelectPersistent(selectPersistentCheckBox.isSelected());
-        });
-        drawTwoColoredCpButton.addActionListener(e -> {
-            foldingService.createTwoColoredCp();
-        });
+        correctCpBeforeFoldingCheckBox.addActionListener(e -> applicationModel.setCorrectCpBeforeFolding(correctCpBeforeFoldingCheckBox.isSelected()));
+        selectPersistentCheckBox.addActionListener(e -> applicationModel.setSelectPersistent(selectPersistentCheckBox.isSelected()));
+        drawTwoColoredCpButton.addActionListener(e -> foldingService.createTwoColoredCp());
         suitei_01Button.addActionListener(e -> {
             foldingService.fold(FoldedFigure.EstimationOrder.ORDER_1);//引数の意味は(i_fold_type , i_suitei_meirei);
             mainCreasePatternWorker.unselect_all(false);
@@ -570,6 +552,7 @@ public class LeftPanel {
         });
         gridSizeSetButton.addActionListener(e -> getData(gridModel));
         gridSizeTextField.addActionListener(e -> gridSizeSetButton.doClick());
+        gridSizeTextField.getDocument().addDocumentListener(new OnlyIntAdapter(gridSizeTextField));
         gridSizeIncreaseButton.addActionListener(e -> gridModel.setGridSize(gridModel.getGridSize() * 2));
         gridColorButton.addActionListener(e -> {
             //以下にやりたいことを書く
@@ -585,6 +568,7 @@ public class LeftPanel {
         moveIntervalGridVerticalButton.addActionListener(e -> gridModel.changeHorizontalScalePosition());
         setIntervalGridSizeButton.addActionListener(e -> getData(gridModel));
         intervalGridSizeTextField.addActionListener(e -> setIntervalGridSizeButton.doClick());
+        intervalGridSizeTextField.getDocument().addDocumentListener(new OnlyIntAdapter(intervalGridSizeTextField));
         moveIntervalGridHorizontal.addActionListener(e -> gridModel.changeVerticalScalePosition());
         intervalGridColorButton.addActionListener(e -> {
             //以下にやりたいことを書く
@@ -593,12 +577,19 @@ public class LeftPanel {
                 applicationModel.setGridScaleColor(color);
             }
         });
+        gridXATextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(gridXATextField));
+        gridXBTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(gridXBTextField));
+        gridXCTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(gridXCTextField));
+        gridYATextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(gridYATextField));
+        gridYBTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(gridYBTextField));
+        gridYCTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(gridYCTextField));
         setGridParametersButton.addActionListener(e -> {
             getData(gridModel);
             // Update the view if the grid angle got reset
             setData(gridModel);
         });
         gridAngleTextField.addActionListener(e -> setGridParametersButton.doClick());
+        gridAngleTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(gridAngleTextField));
         resetGridButton.addActionListener(e -> gridModel.reset());
         drawDiagonalGridlinesCheckBox.addActionListener(e -> gridModel.setDrawDiagonalGridlines(drawDiagonalGridlinesCheckBox.isSelected()));
     }
