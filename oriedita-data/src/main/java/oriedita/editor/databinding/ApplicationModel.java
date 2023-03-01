@@ -391,6 +391,8 @@ public class ApplicationModel implements Serializable {
         displayLeftPanel = true;
         displayRightPanel = true;
 
+        zoomSpeed = 1;
+
         this.pcs.firePropertyChange(null, null, null);
     }
 
@@ -423,7 +425,8 @@ public class ApplicationModel implements Serializable {
                 && displayBottomPanel == applicationModel.getDisplayBottomPanel()
                 && displayRightPanel == applicationModel.getDisplayRightPanel()
                 && displayLeftPanel == applicationModel.getDisplayLeftPanel()
-                && laf == applicationModel.getLaf()){
+                && laf == applicationModel.getLaf()
+                && zoomSpeed == applicationModel.getZoomSpeed()){
             return true;
         } else { return false; }
     }
@@ -804,6 +807,7 @@ public class ApplicationModel implements Serializable {
         customToLineType = applicationModel.getCustomToLineType();
 
         moveFoldedModelWithCp = applicationModel.getMoveFoldedModelWithCp();
+        zoomSpeed = applicationModel.getZoomSpeed();
 
         this.pcs.firePropertyChange(null, null, null);
     }
