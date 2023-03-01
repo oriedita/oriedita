@@ -70,12 +70,23 @@ public class ApplicationModel implements Serializable {
     private boolean foldWarning;
     private CustomLineTypes customFromLineType;
     private CustomLineTypes customToLineType;
-
+    private double zoomSpeed;
     private boolean moveFoldedModelWithCp;
 
     @Inject
     public ApplicationModel() {
         reset();
+    }
+
+
+    public double getZoomSpeed() {
+        return zoomSpeed;
+    }
+
+    public void setZoomSpeed(double zoomSpeed) {
+        double oldZoomSpeed = this.zoomSpeed;
+        this.zoomSpeed = zoomSpeed;
+        this.pcs.firePropertyChange("zoomSpeed", oldZoomSpeed, zoomSpeed);
     }
 
     public void setFoldWarning(boolean foldWarning) {
@@ -317,6 +328,8 @@ public class ApplicationModel implements Serializable {
 
         customFromLineType = CustomLineTypes.ANY;
         customToLineType = CustomLineTypes.EGDE;
+
+        zoomSpeed = 1;
 
         moveFoldedModelWithCp = true;
 

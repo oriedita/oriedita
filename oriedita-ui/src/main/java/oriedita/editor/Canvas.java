@@ -761,19 +761,19 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
             double scrollDistance = applicationModel.isPreciseZoom() ? e.getPreciseWheelRotation() : e.getWheelRotation();
 
             if (target == MouseWheelTarget.CREASE_PATTERN_0) {
-                creasePatternCameraModel.zoomBy(scrollDistance);
+                creasePatternCameraModel.zoomBy(scrollDistance, applicationModel.getZoomSpeed());
                 if (applicationModel.getMoveFoldedModelWithCp()) {
                     for (FoldedFigure_Drawer foldedFigure_drawer : foldedFiguresList.getItems()) {
                         foldedFigure_drawer.scale(1, creasePatternCamera.object2TV(creasePatternCamera.getCameraPosition()));
                     }
-                    foldedFigureModel.zoomBy(scrollDistance);
+                    foldedFigureModel.zoomBy(scrollDistance, applicationModel.getZoomSpeed());
                     // Move all other objects along.
                     for (FoldedFigure_Drawer foldedFigure_drawer : foldedFiguresList.getItems()) {
                         foldedFigure_drawer.setScale(foldedFigureModel.getScale());
                     }
                 }
             } else {
-                foldedFigureModel.zoomBy(scrollDistance);
+                foldedFigureModel.zoomBy(scrollDistance, applicationModel.getZoomSpeed());
             }
 
             mouse_object_position(p_mouse_TV_position);

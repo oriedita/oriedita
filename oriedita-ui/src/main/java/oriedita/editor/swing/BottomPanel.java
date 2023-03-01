@@ -43,6 +43,7 @@ import java.beans.PropertyChangeEvent;
 public class BottomPanel {
     private final ButtonService buttonService;
     private final MeasuresModel measuresModel;
+    private final ApplicationModel applicationModel;
     private final FoldedFigureModel foldedFigureModel;
     private JPanel panel1;
     private JTextField goToFoldedFigureTextField;
@@ -79,6 +80,7 @@ public class BottomPanel {
             TaskService taskService) {
         this.buttonService = buttonService;
         this.measuresModel = measuresModel;
+        this.applicationModel = applicationModel;
         this.foldedFigureModel = foldedFigureModel;
 
 
@@ -305,7 +307,7 @@ public class BottomPanel {
 
     private void createUIComponents() {
         panel1 = new JPanel();
-        foldedFigureResize = new FoldedFigureResize(buttonService, foldedFigureModel, measuresModel);
+        foldedFigureResize = new FoldedFigureResize(applicationModel, buttonService, foldedFigureModel, measuresModel);
         foldedFigureRotate = new FoldedFigureRotate(buttonService, foldedFigureModel, measuresModel);
         foldedFigureBox = new JComboBox<>();
     }
