@@ -57,8 +57,6 @@ public class FoldAction extends AbstractOrieditaAction {
     private void foldCreasePattern(CreasePattern_Worker mainCreasePatternWorker, FoldingService foldingService, ApplicationModel applicationModel) {
         foldingService.fold(FoldedFigure.EstimationOrder.ORDER_5);//引数の意味は(i_fold_type , i_suitei_meirei);
 
-        if (!applicationModel.getSelectPersistent()) {
-            mainCreasePatternWorker.unselect_all();
-        }
+        mainCreasePatternWorker.unselect_all(false);
     }
 }

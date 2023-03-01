@@ -42,7 +42,7 @@ public class MouseHandlerCreaseMove extends BaseMouseHandlerLineTransform {
             int total_new = d.getFoldLineSet().getTotal();
             d.getFoldLineSet().divideLineSegmentWithNewLines(total_old, total_new);
 
-            d.getFoldLineSet().unselect_all();
+            d.unselect_all(false);
             d.record();
 
             canvasModel.setMouseMode(MouseMode.CREASE_SELECT_19);

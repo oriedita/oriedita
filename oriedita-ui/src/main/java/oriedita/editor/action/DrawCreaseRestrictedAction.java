@@ -27,6 +27,6 @@ public class DrawCreaseRestrictedAction extends AbstractOrieditaAction{
         canvasModel.setMouseMode(MouseMode.DRAW_CREASE_RESTRICTED_11);
         canvasModel.setMouseModeAfterColorSelection(MouseMode.DRAW_CREASE_RESTRICTED_11);
 
-        mainCreasePatternWorker.unselect_all();
+        mainCreasePatternWorker.unselect_all(false);
     }
 }
