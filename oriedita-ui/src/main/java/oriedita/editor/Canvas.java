@@ -233,6 +233,7 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
                 selectedFigure.getWireFrame_worker_drawer2().setCam_rear(selectedFigure.getFoldedFigureRearCamera());
                 selectedFigure.getWireFrame_worker_drawer2().setCam_transparent_front(selectedFigure.getTransparentFrontCamera());
                 selectedFigure.getWireFrame_worker_drawer2().setCam_transparent_rear(selectedFigure.getTransparentRearCamera());
+                selectedFigure.getData(foldedFigureModel);
 //AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
             }
             //Logger.info("paint　+++++++++++++++++++++　背景表示");
@@ -606,12 +607,15 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
                             creasePatternCamera.displayPositionMove(mouse_temp0.other_Point_position(p));
                             mainCreasePatternWorker.setCamera(creasePatternCamera);
                             cpTextEditingArea.update();
-                            // Move all other objects along.
-                            for (FoldedFigure_Drawer foldedFigure_drawer : foldedFiguresList.getItems()) {
-                                foldedFigure_drawer.getFoldedFigureFrontCamera().displayPositionMove(mouse_temp0.other_Point_position(p));
-                                foldedFigure_drawer.getFoldedFigureRearCamera().displayPositionMove(mouse_temp0.other_Point_position(p));
-                                foldedFigure_drawer.getTransparentFrontCamera().displayPositionMove(mouse_temp0.other_Point_position(p));
-                                foldedFigure_drawer.getTransparentRearCamera().displayPositionMove(mouse_temp0.other_Point_position(p));
+
+                            if (applicationModel.getMoveFoldedModelWithCp()) {
+                                // Move all other objects along.
+                                for (FoldedFigure_Drawer foldedFigure_drawer : foldedFiguresList.getItems()) {
+                                    foldedFigure_drawer.getFoldedFigureFrontCamera().displayPositionMove(mouse_temp0.other_Point_position(p));
+                                    foldedFigure_drawer.getFoldedFigureRearCamera().displayPositionMove(mouse_temp0.other_Point_position(p));
+                                    foldedFigure_drawer.getTransparentFrontCamera().displayPositionMove(mouse_temp0.other_Point_position(p));
+                                    foldedFigure_drawer.getTransparentRearCamera().displayPositionMove(mouse_temp0.other_Point_position(p));
+                                }
                             }
                             break;
                         case FOLDED_FRONT_1:
@@ -693,11 +697,14 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
                             creasePatternCamera.displayPositionMove(mouse_temp0.other_Point_position(p));
                             mainCreasePatternWorker.setCamera(creasePatternCamera);
                             // Move all other objects along.
-                            for (FoldedFigure_Drawer foldedFigure_drawer : foldedFiguresList.getItems()) {
-                                foldedFigure_drawer.getFoldedFigureFrontCamera().displayPositionMove(mouse_temp0.other_Point_position(p));
-                                foldedFigure_drawer.getFoldedFigureRearCamera().displayPositionMove(mouse_temp0.other_Point_position(p));
-                                foldedFigure_drawer.getTransparentFrontCamera().displayPositionMove(mouse_temp0.other_Point_position(p));
-                                foldedFigure_drawer.getTransparentRearCamera().displayPositionMove(mouse_temp0.other_Point_position(p));
+
+                            if (applicationModel.getMoveFoldedModelWithCp()) {
+                                for (FoldedFigure_Drawer foldedFigure_drawer : foldedFiguresList.getItems()) {
+                                    foldedFigure_drawer.getFoldedFigureFrontCamera().displayPositionMove(mouse_temp0.other_Point_position(p));
+                                    foldedFigure_drawer.getFoldedFigureRearCamera().displayPositionMove(mouse_temp0.other_Point_position(p));
+                                    foldedFigure_drawer.getTransparentFrontCamera().displayPositionMove(mouse_temp0.other_Point_position(p));
+                                    foldedFigure_drawer.getTransparentRearCamera().displayPositionMove(mouse_temp0.other_Point_position(p));
+                                }
                             }
                             break;
                         case FOLDED_FRONT_1:
@@ -755,14 +762,19 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
             double scrollDistance = applicationModel.isPreciseZoom() ? e.getPreciseWheelRotation() : e.getWheelRotation();
 
             if (target == MouseWheelTarget.CREASE_PATTERN_0) {
-                creasePatternCameraModel.zoomBy(scrollDistance);
-                foldedFigureModel.zoomBy(scrollDistance);
-                // Move all other objects along.
-                for (FoldedFigure_Drawer foldedFigure_drawer : foldedFiguresList.getItems()) {
-                    foldedFigure_drawer.setScale(foldedFigureModel.getScale());
+                creasePatternCameraModel.zoomBy(scrollDistance, applicationModel.getZoomSpeed());
+                if (applicationModel.getMoveFoldedModelWithCp()) {
+                    for (FoldedFigure_Drawer foldedFigure_drawer : foldedFiguresList.getItems()) {
+                        foldedFigure_drawer.scale(1, creasePatternCamera.object2TV(creasePatternCamera.getCameraPosition()));
+                    }
+                    foldedFigureModel.zoomBy(scrollDistance, applicationModel.getZoomSpeed());
+                    // Move all other objects along.
+                    for (FoldedFigure_Drawer foldedFigure_drawer : foldedFiguresList.getItems()) {
+                        foldedFigure_drawer.setScale(foldedFigureModel.getScale());
+                    }
                 }
             } else {
-                foldedFigureModel.zoomBy(scrollDistance);
+                foldedFigureModel.zoomBy(scrollDistance, applicationModel.getZoomSpeed());
             }
 
             mouse_object_position(p_mouse_TV_position);

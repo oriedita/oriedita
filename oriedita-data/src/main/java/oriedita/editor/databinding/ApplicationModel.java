@@ -61,7 +61,9 @@ public class ApplicationModel implements Serializable {
     private String laf;
     private Dimension windowSize;
     private List<File> recentFileList;
+
     private boolean showInvisibleTextWarning;
+
     private Color gridColor;
     private Color gridScaleColor;
     private int gridLineWidth;
@@ -70,9 +72,23 @@ public class ApplicationModel implements Serializable {
     private CustomLineTypes customFromLineType;
     private CustomLineTypes customToLineType;
     private int check4ColorTransparency;
+    private double zoomSpeed;
+    private boolean moveFoldedModelWithCp;
+
     @Inject
     public ApplicationModel() {
         reset();
+    }
+
+
+    public double getZoomSpeed() {
+        return zoomSpeed;
+    }
+
+    public void setZoomSpeed(double zoomSpeed) {
+        double oldZoomSpeed = this.zoomSpeed;
+        this.zoomSpeed = zoomSpeed;
+        this.pcs.firePropertyChange("zoomSpeed", oldZoomSpeed, zoomSpeed);
     }
 
     public void setFoldWarning(boolean foldWarning) {
@@ -326,9 +342,22 @@ public class ApplicationModel implements Serializable {
         customFromLineType = CustomLineTypes.ANY;
         customToLineType = CustomLineTypes.EGDE;
 
+        zoomSpeed = 1;
+
+        moveFoldedModelWithCp = true;
+
         this.pcs.firePropertyChange(null, null, null);
     }
 
+    public boolean getMoveFoldedModelWithCp() {
+        return moveFoldedModelWithCp;
+    }
+
+    public void setMoveFoldedModelWithCp(boolean moveFoldedModelWithCp) {
+        boolean oldValue = this.moveFoldedModelWithCp;
+        this.moveFoldedModelWithCp = moveFoldedModelWithCp;
+        pcs.firePropertyChange("moveFoldedModelWithCp", oldValue, moveFoldedModelWithCp);
+    }
     public void restorePrefDefaults(){
         //Unsure of displayPointSpotlight, displayPointOffset, and displayGridInputAssist defaults
         displayComments = true;
@@ -362,6 +391,8 @@ public class ApplicationModel implements Serializable {
         displayLeftPanel = true;
         displayRightPanel = true;
 
+        zoomSpeed = 1;
+
         this.pcs.firePropertyChange(null, null, null);
     }
 
@@ -394,7 +425,8 @@ public class ApplicationModel implements Serializable {
                 && displayBottomPanel == applicationModel.getDisplayBottomPanel()
                 && displayRightPanel == applicationModel.getDisplayRightPanel()
                 && displayLeftPanel == applicationModel.getDisplayLeftPanel()
-                && laf == applicationModel.getLaf()){
+                && laf == applicationModel.getLaf()
+                && zoomSpeed == applicationModel.getZoomSpeed()){
             return true;
         } else { return false; }
     }
@@ -770,6 +802,12 @@ public class ApplicationModel implements Serializable {
 
         laf = applicationModel.getLaf();
         recentFileList = applicationModel.getRecentFileList().stream().filter(File::exists).collect(Collectors.toList());
+
+        customFromLineType = applicationModel.getCustomFromLineType();
+        customToLineType = applicationModel.getCustomToLineType();
+
+        moveFoldedModelWithCp = applicationModel.getMoveFoldedModelWithCp();
+        zoomSpeed = applicationModel.getZoomSpeed();
 
         this.pcs.firePropertyChange(null, null, null);
     }

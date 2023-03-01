@@ -77,6 +77,7 @@ public class AppMenuBar {
     private JCheckBoxMenuItem displayBottomPanel;
     private JCheckBoxMenuItem displayLeftPanel;
     private JCheckBoxMenuItem displayRightPanel;
+    private JCheckBoxMenuItem moveFoldedModelWithCp;
     private JMenuItem newButton;
     private JMenuItem openButton;
     private JMenuItem saveButton;
@@ -168,6 +169,7 @@ public class AppMenuBar {
         buttonService.registerButton(preciseZoomCheckBox, "preciseZoomAction");
         buttonService.registerButton(showSelfIntersectionCheckBox, "displaySelfIntersectionAction");
         buttonService.registerButton(useAdvancedCheck4Display, "useAdvancedCheck4DisplayAction");
+        buttonService.registerButton(moveFoldedModelWithCp, "moveFoldedModelWithCp");
 
         buttonService.registerButton(copyButton, "copyClipboardAction");
         buttonService.registerButton(cutButton, "cutClipboardAction");
@@ -238,6 +240,7 @@ public class AppMenuBar {
         showStandardFaceMarksCheckBox.addActionListener(e -> getData(applicationModel));
         cpOnTopCheckBox.addActionListener(e -> getData(applicationModel));
         toggleHelpMenuItem.addActionListener(e -> applicationModel.toggleHelpVisible());
+        moveFoldedModelWithCp.addActionListener(e -> getData(applicationModel));
         showAutosaveFolderMenuItem.addActionListener(e -> {
             try {
                 File f = ResourceUtil.getTempDir().toFile();
@@ -455,6 +458,8 @@ public class AppMenuBar {
         displayPanelMenu.add(displayLeftPanel);
         displayRightPanel = new JCheckBoxMenuItem("Right Panel");
         displayPanelMenu.add(displayRightPanel);
+        moveFoldedModelWithCp = new JCheckBoxMenuItem("Move Folded Model with CP");
+        viewMenu.add(moveFoldedModelWithCp);
 
         JMenu helpMenu = new JMenu("Help");
         helpMenu.setMnemonic('H');
@@ -486,6 +491,7 @@ public class AppMenuBar {
         applicationModel.setDisplayBottomPanel(displayBottomPanel.isSelected());
         applicationModel.setDisplayLeftPanel(displayLeftPanel.isSelected());
         applicationModel.setDisplayRightPanel(displayRightPanel.isSelected());
+        applicationModel.setMoveFoldedModelWithCp(moveFoldedModelWithCp.isSelected());
     }
 
     public void setData(ApplicationModel applicationModel) {
@@ -506,6 +512,7 @@ public class AppMenuBar {
         displayBottomPanel.setSelected(applicationModel.getDisplayBottomPanel());
         displayLeftPanel.setSelected(applicationModel.getDisplayLeftPanel());
         displayRightPanel.setSelected(applicationModel.getDisplayRightPanel());
+        moveFoldedModelWithCp.setSelected(applicationModel.getMoveFoldedModelWithCp());
 
         openRecentMenu.removeAll();
         if (applicationModel.getRecentFileList().isEmpty()) {

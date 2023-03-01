@@ -179,8 +179,7 @@ public class FoldingServiceImpl implements FoldingService {
         } else if (mainCreasePatternWorker.getFoldLineTotalForSelectFolding() > 0) {
             foldingExecutor.executeTask(new TwoColoredTask(bulletinBoard, creasePatternCamera, this, canvasModel));
         }
-
-        mainCreasePatternWorker.unselect_all();
+        mainCreasePatternWorker.unselect_all(false);
     }
 
     public void twoColorNoSelectedPolygonalLineWarning() {

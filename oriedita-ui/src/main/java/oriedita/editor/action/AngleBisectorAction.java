@@ -27,6 +27,6 @@ public class AngleBisectorAction extends AbstractOrieditaAction {
         canvasModel.setMouseMode(MouseMode.SQUARE_BISECTOR_7);
         canvasModel.setMouseModeAfterColorSelection(MouseMode.SQUARE_BISECTOR_7);
 
-        mainCreasePatternWorker.unselect_all();
+        mainCreasePatternWorker.unselect_all(false);
     }
 }

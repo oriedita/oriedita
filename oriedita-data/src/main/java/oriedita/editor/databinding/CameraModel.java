@@ -2,6 +2,7 @@ package oriedita.editor.databinding;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import org.tinylog.Logger;
 import origami.crease_pattern.OritaCalc;
 
 import java.beans.PropertyChangeListener;
@@ -57,20 +58,22 @@ public class CameraModel {
         this.pcs.firePropertyChange("scale", oldScale, scale);
     }
 
-    public void zoomIn() {
-        setScale(scale * Math.sqrt(Math.sqrt(Math.sqrt(2))));
+    public void zoomIn(double zoomSpeed) {
+        zoomBy(-1, zoomSpeed);
+        Logger.info("zoom in");
     }
 
-    public void zoomBy(double value) {
+    public void zoomBy(double value, double zoomSpeed) {
+        double zoomBase = 1 + zoomSpeed/10;
         if (value > 0) {
-            setScale(scale / Math.pow(1.1, value));
+            setScale(scale / Math.pow(zoomBase, value));
         } else if (value < 0) {
-            setScale(scale * Math.pow(1.1, Math.abs(value)));
+            setScale(scale * Math.pow(zoomBase, Math.abs(value)));
         }
     }
 
-    public void zoomOut() {
-        setScale(scale / Math.sqrt(Math.sqrt(Math.sqrt(2))));
+    public void zoomOut(double zoomSpeed) {
+        zoomBy(1, zoomSpeed);
     }
 
     public void decreaseRotation() {

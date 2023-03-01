@@ -124,6 +124,8 @@ public interface CreasePattern_Worker {
 
     void unselect_all();
 
+    void unselect_all(boolean ignorePersistent);
+
     void select(Point p0a, Point p0b);
 
     void unselect(Point p0a, Point p0b);

@@ -165,7 +165,7 @@ public class TopPanel implements PropertyChangeListener {
         scaleFactorTextField.addActionListener(e -> scaleFactorSetButton.doClick());
         scaleFactorTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(scaleFactorTextField));
         creasePatternZoomInButton.addActionListener(e -> {
-            creasePatternCameraModel.zoomIn();
+            creasePatternCameraModel.zoomIn(applicationModel.getZoomSpeed());
 
             double magnification = Math.sqrt(Math.sqrt(Math.sqrt(2.0)));//  sqrt(sqrt(2))=1.1892
 
@@ -178,7 +178,7 @@ public class TopPanel implements PropertyChangeListener {
                 OZi.scale(magnification, t_o2tv);
             }
 
-            foldedFigureModel.zoomIn();
+            foldedFigureModel.zoomIn(applicationModel.getZoomSpeed());
 //20180122追加　ここまで
         });
         rotateAnticlockwiseButton.addActionListener(e -> creasePatternCameraModel.increaseRotation());

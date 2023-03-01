@@ -30,6 +30,6 @@ public class VoronoiAction extends AbstractOrieditaAction {
         canvasModel.setMouseMode(MouseMode.VORONOI_CREATE_62);
         canvasModel.setMouseModeAfterColorSelection(MouseMode.VORONOI_CREATE_62);
 
-        mainCreasePatternWorker.unselect_all();
+        mainCreasePatternWorker.unselect_all(false);
     }
 }

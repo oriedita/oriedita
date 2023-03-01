@@ -3,6 +3,7 @@ package oriedita.editor.action;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import oriedita.editor.Canvas;
+import oriedita.editor.databinding.ApplicationModel;
 import oriedita.editor.databinding.CameraModel;
 import oriedita.editor.databinding.FoldedFigureModel;
 import oriedita.editor.databinding.FoldedFiguresList;
@@ -24,12 +25,15 @@ public class CreasePatternZoomOutAction extends AbstractOrieditaAction{
     CameraModel creasePatternCameraModel;
 
     @Inject
+    ApplicationModel applicationModel;
+
+    @Inject
     public CreasePatternZoomOutAction() {
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        creasePatternCameraModel.zoomOut();
+        creasePatternCameraModel.zoomOut(applicationModel.getZoomSpeed());
 
         double magnification = 1.0 / Math.sqrt(Math.sqrt(Math.sqrt(2.0)));//  sqrt(sqrt(2))=1.1892
 
@@ -42,6 +46,6 @@ public class CreasePatternZoomOutAction extends AbstractOrieditaAction{
             OZi.scale(magnification, t_o2tv);
         }
 
-        foldedFigureModel.zoomOut();
+        foldedFigureModel.zoomOut(applicationModel.getZoomSpeed());
     }
 }

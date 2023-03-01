@@ -29,6 +29,6 @@ public class OperationFrameSelectAction extends AbstractOrieditaAction{
         canvasModel.setMouseMode(MouseMode.OPERATION_FRAME_CREATE_61);
         canvasModel.setMouseModeAfterColorSelection(MouseMode.DRAW_CREASE_FREE_1);
 
-        mainCreasePatternWorker.unselect_all();
+        mainCreasePatternWorker.unselect_all(false);
     }
 }

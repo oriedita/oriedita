@@ -109,6 +109,7 @@ public class MouseHandlerCreaseCopy4p extends BaseMouseHandlerInputRestricted {
             ori_s_temp.setSave(save);//セレクトされた折線だけ取り出してori_s_tempを作る
             ori_s_temp.move(d.getLineStep().get(0).getA(), d.getLineStep().get(1).getA(), d.getLineStep().get(2).getA(), d.getLineStep().get(3).getA());//全体を移動する
 
+            ori_s_temp.unselect_all();
             int sousuu_old = d.getFoldLineSet().getTotal();
             Save save1 = SaveProvider.createInstance();
             ori_s_temp.getSave(save1);
