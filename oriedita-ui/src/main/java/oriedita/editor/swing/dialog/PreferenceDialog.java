@@ -27,18 +27,13 @@ import javax.swing.JSlider;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import java.awt.Color;
-import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Insets;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Dictionary;
-import java.util.HashMap;
 import java.util.Hashtable;
 
 public class PreferenceDialog extends JDialog {
@@ -104,10 +99,7 @@ public class PreferenceDialog extends JDialog {
     private JPanel panels1Panel;
     private JPanel panels2Panel;
     private JLabel ck4Label;
-    private JSlider ck4Slider;
-    private JPanel ck4SliderPanel;
     private JSlider zoomSpeedSlider;
-    private int ck4XStart;
     private int tempTransparency;
     private final ApplicationModel applicationModel;
     private final ApplicationModel tempModel;
@@ -170,8 +162,6 @@ public class PreferenceDialog extends JDialog {
         setDefaultCloseOperation(HIDE_ON_CLOSE);
         getRootPane().setDefaultButton(buttonOK);
 
-        ck4Slider.setVisible(false);
-
         if (applicationModel.getCheck4ColorTransparency() >= 250) {
             ck4Plus.setEnabled(false);
         }
@@ -190,57 +180,6 @@ public class PreferenceDialog extends JDialog {
         if (applicationModel.getGridLineWidth() <= 1) {
             gridWidthMinus.setEnabled(false);
         }
-
-        ck4Label.addMouseListener(new MouseListener() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-                ck4Slider.setVisible(true);
-                ck4XStart = e.getComponent().getWidth() / 2 - 20;
-                ck4Slider.setValue((applicationModel.getCheck4ColorTransparency() / 5) * 2);
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                ck4Slider.setVisible(false);
-                ck4TF.setText(Integer.toString(tempTransparency));
-                applicationModel.setCheck4ColorTransparency((tempTransparency / 2) * 5);
-                ck4Minus.setEnabled(tempTransparency > 20);
-                ck4Plus.setEnabled(tempTransparency < 100);
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                e.getComponent().setCursor(Cursor.getPredefinedCursor(Cursor.W_RESIZE_CURSOR));
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-                e.getComponent().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-            }
-        });
-        ck4Label.addMouseMotionListener(new MouseMotionListener() {
-            @Override
-            public void mouseDragged(MouseEvent e) {
-                tempTransparency = applicationModel.getCheck4ColorTransparency() + (e.getX() / ck4XStart) * 10;
-                tempTransparency -= tempTransparency % 10;
-                tempTransparency = (tempTransparency / 5) * 2;
-                if (tempTransparency <= 20) {
-                    tempTransparency = 20;
-                } else if (tempTransparency >= 100) {
-                    tempTransparency = 100;
-                }
-                ck4Slider.setValue(tempTransparency);
-            }
-
-            @Override
-            public void mouseMoved(MouseEvent e) {
-            }
-        });
 
         spotlightCB.addActionListener(e -> applicationModel.setDisplayPointSpotlight(spotlightCB.isSelected()));
         offsetCB.addActionListener(e -> applicationModel.setDisplayPointOffset(offsetCB.isSelected()));
@@ -588,7 +527,7 @@ public class PreferenceDialog extends JDialog {
         pointSizeTF.setToolTipText("Input an integer");
         appearance2Panel.add(pointSizeTF, new GridConstraints(3, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         final JLabel label6 = new JLabel();
-        label6.setText(" Line style: ");
+        label6.setText("MV Line style: ");
         appearance2Panel.add(label6, new GridConstraints(7, 0, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         lineStyleDropBox = new JComboBox();
         final DefaultComboBoxModel defaultComboBoxModel1 = new DefaultComboBoxModel();
@@ -671,27 +610,11 @@ public class PreferenceDialog extends JDialog {
         ck4Label.setToolTipText("Change cAMV opacity 20-100%");
         appearance2Panel.add(ck4Label, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         appearance1Panel = new JPanel();
-        appearance1Panel.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 5, 0), -1, -1));
+        appearance1Panel.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 5, 0), -1, -1));
         appearancePanel.add(appearance1Panel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         final JLabel label10 = new JLabel();
         label10.setText("APPEARANCE");
         appearance1Panel.add(label10, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_VERTICAL, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        ck4SliderPanel = new JPanel();
-        ck4SliderPanel.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
-        appearance1Panel.add(ck4SliderPanel, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, new Dimension(150, -1), null, null, 0, false));
-        ck4Slider = new JSlider();
-        ck4Slider.setMajorTickSpacing(20);
-        ck4Slider.setMaximum(100);
-        ck4Slider.setMinimum(20);
-        ck4Slider.setMinorTickSpacing(4);
-        ck4Slider.setPaintLabels(true);
-        ck4Slider.setPaintTicks(true);
-        ck4Slider.setPaintTrack(true);
-        ck4Slider.setSnapToTicks(true);
-        ck4Slider.setToolTipText("");
-        ck4Slider.setValue(40);
-        ck4Slider.setValueIsAdjusting(false);
-        ck4SliderPanel.add(ck4Slider, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final Spacer spacer3 = new Spacer();
         secondColumn.add(spacer3, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         behaviorPanel = new JPanel();
@@ -708,19 +631,21 @@ public class PreferenceDialog extends JDialog {
         behaviorPanel.add(behavior2Panel, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         preciseZoomCB = new JCheckBox();
         preciseZoomCB.setText("Precise zoom");
-        behavior2Panel.add(preciseZoomCB, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        behavior2Panel.add(preciseZoomCB, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         mousewheelMovesCPCB = new JCheckBox();
         mousewheelMovesCPCB.setText("Mousewheel moves CP");
-        behavior2Panel.add(mousewheelMovesCPCB, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        behavior2Panel.add(mousewheelMovesCPCB, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JLabel label12 = new JLabel();
         label12.setText("Zoom Speed: ");
-        behavior2Panel.add(label12, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(103, 16), null, 0, false));
+        behavior2Panel.add(label12, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         zoomSpeedSlider.setMajorTickSpacing(10);
         zoomSpeedSlider.setMaximum(100);
+        zoomSpeedSlider.setMinimum(0);
         zoomSpeedSlider.setPaintLabels(true);
         zoomSpeedSlider.setPaintTicks(true);
         zoomSpeedSlider.setPaintTrack(true);
-        behavior2Panel.add(zoomSpeedSlider, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        zoomSpeedSlider.setSnapToTicks(true);
+        behavior2Panel.add(zoomSpeedSlider, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final Spacer spacer4 = new Spacer();
         topPanel.add(spacer4, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
     }
