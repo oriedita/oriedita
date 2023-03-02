@@ -4,7 +4,7 @@ import java.util.function.Consumer;
 
 public class Animation {
     private final Consumer<Double> setter;
-    private final double from;
+    private double from;
     private double to;
     private long startTime;
     private long duration;
@@ -43,16 +43,22 @@ public class Animation {
         long currentTime = System.nanoTime() - startTime;
         progress =  currentTime*1.0 / duration;
         durationLeft = duration - currentTime;
-        setter.accept(interpolation.interpolate(from, to, Math.max(Math.min(1, progress), 0)));
+        setter.accept(currentValue());
         return true;
     }
 
-    public void setTo(double to) {
-        this.to = to;
+    public double currentValue() {
+        return interpolation.interpolate(from, to, Math.max(Math.min(1, progress), 0));
     }
 
-    public void addTime(long duration) {
-        this.duration = durationLeft + duration;
+    public void combine(Animation other) {
+        System.out.println("prev to: " + to);
+        this.from = currentValue();
+        this.to = other.to;
+        System.out.println("new to: " + to);
+        this.duration = other.duration;
+        this.durationLeft = other.duration;
+        this.startTime = System.nanoTime();
     }
 
     @Override
@@ -65,5 +71,9 @@ public class Animation {
                 ", durationLeft=" + durationLeft +
                 ", progress=" + progress +
                 '}';
+    }
+
+    public double getTo() {
+        return to;
     }
 }

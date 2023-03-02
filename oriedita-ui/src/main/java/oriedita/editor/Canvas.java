@@ -770,13 +770,18 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
             MouseWheelTarget target = foldedFigureCanvasSelectService.pointInCreasePatternOrFoldedFigure(p);
 
             double scrollDistance = applicationModel.isPreciseZoom() ? e.getPreciseWheelRotation() : e.getWheelRotation();
-            double zoomTime = 0.2;
+            double zoomTime = 0.07;
             if (target == MouseWheelTarget.CREASE_PATTERN_0) {
+
                 animationHandler.animate("zoomCp",
                         creasePatternCameraModel::setScale,
                         creasePatternCameraModel.getScale(),
-                        creasePatternCameraModel.getScaleForZoom(scrollDistance, applicationModel.getZoomSpeed()),
+                        creasePatternCameraModel.getScaleForZoomBy(
+                                scrollDistance,
+                                applicationModel.getZoomSpeed(),
+                                animationHandler.getFinalValueOr("zoomCp", creasePatternCameraModel.getScale())),
                         zoomTime);
+
                 if (applicationModel.getMoveFoldedModelWithCp()) {
                     for (FoldedFigure_Drawer foldedFigure_drawer : foldedFiguresList.getItems()) {
                         foldedFigure_drawer.scale(1, creasePatternCamera.object2TV(creasePatternCamera.getCameraPosition()));
@@ -791,16 +796,17 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
                                 }
                             },
                             foldedFigureModel.getScale(),
-                            foldedFigureModel.getScaleForZoom(scrollDistance, applicationModel.getZoomSpeed()),
+                            foldedFigureModel.getScaleForZoomBy(scrollDistance, applicationModel.getZoomSpeed(),
+                                    animationHandler.getFinalValueOr("zoomFoldedModel", foldedFigureModel.getScale())),
                             zoomTime);
-                    //foldedFigureModel.zoomBy(scrollDistance, applicationModel.getZoomSpeed());
 
                 }
             } else {
                 animationHandler.animate("zoomFoldedModel",
                         foldedFigureModel::setScale,
                         foldedFigureModel.getScale(),
-                        foldedFigureModel.getScaleForZoom(scrollDistance, applicationModel.getZoomSpeed()),
+                        foldedFigureModel.getScaleForZoomBy(scrollDistance, applicationModel.getZoomSpeed(),
+                                animationHandler.getFinalValueOr("zoomFoldedModel", foldedFigureModel.getScale())),
                         zoomTime);
             }
 

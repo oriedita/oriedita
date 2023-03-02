@@ -163,17 +163,21 @@ public class FoldedFigureModel implements Serializable {
     }
 
     public void zoomBy(double value, double zoomSpeed) {
-        setScale(getScaleForZoom(value, zoomSpeed));
+        setScale(getScaleForZoomBy(value, zoomSpeed));
     }
 
-    public double getScaleForZoom(double value, double zoomSpeed) {
+    public double getScaleForZoomBy(double value, double zoomSpeed) {
+        return getScaleForZoomBy(value, zoomSpeed, scale);
+    }
+
+    public double getScaleForZoomBy(double value, double zoomSpeed, double initialScale) {
         double zoomBase = 1 + zoomSpeed/10;
         if (value > 0) {
-            return (scale / Math.pow(zoomBase, value));
+            return (initialScale / Math.pow(zoomBase, value));
         } else if (value < 0) {
-            return (scale * Math.pow(zoomBase, Math.abs(value)));
+            return (initialScale * Math.pow(zoomBase, Math.abs(value)));
         }
-        return scale;
+        return initialScale;
     }
 
     public double getRotation() {
