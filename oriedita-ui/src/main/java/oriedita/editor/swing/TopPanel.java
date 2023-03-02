@@ -136,12 +136,17 @@ public class TopPanel implements PropertyChangeListener {
         mouseSettingsCheckBox.addActionListener(e -> applicationModel.setMouseWheelMovesCreasePattern(mouseSettingsCheckBox.isSelected()));
 
         ratioATextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(ratioATextField));
+        ratioATextField.addKeyListener(new InputEnterKeyAdapter(ratioATextField));
         ratioBTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(ratioBTextField));
+        ratioBTextField.addKeyListener(new InputEnterKeyAdapter(ratioBTextField));
         ratioCTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(ratioCTextField));
+        ratioCTextField.addKeyListener(new InputEnterKeyAdapter(ratioCTextField));
         ratioDTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(ratioDTextField));
+        ratioDTextField.addKeyListener(new InputEnterKeyAdapter(ratioDTextField));
         ratioETextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(ratioETextField));
+        ratioETextField.addKeyListener(new InputEnterKeyAdapter(ratioETextField));
         ratioFTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(ratioFTextField));
-
+        ratioFTextField.addKeyListener(new InputEnterKeyAdapter(ratioFTextField));
 
         scaleFactorSetButton.addActionListener(e -> {
             double d_syukusyaku_keisuu_old = creasePatternCameraModel.getScale();
@@ -164,6 +169,7 @@ public class TopPanel implements PropertyChangeListener {
         });
         scaleFactorTextField.addActionListener(e -> scaleFactorSetButton.doClick());
         scaleFactorTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(scaleFactorTextField));
+        scaleFactorTextField.addKeyListener(new InputEnterKeyAdapter(scaleFactorTextField));
         creasePatternZoomInButton.addActionListener(e -> {
             creasePatternCameraModel.zoomIn(applicationModel.getZoomSpeed());
 
@@ -185,6 +191,7 @@ public class TopPanel implements PropertyChangeListener {
         rotationSetButton.addActionListener(e -> creasePatternCameraModel.setRotation(measuresModel.string2double(rotationTextField.getText(), creasePatternCameraModel.getRotation())));
         rotationTextField.addActionListener(e -> rotationSetButton.doClick());
         rotationTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(rotationTextField));
+        rotationTextField.addKeyListener(new InputEnterKeyAdapter(rotationTextField));
         rotateClockwiseButton.addActionListener(e -> creasePatternCameraModel.decreaseRotation());
         transparentButton.addActionListener(e -> canvas.createTransparentBackground());
         backgroundSetPositionButton.addActionListener(e -> {

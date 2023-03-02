@@ -5,6 +5,7 @@ import com.intellij.uiDesigner.core.GridLayoutManager;
 import oriedita.editor.databinding.FoldedFigureModel;
 import oriedita.editor.databinding.MeasuresModel;
 import oriedita.editor.service.ButtonService;
+import oriedita.editor.swing.InputEnterKeyAdapter;
 import oriedita.editor.swing.OnlyDoubleAdapter;
 import origami.crease_pattern.OritaCalc;
 import origami.folding.FoldedFigure;
@@ -50,6 +51,7 @@ public class FoldedFigureRotate extends JPanel {
         });
         foldedFigureRotateTextField.addActionListener(e -> foldedFigureRotateSetButton.doClick());
         foldedFigureRotateTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(foldedFigureRotateTextField));
+        foldedFigureRotateTextField.addKeyListener(new InputEnterKeyAdapter(foldedFigureRotateTextField));
     }
 
     public void setText(String text) {

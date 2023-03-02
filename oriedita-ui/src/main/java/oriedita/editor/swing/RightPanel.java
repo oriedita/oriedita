@@ -391,19 +391,26 @@ public class RightPanel {
         ActionListener listener = e -> restrictedAngleSetDEFButton.doClick();
         angleDTextField.addActionListener(listener);
         angleDTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(angleDTextField));
+        angleDTextField.addKeyListener(new InputEnterKeyAdapter(angleDTextField));
         angleETextField.addActionListener(listener);
         angleETextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(angleETextField));
+        angleETextField.addKeyListener(new InputEnterKeyAdapter(angleETextField));
         angleFTextField.addActionListener(listener);
         angleFTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(angleFTextField));
+        angleFTextField.addKeyListener(new InputEnterKeyAdapter(angleFTextField));
         ActionListener listener1 = e -> restrictedAngleABCSetButton.doClick();
         angleATextField.addActionListener(listener1);
         angleATextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(angleATextField));
+        angleATextField.addKeyListener(new InputEnterKeyAdapter(angleATextField));
         angleCTextField.addActionListener(listener1);
         angleCTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(angleCTextField));
+        angleCTextField.addKeyListener(new InputEnterKeyAdapter(angleCTextField));
         angleBTextField.addActionListener(listener1);
         angleBTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(angleBTextField));
+        angleBTextField.addKeyListener(new InputEnterKeyAdapter(angleBTextField));
         polygonSizeTextField.addActionListener(e -> polygonSizeSetButton.doClick());
         polygonSizeTextField.getDocument().addDocumentListener(new OnlyIntAdapter(polygonSizeTextField));
+        polygonSizeTextField.addKeyListener(new InputEnterKeyAdapter(polygonSizeTextField));
     }
 
     private void setData(HistoryState auxHistoryState) {

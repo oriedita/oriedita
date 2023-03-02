@@ -127,6 +127,7 @@ public class BottomPanel {
         });
         goToFoldedFigureTextField.addActionListener(e -> goToFoldedFigureButton.doClick());
         goToFoldedFigureTextField.getDocument().addDocumentListener(new OnlyIntAdapter(goToFoldedFigureTextField));
+        goToFoldedFigureTextField.addKeyListener(new InputEnterKeyAdapter(goToFoldedFigureTextField));
         constraintButton.addActionListener(e -> canvasModel.setMouseMode(MouseMode.ADD_FOLDING_CONSTRAINT));
 
         undoRedo.addUndoActionListener(e -> {
