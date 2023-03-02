@@ -6,7 +6,6 @@ import oriedita.editor.Colors;
 import oriedita.editor.canvas.LineStyle;
 import oriedita.editor.handler.CustomLineTypes;
 
-import javax.swing.plaf.basic.BasicTreeUI;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Frame;
@@ -17,6 +16,7 @@ import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -397,7 +397,7 @@ public class ApplicationModel implements Serializable {
     }
 
     public boolean isSame(ApplicationModel applicationModel) {
-        if(displayPointSpotlight == applicationModel.getDisplayPointSpotlight()
+        return(displayPointSpotlight == applicationModel.getDisplayPointSpotlight()
                 && displayPointOffset == applicationModel.getDisplayPointOffset()
                 && displayGridInputAssist == applicationModel.getDisplayGridInputAssist()
                 && displayComments == applicationModel.getDisplayComments()
@@ -425,10 +425,8 @@ public class ApplicationModel implements Serializable {
                 && displayBottomPanel == applicationModel.getDisplayBottomPanel()
                 && displayRightPanel == applicationModel.getDisplayRightPanel()
                 && displayLeftPanel == applicationModel.getDisplayLeftPanel()
-                && laf == applicationModel.getLaf()
-                && zoomSpeed == applicationModel.getZoomSpeed()){
-            return true;
-        } else { return false; }
+                && Objects.equals(laf, applicationModel.getLaf())
+                && zoomSpeed == applicationModel.getZoomSpeed());
     }
 
 
