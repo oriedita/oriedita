@@ -12,6 +12,8 @@ import oriedita.editor.canvas.LineStyle;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.canvas.MouseWheelTarget;
 import oriedita.editor.canvas.TextWorker;
+import oriedita.editor.canvas.animation.AnimationHandler;
+import oriedita.editor.canvas.animation.LinearInterpolation;
 import oriedita.editor.databinding.AngleSystemModel;
 import oriedita.editor.databinding.ApplicationModel;
 import oriedita.editor.databinding.BackgroundModel;
@@ -36,6 +38,7 @@ import origami.folding.FoldedFigure;
 
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 import java.awt.AWTException;
@@ -87,6 +90,7 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
     private final CanvasModel canvasModel;
     private final TextWorker textWorker;
     private final SelectedTextModel textModel;
+    private final AnimationHandler animationHandler;
     private boolean hideOperationFrame = false;
 
     private MouseModeHandler activeMouseHandler;
@@ -195,6 +199,7 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
         public void paintComponent(Graphics bufferGraphics) {
             //「f」を付けることでfloat型の数値として記述することができる
             Graphics2D g2 = (Graphics2D) bufferGraphics;
+            animationHandler.update();
 
             BasicStroke BStroke = new BasicStroke(lineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER);
             g2.setStroke(BStroke);//線の太さや線の末端の形状
@@ -336,6 +341,10 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
                 g2.drawLine((int) (p_mouse_TV_position.getX()), (int) (p_mouse_TV_position.getY()),
                         (int) (p_mouse_TV_position.getX() + d_width), (int) (p_mouse_TV_position.getY() + d_width)); //直線
             }
+            if (animationHandler.animating()) {
+                SwingUtilities.invokeLater(canvasModel::markDirty);
+                //canvasModel.markDirty();
+            }
         }
     }
 
@@ -374,6 +383,7 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
         this.canvasModel = canvasModel;
         this.textWorker = textWorker;
         this.textModel = textModel;
+        animationHandler = new AnimationHandler(new LinearInterpolation());
     }
 
     public void init() {
@@ -760,21 +770,38 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
             MouseWheelTarget target = foldedFigureCanvasSelectService.pointInCreasePatternOrFoldedFigure(p);
 
             double scrollDistance = applicationModel.isPreciseZoom() ? e.getPreciseWheelRotation() : e.getWheelRotation();
-
+            double zoomTime = 0.2;
             if (target == MouseWheelTarget.CREASE_PATTERN_0) {
-                creasePatternCameraModel.zoomBy(scrollDistance, applicationModel.getZoomSpeed());
+                animationHandler.animate("zoomCp",
+                        creasePatternCameraModel::setScale,
+                        creasePatternCameraModel.getScale(),
+                        creasePatternCameraModel.getScaleForZoom(scrollDistance, applicationModel.getZoomSpeed()),
+                        zoomTime);
                 if (applicationModel.getMoveFoldedModelWithCp()) {
                     for (FoldedFigure_Drawer foldedFigure_drawer : foldedFiguresList.getItems()) {
                         foldedFigure_drawer.scale(1, creasePatternCamera.object2TV(creasePatternCamera.getCameraPosition()));
                     }
-                    foldedFigureModel.zoomBy(scrollDistance, applicationModel.getZoomSpeed());
-                    // Move all other objects along.
-                    for (FoldedFigure_Drawer foldedFigure_drawer : foldedFiguresList.getItems()) {
-                        foldedFigure_drawer.setScale(foldedFigureModel.getScale());
-                    }
+
+                    animationHandler.animate("zoomFoldedModel",
+                            s -> {
+                                foldedFigureModel.setScale(s);
+                                // Move all other objects along.
+                                for (FoldedFigure_Drawer foldedFigure_drawer : foldedFiguresList.getItems()) {
+                                    foldedFigure_drawer.setScale(foldedFigureModel.getScale());
+                                }
+                            },
+                            foldedFigureModel.getScale(),
+                            foldedFigureModel.getScaleForZoom(scrollDistance, applicationModel.getZoomSpeed()),
+                            zoomTime);
+                    //foldedFigureModel.zoomBy(scrollDistance, applicationModel.getZoomSpeed());
+
                 }
             } else {
-                foldedFigureModel.zoomBy(scrollDistance, applicationModel.getZoomSpeed());
+                animationHandler.animate("zoomFoldedModel",
+                        foldedFigureModel::setScale,
+                        foldedFigureModel.getScale(),
+                        foldedFigureModel.getScaleForZoom(scrollDistance, applicationModel.getZoomSpeed()),
+                        zoomTime);
             }
 
             mouse_object_position(p_mouse_TV_position);

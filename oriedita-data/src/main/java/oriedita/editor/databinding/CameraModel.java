@@ -64,12 +64,17 @@ public class CameraModel {
     }
 
     public void zoomBy(double value, double zoomSpeed) {
+        setScale(getScaleForZoom(value, zoomSpeed));
+    }
+
+    public double getScaleForZoom(double value, double zoomSpeed) {
         double zoomBase = 1 + zoomSpeed/10;
         if (value > 0) {
-            setScale(scale / Math.pow(zoomBase, value));
+            return (scale / Math.pow(zoomBase, value));
         } else if (value < 0) {
-            setScale(scale * Math.pow(zoomBase, Math.abs(value)));
+            return (scale * Math.pow(zoomBase, Math.abs(value)));
         }
+        return scale;
     }
 
     public void zoomOut(double zoomSpeed) {
