@@ -373,6 +373,7 @@ public class LeftPanel {
         });
         lineSegmentDivisionTextField.addActionListener(e -> lineSegmentDivisionSetButton.doClick());
         lineSegmentDivisionTextField.getDocument().addDocumentListener(new OnlyIntAdapter(lineSegmentDivisionTextField));
+        lineSegmentDivisionTextField.addKeyListener(new InputEnterKeyAdapter(lineSegmentDivisionTextField));
         senbun_b_nyuryokuButton.addActionListener(e -> {
             getData(applicationModel);
 
@@ -553,6 +554,7 @@ public class LeftPanel {
         gridSizeSetButton.addActionListener(e -> getData(gridModel));
         gridSizeTextField.addActionListener(e -> gridSizeSetButton.doClick());
         gridSizeTextField.getDocument().addDocumentListener(new OnlyIntAdapter(gridSizeTextField));
+        gridSizeTextField.addKeyListener(new InputEnterKeyAdapter(gridSizeTextField));
         gridSizeIncreaseButton.addActionListener(e -> gridModel.setGridSize(gridModel.getGridSize() * 2));
         gridColorButton.addActionListener(e -> {
             //以下にやりたいことを書く
@@ -569,6 +571,7 @@ public class LeftPanel {
         setIntervalGridSizeButton.addActionListener(e -> getData(gridModel));
         intervalGridSizeTextField.addActionListener(e -> setIntervalGridSizeButton.doClick());
         intervalGridSizeTextField.getDocument().addDocumentListener(new OnlyIntAdapter(intervalGridSizeTextField));
+        intervalGridSizeTextField.addKeyListener(new InputEnterKeyAdapter(intervalGridSizeTextField));
         moveIntervalGridHorizontal.addActionListener(e -> gridModel.changeVerticalScalePosition());
         intervalGridColorButton.addActionListener(e -> {
             //以下にやりたいことを書く
@@ -578,11 +581,17 @@ public class LeftPanel {
             }
         });
         gridXATextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(gridXATextField));
+        gridXATextField.addKeyListener(new InputEnterKeyAdapter(gridXATextField));
         gridXBTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(gridXBTextField));
+        gridXBTextField.addKeyListener(new InputEnterKeyAdapter(gridXBTextField));
         gridXCTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(gridXCTextField));
+        gridXCTextField.addKeyListener(new InputEnterKeyAdapter(gridXCTextField));
         gridYATextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(gridYATextField));
+        gridYATextField.addKeyListener(new InputEnterKeyAdapter(gridYATextField));
         gridYBTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(gridYBTextField));
+        gridYBTextField.addKeyListener(new InputEnterKeyAdapter(gridYBTextField));
         gridYCTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(gridYCTextField));
+        gridYCTextField.addKeyListener(new InputEnterKeyAdapter(gridYCTextField));
         setGridParametersButton.addActionListener(e -> {
             getData(gridModel);
             // Update the view if the grid angle got reset
@@ -590,6 +599,7 @@ public class LeftPanel {
         });
         gridAngleTextField.addActionListener(e -> setGridParametersButton.doClick());
         gridAngleTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(gridAngleTextField));
+        gridAngleTextField.addKeyListener(new InputEnterKeyAdapter(gridAngleTextField));
         resetGridButton.addActionListener(e -> gridModel.reset());
         drawDiagonalGridlinesCheckBox.addActionListener(e -> gridModel.setDrawDiagonalGridlines(drawDiagonalGridlinesCheckBox.isSelected()));
     }
