@@ -216,6 +216,8 @@ public class PreferenceDialog extends JDialog {
                         foldedFigureModel.setFrontColor(Colors.FIGURE_FRONT);
                         foldedFigureModel.setBackColor(Colors.FIGURE_BACK);
                     }
+                    gridColorButton.setIcon(new ColorIcon(applicationModel.getGridColor()));
+                    gridScaleColorButton.setIcon(new ColorIcon(applicationModel.getGridScaleColor()));
                 });
             } else { lookAndFeelService.toggleDarkMode(); }
         });
@@ -345,14 +347,14 @@ public class PreferenceDialog extends JDialog {
     }
 
     private void onOK() {
-        dispose();
+        setVisible(false);
     }
 
     private void onCancel() {
         setData(tempModel);
         applicationModel.set(tempModel);
         foldedFigureModel.set(tempfoldedModel);
-        dispose();
+        setVisible(false);
     }
 
     private void onReset() {
@@ -362,6 +364,10 @@ public class PreferenceDialog extends JDialog {
             foldedFigureModel.restorePrefDefaults();
             dispose();
         }
+    }
+
+    public void updateTempModel(ApplicationModel applicationModel) {
+        tempModel.set(applicationModel);
     }
 
     /**
