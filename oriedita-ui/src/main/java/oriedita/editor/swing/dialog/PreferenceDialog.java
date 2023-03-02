@@ -345,28 +345,14 @@ public class PreferenceDialog extends JDialog {
     }
 
     private void onOK() {
-        if (!applicationModel.isSame(tempModel) || !foldedFigureModel.isSame(tempfoldedModel)) {
-            int result = JOptionPane.showConfirmDialog(this, "Are you sure you want to confirm changes?", "Confirm changes", JOptionPane.YES_NO_OPTION);
-            if (result == JOptionPane.YES_OPTION) {
-                dispose();
-            }
-        } else {
-            dispose();
-        }
+        dispose();
     }
 
     private void onCancel() {
-        if (!applicationModel.isSame(tempModel) || !foldedFigureModel.isSame(tempfoldedModel)) {
-            int result = JOptionPane.showConfirmDialog(this, "Are you sure you want to cancel all changes?", "Cancel changes", JOptionPane.YES_NO_OPTION);
-            if (result == JOptionPane.YES_OPTION) {
-                setData(tempModel);
-                applicationModel.set(tempModel);
-                foldedFigureModel.set(tempfoldedModel);
-                dispose();
-            }
-        } else {
-            dispose();
-        }
+        setData(tempModel);
+        applicationModel.set(tempModel);
+        foldedFigureModel.set(tempfoldedModel);
+        dispose();
     }
 
     private void onReset() {
