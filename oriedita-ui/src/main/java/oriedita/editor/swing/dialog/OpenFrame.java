@@ -18,7 +18,6 @@ import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.plaf.basic.BasicTreeUI;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Frame;
@@ -39,8 +38,10 @@ public class OpenFrame extends JDialog {
     private JButton del_l_XButton;
     private JPanel panel;
     private JButton replace_lineButton;
-    private JComboBox fromLineDropBox;
-    private JComboBox toLineDropBox;
+    private JComboBox<String> fromLineDropBox;
+    private JComboBox<String> toLineDropBox;
+    private JButton del_l_typeButton;
+    private JComboBox<String> delTypeDropBox;
 
     private CustomLineTypes customLineTypes;
 
@@ -65,6 +66,7 @@ public class OpenFrame extends JDialog {
         buttonService.registerButton(del_l_XButton, "del_l_XAction");
         buttonService.registerButton(selectAnd3ClickCheckBox, "selectAnd3ClickAction");
         buttonService.registerButton(replace_lineButton, "replace_lineButton");
+        buttonService.registerButton(del_l_typeButton, "del_l_typeButton");
 
         o_F_checkButton.addActionListener(e -> canvasModel.setMouseMode(MouseMode.FLAT_FOLDABLE_CHECK_63));
         foldableLinePlusGridInputButton.addActionListener(e -> {
@@ -91,6 +93,15 @@ public class OpenFrame extends JDialog {
             applicationModel.setCustomToLineType(CustomLineTypes.from(toLineDropBox.getSelectedIndex()));
             toLineDropBox.setSelectedIndex(applicationModel.getCustomToLineType().getType());
         });
+        del_l_typeButton.addActionListener(e -> {
+            canvasModel.setMouseMode(MouseMode.DELETE_LINE_TYPE_SELECT_73);
+            mainCreasePatternWorker.unselect_all(false);
+        });
+        delTypeDropBox.addActionListener(e -> {
+            applicationModel.setDelLineType(CustomLineTypes.from(delTypeDropBox.getSelectedIndex() - 1));
+            delTypeDropBox.setSelectedIndex(applicationModel.getDelLineType().getType() + 1);
+        });
+
         selectAnd3ClickCheckBox.addActionListener(e -> canvasModel.setCkbox_add_frame_SelectAnd3click_isSelected(selectAnd3ClickCheckBox.isSelected()));
 
         pack();
@@ -263,6 +274,28 @@ public class OpenFrame extends JDialog {
         gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         panel1.add(foldableLinePlusGridInputButton, gbc);
+        del_l_typeButton = new JButton();
+        del_l_typeButton.setText("del_l_type");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 5;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        panel1.add(del_l_typeButton, gbc);
+        delTypeDropBox = new JComboBox();
+        final DefaultComboBoxModel defaultComboBoxModel3 = new DefaultComboBoxModel();
+        defaultComboBoxModel3.addElement("Any");
+        defaultComboBoxModel3.addElement("Edge");
+        defaultComboBoxModel3.addElement("Mountain");
+        defaultComboBoxModel3.addElement("Valley");
+        defaultComboBoxModel3.addElement("Aux");
+        delTypeDropBox.setModel(defaultComboBoxModel3);
+        gbc = new GridBagConstraints();
+        gbc.gridx = 1;
+        gbc.gridy = 5;
+        gbc.gridwidth = 3;
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        panel1.add(delTypeDropBox, gbc);
     }
 
     /**

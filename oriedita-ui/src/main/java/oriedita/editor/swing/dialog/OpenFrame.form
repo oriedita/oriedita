@@ -153,6 +153,30 @@
               <icon value="ppp/oritatami_kanousen_and_kousitenkei.png"/>
             </properties>
           </component>
+          <component id="2cb22" class="javax.swing.JButton" binding="del_l_typeButton" default-binding="true">
+            <constraints>
+              <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties>
+              <text value="del_l_type"/>
+            </properties>
+          </component>
+          <component id="8c67a" class="javax.swing.JComboBox" binding="delTypeDropBox">
+            <constraints>
+              <grid row="5" column="1" row-span="1" col-span="3" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties>
+              <model>
+                <item value="Any"/>
+                <item value="Edge"/>
+                <item value="Mountain"/>
+                <item value="Valley"/>
+                <item value="Aux"/>
+              </model>
+            </properties>
+          </component>
         </children>
       </grid>
     </children>
