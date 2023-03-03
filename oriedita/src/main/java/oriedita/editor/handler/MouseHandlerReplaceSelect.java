@@ -42,15 +42,17 @@ public class MouseHandlerReplaceSelect extends BaseMouseHandlerBoxSelect {
                 // From "Any"
                 if(from == -1){
                     s.setColor(LineColor.fromNumber(to));
+                    d.fix2();
+                    d.record();
                 }
                 // From other line types
                 else {
                     if( s.getColor().getNumber() == from){
                         s.setColor(LineColor.fromNumber(to));
+                        d.fix2();
+                        d.record();
                     }
                 }
-                d.fix2();
-                d.record();
             }
         }
     }
