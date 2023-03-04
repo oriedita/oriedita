@@ -71,6 +71,7 @@ public class ApplicationModel implements Serializable {
     private boolean foldWarning;
     private CustomLineTypes customFromLineType;
     private CustomLineTypes customToLineType;
+    private CustomLineTypes delLineType;
     private int check4ColorTransparency;
     private double zoomSpeed;
     private boolean moveFoldedModelWithCp;
@@ -125,6 +126,14 @@ public class ApplicationModel implements Serializable {
         CustomLineTypes oldCustomToLineType = this.customToLineType;
         this.customToLineType = customToLineType;
         this.pcs.firePropertyChange("customToLineType", oldCustomToLineType, customToLineType);
+    }
+
+    public CustomLineTypes getDelLineType() { return delLineType; }
+
+    public void setDelLineType(CustomLineTypes delLineType) {
+        CustomLineTypes oldDelLineType = this.delLineType;
+        this.delLineType = delLineType;
+        this.pcs.firePropertyChange("delLineType", oldDelLineType, delLineType);
     }
 
     public CustomLineTypes getCustomToLineType(){
@@ -341,6 +350,7 @@ public class ApplicationModel implements Serializable {
 
         customFromLineType = CustomLineTypes.ANY;
         customToLineType = CustomLineTypes.EGDE;
+        delLineType = CustomLineTypes.ANY;
 
         zoomSpeed = 1;
 
@@ -803,6 +813,7 @@ public class ApplicationModel implements Serializable {
 
         customFromLineType = applicationModel.getCustomFromLineType();
         customToLineType = applicationModel.getCustomToLineType();
+        delLineType = applicationModel.getDelLineType();
 
         moveFoldedModelWithCp = applicationModel.getMoveFoldedModelWithCp();
         zoomSpeed = applicationModel.getZoomSpeed();

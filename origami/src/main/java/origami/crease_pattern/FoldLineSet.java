@@ -446,6 +446,41 @@ public class FoldLineSet {
         return i_r;
     }
 
+    public boolean insideToDelete(Polygon b, int del){
+        boolean i_r = false;
+
+        FoldLineSave save = new FoldLineSave();
+
+        for (int i = 1; i <= total; i++){
+            LineSegment s;
+            s = lineSegments.get(i);
+
+            // From "Any"
+            if(del == -1){
+                if(b.totu_boundary_inside(s)){
+                    i_r = true;
+                } else {
+                    save.addLineSegment(s.clone());
+                }
+            }
+            //From other line types
+            else {
+                if ((b.totu_boundary_inside(s)) && s.getColor().getNumber() == del) {
+                    i_r = true;
+                }//黒赤青線はmemo1に書かれない。つまり削除される。
+                else if ((!b.totu_boundary_inside(s)) || s.getColor().getNumber() != del) {
+                    save.addLineSegment(s.clone());
+                }
+            }
+        }
+        if(i_r){
+            reset();
+            setSave(save);
+        }
+
+        return i_r;
+    }
+
     public boolean deleteInsideLine(LineSegment s_step1, String Dousa_mode) {
         //"l"  lXは小文字のエル。Senbun s_step1と重複する部分のある線分を削除するモード。
         //"lX" lXは小文字のエルと大文字のエックス。Senbun s_step1と重複する部分のある線分やX交差する線分を削除するモード。
