@@ -42,6 +42,8 @@ public class Oriedita {
     List<String> argv;
 
     public void start(@Observes ContainerInitialized event) {
+        long startTime = System.currentTimeMillis();
+
         if (! event.getContainerId().equals(RegistrySingletonProvider.STATIC_INSTANCE)) {
             Logger.warn("Not starting Oriedita outside of normal mode");
             return;
@@ -55,6 +57,8 @@ public class Oriedita {
         lookAndFeelService.init();
         // Restore the applicationModel, this should be done as early as possible.
         applicationModelPersistenceService.init();
+
+        Logger.info("Setup in {} ms.", System.currentTimeMillis() - startTime);
 
         SwingUtilities.invokeLater(() -> {
             lookAndFeelService.registerFlatLafSource();
@@ -74,6 +78,7 @@ public class Oriedita {
             }
 
             fileSaveService.initAutoSave();
+            Logger.info("Startup in {} ms.", System.currentTimeMillis() - startTime);
         });
     }
 
