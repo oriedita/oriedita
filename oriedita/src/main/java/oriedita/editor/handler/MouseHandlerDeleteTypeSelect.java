@@ -32,24 +32,6 @@ public class MouseHandlerDeleteTypeSelect extends BaseMouseHandlerBoxSelect {
             if (d.insideToDelete(selectionStart, p0, del)) {
                 d.record();
             }
-        } else {//現状では赤を赤に変えたときもUNDO用に記録されてしまう20161218
-            if (d.getFoldLineSet().closestLineSegmentDistance(p) < d.getSelectionDistance()) {//点pに最も近い線分の番号での、その距離を返す	public double closestLineSegmentDistance(Ten p)
-                LineSegment s = d.getFoldLineSet().closestLineSegmentSearch(p);
-
-                // From "Any"
-                if(del == -1){
-                    d.getFoldLineSet().deleteLine(s);
-                    d.record();
-
-                }
-                // From other line types
-                else {
-                    if( s.getColor().getNumber() == del){
-                        d.getFoldLineSet().deleteLine(s);
-                        d.record();
-                    }
-                }
-            }
         }
     }
 
