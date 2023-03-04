@@ -1,5 +1,7 @@
 # Oriedita
 
+Visit the [Oriedita website](https://oriedita.github.io) for more information.
+
 _This a fork of Orihime オリヒメ and not affiliated with the original version._
 
 Oriedita is a computer program used for drawing origami crease patterns. It comes with a wide range of tools to help you
@@ -12,10 +14,11 @@ The software is based on Orihime, it adds performance, stability and usage impro
 
 - [Making it possible to fold very complex crease patterns](https://origami.abstreamace.com/2021/10/13/fold-a-full-ryujin-3-5-with-orihime-algorithm/)
   that would be impossible to fold in Orihime.
-- Dark mode and improved Look and Feel (#75, #51, #45)
-- Improved file save handling and better .cp support (#50)
-- Persisting application state (#19)
-- Easier installation on Windows (#30)
+- Dark mode and improved Look and Feel
+- Improved file save handling and better .cp support
+- .FOLD file support
+- Persisting application state
+- Easier installation on Windows
 
 ## Usage
 
@@ -24,14 +27,14 @@ The software is based on Orihime, it adds performance, stability and usage impro
 [Download the latest development version.](https://nightly.link/oriedita/oriedita/workflows/maven/master/oriedita-jar.zip)
 
 After downloading the latest version you can use the installer to install the software or run the jar using Java (at
-least version 8).
+least version 11).
 
 You should be presented with the main interface of Oriedita.
 
-![](https://i.imgur.com/w1Nh7aC.png)
+![](https://i.imgur.com/JxoL28Z.png)
 
 Use the mouse to draw lines on the crease pattern, using the ![MVEA](https://i.imgur.com/4vm5CND.png) buttons to change
-the direction of the fold line, and use the ![Fold](https://i.imgur.com/jxswOXM.png) button to try and fold the crease
+the direction of the fold line, and use the ![Fold](https://i.imgur.com/IDUV2Ss.png) button to try and fold the crease
 pattern.
 
 Clicking on buttons will update the help box with a help text for that button.
