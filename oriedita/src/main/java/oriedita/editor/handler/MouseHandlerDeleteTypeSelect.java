@@ -5,12 +5,8 @@ import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.databinding.ApplicationModel;
 import origami.Epsilon;
-import origami.crease_pattern.FoldLineSet;
-import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
-
-import java.awt.EventQueue;
 
 @ApplicationScoped
 @Handles(MouseMode.DELETE_LINE_TYPE_SELECT_73)
@@ -34,7 +30,6 @@ public class MouseHandlerDeleteTypeSelect extends BaseMouseHandlerBoxSelect {
 
         if (selectionStart.distance(p0) > Epsilon.UNKNOWN_1EN6) {//現状では赤を赤に変えたときもUNDO用に記録されてしまう20161218
             if (d.insideToDelete(selectionStart, p0, del)) {
-                d.fix2();
                 d.record();
             }
         } else {//現状では赤を赤に変えたときもUNDO用に記録されてしまう20161218
@@ -44,7 +39,6 @@ public class MouseHandlerDeleteTypeSelect extends BaseMouseHandlerBoxSelect {
                 // From "Any"
                 if(del == -1){
                     d.getFoldLineSet().deleteLine(s);
-                    d.fix2();
                     d.record();
 
                 }
@@ -52,7 +46,6 @@ public class MouseHandlerDeleteTypeSelect extends BaseMouseHandlerBoxSelect {
                 else {
                     if( s.getColor().getNumber() == del){
                         d.getFoldLineSet().deleteLine(s);
-                        d.fix2();
                         d.record();
                     }
                 }

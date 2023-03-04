@@ -130,6 +130,7 @@ public class OpenFrame extends JDialog {
     public void setData(ApplicationModel applicationModel) {
         fromLineDropBox.setSelectedIndex(applicationModel.getCustomFromLineType().getType() + 1);
         toLineDropBox.setSelectedIndex(applicationModel.getCustomToLineType().getType());
+        delTypeDropBox.setSelectedIndex(applicationModel.getDelLineType().getType() + 1);
     }
 
     {

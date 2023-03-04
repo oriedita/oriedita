@@ -473,8 +473,10 @@ public class FoldLineSet {
                 }
             }
         }
-        reset();
-        setSave(save);
+        if(i_r){
+            reset();
+            setSave(save);
+        }
 
         return i_r;
     }
