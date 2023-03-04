@@ -215,13 +215,16 @@ public class AppMenuBar {
             fileSaveService.exportFile();
         });
         prefButton.addActionListener(e -> {
-            preferenceDialog = new PreferenceDialog(applicationModel, lookAndFeelService, frameProvider, foldedFigureModel, "Preferences", frameProvider.get());
+            if(preferenceDialog == null){
+                preferenceDialog = new PreferenceDialog(applicationModel, lookAndFeelService, frameProvider, foldedFigureModel, "Preferences", frameProvider.get());
+            }
             preferenceDialog.setSize(475, 575);
             preferenceDialog.setMinimumSize(new Dimension(475, 575));
             preferenceDialog.setResizable(true);
             preferenceDialog.setData(applicationModel);
             preferenceDialog.setLocationRelativeTo(prefButton);
             preferenceDialog.setAlwaysOnTop(false);
+            preferenceDialog.updateTempModel(applicationModel);
             preferenceDialog.setVisible(true);
         });
         exitButton.addActionListener(e -> closing());
