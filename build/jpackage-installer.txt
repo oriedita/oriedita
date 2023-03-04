@@ -1,4 +1,5 @@
 --file-associations build/FAori.properties
 --file-associations build/FAcreasepattern.properties
 --file-associations build/FAorh.properties
+--file-associations build/FAfold.properties
 --license-file LICENSE.md
