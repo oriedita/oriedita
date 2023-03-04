@@ -51,6 +51,9 @@ import java.util.ArrayDeque;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Queue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 @ApplicationScoped
 public class App {
@@ -131,8 +134,17 @@ public class App {
         return false;
     }
 
-    public void start() {
+    public void start() throws InterruptedException {
+        ExecutorService initService = Executors.newWorkStealingPool();
         canvas.init();
+        editor.init(initService);
+
+        initService.shutdown();
+
+        if (!initService.awaitTermination(10L, TimeUnit.SECONDS)) {
+            throw new RuntimeException("Could not start");
+        }
+
         // ---
         // Bind model to ui
         backgroundModel.addPropertyChangeListener(editor.getTopPanel());

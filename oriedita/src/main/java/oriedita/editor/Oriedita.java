@@ -63,7 +63,11 @@ public class Oriedita {
         SwingUtilities.invokeLater(() -> {
             lookAndFeelService.registerFlatLafSource();
 
-            app.start();
+            try {
+                app.start();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
 
             LoadingDialogUtil.hide();
 

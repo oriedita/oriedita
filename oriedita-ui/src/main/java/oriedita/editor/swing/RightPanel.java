@@ -37,7 +37,13 @@ import java.beans.PropertyChangeEvent;
 
 @ApplicationScoped
 public class RightPanel {
+    private final FrameProvider frameProvider;
+    private final AngleSystemModel angleSystemModel;
     private final MeasuresModel measuresModel;
+    private final CreasePattern_Worker mainCreasePatternWorker;
+    private final ButtonService buttonService;
+    private final CanvasModel canvasModel;
+    private final ApplicationModel applicationModel;
     private OpenFrame openFrame;
     private JCheckBox cAMVCheckBox;
     private JButton ck4_colorIncreaseButton;
@@ -111,7 +117,13 @@ public class RightPanel {
                       @Named("mainCreasePattern_Worker") CreasePattern_Worker mainCreasePatternWorker,
                       CanvasModel canvasModel,
                       ApplicationModel applicationModel) {
+        this.frameProvider = frameProvider;
+        this.angleSystemModel = angleSystemModel;
         this.measuresModel = measuresModel;
+        this.mainCreasePatternWorker = mainCreasePatternWorker;
+        this.buttonService = buttonService;
+        this.canvasModel = canvasModel;
+        this.applicationModel = applicationModel;
 
         applicationModel.addPropertyChangeListener(e -> setData(applicationModel));
         angleSystemModel.addPropertyChangeListener(e -> setData(angleSystemModel));
@@ -121,7 +133,9 @@ public class RightPanel {
         auxHistoryState.addPropertyChangeListener(e -> setData(auxHistoryState));
 
         $$$setupUI$$$();
+    }
 
+    public void init() {
         buttonService.registerButton(ck4_colorIncreaseButton, "ck4_colorIncreaseAction");
         buttonService.registerButton(fxOButton, "fxOAction");
         buttonService.registerButton(fxTButton, "fxTAction");
