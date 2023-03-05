@@ -419,6 +419,9 @@ public class DrawingUtil {
                 break;
             case BLACK_WHITE:
                 setColor(g, s.getColor());
+                if (s.getColor() == LineColor.BLACK_0) {
+                    g2.setStroke(new BasicStroke(lineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
+                }
                 if (s.getColor() == LineColor.RED_1) {
                     setColor(g, LineColor.BLACK_0);
                     g2.setStroke(new BasicStroke(lineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
