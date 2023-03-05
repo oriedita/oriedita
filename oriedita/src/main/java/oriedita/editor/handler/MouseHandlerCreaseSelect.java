@@ -52,7 +52,6 @@ public class MouseHandlerCreaseSelect extends BaseMouseHandlerBoxSelect {
     @Override
     public void reset() {
         super.reset();
-        //canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.NORMAL_0);
         tripleClick = false;
     }
 
@@ -66,7 +65,6 @@ public class MouseHandlerCreaseSelect extends BaseMouseHandlerBoxSelect {
         if (e.getClickCount() == 3 && canvasModel.isCkbox_add_frame_SelectAnd3click_isSelected()) {
             System.out.println("3_Click");//("トリプルクリック"
             tripleClick = true;
-            System.out.println(canvasModel.getSelectionOperationMode());
             switch (canvasModel.getSelectionOperationMode()) {
                 case MOVE_1:
                     canvasModel.setMouseMode(MouseMode.CREASE_MOVE_21);
