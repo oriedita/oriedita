@@ -144,7 +144,8 @@ public class DrawingUtil {
                 g.setColor(Colors.get(new Color(210, 0, 255)));
                 break;
             case GREY_10:
-                g.setColor(new Color(131, 131, 131, 170));
+                g.setColor(Colors.get(new Color(162, 162, 162)));
+                break;
             default:
                 break;
         }

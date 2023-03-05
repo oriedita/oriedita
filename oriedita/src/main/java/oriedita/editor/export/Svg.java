@@ -372,7 +372,7 @@ public class Svg {
                         str_stroke = "black";
                         break;
                     case BLUE_2:
-                        str_stroke = "#838383";
+                        str_stroke = "#A2A2A2";
                         break;
                     default:
                         break;
@@ -433,24 +433,14 @@ public class Svg {
             BigDecimal b_by = new BigDecimal(String.valueOf(b.getY()));
             double y2 = b_by.setScale(2, RoundingMode.HALF_UP).doubleValue();
 
-            if(lineStyle == LineStyle.BLACK_WHITE && color == LineColor.BLUE_2){
-                pw.println("<line x1=\"" + x1 + "\"" +
-                        " y1=\"" + y1 + "\"" +
-                        " x2=\"" + x2 + "\"" +
-                        " y2=\"" + y2 + "\"" +
-                        " " + str_stroke_dasharray + " " +
-                        " stroke=\"" + str_stroke + "\"" +
-                        " stroke-width=\"" + str_strokewidth + "\"" +
-                        " stroke-opacity=\"0.67" + "\"" + "/>");
-            } else {
-                pw.println("<line x1=\"" + x1 + "\"" +
-                        " y1=\"" + y1 + "\"" +
-                        " x2=\"" + x2 + "\"" +
-                        " y2=\"" + y2 + "\"" +
-                        " " + str_stroke_dasharray + " " +
-                        " stroke=\"" + str_stroke + "\"" +
-                        " stroke-width=\"" + str_strokewidth + "\"" + " />");
-            }
+            pw.println("<line x1=\"" + x1 + "\"" +
+                    " y1=\"" + y1 + "\"" +
+                    " x2=\"" + x2 + "\"" +
+                    " y2=\"" + y2 + "\"" +
+                    " " + str_stroke_dasharray + " " +
+                    " stroke=\"" + str_stroke + "\"" +
+                    " stroke-width=\"" + str_strokewidth + "\"" + " />");
+
 
             drawVertex(pw, fCreasePatternLineWidth, pointSize, x1, y1);
             drawVertex(pw, fCreasePatternLineWidth, pointSize, x2, y2);
