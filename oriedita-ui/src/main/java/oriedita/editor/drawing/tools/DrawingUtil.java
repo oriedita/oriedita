@@ -143,6 +143,8 @@ public class DrawingUtil {
             case PURPLE_8:
                 g.setColor(Colors.get(new Color(210, 0, 255)));
                 break;
+            case GREY_10:
+                g.setColor(new Color(131, 131, 131, 170));
             default:
                 break;
         }
@@ -414,6 +416,17 @@ public class DrawingUtil {
             case COLOR:
                 setColor(g, s.getColor());
                 g2.setStroke(new BasicStroke(lineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));//基本指定A　　線の太さや線の末端の形状
+                break;
+            case BLACK_WHITE:
+                setColor(g, s.getColor());
+                if (s.getColor() == LineColor.RED_1) {
+                    setColor(g, LineColor.BLACK_0);
+                    g2.setStroke(new BasicStroke(lineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
+                }
+                if (s.getColor() == LineColor.BLUE_2) {
+                    setColor(g, LineColor.GREY_10);
+                    g2.setStroke(new BasicStroke(lineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
+                }
                 break;
             case COLOR_AND_SHAPE:
                 setColor(g, s.getColor());

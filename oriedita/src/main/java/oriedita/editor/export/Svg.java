@@ -365,9 +365,24 @@ public class Svg {
                 str_stroke = "black";
             }
 
+            if(lineStyle == LineStyle.BLACK_WHITE){
+                switch(color){
+                    case BLACK_0:
+                    case RED_1:
+                        str_stroke = "black";
+                        break;
+                    case BLUE_2:
+                        str_stroke = "#838383";
+                        break;
+                    default:
+                        break;
+                }
+            }
+
             String str_stroke_dasharray;
             switch (lineStyle) {
                 case COLOR:
+                case BLACK_WHITE:
                     str_stroke_dasharray = "";
                     break;
                 case COLOR_AND_SHAPE:
@@ -418,14 +433,24 @@ public class Svg {
             BigDecimal b_by = new BigDecimal(String.valueOf(b.getY()));
             double y2 = b_by.setScale(2, RoundingMode.HALF_UP).doubleValue();
 
-            pw.println("<line x1=\"" + x1 + "\"" +
-                    " y1=\"" + y1 + "\"" +
-                    " x2=\"" + x2 + "\"" +
-                    " y2=\"" + y2 + "\"" +
-                    " " + str_stroke_dasharray + " " +
-                    " stroke=\"" + str_stroke + "\"" +
-                    " stroke-width=\"" + str_strokewidth + "\"" + " />");
-
+            if(lineStyle == LineStyle.BLACK_WHITE && color == LineColor.BLUE_2){
+                pw.println("<line x1=\"" + x1 + "\"" +
+                        " y1=\"" + y1 + "\"" +
+                        " x2=\"" + x2 + "\"" +
+                        " y2=\"" + y2 + "\"" +
+                        " " + str_stroke_dasharray + " " +
+                        " stroke=\"" + str_stroke + "\"" +
+                        " stroke-width=\"" + str_strokewidth + "\"" +
+                        " stroke-opacity=\"0.67" + "\"" + "/>");
+            } else {
+                pw.println("<line x1=\"" + x1 + "\"" +
+                        " y1=\"" + y1 + "\"" +
+                        " x2=\"" + x2 + "\"" +
+                        " y2=\"" + y2 + "\"" +
+                        " " + str_stroke_dasharray + " " +
+                        " stroke=\"" + str_stroke + "\"" +
+                        " stroke-width=\"" + str_strokewidth + "\"" + " />");
+            }
 
             drawVertex(pw, fCreasePatternLineWidth, pointSize, x1, y1);
             drawVertex(pw, fCreasePatternLineWidth, pointSize, x2, y2);

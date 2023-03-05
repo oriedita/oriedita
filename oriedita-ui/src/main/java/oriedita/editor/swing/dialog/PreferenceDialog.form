@@ -398,6 +398,7 @@
                         <properties>
                           <model>
                             <item value="Color solid"/>
+                            <item value="BW solid"/>
                             <item value="Color dashes"/>
                             <item value="BW - 1 dot/dash"/>
                             <item value="BW - 2 dots/dash"/>

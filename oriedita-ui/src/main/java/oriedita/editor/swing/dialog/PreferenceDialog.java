@@ -527,6 +527,7 @@ public class PreferenceDialog extends JDialog {
         lineStyleDropBox = new JComboBox();
         final DefaultComboBoxModel defaultComboBoxModel1 = new DefaultComboBoxModel();
         defaultComboBoxModel1.addElement("Color solid");
+        defaultComboBoxModel1.addElement("BW solid");
         defaultComboBoxModel1.addElement("Color dashes");
         defaultComboBoxModel1.addElement("BW - 1 dot/dash");
         defaultComboBoxModel1.addElement("BW - 2 dots/dash");
