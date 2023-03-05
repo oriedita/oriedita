@@ -29,6 +29,6 @@ public class DrawCreaseFreeAction extends AbstractOrieditaAction {
         canvasModel.setMouseMode(MouseMode.DRAW_CREASE_FREE_1);
         canvasModel.setMouseModeAfterColorSelection(MouseMode.DRAW_CREASE_FREE_1);
 
-        mainCreasePatternWorker.unselect_all();
+        mainCreasePatternWorker.unselect_all(false);
     }
 }

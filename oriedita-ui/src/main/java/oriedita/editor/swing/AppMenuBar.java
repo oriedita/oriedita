@@ -36,7 +36,6 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import java.awt.Desktop;
-import java.awt.Dialog;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.Transferable;
@@ -78,6 +77,7 @@ public class AppMenuBar {
     private JCheckBoxMenuItem displayBottomPanel;
     private JCheckBoxMenuItem displayLeftPanel;
     private JCheckBoxMenuItem displayRightPanel;
+    private JCheckBoxMenuItem moveFoldedModelWithCp;
     private JMenuItem newButton;
     private JMenuItem openButton;
     private JMenuItem saveButton;
@@ -95,6 +95,7 @@ public class AppMenuBar {
     private JMenuItem pasteButton;
     private JMenuItem pasteOffsetButton;
     private AppMenuBarUI appMenuBarUI;
+    private PreferenceDialog preferenceDialog;
     @Inject
     public AppMenuBar(
             FrameProvider frameProvider,
@@ -168,6 +169,7 @@ public class AppMenuBar {
         buttonService.registerButton(preciseZoomCheckBox, "preciseZoomAction");
         buttonService.registerButton(showSelfIntersectionCheckBox, "displaySelfIntersectionAction");
         buttonService.registerButton(useAdvancedCheck4Display, "useAdvancedCheck4DisplayAction");
+        buttonService.registerButton(moveFoldedModelWithCp, "moveFoldedModelWithCp");
 
         buttonService.registerButton(copyButton, "copyClipboardAction");
         buttonService.registerButton(cutButton, "cutClipboardAction");
@@ -212,11 +214,13 @@ public class AppMenuBar {
             fileSaveService.exportFile();
         });
         prefButton.addActionListener(e -> {
-            PreferenceDialog d = new PreferenceDialog(applicationModel, lookAndFeelService, frameProvider, foldedFigureModel);
-            d.setSize(475, 525);
-            d.setResizable(true);
-            d.setData(applicationModel);
-            d.setVisible(true);
+            preferenceDialog = new PreferenceDialog(applicationModel, lookAndFeelService, frameProvider, foldedFigureModel, "Preferences", frameProvider.get());
+            preferenceDialog.setSize(475, 575);
+            preferenceDialog.setResizable(true);
+            preferenceDialog.setData(applicationModel);
+            preferenceDialog.setLocationRelativeTo(prefButton);
+            preferenceDialog.setAlwaysOnTop(false);
+            preferenceDialog.setVisible(true);
         });
         exitButton.addActionListener(e -> closing());
         showPointRangeCheckBox.addActionListener(e -> getData(applicationModel));
@@ -236,6 +240,7 @@ public class AppMenuBar {
         showStandardFaceMarksCheckBox.addActionListener(e -> getData(applicationModel));
         cpOnTopCheckBox.addActionListener(e -> getData(applicationModel));
         toggleHelpMenuItem.addActionListener(e -> applicationModel.toggleHelpVisible());
+        moveFoldedModelWithCp.addActionListener(e -> getData(applicationModel));
         showAutosaveFolderMenuItem.addActionListener(e -> {
             try {
                 File f = ResourceUtil.getTempDir().toFile();
@@ -382,7 +387,7 @@ public class AppMenuBar {
 
         fileMenu.addSeparator();
 
-        prefButton = new JMenuItem("Preference");
+        prefButton = new JMenuItem("Preferences");
         fileMenu.add(prefButton);
 
         exitButton = new JMenuItem("Exit");
@@ -453,6 +458,8 @@ public class AppMenuBar {
         displayPanelMenu.add(displayLeftPanel);
         displayRightPanel = new JCheckBoxMenuItem("Right Panel");
         displayPanelMenu.add(displayRightPanel);
+        moveFoldedModelWithCp = new JCheckBoxMenuItem("Move Folded Model with CP");
+        viewMenu.add(moveFoldedModelWithCp);
 
         JMenu helpMenu = new JMenu("Help");
         helpMenu.setMnemonic('H');
@@ -484,6 +491,7 @@ public class AppMenuBar {
         applicationModel.setDisplayBottomPanel(displayBottomPanel.isSelected());
         applicationModel.setDisplayLeftPanel(displayLeftPanel.isSelected());
         applicationModel.setDisplayRightPanel(displayRightPanel.isSelected());
+        applicationModel.setMoveFoldedModelWithCp(moveFoldedModelWithCp.isSelected());
     }
 
     public void setData(ApplicationModel applicationModel) {
@@ -504,6 +512,7 @@ public class AppMenuBar {
         displayBottomPanel.setSelected(applicationModel.getDisplayBottomPanel());
         displayLeftPanel.setSelected(applicationModel.getDisplayLeftPanel());
         displayRightPanel.setSelected(applicationModel.getDisplayRightPanel());
+        moveFoldedModelWithCp.setSelected(applicationModel.getMoveFoldedModelWithCp());
 
         openRecentMenu.removeAll();
         if (applicationModel.getRecentFileList().isEmpty()) {

@@ -71,7 +71,7 @@ public class OpenFrame extends JDialog {
             canvasModel.setMouseMode(MouseMode.FOLDABLE_LINE_INPUT_39);
             canvasModel.setMouseModeAfterColorSelection(MouseMode.FOLDABLE_LINE_INPUT_39);
 
-            mainCreasePatternWorker.unselect_all();
+            mainCreasePatternWorker.unselect_all(false);
         });
         select_polygonButton.addActionListener(e -> canvasModel.setMouseMode(MouseMode.SELECT_POLYGON_66));
         unselect_polygonButton.addActionListener(e -> canvasModel.setMouseMode(MouseMode.UNSELECT_POLYGON_67));
@@ -81,7 +81,7 @@ public class OpenFrame extends JDialog {
         del_l_XButton.addActionListener(e -> canvasModel.setMouseMode(MouseMode.CREASE_DELETE_INTERSECTING_65));
         replace_lineButton.addActionListener(e -> {
             canvasModel.setMouseMode(MouseMode.REPLACE_LINE_TYPE_SELECT_72);
-            mainCreasePatternWorker.unselect_all();
+            mainCreasePatternWorker.unselect_all(false);
         });
         fromLineDropBox.addActionListener(e -> {
             applicationModel.setCustomFromLineType(CustomLineTypes.from(fromLineDropBox.getSelectedIndex() - 1));

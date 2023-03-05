@@ -115,7 +115,7 @@ public class MouseHandlerCreaseMove4p extends BaseMouseHandlerInputRestricted {
             int sousuu_new = d.getFoldLineSet().getTotal();
             d.getFoldLineSet().divideLineSegmentWithNewLines(sousuu_old, sousuu_new);
 
-            d.getFoldLineSet().unselect_all();
+            d.unselect_all(false);
             d.record();
 
             canvasModel.setMouseMode(MouseMode.CREASE_SELECT_19);

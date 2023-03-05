@@ -488,7 +488,7 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
         if (check4) {
             for (FlatFoldabilityViolation violation : foldLineSet.getViolations()) {
                 DrawingUtil.drawViolation(g2, camera.object2TV(violation.getPoint()), violation,
-                        check4ColorTransparency, applicationModel.getAdvancedCheck4Display());
+                        applicationModel.getCheck4ColorTransparency(), applicationModel.getAdvancedCheck4Display());
             }
 
             if (displayComments) {
@@ -767,8 +767,14 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     }
 
     @Override
+    public void unselect_all(boolean ignorePersistent) {
+        if (!applicationModel.getSelectPersistent() || ignorePersistent) {
+            foldLineSet.unselect_all();
+        }
+    }
+
     public void unselect_all() {
-        foldLineSet.unselect_all();
+        unselect_all(true);
     }
 
     @Override

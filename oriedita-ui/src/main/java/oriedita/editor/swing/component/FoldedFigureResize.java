@@ -2,9 +2,11 @@ package oriedita.editor.swing.component;
 
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
+import oriedita.editor.databinding.ApplicationModel;
 import oriedita.editor.databinding.FoldedFigureModel;
 import oriedita.editor.databinding.MeasuresModel;
 import oriedita.editor.service.ButtonService;
+import oriedita.editor.swing.OnlyDoubleAdapter;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -21,7 +23,7 @@ public class FoldedFigureResize extends JPanel {
     private JButton foldedFigureSizeSetButton;
     private JButton foldedFigureSizeIncreaseButton;
 
-    public FoldedFigureResize(ButtonService buttonService, FoldedFigureModel foldedFigureModel, MeasuresModel measuresModel) {
+    public FoldedFigureResize(ApplicationModel applicationModel, ButtonService buttonService, FoldedFigureModel foldedFigureModel, MeasuresModel measuresModel) {
         add($$$getRootComponent$$$());
 
         buttonService.registerButton(foldedFigureSizeSetButton, "foldedFigureSizeSetAction");
@@ -29,9 +31,10 @@ public class FoldedFigureResize extends JPanel {
         buttonService.registerButton(foldedFigureSizeIncreaseButton, "foldedFigureSizeIncreaseAction");
 
         foldedFigureSizeSetButton.addActionListener(e -> foldedFigureModel.setScale(measuresModel.string2double(foldedFigureSizeTextField.getText(), foldedFigureModel.getScale())));
-        foldedFigureSizeDecreaseButton.addActionListener(e -> foldedFigureModel.zoomOut());
-        foldedFigureSizeIncreaseButton.addActionListener(e -> foldedFigureModel.zoomIn());
+        foldedFigureSizeDecreaseButton.addActionListener(e -> foldedFigureModel.zoomOut(applicationModel.getZoomSpeed()));
+        foldedFigureSizeIncreaseButton.addActionListener(e -> foldedFigureModel.zoomIn(applicationModel.getZoomSpeed()));
         foldedFigureSizeTextField.addActionListener(e -> foldedFigureSizeSetButton.doClick());
+        foldedFigureSizeTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(foldedFigureSizeTextField));
     }
 
     {

@@ -32,6 +32,6 @@ public class DrawLineSegmentInternalDivisionRatioAction extends AbstractOriedita
         canvasModel.setMouseMode(MouseMode.LINE_SEGMENT_RATIO_SET_28);
         canvasModel.setMouseModeAfterColorSelection(MouseMode.LINE_SEGMENT_RATIO_SET_28);
 
-        mainCreasePatternWorker.unselect_all();
+        mainCreasePatternWorker.unselect_all(false);
     }
 }

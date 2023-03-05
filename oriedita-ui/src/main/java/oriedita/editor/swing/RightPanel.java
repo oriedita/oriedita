@@ -390,13 +390,20 @@ public class RightPanel {
         });
         ActionListener listener = e -> restrictedAngleSetDEFButton.doClick();
         angleDTextField.addActionListener(listener);
+        angleDTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(angleDTextField));
         angleETextField.addActionListener(listener);
+        angleETextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(angleETextField));
         angleFTextField.addActionListener(listener);
+        angleFTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(angleFTextField));
         ActionListener listener1 = e -> restrictedAngleABCSetButton.doClick();
         angleATextField.addActionListener(listener1);
+        angleATextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(angleATextField));
         angleCTextField.addActionListener(listener1);
+        angleCTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(angleCTextField));
         angleBTextField.addActionListener(listener1);
+        angleBTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(angleBTextField));
         polygonSizeTextField.addActionListener(e -> polygonSizeSetButton.doClick());
+        polygonSizeTextField.getDocument().addDocumentListener(new OnlyIntAdapter(polygonSizeTextField));
     }
 
     private void setData(HistoryState auxHistoryState) {
@@ -521,6 +528,7 @@ public class RightPanel {
         l1Button.setText("L1=");
         panel6.add(l1Button, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, 1, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         measuredLength1TextField = new JTextField();
+        measuredLength1TextField.setEditable(false);
         measuredLength1TextField.setOpaque(true);
         measuredLength1TextField.setText("0.0");
         panel6.add(measuredLength1TextField, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
@@ -529,6 +537,7 @@ public class RightPanel {
         l2Button.setText("L2=");
         panel6.add(l2Button, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, 1, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         measuredLength2TextField = new JTextField();
+        measuredLength2TextField.setEditable(false);
         measuredLength2TextField.setOpaque(true);
         measuredLength2TextField.setText("0.0");
         panel6.add(measuredLength2TextField, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
@@ -537,14 +546,17 @@ public class RightPanel {
         a3Button.setText("A3=");
         panel6.add(a3Button, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, 1, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         measuredAngle3TextField = new JTextField();
+        measuredAngle3TextField.setEditable(false);
         measuredAngle3TextField.setOpaque(true);
         measuredAngle3TextField.setText("0.0");
         panel6.add(measuredAngle3TextField, new GridConstraints(4, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         measuredAngle2TextField = new JTextField();
+        measuredAngle2TextField.setEditable(false);
         measuredAngle2TextField.setOpaque(true);
         measuredAngle2TextField.setText("0.0");
         panel6.add(measuredAngle2TextField, new GridConstraints(3, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         measuredAngle1TextField = new JTextField();
+        measuredAngle1TextField.setEditable(false);
         measuredAngle1TextField.setOpaque(true);
         measuredAngle1TextField.setText("0.0");
         panel6.add(measuredAngle1TextField, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));

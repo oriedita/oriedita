@@ -53,7 +53,8 @@ import java.util.Arrays;
 
 @ApplicationScoped
 public class LeftPanel {
-    @Inject @ActionHandler(ActionType.lineWidthDecreaseAction)
+    @Inject
+    @ActionHandler(ActionType.lineWidthDecreaseAction)
     LineWidthDecreaseAction lineWidthDecreaseAction;
     private final FrameProvider frameProvider;
     private final HistoryState historyState;
@@ -192,8 +193,6 @@ public class LeftPanel {
         this.drawCreaseFreeAction = drawCreaseFreeAction;
         this.foldingService = foldingService;
         this.foldedFiguresList = foldedFiguresList;
-
-
     }
 
     public void init() {
@@ -291,12 +290,8 @@ public class LeftPanel {
         buttonService.registerLabel(gridYSqrtLabel, "labelSqrt");
 
 
-        undoRedo.addUndoActionListener(e -> {
-            mainCreasePatternWorker.undo();
-        });
-        undoRedo.addRedoActionListener(e -> {
-            mainCreasePatternWorker.redo();
-        });
+        undoRedo.addUndoActionListener(e -> mainCreasePatternWorker.undo());
+        undoRedo.addRedoActionListener(e -> mainCreasePatternWorker.redo());
         colRedButton.addActionListener(e -> canvasModel.setLineColor(LineColor.RED_1));
         colBlueButton.addActionListener(e -> canvasModel.setLineColor(LineColor.BLUE_2));
         colBlackButton.addActionListener(e -> canvasModel.setLineColor(LineColor.BLACK_0));
@@ -306,68 +301,68 @@ public class LeftPanel {
             canvasModel.setMouseMode(MouseMode.LENGTHEN_CREASE_5);
             canvasModel.setMouseModeAfterColorSelection(MouseMode.LENGTHEN_CREASE_5);
 
-            mainCreasePatternWorker.unselect_all();
+            mainCreasePatternWorker.unselect_all(false);
         });
         lengthenCrease2Button.addActionListener(e -> {
             canvasModel.setMouseMode(MouseMode.LENGTHEN_CREASE_SAME_COLOR_70);
             canvasModel.setMouseModeAfterColorSelection(MouseMode.LENGTHEN_CREASE_SAME_COLOR_70);
 
-            mainCreasePatternWorker.unselect_all();
+            mainCreasePatternWorker.unselect_all(false);
         });
         rabbitEarButton.addActionListener(e -> {
             canvasModel.setMouseMode(MouseMode.INWARD_8);
             canvasModel.setMouseModeAfterColorSelection(MouseMode.INWARD_8);
 
-            mainCreasePatternWorker.unselect_all();
+            mainCreasePatternWorker.unselect_all(false);
         });
         perpendicularDrawButton.addActionListener(e -> {
             canvasModel.setMouseMode(MouseMode.PERPENDICULAR_DRAW_9);
             canvasModel.setMouseModeAfterColorSelection(MouseMode.PERPENDICULAR_DRAW_9);
 
-            mainCreasePatternWorker.unselect_all();
+            mainCreasePatternWorker.unselect_all(false);
         });
         symmetricDrawButton.addActionListener(e -> {
             canvasModel.setMouseMode(MouseMode.SYMMETRIC_DRAW_10);
             canvasModel.setMouseModeAfterColorSelection(MouseMode.SYMMETRIC_DRAW_10);
 
-            mainCreasePatternWorker.unselect_all();
+            mainCreasePatternWorker.unselect_all(false);
         });
         continuousSymmetricDrawButton.addActionListener(e -> {
             canvasModel.setMouseMode(MouseMode.CONTINUOUS_SYMMETRIC_DRAW_52);
             canvasModel.setMouseModeAfterColorSelection(MouseMode.CONTINUOUS_SYMMETRIC_DRAW_52);
 
-            mainCreasePatternWorker.unselect_all();
+            mainCreasePatternWorker.unselect_all(false);
         });
         parallelDrawButton.addActionListener(e -> {
             canvasModel.setMouseMode(MouseMode.PARALLEL_DRAW_40);
             canvasModel.setMouseModeAfterColorSelection(MouseMode.PARALLEL_DRAW_40);
 
-            mainCreasePatternWorker.unselect_all();
+            mainCreasePatternWorker.unselect_all(false);
         });
         setParallelDrawWidthButton.addActionListener(e -> {
             canvasModel.setMouseMode(MouseMode.PARALLEL_DRAW_WIDTH_51);
             canvasModel.setMouseModeAfterColorSelection(MouseMode.PARALLEL_DRAW_WIDTH_51);
 
-            mainCreasePatternWorker.unselect_all();
+            mainCreasePatternWorker.unselect_all(false);
         });
         foldableLineDrawButton.addActionListener(e -> {
             canvasModel.setMouseMode(MouseMode.FOLDABLE_LINE_DRAW_71);
             canvasModel.setMouseModeAfterColorSelection(MouseMode.FOLDABLE_LINE_DRAW_71);
 
-            mainCreasePatternWorker.unselect_all();
+            mainCreasePatternWorker.unselect_all(false);
         });
         fishBoneDrawButton.addActionListener(e -> {
             canvasModel.setMouseMode(MouseMode.FISH_BONE_DRAW_33);
             canvasModel.setMouseModeAfterColorSelection(MouseMode.FISH_BONE_DRAW_33);
 
-            mainCreasePatternWorker.unselect_all();
+            mainCreasePatternWorker.unselect_all(false);
             buttonService.Button_shared_operation();
         });
         doubleSymmetricDrawButton.addActionListener(e -> {
             canvasModel.setMouseMode(MouseMode.DOUBLE_SYMMETRIC_DRAW_35);
             canvasModel.setMouseModeAfterColorSelection(MouseMode.DOUBLE_SYMMETRIC_DRAW_35);
 
-            mainCreasePatternWorker.unselect_all();
+            mainCreasePatternWorker.unselect_all(false);
             buttonService.Button_shared_operation();
         });
         lineSegmentDivisionSetButton.addActionListener(e -> {
@@ -377,26 +372,19 @@ public class LeftPanel {
             canvasModel.setMouseModeAfterColorSelection(MouseMode.LINE_SEGMENT_DIVISION_27);
         });
         lineSegmentDivisionTextField.addActionListener(e -> lineSegmentDivisionSetButton.doClick());
+        lineSegmentDivisionTextField.getDocument().addDocumentListener(new OnlyIntAdapter(lineSegmentDivisionTextField));
         senbun_b_nyuryokuButton.addActionListener(e -> {
             getData(applicationModel);
 
             canvasModel.setMouseMode(MouseMode.LINE_SEGMENT_DIVISION_27);
             canvasModel.setMouseModeAfterColorSelection(MouseMode.LINE_SEGMENT_DIVISION_27);
 
-            mainCreasePatternWorker.unselect_all();
+            mainCreasePatternWorker.unselect_all(false);
         });
-        selectButton.addActionListener(e -> {
-            canvasModel.setMouseMode(MouseMode.CREASE_SELECT_19);
-        });
-        selectAllButton.addActionListener(e -> {
-            mainCreasePatternWorker.select_all();
-        });
-        unselectButton.addActionListener(e -> {
-            canvasModel.setMouseMode(MouseMode.CREASE_UNSELECT_20);
-        });
-        unselectAllButton.addActionListener(e -> {
-            mainCreasePatternWorker.unselect_all();
-        });
+        selectButton.addActionListener(e -> canvasModel.setMouseMode(MouseMode.CREASE_SELECT_19));
+        selectAllButton.addActionListener(e -> mainCreasePatternWorker.select_all());
+        unselectButton.addActionListener(e -> canvasModel.setMouseMode(MouseMode.CREASE_UNSELECT_20));
+        unselectAllButton.addActionListener(e -> mainCreasePatternWorker.unselect_all());
         moveButton.addActionListener(e -> {
             canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.MOVE_1);
             canvasModel.setMouseMode(MouseMode.CREASE_MOVE_21);
@@ -425,20 +413,20 @@ public class LeftPanel {
             canvasModel.setMouseMode(MouseMode.LINE_SEGMENT_DELETE_3);
             canvasModel.setFoldLineAdditionalInputMode(FoldLineAdditionalInputMode.POLY_LINE_0);
 
-            mainCreasePatternWorker.unselect_all();
+            mainCreasePatternWorker.unselect_all(false);
         });
         edgeLineSegmentDeleteButton.addActionListener(e -> {
 
             canvasModel.setMouseMode(MouseMode.LINE_SEGMENT_DELETE_3);
             canvasModel.setFoldLineAdditionalInputMode(FoldLineAdditionalInputMode.BLACK_LINE_2);
 
-            mainCreasePatternWorker.unselect_all();
+            mainCreasePatternWorker.unselect_all(false);
         });
         auxLiveLineSegmentDeleteButton.addActionListener(e -> {
             canvasModel.setMouseMode(MouseMode.LINE_SEGMENT_DELETE_3);
             canvasModel.setFoldLineAdditionalInputMode(FoldLineAdditionalInputMode.AUX_LIVE_LINE_3);
 
-            mainCreasePatternWorker.unselect_all();
+            mainCreasePatternWorker.unselect_all(false);
         });
         trimBranchesButton.addActionListener(e -> {
             mainCreasePatternWorker.point_removal();
@@ -446,41 +434,41 @@ public class LeftPanel {
             mainCreasePatternWorker.branch_trim();
             mainCreasePatternWorker.organizeCircles();
             mainCreasePatternWorker.record();
-            mainCreasePatternWorker.unselect_all();
+            mainCreasePatternWorker.unselect_all(false);
         });
         toMountainButton.addActionListener(e -> {
             canvasModel.setMouseMode(MouseMode.CREASE_MAKE_MOUNTAIN_23);
 
-            mainCreasePatternWorker.unselect_all();
+            mainCreasePatternWorker.unselect_all(false);
         });
         toValleyButton.addActionListener(e -> {
             canvasModel.setMouseMode(MouseMode.CREASE_MAKE_VALLEY_24);
 
-            mainCreasePatternWorker.unselect_all();
+            mainCreasePatternWorker.unselect_all(false);
         });
         toEdgeButton.addActionListener(e -> {
             canvasModel.setMouseMode(MouseMode.CREASE_MAKE_EDGE_25);
 
-            mainCreasePatternWorker.unselect_all();
+            mainCreasePatternWorker.unselect_all(false);
         });
         toAuxButton.addActionListener(e -> {
             canvasModel.setMouseMode(MouseMode.CREASE_MAKE_AUX_60);
 
-            mainCreasePatternWorker.unselect_all();
+            mainCreasePatternWorker.unselect_all(false);
         });
         zen_yama_tani_henkanButton.addActionListener(e -> {
             mainCreasePatternWorker.allMountainValleyChange();
-            mainCreasePatternWorker.unselect_all();
+            mainCreasePatternWorker.unselect_all(false);
         });
         senbun_henkan2Button.addActionListener(e -> {
             canvasModel.setMouseMode(MouseMode.CREASE_TOGGLE_MV_58);
 
-            mainCreasePatternWorker.unselect_all();
+            mainCreasePatternWorker.unselect_all(false);
         });
         senbun_henkanButton.addActionListener(e -> {
             canvasModel.setMouseMode(MouseMode.CHANGE_CREASE_TYPE_4);
 
-            mainCreasePatternWorker.unselect_all();
+            mainCreasePatternWorker.unselect_all(false);
         });
         in_L_col_changeButton.addActionListener(e -> {
             canvasModel.setMouseMode(MouseMode.CREASE_MAKE_MV_34);
@@ -490,7 +478,7 @@ public class LeftPanel {
                 canvasModel.setLineColor(LineColor.RED_1);
             }
 
-            mainCreasePatternWorker.unselect_all();
+            mainCreasePatternWorker.unselect_all(false);
         });
         on_L_col_changeButton.addActionListener(e -> {
             canvasModel.setMouseMode(MouseMode.CREASES_ALTERNATE_MV_36);
@@ -500,22 +488,22 @@ public class LeftPanel {
                 canvasModel.setLineColor(LineColor.BLUE_2);
             }
 
-            mainCreasePatternWorker.unselect_all();
+            mainCreasePatternWorker.unselect_all(false);
         });
         v_addButton.addActionListener(e -> {
             canvasModel.setMouseMode(MouseMode.DRAW_POINT_14);
 
-            mainCreasePatternWorker.unselect_all();
+            mainCreasePatternWorker.unselect_all(false);
         });
         v_delButton.addActionListener(e -> {
             canvasModel.setMouseMode(MouseMode.DELETE_POINT_15);
 
-            mainCreasePatternWorker.unselect_all();
+            mainCreasePatternWorker.unselect_all(false);
         });
         v_del_ccButton.addActionListener(e -> {
             canvasModel.setMouseMode(MouseMode.VERTEX_DELETE_ON_CREASE_41);
 
-            mainCreasePatternWorker.unselect_all();
+            mainCreasePatternWorker.unselect_all(false);
         });
         v_del_allButton.addActionListener(e -> {
             mainCreasePatternWorker.v_del_all();
@@ -525,20 +513,12 @@ public class LeftPanel {
             mainCreasePatternWorker.v_del_all_cc();
             Logger.info("mainDrawingWorker.v_del_all_cc()");
         });
-        correctCpBeforeFoldingCheckBox.addActionListener(e -> {
-            applicationModel.setCorrectCpBeforeFolding(correctCpBeforeFoldingCheckBox.isSelected());
-        });
-        selectPersistentCheckBox.addActionListener(e -> {
-            applicationModel.setSelectPersistent(selectPersistentCheckBox.isSelected());
-        });
-        drawTwoColoredCpButton.addActionListener(e -> {
-            foldingService.createTwoColoredCp();
-        });
+        correctCpBeforeFoldingCheckBox.addActionListener(e -> applicationModel.setCorrectCpBeforeFolding(correctCpBeforeFoldingCheckBox.isSelected()));
+        selectPersistentCheckBox.addActionListener(e -> applicationModel.setSelectPersistent(selectPersistentCheckBox.isSelected()));
+        drawTwoColoredCpButton.addActionListener(e -> foldingService.createTwoColoredCp());
         suitei_01Button.addActionListener(e -> {
             foldingService.fold(FoldedFigure.EstimationOrder.ORDER_1);//引数の意味は(i_fold_type , i_suitei_meirei);
-            if (!applicationModel.getSelectPersistent()) {
-                mainCreasePatternWorker.unselect_all();
-            }
+            mainCreasePatternWorker.unselect_all(false);
         });
         koteimen_siteiButton.addActionListener(e -> {
             FoldedFigure_Drawer selectedFigure = foldedFiguresList.getActiveItem();
@@ -549,16 +529,12 @@ public class LeftPanel {
         });
         suitei_02Button.addActionListener(e -> {
             foldingService.fold(FoldedFigure.EstimationOrder.ORDER_2);//引数の意味は(i_fold_type , i_suitei_meirei);
-            if (!applicationModel.getSelectPersistent()) {
-                mainCreasePatternWorker.unselect_all();
-            }
+            mainCreasePatternWorker.unselect_all(false);
         });
         suitei_03Button.addActionListener(e -> {
             foldingService.fold(FoldedFigure.EstimationOrder.ORDER_3);//引数の意味は(i_fold_type , i_suitei_meirei);
 
-            if (!applicationModel.getSelectPersistent()) {
-                mainCreasePatternWorker.unselect_all();
-            }
+            mainCreasePatternWorker.unselect_all(false);
         });
         coloredXRayCheckBox.addActionListener(e -> foldedFigureModel.setTransparencyColor(coloredXRayCheckBox.isSelected()));
         coloredXRayDecreaseButton.addActionListener(e -> foldedFigureModel.decreaseTransparency());
@@ -576,6 +552,7 @@ public class LeftPanel {
         });
         gridSizeSetButton.addActionListener(e -> getData(gridModel));
         gridSizeTextField.addActionListener(e -> gridSizeSetButton.doClick());
+        gridSizeTextField.getDocument().addDocumentListener(new OnlyIntAdapter(gridSizeTextField));
         gridSizeIncreaseButton.addActionListener(e -> gridModel.setGridSize(gridModel.getGridSize() * 2));
         gridColorButton.addActionListener(e -> {
             //以下にやりたいことを書く
@@ -591,6 +568,7 @@ public class LeftPanel {
         moveIntervalGridVerticalButton.addActionListener(e -> gridModel.changeHorizontalScalePosition());
         setIntervalGridSizeButton.addActionListener(e -> getData(gridModel));
         intervalGridSizeTextField.addActionListener(e -> setIntervalGridSizeButton.doClick());
+        intervalGridSizeTextField.getDocument().addDocumentListener(new OnlyIntAdapter(intervalGridSizeTextField));
         moveIntervalGridHorizontal.addActionListener(e -> gridModel.changeVerticalScalePosition());
         intervalGridColorButton.addActionListener(e -> {
             //以下にやりたいことを書く
@@ -599,12 +577,19 @@ public class LeftPanel {
                 applicationModel.setGridScaleColor(color);
             }
         });
+        gridXATextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(gridXATextField));
+        gridXBTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(gridXBTextField));
+        gridXCTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(gridXCTextField));
+        gridYATextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(gridYATextField));
+        gridYBTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(gridYBTextField));
+        gridYCTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(gridYCTextField));
         setGridParametersButton.addActionListener(e -> {
             getData(gridModel);
             // Update the view if the grid angle got reset
             setData(gridModel);
         });
         gridAngleTextField.addActionListener(e -> setGridParametersButton.doClick());
+        gridAngleTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(gridAngleTextField));
         resetGridButton.addActionListener(e -> gridModel.reset());
         drawDiagonalGridlinesCheckBox.addActionListener(e -> gridModel.setDrawDiagonalGridlines(drawDiagonalGridlinesCheckBox.isSelected()));
     }
