@@ -12,7 +12,7 @@ jobs:
         with:
           artifact: test-results
           name: JUnit Test Report
-          path: '*.xml'
+          path: "*/target/surefire-reports/TEST*.xml"    # Path to test results
           reporter: java-junit
 
   pr_comment:
