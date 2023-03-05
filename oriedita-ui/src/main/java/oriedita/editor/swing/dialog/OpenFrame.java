@@ -18,7 +18,6 @@ import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.plaf.basic.BasicTreeUI;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Frame;
@@ -39,8 +38,8 @@ public class OpenFrame extends JDialog {
     private JButton del_l_XButton;
     private JPanel panel;
     private JButton replace_lineButton;
-    private JComboBox fromLineDropBox;
-    private JComboBox toLineDropBox;
+    private JComboBox<String> fromLineDropBox;
+    private JComboBox<String> toLineDropBox;
 
     private CustomLineTypes customLineTypes;
 
@@ -91,6 +90,7 @@ public class OpenFrame extends JDialog {
             applicationModel.setCustomToLineType(CustomLineTypes.from(toLineDropBox.getSelectedIndex()));
             toLineDropBox.setSelectedIndex(applicationModel.getCustomToLineType().getType());
         });
+
         selectAnd3ClickCheckBox.addActionListener(e -> canvasModel.setCkbox_add_frame_SelectAnd3click_isSelected(selectAnd3ClickCheckBox.isSelected()));
 
         pack();

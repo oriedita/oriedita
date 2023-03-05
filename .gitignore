@@ -6,3 +6,6 @@ target/
 ci-build/
 lib/
 *.iml
+pom.xml.next
+pom.xml.tag
+release.properties

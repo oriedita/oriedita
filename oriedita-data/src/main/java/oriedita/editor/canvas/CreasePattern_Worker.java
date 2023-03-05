@@ -164,6 +164,9 @@ public interface CreasePattern_Worker {
     boolean insideToAux(Point p0a, Point p0b);
 
     boolean insideToReplace(Point p0a, Point p0b, int from, int to);
+
+    boolean insideToDelete(Point p0a, Point p0b, int del);
+
     void setFoldLineDividingNumber(int i);
 
     void setNumPolygonCorners(int i);

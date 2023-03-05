@@ -6,7 +6,6 @@ import oriedita.editor.Colors;
 import oriedita.editor.canvas.LineStyle;
 import oriedita.editor.handler.CustomLineTypes;
 
-import javax.swing.plaf.basic.BasicTreeUI;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Frame;
@@ -17,6 +16,7 @@ import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -71,6 +71,7 @@ public class ApplicationModel implements Serializable {
     private boolean foldWarning;
     private CustomLineTypes customFromLineType;
     private CustomLineTypes customToLineType;
+    private CustomLineTypes delLineType;
     private int check4ColorTransparency;
     private double zoomSpeed;
     private boolean moveFoldedModelWithCp;
@@ -125,6 +126,14 @@ public class ApplicationModel implements Serializable {
         CustomLineTypes oldCustomToLineType = this.customToLineType;
         this.customToLineType = customToLineType;
         this.pcs.firePropertyChange("customToLineType", oldCustomToLineType, customToLineType);
+    }
+
+    public CustomLineTypes getDelLineType() { return delLineType; }
+
+    public void setDelLineType(CustomLineTypes delLineType) {
+        CustomLineTypes oldDelLineType = this.delLineType;
+        this.delLineType = delLineType;
+        this.pcs.firePropertyChange("delLineType", oldDelLineType, delLineType);
     }
 
     public CustomLineTypes getCustomToLineType(){
@@ -341,6 +350,7 @@ public class ApplicationModel implements Serializable {
 
         customFromLineType = CustomLineTypes.ANY;
         customToLineType = CustomLineTypes.EGDE;
+        delLineType = CustomLineTypes.ANY;
 
         zoomSpeed = 1;
 
@@ -397,7 +407,7 @@ public class ApplicationModel implements Serializable {
     }
 
     public boolean isSame(ApplicationModel applicationModel) {
-        if(displayPointSpotlight == applicationModel.getDisplayPointSpotlight()
+        return(displayPointSpotlight == applicationModel.getDisplayPointSpotlight()
                 && displayPointOffset == applicationModel.getDisplayPointOffset()
                 && displayGridInputAssist == applicationModel.getDisplayGridInputAssist()
                 && displayComments == applicationModel.getDisplayComments()
@@ -425,10 +435,8 @@ public class ApplicationModel implements Serializable {
                 && displayBottomPanel == applicationModel.getDisplayBottomPanel()
                 && displayRightPanel == applicationModel.getDisplayRightPanel()
                 && displayLeftPanel == applicationModel.getDisplayLeftPanel()
-                && laf == applicationModel.getLaf()
-                && zoomSpeed == applicationModel.getZoomSpeed()){
-            return true;
-        } else { return false; }
+                && Objects.equals(laf, applicationModel.getLaf())
+                && zoomSpeed == applicationModel.getZoomSpeed());
     }
 
 
@@ -805,6 +813,7 @@ public class ApplicationModel implements Serializable {
 
         customFromLineType = applicationModel.getCustomFromLineType();
         customToLineType = applicationModel.getCustomToLineType();
+        delLineType = applicationModel.getDelLineType();
 
         moveFoldedModelWithCp = applicationModel.getMoveFoldedModelWithCp();
         zoomSpeed = applicationModel.getZoomSpeed();

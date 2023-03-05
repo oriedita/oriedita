@@ -95,7 +95,7 @@ public class ResourceUtil {
             return jarBundle.getString(key);
         }
 
-        Logger.warn(bundle + "." + key + " does not exist");
+        Logger.debug(bundle + "." + key + " does not exist");
 
         return null;
     }

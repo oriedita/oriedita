@@ -8,15 +8,19 @@ import oriedita.editor.Canvas;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /**
  * BorderLayout for each different part.
  */
 @ApplicationScoped
 public class Editor {
+    private final Canvas canvas1;
     private JPanel root;
     private Canvas.CanvasUI canvas;
-    private final Canvas canvas1;
     private RightPanel rightPanel;
     private BottomPanel bottomPanel;
     private TopPanel topPanel;
@@ -30,9 +34,14 @@ public class Editor {
         this.topPanel = topPanel;
         this.leftPanel = leftPanel;
 
-        leftPanel.init();
-        topPanel.init();
         $$$setupUI$$$();
+    }
+
+    public void init(ExecutorService service) throws InterruptedException {
+        service.submit(leftPanel::init);
+        service.submit(topPanel::init);
+        service.submit(rightPanel::init);
+        service.submit(bottomPanel::init);
     }
 
     private void createUIComponents() {
