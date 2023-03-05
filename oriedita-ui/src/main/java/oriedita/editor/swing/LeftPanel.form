@@ -127,7 +127,7 @@
           </component>
         </children>
       </grid>
-      <grid id="7161c" layout-manager="GridLayoutManager" row-count="1" column-count="4" same-size-horizontally="true" same-size-vertically="false" hgap="1" vgap="1">
+      <grid id="7161c" layout-manager="GridLayoutManager" row-count="1" column-count="4" same-size-horizontally="false" same-size-vertically="false" hgap="1" vgap="1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
           <grid row="9" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -135,43 +135,47 @@
         <properties/>
         <border type="none"/>
         <children>
-          <component id="ea3d2" class="javax.swing.JButton" binding="toMountainButton">
+          <component id="d2ac1" class="javax.swing.JButton" binding="replace_lineButton">
             <constraints>
-              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <actionCommand value="toMountainAction"/>
-              <foreground color="-65536"/>
-              <icon value="ppp/M_nisuru.png"/>
+              <text value="Button"/>
             </properties>
           </component>
-          <component id="bce06" class="javax.swing.JButton" binding="toValleyButton">
+          <component id="10666" class="javax.swing.JComboBox" binding="fromLineDropBox">
             <constraints>
-              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <actionCommand value="toValleyAction"/>
-              <foreground color="-16776961"/>
-              <icon value="ppp/V_nisuru.png"/>
+              <model>
+                <item value="Any"/>
+                <item value="Edge"/>
+                <item value="M"/>
+                <item value="V"/>
+                <item value="Aux"/>
+              </model>
             </properties>
           </component>
-          <component id="91ebe" class="javax.swing.JButton" binding="toEdgeButton">
+          <component id="51850" class="javax.swing.JLabel">
             <constraints>
-              <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <actionCommand value="toEdgeAction"/>
-              <icon value="ppp/E_nisuru.png"/>
+              <text value="-&gt;"/>
             </properties>
           </component>
-          <component id="a3503" class="javax.swing.JButton" binding="toAuxButton">
+          <component id="20096" class="javax.swing.JComboBox" binding="toLineDropBox">
             <constraints>
-              <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <actionCommand value="toAuxAction"/>
-              <foreground color="-10172216"/>
-              <icon value="ppp/HK_nisuru.png"/>
+              <model>
+                <item value="Edge"/>
+                <item value="M"/>
+                <item value="V"/>
+                <item value="Aux"/>
+              </model>
             </properties>
           </component>
         </children>
@@ -219,7 +223,7 @@
       <grid id="c4e26" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="true" same-size-vertically="false" hgap="1" vgap="1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
-          <grid row="11" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="11" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="2" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties/>
         <border type="none"/>
