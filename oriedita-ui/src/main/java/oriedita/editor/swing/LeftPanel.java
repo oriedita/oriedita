@@ -168,6 +168,7 @@ public class LeftPanel {
     private JButton replace_lineButton;
     private JComboBox<String> fromLineDropBox;
     private JComboBox<String> toLineDropBox;
+    private JLabel replaceLabel;
 
     @Inject
     public LeftPanel(FrameProvider frameProvider,
@@ -284,6 +285,7 @@ public class LeftPanel {
         buttonService.registerLabel(gridYPlusLabel, "labelPlus");
         buttonService.registerLabel(gridXSqrtLabel, "labelSqrt");
         buttonService.registerLabel(gridYSqrtLabel, "labelSqrt");
+        buttonService.registerLabel(replaceLabel, "labelReplace");
 
 
         undoRedo.addUndoActionListener(e -> mainCreasePatternWorker.undo());
@@ -697,9 +699,9 @@ public class LeftPanel {
         defaultComboBoxModel1.addElement("Aux");
         fromLineDropBox.setModel(defaultComboBoxModel1);
         panel3.add(fromLineDropBox, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        final JLabel label1 = new JLabel();
-        label1.setText("->");
-        panel3.add(label1, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        replaceLabel = new JLabel();
+        replaceLabel.setText("");
+        panel3.add(replaceLabel, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         toLineDropBox = new JComboBox();
         final DefaultComboBoxModel defaultComboBoxModel2 = new DefaultComboBoxModel();
         defaultComboBoxModel2.addElement("Edge");
