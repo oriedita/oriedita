@@ -12,7 +12,8 @@ public enum LineColor {
     GREEN_6(6),
     YELLOW_7(7),
     PURPLE_8(8),
-    OTHER_9(9);
+    OTHER_9(9),
+    GREY_10(10);
 
     private final int type;
 

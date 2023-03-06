@@ -5,9 +5,10 @@ package oriedita.editor.canvas;
  */
 public enum LineStyle {
     COLOR(1),
-    COLOR_AND_SHAPE(2),
-    BLACK_ONE_DOT(3),
-    BLACK_TWO_DOT(4),
+    BLACK_WHITE(2),
+    COLOR_AND_SHAPE(3),
+    BLACK_ONE_DOT(4),
+    BLACK_TWO_DOT(5),
     ;
 
     private final int type;

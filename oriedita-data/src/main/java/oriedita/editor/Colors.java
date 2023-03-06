@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Colors {
-    public static final Color GRID_LINE_DARK = new Color(54, 54, 54);
+    public static final Color GRID_LINE_DARK = new Color(50, 50, 50);
     public static final Color GRID_SCALE_DARK = new Color(17, 75, 10);
 
     public static final Color GRID_LINE = new Color(230, 230, 230);
@@ -27,7 +27,7 @@ public class Colors {
         colorMap = new HashMap<>();
         darkColorMap = new HashMap<>();
 
-        add(Color.black, Color.black, new Color(176, 176, 176));
+        add(Color.black, Color.black, new Color(210, 210, 210));
         add(Color.white, Color.white, new Color(37, 37, 37));
         add(Color.red, Color.red, new Color(229, 115, 115));
         add(Color.blue, Color.blue, new Color(33, 150, 243));
@@ -37,6 +37,7 @@ public class Colors {
         add(new Color(150, 150, 150), new Color(150, 150, 150), new Color(50, 50, 50));
         add(new Color(255, 0, 0, 75), new Color(255, 0, 0, 75), new Color(255, 0, 0, 75));
         add(new Color(230, 230, 230), new Color(230, 230, 230), new Color(54, 54, 54));
+        add(new Color(162, 162, 162), new Color(162, 162, 162), new Color(120, 120, 120)); //placeholder
     }
 
     private static Map<Color, Color> activeColorMap = colorMap;
