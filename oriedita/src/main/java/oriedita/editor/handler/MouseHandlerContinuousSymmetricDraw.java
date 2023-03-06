@@ -7,6 +7,7 @@ import org.tinylog.Logger;
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.databinding.CanvasModel;
+import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
@@ -47,7 +48,7 @@ public class MouseHandlerContinuousSymmetricDraw extends BaseMouseHandlerInputRe
     //マウス操作(ボタンを離したとき)を行う関数
     public void mouseReleased(Point p0) {
         if (d.getLineStep().size() == 2) {
-            continuous_folding_new(d.getLineStep().get(0).getA(), d.getLineStep().get(1).getA());
+            continuous_folding_new(d.getLineStep().get(0).getA(), d.getLineStep().get(1).getA(), null);
 
             LineColor lineType = d.getLineColor();
             for (int i = 2; i < d.getLineStep().size(); i++) {
@@ -70,7 +71,7 @@ public class MouseHandlerContinuousSymmetricDraw extends BaseMouseHandlerInputRe
         this.toolbox = new CreasePattern_Worker_Toolbox(d.getFoldLineSet());
     }
 
-    public void continuous_folding_new(Point a, Point b) {//An improved version of continuous folding.
+    public void continuous_folding_new(Point a, Point b, Point start) {//An improved version of continuous folding.
         canvasModel.markDirty();
 
         //ベクトルab(=s0)を点aからb方向に、最初に他の折線(直線に含まれる線分は無視。)と交差するところまで延長する
@@ -91,6 +92,12 @@ public class MouseHandlerContinuousSymmetricDraw extends BaseMouseHandlerInputRe
         s.set(toolbox.getLengthenUntilIntersectionLineSegment_new());
         d.lineStepAdd(s);
         s.setActive(LineSegment.ActiveState.ACTIVE_BOTH_3);
+        if (start != null && Epsilon.high.eq0(start.distance(s.getB()))) {
+            return;
+        }
+        if (start == null) {
+            start = s.getB();
+        }
 
         Logger.info("20201129 saiki repaint ");
 
@@ -106,7 +113,7 @@ public class MouseHandlerContinuousSymmetricDraw extends BaseMouseHandlerInputRe
             Point new_b = new Point();
             new_b.set(OritaCalc.findLineSymmetryPoint(kousaten_made_nobasi_saisyono_lineSegment.getA(), kousaten_made_nobasi_saisyono_lineSegment.getB(), a));//２つの点t1,t2を通る直線に関して、点pの対照位置にある点を求める public Ten oc.sentaisyou_ten_motome(Ten t1,Ten t2,Ten p){
 
-            continuous_folding_new(new_a, new_b);//種の散布
+            continuous_folding_new(new_a, new_b, start);//種の散布
             return;
         }
 
@@ -143,7 +150,7 @@ public class MouseHandlerContinuousSymmetricDraw extends BaseMouseHandlerInputRe
                     Point new_b = new Point();
                     new_b.set(OritaCalc.findLineSymmetryPoint(kousaten_made_nobasi_saisyono_lineSegment.getA(), kousaten_made_nobasi_saisyono_lineSegment.getB(), a));//２つの点t1,t2を通る直線に関して、点pの対照位置にある点を求める public Ten oc.sentaisyou_ten_motome(Ten t1,Ten t2,Ten p){
 
-                    continuous_folding_new(new_a, new_b);//種の散布
+                    continuous_folding_new(new_a, new_b, start);//種の散布
                     return;
                 }
                 return;
@@ -164,7 +171,7 @@ public class MouseHandlerContinuousSymmetricDraw extends BaseMouseHandlerInputRe
                         Point new_b = new Point();
                         new_b.set(OritaCalc.findLineSymmetryPoint(kousaten_made_nobasi_saisyono_lineSegment.getA(), kousaten_made_nobasi_saisyono_lineSegment.getB(), a));//２つの点t1,t2を通る直線に関して、点pの対照位置にある点を求める public Ten oc.sentaisyou_ten_motome(Ten t1,Ten t2,Ten p){
 
-                        continuous_folding_new(new_a, new_b);//種の散布
+                        continuous_folding_new(new_a, new_b, start);//種の散布
                         return;
                     }
                 }
@@ -182,7 +189,7 @@ public class MouseHandlerContinuousSymmetricDraw extends BaseMouseHandlerInputRe
                         Point new_b = new Point();
                         new_b.set(OritaCalc.findLineSymmetryPoint(kousaten_made_nobasi_saisyono_lineSegment.getA(), kousaten_made_nobasi_saisyono_lineSegment.getB(), a));//２つの点t1,t2を通る直線に関して、点pの対照位置にある点を求める public Ten oc.sentaisyou_ten_motome(Ten t1,Ten t2,Ten p){
 
-                        continuous_folding_new(new_a, new_b);//種の散布
+                        continuous_folding_new(new_a, new_b, start);//種の散布
                         return;
                     }
                 }
@@ -200,7 +207,7 @@ public class MouseHandlerContinuousSymmetricDraw extends BaseMouseHandlerInputRe
                         Point new_b = new Point();
                         new_b.set(OritaCalc.findLineSymmetryPoint(kousaten_made_nobasi_saisyono_lineSegment.getA(), kousaten_made_nobasi_saisyono_lineSegment.getB(), a));//２つの点t1,t2を通る直線に関して、点pの対照位置にある点を求める public Ten oc.sentaisyou_ten_motome(Ten t1,Ten t2,Ten p){
 
-                        continuous_folding_new(new_a, new_b);//種の散布
+                        continuous_folding_new(new_a, new_b, start);//種の散布
                     }
                 }
             }
