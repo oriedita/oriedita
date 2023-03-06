@@ -110,7 +110,6 @@ public class MouseHandlerContinuousSymmetricDraw extends BaseMouseHandlerInputRe
         if (toolbox.getLengthenUntilIntersectionFlg_new(a, b) == StraightLine.Intersection.INTERSECT_X_1) {
             LineSegment kousaten_made_nobasi_saisyono_lineSegment = new LineSegment();
             kousaten_made_nobasi_saisyono_lineSegment.set(toolbox.getLengthenUntilIntersectionFirstLineSegment_new());
-            System.out.println(kousaten_made_nobasi_saisyono_lineSegment.getColor());
             Point new_a = new Point();
             new_a.set(toolbox.getLengthenUntilIntersectionPoint_new());//Ten new_aは最も近い交点
             Point new_b = new Point();
