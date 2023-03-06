@@ -110,10 +110,6 @@ public class LeftPanel {
     private JButton copy2p2pButton;
     private JButton deleteSelectedLineSegmentButton;
     private JButton trimBranchesButton;
-    private JButton toMountainButton;
-    private JButton toValleyButton;
-    private JButton toEdgeButton;
-    private JButton toAuxButton;
     private JButton zen_yama_tani_henkanButton;
     private JButton senbun_henkan2Button;
     private JButton senbun_henkanButton;
@@ -168,7 +164,11 @@ public class LeftPanel {
     private JLabel gridYSqrtLabel;
     private JCheckBox drawDiagonalGridlinesCheckBox;
     private JButton del_l_typeButton;
-    private JComboBox delTypeDropBox;
+    private JComboBox<String> delTypeDropBox;
+    private JButton replace_lineButton;
+    private JComboBox<String> fromLineDropBox;
+    private JComboBox<String> toLineDropBox;
+    private JLabel replaceLabel;
 
     @Inject
     public LeftPanel(FrameProvider frameProvider,
@@ -235,10 +235,7 @@ public class LeftPanel {
         buttonService.registerButton(deleteSelectedLineSegmentButton, "deleteSelectedLineSegmentAction");
         buttonService.registerButton(del_l_typeButton, "del_l_typeButton");
         buttonService.registerButton(trimBranchesButton, "trimBranchesAction");
-        buttonService.registerButton(toMountainButton, "toMountainAction");
-        buttonService.registerButton(toValleyButton, "toValleyAction");
-        buttonService.registerButton(toEdgeButton, "toEdgeAction");
-        buttonService.registerButton(toAuxButton, "toAuxAction");
+        buttonService.registerButton(replace_lineButton, "replace_lineButton");
         buttonService.registerButton(zen_yama_tani_henkanButton, "zen_yama_tani_henkanAction");
         buttonService.registerButton(senbun_henkan2Button, "senbun_henkan2Action");
         buttonService.registerButton(senbun_henkanButton, "senbun_henkanAction");
@@ -288,6 +285,7 @@ public class LeftPanel {
         buttonService.registerLabel(gridYPlusLabel, "labelPlus");
         buttonService.registerLabel(gridXSqrtLabel, "labelSqrt");
         buttonService.registerLabel(gridYSqrtLabel, "labelSqrt");
+        buttonService.registerLabel(replaceLabel, "labelReplace");
 
 
         undoRedo.addUndoActionListener(e -> mainCreasePatternWorker.undo());
@@ -426,25 +424,17 @@ public class LeftPanel {
             mainCreasePatternWorker.record();
             mainCreasePatternWorker.unselect_all(false);
         });
-        toMountainButton.addActionListener(e -> {
-            canvasModel.setMouseMode(MouseMode.CREASE_MAKE_MOUNTAIN_23);
-
+        replace_lineButton.addActionListener(e -> {
+            canvasModel.setMouseMode(MouseMode.REPLACE_LINE_TYPE_SELECT_72);
             mainCreasePatternWorker.unselect_all(false);
         });
-        toValleyButton.addActionListener(e -> {
-            canvasModel.setMouseMode(MouseMode.CREASE_MAKE_VALLEY_24);
-
-            mainCreasePatternWorker.unselect_all(false);
+        fromLineDropBox.addActionListener(e -> {
+            applicationModel.setCustomFromLineType(CustomLineTypes.from(fromLineDropBox.getSelectedIndex() - 1));
+            fromLineDropBox.setSelectedIndex(applicationModel.getCustomFromLineType().getType() + 1);
         });
-        toEdgeButton.addActionListener(e -> {
-            canvasModel.setMouseMode(MouseMode.CREASE_MAKE_EDGE_25);
-
-            mainCreasePatternWorker.unselect_all(false);
-        });
-        toAuxButton.addActionListener(e -> {
-            canvasModel.setMouseMode(MouseMode.CREASE_MAKE_AUX_60);
-
-            mainCreasePatternWorker.unselect_all(false);
+        toLineDropBox.addActionListener(e -> {
+            applicationModel.setCustomToLineType(CustomLineTypes.from(toLineDropBox.getSelectedIndex()));
+            toLineDropBox.setSelectedIndex(applicationModel.getCustomToLineType().getType());
         });
         zen_yama_tani_henkanButton.addActionListener(e -> {
             mainCreasePatternWorker.allMountainValleyChange();
@@ -695,27 +685,31 @@ public class LeftPanel {
         colCyanButton.setText("A");
         panel2.add(colCyanButton, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         final JPanel panel3 = new JPanel();
-        panel3.setLayout(new GridLayoutManager(1, 4, new Insets(0, 0, 0, 0), 1, 1, true, false));
+        panel3.setLayout(new GridLayoutManager(1, 4, new Insets(0, 0, 0, 0), 1, 1));
         root.add(panel3, new GridConstraints(9, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-        toMountainButton = new JButton();
-        toMountainButton.setActionCommand("toMountainAction");
-        toMountainButton.setForeground(new Color(-65536));
-        toMountainButton.setIcon(new ImageIcon(getClass().getResource("/ppp/M_nisuru.png")));
-        panel3.add(toMountainButton, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-        toValleyButton = new JButton();
-        toValleyButton.setActionCommand("toValleyAction");
-        toValleyButton.setForeground(new Color(-16776961));
-        toValleyButton.setIcon(new ImageIcon(getClass().getResource("/ppp/V_nisuru.png")));
-        panel3.add(toValleyButton, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-        toEdgeButton = new JButton();
-        toEdgeButton.setActionCommand("toEdgeAction");
-        toEdgeButton.setIcon(new ImageIcon(getClass().getResource("/ppp/E_nisuru.png")));
-        panel3.add(toEdgeButton, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-        toAuxButton = new JButton();
-        toAuxButton.setActionCommand("toAuxAction");
-        toAuxButton.setForeground(new Color(-10172216));
-        toAuxButton.setIcon(new ImageIcon(getClass().getResource("/ppp/HK_nisuru.png")));
-        panel3.add(toAuxButton, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        replace_lineButton = new JButton();
+        replace_lineButton.setText("Button");
+        panel3.add(replace_lineButton, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        fromLineDropBox = new JComboBox();
+        final DefaultComboBoxModel defaultComboBoxModel1 = new DefaultComboBoxModel();
+        defaultComboBoxModel1.addElement("Any");
+        defaultComboBoxModel1.addElement("Edge");
+        defaultComboBoxModel1.addElement("M");
+        defaultComboBoxModel1.addElement("V");
+        defaultComboBoxModel1.addElement("Aux");
+        fromLineDropBox.setModel(defaultComboBoxModel1);
+        panel3.add(fromLineDropBox, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        replaceLabel = new JLabel();
+        replaceLabel.setText("");
+        panel3.add(replaceLabel, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        toLineDropBox = new JComboBox();
+        final DefaultComboBoxModel defaultComboBoxModel2 = new DefaultComboBoxModel();
+        defaultComboBoxModel2.addElement("Edge");
+        defaultComboBoxModel2.addElement("M");
+        defaultComboBoxModel2.addElement("V");
+        defaultComboBoxModel2.addElement("Aux");
+        toLineDropBox.setModel(defaultComboBoxModel2);
+        panel3.add(toLineDropBox, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JPanel panel4 = new JPanel();
         panel4.setLayout(new GridLayoutManager(1, 3, new Insets(0, 0, 0, 0), 1, 1, true, false));
         root.add(panel4, new GridConstraints(10, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
@@ -733,7 +727,7 @@ public class LeftPanel {
         panel4.add(senbun_henkanButton, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         final JPanel panel5 = new JPanel();
         panel5.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 0, 0), 1, 1, true, false));
-        root.add(panel5, new GridConstraints(11, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        root.add(panel5, new GridConstraints(11, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         in_L_col_changeButton = new JButton();
         in_L_col_changeButton.setActionCommand("in_L_col_changeAction");
         in_L_col_changeButton.setIcon(new ImageIcon(getClass().getResource("/ppp/in_L_col_change.png")));
@@ -1005,13 +999,13 @@ public class LeftPanel {
         del_l_typeButton.setText("");
         panel13.add(del_l_typeButton, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         delTypeDropBox = new JComboBox();
-        final DefaultComboBoxModel defaultComboBoxModel1 = new DefaultComboBoxModel();
-        defaultComboBoxModel1.addElement("Any");
-        defaultComboBoxModel1.addElement("Edge");
-        defaultComboBoxModel1.addElement("Mountain");
-        defaultComboBoxModel1.addElement("Valley");
-        defaultComboBoxModel1.addElement("Aux");
-        delTypeDropBox.setModel(defaultComboBoxModel1);
+        final DefaultComboBoxModel defaultComboBoxModel3 = new DefaultComboBoxModel();
+        defaultComboBoxModel3.addElement("Any");
+        defaultComboBoxModel3.addElement("Edge");
+        defaultComboBoxModel3.addElement("Mountain");
+        defaultComboBoxModel3.addElement("Valley");
+        defaultComboBoxModel3.addElement("Aux");
+        delTypeDropBox.setModel(defaultComboBoxModel3);
         panel13.add(delTypeDropBox, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final Spacer spacer1 = new Spacer();
         root.add(spacer1, new GridConstraints(5, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, new Dimension(-1, 5), new Dimension(-1, 5), null, 0, false));
@@ -1106,12 +1100,14 @@ public class LeftPanel {
         intervalGridColorButton.setIcon(new ColorIcon(data.getGridScaleColor()));
 
         delTypeDropBox.setSelectedIndex(applicationModel.getDelLineType().getType() + 1);
+        fromLineDropBox.setSelectedIndex(applicationModel.getCustomFromLineType().getType() + 1);
+        toLineDropBox.setSelectedIndex(applicationModel.getCustomToLineType().getType());
 
         if (e.getPropertyName() == null || e.getPropertyName().equals("laf")) {
             // The look and feel is not set yet, so it must be read from the applicationModel
             boolean isDark = LookAndFeelUtil.determineLafDark(data.getLaf());
 
-            for (JButton button : Arrays.asList(colBlackButton, colRedButton, colBlueButton, colCyanButton, toMountainButton, toValleyButton, toAuxButton, toEdgeButton, senbun_henkan2Button)) {
+            for (JButton button : Arrays.asList(colBlackButton, colRedButton, colBlueButton, colCyanButton, senbun_henkan2Button)) {
                 button.setForeground(Colors.restore(button.getForeground(), isDark));
                 button.setBackground(Colors.restore(button.getBackground(), isDark));
             }
@@ -1138,9 +1134,6 @@ public class LeftPanel {
             unselectButton.setSelected(m == MouseMode.CREASE_UNSELECT_20);
             moveButton.setSelected(m == MouseMode.CREASE_MOVE_21);
             copyButton.setSelected(m == MouseMode.CREASE_COPY_22);
-            toMountainButton.setSelected(m == MouseMode.CREASE_MAKE_MOUNTAIN_23);
-            toValleyButton.setSelected(m == MouseMode.CREASE_MAKE_VALLEY_24);
-            toEdgeButton.setSelected(m == MouseMode.CREASE_MAKE_EDGE_25);
             senbun_b_nyuryokuButton.setSelected(m == MouseMode.LINE_SEGMENT_DIVISION_27);
             move2p2pButton.setSelected(m == MouseMode.CREASE_MOVE_4P_31);
             copy2p2pButton.setSelected(m == MouseMode.CREASE_COPY_4P_32);
@@ -1154,12 +1147,12 @@ public class LeftPanel {
             setParallelDrawWidthButton.setSelected(m == MouseMode.PARALLEL_DRAW_WIDTH_51);
             continuousSymmetricDrawButton.setSelected(m == MouseMode.CONTINUOUS_SYMMETRIC_DRAW_52);
             senbun_henkan2Button.setSelected(m == MouseMode.CREASE_TOGGLE_MV_58);
-            toAuxButton.setSelected(m == MouseMode.CREASE_MAKE_AUX_60);
             voronoiButton.setSelected(m == MouseMode.VORONOI_CREATE_62);
             lengthenCrease2Button.setSelected(m == MouseMode.LENGTHEN_CREASE_SAME_COLOR_70);
             foldableLineDrawButton.setSelected(m == MouseMode.FOLDABLE_LINE_DRAW_71);
             koteimen_siteiButton.setSelected(m == MouseMode.CHANGE_STANDARD_FACE_103);
             del_l_typeButton.setSelected(m == MouseMode.DELETE_LINE_TYPE_SELECT_73);
+            replace_lineButton.setSelected(m == MouseMode.REPLACE_LINE_TYPE_SELECT_72);
         }
 
         if (e.getPropertyName() == null || e.getPropertyName().equals("lineColor") || e.getPropertyName().equals("toggleLineColor")) {
@@ -1198,34 +1191,10 @@ public class LeftPanel {
         if (e.getPropertyName() == null || e.getPropertyName().equals("mouseMode") || e.getPropertyName().equals("foldLineAdditionalInputMode")) {
             Color buttonBg = UIManager.getColor("Button.background");
             Color buttonFg = UIManager.getColor("Button.foreground");
-            toMountainButton.setBackground(buttonBg);
-            toMountainButton.setForeground(Colors.get(Color.red));
-            toValleyButton.setBackground(buttonBg);
-            toValleyButton.setForeground(Colors.get(Color.blue));
-            toEdgeButton.setBackground(buttonBg);
-            toEdgeButton.setForeground(Colors.get(Color.black));
-            toAuxButton.setBackground(buttonBg);
-            toAuxButton.setForeground(Colors.get(new Color(100, 200, 200)));
             senbun_henkan2Button.setBackground(buttonBg);
             senbun_henkan2Button.setForeground(buttonFg);
 
             switch (data.getMouseMode()) {
-                case CREASE_MAKE_MOUNTAIN_23:
-                    toMountainButton.setBackground(Colors.get(Color.red));
-                    toMountainButton.setForeground(Colors.get(Color.white));
-                    break;
-                case CREASE_MAKE_VALLEY_24:
-                    toValleyButton.setBackground(Colors.get(Color.blue));
-                    toValleyButton.setForeground(Colors.get(Color.white));
-                    break;
-                case CREASE_MAKE_EDGE_25:
-                    toEdgeButton.setBackground(Colors.get(Color.black));
-                    toEdgeButton.setForeground(Colors.get(Color.white));
-                    break;
-                case CREASE_MAKE_AUX_60:
-                    toAuxButton.setBackground(Colors.get(new Color(100, 200, 200)));
-                    toAuxButton.setForeground(Colors.get(Color.white));
-                    break;
                 case CREASE_TOGGLE_MV_58:
                     senbun_henkan2Button.setBackground(Colors.get(new Color(138, 43, 226)));
                     senbun_henkan2Button.setForeground(Colors.get(Color.white));
