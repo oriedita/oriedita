@@ -42,6 +42,6 @@ public class OnlyIntAdapter implements DocumentListener {
     }
 
     public boolean onlyInt(JTextField tf) {
-        return Pattern.compile("^-?\\d+$").matcher(tf.getText()).matches();
+        return Pattern.compile("^-?\\d+(E-?\\d+)?$").matcher(tf.getText()).matches();
     }
 }
