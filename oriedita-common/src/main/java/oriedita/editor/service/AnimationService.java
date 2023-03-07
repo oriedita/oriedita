@@ -34,10 +34,4 @@ public interface AnimationService {
      * @return true if any animation is currently running
      */
     boolean isAnimating();
-
-    /**
-     * @param key animation key to be looked up
-     * @return true if there is an animation with the specified key currently running
-     */
-    boolean isAnimating(String key);
 }

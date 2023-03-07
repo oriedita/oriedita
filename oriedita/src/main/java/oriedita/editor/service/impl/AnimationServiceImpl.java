@@ -77,8 +77,4 @@ public class AnimationServiceImpl implements AnimationService {
     public boolean isAnimating() {
         return isAnimating;
     }
-
-    public boolean isAnimating(String key) {
-        return animations.containsKey(key);
-    }
 }

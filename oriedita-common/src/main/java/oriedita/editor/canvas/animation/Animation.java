@@ -52,10 +52,8 @@ public class Animation {
     }
 
     public void combine(Animation other) {
-        System.out.println("prev to: " + to);
         this.from = currentValue();
         this.to = other.to;
-        System.out.println("new to: " + to);
         this.duration = other.duration;
         this.durationLeft = other.duration;
         this.startTime = System.nanoTime();
