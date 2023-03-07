@@ -12,8 +12,6 @@ import oriedita.editor.canvas.LineStyle;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.canvas.MouseWheelTarget;
 import oriedita.editor.canvas.TextWorker;
-import oriedita.editor.canvas.animation.AnimationHandler;
-import oriedita.editor.canvas.animation.LinearInterpolation;
 import oriedita.editor.databinding.AngleSystemModel;
 import oriedita.editor.databinding.ApplicationModel;
 import oriedita.editor.databinding.BackgroundModel;
@@ -28,6 +26,7 @@ import oriedita.editor.drawing.tools.Background_camera;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.handler.DrawingSettings;
 import oriedita.editor.handler.MouseModeHandler;
+import oriedita.editor.service.AnimationService;
 import oriedita.editor.service.FoldedFigureCanvasSelectService;
 import oriedita.editor.service.TaskExecutorService;
 import oriedita.editor.swing.component.BulletinBoard;
@@ -90,7 +89,7 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
     private final CanvasModel canvasModel;
     private final TextWorker textWorker;
     private final SelectedTextModel textModel;
-    private final AnimationHandler animationHandler;
+    private final AnimationService animationService;
     private boolean hideOperationFrame = false;
 
     private MouseModeHandler activeMouseHandler;
@@ -199,7 +198,7 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
         public void paintComponent(Graphics bufferGraphics) {
             //「f」を付けることでfloat型の数値として記述することができる
             Graphics2D g2 = (Graphics2D) bufferGraphics;
-            animationHandler.update();
+            animationService.update();
 
             BasicStroke BStroke = new BasicStroke(lineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER);
             g2.setStroke(BStroke);//線の太さや線の末端の形状
@@ -341,9 +340,8 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
                 g2.drawLine((int) (p_mouse_TV_position.getX()), (int) (p_mouse_TV_position.getY()),
                         (int) (p_mouse_TV_position.getX() + d_width), (int) (p_mouse_TV_position.getY() + d_width)); //直線
             }
-            if (animationHandler.animating()) {
+            if (animationService.isAnimating()) {
                 SwingUtilities.invokeLater(canvasModel::markDirty);
-                //canvasModel.markDirty();
             }
         }
     }
@@ -365,7 +363,8 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
                   FoldedFigureCanvasSelectService foldedFigureCanvasSelectService,
                   @Any CanvasModel canvasModel,
                   TextWorker textWorker,
-                  SelectedTextModel textModel) {
+                  SelectedTextModel textModel,
+                  AnimationService animationService) {
         this.creasePatternCamera = creasePatternCamera;
         this.frameProvider = frameProvider;
         this.foldingExecutor = foldingExecutor;
@@ -383,7 +382,7 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
         this.canvasModel = canvasModel;
         this.textWorker = textWorker;
         this.textModel = textModel;
-        animationHandler = new AnimationHandler(new LinearInterpolation());
+        this.animationService = animationService;
     }
 
     public void init() {
@@ -773,13 +772,10 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
             double zoomTime = 0.07;
             if (target == MouseWheelTarget.CREASE_PATTERN_0) {
 
-                animationHandler.animate("zoomCp",
+                animationService.animate("zoomCp",
                         creasePatternCameraModel::setScale,
-                        creasePatternCameraModel.getScale(),
-                        creasePatternCameraModel.getScaleForZoomBy(
-                                scrollDistance,
-                                applicationModel.getZoomSpeed(),
-                                animationHandler.getFinalValueOr("zoomCp", creasePatternCameraModel.getScale())),
+                        creasePatternCameraModel::getScale,
+                        scale -> creasePatternCameraModel.getScaleForZoomBy(scrollDistance, applicationModel.getZoomSpeed(), scale),
                         zoomTime);
 
                 if (applicationModel.getMoveFoldedModelWithCp()) {
@@ -787,7 +783,7 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
                         foldedFigure_drawer.scale(1, creasePatternCamera.object2TV(creasePatternCamera.getCameraPosition()));
                     }
 
-                    animationHandler.animate("zoomFoldedModel",
+                    animationService.animate("zoomFoldedModel",
                             s -> {
                                 foldedFigureModel.setScale(s);
                                 // Move all other objects along.
@@ -795,18 +791,16 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
                                     foldedFigure_drawer.setScale(foldedFigureModel.getScale());
                                 }
                             },
-                            foldedFigureModel.getScale(),
-                            foldedFigureModel.getScaleForZoomBy(scrollDistance, applicationModel.getZoomSpeed(),
-                                    animationHandler.getFinalValueOr("zoomFoldedModel", foldedFigureModel.getScale())),
+                            foldedFigureModel::getScale,
+                            scale -> foldedFigureModel.getScaleForZoomBy(scrollDistance, applicationModel.getZoomSpeed(), scale),
                             zoomTime);
 
                 }
             } else {
-                animationHandler.animate("zoomFoldedModel",
+                animationService.animate("zoomFoldedModel",
                         foldedFigureModel::setScale,
-                        foldedFigureModel.getScale(),
-                        foldedFigureModel.getScaleForZoomBy(scrollDistance, applicationModel.getZoomSpeed(),
-                                animationHandler.getFinalValueOr("zoomFoldedModel", foldedFigureModel.getScale())),
+                        foldedFigureModel::getScale,
+                        scale -> foldedFigureModel.getScaleForZoomBy(scrollDistance, applicationModel.getZoomSpeed(), scale),
                         zoomTime);
             }
 

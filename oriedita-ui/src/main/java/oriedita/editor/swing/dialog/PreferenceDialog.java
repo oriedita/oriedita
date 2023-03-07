@@ -100,6 +100,7 @@ public class PreferenceDialog extends JDialog {
     private JPanel panels2Panel;
     private JLabel ck4Label;
     private JSlider zoomSpeedSlider;
+    private JCheckBox checkBoxAnimation;
     private int tempTransparency;
     private final ApplicationModel applicationModel;
     private final ApplicationModel tempModel;
@@ -139,6 +140,7 @@ public class PreferenceDialog extends JDialog {
         leftPanelCB.setSelected(applicationModel.getDisplayLeftPanel());
         rightPanelCB.setSelected(applicationModel.getDisplayRightPanel());
         zoomSpeedSlider.setValue((int) (applicationModel.getZoomSpeed() * 10));
+        checkBoxAnimation.setSelected(applicationModel.getAnimations());
     }
 
     public PreferenceDialog(
@@ -323,6 +325,7 @@ public class PreferenceDialog extends JDialog {
         bottomPanelCB.addActionListener(e -> applicationModel.setDisplayBottomPanel(bottomPanelCB.isSelected()));
         leftPanelCB.addActionListener(e -> applicationModel.setDisplayLeftPanel(leftPanelCB.isSelected()));
         rightPanelCB.addActionListener(e -> applicationModel.setDisplayRightPanel(rightPanelCB.isSelected()));
+        checkBoxAnimation.addActionListener(e -> applicationModel.setAnimations(checkBoxAnimation.isSelected()));
 
         buttonOK.addActionListener(e -> onOK());
 
@@ -387,7 +390,7 @@ public class PreferenceDialog extends JDialog {
         contentPane = new JPanel();
         contentPane.setLayout(new GridLayoutManager(2, 1, new Insets(10, 10, 10, 10), -1, -1));
         contentPane.setFocusTraversalPolicyProvider(false);
-        contentPane.setMinimumSize(new Dimension(450, 550));
+        contentPane.setMinimumSize(new Dimension(450, 600));
         contentPane.setPreferredSize(new Dimension(450, 550));
         bottomPanel = new JPanel();
         bottomPanel.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 0, 0), -1, -1));
@@ -499,7 +502,7 @@ public class PreferenceDialog extends JDialog {
         appearancePanel.setLayout(new GridLayoutManager(2, 1, new Insets(0, 0, 20, 0), -1, -1));
         secondColumn.add(appearancePanel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         appearance2Panel = new JPanel();
-        appearance2Panel.setLayout(new GridLayoutManager(12, 4, new Insets(0, 0, 0, 0), 1, 2));
+        appearance2Panel.setLayout(new GridLayoutManager(13, 4, new Insets(0, 0, 0, 0), 1, 2));
         appearancePanel.add(appearance2Panel, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 1, false));
         final JLabel label3 = new JLabel();
         label3.setText("CP line width: ");
@@ -627,7 +630,7 @@ public class PreferenceDialog extends JDialog {
         label11.setText("BEHAVIOR");
         behavior1Panel.add(label11, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         behavior2Panel = new JPanel();
-        behavior2Panel.setLayout(new GridLayoutManager(3, 2, new Insets(0, 0, 0, 0), 1, 2));
+        behavior2Panel.setLayout(new GridLayoutManager(4, 2, new Insets(0, 0, 0, 0), 1, 2));
         behaviorPanel.add(behavior2Panel, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         preciseZoomCB = new JCheckBox();
         preciseZoomCB.setText("Precise zoom");
@@ -646,6 +649,9 @@ public class PreferenceDialog extends JDialog {
         zoomSpeedSlider.setPaintTrack(true);
         zoomSpeedSlider.setSnapToTicks(true);
         behavior2Panel.add(zoomSpeedSlider, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        checkBoxAnimation = new JCheckBox();
+        checkBoxAnimation.setText("Animations");
+        behavior2Panel.add(checkBoxAnimation, new GridConstraints(3, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final Spacer spacer4 = new Spacer();
         topPanel.add(spacer4, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
     }

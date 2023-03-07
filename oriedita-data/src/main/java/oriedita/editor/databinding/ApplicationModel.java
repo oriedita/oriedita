@@ -74,12 +74,30 @@ public class ApplicationModel implements Serializable {
     private int check4ColorTransparency;
     private double zoomSpeed;
     private boolean moveFoldedModelWithCp;
+    private boolean animations;
+
+    /*
+    Things to remember when adding a new property:
+        - getter, setter (with pcs event)
+        - add the default value to reset
+        - add the property to set
+        - if included in preference window: add property to isSame and restorePrefDefaults
+     */
 
     @Inject
     public ApplicationModel() {
         reset();
     }
 
+    public boolean getAnimations() {
+        return animations;
+    }
+
+    public void setAnimations(boolean animations) {
+        boolean oldAnimations = this.animations;
+        this.animations = animations;
+        this.pcs.firePropertyChange("animations", oldAnimations, animations);
+    }
 
     public double getZoomSpeed() {
         return zoomSpeed;
@@ -343,7 +361,7 @@ public class ApplicationModel implements Serializable {
         customToLineType = CustomLineTypes.EGDE;
 
         zoomSpeed = 1;
-
+        animations = true;
         moveFoldedModelWithCp = true;
 
         this.pcs.firePropertyChange(null, null, null);
@@ -392,6 +410,7 @@ public class ApplicationModel implements Serializable {
         displayRightPanel = true;
 
         zoomSpeed = 1;
+        animations = true;
 
         this.pcs.firePropertyChange(null, null, null);
     }
@@ -426,7 +445,7 @@ public class ApplicationModel implements Serializable {
                 && displayRightPanel == applicationModel.getDisplayRightPanel()
                 && displayLeftPanel == applicationModel.getDisplayLeftPanel()
                 && Objects.equals(laf, applicationModel.getLaf())
-                && zoomSpeed == applicationModel.getZoomSpeed());
+                && zoomSpeed == applicationModel.getZoomSpeed() && animations == applicationModel.getAnimations());
     }
 
 
