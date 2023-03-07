@@ -23,4 +23,18 @@ public class FoldLineSetFactory {
     FoldLineSet foldLineSet() {
         return new FoldLineSet();
     }
+
+    @Named("backup_auxlines")
+    @Produces
+    @ApplicationScoped
+    FoldLineSet backupAuxLinesFoldLineSet() {
+        return new FoldLineSet();
+    }
+
+    @Named("backup_foldlines")
+    @Produces
+    @ApplicationScoped
+    FoldLineSet backupFoldLineSet() {
+        return new FoldLineSet();
+    }
 }

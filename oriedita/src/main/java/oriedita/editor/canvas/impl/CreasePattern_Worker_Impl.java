@@ -1,8 +1,5 @@
 package oriedita.editor.canvas.impl;
 
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
-import jakarta.inject.Named;
 import org.tinylog.Logger;
 import oriedita.editor.Colors;
 import oriedita.editor.canvas.CreasePattern_Worker;
@@ -56,7 +53,7 @@ import java.util.List;
 /**
  * Responsible for holding the current creasepattern and drawing it.
  */
-@ApplicationScoped
+
 public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     // ------------
     private final int check4ColorTransparencyIncrement = 10;
@@ -101,7 +98,7 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     private boolean gridInputAssist = false;//1 if you use the input assist function for fine grid display, 0 if you do not use it
     private Color customCircleColor;//Stores custom colors for circles and auxiliary hot lines
     private FoldLineAdditionalInputMode i_foldLine_additional = FoldLineAdditionalInputMode.POLY_LINE_0;//= 0 is polygonal line input = 1 is auxiliary line input mode (when inputting a line segment, these two). When deleting a line segment, the value becomes as follows. = 0 is the deletion of the polygonal line, = 1 is the deletion of the auxiliary picture line, = 2 is the deletion of the black line, = 3 is the deletion of the auxiliary live line, = 4 is the folding line, the auxiliary live line and the auxiliary picture line.
-    private FoldLineSet auxLines = new FoldLineSet();    //Store auxiliary lines
+    private final FoldLineSet auxLines;    //Store auxiliary lines
     private int foldLineDividingNumber = 1;
     private int numPolygonCorners = 5;
     private String text_cp_setumei;
@@ -120,13 +117,12 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     //--------------------------------------------
     private CanvasModel.SelectionOperationMode i_select_mode = CanvasModel.SelectionOperationMode.NORMAL_0;//=0は通常のセレクト操作
 
-    @Inject
-    public CreasePattern_Worker_Impl(@Named("creasePatternCamera") Camera creasePatternCamera,
-                                     @Named("normal") HistoryState normalHistoryState,
-                                     @Named("aux") HistoryState auxHistoryState,
-                                     @Named("auxlines") FoldLineSet auxLines,
-                                     @Named("foldlines") FoldLineSet foldLineSet,
-                                     @Named("camvExecutor") TaskExecutorService camvTaskExecutor,
+    public CreasePattern_Worker_Impl(Camera creasePatternCamera,
+                                     HistoryState normalHistoryState,
+                                     HistoryState auxHistoryState,
+                                     FoldLineSet auxLines,
+                                     FoldLineSet foldLineSet,
+                                     TaskExecutorService camvTaskExecutor,
                                      CanvasModel canvasModel,
                                      ApplicationModel applicationModel,
                                      GridModel gridModel,
