@@ -44,7 +44,7 @@ public class AnimationServiceImpl implements AnimationService {
             return;
         }
 
-        Animation a = new Animation(setter, from, to, (long) (time*1000), interpolation);
+        Animation a = new Animation(setter, from, to, (long) (time*1000*applicationModel.getAnimationSpeed()), interpolation);
 
         if (animations.containsKey(key)) {
             animations.get(key).combine(a);

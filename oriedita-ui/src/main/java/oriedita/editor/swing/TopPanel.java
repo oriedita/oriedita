@@ -106,6 +106,7 @@ public class TopPanel implements PropertyChangeListener {
         buttonService.addDefaultListener($$$getRootComponent$$$());
 
         buttonService.registerButton(creasePatternZoomInButton, "creasePatternZoomInAction");
+        buttonService.registerButton(creasePatternZoomOutButton, "creasePatternZoomOutAction");
         buttonService.registerButton(rotateAnticlockwiseButton, "rotateAnticlockwiseAction");
         buttonService.registerButton(rotateClockwiseButton, "rotateClockwiseAction");
         buttonService.registerButton(senbun_yoke_henkanButton, "senbun_yoke_henkanAction");
@@ -164,23 +165,6 @@ public class TopPanel implements PropertyChangeListener {
         });
         scaleFactorTextField.addActionListener(e -> scaleFactorSetButton.doClick());
         scaleFactorTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(scaleFactorTextField));
-        creasePatternZoomInButton.addActionListener(e -> {
-            creasePatternCameraModel.zoomIn(applicationModel.getZoomSpeed());
-
-            double magnification = Math.sqrt(Math.sqrt(Math.sqrt(2.0)));//  sqrt(sqrt(2))=1.1892
-
-            FoldedFigure_Drawer OZi;
-            for (int i_oz = 0; i_oz < foldedFiguresList.getSize(); i_oz++) {
-                OZi = foldedFiguresList.getElementAt(i_oz);
-
-                Point t_o2tv = canvas.getCreasePatternCamera().object2TV(canvas.getCreasePatternCamera().getCameraPosition());
-
-                OZi.scale(magnification, t_o2tv);
-            }
-
-            foldedFigureModel.zoomIn(applicationModel.getZoomSpeed());
-//20180122追加　ここまで
-        });
         rotateAnticlockwiseButton.addActionListener(e -> creasePatternCameraModel.increaseRotation());
         rotationSetButton.addActionListener(e -> creasePatternCameraModel.setRotation(measuresModel.string2double(rotationTextField.getText(), creasePatternCameraModel.getRotation())));
         rotationTextField.addActionListener(e -> rotationSetButton.doClick());

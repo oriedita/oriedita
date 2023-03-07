@@ -769,21 +769,20 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
             MouseWheelTarget target = foldedFigureCanvasSelectService.pointInCreasePatternOrFoldedFigure(p);
 
             double scrollDistance = applicationModel.isPreciseZoom() ? e.getPreciseWheelRotation() : e.getWheelRotation();
-            double zoomTime = 0.1;
             if (target == MouseWheelTarget.CREASE_PATTERN_0) {
 
-                animationService.animate("zoomCp",
+                animationService.animate(Animations.ZOOM_CP,
                         creasePatternCameraModel::setScale,
                         creasePatternCameraModel::getScale,
                         scale -> creasePatternCameraModel.getScaleForZoomBy(scrollDistance, applicationModel.getZoomSpeed(), scale),
-                        zoomTime);
+                        AnimationDurations.ZOOM);
 
                 if (applicationModel.getMoveFoldedModelWithCp()) {
                     for (FoldedFigure_Drawer foldedFigure_drawer : foldedFiguresList.getItems()) {
                         foldedFigure_drawer.scale(1, creasePatternCamera.object2TV(creasePatternCamera.getCameraPosition()));
                     }
 
-                    animationService.animate("zoomFoldedModel",
+                    animationService.animate(Animations.ZOOM_FOLDED_MODEL,
                             s -> {
                                 foldedFigureModel.setScale(s);
                                 // Move all other objects along.
@@ -793,15 +792,14 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
                             },
                             foldedFigureModel::getScale,
                             scale -> foldedFigureModel.getScaleForZoomBy(scrollDistance, applicationModel.getZoomSpeed(), scale),
-                            zoomTime);
-
+                            AnimationDurations.ZOOM);
                 }
             } else {
-                animationService.animate("zoomFoldedModel",
+                animationService.animate(Animations.ZOOM_FOLDED_MODEL,
                         foldedFigureModel::setScale,
                         foldedFigureModel::getScale,
                         scale -> foldedFigureModel.getScaleForZoomBy(scrollDistance, applicationModel.getZoomSpeed(), scale),
-                        zoomTime);
+                        AnimationDurations.ZOOM);
             }
 
             mouse_object_position(p_mouse_TV_position);

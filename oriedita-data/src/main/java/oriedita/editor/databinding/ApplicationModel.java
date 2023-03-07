@@ -75,6 +75,7 @@ public class ApplicationModel implements Serializable {
     private double zoomSpeed;
     private boolean moveFoldedModelWithCp;
     private boolean animations;
+    private double animationSpeed;
 
     /*
     Things to remember when adding a new property:
@@ -87,6 +88,16 @@ public class ApplicationModel implements Serializable {
     @Inject
     public ApplicationModel() {
         reset();
+    }
+
+    public double getAnimationSpeed() {
+        return animationSpeed;
+    }
+
+    public void setAnimationSpeed(double animationSpeed) {
+        double oldAnimationSpeed = this.animationSpeed;
+        this.animationSpeed = animationSpeed;
+        this.pcs.firePropertyChange("animationSpeed", oldAnimationSpeed, animationSpeed);
     }
 
     public boolean getAnimations() {
@@ -362,6 +373,7 @@ public class ApplicationModel implements Serializable {
 
         zoomSpeed = 1;
         animations = true;
+        animationSpeed = 1;
         moveFoldedModelWithCp = true;
 
         this.pcs.firePropertyChange(null, null, null);
@@ -824,6 +836,7 @@ public class ApplicationModel implements Serializable {
         customToLineType = applicationModel.getCustomToLineType();
 
         moveFoldedModelWithCp = applicationModel.getMoveFoldedModelWithCp();
+        animationSpeed = applicationModel.getAnimationSpeed();
         zoomSpeed = applicationModel.getZoomSpeed();
 
         this.pcs.firePropertyChange(null, null, null);
