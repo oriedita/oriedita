@@ -206,8 +206,32 @@ public class FoldingServiceImpl implements FoldingService {
         LineSegmentSet lines = figure.wireFrame_worker1.getLineStore();
         Foldable newFigure = initFoldedFigure();
 
+        //What the fuck
+        FoldedFigure.EstimationOrder order;
+        switch (figure.displayStyle) {
+            case NONE_0:
+                order = FoldedFigure.EstimationOrder.ORDER_0;
+                break;
+            case DEVELOPMENT_1:
+                order = FoldedFigure.EstimationOrder.ORDER_1;
+                break;
+            case WIRE_2:
+                order = FoldedFigure.EstimationOrder.ORDER_2;
+                break;
+            case TRANSPARENT_3:
+                order = FoldedFigure.EstimationOrder.ORDER_3;
+                break;
+            case DEVELOPMENT_4:
+                order = FoldedFigure.EstimationOrder.ORDER_4;
+                break;
+            case PAPER_5:
+                order = FoldedFigure.EstimationOrder.ORDER_5;
+                break;
+            default:
+                order = FoldedFigure.EstimationOrder.ORDER_5;
+        }
         foldingExecutor.executeTask(new FoldingEstimateTask(
-                creasePatternCamera, bulletinBoard, canvasModel, lines, newFigure, figure.estimationOrder));
+                creasePatternCamera, bulletinBoard, canvasModel, lines, newFigure, order));
     }
 
 }
