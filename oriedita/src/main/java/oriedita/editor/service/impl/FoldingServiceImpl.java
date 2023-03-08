@@ -200,4 +200,14 @@ public class FoldingServiceImpl implements FoldingService {
         return lineSegmentsForFolding;
     }
 
+    @Override
+    public void duplicate(FoldedFigure figureToDuplicate) { //Trox's stuffs
+        FoldedFigure figure = figureToDuplicate;
+        LineSegmentSet lines = figure.wireFrame_worker1.getLineStore();
+        Foldable newFigure = initFoldedFigure();
+
+        foldingExecutor.executeTask(new FoldingEstimateTask(
+                creasePatternCamera, bulletinBoard, canvasModel, lines, newFigure, figure.estimationOrder));
+    }
+
 }

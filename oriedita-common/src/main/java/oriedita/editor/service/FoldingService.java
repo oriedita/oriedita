@@ -20,6 +20,8 @@ public interface FoldingService {
 
     LineSegmentSet getLineSegmentsForFolding();
 
+    void duplicate(FoldedFigure figureToDuplicate); //Trox's stuffs
+
     enum FoldType {
         FOR_ALL_CONNECTED_LINES_1,
         FOR_SELECTED_LINES_2,

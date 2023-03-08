@@ -507,15 +507,6 @@ public class LeftPanel {
                 canvasModel.setMouseMode(MouseMode.CHANGE_STANDARD_FACE_103);
             }
         });
-        suitei_02Button.addActionListener(e -> {
-            foldingService.fold(FoldedFigure.EstimationOrder.ORDER_2);//引数の意味は(i_fold_type , i_suitei_meirei);
-            mainCreasePatternWorker.unselect_all(false);
-        });
-        suitei_03Button.addActionListener(e -> {
-            foldingService.fold(FoldedFigure.EstimationOrder.ORDER_3);//引数の意味は(i_fold_type , i_suitei_meirei);
-
-            mainCreasePatternWorker.unselect_all(false);
-        });
         coloredXRayCheckBox.addActionListener(e -> foldedFigureModel.setTransparencyColor(coloredXRayCheckBox.isSelected()));
         coloredXRayDecreaseButton.addActionListener(e -> foldedFigureModel.decreaseTransparency());
         coloredXRayIncreaseButton.addActionListener(e -> foldedFigureModel.increaseTransparency());
