@@ -96,8 +96,8 @@ public class FoldedFigure_Drawer implements Foldable {
     }
 
     void folding_estimation_camera_configure(Camera creasePatternCamera) {
-        d_foldedFigure_scale_factor = creasePatternCamera.getCameraZoomX();
-        d_foldedFigure_rotation_correction = creasePatternCamera.getCameraAngle();
+//        d_foldedFigure_scale_factor = creasePatternCamera.getCameraZoomX();
+//        d_foldedFigure_rotation_correction = creasePatternCamera.getCameraAngle();
 
         foldedFigureModel.setScale(d_foldedFigure_scale_factor);
         foldedFigureModel.setRotation(d_foldedFigure_rotation_correction);
