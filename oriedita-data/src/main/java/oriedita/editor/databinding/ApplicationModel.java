@@ -848,6 +848,7 @@ public class ApplicationModel implements Serializable {
 
         moveFoldedModelWithCp = applicationModel.getMoveFoldedModelWithCp();
         animationSpeed = applicationModel.getAnimationSpeed();
+        animations = applicationModel.getAnimations();
         zoomSpeed = applicationModel.getZoomSpeed();
 
         this.pcs.firePropertyChange(null, null, null);
