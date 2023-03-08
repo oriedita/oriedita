@@ -9,7 +9,6 @@ import jakarta.inject.Named;
 import org.tinylog.Logger;
 import oriedita.editor.Colors;
 import oriedita.editor.FrameProvider;
-import oriedita.editor.action.ActionType;
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.databinding.ApplicationModel;
@@ -385,11 +384,11 @@ public class AppMenuBar {
         fileMenu.add(exportButton);
 
         JMenuItem importButton = new JMenuItem("Import");
-        importButton.setActionCommand(ActionType.IMPORT.action());
+        importButton.setActionCommand("importAction");
         fileMenu.add(importButton);
 
         JMenuItem importAddButton = new JMenuItem("Import (Add)");
-        importAddButton.setActionCommand(ActionType.IMPORT_ADD.action());
+        importAddButton.setActionCommand("inputDataAction");
         fileMenu.add(importAddButton);
 
         fileMenu.addSeparator();
