@@ -107,6 +107,8 @@ public enum ActionType {
     haltAction("haltAction"),
     resetAction("resetAction"),
     flipAction("foldedFigureFlipAction"),
+    scaleAction("scaleAction"),
+    duplicate("duplicateAction"),
     frontColorAction("frontColorAction"),
     As100Action("As100Action"),
     lineColorAction("lineColorAction"),

@@ -27,7 +27,9 @@ import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.handler.DrawingSettings;
 import oriedita.editor.handler.MouseModeHandler;
 import oriedita.editor.service.AnimationService;
+import oriedita.editor.service.ButtonService;
 import oriedita.editor.service.FoldedFigureCanvasSelectService;
+import oriedita.editor.service.FoldingService;
 import oriedita.editor.service.TaskExecutorService;
 import oriedita.editor.swing.component.BulletinBoard;
 import oriedita.editor.swing.component.TextEditingArea;
@@ -36,7 +38,9 @@ import origami.crease_pattern.element.Polygon;
 import origami.folding.FoldedFigure;
 
 import javax.imageio.ImageIO;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
@@ -135,6 +139,8 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
     private boolean mouseReleasedValid = false;//0 ignores mouse operation. 1 is valid for mouse operation. When an unexpected mouseDragged or mouseReleased occurs due to on-off of the file box, set it to 0 so that it will not be picked up. These are set to 1 valid when the mouse is clicked.
 
     private final FrameProvider frameProvider;
+
+    private final ButtonService buttonService;
 
     private CanvasUI canvasUI;
 
@@ -369,7 +375,8 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
                   @Any CanvasModel canvasModel,
                   TextWorker textWorker,
                   SelectedTextModel textModel,
-                  AnimationService animationService) {
+                  AnimationService animationService,
+                  ButtonService buttonService) {
         this.creasePatternCamera = creasePatternCamera;
         this.frameProvider = frameProvider;
         this.foldingExecutor = foldingExecutor;
@@ -388,6 +395,7 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
         this.textWorker = textWorker;
         this.textModel = textModel;
         this.animationService = animationService;
+        this.buttonService = buttonService;
     }
 
     public void init() {
@@ -517,6 +525,39 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
 
     //マウス操作(ボタンを押したとき)を行う関数----------------------------------------------------
     public void mousePressed(MouseEvent e) {
+        JPopupMenu foldPopUp = new JPopupMenu();
+
+        JMenuItem flipItem = new JMenuItem();
+        flipItem.setActionCommand("foldedFigureFlipAction");
+        foldPopUp.add(flipItem);
+
+        JMenuItem scaleItem = new JMenuItem();
+        scaleItem.setActionCommand("scaleAction");
+        foldPopUp.add(scaleItem);
+
+        JMenuItem deleteItem = new JMenuItem();
+        deleteItem.setActionCommand("foldedFigureTrashAction");
+        foldPopUp.add(deleteItem);
+
+        JMenuItem duplicateItem = new JMenuItem("Duplicate");
+        duplicateItem.setActionCommand("duplicateAction");
+        foldPopUp.add(duplicateItem);
+
+        JMenuItem wireframeItem = new JMenuItem();
+        wireframeItem.setActionCommand("suitei_02Action");
+        foldPopUp.add(wireframeItem);
+
+        JMenuItem xrayItem = new JMenuItem();
+        xrayItem.setActionCommand("suitei_03Action");
+        foldPopUp.add(xrayItem);
+
+        buttonService.addDefaultListener(foldPopUp);
+        flipItem.setText("Flip");
+        scaleItem.setText("Scale");
+        deleteItem.setText("Delete");
+        wireframeItem.setText("Wireframe");
+        xrayItem.setText("X-ray");
+
         Point p = e2p(e);
         canvasUI.requestFocus();
         mouseDraggedValid = true;
@@ -578,15 +619,28 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
             case MouseEvent.BUTTON3:
                 mainCreasePatternWorker.setCamera(creasePatternCamera);
                 activeMouseHandler.reset();
-                if (activeMouseHandler.getMouseMode() != MouseMode.LINE_SEGMENT_DELETE_3) {
-                    mainCreasePatternWorker.setFoldLineAdditional(FoldLineAdditionalInputMode.BOTH_4);
+                MouseWheelTarget rightCLickTarget = foldedFigureCanvasSelectService.pointInCreasePatternOrFoldedFigure(p);
+
+                switch (rightCLickTarget) {
+                    case CREASE_PATTERN_0:
+                        if (activeMouseHandler.getMouseMode() != MouseMode.LINE_SEGMENT_DELETE_3) {
+                            mainCreasePatternWorker.setFoldLineAdditional(FoldLineAdditionalInputMode.BOTH_4);
+                        }
+                        mouseModeHandlers.get(MouseMode.LINE_SEGMENT_DELETE_3).mousePressed(p, e);
+                        activeMouseHandler = mouseModeHandlers.get(MouseMode.LINE_SEGMENT_DELETE_3);
+                        break;
+                    case FOLDED_FRONT_1:
+                    case FOLDED_BACK_2:
+                    case TRANSPARENT_FRONT_3:
+                    case TRANSPARENT_BACK_4:
+                        foldPopUp.show(this.canvasUI, e.getX(), e.getY());
+                        break;
+                    default:
+                        break;
                 }
-                mouseModeHandlers.get(MouseMode.LINE_SEGMENT_DELETE_3).mousePressed(p, e);
-                activeMouseHandler = mouseModeHandlers.get(MouseMode.LINE_SEGMENT_DELETE_3);
                 canvasUI.repaint();
                 return;
         }
-
 
         mainCreasePatternWorker.setCamera(creasePatternCamera);
 
@@ -646,8 +700,10 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
 
                 case MouseEvent.BUTTON3:
                     mainCreasePatternWorker.setCamera(creasePatternCamera);
-                    mouseModeHandlers.get(MouseMode.LINE_SEGMENT_DELETE_3).mouseDragged(p, e);
-                    activeMouseHandler = mouseModeHandlers.get(MouseMode.LINE_SEGMENT_DELETE_3);
+                    if (canvasModel.getMouseInCpOrFoldedFigure() == MouseWheelTarget.CREASE_PATTERN_0) {
+                        mouseModeHandlers.get(MouseMode.LINE_SEGMENT_DELETE_3).mouseDragged(p, e);
+                        activeMouseHandler = mouseModeHandlers.get(MouseMode.LINE_SEGMENT_DELETE_3);
+                    }
             }
 
             mainCreasePatternWorker.setCamera(creasePatternCamera);
@@ -726,15 +782,17 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
                     mouseReleasedValid = false;
                     return;//
                 case MouseEvent.BUTTON3:
-                    //if(i_mouse_undo_redo_mode==1){i_mouse_undo_redo_mode=0;mainDrawingWorker.unselect_all();Button_kyoutuu_sagyou();mainDrawingWorker.modosi_i_orisen_hojyosen();return;}
                     mainCreasePatternWorker.setCamera(creasePatternCamera);
-                    mouseModeHandlers.get(MouseMode.LINE_SEGMENT_DELETE_3).mouseReleased(p, e);
-                    activeMouseHandler = mouseModeHandlers.get(MouseMode.LINE_SEGMENT_DELETE_3);
+                    if (canvasModel.getMouseInCpOrFoldedFigure() == MouseWheelTarget.CREASE_PATTERN_0) {
+                        //if(i_mouse_undo_redo_mode==1){i_mouse_undo_redo_mode=0;mainDrawingWorker.unselect_all();Button_kyoutuu_sagyou();mainDrawingWorker.modosi_i_orisen_hojyosen();return;}
+                        mouseModeHandlers.get(MouseMode.LINE_SEGMENT_DELETE_3).mouseReleased(p, e);
+                        activeMouseHandler = mouseModeHandlers.get(MouseMode.LINE_SEGMENT_DELETE_3);
+                        canvasModel.restoreFoldLineAdditionalInputMode();
+                        //線分削除モード。
+                    }
                     canvasUI.repaint();//なんでここにrepaintがあるか検討した方がよいかも。20181208
-                    canvasModel.restoreFoldLineAdditionalInputMode();
                     mouseDraggedValid = false;
                     mouseReleasedValid = false;
-                    //線分削除モード。
 
                     return;
             }
@@ -942,3 +1000,4 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
         return creasePatternCamera;
     }
 }
+
