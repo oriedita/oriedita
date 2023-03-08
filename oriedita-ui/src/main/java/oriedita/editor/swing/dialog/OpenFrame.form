@@ -62,59 +62,6 @@
               <text value="Del_l"/>
             </properties>
           </component>
-          <component id="4a425" class="javax.swing.JButton" binding="replace_lineButton" default-binding="true">
-            <constraints>
-              <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="0.0" weighty="0.0"/>
-            </constraints>
-            <properties>
-              <maximumSize width="-1" height="-1"/>
-              <minimumSize width="-1" height="-1"/>
-              <text value="replace_line"/>
-            </properties>
-          </component>
-          <component id="c851b" class="javax.swing.JComboBox" binding="fromLineDropBox">
-            <constraints>
-              <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="0.0" weighty="0.0"/>
-            </constraints>
-            <properties>
-              <maximumSize width="-1" height="-1"/>
-              <minimumSize width="-1" height="-1"/>
-              <model>
-                <item value="Any"/>
-                <item value="Edge"/>
-                <item value="Mountain"/>
-                <item value="Valley"/>
-                <item value="Aux"/>
-              </model>
-            </properties>
-          </component>
-          <component id="27e49" class="javax.swing.JLabel">
-            <constraints>
-              <grid row="4" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="0.0" weighty="0.0"/>
-            </constraints>
-            <properties>
-              <text value=" -&gt; "/>
-            </properties>
-          </component>
-          <component id="b86a1" class="javax.swing.JComboBox" binding="toLineDropBox">
-            <constraints>
-              <grid row="4" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="0.0" weighty="0.0"/>
-            </constraints>
-            <properties>
-              <maximumSize width="-1" height="-1"/>
-              <minimumSize width="-1" height="-1"/>
-              <model>
-                <item value="Edge"/>
-                <item value="Mountain"/>
-                <item value="Valley"/>
-                <item value="Aux"/>
-              </model>
-            </properties>
-          </component>
           <component id="1d23b" class="javax.swing.JButton" binding="unselect_polygonButton" default-binding="true">
             <constraints>
               <grid row="1" column="2" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>

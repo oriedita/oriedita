@@ -803,6 +803,11 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     }
 
     @Override
+    public boolean insideToDelete(Point p0a, Point p0b, int del){
+        return foldLineSet.insideToDelete(createBox(p0a, p0b), del);
+    }
+
+    @Override
     public boolean deleteInside_text(Point p1, Point p2) {
         if (textWorker.deleteInsideRectangle(p1, p2, camera)) {
             textModel.markDirty();
@@ -929,6 +934,7 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     public boolean insideToReplace(Point p0a, Point p0b, int from, int to){
         return foldLineSet.insideToReplace(createBox(p0a, p0b), from, to);
     }
+
     @Override
     public void setFoldLineAdditional(FoldLineAdditionalInputMode i) {
         i_foldLine_additional = i;

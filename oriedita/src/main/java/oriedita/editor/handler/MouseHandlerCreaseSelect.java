@@ -23,6 +23,7 @@ public class MouseHandlerCreaseSelect extends BaseMouseHandlerBoxSelect {
     private final MouseHandlerDrawCreaseSymmetric mouseHandlerDrawCreaseSymmetric;
     private final CanvasModel canvasModel;
     private final CreasePattern_Worker d;
+    private boolean tripleClick;
 
     @Inject
     public MouseHandlerCreaseSelect(
@@ -40,11 +41,18 @@ public class MouseHandlerCreaseSelect extends BaseMouseHandlerBoxSelect {
         this.mouseHandlerCreaseMove = mouseHandlerCreaseMove;
         this.mouseHandlerCreaseCopy = mouseHandlerCreaseCopy;
         this.mouseHandlerDrawCreaseSymmetric = mouseHandlerDrawCreaseSymmetric;
+        tripleClick = false;
     }
 
     @Override
     public EnumSet<Feature> getSubscribedFeatures() {
         return EnumSet.of(Feature.BUTTON_1);
+    }
+
+    @Override
+    public void reset() {
+        super.reset();
+        tripleClick = false;
     }
 
     @Override
@@ -56,7 +64,7 @@ public class MouseHandlerCreaseSelect extends BaseMouseHandlerBoxSelect {
     public void mousePressed(Point p0, MouseEvent e) {
         if (e.getClickCount() == 3 && canvasModel.isCkbox_add_frame_SelectAnd3click_isSelected()) {
             System.out.println("3_Click");//("トリプルクリック"
-
+            tripleClick = true;
             switch (canvasModel.getSelectionOperationMode()) {
                 case MOVE_1:
                     canvasModel.setMouseMode(MouseMode.CREASE_MOVE_21);
@@ -75,6 +83,7 @@ public class MouseHandlerCreaseSelect extends BaseMouseHandlerBoxSelect {
                     break;
             }
         } else {
+            tripleClick = false;
             mousePressed(p0);
         }
     }
@@ -89,7 +98,10 @@ public class MouseHandlerCreaseSelect extends BaseMouseHandlerBoxSelect {
         if (d.getLineStep().size() == 0) {//i_select_modeを決める
             p.set(d.getCamera().TV2object(p0));
         }
-
+        if (!tripleClick) {
+            super.mousePressed(p0);
+            return;
+        }
         switch (d.getI_select_mode()) {
             case NORMAL_0:
                 super.mousePressed(p0);
@@ -116,7 +128,11 @@ public class MouseHandlerCreaseSelect extends BaseMouseHandlerBoxSelect {
 
     //マウス操作(mouseMode==19 select　でドラッグしたとき)を行う関数----------------------------------------------------
     public void mouseDragged(Point p0) {
-        //mDragged_A_box_select( p0);
+        if (!tripleClick) {
+            super.mouseDragged(p0);
+            return;
+        }
+
         switch (d.getI_select_mode()) {
             case NORMAL_0:
                 super.mouseDragged(p0);
@@ -141,6 +157,11 @@ public class MouseHandlerCreaseSelect extends BaseMouseHandlerBoxSelect {
 
     //マウス操作(mouseMode==19 select　でボタンを離したとき)を行う関数----------------------------------------------------
     public void mouseReleased(Point p0) {
+
+        if (!tripleClick) {
+            mReleased_A_box_select(p0);
+            return;
+        }
         switch (d.getI_select_mode()) {
             case NORMAL_0:
                 mReleased_A_box_select(p0);
@@ -161,6 +182,7 @@ public class MouseHandlerCreaseSelect extends BaseMouseHandlerBoxSelect {
                 mouseHandlerDrawCreaseSymmetric.mouseReleased(p0);//鏡映
                 break;
         }
+        tripleClick = false;
     }
 
     public void mReleased_A_box_select(Point p0) {

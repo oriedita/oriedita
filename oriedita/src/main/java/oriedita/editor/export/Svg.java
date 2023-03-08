@@ -365,9 +365,24 @@ public class Svg {
                 str_stroke = "black";
             }
 
+            if(lineStyle == LineStyle.BLACK_WHITE){
+                switch(color){
+                    case BLACK_0:
+                    case RED_1:
+                        str_stroke = "black";
+                        break;
+                    case BLUE_2:
+                        str_stroke = "#A2A2A2";
+                        break;
+                    default:
+                        break;
+                }
+            }
+
             String str_stroke_dasharray;
             switch (lineStyle) {
                 case COLOR:
+                case BLACK_WHITE:
                     str_stroke_dasharray = "";
                     break;
                 case COLOR_AND_SHAPE:

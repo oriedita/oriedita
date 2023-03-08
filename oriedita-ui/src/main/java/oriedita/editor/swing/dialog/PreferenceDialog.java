@@ -28,6 +28,7 @@ import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.awt.Frame;
 import java.awt.Insets;
 import java.awt.event.KeyEvent;
@@ -200,23 +201,27 @@ public class PreferenceDialog extends JDialog {
         zoomSpeedSlider.addChangeListener(e -> applicationModel.setZoomSpeed(zoomSpeedSlider.getValue() / 10.0));
         mousewheelMovesCPCB.addActionListener(e -> applicationModel.setMouseWheelMovesCreasePattern(mousewheelMovesCPCB.isSelected()));
         darkModeCheckBox.addActionListener(e -> {
-            lookAndFeelService.toggleDarkMode();
-
             if (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(frameProvider.get(), "Restore custom colors in grid and folded figure for this color scheme?", "Restore colors", JOptionPane.YES_NO_OPTION)) {
-                if (FlatLaf.isLafDark()) {
-                    applicationModel.setGridColor(Colors.GRID_LINE_DARK);
-                    applicationModel.setGridScaleColor(Colors.GRID_SCALE_DARK);
+                lookAndFeelService.toggleDarkMode();
 
-                    foldedFigureModel.setFrontColor(Colors.FIGURE_FRONT_DARK);
-                    foldedFigureModel.setBackColor(Colors.FIGURE_BACK_DARK);
-                } else {
-                    applicationModel.setGridColor(Colors.GRID_LINE);
-                    applicationModel.setGridScaleColor(Colors.GRID_SCALE);
+                EventQueue.invokeLater(() -> {
+                    if (FlatLaf.isLafDark()) {
+                        applicationModel.setGridColor(Colors.GRID_LINE_DARK);
+                        applicationModel.setGridScaleColor(Colors.GRID_SCALE_DARK);
 
-                    foldedFigureModel.setFrontColor(Colors.FIGURE_FRONT);
-                    foldedFigureModel.setBackColor(Colors.FIGURE_BACK);
-                }
-            }
+                        foldedFigureModel.setFrontColor(Colors.FIGURE_FRONT_DARK);
+                        foldedFigureModel.setBackColor(Colors.FIGURE_BACK_DARK);
+                    } else {
+                        applicationModel.setGridColor(Colors.GRID_LINE);
+                        applicationModel.setGridScaleColor(Colors.GRID_SCALE);
+
+                        foldedFigureModel.setFrontColor(Colors.FIGURE_FRONT);
+                        foldedFigureModel.setBackColor(Colors.FIGURE_BACK);
+                    }
+                    gridColorButton.setIcon(new ColorIcon(applicationModel.getGridColor()));
+                    gridScaleColorButton.setIcon(new ColorIcon(applicationModel.getGridScaleColor()));
+                });
+            } else { lookAndFeelService.toggleDarkMode(); }
         });
         antiAliasCB.addActionListener(e -> applicationModel.setAntiAlias(antiAliasCB.isSelected()));
         foldAntiAliasCheckBox.addActionListener(e -> foldedFigureModel.setAntiAlias(foldAntiAliasCheckBox.isSelected()));
@@ -345,28 +350,14 @@ public class PreferenceDialog extends JDialog {
     }
 
     private void onOK() {
-        if (!applicationModel.isSame(tempModel) || !foldedFigureModel.isSame(tempfoldedModel)) {
-            int result = JOptionPane.showConfirmDialog(this, "Are you sure you want to confirm changes?", "Confirm changes", JOptionPane.YES_NO_OPTION);
-            if (result == JOptionPane.YES_OPTION) {
-                dispose();
-            }
-        } else {
-            dispose();
-        }
+        setVisible(false);
     }
 
     private void onCancel() {
-        if (!applicationModel.isSame(tempModel) || !foldedFigureModel.isSame(tempfoldedModel)) {
-            int result = JOptionPane.showConfirmDialog(this, "Are you sure you want to cancel all changes?", "Cancel changes", JOptionPane.YES_NO_OPTION);
-            if (result == JOptionPane.YES_OPTION) {
-                setData(tempModel);
-                applicationModel.set(tempModel);
-                foldedFigureModel.set(tempfoldedModel);
-                dispose();
-            }
-        } else {
-            dispose();
-        }
+        setData(tempModel);
+        applicationModel.set(tempModel);
+        foldedFigureModel.set(tempfoldedModel);
+        setVisible(false);
     }
 
     private void onReset() {
@@ -376,6 +367,10 @@ public class PreferenceDialog extends JDialog {
             foldedFigureModel.restorePrefDefaults();
             dispose();
         }
+    }
+
+    public void updateTempModel(ApplicationModel applicationModel) {
+        tempModel.set(applicationModel);
     }
 
     /**
@@ -535,6 +530,7 @@ public class PreferenceDialog extends JDialog {
         lineStyleDropBox = new JComboBox();
         final DefaultComboBoxModel defaultComboBoxModel1 = new DefaultComboBoxModel();
         defaultComboBoxModel1.addElement("Color solid");
+        defaultComboBoxModel1.addElement("BW solid");
         defaultComboBoxModel1.addElement("Color dashes");
         defaultComboBoxModel1.addElement("BW - 1 dot/dash");
         defaultComboBoxModel1.addElement("BW - 2 dots/dash");

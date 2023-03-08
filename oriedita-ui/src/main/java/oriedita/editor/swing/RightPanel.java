@@ -37,7 +37,13 @@ import java.beans.PropertyChangeEvent;
 
 @ApplicationScoped
 public class RightPanel {
+    private final FrameProvider frameProvider;
+    private final AngleSystemModel angleSystemModel;
     private final MeasuresModel measuresModel;
+    private final CreasePattern_Worker mainCreasePatternWorker;
+    private final ButtonService buttonService;
+    private final CanvasModel canvasModel;
+    private final ApplicationModel applicationModel;
     private OpenFrame openFrame;
     private JCheckBox cAMVCheckBox;
     private JButton ck4_colorIncreaseButton;
@@ -111,7 +117,13 @@ public class RightPanel {
                       @Named("mainCreasePattern_Worker") CreasePattern_Worker mainCreasePatternWorker,
                       CanvasModel canvasModel,
                       ApplicationModel applicationModel) {
+        this.frameProvider = frameProvider;
+        this.angleSystemModel = angleSystemModel;
         this.measuresModel = measuresModel;
+        this.mainCreasePatternWorker = mainCreasePatternWorker;
+        this.buttonService = buttonService;
+        this.canvasModel = canvasModel;
+        this.applicationModel = applicationModel;
 
         applicationModel.addPropertyChangeListener(e -> setData(applicationModel));
         angleSystemModel.addPropertyChangeListener(e -> setData(angleSystemModel));
@@ -121,7 +133,9 @@ public class RightPanel {
         auxHistoryState.addPropertyChangeListener(e -> setData(auxHistoryState));
 
         $$$setupUI$$$();
+    }
 
+    public void init() {
         buttonService.registerButton(ck4_colorIncreaseButton, "ck4_colorIncreaseAction");
         buttonService.registerButton(fxOButton, "fxOAction");
         buttonService.registerButton(fxTButton, "fxTAction");
@@ -391,19 +405,26 @@ public class RightPanel {
         ActionListener listener = e -> restrictedAngleSetDEFButton.doClick();
         angleDTextField.addActionListener(listener);
         angleDTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(angleDTextField));
+        angleDTextField.addKeyListener(new InputEnterKeyAdapter(angleDTextField));
         angleETextField.addActionListener(listener);
         angleETextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(angleETextField));
+        angleETextField.addKeyListener(new InputEnterKeyAdapter(angleETextField));
         angleFTextField.addActionListener(listener);
         angleFTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(angleFTextField));
+        angleFTextField.addKeyListener(new InputEnterKeyAdapter(angleFTextField));
         ActionListener listener1 = e -> restrictedAngleABCSetButton.doClick();
         angleATextField.addActionListener(listener1);
         angleATextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(angleATextField));
+        angleATextField.addKeyListener(new InputEnterKeyAdapter(angleATextField));
         angleCTextField.addActionListener(listener1);
         angleCTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(angleCTextField));
+        angleCTextField.addKeyListener(new InputEnterKeyAdapter(angleCTextField));
         angleBTextField.addActionListener(listener1);
         angleBTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(angleBTextField));
+        angleBTextField.addKeyListener(new InputEnterKeyAdapter(angleBTextField));
         polygonSizeTextField.addActionListener(e -> polygonSizeSetButton.doClick());
         polygonSizeTextField.getDocument().addDocumentListener(new OnlyIntAdapter(polygonSizeTextField));
+        polygonSizeTextField.addKeyListener(new InputEnterKeyAdapter(polygonSizeTextField));
     }
 
     private void setData(HistoryState auxHistoryState) {
@@ -722,7 +743,6 @@ public class RightPanel {
     }
 
     public void setData(ApplicationModel data) {
-        if (openFrame != null) openFrame.setData(data);
         c_colButton.setIcon(new ColorIcon(data.getCircleCustomizedColor()));
         cAMVCheckBox.setSelected(data.getCheck4Enabled());
 

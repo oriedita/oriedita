@@ -301,10 +301,10 @@ public class ButtonServiceImpl implements ButtonService {
                     if (type != null) {
                         String text = button.getText();
                         Optional<OrieditaAction> first = actions.stream().filter(a -> a.getActionType().equals(type)).findFirst();
-                        first.ifPresentOrElse(button::setAction, () -> Logger.warn("No handler for {}", key));
+                        first.ifPresentOrElse(button::setAction, () -> Logger.debug("No handler for {}", key));
                         button.setText(text);
                     } else {
-                        Logger.warn("No action found for {}", key);
+                        Logger.debug("No action found for {}", key);
                     }
                     registerButton(button, key);
                 }

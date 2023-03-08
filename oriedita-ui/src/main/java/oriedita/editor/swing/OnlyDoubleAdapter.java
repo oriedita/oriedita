@@ -42,6 +42,6 @@ public class OnlyDoubleAdapter implements DocumentListener {
     }
 
     public boolean onlyDouble(JTextField tf) {
-        return Pattern.compile("^-?\\d+(\\.\\d+)?$").matcher(tf.getText()).matches();
+        return Pattern.compile("^-?\\d+(\\.\\d+)?(E-?\\d+)?$").matcher(tf.getText()).matches();
     }
 }

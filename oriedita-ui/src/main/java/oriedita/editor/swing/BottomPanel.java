@@ -44,8 +44,11 @@ import java.beans.PropertyChangeEvent;
 public class BottomPanel {
     private final ButtonService buttonService;
     private final MeasuresModel measuresModel;
+    private final CanvasModel canvasModel;
     private final ApplicationModel applicationModel;
     private final FoldedFigureModel foldedFigureModel;
+    private final FoldedFiguresList foldedFiguresList;
+    private final TaskService taskService;
     private JPanel panel1;
     private JTextField goToFoldedFigureTextField;
     private FoldedFigureRotate foldedFigureRotate;
@@ -83,16 +86,21 @@ public class BottomPanel {
             AnimationService animationService) {
         this.buttonService = buttonService;
         this.measuresModel = measuresModel;
+        this.canvasModel = canvasModel;
         this.applicationModel = applicationModel;
         this.foldedFigureModel = foldedFigureModel;
         this.animationService = animationService;
+        this.foldedFiguresList = foldedFiguresList;
+        this.taskService = taskService;
 
 
         foldedFigureModel.addPropertyChangeListener(e -> setData(foldedFigureModel));
         canvasModel.addPropertyChangeListener(e -> setData(e, canvasModel));
 
         $$$setupUI$$$();
+    }
 
+    public void init() {
         buttonService.addDefaultListener($$$getRootComponent$$$());
 
         buttonService.registerButton(foldedFigureAntiAliasButton, "foldedFigureToggleAntiAliasAction");
@@ -131,6 +139,7 @@ public class BottomPanel {
         });
         goToFoldedFigureTextField.addActionListener(e -> goToFoldedFigureButton.doClick());
         goToFoldedFigureTextField.getDocument().addDocumentListener(new OnlyIntAdapter(goToFoldedFigureTextField));
+        goToFoldedFigureTextField.addKeyListener(new InputEnterKeyAdapter(goToFoldedFigureTextField));
         constraintButton.addActionListener(e -> canvasModel.setMouseMode(MouseMode.ADD_FOLDING_CONSTRAINT));
 
         undoRedo.addUndoActionListener(e -> {

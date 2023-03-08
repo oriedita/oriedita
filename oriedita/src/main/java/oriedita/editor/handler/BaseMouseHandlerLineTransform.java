@@ -61,7 +61,7 @@ public abstract class BaseMouseHandlerLineTransform extends BaseMouseHandlerLine
 
     @Override
     public void mouseReleased(Point p0) {
-        canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.NORMAL_0);//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
+        //  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
 
         delta.set(
                 -selectionLine.determineBX() + selectionLine.determineAX(),
