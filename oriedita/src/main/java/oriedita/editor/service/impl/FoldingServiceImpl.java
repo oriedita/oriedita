@@ -159,7 +159,7 @@ public class FoldingServiceImpl implements FoldingService {
         Logger.info(" oritatami_jyunbi 20180107");
 
         FoldedFigure_Drawer newFoldedFigure = new FoldedFigure_Drawer(new FoldedFigure_01(bulletinBoard));
-
+        newFoldedFigure.setMoveWithCp(applicationModel.getMoveFoldedModelWithCp());
         foldedFiguresList.addElement(newFoldedFigure);
         foldedFiguresList.setSelectedItem(newFoldedFigure);
 

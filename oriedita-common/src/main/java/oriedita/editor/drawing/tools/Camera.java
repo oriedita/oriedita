@@ -15,6 +15,8 @@ public class Camera implements Serializable { // Mediation between actual coordi
     double camera_zoom_y;
     double display_position_x, display_position_y;
 
+    Camera parent;
+
     double do2rad = 3.14159265 / 180.0;
     double camera_rad;
     double sin_rad;
@@ -45,9 +47,18 @@ public class Camera implements Serializable { // Mediation between actual coordi
         camera_mirror = 1.0;       //鏡
         camera_zoom_x = 1.0;
         camera_zoom_y = 1.0;
+        parent = null;
 
         display_position_x = 350.0;
         display_position_y = 350.0;
+    }
+
+    public Camera getParent() {
+        return parent;
+    }
+
+    public void setParent(Camera parent) {
+        this.parent = parent;
     }
 
     public void multiplyCameraZoomX(double d) {
@@ -75,6 +86,7 @@ public class Camera implements Serializable { // Mediation between actual coordi
         setCameraMirror(d_camera_mirror);
         setCameraZoomX(d_camera_zoom_x);
         setCameraZoomY(d_camera_zoom_y);
+        setParent(c0.getParent());
 
         setDisplayPositionX(d_display_position_x);
         setDisplayPositionY(d_display_position_y);
@@ -182,6 +194,9 @@ public class Camera implements Serializable { // Mediation between actual coordi
         y2 = y2 * camera_zoom_y;
         t_tv.setX(x2 + display_position_x);
         t_tv.setY(y2 + display_position_y);
+        if (parent != null) {
+            t_tv = parent.object2TV(t_tv);
+        }
         return t_tv;
     }
 
@@ -212,6 +227,9 @@ public class Camera implements Serializable { // Mediation between actual coordi
     }
 
     public Point TV2object(Point t_tv) {
+        if (parent != null) {
+            t_tv = parent.TV2object(t_tv);
+        }
         Point t_ob = new Point();
         double x1, y1;
         double x2, y2;
@@ -241,13 +259,23 @@ public class Camera implements Serializable { // Mediation between actual coordi
     }
 
     public void displayPositionMove(Point tuika) {
+        if (parent != null) {
+            Point origin = parent.TV2object(new Point(0,0));
+            Point delta_tr = parent.TV2object(tuika);
+            tuika = origin.other_Point_position(delta_tr);
+        }
         display_position_x = display_position_x + tuika.getX();
         display_position_y = display_position_y + tuika.getY();
     }
 
     //Make sure that the display on the TV does not change, and adjust the camera position to the position of the subject corresponding to the coordinates Ten P on the TV.
     public void camera_position_specify_from_TV(Point p) {
-        setCameraPosition(TV2object(p));
-        setDisplayPosition(p);
+        if (parent != null) {
+            setCameraPosition(TV2object(p));
+            setDisplayPosition(parent.TV2object(p));
+        } else {
+            setCameraPosition(TV2object(p));
+            setDisplayPosition(p);
+        }
     }
 }

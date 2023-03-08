@@ -101,6 +101,8 @@ public class PreferenceDialog extends JDialog {
     private JPanel panels2Panel;
     private JLabel ck4Label;
     private JSlider zoomSpeedSlider;
+    private JCheckBox checkBoxAnimation;
+    private JSlider animationSpeedSlider;
     private int tempTransparency;
     private final ApplicationModel applicationModel;
     private final ApplicationModel tempModel;
@@ -140,6 +142,8 @@ public class PreferenceDialog extends JDialog {
         leftPanelCB.setSelected(applicationModel.getDisplayLeftPanel());
         rightPanelCB.setSelected(applicationModel.getDisplayRightPanel());
         zoomSpeedSlider.setValue((int) (applicationModel.getZoomSpeed() * 10));
+        checkBoxAnimation.setSelected(applicationModel.getAnimations());
+        animationSpeedSlider.setValue((int) ((applicationModel.getAnimationSpeed()) * 8));
     }
 
     public PreferenceDialog(
@@ -181,6 +185,9 @@ public class PreferenceDialog extends JDialog {
         if (applicationModel.getGridLineWidth() <= 1) {
             gridWidthMinus.setEnabled(false);
         }
+        if (!applicationModel.getAnimations()) {
+            animationSpeedSlider.setEnabled(false);
+        }
 
         spotlightCB.addActionListener(e -> applicationModel.setDisplayPointSpotlight(spotlightCB.isSelected()));
         offsetCB.addActionListener(e -> applicationModel.setDisplayPointOffset(offsetCB.isSelected()));
@@ -219,7 +226,9 @@ public class PreferenceDialog extends JDialog {
                     gridColorButton.setIcon(new ColorIcon(applicationModel.getGridColor()));
                     gridScaleColorButton.setIcon(new ColorIcon(applicationModel.getGridScaleColor()));
                 });
-            } else { lookAndFeelService.toggleDarkMode(); }
+            } else {
+                lookAndFeelService.toggleDarkMode();
+            }
         });
         antiAliasCB.addActionListener(e -> applicationModel.setAntiAlias(antiAliasCB.isSelected()));
         foldAntiAliasCheckBox.addActionListener(e -> foldedFigureModel.setAntiAlias(foldAntiAliasCheckBox.isSelected()));
@@ -320,6 +329,9 @@ public class PreferenceDialog extends JDialog {
                 gridScaleColorButton.setIcon(new ColorIcon(applicationModel.getGridScaleColor()));
             }
         });
+        animationSpeedSlider.addChangeListener(e -> {
+            applicationModel.setAnimationSpeed(animationSpeedSlider.getValue() / 8.0);
+        });
         lineStyleDropBox.addActionListener(e -> {
             applicationModel.setLineStyle(LineStyle.from(lineStyleDropBox.getSelectedIndex() + 1));
             lineStyleDropBox.setSelectedIndex(applicationModel.getLineStyle().getType() - 1);
@@ -328,6 +340,10 @@ public class PreferenceDialog extends JDialog {
         bottomPanelCB.addActionListener(e -> applicationModel.setDisplayBottomPanel(bottomPanelCB.isSelected()));
         leftPanelCB.addActionListener(e -> applicationModel.setDisplayLeftPanel(leftPanelCB.isSelected()));
         rightPanelCB.addActionListener(e -> applicationModel.setDisplayRightPanel(rightPanelCB.isSelected()));
+        checkBoxAnimation.addActionListener(e -> {
+            applicationModel.setAnimations(checkBoxAnimation.isSelected());
+            animationSpeedSlider.setEnabled(applicationModel.getAnimations());
+        });
 
         buttonOK.addActionListener(e -> onOK());
 
@@ -382,8 +398,8 @@ public class PreferenceDialog extends JDialog {
         contentPane = new JPanel();
         contentPane.setLayout(new GridLayoutManager(2, 1, new Insets(10, 10, 10, 10), -1, -1));
         contentPane.setFocusTraversalPolicyProvider(false);
-        contentPane.setMinimumSize(new Dimension(450, 550));
-        contentPane.setPreferredSize(new Dimension(450, 550));
+        contentPane.setMinimumSize(new Dimension(500, 650));
+        contentPane.setPreferredSize(new Dimension(450, 650));
         bottomPanel = new JPanel();
         bottomPanel.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 0, 0), -1, -1));
         contentPane.add(bottomPanel, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
@@ -494,7 +510,7 @@ public class PreferenceDialog extends JDialog {
         appearancePanel.setLayout(new GridLayoutManager(2, 1, new Insets(0, 0, 20, 0), -1, -1));
         secondColumn.add(appearancePanel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         appearance2Panel = new JPanel();
-        appearance2Panel.setLayout(new GridLayoutManager(12, 4, new Insets(0, 0, 0, 0), 1, 2));
+        appearance2Panel.setLayout(new GridLayoutManager(13, 4, new Insets(0, 0, 0, 0), 1, 2));
         appearancePanel.add(appearance2Panel, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 1, false));
         final JLabel label3 = new JLabel();
         label3.setText("CP line width: ");
@@ -623,7 +639,7 @@ public class PreferenceDialog extends JDialog {
         label11.setText("BEHAVIOR");
         behavior1Panel.add(label11, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         behavior2Panel = new JPanel();
-        behavior2Panel.setLayout(new GridLayoutManager(3, 2, new Insets(0, 0, 0, 0), 1, 2));
+        behavior2Panel.setLayout(new GridLayoutManager(5, 2, new Insets(0, 0, 0, 0), 1, 2));
         behaviorPanel.add(behavior2Panel, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         preciseZoomCB = new JCheckBox();
         preciseZoomCB.setText("Precise zoom");
@@ -642,6 +658,19 @@ public class PreferenceDialog extends JDialog {
         zoomSpeedSlider.setPaintTrack(true);
         zoomSpeedSlider.setSnapToTicks(true);
         behavior2Panel.add(zoomSpeedSlider, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        checkBoxAnimation = new JCheckBox();
+        checkBoxAnimation.setText("Animations");
+        behavior2Panel.add(checkBoxAnimation, new GridConstraints(3, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final JLabel label13 = new JLabel();
+        label13.setText("Animation Speed:");
+        behavior2Panel.add(label13, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        animationSpeedSlider.setMajorTickSpacing(8);
+        animationSpeedSlider.setMaximum(24);
+        animationSpeedSlider.setPaintLabels(true);
+        animationSpeedSlider.setPaintTicks(true);
+        animationSpeedSlider.setPaintTrack(true);
+        animationSpeedSlider.setValue(8);
+        behavior2Panel.add(animationSpeedSlider, new GridConstraints(4, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final Spacer spacer4 = new Spacer();
         topPanel.add(spacer4, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
     }
@@ -663,5 +692,13 @@ public class PreferenceDialog extends JDialog {
         }
         zoomSpeedSlider.setLabelTable(labels);
         zoomSpeedSlider.setPaintLabels(true);
+
+        animationSpeedSlider = new JSlider(0, 24);
+        Dictionary<Integer, JLabel> labelsAnimSpeed = new Hashtable<>();
+        labelsAnimSpeed.put(0, new JLabel("Fast"));
+        labelsAnimSpeed.put(8, new JLabel("Normal"));
+        labelsAnimSpeed.put(16, new JLabel("Slow"));
+        labelsAnimSpeed.put(24, new JLabel("Slowest"));
+        animationSpeedSlider.setLabelTable(labelsAnimSpeed);
     }
 }

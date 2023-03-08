@@ -13,6 +13,7 @@ import oriedita.editor.databinding.FoldedFiguresList;
 import oriedita.editor.databinding.MeasuresModel;
 import oriedita.editor.drawing.FoldedFigure_Drawer;
 import oriedita.editor.handler.FoldedFigureOperationMode;
+import oriedita.editor.service.AnimationService;
 import oriedita.editor.service.ButtonService;
 import oriedita.editor.service.TaskService;
 import oriedita.editor.swing.component.ColorIcon;
@@ -71,6 +72,7 @@ public class BottomPanel {
     private UndoRedo undoRedo;
     private JComboBox<FoldedFigure_Drawer> foldedFigureBox;
     private JButton constraintButton;
+    private final AnimationService animationService;
 
     @Inject
     public BottomPanel(
@@ -80,12 +82,14 @@ public class BottomPanel {
             FoldedFigureModel foldedFigureModel,
             ApplicationModel applicationModel,
             FoldedFiguresList foldedFiguresList,
-            TaskService taskService) {
+            TaskService taskService,
+            AnimationService animationService) {
         this.buttonService = buttonService;
         this.measuresModel = measuresModel;
         this.canvasModel = canvasModel;
         this.applicationModel = applicationModel;
         this.foldedFigureModel = foldedFigureModel;
+        this.animationService = animationService;
         this.foldedFiguresList = foldedFiguresList;
         this.taskService = taskService;
 
@@ -315,7 +319,7 @@ public class BottomPanel {
 
     private void createUIComponents() {
         panel1 = new JPanel();
-        foldedFigureResize = new FoldedFigureResize(applicationModel, buttonService, foldedFigureModel, measuresModel);
+        foldedFigureResize = new FoldedFigureResize(applicationModel, buttonService, foldedFigureModel, measuresModel, animationService);
         foldedFigureRotate = new FoldedFigureRotate(buttonService, foldedFigureModel, measuresModel);
         foldedFigureBox = new JComboBox<>();
     }

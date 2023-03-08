@@ -26,6 +26,7 @@ import oriedita.editor.drawing.tools.Background_camera;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.handler.DrawingSettings;
 import oriedita.editor.handler.MouseModeHandler;
+import oriedita.editor.service.AnimationService;
 import oriedita.editor.service.FoldedFigureCanvasSelectService;
 import oriedita.editor.service.TaskExecutorService;
 import oriedita.editor.swing.component.BulletinBoard;
@@ -36,6 +37,7 @@ import origami.folding.FoldedFigure;
 
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 import java.awt.AWTException;
@@ -87,6 +89,7 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
     private final CanvasModel canvasModel;
     private final TextWorker textWorker;
     private final SelectedTextModel textModel;
+    private final AnimationService animationService;
     private boolean hideOperationFrame = false;
 
     private MouseModeHandler activeMouseHandler;
@@ -195,6 +198,7 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
         public void paintComponent(Graphics bufferGraphics) {
             //「f」を付けることでfloat型の数値として記述することができる
             Graphics2D g2 = (Graphics2D) bufferGraphics;
+            animationService.update();
 
             BasicStroke BStroke = new BasicStroke(lineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER);
             g2.setStroke(BStroke);//線の太さや線の末端の形状
@@ -216,6 +220,11 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
 
             //カメラのセット
             mainCreasePatternWorker.setCamera(creasePatternCamera);
+
+            for (FoldedFigure_Drawer d : foldedFiguresList.getItems()) {
+                d.setParentCamera(applicationModel.getMoveFoldedModelWithCp()? creasePatternCamera : null);
+                d.setMoveWithCp(applicationModel.getMoveFoldedModelWithCp());
+            }
 
 
             FoldedFigure_Drawer OZi;
@@ -336,6 +345,9 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
                 g2.drawLine((int) (p_mouse_TV_position.getX()), (int) (p_mouse_TV_position.getY()),
                         (int) (p_mouse_TV_position.getX() + d_width), (int) (p_mouse_TV_position.getY() + d_width)); //直線
             }
+            if (animationService.isAnimating()) {
+                SwingUtilities.invokeLater(canvasModel::markDirty);
+            }
         }
     }
 
@@ -356,7 +368,8 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
                   FoldedFigureCanvasSelectService foldedFigureCanvasSelectService,
                   @Any CanvasModel canvasModel,
                   TextWorker textWorker,
-                  SelectedTextModel textModel) {
+                  SelectedTextModel textModel,
+                  AnimationService animationService) {
         this.creasePatternCamera = creasePatternCamera;
         this.frameProvider = frameProvider;
         this.foldingExecutor = foldingExecutor;
@@ -374,6 +387,7 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
         this.canvasModel = canvasModel;
         this.textWorker = textWorker;
         this.textModel = textModel;
+        this.animationService = animationService;
     }
 
     public void init() {
@@ -607,16 +621,6 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
                             creasePatternCamera.displayPositionMove(mouse_temp0.other_Point_position(p));
                             mainCreasePatternWorker.setCamera(creasePatternCamera);
                             cpTextEditingArea.update();
-
-                            if (applicationModel.getMoveFoldedModelWithCp()) {
-                                // Move all other objects along.
-                                for (FoldedFigure_Drawer foldedFigure_drawer : foldedFiguresList.getItems()) {
-                                    foldedFigure_drawer.getFoldedFigureFrontCamera().displayPositionMove(mouse_temp0.other_Point_position(p));
-                                    foldedFigure_drawer.getFoldedFigureRearCamera().displayPositionMove(mouse_temp0.other_Point_position(p));
-                                    foldedFigure_drawer.getTransparentFrontCamera().displayPositionMove(mouse_temp0.other_Point_position(p));
-                                    foldedFigure_drawer.getTransparentRearCamera().displayPositionMove(mouse_temp0.other_Point_position(p));
-                                }
-                            }
                             break;
                         case FOLDED_FRONT_1:
                             if (selectedFigure != null)
@@ -697,15 +701,6 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
                             creasePatternCamera.displayPositionMove(mouse_temp0.other_Point_position(p));
                             mainCreasePatternWorker.setCamera(creasePatternCamera);
                             // Move all other objects along.
-
-                            if (applicationModel.getMoveFoldedModelWithCp()) {
-                                for (FoldedFigure_Drawer foldedFigure_drawer : foldedFiguresList.getItems()) {
-                                    foldedFigure_drawer.getFoldedFigureFrontCamera().displayPositionMove(mouse_temp0.other_Point_position(p));
-                                    foldedFigure_drawer.getFoldedFigureRearCamera().displayPositionMove(mouse_temp0.other_Point_position(p));
-                                    foldedFigure_drawer.getTransparentFrontCamera().displayPositionMove(mouse_temp0.other_Point_position(p));
-                                    foldedFigure_drawer.getTransparentRearCamera().displayPositionMove(mouse_temp0.other_Point_position(p));
-                                }
-                            }
                             break;
                         case FOLDED_FRONT_1:
                             if (selectedFigure != null)
@@ -760,21 +755,20 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
             MouseWheelTarget target = foldedFigureCanvasSelectService.pointInCreasePatternOrFoldedFigure(p);
 
             double scrollDistance = applicationModel.isPreciseZoom() ? e.getPreciseWheelRotation() : e.getWheelRotation();
-
             if (target == MouseWheelTarget.CREASE_PATTERN_0) {
-                creasePatternCameraModel.zoomBy(scrollDistance, applicationModel.getZoomSpeed());
-                if (applicationModel.getMoveFoldedModelWithCp()) {
-                    for (FoldedFigure_Drawer foldedFigure_drawer : foldedFiguresList.getItems()) {
-                        foldedFigure_drawer.scale(1, creasePatternCamera.object2TV(creasePatternCamera.getCameraPosition()));
-                    }
-                    foldedFigureModel.zoomBy(scrollDistance, applicationModel.getZoomSpeed());
-                    // Move all other objects along.
-                    for (FoldedFigure_Drawer foldedFigure_drawer : foldedFiguresList.getItems()) {
-                        foldedFigure_drawer.setScale(foldedFigureModel.getScale());
-                    }
-                }
+
+                animationService.animate(Animations.ZOOM_CP,
+                        creasePatternCameraModel::setScale,
+                        creasePatternCameraModel::getScale,
+                        scale -> creasePatternCameraModel.getScaleForZoomBy(scrollDistance, applicationModel.getZoomSpeed(), scale),
+                        AnimationDurations.ZOOM);
+
             } else {
-                foldedFigureModel.zoomBy(scrollDistance, applicationModel.getZoomSpeed());
+                animationService.animate(Animations.ZOOM_FOLDED_MODEL,
+                        foldedFigureModel::setScale,
+                        foldedFigureModel::getScale,
+                        scale -> foldedFigureModel.getScaleForZoomBy(scrollDistance, applicationModel.getZoomSpeed(), scale),
+                        AnimationDurations.ZOOM);
             }
 
             mouse_object_position(p_mouse_TV_position);

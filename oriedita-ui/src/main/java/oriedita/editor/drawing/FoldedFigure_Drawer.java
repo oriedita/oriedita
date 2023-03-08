@@ -27,6 +27,7 @@ public class FoldedFigure_Drawer implements Foldable {
     private final Camera transparentFrontCamera = new Camera();
     private final Camera transparentRearCamera = new Camera();
     private origami.crease_pattern.element.Polygon boundingBox;
+    boolean moveWithCp;
     private Color foldedFigure_F_color = new Color(255, 255, 50);//Folded surface color
     private Color foldedFigure_B_color = new Color(233, 233, 233);//The color of the back side of the folded figure
     private Color foldedFigure_L_color = Color.black;//Folded line color
@@ -51,6 +52,14 @@ public class FoldedFigure_Drawer implements Foldable {
         //This is the end of the camera settings ----------------------------------------------------
     }
 
+    public boolean getMoveWithCp() {
+        return moveWithCp;
+    }
+
+    public void setMoveWithCp(boolean moveWithCp) {
+        this.moveWithCp = moveWithCp;
+    }
+
     public int getStartingFaceId() {
         return startingFaceId;
     }
@@ -67,6 +76,14 @@ public class FoldedFigure_Drawer implements Foldable {
         initializeCamera(transparentRearCamera, -1.0);
     }
 
+    public void setParentCamera(Camera cam) {
+        foldedFigureCamera.setParent(cam);
+        foldedFigureFrontCamera.setParent(cam);
+        foldedFigureRearCamera.setParent(cam);
+        transparentFrontCamera.setParent(cam);
+        transparentRearCamera.setParent(cam);
+    }
+
     private void initializeCamera(Camera cam, double mirror) {
         cam.setCameraPositionX(0.0);
         cam.setCameraPositionY(0.0);
@@ -74,8 +91,8 @@ public class FoldedFigure_Drawer implements Foldable {
         cam.setCameraMirror(mirror);
         cam.setCameraZoomX(1.0);
         cam.setCameraZoomY(1.0);
-        cam.setDisplayPositionX(350.0);
-        cam.setDisplayPositionY(350.0);
+        cam.setDisplayPositionX(0);
+        cam.setDisplayPositionY(0);
     }
 
     void folding_estimation_camera_configure(Camera creasePatternCamera) {
@@ -87,46 +104,25 @@ public class FoldedFigure_Drawer implements Foldable {
 
         Logger.info("wireFrame_worker1.ten_of_kijyunmen_ob     " + wireFrame_worker_drawer1.getStartingFacePointTV(startingFaceId).getX());
 
-        Point p0 = new Point();
-        Point p = new Point();
+        if(moveWithCp) {
+            foldedFigureCamera.setParent(creasePatternCamera);
+            foldedFigureFrontCamera.setParent(creasePatternCamera);
+            foldedFigureRearCamera.setParent(creasePatternCamera);
+            transparentFrontCamera.setParent(creasePatternCamera);
+            transparentRearCamera.setParent(creasePatternCamera);
+        } else {
+            foldedFigureCamera.setCamera(creasePatternCamera);
+            foldedFigureFrontCamera.setCamera(creasePatternCamera);
+            foldedFigureRearCamera.setCamera(creasePatternCamera);
+            transparentFrontCamera.setCamera(creasePatternCamera);
+            transparentRearCamera.setCamera(creasePatternCamera);
+        }
 
-        p.set(wireFrame_worker_drawer1.getStartingFacePoint(startingFaceId));
-        p0.set(creasePatternCamera.object2TV(p));
-
-        double cameraPositionX = p.getX();
-        double cameraPositionY = p.getY();
-        double displayPositionX = p0.getX();
-        double displayPositionY = p0.getY();
-
-        foldedFigureCamera.setCamera(creasePatternCamera);
-        foldedFigureCamera.setCameraPositionX(cameraPositionX);
-        foldedFigureCamera.setCameraPositionY(cameraPositionY);
-        foldedFigureCamera.setDisplayPositionX(displayPositionX + 20.0);
-        foldedFigureCamera.setDisplayPositionY(displayPositionY + 20.0);
-
-        foldedFigureFrontCamera.setCamera(creasePatternCamera);
-        foldedFigureFrontCamera.setCameraPositionX(cameraPositionX);
-        foldedFigureFrontCamera.setCameraPositionY(cameraPositionY);
-        foldedFigureFrontCamera.setDisplayPositionX(displayPositionX + 20.0);
-        foldedFigureFrontCamera.setDisplayPositionY(displayPositionY + 20.0);
-
-        foldedFigureRearCamera.setCamera(creasePatternCamera);
-        foldedFigureRearCamera.setCameraPositionX(cameraPositionX);
-        foldedFigureRearCamera.setCameraPositionY(cameraPositionY);
-        foldedFigureRearCamera.setDisplayPositionX(displayPositionX + 40.0);
-        foldedFigureRearCamera.setDisplayPositionY(displayPositionY + 20.0);
-
-        transparentFrontCamera.setCamera(creasePatternCamera);
-        transparentFrontCamera.setCameraPositionX(cameraPositionX);
-        transparentFrontCamera.setCameraPositionY(cameraPositionY);
-        transparentFrontCamera.setDisplayPositionX(displayPositionX + 20.0);
-        transparentFrontCamera.setDisplayPositionY(displayPositionY + 0.0);
-
-        transparentRearCamera.setCamera(creasePatternCamera);
-        transparentRearCamera.setCameraPositionX(cameraPositionX);
-        transparentRearCamera.setCameraPositionY(cameraPositionY);
-        transparentRearCamera.setDisplayPositionX(displayPositionX + 40.0);
-        transparentRearCamera.setDisplayPositionY(displayPositionY + 0.0);
+        foldedFigureCamera.displayPositionMove(new Point(20, 20));
+        foldedFigureFrontCamera.displayPositionMove(new Point(20, 20));
+        foldedFigureRearCamera.displayPositionMove(new Point(40, 20));
+        transparentFrontCamera.displayPositionMove(new Point(20, 0));
+        transparentRearCamera.displayPositionMove(new Point(40, 0));
 
         double d_camera_mirror = foldedFigureRearCamera.getCameraMirror();
         foldedFigureRearCamera.setCameraMirror(d_camera_mirror * -1.0);
