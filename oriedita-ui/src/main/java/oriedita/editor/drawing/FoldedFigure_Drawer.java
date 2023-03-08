@@ -116,6 +116,9 @@ public class FoldedFigure_Drawer implements Foldable {
             foldedFigureRearCamera.setCamera(creasePatternCamera);
             transparentFrontCamera.setCamera(creasePatternCamera);
             transparentRearCamera.setCamera(creasePatternCamera);
+            double d_camera_mirror = foldedFigureRearCamera.getCameraMirror();
+            foldedFigureRearCamera.setCameraMirror(d_camera_mirror * -1.0);
+            transparentRearCamera.setCameraMirror(d_camera_mirror * -1.0);
         }
 
         foldedFigureCamera.displayPositionMove(new Point(20, 20));
@@ -123,10 +126,6 @@ public class FoldedFigure_Drawer implements Foldable {
         foldedFigureRearCamera.displayPositionMove(new Point(40, 20));
         transparentFrontCamera.displayPositionMove(new Point(20, 0));
         transparentRearCamera.displayPositionMove(new Point(40, 0));
-
-        double d_camera_mirror = foldedFigureRearCamera.getCameraMirror();
-        foldedFigureRearCamera.setCameraMirror(d_camera_mirror * -1.0);
-        transparentRearCamera.setCameraMirror(d_camera_mirror * -1.0);
     }
 
     public origami.crease_pattern.element.Polygon getBoundingBox() {
