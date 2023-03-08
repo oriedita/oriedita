@@ -2,9 +2,12 @@ package oriedita.editor.swing.component;
 
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
+import oriedita.editor.AnimationDurations;
+import oriedita.editor.Animations;
 import oriedita.editor.databinding.ApplicationModel;
 import oriedita.editor.databinding.FoldedFigureModel;
 import oriedita.editor.databinding.MeasuresModel;
+import oriedita.editor.service.AnimationService;
 import oriedita.editor.service.ButtonService;
 import oriedita.editor.swing.OnlyDoubleAdapter;
 
@@ -23,16 +26,32 @@ public class FoldedFigureResize extends JPanel {
     private JButton foldedFigureSizeSetButton;
     private JButton foldedFigureSizeIncreaseButton;
 
-    public FoldedFigureResize(ApplicationModel applicationModel, ButtonService buttonService, FoldedFigureModel foldedFigureModel, MeasuresModel measuresModel) {
+    public FoldedFigureResize(ApplicationModel applicationModel,
+                              ButtonService buttonService,
+                              FoldedFigureModel foldedFigureModel,
+                              MeasuresModel measuresModel,
+                              AnimationService animationService) {
         add($$$getRootComponent$$$());
 
         buttonService.registerButton(foldedFigureSizeSetButton, "foldedFigureSizeSetAction");
         buttonService.registerButton(foldedFigureSizeDecreaseButton, "foldedFigureSizeDecreaseAction");
         buttonService.registerButton(foldedFigureSizeIncreaseButton, "foldedFigureSizeIncreaseAction");
 
-        foldedFigureSizeSetButton.addActionListener(e -> foldedFigureModel.setScale(measuresModel.string2double(foldedFigureSizeTextField.getText(), foldedFigureModel.getScale())));
-        foldedFigureSizeDecreaseButton.addActionListener(e -> foldedFigureModel.zoomOut(applicationModel.getZoomSpeed()));
-        foldedFigureSizeIncreaseButton.addActionListener(e -> foldedFigureModel.zoomIn(applicationModel.getZoomSpeed()));
+        foldedFigureSizeSetButton.addActionListener(e ->
+                animationService.animate(Animations.ZOOM_FOLDED_MODEL, foldedFigureModel::setScale, foldedFigureModel::getScale,
+                        s -> measuresModel.string2double(foldedFigureSizeTextField.getText(), foldedFigureModel.getScale()), AnimationDurations.ZOOM)
+        );
+        foldedFigureSizeDecreaseButton.addActionListener(e ->
+                animationService.animate(Animations.ZOOM_FOLDED_MODEL,
+                        foldedFigureModel::setScale,
+                        foldedFigureModel::getScale,
+                        scale -> foldedFigureModel.getScaleForZoomBy(1, applicationModel.getZoomSpeed(), scale),
+                        AnimationDurations.ZOOM));
+        foldedFigureSizeIncreaseButton.addActionListener(e -> animationService.animate(Animations.ZOOM_FOLDED_MODEL,
+                foldedFigureModel::setScale,
+                foldedFigureModel::getScale,
+                scale -> foldedFigureModel.getScaleForZoomBy(-1, applicationModel.getZoomSpeed(), scale),
+                AnimationDurations.ZOOM));
         foldedFigureSizeTextField.addActionListener(e -> foldedFigureSizeSetButton.doClick());
         foldedFigureSizeTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(foldedFigureSizeTextField));
     }
