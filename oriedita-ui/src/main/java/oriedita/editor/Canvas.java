@@ -221,6 +221,11 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
             //カメラのセット
             mainCreasePatternWorker.setCamera(creasePatternCamera);
 
+            for (FoldedFigure_Drawer d : foldedFiguresList.getItems()) {
+                d.setParentCamera(applicationModel.getMoveFoldedModelWithCp()? creasePatternCamera : null);
+                d.setMoveWithCp(applicationModel.getMoveFoldedModelWithCp());
+            }
+
 
             FoldedFigure_Drawer OZi;
             for (int i_oz = 0; i_oz < foldedFiguresList.getSize(); i_oz++) {
@@ -616,16 +621,6 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
                             creasePatternCamera.displayPositionMove(mouse_temp0.other_Point_position(p));
                             mainCreasePatternWorker.setCamera(creasePatternCamera);
                             cpTextEditingArea.update();
-
-                            if (applicationModel.getMoveFoldedModelWithCp()) {
-                                // Move all other objects along.
-                                for (FoldedFigure_Drawer foldedFigure_drawer : foldedFiguresList.getItems()) {
-                                    foldedFigure_drawer.getFoldedFigureFrontCamera().displayPositionMove(mouse_temp0.other_Point_position(p));
-                                    foldedFigure_drawer.getFoldedFigureRearCamera().displayPositionMove(mouse_temp0.other_Point_position(p));
-                                    foldedFigure_drawer.getTransparentFrontCamera().displayPositionMove(mouse_temp0.other_Point_position(p));
-                                    foldedFigure_drawer.getTransparentRearCamera().displayPositionMove(mouse_temp0.other_Point_position(p));
-                                }
-                            }
                             break;
                         case FOLDED_FRONT_1:
                             if (selectedFigure != null)
@@ -706,15 +701,6 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
                             creasePatternCamera.displayPositionMove(mouse_temp0.other_Point_position(p));
                             mainCreasePatternWorker.setCamera(creasePatternCamera);
                             // Move all other objects along.
-
-                            if (applicationModel.getMoveFoldedModelWithCp()) {
-                                for (FoldedFigure_Drawer foldedFigure_drawer : foldedFiguresList.getItems()) {
-                                    foldedFigure_drawer.getFoldedFigureFrontCamera().displayPositionMove(mouse_temp0.other_Point_position(p));
-                                    foldedFigure_drawer.getFoldedFigureRearCamera().displayPositionMove(mouse_temp0.other_Point_position(p));
-                                    foldedFigure_drawer.getTransparentFrontCamera().displayPositionMove(mouse_temp0.other_Point_position(p));
-                                    foldedFigure_drawer.getTransparentRearCamera().displayPositionMove(mouse_temp0.other_Point_position(p));
-                                }
-                            }
                             break;
                         case FOLDED_FRONT_1:
                             if (selectedFigure != null)
@@ -777,23 +763,6 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
                         scale -> creasePatternCameraModel.getScaleForZoomBy(scrollDistance, applicationModel.getZoomSpeed(), scale),
                         AnimationDurations.ZOOM);
 
-                if (applicationModel.getMoveFoldedModelWithCp()) {
-                    for (FoldedFigure_Drawer foldedFigure_drawer : foldedFiguresList.getItems()) {
-                        foldedFigure_drawer.scale(1, creasePatternCamera.object2TV(creasePatternCamera.getCameraPosition()));
-                    }
-
-                    animationService.animate(Animations.ZOOM_FOLDED_MODEL,
-                            s -> {
-                                foldedFigureModel.setScale(s);
-                                // Move all other objects along.
-                                for (FoldedFigure_Drawer foldedFigure_drawer : foldedFiguresList.getItems()) {
-                                    foldedFigure_drawer.setScale(foldedFigureModel.getScale());
-                                }
-                            },
-                            foldedFigureModel::getScale,
-                            scale -> foldedFigureModel.getScaleForZoomBy(scrollDistance, applicationModel.getZoomSpeed(), scale),
-                            AnimationDurations.ZOOM);
-                }
             } else {
                 animationService.animate(Animations.ZOOM_FOLDED_MODEL,
                         foldedFigureModel::setScale,

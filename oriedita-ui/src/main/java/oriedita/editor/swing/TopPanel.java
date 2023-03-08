@@ -7,6 +7,8 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Any;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
+import oriedita.editor.AnimationDurations;
+import oriedita.editor.Animations;
 import oriedita.editor.Canvas;
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.canvas.MouseMode;
@@ -14,13 +16,10 @@ import oriedita.editor.databinding.ApplicationModel;
 import oriedita.editor.databinding.BackgroundModel;
 import oriedita.editor.databinding.CameraModel;
 import oriedita.editor.databinding.CanvasModel;
-import oriedita.editor.databinding.FoldedFigureModel;
-import oriedita.editor.databinding.FoldedFiguresList;
 import oriedita.editor.databinding.InternalDivisionRatioModel;
 import oriedita.editor.databinding.MeasuresModel;
-import oriedita.editor.drawing.FoldedFigure_Drawer;
+import oriedita.editor.service.AnimationService;
 import oriedita.editor.service.ButtonService;
-import origami.crease_pattern.element.Point;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -41,9 +40,7 @@ public class TopPanel implements PropertyChangeListener {
     private final CanvasModel canvasModel;
     private final InternalDivisionRatioModel internalDivisionRatioModel;
     private final CreasePattern_Worker mainCreasePatternWorker;
-    private final FoldedFigureModel foldedFigureModel;
     private final CameraModel creasePatternCameraModel;
-    private final FoldedFiguresList foldedFiguresList;
     private final Canvas canvas;
     private final ApplicationModel applicationModel;
     private JButton operationFrameSelectButton;
@@ -79,27 +76,27 @@ public class TopPanel implements PropertyChangeListener {
     private JLabel ratioLabel4;
     private JLabel ratioLabel5;
 
+    private final AnimationService animationService;
+
     @Inject
     public TopPanel(MeasuresModel measuresModel,
                     ButtonService buttonService,
                     @Any CanvasModel canvasModel,
                     InternalDivisionRatioModel internalDivisionRatioModel,
                     @Named("mainCreasePattern_Worker") CreasePattern_Worker mainCreasePatternWorker,
-                    FoldedFigureModel foldedFigureModel,
                     CameraModel creasePatternCameraModel,
-                    FoldedFiguresList foldedFiguresList,
                     Canvas canvas,
-                    ApplicationModel applicationModel) {
+                    ApplicationModel applicationModel,
+                    AnimationService animationService) {
         this.measuresModel = measuresModel;
         this.buttonService = buttonService;
         this.canvasModel = canvasModel;
         this.internalDivisionRatioModel = internalDivisionRatioModel;
         this.mainCreasePatternWorker = mainCreasePatternWorker;
-        this.foldedFigureModel = foldedFigureModel;
         this.creasePatternCameraModel = creasePatternCameraModel;
-        this.foldedFiguresList = foldedFiguresList;
         this.canvas = canvas;
         this.applicationModel = applicationModel;
+        this.animationService = animationService;
     }
 
     public void init() {
@@ -146,22 +143,10 @@ public class TopPanel implements PropertyChangeListener {
 
         scaleFactorSetButton.addActionListener(e -> {
             double d_syukusyaku_keisuu_old = creasePatternCameraModel.getScale();
-
-            creasePatternCameraModel.setScale(measuresModel.string2double(scaleFactorTextField.getText(), d_syukusyaku_keisuu_old));
-            if (creasePatternCameraModel.getScale() != d_syukusyaku_keisuu_old) {
-                double magnification = creasePatternCameraModel.getScale() / d_syukusyaku_keisuu_old;
-
-                FoldedFigure_Drawer OZi;
-                for (int i_oz = 0; i_oz < foldedFiguresList.getSize(); i_oz++) {
-                    OZi = foldedFiguresList.getElementAt(i_oz);
-
-                    Point t_o2tv = canvas.getCreasePatternCamera().object2TV(canvas.getCreasePatternCamera().getCameraPosition());
-
-                    OZi.scale(magnification, t_o2tv);
-                }
-
-                foldedFigureModel.setScale(foldedFigureModel.getScale() * magnification);
-            }
+            double x = measuresModel.string2double(scaleFactorTextField.getText(), d_syukusyaku_keisuu_old);
+            animationService.animate(Animations.ZOOM_CP,
+                    creasePatternCameraModel::setScale, creasePatternCameraModel::getScale, s -> x,
+                    AnimationDurations.ZOOM);
         });
         scaleFactorTextField.addActionListener(e -> scaleFactorSetButton.doClick());
         scaleFactorTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(scaleFactorTextField));
