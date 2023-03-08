@@ -433,6 +433,7 @@ public class ApplicationModel implements Serializable {
 
         zoomSpeed = 1;
         animations = true;
+        animationSpeed = 1;
 
         this.pcs.firePropertyChange(null, null, null);
     }
@@ -467,7 +468,9 @@ public class ApplicationModel implements Serializable {
                 && displayRightPanel == applicationModel.getDisplayRightPanel()
                 && displayLeftPanel == applicationModel.getDisplayLeftPanel()
                 && Objects.equals(laf, applicationModel.getLaf())
-                && zoomSpeed == applicationModel.getZoomSpeed() && animations == applicationModel.getAnimations());
+                && zoomSpeed == applicationModel.getZoomSpeed()
+                && animations == applicationModel.getAnimations()
+                && animationSpeed == applicationModel.getAnimationSpeed());
     }
 
 

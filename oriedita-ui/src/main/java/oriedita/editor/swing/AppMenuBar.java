@@ -36,7 +36,6 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import java.awt.Desktop;
-import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.Transferable;
@@ -220,8 +219,8 @@ public class AppMenuBar {
             if(preferenceDialog == null){
                 preferenceDialog = new PreferenceDialog(applicationModel, lookAndFeelService, frameProvider, foldedFigureModel, "Preferences", frameProvider.get());
             }
-            preferenceDialog.setSize(475, 575);
-            preferenceDialog.setMinimumSize(new Dimension(475, 575));
+            preferenceDialog.setSize(preferenceDialog.getRootPane().getMinimumSize());
+            preferenceDialog.setMinimumSize(preferenceDialog.getRootPane().getMinimumSize());
             preferenceDialog.setResizable(true);
             preferenceDialog.setData(applicationModel);
             preferenceDialog.setLocationRelativeTo(prefButton);
