@@ -14,6 +14,8 @@ public interface ButtonService {
 
     void registerButton(AbstractButton button, String key);
 
+    void registerButton(AbstractButton button, String key, boolean wantToReplace);
+
     void Button_shared_operation(boolean resetLineStep);
 
     default void Button_shared_operation() {
@@ -23,4 +25,6 @@ public interface ButtonService {
     Map<KeyStroke, AbstractButton> getHelpInputMap();
 
     void addDefaultListener(Container root);
+
+    void addDefaultListener(Container root, boolean wantToReplace);
 }

@@ -509,7 +509,6 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
         JMenuItem item = new JMenuItem();
         item.setActionCommand(action);
         popupMenu.add(item);
-        buttonService.addDefaultListener(popupMenu);
         item.setText(text);
     }
 
@@ -540,6 +539,8 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
         createMenuItem(foldPopUp, "duplicateAction", "Duplicate");
         createMenuItem(foldPopUp, "suitei_02Action", "Wireframe");
         createMenuItem(foldPopUp, "suitei_03Action", "X-ray");
+
+        buttonService.addDefaultListener(foldPopUp, false);
 
         Point p = e2p(e);
         canvasUI.requestFocus();
