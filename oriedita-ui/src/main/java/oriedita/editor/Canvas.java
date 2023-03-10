@@ -29,7 +29,6 @@ import oriedita.editor.handler.MouseModeHandler;
 import oriedita.editor.service.AnimationService;
 import oriedita.editor.service.ButtonService;
 import oriedita.editor.service.FoldedFigureCanvasSelectService;
-import oriedita.editor.service.FoldingService;
 import oriedita.editor.service.TaskExecutorService;
 import oriedita.editor.swing.component.BulletinBoard;
 import oriedita.editor.swing.component.TextEditingArea;
@@ -506,6 +505,14 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
 
     }
 
+    public void createMenuItem(JPopupMenu popupMenu, String action, String text){
+        JMenuItem item = new JMenuItem();
+        item.setActionCommand(action);
+        popupMenu.add(item);
+        buttonService.addDefaultListener(popupMenu);
+        item.setText(text);
+    }
+
     // マウス操作(マウスが動いた時)を行う関数----------------------------------------------------
     public void mouseMoved(MouseEvent e) {
         //何もしない
@@ -527,36 +534,12 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
     public void mousePressed(MouseEvent e) {
         JPopupMenu foldPopUp = new JPopupMenu();
 
-        JMenuItem flipItem = new JMenuItem();
-        flipItem.setActionCommand("foldedFigureFlipAction");
-        foldPopUp.add(flipItem);
-
-        JMenuItem scaleItem = new JMenuItem();
-        scaleItem.setActionCommand("scaleAction");
-        foldPopUp.add(scaleItem);
-
-        JMenuItem deleteItem = new JMenuItem();
-        deleteItem.setActionCommand("foldedFigureTrashAction");
-        foldPopUp.add(deleteItem);
-
-        JMenuItem duplicateItem = new JMenuItem("Duplicate");
-        duplicateItem.setActionCommand("duplicateAction");
-        foldPopUp.add(duplicateItem);
-
-        JMenuItem wireframeItem = new JMenuItem();
-        wireframeItem.setActionCommand("suitei_02Action");
-        foldPopUp.add(wireframeItem);
-
-        JMenuItem xrayItem = new JMenuItem();
-        xrayItem.setActionCommand("suitei_03Action");
-        foldPopUp.add(xrayItem);
-
-        buttonService.addDefaultListener(foldPopUp);
-        flipItem.setText("Flip");
-        scaleItem.setText("Scale");
-        deleteItem.setText("Delete");
-        wireframeItem.setText("Wireframe");
-        xrayItem.setText("X-ray");
+        createMenuItem(foldPopUp, "foldedFigureFlipAction", "Flip");
+        createMenuItem(foldPopUp, "scaleAction", "Scale");
+        createMenuItem(foldPopUp, "foldedFigureTrashAction", "Delete");
+        createMenuItem(foldPopUp, "duplicateAction", "Duplicate");
+        createMenuItem(foldPopUp, "suitei_02Action", "Wireframe");
+        createMenuItem(foldPopUp, "suitei_03Action", "X-ray");
 
         Point p = e2p(e);
         canvasUI.requestFocus();
