@@ -121,82 +121,7 @@ public class ButtonServiceImpl implements ButtonService {
     }
 
     @Override public void registerButton(AbstractButton button, String key) {
-
-        String name = ResourceUtil.getBundleString("name", key);
-        String keyStrokeString = ResourceUtil.getBundleString("hotkey", key);
-        // String tooltip = ResourceUtil.getBundleString("tooltip", key);
-        String help = ResourceUtil.getBundleString("help", key);
-        String icon = ResourceUtil.getBundleString("icons", key);
-
-        KeyStroke keyStroke = KeyStroke.getKeyStroke(keyStrokeString);
-
-        if (!StringOp.isEmpty(keyStrokeString) && keyStroke == null) {
-            Logger.error("Keystroke for \"" + key + "\": \"" + keyStrokeString + "\" is invalid");
-        }
-
-        setTooltip(button, key);
-
-        if (button instanceof JMenuItem) {
-            JMenuItem menuItem = (JMenuItem) button;
-
-            if (!StringOp.isEmpty(name)) {
-                int mnemonicIndex = name.indexOf('_');
-                if (mnemonicIndex > -1) {
-                    String formattedName = name.replaceAll("_", "");
-
-                    menuItem.setText(formattedName);
-                    menuItem.setMnemonic(formattedName.charAt(mnemonicIndex));
-                    menuItem.setDisplayedMnemonicIndex(mnemonicIndex);
-                } else {
-                    menuItem.setText(name);
-                }
-            }
-
-            if (keyStroke != null) {
-                // Menu item can handle own accelerator (and shows a nice hint).
-                menuItem.setAccelerator(keyStroke);
-            }
-        } else {
-            KeyStrokeUtil.resetButton(button);
-
-            addContextMenu(button, key, keyStroke);
-
-            if (keyStroke != null) {
-                addKeyStroke(keyStroke, button, key);
-            }
-            owner.get().getRootPane().getActionMap().put(key, new Click(button));
-
-            if (!StringOp.isEmpty(icon)) {
-                GlyphIcon glyphIcon = new GlyphIcon(icon, button.getForeground());
-                button.addPropertyChangeListener("foreground", glyphIcon);
-                // Reset the text if there is no icon.
-                if (button.getIcon() == null) {
-                    button.setText(null);
-                }
-                button.setIcon(glyphIcon);
-
-                if (button instanceof JCheckBox) {
-                    GlyphIcon selectedGlyphIcon = new GlyphIcon(String.valueOf((char) (icon.toCharArray()[0] + 1)), button.getForeground());
-                    button.addPropertyChangeListener("foreground", selectedGlyphIcon);
-                    button.setSelectedIcon(selectedGlyphIcon);
-                }
-            }
-        }
-
-        final String fKey = key;
-
-        if (!StringOp.isEmpty(help)) {
-            button.addActionListener(e -> {
-                explanation.setExplanation(fKey);
-                Action action = button.getAction();
-                if (action instanceof OrieditaAction) {
-                    OrieditaAction oAction = (OrieditaAction) action;
-                    Button_shared_operation(oAction.resetLineStep());
-                } else {
-                    Button_shared_operation(true);
-                }
-            });
-        }
+        registerButton(button, key, true);
     }
 
     @Override public void registerButton(AbstractButton button, String key, boolean wantToReplace) {
@@ -367,40 +292,7 @@ public class ButtonServiceImpl implements ButtonService {
 
     @Override
     public void addDefaultListener(Container component) {
-        Component[] components = component.getComponents();
-
-        for (Component component1 : components) {
-            if (component1 instanceof AbstractButton) {
-                AbstractButton button = (AbstractButton) component1;
-                String key = button.getActionCommand();
-
-                if (key != null && !"".equals(key)) {
-                    ActionType type = ActionType.fromAction(key);
-
-                    if (type != null) {
-                        String text = button.getText();
-                        Optional<OrieditaAction> first = actions.stream().filter(a -> a.getActionType().equals(type)).findFirst();
-                        first.ifPresentOrElse(button::setAction, () -> Logger.debug("No handler for {}", key));
-                        button.setText(text);
-                    } else {
-                        Logger.debug("No action found for {}", key);
-                    }
-                    registerButton(button, key);
-                }
-            }
-
-            if (component1 instanceof Container) {
-                addDefaultListener((Container) component1);
-            }
-
-            if (component1 instanceof JMenu) {
-                for (MenuElement element : ((JMenu) component1).getSubElements()) {
-                    if (element instanceof Container) {
-                        addDefaultListener((Container) element);
-                    }
-                }
-            }
-        }
+        addDefaultListener(component, true);
     }
 
     @Override
