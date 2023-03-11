@@ -121,6 +121,10 @@ public class ButtonServiceImpl implements ButtonService {
     }
 
     @Override public void registerButton(AbstractButton button, String key) {
+        registerButton(button, key, true);
+    }
+
+    @Override public void registerButton(AbstractButton button, String key, boolean wantToReplace) {
 
         String name = ResourceUtil.getBundleString("name", key);
         String keyStrokeString = ResourceUtil.getBundleString("hotkey", key);
@@ -139,7 +143,7 @@ public class ButtonServiceImpl implements ButtonService {
         if (button instanceof JMenuItem) {
             JMenuItem menuItem = (JMenuItem) button;
 
-            if (!StringOp.isEmpty(name)) {
+            if (!StringOp.isEmpty(name) && wantToReplace) {
                 int mnemonicIndex = name.indexOf('_');
                 if (mnemonicIndex > -1) {
                     String formattedName = name.replaceAll("_", "");
@@ -288,6 +292,11 @@ public class ButtonServiceImpl implements ButtonService {
 
     @Override
     public void addDefaultListener(Container component) {
+        addDefaultListener(component, true);
+    }
+
+    @Override
+    public void addDefaultListener(Container component, boolean wantToReplace) {
         Component[] components = component.getComponents();
 
         for (Component component1 : components) {
@@ -306,7 +315,7 @@ public class ButtonServiceImpl implements ButtonService {
                     } else {
                         Logger.debug("No action found for {}", key);
                     }
-                    registerButton(button, key);
+                    registerButton(button, key, wantToReplace);
                 }
             }
 
