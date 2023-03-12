@@ -5,6 +5,7 @@ import oriedita.editor.action.ActionType;
 import javax.swing.JButton;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+import java.awt.Graphics;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -32,6 +33,17 @@ public class DropdownToolButton extends JButton {
 
     public JPopupMenu getDropdownMenu() {
         return dropdownMenu;
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        int triangleSize = 8;
+        int border = 2;
+        int[] xPoints = new int[] {getWidth()-border, getWidth()-border, getWidth() - triangleSize};
+        int[] yPoints = new int[] {getHeight() - triangleSize, getHeight()-border, getHeight()-border};
+        g.setColor(getForeground());
+        g.fillPolygon(xPoints, yPoints, 3);
     }
 
     public void setActions(ActionType... actions) {
