@@ -15,6 +15,7 @@ import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.handler.Handles;
 import oriedita.editor.handler.MouseHandlerVoronoiCreate;
 import oriedita.editor.service.ButtonService;
+import oriedita.editor.swing.component.DropdownToolButton;
 import oriedita.editor.swing.component.GlyphIcon;
 import oriedita.editor.swing.dialog.HelpDialog;
 import oriedita.editor.swing.dialog.SelectKeyStrokeDialog;
@@ -26,6 +27,7 @@ import javax.swing.AbstractAction;
 import javax.swing.AbstractButton;
 import javax.swing.Action;
 import javax.swing.InputMap;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -42,8 +44,10 @@ import java.awt.Container;
 import java.awt.KeyboardFocusManager;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.beans.PropertyChangeListener;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -124,8 +128,18 @@ public class ButtonServiceImpl implements ButtonService {
         registerButton(button, key, true);
     }
 
-    @Override public void registerButton(AbstractButton button, String key, boolean wantToReplace) {
+    @Override
+    public void registerButton(AbstractButton button, String key, boolean wantToReplace) {
+        ActionType type = ActionType.fromAction(key);
 
+        if (type != null) {
+            String text = button.getText();
+            Optional<OrieditaAction> first = actions.stream().filter(a -> a.getActionType().equals(type)).findFirst();
+            first.ifPresentOrElse(button::setAction, () -> Logger.debug("No handler for {}", key));
+            button.setText(text);
+        } else {
+            Logger.debug("No action found for {}", key);
+        }
         String name = ResourceUtil.getBundleString("name", key);
         String keyStrokeString = ResourceUtil.getBundleString("hotkey", key);
         // String tooltip = ResourceUtil.getBundleString("tooltip", key);
@@ -161,11 +175,24 @@ public class ButtonServiceImpl implements ButtonService {
                 menuItem.setAccelerator(keyStroke);
             }
         } else {
+            if (button instanceof DropdownToolButton) {
+                DropdownToolButton tb = (DropdownToolButton) button;
+                for (Component component : tb.getDropdownMenu().getComponents()) {
+                    if (component instanceof JMenuItem) {
+                        JMenuItem item = (JMenuItem) component;
+                        String itemKey = item.getActionCommand();
+                        if (itemKey != null) {
+                            owner.get().getRootPane().getActionMap().put(itemKey, new Click(item));
+                            addKeyStroke(item.getAccelerator(), item, itemKey);
+                        }
+                    }
+                }
+            }
             KeyStrokeUtil.resetButton(button);
 
             addContextMenu(button, key, keyStroke);
 
-            if (keyStroke != null) {
+            if (keyStroke != null && button instanceof JButton) {
                 addKeyStroke(keyStroke, button, key);
             }
             owner.get().getRootPane().getActionMap().put(key, new Click(button));
@@ -199,6 +226,17 @@ public class ButtonServiceImpl implements ButtonService {
                 } else {
                     Button_shared_operation(true);
                 }
+            });
+        }
+        if (button instanceof DropdownToolButton) {
+            button.addPropertyChangeListener("activeAction", e -> {
+                for (ActionListener actionListener : button.getActionListeners()) {
+                    button.removeActionListener(actionListener);
+                }
+                for (PropertyChangeListener l : button.getPropertyChangeListeners()) {
+                    button.removePropertyChangeListener(l);
+                }
+                registerButton(button, ((ActionType) e.getNewValue()).action(), wantToReplace);
             });
         }
     }
@@ -298,6 +336,10 @@ public class ButtonServiceImpl implements ButtonService {
     @Override
     public void addDefaultListener(Container component, boolean wantToReplace) {
         Component[] components = component.getComponents();
+        if (component instanceof DropdownToolButton) {
+            DropdownToolButton tb = (DropdownToolButton) component;
+            addDefaultListener(tb.getDropdownMenu());
+        }
 
         for (Component component1 : components) {
             if (component1 instanceof AbstractButton) {
@@ -305,16 +347,6 @@ public class ButtonServiceImpl implements ButtonService {
                 String key = button.getActionCommand();
 
                 if (key != null && !"".equals(key)) {
-                    ActionType type = ActionType.fromAction(key);
-
-                    if (type != null) {
-                        String text = button.getText();
-                        Optional<OrieditaAction> first = actions.stream().filter(a -> a.getActionType().equals(type)).findFirst();
-                        first.ifPresentOrElse(button::setAction, () -> Logger.debug("No handler for {}", key));
-                        button.setText(text);
-                    } else {
-                        Logger.debug("No action found for {}", key);
-                    }
                     registerButton(button, key, wantToReplace);
                 }
             }
