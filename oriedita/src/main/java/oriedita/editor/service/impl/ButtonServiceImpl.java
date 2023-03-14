@@ -119,8 +119,10 @@ public class ButtonServiceImpl implements ButtonService {
         }
     }
 
-    private void addKeyStroke(KeyStroke keyStroke, AbstractButton button, String key) {
-        helpInputMap.put(keyStroke, button);
+    private void addKeyStroke(KeyStroke keyStroke, AbstractButton button, String key, boolean addToHelpMap) {
+        if (addToHelpMap) {
+            helpInputMap.put(keyStroke, button);
+        }
         owner.get().getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, key);
     }
 
@@ -130,21 +132,14 @@ public class ButtonServiceImpl implements ButtonService {
 
     @Override
     public void registerButton(AbstractButton button, String key, boolean wantToReplace) {
-        ActionType type = ActionType.fromAction(key);
 
-        if (type != null) {
-            String text = button.getText();
-            Optional<OrieditaAction> first = actions.stream().filter(a -> a.getActionType().equals(type)).findFirst();
-            first.ifPresentOrElse(button::setAction, () -> Logger.debug("No handler for {}", key));
-            button.setText(text);
-        } else {
-            Logger.debug("No action found for {}", key);
-        }
         String name = ResourceUtil.getBundleString("name", key);
         String keyStrokeString = ResourceUtil.getBundleString("hotkey", key);
         // String tooltip = ResourceUtil.getBundleString("tooltip", key);
         String help = ResourceUtil.getBundleString("help", key);
         String icon = ResourceUtil.getBundleString("icons", key);
+
+        setAction(button, key);
 
         KeyStroke keyStroke = KeyStroke.getKeyStroke(keyStrokeString);
 
@@ -170,6 +165,12 @@ public class ButtonServiceImpl implements ButtonService {
                 }
             }
 
+            if (!StringOp.isEmpty(icon)) {
+                GlyphIcon glyphIcon = new GlyphIcon(icon, button.getForeground());
+                button.addPropertyChangeListener("foreground", glyphIcon);
+                button.setIcon(glyphIcon);
+            }
+
             if (keyStroke != null) {
                 // Menu item can handle own accelerator (and shows a nice hint).
                 menuItem.setAccelerator(keyStroke);
@@ -177,13 +178,14 @@ public class ButtonServiceImpl implements ButtonService {
         } else {
             if (button instanceof DropdownToolButton) {
                 DropdownToolButton tb = (DropdownToolButton) button;
+                // Since these aren't in a proper JMenu, JMenuItem.setAccelerator is not enough
                 for (Component component : tb.getDropdownMenu().getComponents()) {
                     if (component instanceof JMenuItem) {
                         JMenuItem item = (JMenuItem) component;
                         String itemKey = item.getActionCommand();
                         if (itemKey != null) {
                             owner.get().getRootPane().getActionMap().put(itemKey, new Click(item));
-                            addKeyStroke(item.getAccelerator(), item, itemKey);
+                            addKeyStroke(item.getAccelerator(), item, itemKey, false);
                         }
                     }
                 }
@@ -193,7 +195,7 @@ public class ButtonServiceImpl implements ButtonService {
             addContextMenu(button, key, keyStroke);
 
             if (keyStroke != null && button instanceof JButton) {
-                addKeyStroke(keyStroke, button, key);
+                addKeyStroke(keyStroke, button, key, true);
             }
             owner.get().getRootPane().getActionMap().put(key, new Click(button));
 
@@ -215,29 +217,45 @@ public class ButtonServiceImpl implements ButtonService {
         }
 
         final String fKey = key;
+        ActionListener explanationUpdater = e -> {
+            explanation.setExplanation(fKey);
+            Action action = button.getAction();
+            if (action instanceof OrieditaAction) {
+                OrieditaAction oAction = (OrieditaAction) action;
+                Button_shared_operation(oAction.resetLineStep());
+            } else {
+                Button_shared_operation(true);
+            }
+        };
 
         if (!StringOp.isEmpty(help)) {
-            button.addActionListener(e -> {
-                explanation.setExplanation(fKey);
-                Action action = button.getAction();
-                if (action instanceof OrieditaAction) {
-                    OrieditaAction oAction = (OrieditaAction) action;
-                    Button_shared_operation(oAction.resetLineStep());
-                } else {
-                    Button_shared_operation(true);
-                }
-            });
+            button.addActionListener(explanationUpdater);
         }
         if (button instanceof DropdownToolButton) {
             button.addPropertyChangeListener("activeAction", e -> {
-                for (ActionListener actionListener : button.getActionListeners()) {
-                    button.removeActionListener(actionListener);
+                // remove all listeners because registerButton will add new ones
+                button.removeActionListener(explanationUpdater);
+                for (PropertyChangeListener listener : button.getPropertyChangeListeners("activeAction")) {
+                    button.removePropertyChangeListener("activeAction", listener);
                 }
-                for (PropertyChangeListener l : button.getPropertyChangeListeners()) {
-                    button.removePropertyChangeListener(l);
+                for (PropertyChangeListener listener : button.getPropertyChangeListeners("foreground")) {
+                    button.removePropertyChangeListener("foreground", listener);
                 }
                 registerButton(button, ((ActionType) e.getNewValue()).action(), wantToReplace);
             });
+        }
+    }
+
+    private void setAction(AbstractButton button, String key) {
+        ActionType type = ActionType.fromAction(key);
+
+        if (type != null) {
+            String text = button.getText();
+            Optional<OrieditaAction> first = actions.stream().filter(a -> a.getActionType().equals(type)).findFirst();
+            first.ifPresentOrElse(button::setAction, () -> Logger.debug("No handler for {}", key));
+            button.setText(text);
+        }  else {
+            Logger.debug("No action found for {}", key);
         }
     }
 
@@ -286,7 +304,7 @@ public class ButtonServiceImpl implements ButtonService {
                     owner.get().getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).remove(currentKeyStroke);
 
                     if (newKeyStroke != null) {
-                        addKeyStroke(newKeyStroke, button, key);
+                        addKeyStroke(newKeyStroke, button, key, true);
                         putValue(javax.swing.Action.NAME, "Change key stroke (Current: " + KeyStrokeUtil.toString(newKeyStroke) + ")");
                     } else {
                         putValue(javax.swing.Action.NAME, "Change key stroke");

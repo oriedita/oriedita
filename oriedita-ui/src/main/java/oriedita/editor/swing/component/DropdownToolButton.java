@@ -18,14 +18,16 @@ public class DropdownToolButton extends JButton {
 
     public DropdownToolButton() {
         this.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
+            private boolean isInTriangle(MouseEvent e) {
                 int diffX = getWidth() - e.getX();
                 int diffY = getHeight() - e.getY();
-                if (diffY + diffX < 15) {
+                return  (diffY + diffX < 15);
+            }
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                if (isInTriangle(e) && e.getButton() == MouseEvent.BUTTON1) {
                     dropdownMenu.setLocation(e.getLocationOnScreen());
                     dropdownMenu.setVisible(true);
-                    e.consume();
                 }
             }
         });
@@ -33,6 +35,10 @@ public class DropdownToolButton extends JButton {
 
     public JPopupMenu getDropdownMenu() {
         return dropdownMenu;
+    }
+
+    public ActionType getActiveAction() {
+        return activeAction;
     }
 
     @Override
