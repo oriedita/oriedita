@@ -21,11 +21,10 @@ public class ScaleAction extends AbstractOrieditaAction{
 
     @Override
     public void actionPerformed(ActionEvent e) {
-//        foldedFigureModel.setScale(1);
         animationService.animate(Animations.ZOOM_FOLDED_MODEL,
                 foldedFigureModel::setScale,
                 foldedFigureModel::getScale,
                 scale -> 1.0,
-                AnimationDurations.SCALED_FOLD_ZOOM);
+                AnimationDurations.SCALE_SPEED);
     }
 }
