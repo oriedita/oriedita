@@ -7,19 +7,24 @@ import jakarta.enterprise.inject.Any;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import org.tinylog.Logger;
+import oriedita.editor.AnimationDurations;
+import oriedita.editor.Animations;
 import oriedita.editor.Colors;
 import oriedita.editor.FrameProvider;
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.databinding.ApplicationModel;
+import oriedita.editor.databinding.CameraModel;
 import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.databinding.FileModel;
 import oriedita.editor.databinding.FoldedFigureModel;
 import oriedita.editor.databinding.FoldedFiguresList;
 import oriedita.editor.datatransfer.SaveTransferable;
+import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.exception.FileReadingException;
 import oriedita.editor.save.Save;
 import oriedita.editor.save.SaveProvider;
+import oriedita.editor.service.AnimationService;
 import oriedita.editor.service.ButtonService;
 import oriedita.editor.service.FileSaveService;
 import oriedita.editor.service.LookAndFeelService;
@@ -78,6 +83,7 @@ public class AppMenuBar {
     private JCheckBoxMenuItem displayRightPanel;
     private JCheckBoxMenuItem moveFoldedModelWithCp;
     private JCheckBoxMenuItem doAnimations;
+    private JMenuItem scaleCP;
     private JMenuItem newButton;
     private JMenuItem openButton;
     private JMenuItem saveButton;
@@ -96,6 +102,9 @@ public class AppMenuBar {
     private JMenuItem pasteOffsetButton;
     private AppMenuBarUI appMenuBarUI;
     private PreferenceDialog preferenceDialog;
+    private final AnimationService animationService;
+    private final CameraModel creasePatternCameraModel;
+    private final Camera camera;
     @Inject
     public AppMenuBar(
             FrameProvider frameProvider,
@@ -109,7 +118,10 @@ public class AppMenuBar {
             @Named("mainCreasePattern_Worker") CreasePattern_Worker mainCreasePatternWorker,
             FoldedFigureModel foldedFigureModel,
             ResetService resetService,
-            FoldedFiguresList foldedFiguresList
+            FoldedFiguresList foldedFiguresList,
+            AnimationService animationService,
+            Camera camera,
+            CameraModel creasePatternCameraModel
     ) {
         this.frameProvider = frameProvider;
         this.foldingExecutor = foldingExecutor;
@@ -123,6 +135,38 @@ public class AppMenuBar {
         this.foldedFigureModel = foldedFigureModel;
         this.resetService = resetService;
         this.foldedFiguresList = foldedFiguresList;
+        this.animationService = animationService;
+        this.camera = camera;
+        this.creasePatternCameraModel = creasePatternCameraModel;
+    }
+
+    public void resetCPView(){
+        animationService.animate(Animations.INITIAL_X_POS_DISPLAY,
+                camera::setDisplayPositionX,
+                camera::getDisplayPositionX,
+                positionX -> 350.0,
+                AnimationDurations.SCALE_SPEED);
+        animationService.animate(Animations.INITIAL_Y_POS_DISPLAY,
+                camera::setDisplayPositionY,
+                camera::getDisplayPositionY,
+                positionY -> 350.0,
+                AnimationDurations.SCALE_SPEED);
+        animationService.animate(Animations.INITIAL_X_POS_CAMERA,
+                camera::setCameraPositionX,
+                camera::getCameraPositionX,
+                positionX -> 0.0,
+                AnimationDurations.SCALE_SPEED);
+        animationService.animate(Animations.INITIAL_Y_POS_CAMERA,
+                camera::setCameraPositionY,
+                camera::getCameraPositionY,
+                positionY -> 0.0,
+                AnimationDurations.SCALE_SPEED);
+        animationService.animate(Animations.ZOOM_CP,
+                creasePatternCameraModel::setScale,
+                creasePatternCameraModel::getScale,
+                scale -> 1.0,
+                AnimationDurations.SCALE_SPEED);
+        canvasModel.markDirty();
     }
 
     public void init() {
@@ -295,6 +339,10 @@ public class AppMenuBar {
         displayRightPanel.addActionListener(e -> getData(applicationModel));
         displayLeftPanel.addActionListener(e -> getData(applicationModel));
         doAnimations.addActionListener(e -> getData(applicationModel));
+        scaleCP.addActionListener(e -> {
+            resetCPView();
+            getData(applicationModel);
+        });
 
         copyButton.addActionListener(e -> {
             Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
@@ -468,6 +516,8 @@ public class AppMenuBar {
         viewMenu.add(moveFoldedModelWithCp);
         doAnimations = new JCheckBoxMenuItem("Animations");
         viewMenu.add(doAnimations);
+        scaleCP = new JMenuItem("Scale back CP");
+        viewMenu.add(scaleCP);
 
         JMenu helpMenu = new JMenu("Help");
         helpMenu.setMnemonic('H');
