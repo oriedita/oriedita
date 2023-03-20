@@ -278,4 +278,8 @@ public class Camera implements Serializable { // Mediation between actual coordi
             setDisplayPosition(p);
         }
     }
+
+    public Point getDisplayPosition() {
+        return new Point(display_position_x, display_position_y);
+    }
 }

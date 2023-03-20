@@ -7,6 +7,7 @@ import oriedita.editor.canvas.animation.Animation;
 import oriedita.editor.canvas.animation.Interpolation;
 import oriedita.editor.databinding.ApplicationModel;
 import oriedita.editor.service.AnimationService;
+import origami.crease_pattern.element.Point;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -55,8 +56,38 @@ public class AnimationServiceImpl implements AnimationService {
     }
 
     @Override
-    public void animate(String key, Consumer<Double> setter, Supplier<Double> getter, UnaryOperator<Double> calculateEndValue, double time) {
-        animate(key, setter, getter, calculateEndValue, time, defaultInterpolation);
+    public Interpolation getDefaultInterpolation() {
+        return defaultInterpolation;
+    }
+
+    @Override
+    public void animatePoint(String key, Consumer<Point> setter, Supplier<Point> getter, UnaryOperator<Point> calculateEndValue, double time, Interpolation interpolation) {
+        Point current = getter.get();
+
+        if (animations.containsKey(key+"_x")) {
+            current.setX(animations.get(key+"_x").getTo());
+        }
+        if (animations.containsKey(key+"_y")) {
+            current.setY(animations.get(key+"_y").getTo());
+        }
+        Point to = calculateEndValue.apply(current);
+
+        if (!applicationModel.getAnimations()) {
+            setter.accept(to);
+            return;
+        }
+        animate(key+"_x", x -> {
+            Point newP = new Point();
+            newP.set(getter.get());
+            newP.setX(x);
+            setter.accept(newP);
+        }, () -> getter.get().getX(), to.getX(), time, interpolation);
+        animate(key+"_y", y -> {
+            Point newP = new Point();
+            newP.set(getter.get());
+            newP.setY(y);
+            setter.accept(newP);
+        }, () -> getter.get().getY(), to.getY(), time, interpolation);
     }
 
     synchronized public void update() {
