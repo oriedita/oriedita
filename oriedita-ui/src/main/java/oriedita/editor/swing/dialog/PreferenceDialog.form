@@ -122,7 +122,7 @@
                           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                         </constraints>
                         <properties>
-                          <text value="Point spotlight"/>
+                          <text value="Selection range"/>
                         </properties>
                       </component>
                       <component id="f1bcf" class="javax.swing.JCheckBox" binding="offsetCB">
@@ -640,7 +640,7 @@
                       </component>
                     </children>
                   </grid>
-                  <grid id="34170" binding="behavior2Panel" layout-manager="GridLayoutManager" row-count="5" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="1" vgap="2">
+                  <grid id="34170" binding="behavior2Panel" layout-manager="GridLayoutManager" row-count="6" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="1" vgap="2">
                     <margin top="0" left="0" bottom="0" right="0"/>
                     <constraints>
                       <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -713,6 +713,24 @@
                           <paintTicks value="true"/>
                           <paintTrack value="true"/>
                           <value value="8"/>
+                        </properties>
+                      </component>
+                      <component id="18db4" class="javax.swing.JLabel">
+                        <constraints>
+                          <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties>
+                          <text value="Selection Range:"/>
+                        </properties>
+                      </component>
+                      <component id="d167e" class="javax.swing.JSlider" binding="mouseRangeSlider">
+                        <constraints>
+                          <grid row="5" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties>
+                          <maximum value="100"/>
+                          <minimum value="2"/>
+                          <value value="20"/>
                         </properties>
                       </component>
                     </children>

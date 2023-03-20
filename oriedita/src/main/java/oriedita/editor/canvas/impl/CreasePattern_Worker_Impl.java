@@ -320,9 +320,9 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     }
 
     public void calculateDecisionWidth() {
-        selectionDistance = grid.getGridWidth() / 1000.0;
-        if (camera.getCameraZoomX() * selectionDistance < 10.0) {
-            selectionDistance = 10.0 / camera.getCameraZoomX();
+        selectionDistance = applicationModel.getMouseRadius();
+        if (camera.getCameraZoomX() > 1) {
+            selectionDistance = applicationModel.getMouseRadius() / camera.getCameraZoomX();
         }
     }
 

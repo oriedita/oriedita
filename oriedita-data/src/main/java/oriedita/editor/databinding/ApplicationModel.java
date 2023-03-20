@@ -77,6 +77,7 @@ public class ApplicationModel implements Serializable {
     private boolean moveFoldedModelWithCp;
     private boolean animations;
     private double animationSpeed;
+    private double mouseRadius;
 
     /*
     Things to remember when adding a new property:
@@ -89,6 +90,16 @@ public class ApplicationModel implements Serializable {
     @Inject
     public ApplicationModel() {
         reset();
+    }
+
+    public double getMouseRadius() {
+        return mouseRadius;
+    }
+
+    public void setMouseRadius(double mouseRadius) {
+        double oldMouseRadius = this.mouseRadius;
+        this.mouseRadius = mouseRadius;
+        this.pcs.firePropertyChange("mouseRadius", oldMouseRadius, mouseRadius);
     }
 
     public double getAnimationSpeed() {
@@ -385,6 +396,7 @@ public class ApplicationModel implements Serializable {
         animations = true;
         animationSpeed = 1;
         moveFoldedModelWithCp = true;
+        mouseRadius = 10;
 
         this.pcs.firePropertyChange(null, null, null);
     }
@@ -434,6 +446,7 @@ public class ApplicationModel implements Serializable {
         zoomSpeed = 1;
         animations = true;
         animationSpeed = 1;
+        mouseRadius = 10;
 
         this.pcs.firePropertyChange(null, null, null);
     }
@@ -470,7 +483,8 @@ public class ApplicationModel implements Serializable {
                 && Objects.equals(laf, applicationModel.getLaf())
                 && zoomSpeed == applicationModel.getZoomSpeed()
                 && animations == applicationModel.getAnimations()
-                && animationSpeed == applicationModel.getAnimationSpeed());
+                && animationSpeed == applicationModel.getAnimationSpeed()
+                && mouseRadius == applicationModel.getMouseRadius());
     }
 
 
@@ -853,6 +867,7 @@ public class ApplicationModel implements Serializable {
         animationSpeed = applicationModel.getAnimationSpeed();
         animations = applicationModel.getAnimations();
         zoomSpeed = applicationModel.getZoomSpeed();
+        mouseRadius = applicationModel.getMouseRadius();
 
         this.pcs.firePropertyChange(null, null, null);
     }
