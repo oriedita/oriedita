@@ -103,6 +103,7 @@ public class PreferenceDialog extends JDialog {
     private JSlider zoomSpeedSlider;
     private JCheckBox checkBoxAnimation;
     private JSlider animationSpeedSlider;
+    private JSlider mouseRangeSlider;
     private int tempTransparency;
     private final ApplicationModel applicationModel;
     private final ApplicationModel tempModel;
@@ -144,6 +145,7 @@ public class PreferenceDialog extends JDialog {
         zoomSpeedSlider.setValue((int) (applicationModel.getZoomSpeed() * 10));
         checkBoxAnimation.setSelected(applicationModel.getAnimations());
         animationSpeedSlider.setValue((int) ((applicationModel.getAnimationSpeed()) * 8));
+        mouseRangeSlider.setValue((int) applicationModel.getMouseRadius());
     }
 
     public PreferenceDialog(
@@ -344,6 +346,7 @@ public class PreferenceDialog extends JDialog {
             applicationModel.setAnimations(checkBoxAnimation.isSelected());
             animationSpeedSlider.setEnabled(applicationModel.getAnimations());
         });
+        mouseRangeSlider.addChangeListener(e -> applicationModel.setMouseRadius(mouseRangeSlider.getValue()));
 
         buttonOK.addActionListener(e -> onOK());
 
@@ -439,7 +442,7 @@ public class PreferenceDialog extends JDialog {
         display2Panel.setLayout(new GridLayoutManager(13, 1, new Insets(0, 0, 0, 0), 1, 2));
         displayPanel.add(display2Panel, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         spotlightCB = new JCheckBox();
-        spotlightCB.setText("Point spotlight");
+        spotlightCB.setText("Selection range");
         display2Panel.add(spotlightCB, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         offsetCB = new JCheckBox();
         offsetCB.setText("Point offset");
@@ -639,7 +642,7 @@ public class PreferenceDialog extends JDialog {
         label11.setText("BEHAVIOR");
         behavior1Panel.add(label11, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         behavior2Panel = new JPanel();
-        behavior2Panel.setLayout(new GridLayoutManager(5, 2, new Insets(0, 0, 0, 0), 1, 2));
+        behavior2Panel.setLayout(new GridLayoutManager(6, 2, new Insets(0, 0, 0, 0), 1, 2));
         behaviorPanel.add(behavior2Panel, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         preciseZoomCB = new JCheckBox();
         preciseZoomCB.setText("Precise zoom");
@@ -671,6 +674,14 @@ public class PreferenceDialog extends JDialog {
         animationSpeedSlider.setPaintTrack(true);
         animationSpeedSlider.setValue(8);
         behavior2Panel.add(animationSpeedSlider, new GridConstraints(4, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final JLabel label14 = new JLabel();
+        label14.setText("Selection Range:");
+        behavior2Panel.add(label14, new GridConstraints(5, 0, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        mouseRangeSlider = new JSlider();
+        mouseRangeSlider.setMaximum(100);
+        mouseRangeSlider.setMinimum(2);
+        mouseRangeSlider.setValue(20);
+        behavior2Panel.add(mouseRangeSlider, new GridConstraints(5, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final Spacer spacer4 = new Spacer();
         topPanel.add(spacer4, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
     }
