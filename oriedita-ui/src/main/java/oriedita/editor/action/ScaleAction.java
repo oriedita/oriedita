@@ -24,7 +24,7 @@ public class ScaleAction extends AbstractOrieditaAction{
         animationService.animate(Animations.ZOOM_FOLDED_MODEL,
                 foldedFigureModel::setScale,
                 foldedFigureModel::getScale,
-                scale -> 1.0,
+                1.0,
                 AnimationDurations.SCALE_SPEED);
     }
 }

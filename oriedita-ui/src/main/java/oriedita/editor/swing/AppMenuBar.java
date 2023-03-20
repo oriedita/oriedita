@@ -33,6 +33,7 @@ import oriedita.editor.service.TaskExecutorService;
 import oriedita.editor.swing.dialog.PreferenceDialog;
 import oriedita.editor.tools.LookAndFeelUtil;
 import oriedita.editor.tools.ResourceUtil;
+import origami.crease_pattern.element.Point;
 
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
@@ -141,30 +142,21 @@ public class AppMenuBar {
     }
 
     public void resetCPView(){
-        animationService.animate(Animations.INITIAL_X_POS_DISPLAY,
-                camera::setDisplayPositionX,
-                camera::getDisplayPositionX,
-                positionX -> 350.0,
+        animationService.animatePoint(Animations.INITIAL_POS_DISPLAY,
+                camera::setDisplayPosition,
+                camera::getDisplayPosition,
+                new Point(350, 350),
                 AnimationDurations.SCALE_SPEED);
-        animationService.animate(Animations.INITIAL_Y_POS_DISPLAY,
-                camera::setDisplayPositionY,
-                camera::getDisplayPositionY,
-                positionY -> 350.0,
+        animationService.animatePoint(Animations.INITIAL_POS_CAMERA,
+                camera::setCameraPosition,
+                camera::getCameraPosition,
+                new Point(0, 0),
                 AnimationDurations.SCALE_SPEED);
-        animationService.animate(Animations.INITIAL_X_POS_CAMERA,
-                camera::setCameraPositionX,
-                camera::getCameraPositionX,
-                positionX -> 0.0,
-                AnimationDurations.SCALE_SPEED);
-        animationService.animate(Animations.INITIAL_Y_POS_CAMERA,
-                camera::setCameraPositionY,
-                camera::getCameraPositionY,
-                positionY -> 0.0,
-                AnimationDurations.SCALE_SPEED);
+
         animationService.animate(Animations.ZOOM_CP,
                 creasePatternCameraModel::setScale,
                 creasePatternCameraModel::getScale,
-                scale -> 1.0,
+                1.0,
                 AnimationDurations.SCALE_SPEED);
         canvasModel.markDirty();
     }

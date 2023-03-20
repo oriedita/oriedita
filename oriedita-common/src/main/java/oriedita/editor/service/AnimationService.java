@@ -1,6 +1,7 @@
 package oriedita.editor.service;
 
 import oriedita.editor.canvas.animation.Interpolation;
+import origami.crease_pattern.element.Point;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -23,7 +24,34 @@ public interface AnimationService {
      */
     void animate(String key, Consumer<Double> setter, Supplier<Double> getter, UnaryOperator<Double> calculateEndValue, double time, Interpolation interpolation);
 
-    void animate(String key, Consumer<Double> setter, Supplier<Double> getter, UnaryOperator<Double> calculateEndValue, double time);
+    default void animate(String key, Consumer<Double> setter, Supplier<Double> getter, UnaryOperator<Double> calculateEndValue, double time) {
+        animate(key, setter, getter, calculateEndValue, time, getDefaultInterpolation());
+    }
+
+    default void animate(String key, Consumer<Double> setter, Supplier<Double> getter, double endValue, double time, Interpolation interpolation) {
+        animate(key, setter, getter, n -> endValue, time, interpolation);
+    }
+
+    default void animate(String key, Consumer<Double> setter, Supplier<Double> getter, double endValue, double time) {
+        animate(key, setter, getter, n -> endValue, time);
+    }
+
+    Interpolation getDefaultInterpolation();
+
+    void animatePoint(String key, Consumer<Point> setter, Supplier<Point> getter, UnaryOperator<Point> calculateEndPoint, double time, Interpolation interpolation);
+
+    default void animatePoint(String key, Consumer<Point> setter, Supplier<Point> getter, UnaryOperator<Point> calculateEndPoint, double time) {
+        animatePoint(key, setter, getter, calculateEndPoint, time, getDefaultInterpolation());
+    }
+
+    default void animatePoint(String key, Consumer<Point> setter, Supplier<Point> getter, Point endPoint, double time, Interpolation interpolation) {
+        animatePoint(key, setter, getter, p -> endPoint, time, interpolation);
+    }
+
+    default void animatePoint(String key, Consumer<Point> setter, Supplier<Point> getter, Point endPoint, double time) {
+        animatePoint(key, setter, getter, endPoint, time, getDefaultInterpolation());
+    }
+
 
     /**
      * updates all currently running animations and sets their respective properties to the correct value
