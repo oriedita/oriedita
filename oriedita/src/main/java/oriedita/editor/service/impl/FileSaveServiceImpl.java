@@ -40,6 +40,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -60,6 +61,8 @@ public class FileSaveServiceImpl implements FileSaveService {
     private final BackgroundModel backgroundModel;
     private final SimpleDateFormat df = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss");
     private Path autoSavePath;
+    private ScheduledThreadPoolExecutor schedulePool;
+    private ScheduledFuture<?> autoSaveFuture;
 
     @Inject
     public FileSaveServiceImpl(
@@ -107,6 +110,12 @@ public class FileSaveServiceImpl implements FileSaveService {
             mainCreasePatternWorker.setSave_for_reading(memo_temp);
             mainCreasePatternWorker.record();
         }
+
+        applicationModel.addPropertyChangeListener((event) -> {
+            if (event.getPropertyName() ==null || event.getPropertyName().equals("autoSaveInterval")) {
+                updateAutoSave(applicationModel.getAutoSaveInterval());
+            }
+        });
     }
 
     @Override
@@ -441,12 +450,32 @@ public class FileSaveServiceImpl implements FileSaveService {
 
     @Override
     public void initAutoSave() {
-        ScheduledThreadPoolExecutor pool = new ScheduledThreadPoolExecutor(1);
+        schedulePool = new ScheduledThreadPoolExecutor(1);
 
         autoSavePath = ResourceUtil.getTempDir().resolve("oriedita-autosave-" + df.format(new Date()));
         autoSavePath.toFile().mkdirs();
 
-        pool.scheduleAtFixedRate(this::autoSaveFile, 5, 5, TimeUnit.MINUTES);
+        updateAutoSave(applicationModel.getAutoSaveInterval());
+    }
+
+    private void updateAutoSave(long delay) {
+        if (schedulePool == null) {
+            // Do not continue if initAutoSave has not been called.
+            return;
+        }
+
+        if (autoSaveFuture != null) {
+            autoSaveFuture.cancel(false);
+        }
+
+        if (delay < 0) {
+            Logger.info("Disabling autoSave");
+            return;
+        }
+
+        Logger.info("Setting autoSave interval to " + delay + " minutes");
+
+        autoSaveFuture = schedulePool.scheduleAtFixedRate(this::autoSaveFile, delay, delay, TimeUnit.MINUTES);
     }
 
     private void autoSaveFile() {
