@@ -531,17 +531,6 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
 
     //マウス操作(ボタンを押したとき)を行う関数----------------------------------------------------
     public void mousePressed(MouseEvent e) {
-        JPopupMenu foldPopUp = new JPopupMenu();
-
-        createMenuItem(foldPopUp, "foldedFigureFlipAction", "Flip");
-        createMenuItem(foldPopUp, "scaleAction", "Scale");
-        createMenuItem(foldPopUp, "foldedFigureTrashAction", "Delete");
-        createMenuItem(foldPopUp, "duplicateAction", "Duplicate");
-        createMenuItem(foldPopUp, "suitei_02Action", "Wireframe");
-        createMenuItem(foldPopUp, "suitei_03Action", "X-ray");
-
-        buttonService.addDefaultListener(foldPopUp, false);
-
         Point p = e2p(e);
         canvasUI.requestFocus();
         mouseDraggedValid = true;
@@ -617,6 +606,18 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
                     case FOLDED_BACK_2:
                     case TRANSPARENT_FRONT_3:
                     case TRANSPARENT_BACK_4:
+                        JPopupMenu foldPopUp = new JPopupMenu();
+
+                        createMenuItem(foldPopUp, "foldedFigureFlipAction", "Flip");
+                        createMenuItem(foldPopUp, "scaleAction", "Scale");
+                        createMenuItem(foldPopUp, "foldedFigureTrashAction", "Delete");
+                        createMenuItem(foldPopUp, "duplicateAction", "Duplicate");
+                        if(foldedFiguresList.getActiveItem().getFoldedFigure().estimationStep != FoldedFigure.EstimationStep.STEP_10){
+                            createMenuItem(foldPopUp, "suitei_02Action", "Wireframe");
+                            createMenuItem(foldPopUp, "suitei_03Action", "X-ray");
+                        }
+
+                        buttonService.addDefaultListener(foldPopUp, false);
                         foldPopUp.show(this.canvasUI, e.getX(), e.getY());
                         break;
                     default:
