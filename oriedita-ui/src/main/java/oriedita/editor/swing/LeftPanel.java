@@ -29,7 +29,6 @@ import oriedita.editor.service.ButtonService;
 import oriedita.editor.service.FoldingService;
 import oriedita.editor.service.HistoryState;
 import oriedita.editor.swing.component.ColorIcon;
-import oriedita.editor.swing.component.DropdownToolButton;
 import oriedita.editor.swing.component.UndoRedo;
 import oriedita.editor.tools.LookAndFeelUtil;
 import oriedita.editor.tools.StringOp;
@@ -170,7 +169,6 @@ public class LeftPanel {
     private JComboBox<String> fromLineDropBox;
     private JComboBox<String> toLineDropBox;
     private JLabel replaceLabel;
-    private DropdownToolButton dropdownToolButton1;
 
     @Inject
     public LeftPanel(FrameProvider frameProvider,
@@ -623,7 +621,6 @@ public class LeftPanel {
      * @noinspection ALL
      */
     private void $$$setupUI$$$() {
-        createUIComponents();
         root = new JPanel();
         root.setLayout(new GridLayoutManager(24, 1, new Insets(1, 1, 1, 1), 1, 1));
         undoRedo = new UndoRedo();
@@ -801,7 +798,7 @@ public class LeftPanel {
         coloredXRayIncreaseButton.setIcon(new ImageIcon(getClass().getResource("/ppp/ck4_color_age.png")));
         panel9.add(coloredXRayIncreaseButton, new GridConstraints(0, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         final JPanel panel10 = new JPanel();
-        panel10.setLayout(new GridLayoutManager(6, 4, new Insets(0, 0, 0, 0), 1, 1));
+        panel10.setLayout(new GridLayoutManager(5, 4, new Insets(0, 0, 0, 0), 1, 1));
         root.add(panel10, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         perpendicularDrawButton = new JButton();
         perpendicularDrawButton.setActionCommand("perpendicularDrawAction");
@@ -885,7 +882,6 @@ public class LeftPanel {
         drawCreaseFreeButton.setIcon(new ImageIcon(getClass().getResource("/ppp/senbun_nyuryoku.png")));
         drawCreaseFreeButton.setText("");
         panel10.add(drawCreaseFreeButton, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        panel10.add(dropdownToolButton1, new GridConstraints(5, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         final JPanel panel11 = new JPanel();
         panel11.setLayout(new GridLayoutManager(3, 4, new Insets(0, 0, 0, 0), 1, 1));
         root.add(panel11, new GridConstraints(7, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
@@ -1231,10 +1227,5 @@ public class LeftPanel {
 
     public void setData(FoldedFigureModel foldedFigureModel) {
         coloredXRayCheckBox.setSelected(foldedFigureModel.isTransparencyColor());
-    }
-
-    public void createUIComponents() {
-        dropdownToolButton1 = new DropdownToolButton();
-        dropdownToolButton1.setActions(ActionType.angleBisectorAction, ActionType.drawCreaseFreeAction, ActionType.makeFlatFoldableAction);
     }
 }
