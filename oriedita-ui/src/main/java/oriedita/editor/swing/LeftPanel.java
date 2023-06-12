@@ -8,6 +8,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import org.tinylog.Logger;
+import oriedita.editor.Canvas;
 import oriedita.editor.Colors;
 import oriedita.editor.FrameProvider;
 import oriedita.editor.action.ActionHandler;
@@ -34,6 +35,7 @@ import oriedita.editor.tools.LookAndFeelUtil;
 import oriedita.editor.tools.StringOp;
 import origami.crease_pattern.element.LineColor;
 import origami.folding.FoldedFigure;
+import origami.crease_pattern.element.LineSegment;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
@@ -53,6 +55,7 @@ import java.awt.Dimension;
 import java.awt.Insets;
 import java.beans.PropertyChangeEvent;
 import java.util.Arrays;
+import java.util.List;
 
 @ApplicationScoped
 public class LeftPanel {
@@ -169,6 +172,11 @@ public class LeftPanel {
     private JComboBox<String> fromLineDropBox;
     private JComboBox<String> toLineDropBox;
     private JLabel replaceLabel;
+    private final List<MouseMode> selectionTools = Arrays.asList(MouseMode.CREASE_MOVE_21,
+                                                                 MouseMode.CREASE_MOVE_4P_31,
+                                                                 MouseMode.CREASE_COPY_22,
+                                                                 MouseMode.CREASE_COPY_4P_32,
+                                                                 MouseMode.DRAW_CREASE_SYMMETRIC_12);
 
     @Inject
     public LeftPanel(FrameProvider frameProvider,
@@ -380,31 +388,54 @@ public class LeftPanel {
 
             mainCreasePatternWorker.unselect_all(false);
         });
-        selectButton.addActionListener(e -> canvasModel.setMouseMode(MouseMode.CREASE_SELECT_19));
-        selectAllButton.addActionListener(e -> mainCreasePatternWorker.select_all());
-        unselectButton.addActionListener(e -> canvasModel.setMouseMode(MouseMode.CREASE_UNSELECT_20));
-        unselectAllButton.addActionListener(e -> mainCreasePatternWorker.unselect_all());
+        selectButton.addActionListener(e -> {
+            resetSelectionButtons();
+            canvasModel.setMouseMode(MouseMode.CREASE_SELECT_19);
+        });
+        selectAllButton.addActionListener(e -> {
+            resetSelectionButtons();
+            mainCreasePatternWorker.select_all();
+        });
+        unselectButton.addActionListener(e -> {
+            resetSelectionButtons();
+            canvasModel.setMouseMode(MouseMode.CREASE_UNSELECT_20);
+        });
+        unselectAllButton.addActionListener(e -> {
+            resetSelectionButtons();
+            mainCreasePatternWorker.unselect_all();
+        });
         moveButton.addActionListener(e -> {
+            resetSelectionButtons();
             canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.MOVE_1);
             canvasModel.setMouseMode(MouseMode.CREASE_MOVE_21);
+            refreshSelectionButtons();
         });
         move2p2pButton.addActionListener(e -> {
+            resetSelectionButtons();
             canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.MOVE4P_2);
             canvasModel.setMouseMode(MouseMode.CREASE_MOVE_4P_31);
+            refreshSelectionButtons();
         });
         copyButton.addActionListener(e -> {
+            resetSelectionButtons();
             canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.COPY_3);
             canvasModel.setMouseMode(MouseMode.CREASE_COPY_22);
+            refreshSelectionButtons();
         });
         copy2p2pButton.addActionListener(e -> {
+            resetSelectionButtons();
             canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.COPY4P_4);
             canvasModel.setMouseMode(MouseMode.CREASE_COPY_4P_32);
+            refreshSelectionButtons();
         });
         reflectButton.addActionListener(e -> {
+            resetSelectionButtons();
             canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.MIRROR_5);
             canvasModel.setMouseMode(MouseMode.DRAW_CREASE_SYMMETRIC_12);
+            refreshSelectionButtons();
         });
         deleteSelectedLineSegmentButton.addActionListener(e -> {
+            resetSelectionButtons();
             mainCreasePatternWorker.del_selected_senbun();
             mainCreasePatternWorker.record();
         });
@@ -1105,7 +1136,71 @@ public class LeftPanel {
         }
     }
 
+    private void resetButtons(MouseMode previousTool){
+        if(selectionTools.contains(previousTool)){
+            resetSelectionButtons();
+        }
+    }
+
+    private void resetSelectionButtons(){
+        Logger.info("Resetting Selection Buttons to default");
+        
+        Border defaultBorder = (Border) UIManager.get("Button.border");
+        moveButton.setBorder(defaultBorder);
+        move2p2pButton.setBorder(defaultBorder);
+        copyButton.setBorder(defaultBorder);
+        copy2p2pButton.setBorder(defaultBorder);
+        reflectButton.setBorder(defaultBorder);
+        Canvas.clearUserWarningMessage();
+
+    }
+
+    private void refreshSelectionButtons(){
+
+        if(!selectionTools.contains(this.canvasModel.getMouseMode())){
+            Logger.info("No selection tool selected, so not refresshing selection buttons");
+            return;
+        }
+
+        LineBorder highlight = null;
+        
+        if(validateSelection()){
+            highlight = new LineBorder(Color.green);               
+            Logger.info("Highlight for selection tools has been set to green");
+        }
+        else {
+            highlight = new LineBorder(Color.yellow);
+            Logger.info("Highlight for selection tools has been set to yellow");
+            Canvas.setUserWarningMessage("This tool depends on crease(s) being selected in advance");
+        }
+
+        switch (this.canvasModel.getSelectionOperationMode()) {
+            case MOVE_1:
+                moveButton.setBorder(highlight);
+                break;
+            case MOVE4P_2:
+                move2p2pButton.setBorder(highlight);
+                break;
+            case COPY_3:
+                copyButton.setBorder(highlight);
+                break;
+            case COPY4P_4:
+                copy2p2pButton.setBorder(highlight);
+                break;
+            case MIRROR_5:
+                reflectButton.setBorder(highlight);
+                break;
+            default:
+                break;
+        }
+    }
+
     public void setData(PropertyChangeEvent e, CanvasModel data) {
+        if(e.getPropertyName() != null && e.getPropertyName().equals("mouseMode") && e.getOldValue() != null){
+            MouseMode previousTool = (MouseMode) e.getOldValue();
+            resetButtons(previousTool);
+        }
+
         if (e.getPropertyName() == null || e.getPropertyName().equals("mouseMode") || e.getPropertyName().equals("foldLineAdditionalInputMode")) {
             MouseMode m = data.getMouseMode();
             FoldLineAdditionalInputMode f = data.getFoldLineAdditionalInputMode();
@@ -1196,36 +1291,23 @@ public class LeftPanel {
         }
 
         if (e.getPropertyName() == null || e.getPropertyName().equals("selectionOperationMode")) {
-            Border defaultBorder = (Border) UIManager.get("Button.border");
-            moveButton.setBorder(defaultBorder);
-            move2p2pButton.setBorder(defaultBorder);
-            copyButton.setBorder(defaultBorder);
-            copy2p2pButton.setBorder(defaultBorder);
-            reflectButton.setBorder(defaultBorder);
-
-            switch (data.getSelectionOperationMode()) {
-                case MOVE_1:
-                    moveButton.setBorder(new LineBorder(Color.green));
-                    break;
-                case MOVE4P_2:
-                    move2p2pButton.setBorder(new LineBorder(Color.green));
-                    break;
-                case COPY_3:
-                    copyButton.setBorder(new LineBorder(Color.green));
-                    break;
-                case COPY4P_4:
-                    copy2p2pButton.setBorder(new LineBorder(Color.green));
-                    break;
-                case MIRROR_5:
-                    reflectButton.setBorder(new LineBorder(Color.green));
-                    break;
-                default:
-                    break;
-            }
+            resetSelectionButtons();
+            refreshSelectionButtons();
         }
     }
 
     public void setData(FoldedFigureModel foldedFigureModel) {
         coloredXRayCheckBox.setSelected(foldedFigureModel.isTransparencyColor());
+    }
+
+    public boolean validateSelection(){
+        for (int i = 1; i <= this.mainCreasePatternWorker.getFoldLineSet().getTotal(); i++) { 
+            LineSegment s = this.mainCreasePatternWorker.getFoldLineSet().get(i);
+            if (s.getSelected() == 2) {
+                return true;
+            }
+        }
+        Logger.info("No lines selected, selection is invalid");
+        return false;
     }
 }
