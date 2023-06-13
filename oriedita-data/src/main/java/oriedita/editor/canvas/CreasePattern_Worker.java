@@ -18,6 +18,7 @@ import origami.crease_pattern.element.Polygon;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.List;
 
 public interface CreasePattern_Worker {
@@ -119,6 +120,10 @@ public interface CreasePattern_Worker {
     void setDrawingStage(int i);
 
     int getCandidateSize();
+
+    void setIsSelectionEmpty(boolean isEmpty);
+
+    boolean getIsSelectionEmpty();
 
     void select_all();
 
@@ -265,6 +270,10 @@ public interface CreasePattern_Worker {
     int getFoldLineDividingNumber();
 
     TextWorker getTextWorker();
+
+    public void addPropertyChangeListener(PropertyChangeListener listener);
+
+    public void removePropertyChangeListener(PropertyChangeListener listener);
 
     void setGridConfigurationData(GridModel gridModel);
 

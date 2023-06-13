@@ -30,6 +30,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public class FoldLineSet {
     int total;               //Total number of line segments actually used
     List<LineSegment> lineSegments = new ArrayList<>(); //折線とする線分のインスタンス化
+    boolean check;
 
     private final Queue<LineSegment> Check1LineSegment = new ConcurrentLinkedQueue<>(); //Instantiation of line segments to store check information
     private final Queue<LineSegment> Check2LineSegment = new ConcurrentLinkedQueue<>(); //Instantiation of line segments to store check information
@@ -49,6 +50,7 @@ public class FoldLineSet {
 
     public void reset() {
         total = 0;
+        check = true;
         lineSegments.clear();
         lineSegments.add(new LineSegment());
         Check1LineSegment.clear();
@@ -93,6 +95,14 @@ public class FoldLineSet {
         while (lineSegments.size() < total + 1) {
             lineSegments.add(new LineSegment());
         }
+    }
+
+    public void setSelectionCheck(boolean check){
+        this.check = check;
+    }
+
+    public boolean getSelectionCheck(){
+        return check;
     }
 
     public List<LineSegment> getLineSegments() {
@@ -339,13 +349,16 @@ public class FoldLineSet {
     }
 
     public void select(Polygon p) {
+        boolean temp = true;
         for (int i = 1; i <= total; i++) {
             LineSegment s = lineSegments.get(i);
             if (p.totu_boundary_inside(s)) {
-
                 s.setSelected(2);
-
+                if(temp){
+                    temp = false;
+                }
             }
+            setSelectionCheck(temp);
         }
     }
 
@@ -356,6 +369,7 @@ public class FoldLineSet {
                 s.setSelected(0);
             }
         }
+        setSelectionCheck(getFoldLineTotalForSelectFolding() == 0);
     }
 
     //--------------------------------

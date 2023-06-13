@@ -47,6 +47,8 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -107,6 +109,7 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     private boolean check2 = false;//=0 check2を実施しない、1=実施する　
     private boolean check3 = false;//=0 check3を実施しない、1=実施する　
     private boolean check4 = false;//=0 check4を実施しない、1=実施する　
+    private boolean isEmpty;
     //---------------------------------
     private int check4ColorTransparency = 100;
     // ****************************************************************************************************************************************
@@ -116,6 +119,7 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     // Sub-operation mode for MouseMode.FOLDABLE_LINE_DRAW_71, either DRAW_CREASE_FREE_1, or VERTEX_MAKE_ANGULARLY_FLAT_FOLDABLE_38
     //--------------------------------------------
     private CanvasModel.SelectionOperationMode i_select_mode = CanvasModel.SelectionOperationMode.NORMAL_0;//=0は通常のセレクト操作
+    private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
     public CreasePattern_Worker_Impl(Camera creasePatternCamera,
                                      HistoryState normalHistoryState,
@@ -758,8 +762,19 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     }
 
     @Override
+    public void setIsSelectionEmpty(boolean isEmpty){
+        boolean oldIsEmpty = this.isEmpty;
+        this.isEmpty = isEmpty;
+        this.pcs.firePropertyChange("isEmpty", oldIsEmpty, isEmpty);
+    }
+
+    @Override
+    public boolean getIsSelectionEmpty(){ return isEmpty; }
+
+    @Override
     public void select_all() {
         foldLineSet.select_all();
+        setIsSelectionEmpty(false);
     }
 
     @Override
@@ -767,6 +782,7 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
         if (!applicationModel.getSelectPersistent() || ignorePersistent) {
             foldLineSet.unselect_all();
         }
+        setIsSelectionEmpty(true);
     }
 
     public void unselect_all() {
@@ -776,11 +792,13 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     @Override
     public void select(Point p0a, Point p0b) {
         foldLineSet.select(createBox(p0a, p0b));
+        setIsSelectionEmpty(foldLineSet.getSelectionCheck());
     }
 
     @Override
     public void unselect(Point p0a, Point p0b) {
         foldLineSet.unselect(createBox(p0a, p0b));
+        setIsSelectionEmpty(foldLineSet.getSelectionCheck());
     }
 
     @Override
@@ -1250,5 +1268,15 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     @Override
     public TextWorker getTextWorker() {
         return textWorker;
+    }
+
+    @Override
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+        this.pcs.addPropertyChangeListener(listener);
+    }
+
+    @Override
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
+        this.pcs.removePropertyChangeListener(listener);
     }
 }

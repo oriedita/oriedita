@@ -204,6 +204,7 @@ public class LeftPanel {
         gridModel.addPropertyChangeListener(e -> setData(gridModel));
         foldedFigureModel.addPropertyChangeListener(e -> setData(foldedFigureModel));
         canvasModel.addPropertyChangeListener(e -> setData(e, canvasModel));
+        mainCreasePatternWorker.addPropertyChangeListener(e -> setData(e, mainCreasePatternWorker));
         historyState.addPropertyChangeListener(e -> setData(historyState));
 
         setData(historyState);
@@ -1084,7 +1085,6 @@ public class LeftPanel {
 
     public void setData(PropertyChangeEvent e, ApplicationModel data) {
         lineSegmentDivisionTextField.setText(String.valueOf(data.getFoldLineDividingNumber()));
-
         gridLineWidthDecreaseButton.setEnabled(data.getGridLineWidth() != 1);
 
         gridColorButton.setIcon(new ColorIcon(data.getGridColor()));
@@ -1227,5 +1227,12 @@ public class LeftPanel {
 
     public void setData(FoldedFigureModel foldedFigureModel) {
         coloredXRayCheckBox.setSelected(foldedFigureModel.isTransparencyColor());
+    }
+
+    public void setData(PropertyChangeEvent e, CreasePattern_Worker mainCreasePatternWorker) {
+        moveButton.setEnabled(!mainCreasePatternWorker.getIsSelectionEmpty());
+        move2p2pButton.setEnabled(!mainCreasePatternWorker.getIsSelectionEmpty());
+        copyButton.setEnabled(!mainCreasePatternWorker.getIsSelectionEmpty());
+        copy2p2pButton.setEnabled(!mainCreasePatternWorker.getIsSelectionEmpty());
     }
 }
