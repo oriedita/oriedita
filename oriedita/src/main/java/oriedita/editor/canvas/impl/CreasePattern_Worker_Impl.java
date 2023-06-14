@@ -400,6 +400,7 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     public String undo() {
         s_title = setMemo_for_redo_undo(historyState.undo());
         checkIfNecessary();
+        refreshIsSelectionEmpty();
         return s_title;
     }
 
@@ -407,6 +408,7 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     public String redo() {
         s_title = setMemo_for_redo_undo(historyState.redo());
         checkIfNecessary();
+        refreshIsSelectionEmpty();
         return s_title;
     }
 
