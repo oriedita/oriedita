@@ -169,27 +169,13 @@ public class PreferenceDialog extends JDialog {
         setDefaultCloseOperation(HIDE_ON_CLOSE);
         getRootPane().setDefaultButton(buttonOK);
 
-        if (applicationModel.getCheck4ColorTransparency() >= 250) {
-            ck4Plus.setEnabled(false);
-        }
-        if (applicationModel.getCheck4ColorTransparency() <= 50) {
-            ck4Minus.setEnabled(false);
-        }
-        if (applicationModel.getLineWidth() <= 0) {
-            lineWidthMinus.setEnabled(false);
-        }
-        if (applicationModel.getAuxLineWidth() <= 0) {
-            auxLineMinus.setEnabled(false);
-        }
-        if (applicationModel.getPointSize() <= 0) {
-            pointSizeMinus.setEnabled(false);
-        }
-        if (applicationModel.getGridLineWidth() <= 1) {
-            gridWidthMinus.setEnabled(false);
-        }
-        if (!applicationModel.getAnimations()) {
-            animationSpeedSlider.setEnabled(false);
-        }
+        ck4Plus.setEnabled(applicationModel.getCheck4ColorTransparency() < 250);
+        ck4Minus.setEnabled(applicationModel.getCheck4ColorTransparency() > 50);
+        lineWidthMinus.setEnabled(applicationModel.getLineWidth() > 0);
+        auxLineMinus.setEnabled(applicationModel.getAuxLineWidth() > 0);
+        pointSizeMinus.setEnabled(applicationModel.getPointSize() > 0);
+        gridWidthMinus.setEnabled(applicationModel.getGridLineWidth() > 1);
+        animationSpeedSlider.setEnabled(applicationModel.getAnimations());
 
         spotlightCB.addActionListener(e -> applicationModel.setDisplayPointSpotlight(spotlightCB.isSelected()));
         offsetCB.addActionListener(e -> applicationModel.setDisplayPointOffset(offsetCB.isSelected()));
@@ -240,9 +226,7 @@ public class PreferenceDialog extends JDialog {
             if (tempTransparency <= 100) {
                 applicationModel.setCheck4ColorTransparency((tempTransparency / 2) * 5 + 10);
                 tempTransparency += 4;
-                if (tempTransparency >= 100) {
-                    ck4Plus.setEnabled(false);
-                }
+                ck4Plus.setEnabled(tempTransparency < 100);
                 ck4TF.setText(Integer.toString(tempTransparency));
                 ck4Minus.setEnabled(true);
             }
@@ -252,9 +236,7 @@ public class PreferenceDialog extends JDialog {
             if (tempTransparency > 20) {
                 applicationModel.setCheck4ColorTransparency((tempTransparency / 2) * 5 - 10);
                 tempTransparency -= 4;
-                if (tempTransparency <= 20) {
-                    ck4Minus.setEnabled(false);
-                }
+                ck4Minus.setEnabled(tempTransparency > 20);
                 ck4TF.setText(Integer.toString(tempTransparency));
                 ck4Plus.setEnabled(true);
             }
@@ -267,9 +249,7 @@ public class PreferenceDialog extends JDialog {
         lineWidthMinus.addActionListener(e -> {
             if (applicationModel.getLineWidth() > 0) {
                 applicationModel.setLineWidth(Integer.parseInt(lineWidthTF.getText()) - 1);
-                if (applicationModel.getLineWidth() <= 0) {
-                    lineWidthMinus.setEnabled(false);
-                }
+                lineWidthMinus.setEnabled(applicationModel.getLineWidth() > 0);
                 lineWidthTF.setText(Integer.toString(applicationModel.getLineWidth()));
             }
         });
@@ -281,9 +261,7 @@ public class PreferenceDialog extends JDialog {
         auxLineMinus.addActionListener(e -> {
             if (applicationModel.getAuxLineWidth() > 0) {
                 applicationModel.setAuxLineWidth(Integer.parseInt(auxLineTF.getText()) - 1);
-                if (applicationModel.getAuxLineWidth() <= 0) {
-                    auxLineMinus.setEnabled(false);
-                }
+                auxLineMinus.setEnabled(applicationModel.getAuxLineWidth() > 0);
                 auxLineTF.setText(Integer.toString(applicationModel.getAuxLineWidth()));
             }
         });
@@ -295,9 +273,7 @@ public class PreferenceDialog extends JDialog {
         pointSizeMinus.addActionListener(e -> {
             if (applicationModel.getPointSize() > 0) {
                 applicationModel.setPointSize(Integer.parseInt(pointSizeTF.getText()) - 1);
-                if (applicationModel.getPointSize() <= 0) {
-                    pointSizeMinus.setEnabled(false);
-                }
+                pointSizeMinus.setEnabled(applicationModel.getPointSize() > 0);
                 pointSizeTF.setText(Integer.toString(applicationModel.getPointSize()));
             }
         });
@@ -309,9 +285,7 @@ public class PreferenceDialog extends JDialog {
         gridWidthMinus.addActionListener(e -> {
             if (applicationModel.getGridLineWidth() > 0) {
                 applicationModel.setGridLineWidth(Integer.parseInt(gridWidthTF.getText()) - 1);
-                if (applicationModel.getGridLineWidth() <= 1) {
-                    gridWidthMinus.setEnabled(false);
-                }
+                gridWidthMinus.setEnabled(applicationModel.getGridLineWidth() > 1);
                 gridWidthTF.setText(Integer.toString(applicationModel.getGridLineWidth()));
             }
         });
@@ -331,9 +305,7 @@ public class PreferenceDialog extends JDialog {
                 gridScaleColorButton.setIcon(new ColorIcon(applicationModel.getGridScaleColor()));
             }
         });
-        animationSpeedSlider.addChangeListener(e -> {
-            applicationModel.setAnimationSpeed(animationSpeedSlider.getValue() / 8.0);
-        });
+        animationSpeedSlider.addChangeListener(e -> applicationModel.setAnimationSpeed(animationSpeedSlider.getValue() / 8.0));
         lineStyleDropBox.addActionListener(e -> {
             applicationModel.setLineStyle(LineStyle.from(lineStyleDropBox.getSelectedIndex() + 1));
             lineStyleDropBox.setSelectedIndex(applicationModel.getLineStyle().getType() - 1);
