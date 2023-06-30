@@ -793,8 +793,8 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     public void unselect_all(boolean ignorePersistent) {
         if (!applicationModel.getSelectPersistent() || ignorePersistent) {
             foldLineSet.unselect_all();
+            setIsSelectionEmpty(true);
         }
-        setIsSelectionEmpty(true);
     }
 
     public void unselect_all() {
