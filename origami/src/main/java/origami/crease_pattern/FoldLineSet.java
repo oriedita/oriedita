@@ -213,6 +213,17 @@ public class FoldLineSet {
             }
         }
     }
+    
+    public boolean isSelectionEmpty(){
+        for (int i = 1; i <= total; i++) {
+            LineSegment s = lineSegments.get(i);
+            if (s.getSelected() == 2) {
+                //We finish the calculation on the first selected crease in an attempt to finish faster than O(n) in the best case scenario
+                return false;
+            }
+        }
+        return true;
+    }
 
     //The number of broken lines of the line segment set selected for folding estimation is output as an int.
     // Do not count auxiliary lines with icol of 3 (cyan = light blue) or more
@@ -338,15 +349,17 @@ public class FoldLineSet {
         }
     }
 
-    public void select(Polygon p) {
+    public boolean select(Polygon p) {
+        boolean anyLinesSelected = false;
+
         for (int i = 1; i <= total; i++) {
             LineSegment s = lineSegments.get(i);
             if (p.totu_boundary_inside(s)) {
-
                 s.setSelected(2);
-
+                anyLinesSelected = true;
             }
         }
+        return anyLinesSelected;
     }
 
     public void unselect(Polygon p) {

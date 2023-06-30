@@ -47,6 +47,8 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -107,6 +109,7 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     private boolean check2 = false;//=0 check2を実施しない、1=実施する　
     private boolean check3 = false;//=0 check3を実施しない、1=実施する　
     private boolean check4 = false;//=0 check4を実施しない、1=実施する　
+    private boolean isSelectionEmpty;
     //---------------------------------
     private int check4ColorTransparency = 100;
     // ****************************************************************************************************************************************
@@ -116,6 +119,7 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     // Sub-operation mode for MouseMode.FOLDABLE_LINE_DRAW_71, either DRAW_CREASE_FREE_1, or VERTEX_MAKE_ANGULARLY_FLAT_FOLDABLE_38
     //--------------------------------------------
     private CanvasModel.SelectionOperationMode i_select_mode = CanvasModel.SelectionOperationMode.NORMAL_0;//=0は通常のセレクト操作
+    private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
     public CreasePattern_Worker_Impl(Camera creasePatternCamera,
                                      HistoryState normalHistoryState,
@@ -396,6 +400,7 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     public String undo() {
         s_title = setMemo_for_redo_undo(historyState.undo());
         checkIfNecessary();
+        refreshIsSelectionEmpty();
         return s_title;
     }
 
@@ -403,6 +408,7 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     public String redo() {
         s_title = setMemo_for_redo_undo(historyState.redo());
         checkIfNecessary();
+        refreshIsSelectionEmpty();
         return s_title;
     }
 
@@ -758,14 +764,36 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     }
 
     @Override
+    public void setIsSelectionEmpty(boolean isSelectionEmpty){
+        boolean oldIsSelectionEmpty = this.isSelectionEmpty;
+        this.isSelectionEmpty = isSelectionEmpty;
+        this.pcs.firePropertyChange("isSelectionEmpty", oldIsSelectionEmpty, isSelectionEmpty);
+    }
+
+    @Override
+    public boolean getIsSelectionEmpty(){ 
+        return isSelectionEmpty;
+    }
+
+    @Override
+    public void refreshIsSelectionEmpty(){
+        boolean latestState = foldLineSet.isSelectionEmpty();
+        if(latestState != this.isSelectionEmpty){
+            setIsSelectionEmpty(latestState);
+        }
+    }
+
+    @Override
     public void select_all() {
         foldLineSet.select_all();
+        refreshIsSelectionEmpty();
     }
 
     @Override
     public void unselect_all(boolean ignorePersistent) {
         if (!applicationModel.getSelectPersistent() || ignorePersistent) {
             foldLineSet.unselect_all();
+            setIsSelectionEmpty(true);
         }
     }
 
@@ -775,12 +803,16 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
 
     @Override
     public void select(Point p0a, Point p0b) {
-        foldLineSet.select(createBox(p0a, p0b));
+        boolean anyLinesSelected = foldLineSet.select(createBox(p0a, p0b));
+        if(anyLinesSelected) {
+        	setIsSelectionEmpty(false);
+        }
     }
 
     @Override
     public void unselect(Point p0a, Point p0b) {
         foldLineSet.unselect(createBox(p0a, p0b));
+        refreshIsSelectionEmpty();
     }
 
     @Override
@@ -860,6 +892,7 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     @Override
     public void del_selected_senbun() {
         foldLineSet.delSelectedLineSegmentFast();
+        setIsSelectionEmpty(true);
     }
 
     @Override
@@ -1250,5 +1283,15 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     @Override
     public TextWorker getTextWorker() {
         return textWorker;
+    }
+
+    @Override
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+        this.pcs.addPropertyChangeListener(listener);
+    }
+
+    @Override
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
+        this.pcs.removePropertyChangeListener(listener);
     }
 }

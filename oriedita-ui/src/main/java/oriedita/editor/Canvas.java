@@ -143,6 +143,16 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
 
     private CanvasUI canvasUI;
 
+    private static String userWarningMessage = null;
+
+    public static void setUserWarningMessage(String uwm){
+        Canvas.userWarningMessage = uwm;
+    }
+
+    public static void clearUserWarningMessage(){
+        Canvas.userWarningMessage = null;
+    }
+
     public CanvasUI getCanvasImpl() {
         return canvasUI;
     }
@@ -322,6 +332,11 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
 
                     bufferGraphics.drawString(foldingExecutor.getTaskName() + " Under Calculation. If you want to cancel calculation, uncheck [check A + MV]on right side and press the brake button (bicycle brake icon) on lower side.", 10, 69); //この表示内容はvoid kekka_syoriで決められる。
                     bufferGraphics.drawString("計算中。　なお、計算を取り消し通常状態に戻りたいなら、右辺の[check A+MV]のチェックをはずし、ブレーキボタン（下辺の、自転車のブレーキのアイコン）を押す。 ", 10, 83); //この表示内容はvoid kekka_syoriで決められる。
+                }
+
+                if (Canvas.userWarningMessage != null) {
+                    bufferGraphics.setColor(Colors.get(Color.yellow));
+                    bufferGraphics.drawString(Canvas.userWarningMessage, 10, 97);
                 }
 
                 bulletinBoard.draw(bufferGraphics);//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

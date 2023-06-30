@@ -8,6 +8,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import org.tinylog.Logger;
+import oriedita.editor.Canvas;
 import oriedita.editor.Colors;
 import oriedita.editor.FrameProvider;
 import oriedita.editor.action.ActionHandler;
@@ -34,6 +35,7 @@ import oriedita.editor.tools.LookAndFeelUtil;
 import oriedita.editor.tools.StringOp;
 import origami.crease_pattern.element.LineColor;
 import origami.folding.FoldedFigure;
+import origami.crease_pattern.element.LineSegment;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
@@ -53,6 +55,7 @@ import java.awt.Dimension;
 import java.awt.Insets;
 import java.beans.PropertyChangeEvent;
 import java.util.Arrays;
+import java.util.HashMap;
 
 @ApplicationScoped
 public class LeftPanel {
@@ -170,6 +173,8 @@ public class LeftPanel {
     private JComboBox<String> toLineDropBox;
     private JLabel replaceLabel;
 
+    private HashMap<MouseMode, JButton> selectionTransformationToolLookup;
+                                                            
     @Inject
     public LeftPanel(FrameProvider frameProvider,
                      @Named("normal") HistoryState historyState,
@@ -195,6 +200,15 @@ public class LeftPanel {
         this.drawCreaseFreeAction = drawCreaseFreeAction;
         this.foldingService = foldingService;
         this.foldedFiguresList = foldedFiguresList;
+
+        this.selectionTransformationToolLookup  = new HashMap<MouseMode,JButton>();
+
+        this.selectionTransformationToolLookup.put(null                               , deleteSelectedLineSegmentButton);
+        this.selectionTransformationToolLookup.put(MouseMode.DRAW_CREASE_SYMMETRIC_12 ,  reflectButton);
+        this.selectionTransformationToolLookup.put(MouseMode.CREASE_MOVE_21           ,     moveButton);
+        this.selectionTransformationToolLookup.put(MouseMode.CREASE_COPY_22           ,     copyButton);
+        this.selectionTransformationToolLookup.put(MouseMode.CREASE_MOVE_4P_31        , move2p2pButton);
+        this.selectionTransformationToolLookup.put(MouseMode.CREASE_COPY_4P_32        , copy2p2pButton);
     }
 
     public void init() {
@@ -204,6 +218,7 @@ public class LeftPanel {
         gridModel.addPropertyChangeListener(e -> setData(gridModel));
         foldedFigureModel.addPropertyChangeListener(e -> setData(foldedFigureModel));
         canvasModel.addPropertyChangeListener(e -> setData(e, canvasModel));
+        mainCreasePatternWorker.addPropertyChangeListener(e -> setData(e, mainCreasePatternWorker));
         historyState.addPropertyChangeListener(e -> setData(historyState));
 
         setData(historyState);
@@ -1084,7 +1099,6 @@ public class LeftPanel {
 
     public void setData(PropertyChangeEvent e, ApplicationModel data) {
         lineSegmentDivisionTextField.setText(String.valueOf(data.getFoldLineDividingNumber()));
-
         gridLineWidthDecreaseButton.setEnabled(data.getGridLineWidth() != 1);
 
         gridColorButton.setIcon(new ColorIcon(data.getGridColor()));
@@ -1105,7 +1119,53 @@ public class LeftPanel {
         }
     }
 
+    private void refreshButtons(){
+        refreshSelectionButtons();
+    }
+
+    private void resetSelectionButtons(){
+        Logger.info("Resetting Selection Buttons to default");
+        
+        Border defaultBorder = (Border) UIManager.get("Button.border");
+
+        for(JButton sttButton: selectionTransformationToolLookup.values()){
+            sttButton.setBorder(defaultBorder);
+        }
+
+        Canvas.clearUserWarningMessage();
+    }
+
+    private void refreshSelectionButtons(){
+        resetSelectionButtons();
+
+        boolean nonEmptySelection = !mainCreasePatternWorker.getIsSelectionEmpty();
+        
+        for(JButton sttButton: selectionTransformationToolLookup.values()) {
+            sttButton.setEnabled(nonEmptySelection);
+        }
+
+        MouseMode currentMouseMode = this.canvasModel.getMouseMode();
+
+        if(selectionTransformationToolLookup.containsKey(currentMouseMode)){
+
+            JButton sttButton = selectionTransformationToolLookup.get(currentMouseMode);
+            LineBorder highlight = null;
+        
+            if(!nonEmptySelection){
+                highlight = new LineBorder(Color.yellow);
+                Logger.info("Highlight for selection tools has been set to yellow");
+                Canvas.setUserWarningMessage("Selection Transformation Tools depend on crease(s) being selected in advance");
+                sttButton.setBorder(highlight);
+            }
+        }
+    }
+
     public void setData(PropertyChangeEvent e, CanvasModel data) {
+
+        if("mouseMode".equals(e.getPropertyName())){
+            refreshButtons();
+        }
+
         if (e.getPropertyName() == null || e.getPropertyName().equals("mouseMode") || e.getPropertyName().equals("foldLineAdditionalInputMode")) {
             MouseMode m = data.getMouseMode();
             FoldLineAdditionalInputMode f = data.getFoldLineAdditionalInputMode();
@@ -1194,38 +1254,16 @@ public class LeftPanel {
                     break;
             }
         }
-
-        if (e.getPropertyName() == null || e.getPropertyName().equals("selectionOperationMode")) {
-            Border defaultBorder = (Border) UIManager.get("Button.border");
-            moveButton.setBorder(defaultBorder);
-            move2p2pButton.setBorder(defaultBorder);
-            copyButton.setBorder(defaultBorder);
-            copy2p2pButton.setBorder(defaultBorder);
-            reflectButton.setBorder(defaultBorder);
-
-            switch (data.getSelectionOperationMode()) {
-                case MOVE_1:
-                    moveButton.setBorder(new LineBorder(Color.green));
-                    break;
-                case MOVE4P_2:
-                    move2p2pButton.setBorder(new LineBorder(Color.green));
-                    break;
-                case COPY_3:
-                    copyButton.setBorder(new LineBorder(Color.green));
-                    break;
-                case COPY4P_4:
-                    copy2p2pButton.setBorder(new LineBorder(Color.green));
-                    break;
-                case MIRROR_5:
-                    reflectButton.setBorder(new LineBorder(Color.green));
-                    break;
-                default:
-                    break;
-            }
-        }
     }
 
     public void setData(FoldedFigureModel foldedFigureModel) {
         coloredXRayCheckBox.setSelected(foldedFigureModel.isTransparencyColor());
+    }
+
+    public void setData(PropertyChangeEvent e, CreasePattern_Worker mainCreasePatternWorker) {
+        Logger.info(e.toString());
+        if("isSelectionEmpty".equals(e.getPropertyName())){
+            refreshButtons();
+        }
     }
 }

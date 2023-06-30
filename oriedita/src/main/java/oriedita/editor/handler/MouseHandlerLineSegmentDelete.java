@@ -8,6 +8,7 @@ import origami.Epsilon;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
+import org.tinylog.Logger;
 
 @ApplicationScoped
 @Handles(MouseMode.LINE_SEGMENT_DELETE_3)
@@ -24,6 +25,8 @@ public class MouseHandlerLineSegmentDelete extends BaseMouseHandlerBoxSelect {
     //マウス操作(mouseMode==3,23 でボタンを離したとき)を行う関数----------------------------------------------------
     @Override
     public void mouseReleased(Point p0) {//折線と補助活線と円
+        int preDeleteTotalCPLines = d.getTotal();
+
         super.mouseReleased(p0);
         Point p = new Point();
         p.set(d.getCamera().TV2object(p0));
@@ -179,5 +182,10 @@ public class MouseHandlerLineSegmentDelete extends BaseMouseHandlerBoxSelect {
             d.check4();
         }
 
+        if(d.getTotal() < preDeleteTotalCPLines){
+            Logger.info("Num lines before delete: " + preDeleteTotalCPLines + ", Num lines after delete: " + d.getTotal());
+            Logger.info("Refreshing selection buttons");
+            d.refreshIsSelectionEmpty();
+        }
     }
 }
