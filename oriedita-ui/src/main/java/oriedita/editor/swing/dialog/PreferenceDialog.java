@@ -121,7 +121,7 @@ public class PreferenceDialog extends JDialog {
         markingsCB.setSelected(applicationModel.getDisplayMarkings());
         cpOnTopCB.setSelected(applicationModel.getDisplayCreasePatternOnTop());
         foldingProgressCB.setSelected(applicationModel.getDisplayFoldingProgress());
-        foldWarningCB.setSelected(applicationModel.getFoldWarning());
+        foldWarningCB.setSelected(!applicationModel.getFoldWarning());
         toggleHelpCB.setSelected(applicationModel.getHelpVisible());
         darkModeCheckBox.setSelected(applicationModel.getLaf().equals(FlatDarkLaf.class.getName()));
         preciseZoomCB.setSelected(applicationModel.isPreciseZoom());
@@ -188,7 +188,7 @@ public class PreferenceDialog extends JDialog {
         cpOnTopCB.addActionListener(e -> applicationModel.setDisplayCreasePatternOnTop(cpOnTopCB.isSelected()));
         foldingProgressCB.addActionListener(e -> applicationModel.setDisplayFoldingProgress(foldingProgressCB.isSelected()));
         selfIntersectionCB.addActionListener(e -> applicationModel.setDisplaySelfIntersection(selfIntersectionCB.isSelected()));
-        foldWarningCB.addActionListener(e -> applicationModel.setFoldWarning(foldWarningCB.isSelected()));
+        foldWarningCB.addActionListener(e -> applicationModel.setFoldWarning(!foldWarningCB.isSelected()));
         toggleHelpCB.addActionListener(e -> applicationModel.setHelpVisible(toggleHelpCB.isSelected()));
         preciseZoomCB.addActionListener(e -> applicationModel.setPreciseZoom(preciseZoomCB.isSelected()));
         zoomSpeedSlider.addChangeListener(e -> applicationModel.setZoomSpeed(zoomSpeedSlider.getValue() / 10.0));
