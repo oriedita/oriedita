@@ -6,7 +6,7 @@
     </constraints>
     <properties>
       <focusTraversalPolicyProvider value="true"/>
-      <minimumSize width="490" height="400"/>
+      <minimumSize width="490" height="320"/>
       <preferredSize width="-1" height="-1"/>
     </properties>
     <border type="none"/>
@@ -20,7 +20,7 @@
         <properties/>
         <border type="none"/>
         <children>
-          <grid id="9538f" layout-manager="GridLayoutManager" row-count="1" column-count="4" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+          <grid id="9538f" layout-manager="GridLayoutManager" row-count="1" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
             <margin top="0" left="0" bottom="0" right="10"/>
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="6" fill="0" indent="0" use-parent-layout="false"/>
@@ -30,7 +30,7 @@
             <children>
               <component id="e7465" class="javax.swing.JButton" binding="buttonOK">
                 <constraints>
-                  <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
                   <text value="OK"/>
@@ -38,7 +38,7 @@
               </component>
               <component id="5723f" class="javax.swing.JButton" binding="buttonCancel">
                 <constraints>
-                  <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
                   <text value="Cancel"/>
@@ -46,21 +46,12 @@
               </component>
               <component id="9e182" class="javax.swing.JButton" binding="restoreDefaultsButton" default-binding="true">
                 <constraints>
-                  <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
                   <text value="Restore defaults"/>
                 </properties>
               </component>
-              <grid id="9d18e" binding="panels2Panel" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="10" vgap="-1">
-                <margin top="0" left="0" bottom="0" right="0"/>
-                <constraints>
-                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
-                </constraints>
-                <properties/>
-                <border type="none"/>
-                <children/>
-              </grid>
             </children>
           </grid>
         </children>
@@ -72,7 +63,7 @@
           <gridbag weightx="1.0" weighty="1.0"/>
         </constraints>
         <properties>
-          <minimumSize width="507" height="300"/>
+          <minimumSize width="507" height="220"/>
         </properties>
         <border type="none"/>
         <children>
@@ -101,101 +92,19 @@
                     </properties>
                     <border type="none"/>
                     <children>
-                      <component id="2806b" class="javax.swing.JCheckBox" binding="cpLinesCB">
-                        <constraints>
-                          <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false">
-                            <preferred-size width="121" height="21"/>
-                          </grid>
-                          <gridbag top="0" left="10" bottom="0" right="0" weightx="1.0" weighty="1.0"/>
-                        </constraints>
-                        <properties>
-                          <text value="CP lines"/>
-                        </properties>
-                      </component>
-                      <component id="3c501" class="javax.swing.JCheckBox" binding="auxLinesCB">
-                        <constraints>
-                          <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false">
-                            <preferred-size width="121" height="21"/>
-                          </grid>
-                          <gridbag top="0" left="10" bottom="0" right="0" weightx="1.0" weighty="1.0"/>
-                        </constraints>
-                        <properties>
-                          <text value="Aux lines"/>
-                        </properties>
-                      </component>
-                      <component id="96878" class="javax.swing.JCheckBox" binding="liveAuxCB">
-                        <constraints>
-                          <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false">
-                            <preferred-size width="121" height="21"/>
-                          </grid>
-                          <gridbag top="0" left="10" bottom="0" right="0" weightx="1.0" weighty="1.0"/>
-                        </constraints>
-                        <properties>
-                          <text value="Live aux lines"/>
-                        </properties>
-                      </component>
-                      <component id="466b3" class="javax.swing.JCheckBox" binding="markingsCB">
-                        <constraints>
-                          <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false">
-                            <preferred-size width="121" height="21"/>
-                          </grid>
-                          <gridbag top="0" left="10" bottom="0" right="0" weightx="1.0" weighty="1.0"/>
-                        </constraints>
-                        <properties>
-                          <text value="Markings"/>
-                        </properties>
-                      </component>
-                      <component id="2c842" class="javax.swing.JCheckBox" binding="cpOnTopCB">
-                        <constraints>
-                          <grid row="5" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false">
-                            <preferred-size width="121" height="21"/>
-                          </grid>
-                          <gridbag top="0" left="10" bottom="0" right="0" weightx="1.0" weighty="1.0"/>
-                        </constraints>
-                        <properties>
-                          <text value="CP on top"/>
-                        </properties>
-                      </component>
-                      <component id="fc3ed" class="javax.swing.JLabel" binding="mouseLabel">
+                      <component id="7cfff" class="javax.swing.JLabel" binding="CPLabel">
                         <constraints>
                           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                           <gridbag top="0" left="0" bottom="10" right="0" weightx="0.0" weighty="0.0"/>
                         </constraints>
                         <properties>
-                          <text value="Mouse"/>
-                        </properties>
-                      </component>
-                      <component id="7cfff" class="javax.swing.JLabel" binding="CPLabel">
-                        <constraints>
-                          <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                          <gridbag top="0" left="10" bottom="10" right="0" weightx="0.0" weighty="0.0"/>
-                        </constraints>
-                        <properties>
                           <text value="Crease Pattern"/>
-                        </properties>
-                      </component>
-                      <component id="f1bcf" class="javax.swing.JCheckBox" binding="offsetCB">
-                        <constraints>
-                          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                          <gridbag weightx="1.0" weighty="1.0"/>
-                        </constraints>
-                        <properties>
-                          <text value="Point offset"/>
-                        </properties>
-                      </component>
-                      <component id="68aae" class="javax.swing.JCheckBox" binding="inputAssistCB">
-                        <constraints>
-                          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                          <gridbag weightx="1.0" weighty="1.0"/>
-                        </constraints>
-                        <properties>
-                          <text value="Grid input assist"/>
                         </properties>
                       </component>
                       <component id="b92e1" class="javax.swing.JLabel">
                         <constraints>
-                          <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                          <gridbag top="0" left="0" bottom="10" right="0" weightx="0.0" weighty="0.0"/>
+                          <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                          <gridbag top="0" left="10" bottom="10" right="0" weightx="0.0" weighty="0.0"/>
                         </constraints>
                         <properties>
                           <text value="Miscellaneous"/>
@@ -203,8 +112,8 @@
                       </component>
                       <component id="ef21a" class="javax.swing.JCheckBox" binding="commentCB">
                         <constraints>
-                          <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                          <gridbag weightx="1.0" weighty="1.0"/>
+                          <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                          <gridbag top="0" left="10" bottom="0" right="0" weightx="1.0" weighty="1.0"/>
                         </constraints>
                         <properties>
                           <text value="Comment"/>
@@ -212,8 +121,8 @@
                       </component>
                       <component id="540b0" class="javax.swing.JCheckBox" binding="foldingProgressCB">
                         <constraints>
-                          <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                          <gridbag weightx="1.0" weighty="1.0"/>
+                          <grid row="3" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                          <gridbag top="0" left="10" bottom="0" right="0" weightx="1.0" weighty="1.0"/>
                         </constraints>
                         <properties>
                           <text value="Folding progress"/>
@@ -221,8 +130,8 @@
                       </component>
                       <component id="a5318" class="javax.swing.JCheckBox" binding="selfIntersectionCB">
                         <constraints>
-                          <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                          <gridbag weightx="1.0" weighty="1.0"/>
+                          <grid row="4" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                          <gridbag top="0" left="10" bottom="0" right="0" weightx="1.0" weighty="1.0"/>
                         </constraints>
                         <properties>
                           <text value="Self intersection"/>
@@ -230,8 +139,8 @@
                       </component>
                       <component id="9c138" class="javax.swing.JCheckBox" binding="foldWarningCB">
                         <constraints>
-                          <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="2" indent="0" use-parent-layout="false"/>
-                          <gridbag weightx="1.0" weighty="1.0"/>
+                          <grid row="5" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="2" indent="0" use-parent-layout="false"/>
+                          <gridbag top="0" left="10" bottom="0" right="0" weightx="1.0" weighty="1.0"/>
                         </constraints>
                         <properties>
                           <text value="Fold warning"/>
@@ -239,8 +148,8 @@
                       </component>
                       <component id="c78a6" class="javax.swing.JCheckBox" binding="toggleHelpCB">
                         <constraints>
-                          <grid row="9" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                          <gridbag weightx="1.0" weighty="1.0"/>
+                          <grid row="6" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                          <gridbag top="0" left="10" bottom="0" right="0" weightx="1.0" weighty="1.0"/>
                         </constraints>
                         <properties>
                           <text value="Help dialog"/>
@@ -248,16 +157,25 @@
                       </component>
                       <component id="b7a1a" class="javax.swing.JLabel">
                         <constraints>
-                          <grid row="7" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                          <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                           <gridbag top="0" left="10" bottom="10" right="0" weightx="0.0" weighty="0.0"/>
                         </constraints>
                         <properties>
                           <text value="Panels"/>
                         </properties>
                       </component>
+                      <component id="68aae" class="javax.swing.JCheckBox" binding="inputAssistCB">
+                        <constraints>
+                          <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                          <gridbag top="0" left="10" bottom="0" right="0" weightx="0.0" weighty="0.0"/>
+                        </constraints>
+                        <properties>
+                          <text value="Grid input assist"/>
+                        </properties>
+                      </component>
                       <component id="94a20" class="javax.swing.JCheckBox" binding="topPanelCB">
                         <constraints>
-                          <grid row="8" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                          <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                           <gridbag top="0" left="10" bottom="0" right="0" weightx="0.0" weighty="0.0"/>
                         </constraints>
                         <properties>
@@ -266,7 +184,7 @@
                       </component>
                       <component id="2b8bb" class="javax.swing.JCheckBox" binding="bottomPanelCB">
                         <constraints>
-                          <grid row="9" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                          <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                           <gridbag top="0" left="10" bottom="0" right="0" weightx="0.0" weighty="0.0"/>
                         </constraints>
                         <properties>
@@ -275,7 +193,7 @@
                       </component>
                       <component id="8a4d2" class="javax.swing.JCheckBox" binding="leftPanelCB">
                         <constraints>
-                          <grid row="10" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                          <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                           <gridbag top="0" left="10" bottom="0" right="0" weightx="0.0" weighty="0.0"/>
                         </constraints>
                         <properties>
@@ -284,11 +202,66 @@
                       </component>
                       <component id="192b5" class="javax.swing.JCheckBox" binding="rightPanelCB">
                         <constraints>
-                          <grid row="11" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                          <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                           <gridbag top="0" left="10" bottom="0" right="0" weightx="0.0" weighty="0.0"/>
                         </constraints>
                         <properties>
                           <text value="Right panel"/>
+                        </properties>
+                      </component>
+                      <component id="2806b" class="javax.swing.JCheckBox" binding="cpLinesCB">
+                        <constraints>
+                          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false">
+                            <preferred-size width="121" height="21"/>
+                          </grid>
+                          <gridbag weightx="1.0" weighty="1.0"/>
+                        </constraints>
+                        <properties>
+                          <text value="CP lines"/>
+                        </properties>
+                      </component>
+                      <component id="3c501" class="javax.swing.JCheckBox" binding="auxLinesCB">
+                        <constraints>
+                          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false">
+                            <preferred-size width="121" height="21"/>
+                          </grid>
+                          <gridbag weightx="1.0" weighty="1.0"/>
+                        </constraints>
+                        <properties>
+                          <text value="Aux lines"/>
+                        </properties>
+                      </component>
+                      <component id="96878" class="javax.swing.JCheckBox" binding="liveAuxCB">
+                        <constraints>
+                          <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false">
+                            <preferred-size width="121" height="21"/>
+                          </grid>
+                          <gridbag weightx="1.0" weighty="1.0"/>
+                        </constraints>
+                        <properties>
+                          <text value="Live aux lines"/>
+                        </properties>
+                      </component>
+                      <component id="466b3" class="javax.swing.JCheckBox" binding="markingsCB">
+                        <constraints>
+                          <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false">
+                            <preferred-size width="121" height="21"/>
+                          </grid>
+                          <gridbag weightx="1.0" weighty="1.0"/>
+                        </constraints>
+                        <properties>
+                          <text value="Markings"/>
+                        </properties>
+                      </component>
+                      <component id="2c842" class="javax.swing.JCheckBox" binding="cpOnTopCB">
+                        <constraints>
+                          <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false">
+                            <preferred-size width="121" height="21"/>
+                          </grid>
+                          <gridbag weightx="1.0" weighty="1.0"/>
+                        </constraints>
+                        <properties>
+                          <text value="CP on top"/>
                         </properties>
                       </component>
                     </children>
@@ -624,7 +597,7 @@
                     <children>
                       <component id="dd339" class="javax.swing.JSlider" binding="zoomSpeedSlider" custom-create="true">
                         <constraints>
-                          <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                          <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                           <gridbag weightx="1.0" weighty="1.0"/>
                         </constraints>
                         <properties>
@@ -639,7 +612,7 @@
                       </component>
                       <component id="d167e" class="javax.swing.JSlider" binding="mouseRangeSlider">
                         <constraints>
-                          <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+                          <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
                           <gridbag weightx="1.0" weighty="1.0"/>
                         </constraints>
                         <properties>
@@ -650,7 +623,7 @@
                       </component>
                       <component id="e3092" class="javax.swing.JSlider" binding="animationSpeedSlider" custom-create="true">
                         <constraints>
-                          <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+                          <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
                           <gridbag weightx="1.0" weighty="1.0"/>
                         </constraints>
                         <properties>
@@ -665,7 +638,7 @@
                       </component>
                       <component id="d905" class="javax.swing.JCheckBox" binding="checkBoxAnimation">
                         <constraints>
-                          <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                          <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                           <gridbag weightx="0.0" weighty="1.0"/>
                         </constraints>
                         <properties>
@@ -674,7 +647,7 @@
                       </component>
                       <component id="5fc92" class="javax.swing.JCheckBox" binding="preciseZoomCB">
                         <constraints>
-                          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                          <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                           <gridbag weightx="0.0" weighty="1.0"/>
                         </constraints>
                         <properties>
@@ -683,7 +656,7 @@
                       </component>
                       <component id="9afbf" class="javax.swing.JCheckBox" binding="mousewheelMovesCPCB">
                         <constraints>
-                          <grid row="0" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                          <grid row="1" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                           <gridbag top="0" left="0" bottom="10" right="0" weightx="0.0" weighty="1.0"/>
                         </constraints>
                         <properties>
@@ -692,11 +665,20 @@
                       </component>
                       <component id="824b8" class="javax.swing.JCheckBox" binding="spotlightCB">
                         <constraints>
-                          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                           <gridbag weightx="1.0" weighty="1.0"/>
                         </constraints>
                         <properties>
                           <text value="Selection range"/>
+                        </properties>
+                      </component>
+                      <component id="f1bcf" class="javax.swing.JCheckBox" binding="offsetCB">
+                        <constraints>
+                          <grid row="0" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                          <gridbag weightx="1.0" weighty="1.0"/>
+                        </constraints>
+                        <properties>
+                          <text value="Offset mouse"/>
                         </properties>
                       </component>
                     </children>
