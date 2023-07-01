@@ -254,9 +254,9 @@ public class AppMenuBar {
             if(preferenceDialog == null){
                 preferenceDialog = new PreferenceDialog(applicationModel, lookAndFeelService, frameProvider, foldedFigureModel, "Preferences", frameProvider.get());
             }
-            preferenceDialog.setSize(preferenceDialog.getRootPane().getMinimumSize());
+            preferenceDialog.setSize(preferenceDialog.getRootPane().getPreferredSize());
             preferenceDialog.setMinimumSize(preferenceDialog.getRootPane().getMinimumSize());
-            preferenceDialog.setResizable(true);
+            preferenceDialog.setResizable(false);
             preferenceDialog.setData(applicationModel);
             preferenceDialog.setLocationRelativeTo(prefButton);
             preferenceDialog.setAlwaysOnTop(false);
