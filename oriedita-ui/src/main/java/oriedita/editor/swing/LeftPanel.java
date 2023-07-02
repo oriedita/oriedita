@@ -53,6 +53,8 @@ import javax.swing.border.LineBorder;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Insets;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.beans.PropertyChangeEvent;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -174,7 +176,7 @@ public class LeftPanel {
     private JLabel replaceLabel;
 
     private HashMap<MouseMode, JButton> selectionTransformationToolLookup;
-                                                            
+
     @Inject
     public LeftPanel(FrameProvider frameProvider,
                      @Named("normal") HistoryState historyState,
@@ -201,14 +203,14 @@ public class LeftPanel {
         this.foldingService = foldingService;
         this.foldedFiguresList = foldedFiguresList;
 
-        this.selectionTransformationToolLookup  = new HashMap<MouseMode,JButton>();
+        this.selectionTransformationToolLookup = new HashMap<MouseMode, JButton>();
 
-        this.selectionTransformationToolLookup.put(null                               , deleteSelectedLineSegmentButton);
-        this.selectionTransformationToolLookup.put(MouseMode.DRAW_CREASE_SYMMETRIC_12 ,  reflectButton);
-        this.selectionTransformationToolLookup.put(MouseMode.CREASE_MOVE_21           ,     moveButton);
-        this.selectionTransformationToolLookup.put(MouseMode.CREASE_COPY_22           ,     copyButton);
-        this.selectionTransformationToolLookup.put(MouseMode.CREASE_MOVE_4P_31        , move2p2pButton);
-        this.selectionTransformationToolLookup.put(MouseMode.CREASE_COPY_4P_32        , copy2p2pButton);
+        this.selectionTransformationToolLookup.put(null, deleteSelectedLineSegmentButton);
+        this.selectionTransformationToolLookup.put(MouseMode.DRAW_CREASE_SYMMETRIC_12, reflectButton);
+        this.selectionTransformationToolLookup.put(MouseMode.CREASE_MOVE_21, moveButton);
+        this.selectionTransformationToolLookup.put(MouseMode.CREASE_COPY_22, copyButton);
+        this.selectionTransformationToolLookup.put(MouseMode.CREASE_MOVE_4P_31, move2p2pButton);
+        this.selectionTransformationToolLookup.put(MouseMode.CREASE_COPY_4P_32, copy2p2pButton);
     }
 
     public void init() {
@@ -387,6 +389,16 @@ public class LeftPanel {
         lineSegmentDivisionTextField.addActionListener(e -> lineSegmentDivisionSetButton.doClick());
         lineSegmentDivisionTextField.getDocument().addDocumentListener(new OnlyIntAdapter(lineSegmentDivisionTextField));
         lineSegmentDivisionTextField.addKeyListener(new InputEnterKeyAdapter(lineSegmentDivisionTextField));
+        lineSegmentDivisionTextField.addFocusListener(new FocusListener() {
+            @Override
+            public void focusGained(FocusEvent e) {
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                getData(applicationModel);
+            }
+        });
         senbun_b_nyuryokuButton.addActionListener(e -> {
             getData(applicationModel);
 
@@ -540,6 +552,16 @@ public class LeftPanel {
         gridSizeTextField.addActionListener(e -> gridSizeSetButton.doClick());
         gridSizeTextField.getDocument().addDocumentListener(new OnlyIntAdapter(gridSizeTextField));
         gridSizeTextField.addKeyListener(new InputEnterKeyAdapter(gridSizeTextField));
+        gridSizeTextField.addFocusListener(new FocusListener() {
+            @Override
+            public void focusGained(FocusEvent e) {
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                gridModel.setGridSize(StringOp.String2int(gridSizeTextField.getText(), gridModel.getGridSize()));
+            }
+        });
         gridSizeIncreaseButton.addActionListener(e -> gridModel.setGridSize(gridModel.getGridSize() * 2));
         gridColorButton.addActionListener(e -> {
             //以下にやりたいことを書く
@@ -557,6 +579,16 @@ public class LeftPanel {
         intervalGridSizeTextField.addActionListener(e -> setIntervalGridSizeButton.doClick());
         intervalGridSizeTextField.getDocument().addDocumentListener(new OnlyIntAdapter(intervalGridSizeTextField));
         intervalGridSizeTextField.addKeyListener(new InputEnterKeyAdapter(intervalGridSizeTextField));
+        intervalGridSizeTextField.addFocusListener(new FocusListener() {
+            @Override
+            public void focusGained(FocusEvent e) {
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                gridModel.setIntervalGridSize(StringOp.String2int(intervalGridSizeTextField.getText(), gridModel.getIntervalGridSize()));
+            }
+        });
         moveIntervalGridHorizontal.addActionListener(e -> gridModel.changeVerticalScalePosition());
         intervalGridColorButton.addActionListener(e -> {
             //以下にやりたいことを書く
@@ -567,16 +599,76 @@ public class LeftPanel {
         });
         gridXATextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(gridXATextField));
         gridXATextField.addKeyListener(new InputEnterKeyAdapter(gridXATextField));
+        gridXATextField.addFocusListener(new FocusListener() {
+            @Override
+            public void focusGained(FocusEvent e) {
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                gridModel.setGridXA(measuresModel.string2double(gridXATextField.getText(), gridModel.getGridXA()));
+            }
+        });
         gridXBTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(gridXBTextField));
         gridXBTextField.addKeyListener(new InputEnterKeyAdapter(gridXBTextField));
+        gridXBTextField.addFocusListener(new FocusListener() {
+            @Override
+            public void focusGained(FocusEvent e) {
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                gridModel.setGridXB(measuresModel.string2double(gridXBTextField.getText(), gridModel.getGridXB()));
+            }
+        });
         gridXCTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(gridXCTextField));
         gridXCTextField.addKeyListener(new InputEnterKeyAdapter(gridXCTextField));
+        gridXCTextField.addFocusListener(new FocusListener() {
+            @Override
+            public void focusGained(FocusEvent e) {
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                gridModel.setGridXC(measuresModel.string2double(gridXCTextField.getText(), gridModel.getGridXC()));
+            }
+        });
         gridYATextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(gridYATextField));
         gridYATextField.addKeyListener(new InputEnterKeyAdapter(gridYATextField));
+        gridYATextField.addFocusListener(new FocusListener() {
+            @Override
+            public void focusGained(FocusEvent e) {
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                gridModel.setGridYA(measuresModel.string2double(gridYATextField.getText(), gridModel.getGridYA()));
+            }
+        });
         gridYBTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(gridYBTextField));
         gridYBTextField.addKeyListener(new InputEnterKeyAdapter(gridYBTextField));
+        gridYBTextField.addFocusListener(new FocusListener() {
+            @Override
+            public void focusGained(FocusEvent e) {
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                gridModel.setGridYB(measuresModel.string2double(gridYBTextField.getText(), gridModel.getGridYB()));
+            }
+        });
         gridYCTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(gridYCTextField));
         gridYCTextField.addKeyListener(new InputEnterKeyAdapter(gridYCTextField));
+        gridYCTextField.addFocusListener(new FocusListener() {
+            @Override
+            public void focusGained(FocusEvent e) {
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                gridModel.setGridYC(measuresModel.string2double(gridYCTextField.getText(), gridModel.getGridYC()));
+            }
+        });
         setGridParametersButton.addActionListener(e -> {
             getData(gridModel);
             // Update the view if the grid angle got reset
@@ -585,6 +677,16 @@ public class LeftPanel {
         gridAngleTextField.addActionListener(e -> setGridParametersButton.doClick());
         gridAngleTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(gridAngleTextField));
         gridAngleTextField.addKeyListener(new InputEnterKeyAdapter(gridAngleTextField));
+        gridAngleTextField.addFocusListener(new FocusListener() {
+            @Override
+            public void focusGained(FocusEvent e) {
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                gridModel.setGridAngle(measuresModel.string2double(gridAngleTextField.getText(), gridModel.getGridAngle()));
+            }
+        });
         resetGridButton.addActionListener(e -> gridModel.reset());
         drawDiagonalGridlinesCheckBox.addActionListener(e -> gridModel.setDrawDiagonalGridlines(drawDiagonalGridlinesCheckBox.isSelected()));
     }
@@ -1119,39 +1221,39 @@ public class LeftPanel {
         }
     }
 
-    private void refreshButtons(){
+    private void refreshButtons() {
         refreshSelectionButtons();
     }
 
-    private void resetSelectionButtons(){
+    private void resetSelectionButtons() {
         Logger.info("Resetting Selection Buttons to default");
-        
+
         Border defaultBorder = (Border) UIManager.get("Button.border");
 
-        for(JButton sttButton: selectionTransformationToolLookup.values()){
+        for (JButton sttButton : selectionTransformationToolLookup.values()) {
             sttButton.setBorder(defaultBorder);
         }
 
         Canvas.clearUserWarningMessage();
     }
 
-    private void refreshSelectionButtons(){
+    private void refreshSelectionButtons() {
         resetSelectionButtons();
 
         boolean nonEmptySelection = !mainCreasePatternWorker.getIsSelectionEmpty();
-        
-        for(JButton sttButton: selectionTransformationToolLookup.values()) {
+
+        for (JButton sttButton : selectionTransformationToolLookup.values()) {
             sttButton.setEnabled(nonEmptySelection);
         }
 
         MouseMode currentMouseMode = this.canvasModel.getMouseMode();
 
-        if(selectionTransformationToolLookup.containsKey(currentMouseMode)){
+        if (selectionTransformationToolLookup.containsKey(currentMouseMode)) {
 
             JButton sttButton = selectionTransformationToolLookup.get(currentMouseMode);
             LineBorder highlight = null;
-        
-            if(!nonEmptySelection){
+
+            if (!nonEmptySelection) {
                 highlight = new LineBorder(Color.yellow);
                 Logger.info("Highlight for selection tools has been set to yellow");
                 Canvas.setUserWarningMessage("Selection Transformation Tools depend on crease(s) being selected in advance");
@@ -1162,7 +1264,7 @@ public class LeftPanel {
 
     public void setData(PropertyChangeEvent e, CanvasModel data) {
 
-        if("mouseMode".equals(e.getPropertyName())){
+        if ("mouseMode".equals(e.getPropertyName())) {
             refreshButtons();
         }
 
@@ -1262,7 +1364,7 @@ public class LeftPanel {
 
     public void setData(PropertyChangeEvent e, CreasePattern_Worker mainCreasePatternWorker) {
         Logger.info(e.toString());
-        if("isSelectionEmpty".equals(e.getPropertyName())){
+        if ("isSelectionEmpty".equals(e.getPropertyName())) {
             refreshButtons();
         }
     }

@@ -17,6 +17,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import java.awt.Dimension;
 import java.awt.Insets;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 
 public class FoldedFigureRotate extends JPanel {
     private JButton foldedFigureRotateAntiClockwiseButton;
@@ -52,6 +54,16 @@ public class FoldedFigureRotate extends JPanel {
         foldedFigureRotateTextField.addActionListener(e -> foldedFigureRotateSetButton.doClick());
         foldedFigureRotateTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(foldedFigureRotateTextField));
         foldedFigureRotateTextField.addKeyListener(new InputEnterKeyAdapter(foldedFigureRotateTextField));
+        foldedFigureRotateTextField.addFocusListener(new FocusListener() {
+            @Override
+            public void focusGained(FocusEvent e) {
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                foldedFigureModel.setRotation(OritaCalc.angle_between_m180_180(measuresModel.string2double(foldedFigureRotateTextField.getText(), foldedFigureModel.getRotation())));
+            }
+        });
     }
 
     public void setText(String text) {
