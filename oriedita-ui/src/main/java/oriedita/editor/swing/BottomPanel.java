@@ -142,37 +142,6 @@ public class BottomPanel {
         goToFoldedFigureTextField.addActionListener(e -> goToFoldedFigureButton.doClick());
         goToFoldedFigureTextField.getDocument().addDocumentListener(new OnlyIntAdapter(goToFoldedFigureTextField));
         goToFoldedFigureTextField.addKeyListener(new InputEnterKeyAdapter(goToFoldedFigureTextField));
-        goToFoldedFigureTextField.addFocusListener(new FocusListener() {
-            @Override
-            public void focusGained(FocusEvent e) {
-            }
-
-            @Override
-            public void focusLost(FocusEvent e) {
-                int foldedCases_old = foldedFigureModel.getFoldedCases();
-                int newFoldedCases = StringOp.String2int(goToFoldedFigureTextField.getText(), foldedCases_old);
-                if (newFoldedCases < 1) {
-                    newFoldedCases = 1;
-                }
-
-                foldedFigureModel.setFoldedCases(newFoldedCases);
-
-                FoldedFigure_Drawer selectedFigure = foldedFiguresList.getActiveItem();
-
-                if (selectedFigure == null) {
-                    return;
-                }
-
-                selectedFigure.getFoldedFigure().estimationOrder = FoldedFigure.EstimationOrder.ORDER_6;
-
-                if (foldedFigureModel.getFoldedCases() < selectedFigure.getFoldedFigure().discovered_fold_cases) {
-                    selectedFigure.getFoldedFigure().estimationOrder = FoldedFigure.EstimationOrder.ORDER_51;    //i_suitei_meirei=51はoritatami_suiteiの最初の推定図用カメラの設定は素通りするための設定。推定図用カメラの設定を素通りしたら、i_suitei_meirei=5に変更される。
-                    //1例目の折り上がり予想はi_suitei_meirei=5を指定、2例目以降の折り上がり予想はi_suitei_meirei=6で実施される
-                }
-
-                taskService.executeFoldingEstimateSpecificTask();
-            }
-        });
         constraintButton.addActionListener(e -> canvasModel.setMouseMode(MouseMode.ADD_FOLDING_CONSTRAINT));
 
         undoRedo.addUndoActionListener(e -> {
