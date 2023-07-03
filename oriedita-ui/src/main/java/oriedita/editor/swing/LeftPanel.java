@@ -53,8 +53,8 @@ import javax.swing.border.LineBorder;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Insets;
+import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 import java.beans.PropertyChangeEvent;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -389,11 +389,7 @@ public class LeftPanel {
         lineSegmentDivisionTextField.addActionListener(e -> lineSegmentDivisionSetButton.doClick());
         lineSegmentDivisionTextField.getDocument().addDocumentListener(new OnlyIntAdapter(lineSegmentDivisionTextField));
         lineSegmentDivisionTextField.addKeyListener(new InputEnterKeyAdapter(lineSegmentDivisionTextField));
-        lineSegmentDivisionTextField.addFocusListener(new FocusListener() {
-            @Override
-            public void focusGained(FocusEvent e) {
-            }
-
+        lineSegmentDivisionTextField.addFocusListener(new FocusAdapter() {
             @Override
             public void focusLost(FocusEvent e) {
                 getData(applicationModel);
@@ -552,11 +548,7 @@ public class LeftPanel {
         gridSizeTextField.addActionListener(e -> gridSizeSetButton.doClick());
         gridSizeTextField.getDocument().addDocumentListener(new OnlyIntAdapter(gridSizeTextField));
         gridSizeTextField.addKeyListener(new InputEnterKeyAdapter(gridSizeTextField));
-        gridSizeTextField.addFocusListener(new FocusListener() {
-            @Override
-            public void focusGained(FocusEvent e) {
-            }
-
+        gridSizeTextField.addFocusListener(new FocusAdapter() {
             @Override
             public void focusLost(FocusEvent e) {
                 gridModel.setGridSize(StringOp.String2int(gridSizeTextField.getText(), gridModel.getGridSize()));
@@ -579,11 +571,7 @@ public class LeftPanel {
         intervalGridSizeTextField.addActionListener(e -> setIntervalGridSizeButton.doClick());
         intervalGridSizeTextField.getDocument().addDocumentListener(new OnlyIntAdapter(intervalGridSizeTextField));
         intervalGridSizeTextField.addKeyListener(new InputEnterKeyAdapter(intervalGridSizeTextField));
-        intervalGridSizeTextField.addFocusListener(new FocusListener() {
-            @Override
-            public void focusGained(FocusEvent e) {
-            }
-
+        intervalGridSizeTextField.addFocusListener(new FocusAdapter() {
             @Override
             public void focusLost(FocusEvent e) {
                 gridModel.setIntervalGridSize(StringOp.String2int(intervalGridSizeTextField.getText(), gridModel.getIntervalGridSize()));
@@ -599,11 +587,7 @@ public class LeftPanel {
         });
         gridXATextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(gridXATextField));
         gridXATextField.addKeyListener(new InputEnterKeyAdapter(gridXATextField));
-        gridXATextField.addFocusListener(new FocusListener() {
-            @Override
-            public void focusGained(FocusEvent e) {
-            }
-
+        gridXATextField.addFocusListener(new FocusAdapter() {
             @Override
             public void focusLost(FocusEvent e) {
                 gridModel.setGridXA(measuresModel.string2double(gridXATextField.getText(), gridModel.getGridXA()));
@@ -611,11 +595,7 @@ public class LeftPanel {
         });
         gridXBTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(gridXBTextField));
         gridXBTextField.addKeyListener(new InputEnterKeyAdapter(gridXBTextField));
-        gridXBTextField.addFocusListener(new FocusListener() {
-            @Override
-            public void focusGained(FocusEvent e) {
-            }
-
+        gridXBTextField.addFocusListener(new FocusAdapter() {
             @Override
             public void focusLost(FocusEvent e) {
                 gridModel.setGridXB(measuresModel.string2double(gridXBTextField.getText(), gridModel.getGridXB()));
@@ -623,11 +603,7 @@ public class LeftPanel {
         });
         gridXCTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(gridXCTextField));
         gridXCTextField.addKeyListener(new InputEnterKeyAdapter(gridXCTextField));
-        gridXCTextField.addFocusListener(new FocusListener() {
-            @Override
-            public void focusGained(FocusEvent e) {
-            }
-
+        gridXCTextField.addFocusListener(new FocusAdapter() {
             @Override
             public void focusLost(FocusEvent e) {
                 gridModel.setGridXC(measuresModel.string2double(gridXCTextField.getText(), gridModel.getGridXC()));
@@ -635,11 +611,7 @@ public class LeftPanel {
         });
         gridYATextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(gridYATextField));
         gridYATextField.addKeyListener(new InputEnterKeyAdapter(gridYATextField));
-        gridYATextField.addFocusListener(new FocusListener() {
-            @Override
-            public void focusGained(FocusEvent e) {
-            }
-
+        gridYATextField.addFocusListener(new FocusAdapter() {
             @Override
             public void focusLost(FocusEvent e) {
                 gridModel.setGridYA(measuresModel.string2double(gridYATextField.getText(), gridModel.getGridYA()));
@@ -647,11 +619,7 @@ public class LeftPanel {
         });
         gridYBTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(gridYBTextField));
         gridYBTextField.addKeyListener(new InputEnterKeyAdapter(gridYBTextField));
-        gridYBTextField.addFocusListener(new FocusListener() {
-            @Override
-            public void focusGained(FocusEvent e) {
-            }
-
+        gridYBTextField.addFocusListener(new FocusAdapter() {
             @Override
             public void focusLost(FocusEvent e) {
                 gridModel.setGridYB(measuresModel.string2double(gridYBTextField.getText(), gridModel.getGridYB()));
@@ -659,11 +627,7 @@ public class LeftPanel {
         });
         gridYCTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(gridYCTextField));
         gridYCTextField.addKeyListener(new InputEnterKeyAdapter(gridYCTextField));
-        gridYCTextField.addFocusListener(new FocusListener() {
-            @Override
-            public void focusGained(FocusEvent e) {
-            }
-
+        gridYCTextField.addFocusListener(new FocusAdapter() {
             @Override
             public void focusLost(FocusEvent e) {
                 gridModel.setGridYC(measuresModel.string2double(gridYCTextField.getText(), gridModel.getGridYC()));
@@ -677,11 +641,7 @@ public class LeftPanel {
         gridAngleTextField.addActionListener(e -> setGridParametersButton.doClick());
         gridAngleTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(gridAngleTextField));
         gridAngleTextField.addKeyListener(new InputEnterKeyAdapter(gridAngleTextField));
-        gridAngleTextField.addFocusListener(new FocusListener() {
-            @Override
-            public void focusGained(FocusEvent e) {
-            }
-
+        gridAngleTextField.addFocusListener(new FocusAdapter() {
             @Override
             public void focusLost(FocusEvent e) {
                 gridModel.setGridAngle(measuresModel.string2double(gridAngleTextField.getText(), gridModel.getGridAngle()));

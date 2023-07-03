@@ -19,6 +19,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import java.awt.Dimension;
 import java.awt.Insets;
+import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 
@@ -58,11 +59,7 @@ public class FoldedFigureResize extends JPanel {
         foldedFigureSizeTextField.addActionListener(e -> foldedFigureSizeSetButton.doClick());
         foldedFigureSizeTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(foldedFigureSizeTextField));
         foldedFigureSizeTextField.addKeyListener(new InputEnterKeyAdapter(foldedFigureSizeTextField));
-        foldedFigureSizeTextField.addFocusListener(new FocusListener() {
-            @Override
-            public void focusGained(FocusEvent e) {
-            }
-
+        foldedFigureSizeTextField.addFocusListener(new FocusAdapter() {
             @Override
             public void focusLost(FocusEvent e) {
                 animationService.animate(Animations.ZOOM_FOLDED_MODEL, foldedFigureModel::setScale, foldedFigureModel::getScale,

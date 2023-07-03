@@ -30,8 +30,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import java.awt.Dimension;
 import java.awt.Insets;
+import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
@@ -137,11 +137,7 @@ public class TopPanel implements PropertyChangeListener {
 
         ratioATextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(ratioATextField));
         ratioATextField.addKeyListener(new InputEnterKeyAdapter(ratioATextField));
-        ratioATextField.addFocusListener(new FocusListener() {
-            @Override
-            public void focusGained(FocusEvent e) {
-            }
-
+        ratioATextField.addFocusListener(new FocusAdapter() {
             @Override
             public void focusLost(FocusEvent e) {
                 internalDivisionRatioModel.setInternalDivisionRatioA(measuresModel.string2double(internalDivisionRatioModel.getDisplayInternalDivisionRatioA(), internalDivisionRatioModel.getInternalDivisionRatioA()));
@@ -149,11 +145,7 @@ public class TopPanel implements PropertyChangeListener {
         });
         ratioBTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(ratioBTextField));
         ratioBTextField.addKeyListener(new InputEnterKeyAdapter(ratioBTextField));
-        ratioBTextField.addFocusListener(new FocusListener() {
-            @Override
-            public void focusGained(FocusEvent e) {
-            }
-
+        ratioBTextField.addFocusListener(new FocusAdapter() {
             @Override
             public void focusLost(FocusEvent e) {
                 internalDivisionRatioModel.setInternalDivisionRatioB(measuresModel.string2double(internalDivisionRatioModel.getDisplayInternalDivisionRatioB(), internalDivisionRatioModel.getInternalDivisionRatioB()));
@@ -161,11 +153,7 @@ public class TopPanel implements PropertyChangeListener {
         });
         ratioCTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(ratioCTextField));
         ratioCTextField.addKeyListener(new InputEnterKeyAdapter(ratioCTextField));
-        ratioCTextField.addFocusListener(new FocusListener() {
-            @Override
-            public void focusGained(FocusEvent e) {
-            }
-
+        ratioCTextField.addFocusListener(new FocusAdapter() {
             @Override
             public void focusLost(FocusEvent e) {
                 internalDivisionRatioModel.setInternalDivisionRatioC(measuresModel.string2double(internalDivisionRatioModel.getDisplayInternalDivisionRatioC(), internalDivisionRatioModel.getInternalDivisionRatioC()));
@@ -173,11 +161,7 @@ public class TopPanel implements PropertyChangeListener {
         });
         ratioDTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(ratioDTextField));
         ratioDTextField.addKeyListener(new InputEnterKeyAdapter(ratioDTextField));
-        ratioDTextField.addFocusListener(new FocusListener() {
-            @Override
-            public void focusGained(FocusEvent e) {
-            }
-
+        ratioDTextField.addFocusListener(new FocusAdapter() {
             @Override
             public void focusLost(FocusEvent e) {
                 internalDivisionRatioModel.setInternalDivisionRatioD(measuresModel.string2double(internalDivisionRatioModel.getDisplayInternalDivisionRatioD(), internalDivisionRatioModel.getInternalDivisionRatioD()));
@@ -185,11 +169,7 @@ public class TopPanel implements PropertyChangeListener {
         });
         ratioETextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(ratioETextField));
         ratioETextField.addKeyListener(new InputEnterKeyAdapter(ratioETextField));
-        ratioETextField.addFocusListener(new FocusListener() {
-            @Override
-            public void focusGained(FocusEvent e) {
-            }
-
+        ratioETextField.addFocusListener(new FocusAdapter() {
             @Override
             public void focusLost(FocusEvent e) {
                 internalDivisionRatioModel.setInternalDivisionRatioE(measuresModel.string2double(internalDivisionRatioModel.getDisplayInternalDivisionRatioE(), internalDivisionRatioModel.getInternalDivisionRatioE()));
@@ -197,11 +177,7 @@ public class TopPanel implements PropertyChangeListener {
         });
         ratioFTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(ratioFTextField));
         ratioFTextField.addKeyListener(new InputEnterKeyAdapter(ratioFTextField));
-        ratioFTextField.addFocusListener(new FocusListener() {
-            @Override
-            public void focusGained(FocusEvent e) {
-            }
-
+        ratioFTextField.addFocusListener(new FocusAdapter() {
             @Override
             public void focusLost(FocusEvent e) {
                 internalDivisionRatioModel.setInternalDivisionRatioF(measuresModel.string2double(internalDivisionRatioModel.getDisplayInternalDivisionRatioF(), internalDivisionRatioModel.getInternalDivisionRatioF()));
@@ -218,11 +194,7 @@ public class TopPanel implements PropertyChangeListener {
         scaleFactorTextField.addActionListener(e -> scaleFactorSetButton.doClick());
         scaleFactorTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(scaleFactorTextField));
         scaleFactorTextField.addKeyListener(new InputEnterKeyAdapter(scaleFactorTextField));
-        scaleFactorTextField.addFocusListener(new FocusListener() {
-            @Override
-            public void focusGained(FocusEvent e) {
-            }
-
+        scaleFactorTextField.addFocusListener(new FocusAdapter() {
             @Override
             public void focusLost(FocusEvent e) {
                 double d_syukusyaku_keisuu_old = creasePatternCameraModel.getScale();
@@ -237,11 +209,7 @@ public class TopPanel implements PropertyChangeListener {
         rotationTextField.addActionListener(e -> rotationSetButton.doClick());
         rotationTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(rotationTextField));
         rotationTextField.addKeyListener(new InputEnterKeyAdapter(rotationTextField));
-        rotationTextField.addFocusListener(new FocusListener() {
-            @Override
-            public void focusGained(FocusEvent e) {
-            }
-
+        rotationTextField.addFocusListener(new FocusAdapter() {
             @Override
             public void focusLost(FocusEvent e) {
                 creasePatternCameraModel.setRotation(measuresModel.string2double(rotationTextField.getText(), creasePatternCameraModel.getRotation()));

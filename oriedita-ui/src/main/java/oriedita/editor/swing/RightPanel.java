@@ -33,6 +33,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.beans.PropertyChangeEvent;
@@ -408,11 +409,7 @@ public class RightPanel {
         angleDTextField.addActionListener(listener);
         angleDTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(angleDTextField));
         angleDTextField.addKeyListener(new InputEnterKeyAdapter(angleDTextField));
-        angleDTextField.addFocusListener(new FocusListener() {
-            @Override
-            public void focusGained(FocusEvent e) {
-            }
-
+        angleDTextField.addFocusListener(new FocusAdapter() {
             @Override
             public void focusLost(FocusEvent e) {
                 angleSystemModel.setAngleD(measuresModel.string2double(angleDTextField.getText(), angleSystemModel.getAngleD()));
@@ -422,11 +419,7 @@ public class RightPanel {
         angleETextField.addActionListener(listener);
         angleETextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(angleETextField));
         angleETextField.addKeyListener(new InputEnterKeyAdapter(angleETextField));
-        angleETextField.addFocusListener(new FocusListener() {
-            @Override
-            public void focusGained(FocusEvent e) {
-            }
-
+        angleETextField.addFocusListener(new FocusAdapter() {
             @Override
             public void focusLost(FocusEvent e) {
                 angleSystemModel.setAngleE(measuresModel.string2double(angleETextField.getText(), angleSystemModel.getAngleE()));
@@ -436,11 +429,7 @@ public class RightPanel {
         angleFTextField.addActionListener(listener);
         angleFTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(angleFTextField));
         angleFTextField.addKeyListener(new InputEnterKeyAdapter(angleFTextField));
-        angleFTextField.addFocusListener(new FocusListener() {
-            @Override
-            public void focusGained(FocusEvent e) {
-            }
-
+        angleFTextField.addFocusListener(new FocusAdapter() {
             @Override
             public void focusLost(FocusEvent e) {
                 angleSystemModel.setAngleF(measuresModel.string2double(angleFTextField.getText(), angleSystemModel.getAngleF()));
@@ -451,11 +440,7 @@ public class RightPanel {
         angleATextField.addActionListener(listener1);
         angleATextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(angleATextField));
         angleATextField.addKeyListener(new InputEnterKeyAdapter(angleATextField));
-        angleATextField.addFocusListener(new FocusListener() {
-            @Override
-            public void focusGained(FocusEvent e) {
-            }
-
+        angleATextField.addFocusListener(new FocusAdapter() {
             @Override
             public void focusLost(FocusEvent e) {
                 angleSystemModel.setAngleA(measuresModel.string2double(angleATextField.getText(), angleSystemModel.getAngleA()));
@@ -465,11 +450,7 @@ public class RightPanel {
         angleCTextField.addActionListener(listener1);
         angleCTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(angleCTextField));
         angleCTextField.addKeyListener(new InputEnterKeyAdapter(angleCTextField));
-        angleCTextField.addFocusListener(new FocusListener() {
-            @Override
-            public void focusGained(FocusEvent e) {
-            }
-
+        angleCTextField.addFocusListener(new FocusAdapter() {
             @Override
             public void focusLost(FocusEvent e) {
                 angleSystemModel.setAngleC(measuresModel.string2double(angleCTextField.getText(), angleSystemModel.getAngleC()));
@@ -479,11 +460,7 @@ public class RightPanel {
         angleBTextField.addActionListener(listener1);
         angleBTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(angleBTextField));
         angleBTextField.addKeyListener(new InputEnterKeyAdapter(angleBTextField));
-        angleBTextField.addFocusListener(new FocusListener() {
-            @Override
-            public void focusGained(FocusEvent e) {
-            }
-
+        angleBTextField.addFocusListener(new FocusAdapter() {
             @Override
             public void focusLost(FocusEvent e) {
                 angleSystemModel.setAngleB(measuresModel.string2double(angleBTextField.getText(), angleSystemModel.getAngleB()));
@@ -493,11 +470,7 @@ public class RightPanel {
         polygonSizeTextField.addActionListener(e -> polygonSizeSetButton.doClick());
         polygonSizeTextField.getDocument().addDocumentListener(new OnlyIntAdapter(polygonSizeTextField));
         polygonSizeTextField.addKeyListener(new InputEnterKeyAdapter(polygonSizeTextField));
-        polygonSizeTextField.addFocusListener(new FocusListener() {
-            @Override
-            public void focusGained(FocusEvent e) {
-            }
-
+        polygonSizeTextField.addFocusListener(new FocusAdapter() {
             @Override
             public void focusLost(FocusEvent e) {
                 applicationModel.setNumPolygonCorners(StringOp.String2int(polygonSizeTextField.getText(), applicationModel.getNumPolygonCorners()));
