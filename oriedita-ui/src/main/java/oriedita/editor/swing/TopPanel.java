@@ -30,6 +30,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import java.awt.Dimension;
 import java.awt.Insets;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
@@ -135,16 +137,52 @@ public class TopPanel implements PropertyChangeListener {
 
         ratioATextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(ratioATextField));
         ratioATextField.addKeyListener(new InputEnterKeyAdapter(ratioATextField));
+        ratioATextField.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusLost(FocusEvent e) {
+                internalDivisionRatioModel.setInternalDivisionRatioA(measuresModel.string2double(internalDivisionRatioModel.getDisplayInternalDivisionRatioA(), internalDivisionRatioModel.getInternalDivisionRatioA()));
+            }
+        });
         ratioBTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(ratioBTextField));
         ratioBTextField.addKeyListener(new InputEnterKeyAdapter(ratioBTextField));
+        ratioBTextField.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusLost(FocusEvent e) {
+                internalDivisionRatioModel.setInternalDivisionRatioB(measuresModel.string2double(internalDivisionRatioModel.getDisplayInternalDivisionRatioB(), internalDivisionRatioModel.getInternalDivisionRatioB()));
+            }
+        });
         ratioCTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(ratioCTextField));
         ratioCTextField.addKeyListener(new InputEnterKeyAdapter(ratioCTextField));
+        ratioCTextField.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusLost(FocusEvent e) {
+                internalDivisionRatioModel.setInternalDivisionRatioC(measuresModel.string2double(internalDivisionRatioModel.getDisplayInternalDivisionRatioC(), internalDivisionRatioModel.getInternalDivisionRatioC()));
+            }
+        });
         ratioDTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(ratioDTextField));
         ratioDTextField.addKeyListener(new InputEnterKeyAdapter(ratioDTextField));
+        ratioDTextField.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusLost(FocusEvent e) {
+                internalDivisionRatioModel.setInternalDivisionRatioD(measuresModel.string2double(internalDivisionRatioModel.getDisplayInternalDivisionRatioD(), internalDivisionRatioModel.getInternalDivisionRatioD()));
+            }
+        });
         ratioETextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(ratioETextField));
         ratioETextField.addKeyListener(new InputEnterKeyAdapter(ratioETextField));
+        ratioETextField.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusLost(FocusEvent e) {
+                internalDivisionRatioModel.setInternalDivisionRatioE(measuresModel.string2double(internalDivisionRatioModel.getDisplayInternalDivisionRatioE(), internalDivisionRatioModel.getInternalDivisionRatioE()));
+            }
+        });
         ratioFTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(ratioFTextField));
         ratioFTextField.addKeyListener(new InputEnterKeyAdapter(ratioFTextField));
+        ratioFTextField.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusLost(FocusEvent e) {
+                internalDivisionRatioModel.setInternalDivisionRatioF(measuresModel.string2double(internalDivisionRatioModel.getDisplayInternalDivisionRatioF(), internalDivisionRatioModel.getInternalDivisionRatioF()));
+            }
+        });
 
         scaleFactorSetButton.addActionListener(e -> {
             double d_syukusyaku_keisuu_old = creasePatternCameraModel.getScale();
@@ -156,11 +194,27 @@ public class TopPanel implements PropertyChangeListener {
         scaleFactorTextField.addActionListener(e -> scaleFactorSetButton.doClick());
         scaleFactorTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(scaleFactorTextField));
         scaleFactorTextField.addKeyListener(new InputEnterKeyAdapter(scaleFactorTextField));
+        scaleFactorTextField.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusLost(FocusEvent e) {
+                double d_syukusyaku_keisuu_old = creasePatternCameraModel.getScale();
+                double x = measuresModel.string2double(scaleFactorTextField.getText(), d_syukusyaku_keisuu_old);
+                animationService.animate(Animations.ZOOM_CP,
+                        creasePatternCameraModel::setScale, creasePatternCameraModel::getScale, s -> x,
+                        AnimationDurations.ZOOM);
+            }
+        });
         rotateAnticlockwiseButton.addActionListener(e -> creasePatternCameraModel.increaseRotation());
         rotationSetButton.addActionListener(e -> creasePatternCameraModel.setRotation(measuresModel.string2double(rotationTextField.getText(), creasePatternCameraModel.getRotation())));
         rotationTextField.addActionListener(e -> rotationSetButton.doClick());
         rotationTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(rotationTextField));
         rotationTextField.addKeyListener(new InputEnterKeyAdapter(rotationTextField));
+        rotationTextField.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusLost(FocusEvent e) {
+                creasePatternCameraModel.setRotation(measuresModel.string2double(rotationTextField.getText(), creasePatternCameraModel.getRotation()));
+            }
+        });
         rotateClockwiseButton.addActionListener(e -> creasePatternCameraModel.decreaseRotation());
         transparentButton.addActionListener(e -> canvas.createTransparentBackground());
         backgroundSetPositionButton.addActionListener(e -> {

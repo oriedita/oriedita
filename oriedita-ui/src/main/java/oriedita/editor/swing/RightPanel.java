@@ -33,6 +33,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.beans.PropertyChangeEvent;
 
 @ApplicationScoped
@@ -406,25 +408,73 @@ public class RightPanel {
         angleDTextField.addActionListener(listener);
         angleDTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(angleDTextField));
         angleDTextField.addKeyListener(new InputEnterKeyAdapter(angleDTextField));
+        angleDTextField.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusLost(FocusEvent e) {
+                angleSystemModel.setAngleD(measuresModel.string2double(angleDTextField.getText(), angleSystemModel.getAngleD()));
+                angleSystemModel.setCurrentABC();
+            }
+        });
         angleETextField.addActionListener(listener);
         angleETextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(angleETextField));
         angleETextField.addKeyListener(new InputEnterKeyAdapter(angleETextField));
+        angleETextField.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusLost(FocusEvent e) {
+                angleSystemModel.setAngleE(measuresModel.string2double(angleETextField.getText(), angleSystemModel.getAngleE()));
+                angleSystemModel.setCurrentABC();
+            }
+        });
         angleFTextField.addActionListener(listener);
         angleFTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(angleFTextField));
         angleFTextField.addKeyListener(new InputEnterKeyAdapter(angleFTextField));
+        angleFTextField.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusLost(FocusEvent e) {
+                angleSystemModel.setAngleF(measuresModel.string2double(angleFTextField.getText(), angleSystemModel.getAngleF()));
+                angleSystemModel.setCurrentABC();
+            }
+        });
         ActionListener listener1 = e -> restrictedAngleABCSetButton.doClick();
         angleATextField.addActionListener(listener1);
         angleATextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(angleATextField));
         angleATextField.addKeyListener(new InputEnterKeyAdapter(angleATextField));
+        angleATextField.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusLost(FocusEvent e) {
+                angleSystemModel.setAngleA(measuresModel.string2double(angleATextField.getText(), angleSystemModel.getAngleA()));
+                angleSystemModel.setCurrentABC();
+            }
+        });
         angleCTextField.addActionListener(listener1);
         angleCTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(angleCTextField));
         angleCTextField.addKeyListener(new InputEnterKeyAdapter(angleCTextField));
+        angleCTextField.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusLost(FocusEvent e) {
+                angleSystemModel.setAngleC(measuresModel.string2double(angleCTextField.getText(), angleSystemModel.getAngleC()));
+                angleSystemModel.setCurrentABC();
+            }
+        });
         angleBTextField.addActionListener(listener1);
         angleBTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(angleBTextField));
         angleBTextField.addKeyListener(new InputEnterKeyAdapter(angleBTextField));
+        angleBTextField.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusLost(FocusEvent e) {
+                angleSystemModel.setAngleB(measuresModel.string2double(angleBTextField.getText(), angleSystemModel.getAngleB()));
+                angleSystemModel.setCurrentABC();
+            }
+        });
         polygonSizeTextField.addActionListener(e -> polygonSizeSetButton.doClick());
         polygonSizeTextField.getDocument().addDocumentListener(new OnlyIntAdapter(polygonSizeTextField));
         polygonSizeTextField.addKeyListener(new InputEnterKeyAdapter(polygonSizeTextField));
+        polygonSizeTextField.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusLost(FocusEvent e) {
+                applicationModel.setNumPolygonCorners(StringOp.String2int(polygonSizeTextField.getText(), applicationModel.getNumPolygonCorners()));
+            }
+        });
     }
 
     private void setData(HistoryState auxHistoryState) {
