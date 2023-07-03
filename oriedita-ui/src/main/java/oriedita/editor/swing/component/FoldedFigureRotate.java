@@ -19,7 +19,6 @@ import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 
 public class FoldedFigureRotate extends JPanel {
     private JButton foldedFigureRotateAntiClockwiseButton;
