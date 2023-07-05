@@ -119,6 +119,15 @@ public class ButtonServiceImpl implements ButtonService {
         }
     }
 
+    public void registerLabelNoIcon(JLabel label, String key){
+        String icon = ResourceUtil.getBundleString("icons", key);
+        if (!StringOp.isEmpty(icon)) {
+            GlyphIcon glyphIcon = new GlyphIcon(icon, label.getForeground());
+            label.addPropertyChangeListener("foreground", glyphIcon);
+            label.setIcon(null);
+        }
+    }
+
     private void addKeyStroke(KeyStroke keyStroke, AbstractButton button, String key, boolean addToHelpMap) {
         if (addToHelpMap) {
             helpInputMap.put(keyStroke, button);
@@ -360,6 +369,10 @@ public class ButtonServiceImpl implements ButtonService {
         }
 
         for (Component component1 : components) {
+            if (component1 instanceof Container) {
+                addDefaultListener((Container) component1);
+            }
+
             if (component1 instanceof AbstractButton) {
                 AbstractButton button = (AbstractButton) component1;
                 String key = button.getActionCommand();
@@ -367,10 +380,6 @@ public class ButtonServiceImpl implements ButtonService {
                 if (key != null && !"".equals(key)) {
                     registerButton(button, key, wantToReplace);
                 }
-            }
-
-            if (component1 instanceof Container) {
-                addDefaultListener((Container) component1);
             }
 
             if (component1 instanceof JMenu) {

@@ -7,13 +7,18 @@ import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import oriedita.editor.Colors;
 import oriedita.editor.FrameProvider;
+import oriedita.editor.action.ActionType;
 import oriedita.editor.canvas.LineStyle;
 import oriedita.editor.databinding.ApplicationModel;
 import oriedita.editor.databinding.FoldedFigureModel;
+import oriedita.editor.service.ButtonService;
 import oriedita.editor.service.LookAndFeelService;
 import oriedita.editor.swing.component.ColorIcon;
+import oriedita.editor.tools.KeyStrokeUtil;
+import oriedita.editor.tools.ResourceUtil;
 
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.InputMap;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JColorChooser;
@@ -23,10 +28,13 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
+import javax.swing.BorderFactory;
+import javax.swing.border.TitledBorder;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -37,6 +45,8 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Dictionary;
@@ -105,6 +115,7 @@ public class PreferenceDialog extends JDialog {
     private JPanel pointRadPanel;
     private JPanel gridLinePanel;
     private JLabel CPLabel;
+    private JPanel hotkeyPanel;
     private int tempTransparency;
     private final ApplicationModel applicationModel;
     private final ApplicationModel tempModel;
@@ -155,7 +166,8 @@ public class PreferenceDialog extends JDialog {
             FrameProvider frameProvider,
             FoldedFigureModel foldedFigureModel,
             String name,
-            Frame owner
+            Frame owner,
+            ButtonService buttonService
     ) {
         super(owner, name);
         this.applicationModel = appModel;
@@ -169,6 +181,8 @@ public class PreferenceDialog extends JDialog {
         setContentPane($$$getRootComponent$$$());
         setDefaultCloseOperation(HIDE_ON_CLOSE);
         getRootPane().setDefaultButton(buttonOK);
+
+        setupHotKey(buttonService, frameProvider);
 
         ck4Plus.setEnabled(applicationModel.getCheck4ColorTransparency() < 250);
         ck4Minus.setEnabled(applicationModel.getCheck4ColorTransparency() > 50);
@@ -362,6 +376,64 @@ public class PreferenceDialog extends JDialog {
         tempModel.set(applicationModel);
     }
 
+    public KeyStroke getKeyBind(FrameProvider owner, String key) {
+        InputMap map = owner.get().getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+        KeyStroke stroke = null;
+        for (KeyStroke keyStroke : map.keys()) {
+            if (map.get(keyStroke).equals(key)) {
+                stroke = keyStroke;
+            }
+        }
+        return stroke;
+    }
+
+    public void setupHotKey(ButtonService buttonService, FrameProvider frameProvider) {
+        int rowIndex;
+        final Spacer spacer1 = new Spacer();
+        final Spacer spacer2 = new Spacer();
+
+        for (rowIndex = 0; rowIndex < ActionType.values().length; rowIndex++) {
+            JLabel icon = new JLabel();
+            icon.setEnabled(true);
+            icon.setFocusable(false);
+            icon.setName("");
+            icon.setText("");
+            hotkeyPanel.add(icon, new GridConstraints(rowIndex, 0, 1, 1, GridConstraints.ANCHOR_NORTH, GridConstraints.FILL_NONE, 1, 1, null, null, null, 0, false));
+            JLabel label = new JLabel();
+            label.setEnabled(true);
+            label.setFocusable(false);
+            label.setIconTextGap(4);
+            label.setText(ResourceUtil.getBundleString("name", ActionType.values()[rowIndex].action()));
+            hotkeyPanel.add(label, new GridConstraints(rowIndex, 1, 1, 1, GridConstraints.ANCHOR_NORTH, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+            JLabel keystroke = new JLabel();
+            hotkeyPanel.add(keystroke, new GridConstraints(rowIndex, 3, 1, 1, GridConstraints.ANCHOR_NORTH, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+            buttonService.registerLabelNoIcon(label, ActionType.values()[rowIndex].action());
+            buttonService.registerLabel(icon, ActionType.values()[rowIndex].action());
+            //TODO: should have some kind of placeholder when there's no hotkey for it
+            keystroke.setText(KeyStrokeUtil.toString(getKeyBind(frameProvider, ActionType.values()[rowIndex].action())));
+            //TODO: how to edit keystroke
+            keystroke.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                }
+
+                @Override
+                public void mouseEntered(MouseEvent e) {
+                    keystroke.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+                }
+
+                @Override
+                public void mouseExited(MouseEvent e) {
+                    keystroke.setBorder(BorderFactory.createEmptyBorder());
+                }
+            });
+            //TODO: a restore default button for hotkeys specifically
+            //TODO: (optional) shorten sentences of some tools
+        }
+        hotkeyPanel.add(spacer1, new GridConstraints(rowIndex, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        hotkeyPanel.add(spacer2, new GridConstraints(0, 2, ActionType.values().length, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+    }
+
     /**
      * Method generated by IntelliJ IDEA GUI Designer
      * >>> IMPORTANT!! <<<
@@ -374,10 +446,10 @@ public class PreferenceDialog extends JDialog {
         contentPane = new JPanel();
         contentPane.setLayout(new GridBagLayout());
         contentPane.setFocusTraversalPolicyProvider(true);
-        contentPane.setMinimumSize(new Dimension(490, 320));
-        contentPane.setPreferredSize(new Dimension(-1, -1));
+        contentPane.setMinimumSize(new Dimension(540, 610));
+        contentPane.setPreferredSize(new Dimension(540, 610));
         bottomPanel = new JPanel();
-        bottomPanel.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 10, 0), -1, -1));
+        bottomPanel.setLayout(new GridLayoutManager(2, 1, new Insets(0, 0, 10, 0), -1, -1));
         GridBagConstraints gbc;
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
@@ -399,20 +471,24 @@ public class PreferenceDialog extends JDialog {
         restoreDefaultsButton = new JButton();
         restoreDefaultsButton.setText("Restore defaults");
         panel1.add(restoreDefaultsButton, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final Spacer spacer1 = new Spacer();
+        bottomPanel.add(spacer1, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         topPanel = new JPanel();
         topPanel.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
-        topPanel.setMinimumSize(new Dimension(507, 220));
+        topPanel.setMinimumSize(new Dimension(530, 530));
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
-        gbc.anchor = GridBagConstraints.NORTHWEST;
+        gbc.anchor = GridBagConstraints.NORTH;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
         contentPane.add(topPanel, gbc);
         tabbedPane1 = new JTabbedPane();
+        tabbedPane1.setName("");
         tabbedPane1.setTabLayoutPolicy(0);
         tabbedPane1.setTabPlacement(2);
-        topPanel.add(tabbedPane1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_NORTHWEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        topPanel.add(tabbedPane1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         final JPanel panel2 = new JPanel();
         panel2.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 10));
         tabbedPane1.addTab("DISPLAY", panel2);
@@ -922,6 +998,12 @@ public class PreferenceDialog extends JDialog {
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         behavior2Panel.add(offsetCB, gbc);
+        final JScrollPane scrollPane1 = new JScrollPane();
+        scrollPane1.setAutoscrolls(false);
+        scrollPane1.setVerticalScrollBarPolicy(20);
+        tabbedPane1.addTab("HOTKEYS", scrollPane1);
+        scrollPane1.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
+        scrollPane1.setViewportView(hotkeyPanel);
     }
 
     /**
@@ -949,5 +1031,8 @@ public class PreferenceDialog extends JDialog {
         labelsAnimSpeed.put(16, new JLabel("Slow"));
         labelsAnimSpeed.put(24, new JLabel("Slowest"));
         animationSpeedSlider.setLabelTable(labelsAnimSpeed);
+
+        hotkeyPanel = new JPanel();
+        hotkeyPanel.setLayout(new GridLayoutManager(ActionType.values().length + 1, 4, new Insets(10, 10, 0, 10), -1, -1));
     }
 }
