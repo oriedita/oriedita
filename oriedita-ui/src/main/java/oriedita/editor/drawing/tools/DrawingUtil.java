@@ -84,8 +84,11 @@ public class DrawingUtil {
     }
 
     public static void drawVertex(Graphics2D g, Point a, int pointSize) {
-        g.setColor(Colors.get(Color.black));
+        g.setColor(Colors.get(Color.gray));
         g.fillRect((int) (a.getX() - pointSize), (int) (a.getY() - pointSize), (int) (pointSize * 2 + 0.5), (int) (pointSize * 2 + 0.5));
+
+        g.setColor(Colors.get(Color.black));
+        g.drawRect((int) (a.getX() - pointSize), (int) (a.getY() - pointSize), (int) (pointSize * 2 + 0.5), (int) (pointSize * 2 + 0.5));
     }
 
     //Draw a pointing diagram around the specified Point
@@ -180,9 +183,13 @@ public class DrawingUtil {
         g.drawLine((int) a.getX(), (int) a.getY(), (int) b.getX(), (int) b.getY()); //直線
 
         if (lineWidth < 2.0f) {//Draw a square at the vertex
-            g.setColor(Colors.get(Color.black));
+            g.setColor(Colors.get(Color.gray));
             g.fillRect((int) a.getX() - pointSize, (int) a.getY() - pointSize, 2 * pointSize + 1, 2 * pointSize + 1); //正方形を描く//g.fillRect(10, 10, 100, 50);長方形を描く
             g.fillRect((int) b.getX() - pointSize, (int) b.getY() - pointSize, 2 * pointSize + 1, 2 * pointSize + 1); //正方形を描く
+
+            g.setColor(Colors.get(Color.black));
+            g.drawRect((int) a.getX() - pointSize, (int) a.getY() - pointSize, 2 * pointSize + 1, 2 * pointSize + 1);
+            g.drawRect((int) b.getX() - pointSize, (int) b.getY() - pointSize, 2 * pointSize + 1, 2 * pointSize + 1);
         }
 
         if (lineWidth >= 2.0f) {//  Thick line
@@ -191,13 +198,13 @@ public class DrawingUtil {
             if (pointSize != 0) {
                 double d_width = (double) lineWidth / 2.0 + (double) pointSize;
 
-                g.setColor(Colors.get(Color.white));
+                g.setColor(Colors.get(Color.gray));
                 g2.fill(new Ellipse2D.Double(a.getX() - d_width, a.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
 
                 g.setColor(Colors.get(Color.black));
                 g2.draw(new Ellipse2D.Double(a.getX() - d_width, a.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
 
-                g.setColor(Colors.get(Color.white));
+                g.setColor(Colors.get(Color.gray));
                 g2.fill(new Ellipse2D.Double(b.getX() - d_width, b.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
 
                 g.setColor(Colors.get(Color.black));
@@ -285,13 +292,13 @@ public class DrawingUtil {
                 g2.fill(new Ellipse2D.Double(a.getX() - d_width, a.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
 
 
-                g.setColor(Colors.get(Color.black));
+                g.setColor(Colors.get(Color.gray));
                 g2.draw(new Ellipse2D.Double(a.getX() - d_width, a.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
 
                 g.setColor(Colors.get(Color.white));
                 g2.fill(new Ellipse2D.Double(b.getX() - d_width, b.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
 
-                g.setColor(Colors.get(Color.black));
+                g.setColor(Colors.get(Color.gray));
                 g2.draw(new Ellipse2D.Double(b.getX() - d_width, b.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
             }
         }
@@ -483,13 +490,13 @@ public class DrawingUtil {
             if (pointSize != 0) {
                 double d_width = (double) lineWidth / 2.0 + (double) pointSize;
 
-                g.setColor(Colors.get(Color.white));
+                g.setColor(Colors.get(Color.gray));
                 g2.fill(new Ellipse2D.Double(a.getX() - d_width, a.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
 
                 g.setColor(Colors.get(Color.black));
                 g2.draw(new Ellipse2D.Double(a.getX() - d_width, a.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
 
-                g.setColor(Colors.get(Color.white));
+                g.setColor(Colors.get(Color.gray));
                 g2.fill(new Ellipse2D.Double(b.getX() - d_width, b.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
 
                 g.setColor(Colors.get(Color.black));
