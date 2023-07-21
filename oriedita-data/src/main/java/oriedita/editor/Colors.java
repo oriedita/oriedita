@@ -39,6 +39,7 @@ public class Colors {
         add(new Color(230, 230, 230), new Color(230, 230, 230), new Color(54, 54, 54));
         add(new Color(162, 162, 162), new Color(162, 162, 162), new Color(120, 120, 120)); //placeholder
         add(Color.gray, new Color(128,128,128,128), new Color(128,128,128,128));
+        add(Color.yellow, Color.magenta, Color.yellow);
     }
 
     private static Map<Color, Color> activeColorMap = colorMap;
