@@ -403,12 +403,16 @@ public class PreferenceDialog extends JDialog {
             label.setEnabled(true);
             label.setFocusable(false);
             label.setIconTextGap(4);
-            label.setText(ResourceUtil.getBundleString("name", ActionType.values()[rowIndex].action()));
             hotkeyPanel.add(label, new GridConstraints(rowIndex, 1, 1, 1, GridConstraints.ANCHOR_NORTH, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
             JLabel keystroke = new JLabel();
             hotkeyPanel.add(keystroke, new GridConstraints(rowIndex, 3, 1, 1, GridConstraints.ANCHOR_NORTH, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
 
-            buttonService.registerLabelNoIcon(label, ActionType.values()[rowIndex].action());
+            String actionText = ResourceUtil.getBundleString("name", ActionType.values()[rowIndex].action());
+            if (actionText != null) {
+                actionText = actionText.replaceAll("_", "");
+            }
+            label.setText(actionText);
+
             buttonService.registerLabel(icon, ActionType.values()[rowIndex].action());
             String ksString = KeyStrokeUtil.toString(getKeyBind(frameProvider, ActionType.values()[rowIndex].action()));
             keystroke.setText(!ksString.isEmpty() ? ksString : " ");

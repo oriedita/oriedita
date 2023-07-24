@@ -12,8 +12,6 @@ public interface ButtonService {
 
     void registerLabel(JLabel label, String key);
 
-    void registerLabelNoIcon(JLabel label, String key);
-
     void registerButton(AbstractButton button, String key);
 
     void registerButton(AbstractButton button, String key, boolean wantToReplace);
