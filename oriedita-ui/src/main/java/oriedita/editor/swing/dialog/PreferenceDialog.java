@@ -407,14 +407,16 @@ public class PreferenceDialog extends JDialog {
             hotkeyPanel.add(label, new GridConstraints(rowIndex, 1, 1, 1, GridConstraints.ANCHOR_NORTH, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
             JLabel keystroke = new JLabel();
             hotkeyPanel.add(keystroke, new GridConstraints(rowIndex, 3, 1, 1, GridConstraints.ANCHOR_NORTH, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+
             buttonService.registerLabelNoIcon(label, ActionType.values()[rowIndex].action());
             buttonService.registerLabel(icon, ActionType.values()[rowIndex].action());
-            //TODO: should have some kind of placeholder when there's no hotkey for it
-            keystroke.setText(KeyStrokeUtil.toString(getKeyBind(frameProvider, ActionType.values()[rowIndex].action())));
+            String ksString = KeyStrokeUtil.toString(getKeyBind(frameProvider, ActionType.values()[rowIndex].action()));
+            keystroke.setText(!ksString.isEmpty() ? ksString : " ");
             //TODO: how to edit keystroke
             keystroke.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
+
                 }
 
                 @Override
