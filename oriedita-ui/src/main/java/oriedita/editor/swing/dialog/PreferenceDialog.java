@@ -434,7 +434,7 @@ public class PreferenceDialog extends JDialog {
                 }
             });
             //TODO: a restore default button for hotkeys specifically
-            //TODO: (optional) shorten sentences of some tools
+            //TODO: make changes to hotkeys normally in panels also goes into the hotkey tab
         }
         hotkeyPanel.add(spacer1, new GridConstraints(rowIndex, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         hotkeyPanel.add(spacer2, new GridConstraints(0, 2, ActionType.values().length, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
