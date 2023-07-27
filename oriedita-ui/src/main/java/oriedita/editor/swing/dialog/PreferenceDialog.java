@@ -449,9 +449,9 @@ public class PreferenceDialog extends JDialog {
                     if (newKeyStroke != null) {
                         buttonService.addKeyStroke(newKeyStroke, button, key, true);
                         putValue(Action.NAME, KeyStrokeUtil.toString(newKeyStroke));
-                    }
+                    } else { putValue(Action.NAME, " "); }
 
-                    buttonService.setTooltip(button, key);
+                    if (button != null) buttonService.setTooltip(button, key);
 
                     return true;
                 });
