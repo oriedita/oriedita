@@ -58,6 +58,7 @@ public class ButtonServiceImpl implements ButtonService {
     private final HelpDialog explanation;
     private final CreasePattern_Worker mainCreasePatternWorker;
     private Map<KeyStroke, AbstractButton> helpInputMap = new HashMap<>();
+    private Map<String, AbstractButton> prefHotkeyMap = new HashMap<>();
     private FrameProvider owner;
     private final CanvasModel canvasModel;
 
@@ -119,7 +120,7 @@ public class ButtonServiceImpl implements ButtonService {
         }
     }
 
-    private void addKeyStroke(KeyStroke keyStroke, AbstractButton button, String key, boolean addToHelpMap) {
+    public void addKeyStroke(KeyStroke keyStroke, AbstractButton button, String key, boolean addToHelpMap) {
         if (addToHelpMap) {
             helpInputMap.put(keyStroke, button);
         }
@@ -132,6 +133,7 @@ public class ButtonServiceImpl implements ButtonService {
 
     @Override
     public void registerButton(AbstractButton button, String key, boolean wantToReplace) {
+        prefHotkeyMap.put(key, button);
 
         String name = ResourceUtil.getBundleString("name", key);
         String keyStrokeString = ResourceUtil.getBundleString("hotkey", key);
@@ -274,6 +276,8 @@ public class ButtonServiceImpl implements ButtonService {
     public Map<KeyStroke, AbstractButton> getHelpInputMap() {
         return helpInputMap;
     }
+
+    public Map<String, AbstractButton> getPrefHotkeyMap() { return prefHotkeyMap; }
 
     private void addContextMenu(AbstractButton button, String key, KeyStroke keyStroke) {
         JPopupMenu popup = new JPopupMenu();

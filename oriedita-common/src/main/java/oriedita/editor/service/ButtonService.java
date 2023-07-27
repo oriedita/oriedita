@@ -24,7 +24,13 @@ public interface ButtonService {
 
     Map<KeyStroke, AbstractButton> getHelpInputMap();
 
+    Map<String, AbstractButton> getPrefHotkeyMap();
+
     void addDefaultListener(Container root);
 
     void addDefaultListener(Container root, boolean wantToReplace);
+
+    void addKeyStroke(KeyStroke keyStroke, AbstractButton button, String key, boolean addToHelpMap);
+
+    void setTooltip(AbstractButton button, String key);
 }

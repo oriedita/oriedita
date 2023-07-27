@@ -17,6 +17,9 @@ import oriedita.editor.swing.component.ColorIcon;
 import oriedita.editor.tools.KeyStrokeUtil;
 import oriedita.editor.tools.ResourceUtil;
 
+import javax.swing.AbstractAction;
+import javax.swing.AbstractButton;
+import javax.swing.Action;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.InputMap;
 import javax.swing.JButton;
@@ -44,13 +47,15 @@ import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Dictionary;
 import java.util.Hashtable;
+import java.util.Map;
 
 public class PreferenceDialog extends JDialog {
     private JPanel contentPane;
@@ -182,7 +187,13 @@ public class PreferenceDialog extends JDialog {
         setDefaultCloseOperation(HIDE_ON_CLOSE);
         getRootPane().setDefaultButton(buttonOK);
 
-        setupHotKey(buttonService, frameProvider);
+        this.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentShown(ComponentEvent e) {
+                setupHotKey(buttonService, frameProvider);
+
+            }
+        });
 
         ck4Plus.setEnabled(applicationModel.getCheck4ColorTransparency() < 250);
         ck4Minus.setEnabled(applicationModel.getCheck4ColorTransparency() > 50);
@@ -387,54 +398,91 @@ public class PreferenceDialog extends JDialog {
         return stroke;
     }
 
+    private JLabel getIconLabel(ButtonService buttonService, String key) {
+        JLabel icon = new JLabel();
+        icon.setEnabled(true);
+        icon.setFocusable(false);
+        icon.setName("");
+        icon.setText("");
+        buttonService.registerLabel(icon, key);
+
+        return icon;
+    }
+
+    private JLabel getTextLabel(int rowIndex) {
+        JLabel label = new JLabel();
+        label.setEnabled(true);
+        label.setFocusable(false);
+        label.setIconTextGap(4);
+        String actionText = ResourceUtil.getBundleString("name", ActionType.values()[rowIndex].action());
+        if (actionText != null) {
+            actionText = actionText.replaceAll("_", "");
+        }
+        label.setText(actionText);
+
+        return label;
+    }
+
+    private JButton getKeyStrokeButton(ButtonService buttonService, FrameProvider frameProvider, int rowIndex, String key) {
+        Map<KeyStroke, AbstractButton> helpInputMap = buttonService.getHelpInputMap();
+        KeyStroke currentKeyStroke = getKeyBind(frameProvider, ActionType.values()[rowIndex].action());
+        AbstractButton button = buttonService.getPrefHotkeyMap().get(key);
+
+        Action hotkeyAction = new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                KeyStroke tempKeyStroke = getKeyBind(frameProvider, ActionType.values()[rowIndex].action());
+                new SelectKeyStrokeDialog(frameProvider.get(), button, helpInputMap, tempKeyStroke, newKeyStroke -> {
+                    if (newKeyStroke != null && helpInputMap.containsKey(newKeyStroke) && helpInputMap.get(newKeyStroke) != button) {
+                        String conflictingButton = (String) helpInputMap.get(newKeyStroke).getRootPane()
+                                .getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+                                .get(newKeyStroke);
+                        JOptionPane.showMessageDialog(frameProvider.get(), "Conflicting KeyStroke! Conflicting with " + conflictingButton);
+                        return false;
+                    }
+
+                    ResourceUtil.updateBundleKey("hotkey", key, newKeyStroke == null ? "" : newKeyStroke.toString());
+
+                    helpInputMap.remove(tempKeyStroke);
+                    frameProvider.get().getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).remove(tempKeyStroke);
+
+                    if (newKeyStroke != null) {
+                        buttonService.addKeyStroke(newKeyStroke, button, key, true);
+                        putValue(Action.NAME, KeyStrokeUtil.toString(newKeyStroke));
+                    }
+
+                    buttonService.setTooltip(button, key);
+
+                    return true;
+                });
+            }
+        };
+        JButton keyStrokeButton = new JButton(hotkeyAction);
+        String ksString = KeyStrokeUtil.toString(currentKeyStroke);
+        keyStrokeButton.setText(!ksString.isEmpty() ? ksString : " ");
+
+        return keyStrokeButton;
+    }
+
     public void setupHotKey(ButtonService buttonService, FrameProvider frameProvider) {
+        hotkeyPanel.removeAll();
         int rowIndex;
         final Spacer spacer1 = new Spacer();
         final Spacer spacer2 = new Spacer();
 
         for (rowIndex = 0; rowIndex < ActionType.values().length; rowIndex++) {
-            JLabel icon = new JLabel();
-            icon.setEnabled(true);
-            icon.setFocusable(false);
-            icon.setName("");
-            icon.setText("");
-            hotkeyPanel.add(icon, new GridConstraints(rowIndex, 0, 1, 1, GridConstraints.ANCHOR_NORTH, GridConstraints.FILL_NONE, 1, 1, null, null, null, 0, false));
-            JLabel label = new JLabel();
-            label.setEnabled(true);
-            label.setFocusable(false);
-            label.setIconTextGap(4);
-            hotkeyPanel.add(label, new GridConstraints(rowIndex, 1, 1, 1, GridConstraints.ANCHOR_NORTH, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
-            JLabel keystroke = new JLabel();
-            hotkeyPanel.add(keystroke, new GridConstraints(rowIndex, 3, 1, 1, GridConstraints.ANCHOR_NORTH, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+            String key = ActionType.values()[rowIndex].action();
 
-            String actionText = ResourceUtil.getBundleString("name", ActionType.values()[rowIndex].action());
-            if (actionText != null) {
-                actionText = actionText.replaceAll("_", "");
-            }
-            label.setText(actionText);
+            JLabel iconLabel = getIconLabel(buttonService, key);
+            hotkeyPanel.add(iconLabel, new GridConstraints(rowIndex, 0, 1, 1, GridConstraints.ANCHOR_NORTH, GridConstraints.FILL_NONE, 1, 1, null, null, null, 0, false));
 
-            buttonService.registerLabel(icon, ActionType.values()[rowIndex].action());
-            String ksString = KeyStrokeUtil.toString(getKeyBind(frameProvider, ActionType.values()[rowIndex].action()));
-            keystroke.setText(!ksString.isEmpty() ? ksString : " ");
-            //TODO: how to edit keystroke
-            keystroke.addMouseListener(new MouseAdapter() {
-                @Override
-                public void mouseClicked(MouseEvent e) {
+            JLabel nameLabel = getTextLabel(rowIndex);
+            hotkeyPanel.add(nameLabel, new GridConstraints(rowIndex, 1, 1, 1, GridConstraints.ANCHOR_NORTH, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
 
-                }
+            JButton keystrokeButton = getKeyStrokeButton(buttonService, frameProvider, rowIndex, key);
+            hotkeyPanel.add(keystrokeButton, new GridConstraints(rowIndex, 3, 1, 1, GridConstraints.ANCHOR_NORTH, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
 
-                @Override
-                public void mouseEntered(MouseEvent e) {
-                    keystroke.setBorder(BorderFactory.createLineBorder(Color.GRAY));
-                }
-
-                @Override
-                public void mouseExited(MouseEvent e) {
-                    keystroke.setBorder(BorderFactory.createEmptyBorder());
-                }
-            });
             //TODO: a restore default button for hotkeys specifically
-            //TODO: make changes to hotkeys normally in panels also goes into the hotkey tab
         }
         hotkeyPanel.add(spacer1, new GridConstraints(rowIndex, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         hotkeyPanel.add(spacer2, new GridConstraints(0, 2, ActionType.values().length, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
