@@ -9,7 +9,6 @@ import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import com.opencsv.CSVReaderBuilder;
-import org.tinylog.Logger;
 import oriedita.editor.Colors;
 import oriedita.editor.FrameProvider;
 import oriedita.editor.action.ActionType;
@@ -400,8 +399,8 @@ public class PreferenceDialog extends JDialog {
 
     private void clearHotKeyMap() {
 
-            hotkeyCategoryMap.clear();
-            categoryHeaderList.clear();
+        hotkeyCategoryMap.clear();
+        categoryHeaderList.clear();
 
     }
 
@@ -488,6 +487,21 @@ public class PreferenceDialog extends JDialog {
         return keyStrokeButton;
     }
 
+    private void setupCategoryPanel(JPanel categoryPanel, JLabel clickLabel, JPanel listPanel, int i) {
+        // Category Panel
+        categoryPanel.setLayout(new GridLayoutManager(2, 1, new Insets(0, 0, 5, 0), -1, -1));
+        hotkeyPanel.add(categoryPanel, new GridConstraints(i, 0, 1, 1, GridConstraints.ANCHOR_NORTHWEST, GridConstraints.FILL_HORIZONTAL, 1, 1, null, null, null, 0, false));
+
+        //Category Label
+        clickLabel.setText(categoryHeaderList.get(i).toUpperCase().concat(" ▼"));
+        clickLabel.setBorder(BorderFactory.createLineBorder(new Color(0, 0, 0, 0)));
+        categoryPanel.add(clickLabel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_NORTHWEST, GridConstraints.FILL_HORIZONTAL, 1, 1, null, null, null, 0, false));
+
+        //List panel showing the hotkey list
+        listPanel.setLayout(new GridLayoutManager(ActionType.values().length + 1, 4, new Insets(0, 0, 0, 0), -1, -1));
+        categoryPanel.add(listPanel, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_NORTH, GridConstraints.FILL_HORIZONTAL, 1, 1, null, null, null, 0, false));
+    }
+
     private void addIconTextHotkey(ButtonService buttonService, FrameProvider frameProvider, JPanel listPanel, int i) {
         int rowIndex;
         final Spacer spacer1 = new Spacer();
@@ -513,6 +527,25 @@ public class PreferenceDialog extends JDialog {
 
     }
 
+    private void extractHeaders(List<String[]> allData) {
+        String[] headers = allData.get(0);
+        categoryHeaderList.addAll(Arrays.asList(headers));
+        for (String header : headers) {
+            hotkeyCategoryMap.put(header, new ArrayList<>());
+        }
+    }
+
+    private void extractData(List<String[]> allData) {
+        for (int i = 1; i < allData.size(); i++) {
+            String[] row = allData.get(i);
+            for (int j = 0; j < row.length; j++) {
+                if (!row[j].isEmpty()) {
+                    hotkeyCategoryMap.get(categoryHeaderList.get(j)).add(row[j]);
+                }
+            }
+        }
+    }
+
     private void readCSV() {
         try {
             // Create an object of file reader class with CSV file as a parameter.
@@ -531,24 +564,12 @@ public class PreferenceDialog extends JDialog {
             // Read all data at once
             List<String[]> allData = csvReader.readAll();
 
-            // Extract and print headers
-            String[] headers = allData.get(0);
-            categoryHeaderList.addAll(Arrays.asList(headers));
-            for (String header : headers) {
-                hotkeyCategoryMap.put(header, new ArrayList<>());
-            }
+            // Extract headers
+            extractHeaders(allData);
 
-            // Print Data excluding headers
-            for (int i = 1; i < allData.size(); i++) {
-                String[] row = allData.get(i);
-                for (int j = 0; j < row.length; j++) {
-                    if (!row[j].isEmpty()) {
-                        hotkeyCategoryMap.get(categoryHeaderList.get(j)).add(row[j]);
-                    }
-                }
-            }
+            // Extract Data excluding headers
+            extractData(allData);
 
-//            Logger.info(hotkeyCategoryMap);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -557,16 +578,11 @@ public class PreferenceDialog extends JDialog {
     public void setupHotKey(ButtonService buttonService, FrameProvider frameProvider) {
         hotkeyPanel.removeAll();
         for (int i = 0; i < categoryHeaderList.size(); i++) {
-            JPanel testPanel = new JPanel();
-            testPanel.setLayout(new GridLayoutManager(2, 1, new Insets(0, 0, 5, 0), -1, -1));
-            hotkeyPanel.add(testPanel, new GridConstraints(i, 0, 1, 1, GridConstraints.ANCHOR_NORTHWEST, GridConstraints.FILL_HORIZONTAL, 1, 1, null, null, null, 0, false));
+            JPanel categoryPanel = new JPanel();
             JLabel clickLabel = new JLabel();
-            clickLabel.setText(categoryHeaderList.get(i).toUpperCase().concat(" ▼"));
-            clickLabel.setBorder(BorderFactory.createLineBorder(new Color(0, 0, 0, 0)));
-            testPanel.add(clickLabel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_NORTHWEST, GridConstraints.FILL_HORIZONTAL, 1, 1, null, null, null, 0, false));
             JPanel listPanel = new JPanel();
-            listPanel.setLayout(new GridLayoutManager(ActionType.values().length + 1, 4, new Insets(0, 0, 0, 0), -1, -1));
-            testPanel.add(listPanel, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_NORTH, GridConstraints.FILL_HORIZONTAL, 1, 1, null, null, null, 0, false));
+
+            setupCategoryPanel(categoryPanel, clickLabel, listPanel, i);
 
             addIconTextHotkey(buttonService, frameProvider, listPanel, i);
 
