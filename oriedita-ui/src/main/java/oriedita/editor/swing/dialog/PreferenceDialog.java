@@ -1,10 +1,15 @@
 package oriedita.editor.swing.dialog;
 
+import com.opencsv.CSVParser;
+import com.opencsv.CSVParserBuilder;
+import com.opencsv.CSVReader;
 import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatLaf;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
+import com.opencsv.CSVReaderBuilder;
+import org.tinylog.Logger;
 import oriedita.editor.Colors;
 import oriedita.editor.FrameProvider;
 import oriedita.editor.action.ActionType;
@@ -51,10 +56,17 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.FileReader;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Dictionary;
 import java.util.Hashtable;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 public class PreferenceDialog extends JDialog {
@@ -126,6 +138,8 @@ public class PreferenceDialog extends JDialog {
     private final ApplicationModel tempModel;
     private final FoldedFigureModel foldedFigureModel;
     private final FoldedFigureModel tempfoldedModel;
+    private Map<String, List<String>> hotkeyCategoryMap;
+    private List<String> categoryHeaderList;
 
     public void setData(ApplicationModel applicationModel) {
         spotlightCB.setSelected(applicationModel.getDisplayPointSpotlight());
@@ -191,7 +205,6 @@ public class PreferenceDialog extends JDialog {
             @Override
             public void componentShown(ComponentEvent e) {
                 setupHotKey(buttonService, frameProvider);
-
             }
         });
 
@@ -365,6 +378,7 @@ public class PreferenceDialog extends JDialog {
 
     private void onOK() {
         setVisible(false);
+//        clearHotKeyMap();
     }
 
     private void onCancel() {
@@ -372,6 +386,7 @@ public class PreferenceDialog extends JDialog {
         applicationModel.set(tempModel);
         foldedFigureModel.set(tempfoldedModel);
         setVisible(false);
+//        clearHotKeyMap();
     }
 
     private void onReset() {
@@ -381,6 +396,13 @@ public class PreferenceDialog extends JDialog {
             foldedFigureModel.restorePrefDefaults();
             dispose();
         }
+    }
+
+    private void clearHotKeyMap() {
+
+            hotkeyCategoryMap.clear();
+            categoryHeaderList.clear();
+
     }
 
     public void updateTempModel(ApplicationModel applicationModel) {
@@ -409,12 +431,12 @@ public class PreferenceDialog extends JDialog {
         return icon;
     }
 
-    private JLabel getTextLabel(int rowIndex) {
+    private JLabel getTextLabel(int categoryIndex, int rowIndex) {
         JLabel label = new JLabel();
         label.setEnabled(true);
         label.setFocusable(false);
         label.setIconTextGap(4);
-        String actionText = ResourceUtil.getBundleString("name", ActionType.values()[rowIndex].action());
+        String actionText = ResourceUtil.getBundleString("name", hotkeyCategoryMap.get(categoryHeaderList.get(categoryIndex)).get(rowIndex));
         if (actionText != null) {
             actionText = actionText.replaceAll("_", "");
         }
@@ -423,9 +445,9 @@ public class PreferenceDialog extends JDialog {
         return label;
     }
 
-    private JButton getKeyStrokeButton(ButtonService buttonService, FrameProvider frameProvider, int rowIndex, String key) {
+    private JButton getKeyStrokeButton(ButtonService buttonService, FrameProvider frameProvider, int rowIndex, String key, int categoryIndex) {
         Map<KeyStroke, AbstractButton> helpInputMap = buttonService.getHelpInputMap();
-        KeyStroke currentKeyStroke = getKeyBind(frameProvider, ActionType.values()[rowIndex].action());
+        KeyStroke currentKeyStroke = getKeyBind(frameProvider, hotkeyCategoryMap.get(categoryHeaderList.get(categoryIndex)).get(rowIndex));
         AbstractButton button = buttonService.getPrefHotkeyMap().get(key);
 
         Action hotkeyAction = new AbstractAction() {
@@ -449,7 +471,9 @@ public class PreferenceDialog extends JDialog {
                     if (newKeyStroke != null) {
                         buttonService.addKeyStroke(newKeyStroke, button, key, true);
                         putValue(Action.NAME, KeyStrokeUtil.toString(newKeyStroke));
-                    } else { putValue(Action.NAME, " "); }
+                    } else {
+                        putValue(Action.NAME, " ");
+                    }
 
                     if (button != null) buttonService.setTooltip(button, key);
 
@@ -464,28 +488,111 @@ public class PreferenceDialog extends JDialog {
         return keyStrokeButton;
     }
 
-    public void setupHotKey(ButtonService buttonService, FrameProvider frameProvider) {
-        hotkeyPanel.removeAll();
+    private void addIconTextHotkey(ButtonService buttonService, FrameProvider frameProvider, JPanel listPanel, int i) {
         int rowIndex;
         final Spacer spacer1 = new Spacer();
         final Spacer spacer2 = new Spacer();
 
-        for (rowIndex = 0; rowIndex < ActionType.values().length; rowIndex++) {
-            String key = ActionType.values()[rowIndex].action();
+
+        for (rowIndex = 0; rowIndex < hotkeyCategoryMap.get(categoryHeaderList.get(i)).size(); rowIndex++) {
+            String key = hotkeyCategoryMap.get(categoryHeaderList.get(i)).get(rowIndex);
 
             JLabel iconLabel = getIconLabel(buttonService, key);
-            hotkeyPanel.add(iconLabel, new GridConstraints(rowIndex, 0, 1, 1, GridConstraints.ANCHOR_NORTH, GridConstraints.FILL_NONE, 1, 1, null, null, null, 0, false));
+            listPanel.add(iconLabel, new GridConstraints(rowIndex, 0, 1, 1, GridConstraints.ANCHOR_NORTH, GridConstraints.FILL_NONE, 1, 1, null, null, null, 0, false));
 
-            JLabel nameLabel = getTextLabel(rowIndex);
-            hotkeyPanel.add(nameLabel, new GridConstraints(rowIndex, 1, 1, 1, GridConstraints.ANCHOR_NORTH, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+            JLabel nameLabel = getTextLabel(i, rowIndex);
+            listPanel.add(nameLabel, new GridConstraints(rowIndex, 1, 1, 1, GridConstraints.ANCHOR_NORTH, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
 
-            JButton keystrokeButton = getKeyStrokeButton(buttonService, frameProvider, rowIndex, key);
-            hotkeyPanel.add(keystrokeButton, new GridConstraints(rowIndex, 3, 1, 1, GridConstraints.ANCHOR_NORTH, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+            JButton keystrokeButton = getKeyStrokeButton(buttonService, frameProvider, rowIndex, key, i);
+            listPanel.add(keystrokeButton, new GridConstraints(rowIndex, 3, 1, 1, GridConstraints.ANCHOR_NORTH, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
 
             //TODO: a restore default button for hotkeys specifically
         }
-        hotkeyPanel.add(spacer1, new GridConstraints(rowIndex, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
-        hotkeyPanel.add(spacer2, new GridConstraints(0, 2, ActionType.values().length, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        listPanel.add(spacer1, new GridConstraints(rowIndex, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        listPanel.add(spacer2, new GridConstraints(0, 2, hotkeyCategoryMap.get(categoryHeaderList.get(i)).size(), 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+
+    }
+
+    private void readCSV() {
+        try {
+            // Create an object of file reader class with CSV file as a parameter.
+            FileReader filereader = new FileReader("oriedita/src/main/resources/categories.csv");
+
+            // create csvParser object with
+            // custom separator semicolon
+            CSVParser parser = new CSVParserBuilder().withSeparator(';').build();
+
+            // create csvReader object with parameter
+            // file-reader and parser
+            CSVReader csvReader = new CSVReaderBuilder(filereader)
+                    .withCSVParser(parser)
+                    .build();
+
+            // Read all data at once
+            List<String[]> allData = csvReader.readAll();
+
+            // Extract and print headers
+            String[] headers = allData.get(0);
+            categoryHeaderList.addAll(Arrays.asList(headers));
+            for (String header : headers) {
+                hotkeyCategoryMap.put(header, new ArrayList<>());
+            }
+
+            // Print Data excluding headers
+            for (int i = 1; i < allData.size(); i++) {
+                String[] row = allData.get(i);
+                for (int j = 0; j < row.length; j++) {
+                    if (!row[j].isEmpty()) {
+                        hotkeyCategoryMap.get(categoryHeaderList.get(j)).add(row[j]);
+                    }
+                }
+            }
+
+//            Logger.info(hotkeyCategoryMap);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void setupHotKey(ButtonService buttonService, FrameProvider frameProvider) {
+        hotkeyPanel.removeAll();
+        for (int i = 0; i < categoryHeaderList.size(); i++) {
+            JPanel testPanel = new JPanel();
+            testPanel.setLayout(new GridLayoutManager(2, 1, new Insets(0, 0, 5, 0), -1, -1));
+            hotkeyPanel.add(testPanel, new GridConstraints(i, 0, 1, 1, GridConstraints.ANCHOR_NORTHWEST, GridConstraints.FILL_HORIZONTAL, 1, 1, null, null, null, 0, false));
+            JLabel clickLabel = new JLabel();
+            clickLabel.setText(categoryHeaderList.get(i).toUpperCase().concat(" ▼"));
+            clickLabel.setBorder(BorderFactory.createLineBorder(new Color(0, 0, 0, 0)));
+            testPanel.add(clickLabel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_NORTHWEST, GridConstraints.FILL_HORIZONTAL, 1, 1, null, null, null, 0, false));
+            JPanel listPanel = new JPanel();
+            listPanel.setLayout(new GridLayoutManager(ActionType.values().length + 1, 4, new Insets(0, 0, 0, 0), -1, -1));
+            testPanel.add(listPanel, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_NORTH, GridConstraints.FILL_HORIZONTAL, 1, 1, null, null, null, 0, false));
+
+            addIconTextHotkey(buttonService, frameProvider, listPanel, i);
+
+            int temp = i;
+            clickLabel.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    listPanel.setEnabled(!listPanel.isEnabled());
+                    listPanel.setVisible(listPanel.isEnabled());
+                    clickLabel.setText(listPanel.isEnabled() ? categoryHeaderList.get(temp).toUpperCase().concat(" ▼") : categoryHeaderList.get(temp).toUpperCase());
+                }
+
+                @Override
+                public void mouseEntered(MouseEvent e) {
+                    clickLabel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+                }
+
+                @Override
+                public void mouseExited(MouseEvent e) {
+                    clickLabel.setBorder(BorderFactory.createLineBorder(new Color(0, 0, 0, 0)));
+                }
+            });
+
+        }
+        final Spacer hotkeyPanelSpacer = new Spacer();
+        hotkeyPanel.add(hotkeyPanelSpacer, new GridConstraints(hotkeyCategoryMap.size(), 0, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
     }
 
     /**
@@ -1086,7 +1193,12 @@ public class PreferenceDialog extends JDialog {
         labelsAnimSpeed.put(24, new JLabel("Slowest"));
         animationSpeedSlider.setLabelTable(labelsAnimSpeed);
 
+        hotkeyCategoryMap = new LinkedHashMap<>();
+        categoryHeaderList = new ArrayList<>();
+        clearHotKeyMap();
+        readCSV();
+
         hotkeyPanel = new JPanel();
-        hotkeyPanel.setLayout(new GridLayoutManager(ActionType.values().length + 1, 4, new Insets(10, 10, 0, 10), -1, -1));
+        hotkeyPanel.setLayout(new GridLayoutManager(hotkeyCategoryMap.size() + 1, 2, new Insets(10, 10, 0, 10), -1, -1));
     }
 }
