@@ -377,7 +377,6 @@ public class PreferenceDialog extends JDialog {
 
     private void onOK() {
         setVisible(false);
-//        clearHotKeyMap();
     }
 
     private void onCancel() {
@@ -385,7 +384,6 @@ public class PreferenceDialog extends JDialog {
         applicationModel.set(tempModel);
         foldedFigureModel.set(tempfoldedModel);
         setVisible(false);
-//        clearHotKeyMap();
     }
 
     private void onReset() {
@@ -395,13 +393,6 @@ public class PreferenceDialog extends JDialog {
             foldedFigureModel.restorePrefDefaults();
             dispose();
         }
-    }
-
-    private void clearHotKeyMap() {
-
-        hotkeyCategoryMap.clear();
-        categoryHeaderList.clear();
-
     }
 
     public void updateTempModel(ApplicationModel applicationModel) {
@@ -430,12 +421,12 @@ public class PreferenceDialog extends JDialog {
         return icon;
     }
 
-    private JLabel getTextLabel(int categoryIndex, int rowIndex) {
+    private JLabel getTextLabel(String key) {
         JLabel label = new JLabel();
         label.setEnabled(true);
         label.setFocusable(false);
         label.setIconTextGap(4);
-        String actionText = ResourceUtil.getBundleString("name", hotkeyCategoryMap.get(categoryHeaderList.get(categoryIndex)).get(rowIndex));
+        String actionText = ResourceUtil.getBundleString("name", key);
         if (actionText != null) {
             actionText = actionText.replaceAll("_", "");
         }
@@ -444,15 +435,15 @@ public class PreferenceDialog extends JDialog {
         return label;
     }
 
-    private JButton getKeyStrokeButton(ButtonService buttonService, FrameProvider frameProvider, int rowIndex, String key, int categoryIndex) {
+    private JButton getKeyStrokeButton(ButtonService buttonService, FrameProvider frameProvider, String key) {
         Map<KeyStroke, AbstractButton> helpInputMap = buttonService.getHelpInputMap();
-        KeyStroke currentKeyStroke = getKeyBind(frameProvider, hotkeyCategoryMap.get(categoryHeaderList.get(categoryIndex)).get(rowIndex));
+        KeyStroke currentKeyStroke = getKeyBind(frameProvider, key);
         AbstractButton button = buttonService.getPrefHotkeyMap().get(key);
 
         Action hotkeyAction = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                KeyStroke tempKeyStroke = getKeyBind(frameProvider, ActionType.values()[rowIndex].action());
+                KeyStroke tempKeyStroke = getKeyBind(frameProvider, key);
                 new SelectKeyStrokeDialog(frameProvider.get(), button, helpInputMap, tempKeyStroke, newKeyStroke -> {
                     if (newKeyStroke != null && helpInputMap.containsKey(newKeyStroke) && helpInputMap.get(newKeyStroke) != button) {
                         String conflictingButton = (String) helpInputMap.get(newKeyStroke).getRootPane()
@@ -487,13 +478,13 @@ public class PreferenceDialog extends JDialog {
         return keyStrokeButton;
     }
 
-    private void setupCategoryPanel(JPanel categoryPanel, JLabel clickLabel, JPanel listPanel, int i) {
+    private void setupCategoryPanel(JPanel categoryPanel, JLabel clickLabel, JPanel listPanel, String categoryHeader) {
         // Category Panel
         categoryPanel.setLayout(new GridLayoutManager(2, 1, new Insets(0, 0, 5, 0), -1, -1));
-        hotkeyPanel.add(categoryPanel, new GridConstraints(i, 0, 1, 1, GridConstraints.ANCHOR_NORTHWEST, GridConstraints.FILL_HORIZONTAL, 1, 1, null, null, null, 0, false));
+        hotkeyPanel.add(categoryPanel, new GridConstraints(categoryHeaderList.indexOf(categoryHeader), 0, 1, 1, GridConstraints.ANCHOR_NORTHWEST, GridConstraints.FILL_HORIZONTAL, 1, 1, null, null, null, 0, false));
 
         //Category Label
-        clickLabel.setText(categoryHeaderList.get(i).toUpperCase().concat(" ▼"));
+        clickLabel.setText(categoryHeader.toUpperCase().concat(" ▼"));
         clickLabel.setBorder(BorderFactory.createLineBorder(new Color(0, 0, 0, 0)));
         categoryPanel.add(clickLabel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_NORTHWEST, GridConstraints.FILL_HORIZONTAL, 1, 1, null, null, null, 0, false));
 
@@ -502,28 +493,27 @@ public class PreferenceDialog extends JDialog {
         categoryPanel.add(listPanel, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_NORTH, GridConstraints.FILL_HORIZONTAL, 1, 1, null, null, null, 0, false));
     }
 
-    private void addIconTextHotkey(ButtonService buttonService, FrameProvider frameProvider, JPanel listPanel, int i) {
-        int rowIndex;
+    private void addIconTextHotkey(ButtonService buttonService, FrameProvider frameProvider, JPanel listPanel, String categoryHeader) {
         final Spacer spacer1 = new Spacer();
         final Spacer spacer2 = new Spacer();
 
 
-        for (rowIndex = 0; rowIndex < hotkeyCategoryMap.get(categoryHeaderList.get(i)).size(); rowIndex++) {
-            String key = hotkeyCategoryMap.get(categoryHeaderList.get(i)).get(rowIndex);
+        for (String key : hotkeyCategoryMap.get(categoryHeader)) {
+            int index = hotkeyCategoryMap.get(categoryHeader).indexOf(key);
 
             JLabel iconLabel = getIconLabel(buttonService, key);
-            listPanel.add(iconLabel, new GridConstraints(rowIndex, 0, 1, 1, GridConstraints.ANCHOR_NORTH, GridConstraints.FILL_NONE, 1, 1, null, null, null, 0, false));
+            listPanel.add(iconLabel, new GridConstraints(index, 0, 1, 1, GridConstraints.ANCHOR_NORTH, GridConstraints.FILL_NONE, 1, 1, null, null, null, 0, false));
 
-            JLabel nameLabel = getTextLabel(i, rowIndex);
-            listPanel.add(nameLabel, new GridConstraints(rowIndex, 1, 1, 1, GridConstraints.ANCHOR_NORTH, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+            JLabel nameLabel = getTextLabel(key);
+            listPanel.add(nameLabel, new GridConstraints(index, 1, 1, 1, GridConstraints.ANCHOR_NORTH, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
 
-            JButton keystrokeButton = getKeyStrokeButton(buttonService, frameProvider, rowIndex, key, i);
-            listPanel.add(keystrokeButton, new GridConstraints(rowIndex, 3, 1, 1, GridConstraints.ANCHOR_NORTH, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+            JButton keystrokeButton = getKeyStrokeButton(buttonService, frameProvider, key);
+            listPanel.add(keystrokeButton, new GridConstraints(index, 3, 1, 1, GridConstraints.ANCHOR_NORTH, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
 
             //TODO: a restore default button for hotkeys specifically
         }
-        listPanel.add(spacer1, new GridConstraints(rowIndex, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
-        listPanel.add(spacer2, new GridConstraints(0, 2, hotkeyCategoryMap.get(categoryHeaderList.get(i)).size(), 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        listPanel.add(spacer1, new GridConstraints(hotkeyCategoryMap.get(categoryHeader).size() - 1, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        listPanel.add(spacer2, new GridConstraints(0, 2, hotkeyCategoryMap.get(categoryHeader).size(), 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
 
     }
 
@@ -577,22 +567,21 @@ public class PreferenceDialog extends JDialog {
 
     public void setupHotKey(ButtonService buttonService, FrameProvider frameProvider) {
         hotkeyPanel.removeAll();
-        for (int i = 0; i < categoryHeaderList.size(); i++) {
+        for (String categoryHeader : categoryHeaderList) {
             JPanel categoryPanel = new JPanel();
             JLabel clickLabel = new JLabel();
             JPanel listPanel = new JPanel();
 
-            setupCategoryPanel(categoryPanel, clickLabel, listPanel, i);
+            setupCategoryPanel(categoryPanel, clickLabel, listPanel, categoryHeader);
 
-            addIconTextHotkey(buttonService, frameProvider, listPanel, i);
+            addIconTextHotkey(buttonService, frameProvider, listPanel, categoryHeader);
 
-            int temp = i;
             clickLabel.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
                     listPanel.setEnabled(!listPanel.isEnabled());
                     listPanel.setVisible(listPanel.isEnabled());
-                    clickLabel.setText(listPanel.isEnabled() ? categoryHeaderList.get(temp).toUpperCase().concat(" ▼") : categoryHeaderList.get(temp).toUpperCase());
+                    clickLabel.setText(listPanel.isEnabled() ? categoryHeader.toUpperCase().concat(" ▼") : categoryHeader.toUpperCase());
                 }
 
                 @Override
@@ -1211,7 +1200,6 @@ public class PreferenceDialog extends JDialog {
 
         hotkeyCategoryMap = new LinkedHashMap<>();
         categoryHeaderList = new ArrayList<>();
-        clearHotKeyMap();
         readCSV();
 
         hotkeyPanel = new JPanel();
