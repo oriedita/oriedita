@@ -200,12 +200,7 @@ public class PreferenceDialog extends JDialog {
         setDefaultCloseOperation(HIDE_ON_CLOSE);
         getRootPane().setDefaultButton(buttonOK);
 
-        this.addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentShown(ComponentEvent e) {
-                setupHotKey(buttonService, frameProvider);
-            }
-        });
+        setupHotKey(buttonService, frameProvider);
 
         ck4Plus.setEnabled(applicationModel.getCheck4ColorTransparency() < 250);
         ck4Minus.setEnabled(applicationModel.getCheck4ColorTransparency() > 50);
