@@ -480,12 +480,14 @@ public class PreferenceDialog extends JDialog {
         hotkeyPanel.add(categoryPanel, new GridConstraints(categoryHeaderList.indexOf(categoryHeader), 0, 1, 1, GridConstraints.ANCHOR_NORTHWEST, GridConstraints.FILL_HORIZONTAL, 1, 1, null, null, null, 0, false));
 
         //Category Label
-        clickLabel.setText(categoryHeader.toUpperCase().concat(" ▼"));
+        clickLabel.setText(categoryHeader.toUpperCase());
         clickLabel.setBorder(BorderFactory.createLineBorder(new Color(0, 0, 0, 0)));
         categoryPanel.add(clickLabel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_NORTHWEST, GridConstraints.FILL_HORIZONTAL, 1, 1, null, null, null, 0, false));
 
         //List panel showing the hotkey list
         listPanel.setLayout(new GridLayoutManager(ActionType.values().length + 1, 4, new Insets(0, 15, 0, 0), -1, -1));
+        listPanel.setEnabled(false);
+        listPanel.setVisible(false);
         categoryPanel.add(listPanel, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_NORTH, GridConstraints.FILL_HORIZONTAL, 1, 1, null, null, null, 0, false));
     }
 
@@ -590,7 +592,6 @@ public class PreferenceDialog extends JDialog {
                     clickLabel.setBorder(BorderFactory.createLineBorder(new Color(0, 0, 0, 0)));
                 }
             });
-
         }
         final Spacer hotkeyPanelSpacer = new Spacer();
         hotkeyPanel.add(hotkeyPanelSpacer, new GridConstraints(hotkeyCategoryMap.size(), 0, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
