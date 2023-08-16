@@ -490,7 +490,7 @@ public class PreferenceDialog extends JDialog {
         categoryPanel.add(clickLabel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_NORTHWEST, GridConstraints.FILL_HORIZONTAL, 1, 1, null, null, null, 0, false));
 
         //List panel showing the hotkey list
-        listPanel.setLayout(new GridLayoutManager(ActionType.values().length + 1, 4, new Insets(0, 0, 0, 0), -1, -1));
+        listPanel.setLayout(new GridLayoutManager(ActionType.values().length + 1, 4, new Insets(0, 15, 0, 0), -1, -1));
         categoryPanel.add(listPanel, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_NORTH, GridConstraints.FILL_HORIZONTAL, 1, 1, null, null, null, 0, false));
     }
 

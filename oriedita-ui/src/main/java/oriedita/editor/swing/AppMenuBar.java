@@ -262,7 +262,7 @@ public class AppMenuBar {
             }
             preferenceDialog.setSize(preferenceDialog.getRootPane().getPreferredSize());
             preferenceDialog.setMinimumSize(preferenceDialog.getRootPane().getMinimumSize());
-            preferenceDialog.setResizable(false);
+            preferenceDialog.setResizable(true);
             preferenceDialog.setData(applicationModel);
             preferenceDialog.setLocationRelativeTo(prefButton);
             preferenceDialog.setAlwaysOnTop(false);
