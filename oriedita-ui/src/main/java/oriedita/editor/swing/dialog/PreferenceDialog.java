@@ -479,7 +479,7 @@ public class PreferenceDialog extends JDialog {
         hotkeyPanel.add(categoryPanel, new GridConstraints(categoryHeaderList.indexOf(categoryHeader), 0, 1, 1, GridConstraints.ANCHOR_NORTHWEST, GridConstraints.FILL_HORIZONTAL, 1, 1, null, null, null, 0, false));
 
         //Category Label
-        clickLabel.setText(categoryHeader.toUpperCase().concat(" ▾"));
+        clickLabel.setText("▸ ".concat(categoryHeader.toUpperCase()));
         categoryPanel.add(clickLabel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_NORTHWEST, GridConstraints.FILL_HORIZONTAL, 1, 1, null, null, null, 0, false));
 
         //List panel showing the hotkey list
@@ -577,7 +577,7 @@ public class PreferenceDialog extends JDialog {
                 public void mouseClicked(MouseEvent e) {
                     listPanel.setEnabled(!listPanel.isEnabled());
                     listPanel.setVisible(listPanel.isEnabled());
-                    clickLabel.setText(listPanel.isEnabled() ? categoryHeader.toUpperCase().concat(" ▴") : categoryHeader.toUpperCase().concat(" ▾"));
+                    clickLabel.setText(listPanel.isEnabled() ? "▾ ".concat(categoryHeader.toUpperCase()) : "▸ ".concat(categoryHeader.toUpperCase()));
                 }
             });
         }
