@@ -476,12 +476,10 @@ public class PreferenceDialog extends JDialog {
     private void setupCategoryPanel(JPanel categoryPanel, JLabel clickLabel, JPanel listPanel, String categoryHeader) {
         // Category Panel
         categoryPanel.setLayout(new GridLayoutManager(2, 1, new Insets(0, 0, 5, 0), -1, -1));
-        categoryPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.BLACK));
         hotkeyPanel.add(categoryPanel, new GridConstraints(categoryHeaderList.indexOf(categoryHeader), 0, 1, 1, GridConstraints.ANCHOR_NORTHWEST, GridConstraints.FILL_HORIZONTAL, 1, 1, null, null, null, 0, false));
 
         //Category Label
-        clickLabel.setText(categoryHeader.toUpperCase());
-        clickLabel.setBorder(BorderFactory.createLineBorder(new Color(0, 0, 0, 0)));
+        clickLabel.setText(categoryHeader.toUpperCase().concat(" ▾"));
         categoryPanel.add(clickLabel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_NORTHWEST, GridConstraints.FILL_HORIZONTAL, 1, 1, null, null, null, 0, false));
 
         //List panel showing the hotkey list
@@ -579,17 +577,7 @@ public class PreferenceDialog extends JDialog {
                 public void mouseClicked(MouseEvent e) {
                     listPanel.setEnabled(!listPanel.isEnabled());
                     listPanel.setVisible(listPanel.isEnabled());
-                    clickLabel.setText(listPanel.isEnabled() ? categoryHeader.toUpperCase().concat(" ▼") : categoryHeader.toUpperCase());
-                }
-
-                @Override
-                public void mouseEntered(MouseEvent e) {
-                    clickLabel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
-                }
-
-                @Override
-                public void mouseExited(MouseEvent e) {
-                    clickLabel.setBorder(BorderFactory.createLineBorder(new Color(0, 0, 0, 0)));
+                    clickLabel.setText(listPanel.isEnabled() ? categoryHeader.toUpperCase().concat(" ▴") : categoryHeader.toUpperCase().concat(" ▾"));
                 }
             });
         }
