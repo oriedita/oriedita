@@ -52,14 +52,13 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.FileReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Dictionary;
@@ -534,8 +533,11 @@ public class PreferenceDialog extends JDialog {
 
     private void readCSV() {
         try {
-            // Create an object of file reader class with CSV file as a parameter.
-            FileReader filereader = new FileReader("oriedita/src/main/resources/categories.csv");
+            // Create an object of input stream reader class with CSV file as a parameter.
+            InputStream is = this.getClass().getResourceAsStream("/categories.csv");
+
+            assert is != null;
+            InputStreamReader inputStreamReader = new InputStreamReader(is);
 
             // create csvParser object with
             // custom separator semicolon
@@ -543,7 +545,7 @@ public class PreferenceDialog extends JDialog {
 
             // create csvReader object with parameter
             // file-reader and parser
-            CSVReader csvReader = new CSVReaderBuilder(filereader)
+            CSVReader csvReader = new CSVReaderBuilder(inputStreamReader)
                     .withCSVParser(parser)
                     .build();
 
