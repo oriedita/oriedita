@@ -201,7 +201,7 @@ public class FileSaveServiceImpl implements FileSaveService {
     }
 
     public File selectOpenFile() {
-        String fileName = openFileDialog(frame.get(), "Open File", applicationModel.getDefaultDirectory(), new String[]{"*.ori", "*.cp"}, "Supported files (.ori, .cp)");
+        String fileName = openFileDialog(frame.get(), "Open File", applicationModel.getDefaultDirectory(), new String[]{"*.ori", "*.cp", "*.fold"}, "Supported files (.ori, .cp, .fold)");
 
         if (fileName == null) {
             return null;
@@ -415,7 +415,14 @@ public class FileSaveServiceImpl implements FileSaveService {
             }
 
             Cp.exportFile(save, fname);
-        } else {
+        } else if (fname.getName().endsWith((".fold"))){
+            try {
+                fold.exportFile(mainCreasePatternWorker.getSave_for_export(), fname);
+            } catch (InterruptedException | FileReadingException e) {
+                e.printStackTrace();
+            }
+        }
+        else {
             JOptionPane.showMessageDialog(frame.get(), "Unknown file type, cannot save", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
