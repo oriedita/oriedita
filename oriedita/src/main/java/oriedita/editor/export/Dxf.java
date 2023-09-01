@@ -62,10 +62,10 @@ public class Dxf {
                             layerName = "AuxiliaryLine";
                             colorNumber = 4; // cyan
                     }
-                    x1 = lineSegment.determineAX();
-                    y1 = lineSegment.determineAY();
-                    x2 = lineSegment.determineBX();
-                    y2 = lineSegment.determineBY();
+                    x1 = lineSegment.determineAX() + 200;
+                    y1 = lineSegment.determineAY() - 200;
+                    x2 = lineSegment.determineBX() + 200;
+                    y2 = lineSegment.determineBY() - 200;
 
                     pw.println(layerName);
                     pw.println("  6");
