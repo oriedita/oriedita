@@ -85,10 +85,10 @@ public class Dxf {
 
             }
 
-            pw.println("  0\n");
-            pw.println("ENDSEC\n");
-            pw.println("  0\n");
-            pw.println("EOF\n");
+            pw.println("  0");
+            pw.println("ENDSEC");
+            pw.println("  0");
+            pw.println("EOF");
         } catch (IOException e) {
             Logger.error(e, "Error during Dxf export");
         }
