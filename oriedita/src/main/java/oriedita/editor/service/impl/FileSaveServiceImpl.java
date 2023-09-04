@@ -16,6 +16,7 @@ import oriedita.editor.databinding.FoldedFiguresList;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.exception.FileReadingException;
 import oriedita.editor.export.Cp;
+import oriedita.editor.export.Dxf;
 import oriedita.editor.export.Fold;
 import oriedita.editor.export.Obj;
 import oriedita.editor.export.Orh;
@@ -197,6 +198,8 @@ public class FileSaveServiceImpl implements FileSaveService {
             } catch (InterruptedException | FileReadingException e) {
                 e.printStackTrace();
             }
+        } else if (exportFile.getName().endsWith(".dxf")) {
+            Dxf.exportFile(mainCreasePatternWorker.getSave_for_export(), exportFile);
         }
     }
 
