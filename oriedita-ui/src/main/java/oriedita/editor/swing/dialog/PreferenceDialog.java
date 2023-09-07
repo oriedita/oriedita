@@ -16,6 +16,7 @@ import oriedita.editor.canvas.LineStyle;
 import oriedita.editor.databinding.ApplicationModel;
 import oriedita.editor.databinding.FoldedFigureModel;
 import oriedita.editor.service.ButtonService;
+import oriedita.editor.service.FileSaveService;
 import oriedita.editor.service.LookAndFeelService;
 import oriedita.editor.swing.component.ColorIcon;
 import oriedita.editor.tools.KeyStrokeUtil;
@@ -131,6 +132,8 @@ public class PreferenceDialog extends JDialog {
     private JPanel gridLinePanel;
     private JLabel CPLabel;
     private JPanel hotkeyPanel;
+    private JButton importButton;
+    private JButton exportButton;
     private int tempTransparency;
     private final ApplicationModel applicationModel;
     private final ApplicationModel tempModel;
@@ -184,7 +187,8 @@ public class PreferenceDialog extends JDialog {
             FoldedFigureModel foldedFigureModel,
             String name,
             Frame owner,
-            ButtonService buttonService
+            ButtonService buttonService,
+            FileSaveService fileSaveService
     ) {
         super(owner, name);
         this.applicationModel = appModel;
@@ -353,10 +357,9 @@ public class PreferenceDialog extends JDialog {
         mouseRangeSlider.addChangeListener(e -> applicationModel.setMouseRadius(mouseRangeSlider.getValue()));
 
         buttonOK.addActionListener(e -> onOK());
-
         buttonCancel.addActionListener(e -> onCancel());
-
         restoreDefaultsButton.addActionListener(e -> onReset());
+        exportButton.addActionListener(e -> fileSaveService.exportPref());
 
         // call onCancel() when cross is clicked
         addWindowListener(new WindowAdapter() {
@@ -613,17 +616,23 @@ public class PreferenceDialog extends JDialog {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         contentPane.add(bottomPanel, gbc);
         final JPanel panel1 = new JPanel();
-        panel1.setLayout(new GridLayoutManager(1, 3, new Insets(0, 0, 0, 10), -1, -1));
+        panel1.setLayout(new GridLayoutManager(1, 5, new Insets(0, 0, 0, 10), -1, -1));
         bottomPanel.add(panel1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_SOUTHEAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         buttonOK = new JButton();
         buttonOK.setText("OK");
-        panel1.add(buttonOK, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        panel1.add(buttonOK, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         buttonCancel = new JButton();
         buttonCancel.setText("Cancel");
-        panel1.add(buttonCancel, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        panel1.add(buttonCancel, new GridConstraints(0, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         restoreDefaultsButton = new JButton();
         restoreDefaultsButton.setText("Restore defaults");
-        panel1.add(restoreDefaultsButton, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        panel1.add(restoreDefaultsButton, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        importButton = new JButton();
+        importButton.setText("Import");
+        panel1.add(importButton, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        exportButton = new JButton();
+        exportButton.setText("Export");
+        panel1.add(exportButton, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final Spacer spacer1 = new Spacer();
         bottomPanel.add(spacer1, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         topPanel = new JPanel();

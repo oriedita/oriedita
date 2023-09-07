@@ -10,6 +10,10 @@ public interface FileSaveService {
 
     void openFile();
 
+    void importPref ();
+
+    void exportPref ();
+
     void importFile();
 
     void exportFile();

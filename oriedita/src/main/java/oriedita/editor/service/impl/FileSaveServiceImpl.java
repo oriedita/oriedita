@@ -30,6 +30,7 @@ import oriedita.editor.save.SaveProvider;
 import oriedita.editor.service.FileSaveService;
 import oriedita.editor.service.ResetService;
 import oriedita.editor.swing.dialog.ExportDialog;
+import oriedita.editor.swing.dialog.FileDialogUtil;
 import oriedita.editor.swing.dialog.SaveTypeDialog;
 import oriedita.editor.tools.ResourceUtil;
 
@@ -37,12 +38,19 @@ import javax.swing.JOptionPane;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import static oriedita.editor.swing.dialog.FileDialogUtil.openFileDialog;
 import static oriedita.editor.swing.dialog.FileDialogUtil.saveFileDialog;
@@ -123,6 +131,32 @@ public class FileSaveServiceImpl implements FileSaveService {
         } catch (FileReadingException e) {
             Logger.error(e, "Error during file read");
             JOptionPane.showMessageDialog(frame.get(), "An error occurred when reading this file", "Read Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    @Override
+    public void importPref() {
+
+    }
+
+    @Override
+    public void exportPref(){
+        List<String> fileNames = Arrays.asList("config.json", "hotkey.properties");
+        Path exportPath = Path.of(FileDialogUtil.saveFileDialog(frame.get(), "Export...", applicationModel.getDefaultDirectory(), new String[]{"*.zip"}, null));
+
+        try (ZipOutputStream zout = new ZipOutputStream(new FileOutputStream(exportPath.toFile()))) {
+            fileNames.forEach(fileName -> {
+                Path filePath = ResourceUtil.getAppDir().resolve(fileName);
+                try (InputStream fis = new FileInputStream(filePath.toFile())) {
+                    zout.putNextEntry(new ZipEntry(fileName));
+                    fis.transferTo(zout);
+                    zout.closeEntry();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
