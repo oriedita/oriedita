@@ -44,9 +44,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.zip.ZipEntry;
@@ -141,7 +142,13 @@ public class FileSaveServiceImpl implements FileSaveService {
 
     @Override
     public void exportPref(){
-        List<String> fileNames = Arrays.asList("config.json", "hotkey.properties");
+        File configDir = new File(ResourceUtil.getAppDir().toUri());
+        List<String> fileNames = new ArrayList<>();
+
+        for (File file : Objects.requireNonNull(configDir.listFiles())){
+            fileNames.add(file.getName());
+        }
+
         Path exportPath = Path.of(FileDialogUtil.saveFileDialog(frame.get(), "Export...", applicationModel.getDefaultDirectory(), new String[]{"*.zip"}, null));
 
         try (ZipOutputStream zout = new ZipOutputStream(new FileOutputStream(exportPath.toFile()))) {
