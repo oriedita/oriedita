@@ -1,5 +1,6 @@
 package oriedita.editor.service.impl;
 
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -61,6 +62,22 @@ public class ApplicationModelPersistenceServiceImpl implements ApplicationModelP
             }
 
             applicationModel.reset();
+        }
+    }
+
+    public void importApplicationModel(File configFile){
+        try {
+            ApplicationModel loadedApplicationModel = new DefaultObjectMapper().readValue(configFile, ApplicationModel.class);
+            applicationModel.set(loadedApplicationModel);
+        } catch (JsonMappingException e) {
+            // Can't map imported application state
+            JOptionPane.showMessageDialog(frame.get(), "<html>Failed to map application state.", "State load failed", JOptionPane.ERROR_MESSAGE);
+        } catch (IOException e) {
+            // Imported application state isn't accessible
+            JOptionPane.showMessageDialog(frame.get(), "<html>Failed to import application state.", "State load failed", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        } catch (Exception e){
+            e.printStackTrace();
         }
     }
 
