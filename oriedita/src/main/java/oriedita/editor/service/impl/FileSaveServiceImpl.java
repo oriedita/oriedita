@@ -35,16 +35,13 @@ import oriedita.editor.swing.dialog.FileDialogUtil;
 import oriedita.editor.swing.dialog.SaveTypeDialog;
 import oriedita.editor.tools.ResourceUtil;
 
-import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import java.awt.Image;
 import java.awt.Toolkit;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
@@ -53,10 +50,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.PropertyResourceBundle;
+import java.util.ResourceBundle;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
@@ -146,76 +144,32 @@ public class FileSaveServiceImpl implements FileSaveService {
 
     @Override
     public void importPref(JPanel parent) {
-        ZipFile zipFile = null;
-        JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setMultiSelectionEnabled(false);
-
-        int option = fileChooser.showOpenDialog(parent);
-        if (option == JFileChooser.APPROVE_OPTION && fileChooser.getSelectedFile() != null){
-            try {
-                zipFile = new ZipFile(fileChooser.getSelectedFile());
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-        assert zipFile != null;
+        Path importPath = Path.of(FileDialogUtil.openFileDialog(frame.get(), "Import...", applicationModel.getDefaultDirectory(), new String[]{"*.zip"}, null));
 
         ZipEntry ze;
-        try(ZipInputStream zis = new ZipInputStream(new FileInputStream(zipFile.getName()))){
+        try(ZipInputStream zis = new ZipInputStream(new FileInputStream(importPath.toFile()))){
             while ((ze = zis.getNextEntry()) != null){
-                File file = new File(ze.getName());
 
-                try (FileOutputStream fos = new FileOutputStream(file)) {
-                    byte[] buffer = new byte[1024];
-                    int bytesRead;
-                    while ((bytesRead = zis.read(buffer)) != -1) {
-                        fos.write(buffer, 0, bytesRead);
+                if (ze.getName().equals("config.json")){
+                    applicationModelPersistenceService.importApplicationModel(zis);
+                } else if (ze.getName().endsWith(".properties")){
+                    Logger.info("ze.getName(): "+ze.getName());
+                    String bundleName = ze.getName().split("\\.")[0];
+                    ResourceBundle userBundle = null;
+
+                    try {
+                        userBundle = new PropertyResourceBundle(zis);
+                    } catch (IOException ignored) {
                     }
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
 
-                if (file.getName().equals("config.json")){
-                    applicationModelPersistenceService.importApplicationModel(file);
-                } else if (file.getName().endsWith(".properties")){
-                    try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-                        String line;
-                        boolean skipFirstLine = true; // Flag to skip the first line
-
-                        while ((line = br.readLine()) != null) {
-                            if (skipFirstLine) {
-                                skipFirstLine = false;
-                                continue; // Skip the first line
-                            }
-                            if (!line.contains("=")) {
-                                Logger.info("Line does not contain '=' character: " + line);
-                                continue; // Skip lines without '='
-                            }
-
-                            String[] temp = line.split("=");
-
-                            if (temp.length < 2) {
-                                Logger.info("Invalid/Missing hotkey: " + line);
-                                continue; // Skip lines without both key and value
-                            }
-
-                            // Get bundleName, key, and value
-                            String bundleName = file.getName().split("\\.")[0];
-                            List<String> parts = new ArrayList<>();
-                            parts.add(temp[0]);
-                            parts.add(temp[1]);
-                            String key = parts.get(0);
-                            String value = parts.get(1);
-
-                            ResourceUtil.updateBundleKey(bundleName, key, value);
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                    assert userBundle != null;
+                    for( String key : userBundle.keySet()){
+                        ResourceUtil.updateBundleKey(bundleName, key, userBundle.getString(key));
                     }
                 }
             }
         } catch (IOException e) {
+            Logger.info("zis closed");
             throw new RuntimeException(e);
         }
     }

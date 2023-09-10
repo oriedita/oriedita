@@ -15,6 +15,7 @@ import javax.swing.JOptionPane;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.zip.ZipInputStream;
 
 import static oriedita.editor.tools.ResourceUtil.getAppDir;
 
@@ -65,9 +66,18 @@ public class ApplicationModelPersistenceServiceImpl implements ApplicationModelP
         }
     }
 
-    public void importApplicationModel(File configFile){
+    public void importApplicationModel(ZipInputStream zis){
         try {
-            ApplicationModel loadedApplicationModel = new DefaultObjectMapper().readValue(configFile, ApplicationModel.class);
+            StringBuilder s = new StringBuilder();
+            byte[] buffer = new byte[1024];
+            int read = 0;
+            while ((read = zis.read(buffer, 0, 1024)) >= 0) {
+                s.append(new String(buffer, 0, read));
+            }
+
+            ObjectMapper objectMapper = new DefaultObjectMapper();
+            objectMapper.configure(SerializationFeature.CLOSE_CLOSEABLE, false);
+            ApplicationModel loadedApplicationModel = objectMapper.readValue(s.toString(), ApplicationModel.class);
             applicationModel.set(loadedApplicationModel);
         } catch (JsonMappingException e) {
             // Can't map imported application state

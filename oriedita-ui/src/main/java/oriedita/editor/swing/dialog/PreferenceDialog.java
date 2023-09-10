@@ -359,7 +359,10 @@ public class PreferenceDialog extends JDialog {
         buttonOK.addActionListener(e -> onOK());
         buttonCancel.addActionListener(e -> onCancel());
         restoreDefaultsButton.addActionListener(e -> onReset());
-        importButton.addActionListener(e -> fileSaveService.importPref(contentPane));
+        importButton.addActionListener(e -> {
+            fileSaveService.importPref(contentPane);
+            setData(applicationModel);
+        });
         exportButton.addActionListener(e -> fileSaveService.exportPref());
 
         // call onCancel() when cross is clicked
