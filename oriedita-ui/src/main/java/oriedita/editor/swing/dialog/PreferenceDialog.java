@@ -360,8 +360,9 @@ public class PreferenceDialog extends JDialog {
         buttonCancel.addActionListener(e -> onCancel());
         restoreDefaultsButton.addActionListener(e -> onReset());
         importButton.addActionListener(e -> {
-            fileSaveService.importPref(contentPane);
+            fileSaveService.importPref(contentPane, frameProvider, buttonService);
             setData(applicationModel);
+            setupHotKey(buttonService, frameProvider);
         });
         exportButton.addActionListener(e -> fileSaveService.exportPref());
 

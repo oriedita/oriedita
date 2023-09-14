@@ -28,6 +28,7 @@ import oriedita.editor.save.Save;
 import oriedita.editor.save.SaveConverter;
 import oriedita.editor.save.SaveProvider;
 import oriedita.editor.service.ApplicationModelPersistenceService;
+import oriedita.editor.service.ButtonService;
 import oriedita.editor.service.FileSaveService;
 import oriedita.editor.service.ResetService;
 import oriedita.editor.swing.dialog.ExportDialog;
@@ -35,8 +36,11 @@ import oriedita.editor.swing.dialog.FileDialogUtil;
 import oriedita.editor.swing.dialog.SaveTypeDialog;
 import oriedita.editor.tools.ResourceUtil;
 
+import javax.swing.InputMap;
+import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.KeyStroke;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.io.File;
@@ -143,34 +147,46 @@ public class FileSaveServiceImpl implements FileSaveService {
     }
 
     @Override
-    public void importPref(JPanel parent) {
+    public void importPref(JPanel parent, FrameProvider frameProvider, ButtonService buttonService) {
         Path importPath = Path.of(FileDialogUtil.openFileDialog(frame.get(), "Import...", applicationModel.getDefaultDirectory(), new String[]{"*.zip"}, null));
 
         ZipEntry ze;
         try(ZipInputStream zis = new ZipInputStream(new FileInputStream(importPath.toFile()))){
             while ((ze = zis.getNextEntry()) != null){
-
                 if (ze.getName().equals("config.json")){
                     applicationModelPersistenceService.importApplicationModel(zis);
-                } else if (ze.getName().endsWith(".properties")){
-                    Logger.info("ze.getName(): "+ze.getName());
-                    String bundleName = ze.getName().split("\\.")[0];
-                    ResourceBundle userBundle = null;
-
-                    try {
-                        userBundle = new PropertyResourceBundle(zis);
-                    } catch (IOException ignored) {
-                    }
-
-                    assert userBundle != null;
-                    for( String key : userBundle.keySet()){
-                        ResourceUtil.updateBundleKey(bundleName, key, userBundle.getString(key));
-                    }
+                } else if (ze.getName().equals("hotkey.properties")){
+                    readImportHotkey(zis, ze, frameProvider, buttonService);
                 }
             }
         } catch (IOException e) {
             Logger.info("zis closed");
             throw new RuntimeException(e);
+        }
+    }
+
+    private void readImportHotkey(ZipInputStream zis, ZipEntry ze, FrameProvider frameProvider, ButtonService buttonService){
+        String bundleName = ze.getName().split("\\.")[0];
+        ResourceBundle userBundle;
+
+        try {
+            userBundle = new PropertyResourceBundle(zis);
+            for( String key : userBundle.keySet()){
+                InputMap map = frameProvider.get().getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+                KeyStroke stroke = null;
+                for (KeyStroke keyStroke : map.keys()) {
+                    if (map.get(keyStroke).equals(key)) {
+                        stroke = keyStroke;
+                    }
+                }
+                KeyStroke currentKeyStroke = stroke;
+
+                buttonService.getHelpInputMap().remove(currentKeyStroke);
+                frameProvider.get().getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).remove(currentKeyStroke);
+                frameProvider.get().getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(userBundle.getString(key)), key);
+                ResourceUtil.updateBundleKey(bundleName, key, userBundle.getString(key));
+            }
+        } catch (IOException ignored) {
         }
     }
 
