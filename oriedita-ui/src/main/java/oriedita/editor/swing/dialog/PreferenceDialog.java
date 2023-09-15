@@ -403,13 +403,7 @@ public class PreferenceDialog extends JDialog {
 
     public KeyStroke getKeyBind(FrameProvider owner, String key) {
         InputMap map = owner.get().getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
-        KeyStroke stroke = null;
-        for (KeyStroke keyStroke : map.keys()) {
-            if (map.get(keyStroke).equals(key)) {
-                stroke = keyStroke;
-            }
-        }
-        return stroke;
+        return Arrays.stream(map.keys()).filter(ks -> map.get(ks).equals(key)).findFirst().orElse(null);
     }
 
     private JLabel getIconLabel(ButtonService buttonService, String key) {

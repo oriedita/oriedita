@@ -51,6 +51,7 @@ import java.io.InputStream;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -171,20 +172,18 @@ public class FileSaveServiceImpl implements FileSaveService {
 
         try {
             userBundle = new PropertyResourceBundle(zis);
-            for( String key : userBundle.keySet()){
+
+            for( String action : userBundle.keySet()){
                 InputMap map = frameProvider.get().getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
-                KeyStroke stroke = null;
-                for (KeyStroke keyStroke : map.keys()) {
-                    if (map.get(keyStroke).equals(key)) {
-                        stroke = keyStroke;
-                    }
-                }
-                KeyStroke currentKeyStroke = stroke;
+                KeyStroke currentKeyStroke = Arrays.stream(map.keys()).filter(ks -> map.get(ks).equals(action)).findFirst().orElse(null);
+
+                String keyStroke = userBundle.getString(action);
+
 
                 buttonService.getHelpInputMap().remove(currentKeyStroke);
                 frameProvider.get().getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).remove(currentKeyStroke);
-                frameProvider.get().getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(userBundle.getString(key)), key);
-                ResourceUtil.updateBundleKey(bundleName, key, userBundle.getString(key));
+                frameProvider.get().getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(keyStroke), action);
+                ResourceUtil.updateBundleKey(bundleName, action, keyStroke);
             }
         } catch (IOException ignored) {
         }
