@@ -167,23 +167,19 @@ public class FileSaveServiceImpl implements FileSaveService {
     }
 
     private void readImportHotkey(ZipInputStream zis, ZipEntry ze, FrameProvider frameProvider, ButtonService buttonService){
-        String bundleName = ze.getName().split("\\.")[0];
-        ResourceBundle userBundle;
-
         try {
-            userBundle = new PropertyResourceBundle(zis);
+            ResourceBundle userBundle = new PropertyResourceBundle(zis);
+            InputMap map = frameProvider.get().getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
 
-            for( String action : userBundle.keySet()){
-                InputMap map = frameProvider.get().getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+            for(String action : userBundle.keySet()){
                 KeyStroke currentKeyStroke = Arrays.stream(map.keys()).filter(ks -> map.get(ks).equals(action)).findFirst().orElse(null);
-
-                String keyStroke = userBundle.getString(action);
-
+                String importKeyStroke = userBundle.getString(action);
+                String bundleName = ze.getName().split("\\.")[0];
 
                 buttonService.getHelpInputMap().remove(currentKeyStroke);
                 frameProvider.get().getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).remove(currentKeyStroke);
-                frameProvider.get().getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(keyStroke), action);
-                ResourceUtil.updateBundleKey(bundleName, action, keyStroke);
+                frameProvider.get().getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(importKeyStroke), action);
+                ResourceUtil.updateBundleKey(bundleName, action, importKeyStroke);
             }
         } catch (IOException ignored) {
         }
