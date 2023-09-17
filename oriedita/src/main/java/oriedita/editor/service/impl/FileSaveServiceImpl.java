@@ -149,10 +149,17 @@ public class FileSaveServiceImpl implements FileSaveService {
 
     @Override
     public void importPref(JPanel parent, FrameProvider frameProvider, ButtonService buttonService) {
-        Path importPath = Path.of(FileDialogUtil.openFileDialog(frame.get(), "Import...", applicationModel.getDefaultDirectory(), new String[]{"*.zip"}, null));
+        Path importPath = Path.of(FileDialogUtil.openFileDialog(frame.get(), "Import...", applicationModel.getDefaultDirectory(), new String[]{"*.oriconfig"}, null));
+        File zipFile = importPath.toFile();
+        String extension = ".oriconfig";
+
+        if(!zipFile.getName().endsWith(extension)){
+            JOptionPane.showMessageDialog(parent, String.format("The zip file must have %s as the extension", extension),"Wrong import file format", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
 
         ZipEntry ze;
-        try(ZipInputStream zis = new ZipInputStream(new FileInputStream(importPath.toFile()))){
+        try(ZipInputStream zis = new ZipInputStream(new FileInputStream(zipFile))){
             while ((ze = zis.getNextEntry()) != null){
                 if (ze.getName().equals("config.json")){
                     applicationModelPersistenceService.importApplicationModel(zis);
@@ -194,7 +201,7 @@ public class FileSaveServiceImpl implements FileSaveService {
             fileNames.add(file.getName());
         }
 
-        Path exportPath = Path.of(FileDialogUtil.saveFileDialog(frame.get(), "Export...", applicationModel.getDefaultDirectory(), new String[]{"*.zip"}, null));
+        Path exportPath = Path.of(FileDialogUtil.saveFileDialog(frame.get(), "Export...", applicationModel.getDefaultDirectory(), new String[]{"*.oriconfig"}, null));
 
         try (ZipOutputStream zout = new ZipOutputStream(new FileOutputStream(exportPath.toFile()))) {
             fileNames.forEach(fileName -> {
