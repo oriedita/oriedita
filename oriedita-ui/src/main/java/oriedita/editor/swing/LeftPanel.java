@@ -25,6 +25,7 @@ import oriedita.editor.databinding.FoldedFiguresList;
 import oriedita.editor.databinding.GridModel;
 import oriedita.editor.databinding.MeasuresModel;
 import oriedita.editor.drawing.FoldedFigure_Drawer;
+import oriedita.editor.handler.PopupMenuAdapter;
 import origami.crease_pattern.CustomLineTypes;
 import oriedita.editor.service.ButtonService;
 import oriedita.editor.service.FoldingService;
@@ -49,6 +50,7 @@ import javax.swing.JTextField;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
+import javax.swing.event.PopupMenuEvent;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Insets;
@@ -438,6 +440,12 @@ public class LeftPanel {
             applicationModel.setDelLineType(CustomLineTypes.from(delTypeDropBox.getSelectedIndex() - 1));
             delTypeDropBox.setSelectedIndex(applicationModel.getDelLineType().getNumber() + 1);
         });
+        delTypeDropBox.addPopupMenuListener(new PopupMenuAdapter() {
+            @Override
+            public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+                del_l_typeButton.doClick();
+            }
+        });
         trimBranchesButton.addActionListener(e -> {
             mainCreasePatternWorker.point_removal();
             mainCreasePatternWorker.overlapping_line_removal();
@@ -454,6 +462,12 @@ public class LeftPanel {
             applicationModel.setCustomFromLineType(CustomLineTypes.from(fromLineDropBox.getSelectedIndex() - 1));
             fromLineDropBox.setSelectedIndex(applicationModel.getCustomFromLineType().getNumber() + 1);
         });
+        fromLineDropBox.addPopupMenuListener(new PopupMenuAdapter() {
+            @Override
+            public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+                replace_lineButton.doClick();
+            }
+        });
         toLineDropBox.addActionListener(e -> {
             if (toLineDropBox.getSelectedIndex() == CustomLineTypes.EGDE.getNumber()) {
                 applicationModel.setCustomToLineType(CustomLineTypes.from(toLineDropBox.getSelectedIndex()));
@@ -461,6 +475,12 @@ public class LeftPanel {
             } else {
                 applicationModel.setCustomToLineType(CustomLineTypes.from(toLineDropBox.getSelectedIndex() + 1));
                 toLineDropBox.setSelectedIndex(applicationModel.getCustomToLineType().getNumber() - 1);
+            }
+        });
+        toLineDropBox.addPopupMenuListener(new PopupMenuAdapter() {
+            @Override
+            public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+                replace_lineButton.doClick();
             }
         });
         zen_yama_tani_henkanButton.addActionListener(e -> {
