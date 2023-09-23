@@ -176,7 +176,10 @@ public class LeftPanel {
     private JLabel replaceLabel;
 
     private HashMap<MouseMode, JButton> selectionTransformationToolLookup;
-
+    public double convertAngle(double angle){
+        if(angle>=0) return angle%180;
+        else return 180-(angle%180);
+    }
     @Inject
     public LeftPanel(FrameProvider frameProvider,
                      @Named("normal") HistoryState historyState,
