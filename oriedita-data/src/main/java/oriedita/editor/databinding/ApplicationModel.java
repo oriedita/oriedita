@@ -4,7 +4,6 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import oriedita.editor.Colors;
 import oriedita.editor.canvas.LineStyle;
-import oriedita.editor.handler.CustomLineTypes;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -69,9 +68,9 @@ public class ApplicationModel implements Serializable {
     private int gridLineWidth;
     private boolean displayNumbers;
     private boolean foldWarning;
-    private CustomLineTypes customFromLineType;
-    private CustomLineTypes customToLineType;
-    private CustomLineTypes delLineType;
+    private int customFromLineType;
+    private int customToLineType;
+    private int delLineType;
     private int check4ColorTransparency;
     private double zoomSpeed;
     private boolean moveFoldedModelWithCp;
@@ -152,31 +151,31 @@ public class ApplicationModel implements Serializable {
         return check4ColorTransparency;
     }
 
-    public void setCustomFromLineType(CustomLineTypes customFromLineType){
-        CustomLineTypes oldCustomFromLineType = this.customFromLineType;
+    public void setCustomFromLineType(int customFromLineType){
+        int oldCustomFromLineType = this.customFromLineType;
         this.customFromLineType = customFromLineType;
         this.pcs.firePropertyChange("customFromLineType", oldCustomFromLineType, customFromLineType);
     }
 
-    public CustomLineTypes getCustomFromLineType(){
+    public int getCustomFromLineType(){
         return customFromLineType;
     }
 
-    public void setCustomToLineType(CustomLineTypes customToLineType){
-        CustomLineTypes oldCustomToLineType = this.customToLineType;
+    public void setCustomToLineType(int customToLineType){
+        int oldCustomToLineType = this.customToLineType;
         this.customToLineType = customToLineType;
         this.pcs.firePropertyChange("customToLineType", oldCustomToLineType, customToLineType);
     }
 
-    public CustomLineTypes getDelLineType() { return delLineType; }
+    public int getDelLineType() { return delLineType; }
 
-    public void setDelLineType(CustomLineTypes delLineType) {
-        CustomLineTypes oldDelLineType = this.delLineType;
+    public void setDelLineType(int delLineType) {
+        int oldDelLineType = this.delLineType;
         this.delLineType = delLineType;
         this.pcs.firePropertyChange("delLineType", oldDelLineType, delLineType);
     }
 
-    public CustomLineTypes getCustomToLineType(){
+    public int getCustomToLineType(){
         return customToLineType;
     }
 
@@ -388,9 +387,9 @@ public class ApplicationModel implements Serializable {
 
         laf = "com.formdev.flatlaf.FlatLightLaf";
 
-        customFromLineType = CustomLineTypes.ANY;
-        customToLineType = CustomLineTypes.EGDE;
-        delLineType = CustomLineTypes.ANY;
+        customFromLineType = -1;
+        customToLineType = 0;
+        delLineType = -1;
 
         zoomSpeed = 1;
         animations = true;
@@ -442,6 +441,10 @@ public class ApplicationModel implements Serializable {
         displayBottomPanel = true;
         displayLeftPanel = true;
         displayRightPanel = true;
+
+        customFromLineType = -1;
+        customToLineType = 0;
+        delLineType = -1;
 
         zoomSpeed = 1;
         animations = true;

@@ -441,18 +441,35 @@ public class FoldLineSet {
         for (int i = 1; i <= total; i++){
             LineSegment s;
             s = lineSegments.get(i);
+
             if(b.totu_boundary_inside(s)){
-                // From "Any"
-                if(from == -1){
-                    s.setColor(LineColor.fromNumber(to));
-                    i_r = true;
-                }
-                // From other line types
-                else {
-                    if(s.getColor().getNumber() == from){
+                switch(from) {
+                    case -1:
                         s.setColor(LineColor.fromNumber(to));
                         i_r = true;
-                    }
+                        break;
+                    case 0:
+                        if(s.getColor().getNumber() == 0){
+                            s.setColor(LineColor.fromNumber(to));
+                            i_r = true;
+                        }
+                        break;
+                    case 1:
+                        if(s.getColor().getNumber() == 1 || s.getColor().getNumber() == 2){
+                            s.setColor(LineColor.fromNumber(to));
+                            i_r = true;
+                        }
+                        break;
+                    case 2:
+                    case 3:
+                    case 4:
+                        if(s.getColor().getNumber() == from - 1){
+                            s.setColor(LineColor.fromNumber(to));
+                            i_r = true;
+                        }
+                        break;
+                    default:
+                        break;
                 }
             }
         }
@@ -468,22 +485,42 @@ public class FoldLineSet {
             LineSegment s;
             s = lineSegments.get(i);
 
-            // From "Any"
-            if(del == -1){
-                if(b.totu_boundary_inside(s)){
-                    i_r = true;
-                } else {
-                    save.addLineSegment(s.clone());
-                }
-            }
-            //From other line types
-            else {
-                if ((b.totu_boundary_inside(s)) && s.getColor().getNumber() == del) {
-                    i_r = true;
-                }//黒赤青線はmemo1に書かれない。つまり削除される。
-                else if ((!b.totu_boundary_inside(s)) || s.getColor().getNumber() != del) {
-                    save.addLineSegment(s.clone());
-                }
+            switch(del){
+                case -1:
+                    if(b.totu_boundary_inside(s)){
+                        i_r = true;
+                    } else {
+                        save.addLineSegment(s.clone());
+                    }
+                    break;
+                case 0:
+                    if ((b.totu_boundary_inside(s)) && s.getColor().getNumber() == 0) {
+                        i_r = true;
+                    }//黒赤青線はmemo1に書かれない。つまり削除される。
+                    else if ((!b.totu_boundary_inside(s)) || s.getColor().getNumber() != 0) {
+                        save.addLineSegment(s.clone());
+                    }
+                    break;
+                case 1:
+                    if ((b.totu_boundary_inside(s)) && (s.getColor().getNumber() == 1 || s.getColor().getNumber() == 2)) {
+                        i_r = true;
+                    }//黒赤青線はmemo1に書かれない。つまり削除される。
+                    else if ((!b.totu_boundary_inside(s)) || !(s.getColor().getNumber() == 1 || s.getColor().getNumber() == 2)) {
+                        save.addLineSegment(s.clone());
+                    }
+                    break;
+                case 2:
+                case 3:
+                case 4:
+                    if ((b.totu_boundary_inside(s)) && s.getColor().getNumber() == del - 1) {
+                        i_r = true;
+                    }//黒赤青線はmemo1に書かれない。つまり削除される。
+                    else if ((!b.totu_boundary_inside(s)) || s.getColor().getNumber() != del - 1) {
+                        save.addLineSegment(s.clone());
+                    }
+                    break;
+                default:
+                    break;
             }
         }
         if(i_r){

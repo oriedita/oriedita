@@ -25,7 +25,6 @@ import oriedita.editor.databinding.FoldedFiguresList;
 import oriedita.editor.databinding.GridModel;
 import oriedita.editor.databinding.MeasuresModel;
 import oriedita.editor.drawing.FoldedFigure_Drawer;
-import oriedita.editor.handler.CustomLineTypes;
 import oriedita.editor.service.ButtonService;
 import oriedita.editor.service.FoldingService;
 import oriedita.editor.service.HistoryState;
@@ -35,7 +34,6 @@ import oriedita.editor.tools.LookAndFeelUtil;
 import oriedita.editor.tools.StringOp;
 import origami.crease_pattern.element.LineColor;
 import origami.folding.FoldedFigure;
-import origami.crease_pattern.element.LineSegment;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
@@ -436,8 +434,8 @@ public class LeftPanel {
             mainCreasePatternWorker.unselect_all(false);
         });
         delTypeDropBox.addActionListener(e -> {
-            applicationModel.setDelLineType(CustomLineTypes.from(delTypeDropBox.getSelectedIndex() - 1));
-            delTypeDropBox.setSelectedIndex(applicationModel.getDelLineType().getType() + 1);
+            applicationModel.setDelLineType(delTypeDropBox.getSelectedIndex() - 1);
+            delTypeDropBox.setSelectedIndex(applicationModel.getDelLineType() + 1);
         });
         trimBranchesButton.addActionListener(e -> {
             mainCreasePatternWorker.point_removal();
@@ -452,12 +450,12 @@ public class LeftPanel {
             mainCreasePatternWorker.unselect_all(false);
         });
         fromLineDropBox.addActionListener(e -> {
-            applicationModel.setCustomFromLineType(CustomLineTypes.from(fromLineDropBox.getSelectedIndex() - 1));
-            fromLineDropBox.setSelectedIndex(applicationModel.getCustomFromLineType().getType() + 1);
+            applicationModel.setCustomFromLineType(fromLineDropBox.getSelectedIndex() - 1);
+            fromLineDropBox.setSelectedIndex(applicationModel.getCustomFromLineType() + 1);
         });
         toLineDropBox.addActionListener(e -> {
-            applicationModel.setCustomToLineType(CustomLineTypes.from(toLineDropBox.getSelectedIndex()));
-            toLineDropBox.setSelectedIndex(applicationModel.getCustomToLineType().getType());
+            applicationModel.setCustomToLineType(toLineDropBox.getSelectedIndex());
+            toLineDropBox.setSelectedIndex(applicationModel.getCustomToLineType());
         });
         zen_yama_tani_henkanButton.addActionListener(e -> {
             mainCreasePatternWorker.allMountainValleyChange();
@@ -762,6 +760,7 @@ public class LeftPanel {
         final DefaultComboBoxModel defaultComboBoxModel1 = new DefaultComboBoxModel();
         defaultComboBoxModel1.addElement("Any");
         defaultComboBoxModel1.addElement("Edge");
+        defaultComboBoxModel1.addElement("M & V");
         defaultComboBoxModel1.addElement("M");
         defaultComboBoxModel1.addElement("V");
         defaultComboBoxModel1.addElement("Aux");
@@ -1070,6 +1069,7 @@ public class LeftPanel {
         final DefaultComboBoxModel defaultComboBoxModel3 = new DefaultComboBoxModel();
         defaultComboBoxModel3.addElement("Any");
         defaultComboBoxModel3.addElement("Edge");
+        defaultComboBoxModel3.addElement("M & V");
         defaultComboBoxModel3.addElement("Mountain");
         defaultComboBoxModel3.addElement("Valley");
         defaultComboBoxModel3.addElement("Aux");
@@ -1166,9 +1166,9 @@ public class LeftPanel {
         gridColorButton.setIcon(new ColorIcon(data.getGridColor()));
         intervalGridColorButton.setIcon(new ColorIcon(data.getGridScaleColor()));
 
-        delTypeDropBox.setSelectedIndex(applicationModel.getDelLineType().getType() + 1);
-        fromLineDropBox.setSelectedIndex(applicationModel.getCustomFromLineType().getType() + 1);
-        toLineDropBox.setSelectedIndex(applicationModel.getCustomToLineType().getType());
+        delTypeDropBox.setSelectedIndex(applicationModel.getDelLineType() + 1);
+        fromLineDropBox.setSelectedIndex(applicationModel.getCustomFromLineType() + 1);
+        toLineDropBox.setSelectedIndex(applicationModel.getCustomToLineType());
 
         if (e.getPropertyName() == null || e.getPropertyName().equals("laf")) {
             // The look and feel is not set yet, so it must be read from the applicationModel

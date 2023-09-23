@@ -26,7 +26,7 @@ public class MouseHandlerDeleteTypeSelect extends BaseMouseHandlerBoxSelect {
         Point p = new Point();
         p.set(d.getCamera().TV2object(p0));
 
-        int del = applicationModel.getDelLineType().getType();
+        int del = applicationModel.getDelLineType();
 
         if (selectionStart.distance(p0) > Epsilon.UNKNOWN_1EN6) {//現状では赤を赤に変えたときもUNDO用に記録されてしまう20161218
             if (d.insideToDelete(selectionStart, p0, del)) {
@@ -36,18 +36,33 @@ public class MouseHandlerDeleteTypeSelect extends BaseMouseHandlerBoxSelect {
             if (d.getFoldLineSet().closestLineSegmentDistance(p) < d.getSelectionDistance()) {//点pに最も近い線分の番号での、その距離を返す	public double closestLineSegmentDistance(Ten p)
                 LineSegment s = d.getFoldLineSet().closestLineSegmentSearch(p);
 
-                // From "Any"
-                if (del == -1) {
-                    d.getFoldLineSet().deleteLine(s);
-                    d.record();
-
-                }
-                // From other line types
-                else {
-                    if (s.getColor().getNumber() == del) {
+                switch(del){
+                    case -1:
                         d.getFoldLineSet().deleteLine(s);
                         d.record();
-                    }
+                        break;
+                    case 0:
+                        if(s.getColor().getNumber() == 0){
+                            d.getFoldLineSet().deleteLine(s);
+                            d.record();
+                        }
+                        break;
+                    case 1:
+                        if(s.getColor().getNumber() == 1 || s.getColor().getNumber() == 2){
+                            d.getFoldLineSet().deleteLine(s);
+                            d.record();
+                        }
+                        break;
+                    case 2:
+                    case 3:
+                    case 4:
+                        if (s.getColor().getNumber() == del - 1){
+                            d.getFoldLineSet().deleteLine(s);
+                            d.record();
+                        }
+                        break;
+                    default:
+                        break;
                 }
             }
         }

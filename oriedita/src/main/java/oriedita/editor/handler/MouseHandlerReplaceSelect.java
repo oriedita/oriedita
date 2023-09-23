@@ -27,8 +27,8 @@ public class MouseHandlerReplaceSelect extends BaseMouseHandlerBoxSelect {
         Point p = new Point();
         p.set(d.getCamera().TV2object(p0));
 
-        int from = applicationModel.getCustomFromLineType().getType();
-        int to = applicationModel.getCustomToLineType().getType();
+        int from = applicationModel.getCustomFromLineType();
+        int to = applicationModel.getCustomToLineType();
 
         if (selectionStart.distance(p0) > Epsilon.UNKNOWN_1EN6) {//現状では赤を赤に変えたときもUNDO用に記録されてしまう20161218
             if (d.insideToReplace(selectionStart, p0, from, to)) {
@@ -39,22 +39,39 @@ public class MouseHandlerReplaceSelect extends BaseMouseHandlerBoxSelect {
             if (d.getFoldLineSet().closestLineSegmentDistance(p) < d.getSelectionDistance()) {//点pに最も近い線分の番号での、その距離を返す	public double closestLineSegmentDistance(Ten p)
                 LineSegment s = d.getFoldLineSet().closestLineSegmentSearch(p);
 
-                // From "Any"
-                if(from == -1){
-                    s.setColor(LineColor.fromNumber(to));
-                    d.fix2();
-                    d.record();
-                }
-                // From other line types
-                else {
-                    if( s.getColor().getNumber() == from){
+                switch(from) {
+                    case -1:
                         s.setColor(LineColor.fromNumber(to));
                         d.fix2();
                         d.record();
-                    }
+                        break;
+                    case 0:
+                        if (s.getColor().getNumber() == 0) {
+                            s.setColor(LineColor.fromNumber(to));
+                            d.fix2();
+                            d.record();
+                        }
+                        break;
+                    case 1:
+                        if (s.getColor().getNumber() == 1 || s.getColor().getNumber() == 2) {
+                            s.setColor(LineColor.fromNumber(to));
+                            d.fix2();
+                            d.record();
+                        }
+                        break;
+                    case 2:
+                    case 3:
+                    case 4:
+                        if (s.getColor().getNumber() == from - 1) {
+                            s.setColor(LineColor.fromNumber(to));
+                            d.fix2();
+                            d.record();
+                        }
+                        break;
+                    default:
+                        break;
                 }
             }
         }
     }
-
 }
