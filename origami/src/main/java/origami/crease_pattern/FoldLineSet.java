@@ -435,31 +435,48 @@ public class FoldLineSet {
         return i_r;
     }
 
-    public boolean insideToReplace(Polygon b, int from, int to){
+    public boolean insideToReplace(Polygon b, CustomLineTypes from, CustomLineTypes to){
         boolean i_r = false;
 
         for (int i = 1; i <= total; i++){
             LineSegment s;
             s = lineSegments.get(i);
+
             if(b.totu_boundary_inside(s)){
-                // From "Any"
-                if(from == -1){
-                    s.setColor(LineColor.fromNumber(to));
-                    i_r = true;
-                }
-                // From other line types
-                else {
-                    if(s.getColor().getNumber() == from){
-                        s.setColor(LineColor.fromNumber(to));
+                switch (from){
+                    case ANY:
+                        s.setColor(LineColor.fromNumber(to.getReplaceToTypeNumber()));
                         i_r = true;
-                    }
+                        break;
+                    case EGDE:
+                        if (s.getColor() == LineColor.BLACK_0) {
+                            s.setColor(LineColor.fromNumber(to.getReplaceToTypeNumber()));
+                            i_r = true;
+                        }
+                        break;
+                    case MANDV:
+                        if (s.getColor() == LineColor.RED_1 || s.getColor() == LineColor.BLUE_2) {
+                            s.setColor(LineColor.fromNumber(to.getReplaceToTypeNumber()));
+                            i_r = true;
+                        }
+                        break;
+                    case MOUNTAIN:
+                    case VALLEY:
+                    case AUX:
+                        if (s.getColor() == LineColor.fromNumber(from.getNumber() - 1)) {
+                            s.setColor(LineColor.fromNumber(to.getReplaceToTypeNumber()));
+                            i_r = true;
+                        }
+                        break;
+                    default:
+                        break;
                 }
             }
         }
         return i_r;
     }
 
-    public boolean insideToDelete(Polygon b, int del){
+    public boolean insideToDelete(Polygon b, CustomLineTypes del){
         boolean i_r = false;
 
         FoldLineSave save = new FoldLineSave();
@@ -468,22 +485,42 @@ public class FoldLineSet {
             LineSegment s;
             s = lineSegments.get(i);
 
-            // From "Any"
-            if(del == -1){
-                if(b.totu_boundary_inside(s)){
-                    i_r = true;
-                } else {
-                    save.addLineSegment(s.clone());
-                }
-            }
-            //From other line types
-            else {
-                if ((b.totu_boundary_inside(s)) && s.getColor().getNumber() == del) {
-                    i_r = true;
-                }//黒赤青線はmemo1に書かれない。つまり削除される。
-                else if ((!b.totu_boundary_inside(s)) || s.getColor().getNumber() != del) {
-                    save.addLineSegment(s.clone());
-                }
+            switch (del){
+                case ANY:
+                    if(b.totu_boundary_inside(s)){
+                        i_r = true;
+                    } else {
+                        save.addLineSegment(s.clone());
+                    }
+                    break;
+                case EGDE:
+                    if ((b.totu_boundary_inside(s)) && s.getColor() == LineColor.BLACK_0) {
+                        i_r = true;
+                    }//黒赤青線はmemo1に書かれない。つまり削除される。
+                    else if ((!b.totu_boundary_inside(s)) || s.getColor() != LineColor.BLACK_0) {
+                        save.addLineSegment(s.clone());
+                    }
+                    break;
+                case MANDV:
+                    if ((b.totu_boundary_inside(s)) && (s.getColor() == LineColor.RED_1 || s.getColor() == LineColor.BLUE_2)) {
+                        i_r = true;
+                    }//黒赤青線はmemo1に書かれない。つまり削除される。
+                    else if ((!b.totu_boundary_inside(s)) || !(s.getColor() == LineColor.RED_1 || s.getColor() == LineColor.BLUE_2)) {
+                        save.addLineSegment(s.clone());
+                    }
+                    break;
+                case MOUNTAIN:
+                case VALLEY:
+                case AUX:
+                    if ((b.totu_boundary_inside(s)) && s.getColor() == LineColor.fromNumber(del.getNumber() - 1)) {
+                        i_r = true;
+                    }//黒赤青線はmemo1に書かれない。つまり削除される。
+                    else if ((!b.totu_boundary_inside(s)) || s.getColor() != LineColor.fromNumber(del.getNumber() - 1)) {
+                        save.addLineSegment(s.clone());
+                    }
+                    break;
+                default:
+                    break;
             }
         }
         if(i_r){

@@ -25,7 +25,7 @@ import oriedita.editor.databinding.FoldedFiguresList;
 import oriedita.editor.databinding.GridModel;
 import oriedita.editor.databinding.MeasuresModel;
 import oriedita.editor.drawing.FoldedFigure_Drawer;
-import oriedita.editor.handler.CustomLineTypes;
+import origami.crease_pattern.CustomLineTypes;
 import oriedita.editor.service.ButtonService;
 import oriedita.editor.service.FoldingService;
 import oriedita.editor.service.HistoryState;
@@ -35,7 +35,6 @@ import oriedita.editor.tools.LookAndFeelUtil;
 import oriedita.editor.tools.StringOp;
 import origami.crease_pattern.element.LineColor;
 import origami.folding.FoldedFigure;
-import origami.crease_pattern.element.LineSegment;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
@@ -437,7 +436,7 @@ public class LeftPanel {
         });
         delTypeDropBox.addActionListener(e -> {
             applicationModel.setDelLineType(CustomLineTypes.from(delTypeDropBox.getSelectedIndex() - 1));
-            delTypeDropBox.setSelectedIndex(applicationModel.getDelLineType().getType() + 1);
+            delTypeDropBox.setSelectedIndex(applicationModel.getDelLineType().getNumber() + 1);
         });
         trimBranchesButton.addActionListener(e -> {
             mainCreasePatternWorker.point_removal();
@@ -453,11 +452,16 @@ public class LeftPanel {
         });
         fromLineDropBox.addActionListener(e -> {
             applicationModel.setCustomFromLineType(CustomLineTypes.from(fromLineDropBox.getSelectedIndex() - 1));
-            fromLineDropBox.setSelectedIndex(applicationModel.getCustomFromLineType().getType() + 1);
+            fromLineDropBox.setSelectedIndex(applicationModel.getCustomFromLineType().getNumber() + 1);
         });
         toLineDropBox.addActionListener(e -> {
-            applicationModel.setCustomToLineType(CustomLineTypes.from(toLineDropBox.getSelectedIndex()));
-            toLineDropBox.setSelectedIndex(applicationModel.getCustomToLineType().getType());
+            if (toLineDropBox.getSelectedIndex() == CustomLineTypes.EGDE.getNumber()) {
+                applicationModel.setCustomToLineType(CustomLineTypes.from(toLineDropBox.getSelectedIndex()));
+                toLineDropBox.setSelectedIndex(applicationModel.getCustomToLineType().getNumber());
+            } else {
+                applicationModel.setCustomToLineType(CustomLineTypes.from(toLineDropBox.getSelectedIndex() + 1));
+                toLineDropBox.setSelectedIndex(applicationModel.getCustomToLineType().getNumber() - 1);
+            }
         });
         zen_yama_tani_henkanButton.addActionListener(e -> {
             mainCreasePatternWorker.allMountainValleyChange();
@@ -761,10 +765,11 @@ public class LeftPanel {
         fromLineDropBox = new JComboBox();
         final DefaultComboBoxModel defaultComboBoxModel1 = new DefaultComboBoxModel();
         defaultComboBoxModel1.addElement("Any");
-        defaultComboBoxModel1.addElement("Edge");
+        defaultComboBoxModel1.addElement("E");
+        defaultComboBoxModel1.addElement("M & V");
         defaultComboBoxModel1.addElement("M");
         defaultComboBoxModel1.addElement("V");
-        defaultComboBoxModel1.addElement("Aux");
+        defaultComboBoxModel1.addElement("A");
         fromLineDropBox.setModel(defaultComboBoxModel1);
         panel3.add(fromLineDropBox, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         replaceLabel = new JLabel();
@@ -772,10 +777,10 @@ public class LeftPanel {
         panel3.add(replaceLabel, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         toLineDropBox = new JComboBox();
         final DefaultComboBoxModel defaultComboBoxModel2 = new DefaultComboBoxModel();
-        defaultComboBoxModel2.addElement("Edge");
+        defaultComboBoxModel2.addElement("E");
         defaultComboBoxModel2.addElement("M");
         defaultComboBoxModel2.addElement("V");
-        defaultComboBoxModel2.addElement("Aux");
+        defaultComboBoxModel2.addElement("A");
         toLineDropBox.setModel(defaultComboBoxModel2);
         panel3.add(toLineDropBox, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JPanel panel4 = new JPanel();
@@ -1069,10 +1074,11 @@ public class LeftPanel {
         delTypeDropBox = new JComboBox();
         final DefaultComboBoxModel defaultComboBoxModel3 = new DefaultComboBoxModel();
         defaultComboBoxModel3.addElement("Any");
-        defaultComboBoxModel3.addElement("Edge");
-        defaultComboBoxModel3.addElement("Mountain");
-        defaultComboBoxModel3.addElement("Valley");
-        defaultComboBoxModel3.addElement("Aux");
+        defaultComboBoxModel3.addElement("E");
+        defaultComboBoxModel3.addElement("M & V");
+        defaultComboBoxModel3.addElement("M");
+        defaultComboBoxModel3.addElement("V");
+        defaultComboBoxModel3.addElement("A");
         delTypeDropBox.setModel(defaultComboBoxModel3);
         panel13.add(delTypeDropBox, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final Spacer spacer1 = new Spacer();
@@ -1166,9 +1172,18 @@ public class LeftPanel {
         gridColorButton.setIcon(new ColorIcon(data.getGridColor()));
         intervalGridColorButton.setIcon(new ColorIcon(data.getGridScaleColor()));
 
-        delTypeDropBox.setSelectedIndex(applicationModel.getDelLineType().getType() + 1);
-        fromLineDropBox.setSelectedIndex(applicationModel.getCustomFromLineType().getType() + 1);
-        toLineDropBox.setSelectedIndex(applicationModel.getCustomToLineType().getType());
+        delTypeDropBox.setSelectedIndex(applicationModel.getDelLineType().getNumber() + 1);
+        fromLineDropBox.setSelectedIndex(applicationModel.getCustomFromLineType().getNumber() + 1);
+        if (applicationModel.getCustomToLineType() == CustomLineTypes.EGDE) {
+            toLineDropBox.setSelectedIndex(applicationModel.getCustomToLineType().getNumber());
+        } else {
+            if (applicationModel.getCustomToLineType() != CustomLineTypes.ANY) {
+                toLineDropBox.setSelectedIndex(applicationModel.getCustomToLineType().getNumber() - 1);
+            } else {
+                applicationModel.setCustomToLineType(CustomLineTypes.EGDE);
+                toLineDropBox.setSelectedIndex(CustomLineTypes.EGDE.getNumber());
+            }
+        }
 
         if (e.getPropertyName() == null || e.getPropertyName().equals("laf")) {
             // The look and feel is not set yet, so it must be read from the applicationModel
