@@ -1069,11 +1069,11 @@ public class LeftPanel {
         delTypeDropBox = new JComboBox();
         final DefaultComboBoxModel defaultComboBoxModel3 = new DefaultComboBoxModel();
         defaultComboBoxModel3.addElement("Any");
-        defaultComboBoxModel3.addElement("Edge");
+        defaultComboBoxModel3.addElement("E");
         defaultComboBoxModel3.addElement("M & V");
-        defaultComboBoxModel3.addElement("Mountain");
-        defaultComboBoxModel3.addElement("Valley");
-        defaultComboBoxModel3.addElement("Aux");
+        defaultComboBoxModel3.addElement("M");
+        defaultComboBoxModel3.addElement("V");
+        defaultComboBoxModel3.addElement("A");
         delTypeDropBox.setModel(defaultComboBoxModel3);
         panel13.add(delTypeDropBox, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final Spacer spacer1 = new Spacer();
