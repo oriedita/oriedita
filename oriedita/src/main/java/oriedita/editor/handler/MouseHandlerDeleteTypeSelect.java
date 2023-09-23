@@ -5,6 +5,7 @@ import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.databinding.ApplicationModel;
 import origami.Epsilon;
+import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 
@@ -37,25 +38,27 @@ public class MouseHandlerDeleteTypeSelect extends BaseMouseHandlerBoxSelect {
                 LineSegment s = d.getFoldLineSet().closestLineSegmentSearch(p);
 
                 switch(del){
-                    case -1:
+                    case -1: // Any
                         d.getFoldLineSet().deleteLine(s);
                         d.record();
                         break;
-                    case 0:
-                        if(s.getColor().getNumber() == 0){
+                    case 0: // Edge
+                        if(s.getColor().getNumber() == LineColor.BLACK_0.getNumber()){
                             d.getFoldLineSet().deleteLine(s);
                             d.record();
                         }
                         break;
-                    case 1:
-                        if(s.getColor().getNumber() == 1 || s.getColor().getNumber() == 2){
+                    case 1: // M & V
+                        if(s.getColor().getNumber() == LineColor.RED_1.getNumber() ||
+                                s.getColor().getNumber() == LineColor.BLUE_2.getNumber()){
                             d.getFoldLineSet().deleteLine(s);
                             d.record();
                         }
                         break;
-                    case 2:
-                    case 3:
-                    case 4:
+                    case 2: // Mountain
+                    case 3: // Valley
+                    case 4: // Aux
+                        // `del - 1` represents value of either LineColor.RED_1, LineColor.BLUE_2, or LineColor.CYAN_3
                         if (s.getColor().getNumber() == del - 1){
                             d.getFoldLineSet().deleteLine(s);
                             d.record();

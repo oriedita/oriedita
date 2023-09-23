@@ -444,25 +444,26 @@ public class FoldLineSet {
 
             if(b.totu_boundary_inside(s)){
                 switch(from) {
-                    case -1:
+                    case -1: // Any
                         s.setColor(LineColor.fromNumber(to));
                         i_r = true;
                         break;
-                    case 0:
+                    case 0: // Edge
                         if(s.getColor().getNumber() == 0){
                             s.setColor(LineColor.fromNumber(to));
                             i_r = true;
                         }
                         break;
-                    case 1:
+                    case 1: // M & V
                         if(s.getColor().getNumber() == 1 || s.getColor().getNumber() == 2){
                             s.setColor(LineColor.fromNumber(to));
                             i_r = true;
                         }
                         break;
-                    case 2:
-                    case 3:
-                    case 4:
+                    case 2: // Mountain
+                    case 3: // Valley
+                    case 4: // Aux
+                        // `from - 1` represents value of either LineColor.RED_1, LineColor.BLUE_2, or LineColor.CYAN_3
                         if(s.getColor().getNumber() == from - 1){
                             s.setColor(LineColor.fromNumber(to));
                             i_r = true;
@@ -486,32 +487,33 @@ public class FoldLineSet {
             s = lineSegments.get(i);
 
             switch(del){
-                case -1:
+                case -1: // Any
                     if(b.totu_boundary_inside(s)){
                         i_r = true;
                     } else {
                         save.addLineSegment(s.clone());
                     }
                     break;
-                case 0:
-                    if ((b.totu_boundary_inside(s)) && s.getColor().getNumber() == 0) {
+                case 0: // Edge
+                    if ((b.totu_boundary_inside(s)) && s.getColor().getNumber() == LineColor.BLACK_0.getNumber()) {
                         i_r = true;
                     }//黒赤青線はmemo1に書かれない。つまり削除される。
-                    else if ((!b.totu_boundary_inside(s)) || s.getColor().getNumber() != 0) {
+                    else if ((!b.totu_boundary_inside(s)) || s.getColor().getNumber() != LineColor.BLACK_0.getNumber()) {
                         save.addLineSegment(s.clone());
                     }
                     break;
-                case 1:
-                    if ((b.totu_boundary_inside(s)) && (s.getColor().getNumber() == 1 || s.getColor().getNumber() == 2)) {
+                case 1: // M & V
+                    if ((b.totu_boundary_inside(s)) && (s.getColor().getNumber() == LineColor.RED_1.getNumber() || s.getColor().getNumber() == LineColor.BLUE_2.getNumber())) {
                         i_r = true;
                     }//黒赤青線はmemo1に書かれない。つまり削除される。
-                    else if ((!b.totu_boundary_inside(s)) || !(s.getColor().getNumber() == 1 || s.getColor().getNumber() == 2)) {
+                    else if ((!b.totu_boundary_inside(s)) || !(s.getColor().getNumber() == LineColor.RED_1.getNumber() || s.getColor().getNumber() == LineColor.BLUE_2.getNumber())) {
                         save.addLineSegment(s.clone());
                     }
                     break;
-                case 2:
-                case 3:
-                case 4:
+                case 2: // Mountain
+                case 3: // Valley
+                case 4: // Aux
+                    // `del - 1` represents value of either LineColor.RED_1, LineColor.BLUE_2, or LineColor.CYAN_3
                     if ((b.totu_boundary_inside(s)) && s.getColor().getNumber() == del - 1) {
                         i_r = true;
                     }//黒赤青線はmemo1に書かれない。つまり削除される。
