@@ -18,6 +18,9 @@ public enum CustomLineTypes {
     }
 
     public int getReplaceToTypeNumber(){
+        if(this == CustomLineTypes.ANY){
+            return EGDE.customType;
+        }
         return this == CustomLineTypes.EGDE ? this.getNumber() : this.getNumber() - 1;
     }
 
