@@ -150,11 +150,11 @@
             <properties>
               <model>
                 <item value="Any"/>
-                <item value="Edge"/>
+                <item value="E"/>
                 <item value="M &amp; V"/>
                 <item value="M"/>
                 <item value="V"/>
-                <item value="Aux"/>
+                <item value="A"/>
               </model>
             </properties>
           </component>
@@ -172,10 +172,10 @@
             </constraints>
             <properties>
               <model>
-                <item value="Edge"/>
+                <item value="E"/>
                 <item value="M"/>
                 <item value="V"/>
-                <item value="Aux"/>
+                <item value="A"/>
               </model>
             </properties>
           </component>
@@ -208,6 +208,7 @@
             <properties>
               <actionCommand value="senbun_henkan2Action"/>
               <icon value="ppp/senbun_henkan2.png"/>
+              <text value=""/>
             </properties>
           </component>
           <component id="d0dc8" class="javax.swing.JButton" binding="senbun_henkanButton">

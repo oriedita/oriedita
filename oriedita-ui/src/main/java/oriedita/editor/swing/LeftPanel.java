@@ -759,11 +759,11 @@ public class LeftPanel {
         fromLineDropBox = new JComboBox();
         final DefaultComboBoxModel defaultComboBoxModel1 = new DefaultComboBoxModel();
         defaultComboBoxModel1.addElement("Any");
-        defaultComboBoxModel1.addElement("Edge");
+        defaultComboBoxModel1.addElement("E");
         defaultComboBoxModel1.addElement("M & V");
         defaultComboBoxModel1.addElement("M");
         defaultComboBoxModel1.addElement("V");
-        defaultComboBoxModel1.addElement("Aux");
+        defaultComboBoxModel1.addElement("A");
         fromLineDropBox.setModel(defaultComboBoxModel1);
         panel3.add(fromLineDropBox, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         replaceLabel = new JLabel();
@@ -771,10 +771,10 @@ public class LeftPanel {
         panel3.add(replaceLabel, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         toLineDropBox = new JComboBox();
         final DefaultComboBoxModel defaultComboBoxModel2 = new DefaultComboBoxModel();
-        defaultComboBoxModel2.addElement("Edge");
+        defaultComboBoxModel2.addElement("E");
         defaultComboBoxModel2.addElement("M");
         defaultComboBoxModel2.addElement("V");
-        defaultComboBoxModel2.addElement("Aux");
+        defaultComboBoxModel2.addElement("A");
         toLineDropBox.setModel(defaultComboBoxModel2);
         panel3.add(toLineDropBox, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JPanel panel4 = new JPanel();
@@ -787,6 +787,7 @@ public class LeftPanel {
         senbun_henkan2Button = new JButton();
         senbun_henkan2Button.setActionCommand("senbun_henkan2Action");
         senbun_henkan2Button.setIcon(new ImageIcon(getClass().getResource("/ppp/senbun_henkan2.png")));
+        senbun_henkan2Button.setText("");
         panel4.add(senbun_henkan2Button, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         senbun_henkanButton = new JButton();
         senbun_henkanButton.setActionCommand("senbun_henkanAction");
