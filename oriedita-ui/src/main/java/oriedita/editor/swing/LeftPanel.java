@@ -59,6 +59,7 @@ import java.beans.PropertyChangeEvent;
 import java.util.Arrays;
 import java.util.HashMap;
 
+
 @ApplicationScoped
 public class LeftPanel {
     @Inject
@@ -178,7 +179,7 @@ public class LeftPanel {
     private HashMap<MouseMode, JButton> selectionTransformationToolLookup;
     public double convertAngle(double angle){
         if(angle>=0) return angle%180;
-        else return 180-(angle%180);
+        else return 180+(angle%180);
     }
     @Inject
     public LeftPanel(FrameProvider frameProvider,
@@ -641,6 +642,7 @@ public class LeftPanel {
             // Update the view if the grid angle got reset
             setData(gridModel);
         });
+
         gridAngleTextField.addActionListener(e -> setGridParametersButton.doClick());
         gridAngleTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(gridAngleTextField));
         gridAngleTextField.addKeyListener(new InputEnterKeyAdapter(gridAngleTextField));
@@ -669,7 +671,9 @@ public class LeftPanel {
         data.setGridYA(measuresModel.string2double(gridYATextField.getText(), data.getGridYA()));
         data.setGridYB(measuresModel.string2double(gridYBTextField.getText(), data.getGridYB()));
         data.setGridYC(measuresModel.string2double(gridYCTextField.getText(), data.getGridYC()));
-        data.setGridAngle(measuresModel.string2double(gridAngleTextField.getText(), data.getGridAngle()));
+       
+        gridModel.setGridAngle(convertAngle(measuresModel.string2double(gridAngleTextField.getText(), gridModel.getGridAngle())));
+
     }
 
     public void setData(GridModel data) {
