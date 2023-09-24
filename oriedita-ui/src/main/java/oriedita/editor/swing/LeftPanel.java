@@ -647,7 +647,7 @@ public class LeftPanel {
         gridAngleTextField.addFocusListener(new FocusAdapter() {
             @Override
             public void focusLost(FocusEvent e) {
-                gridModel.setGridAngle(measuresModel.string2double(gridAngleTextField.getText(), gridModel.getGridAngle()));
+                gridModel.setGridAngle(convertAngle(measuresModel.string2double(gridAngleTextField.getText(), gridModel.getGridAngle())));
             }
         });
         resetGridButton.addActionListener(e -> gridModel.reset());
