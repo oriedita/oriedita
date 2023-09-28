@@ -438,7 +438,6 @@ public class LeftPanel {
         });
         delTypeDropBox.addActionListener(e -> {
             applicationModel.setDelLineType(CustomLineTypes.from(delTypeDropBox.getSelectedIndex() - 1));
-            delTypeDropBox.setSelectedIndex(applicationModel.getDelLineType().getNumber() + 1);
         });
         delTypeDropBox.addPopupMenuListener(new PopupMenuAdapter() {
             @Override
@@ -460,7 +459,6 @@ public class LeftPanel {
         });
         fromLineDropBox.addActionListener(e -> {
             applicationModel.setCustomFromLineType(CustomLineTypes.from(fromLineDropBox.getSelectedIndex() - 1));
-            fromLineDropBox.setSelectedIndex(applicationModel.getCustomFromLineType().getNumber() + 1);
         });
         fromLineDropBox.addPopupMenuListener(new PopupMenuAdapter() {
             @Override
@@ -471,10 +469,8 @@ public class LeftPanel {
         toLineDropBox.addActionListener(e -> {
             if (toLineDropBox.getSelectedIndex() == CustomLineTypes.EGDE.getNumber()) {
                 applicationModel.setCustomToLineType(CustomLineTypes.from(toLineDropBox.getSelectedIndex()));
-                toLineDropBox.setSelectedIndex(applicationModel.getCustomToLineType().getNumber());
             } else {
                 applicationModel.setCustomToLineType(CustomLineTypes.from(toLineDropBox.getSelectedIndex() + 1));
-                toLineDropBox.setSelectedIndex(applicationModel.getCustomToLineType().getNumber() - 1);
             }
         });
         toLineDropBox.addPopupMenuListener(new PopupMenuAdapter() {
@@ -1194,16 +1190,34 @@ public class LeftPanel {
 
         delTypeDropBox.setSelectedIndex(applicationModel.getDelLineType().getNumber() + 1);
         fromLineDropBox.setSelectedIndex(applicationModel.getCustomFromLineType().getNumber() + 1);
-        if (applicationModel.getCustomToLineType() == CustomLineTypes.EGDE) {
-            toLineDropBox.setSelectedIndex(applicationModel.getCustomToLineType().getNumber());
-        } else {
-            if (applicationModel.getCustomToLineType() != CustomLineTypes.ANY) {
+
+        // -------- CONTEXT FOR THE BELOW LOGIC --------
+        // - The Replace-to dropbox items are Edge, Mountain, Valley, Aux in that order
+        // - Dropbox starts at index 0 for first item
+        // - CustomLineType enum has Any, Edge, M&V, Mountain, Valley, Aux in that order, starting from -1
+        // -------- LOGIC --------
+        // - If Edge is selected, update the applicationModel using normal index
+        // - If Mountain, Valley, or Aux is selected, update the applicationModel with index - 1 (because those
+        // 3 options in CustomLineType are after M&V, therefore each has an extra value increment)
+        // - If somehow Any is selected (from manual edit in applicationModel), set its value in applicationModel
+        // to CustomLineType.EDGE, and set dropdown's selected index to 0, corresponding to Edge
+        switch (applicationModel.getCustomToLineType()) {
+            case EGDE:
+                toLineDropBox.setSelectedIndex(CustomLineTypes.EGDE.getNumber());
+                break;
+            case MOUNTAIN:
+            case VALLEY:
+            case AUX:
                 toLineDropBox.setSelectedIndex(applicationModel.getCustomToLineType().getNumber() - 1);
-            } else {
+                break;
+            case ANY:
                 applicationModel.setCustomToLineType(CustomLineTypes.EGDE);
                 toLineDropBox.setSelectedIndex(CustomLineTypes.EGDE.getNumber());
-            }
+                break;
+            default:
+                break;
         }
+        // ------ END LOGIC ------
 
         if (e.getPropertyName() == null || e.getPropertyName().equals("laf")) {
             // The look and feel is not set yet, so it must be read from the applicationModel
