@@ -30,13 +30,12 @@ public class Epsilon {
     public static final double UNKNOWN_1EN5 = factor * 1E-5;
     public static final double UNKNOWN_1EN6 = factor * 1E-6;
     public static final double UNKNOWN_1EN7 = factor * 1E-7;
-
     // These are the constants with a known purpose.
 
     public static final double PARALLEL = factor * 0.5;
     public static final double FLAT = factor * 1E-4;
     public static final double QUAD_TREE_ITEM = factor * 0.5;
-
+    public static final double GRID_ANGLE_THRESHOLD = factor * 0.1;
     /**
      * For the most part, this is the smallest epsilon used in the code. Any value
      * that is even smaller is considered zero.
