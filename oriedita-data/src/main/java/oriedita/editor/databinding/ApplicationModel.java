@@ -4,7 +4,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import oriedita.editor.Colors;
 import oriedita.editor.canvas.LineStyle;
-import oriedita.editor.handler.CustomLineTypes;
+import origami.crease_pattern.CustomLineTypes;
 
 import java.awt.Color;
 import java.awt.Dimension;

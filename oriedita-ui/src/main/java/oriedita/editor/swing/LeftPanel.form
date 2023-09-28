@@ -150,10 +150,11 @@
             <properties>
               <model>
                 <item value="Any"/>
-                <item value="Edge"/>
+                <item value="E"/>
+                <item value="M &amp; V"/>
                 <item value="M"/>
                 <item value="V"/>
-                <item value="Aux"/>
+                <item value="A"/>
               </model>
             </properties>
           </component>
@@ -171,10 +172,10 @@
             </constraints>
             <properties>
               <model>
-                <item value="Edge"/>
+                <item value="E"/>
                 <item value="M"/>
                 <item value="V"/>
-                <item value="Aux"/>
+                <item value="A"/>
               </model>
             </properties>
           </component>
@@ -877,10 +878,11 @@
             <properties>
               <model>
                 <item value="Any"/>
-                <item value="Edge"/>
-                <item value="Mountain"/>
-                <item value="Valley"/>
-                <item value="Aux"/>
+                <item value="E"/>
+                <item value="M &amp; V"/>
+                <item value="M"/>
+                <item value="V"/>
+                <item value="A"/>
               </model>
             </properties>
           </component>

@@ -6,6 +6,7 @@ import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.databinding.GridModel;
 import oriedita.editor.drawing.Grid;
 import oriedita.editor.drawing.tools.Camera;
+import origami.crease_pattern.CustomLineTypes;
 import oriedita.editor.save.Save;
 import origami.crease_pattern.FoldLineSet;
 import origami.crease_pattern.LineSegmentSet;
@@ -170,9 +171,9 @@ public interface CreasePattern_Worker {
 
     boolean insideToAux(Point p0a, Point p0b);
 
-    boolean insideToReplace(Point p0a, Point p0b, int from, int to);
+    boolean insideToReplace(Point p0a, Point p0b, CustomLineTypes from, CustomLineTypes to);
 
-    boolean insideToDelete(Point p0a, Point p0b, int del);
+    boolean insideToDelete(Point p0a, Point p0b, CustomLineTypes del);
 
     void setFoldLineDividingNumber(int i);
 

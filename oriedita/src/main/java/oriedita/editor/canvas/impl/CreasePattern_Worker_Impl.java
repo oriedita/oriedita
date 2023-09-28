@@ -17,6 +17,7 @@ import oriedita.editor.databinding.SelectedTextModel;
 import oriedita.editor.drawing.Grid;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
+import origami.crease_pattern.CustomLineTypes;
 import oriedita.editor.save.Save;
 import oriedita.editor.save.SaveProvider;
 import oriedita.editor.service.HistoryState;
@@ -831,7 +832,7 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     }
 
     @Override
-    public boolean insideToDelete(Point p0a, Point p0b, int del){
+    public boolean insideToDelete(Point p0a, Point p0b, CustomLineTypes del){
         return foldLineSet.insideToDelete(createBox(p0a, p0b), del);
     }
 
@@ -960,7 +961,7 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     }
 
     @Override
-    public boolean insideToReplace(Point p0a, Point p0b, int from, int to){
+    public boolean insideToReplace(Point p0a, Point p0b, CustomLineTypes from, CustomLineTypes to){
         return foldLineSet.insideToReplace(createBox(p0a, p0b), from, to);
     }
 
