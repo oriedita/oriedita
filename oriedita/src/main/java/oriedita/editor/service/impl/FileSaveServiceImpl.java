@@ -16,6 +16,7 @@ import oriedita.editor.databinding.FoldedFiguresList;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.exception.FileReadingException;
 import oriedita.editor.export.Cp;
+import oriedita.editor.export.Dxf;
 import oriedita.editor.export.Fold;
 import oriedita.editor.export.Obj;
 import oriedita.editor.export.Orh;
@@ -26,22 +27,41 @@ import oriedita.editor.save.FileVersionTester;
 import oriedita.editor.save.Save;
 import oriedita.editor.save.SaveConverter;
 import oriedita.editor.save.SaveProvider;
+import oriedita.editor.service.ApplicationModelPersistenceService;
+import oriedita.editor.service.ButtonService;
 import oriedita.editor.service.FileSaveService;
 import oriedita.editor.service.ResetService;
 import oriedita.editor.swing.dialog.ExportDialog;
+import oriedita.editor.swing.dialog.FileDialogUtil;
 import oriedita.editor.swing.dialog.SaveTypeDialog;
 import oriedita.editor.tools.ResourceUtil;
 
+import javax.swing.InputMap;
+import javax.swing.JComponent;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.KeyStroke;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
+import java.util.Objects;
+import java.util.PropertyResourceBundle;
+import java.util.ResourceBundle;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
 
 import static oriedita.editor.swing.dialog.FileDialogUtil.openFileDialog;
 import static oriedita.editor.swing.dialog.FileDialogUtil.saveFileDialog;
@@ -60,6 +80,8 @@ public class FileSaveServiceImpl implements FileSaveService {
     private final BackgroundModel backgroundModel;
     private final SimpleDateFormat df = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss");
     private Path autoSavePath;
+    @Inject
+    private ApplicationModelPersistenceService applicationModelPersistenceService;
 
     @Inject
     public FileSaveServiceImpl(
@@ -122,6 +144,78 @@ public class FileSaveServiceImpl implements FileSaveService {
         } catch (FileReadingException e) {
             Logger.error(e, "Error during file read");
             JOptionPane.showMessageDialog(frame.get(), "An error occurred when reading this file", "Read Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    @Override
+    public void importPref(JPanel parent, FrameProvider frameProvider, ButtonService buttonService) {
+        Path importPath = Path.of(FileDialogUtil.openFileDialog(frame.get(), "Import...", applicationModel.getDefaultDirectory(), new String[]{"*.oriconfig"}, null));
+        File zipFile = importPath.toFile();
+        String extension = ".oriconfig";
+
+        if(!zipFile.getName().endsWith(extension)){
+            JOptionPane.showMessageDialog(parent, String.format("The zip file must have %s as the extension", extension),"Wrong import file format", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        ZipEntry ze;
+        try(ZipInputStream zis = new ZipInputStream(new FileInputStream(zipFile))){
+            while ((ze = zis.getNextEntry()) != null){
+                if (ze.getName().equals("config.json")){
+                    applicationModelPersistenceService.importApplicationModel(zis);
+                } else if (ze.getName().equals("hotkey.properties")){
+                    readImportHotkey(zis, ze, frameProvider, buttonService);
+                }
+            }
+        } catch (IOException e) {
+            Logger.info("zis closed");
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void readImportHotkey(ZipInputStream zis, ZipEntry ze, FrameProvider frameProvider, ButtonService buttonService){
+        try {
+            ResourceBundle userBundle = new PropertyResourceBundle(zis);
+            InputMap map = frameProvider.get().getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+
+            for(String action : userBundle.keySet()){
+                KeyStroke currentKeyStroke = Arrays.stream(map.keys()).filter(ks -> map.get(ks).equals(action)).findFirst().orElse(null);
+                String importKeyStroke = userBundle.getString(action);
+                String bundleName = ze.getName().split("\\.")[0];
+
+                buttonService.getHelpInputMap().remove(currentKeyStroke);
+                frameProvider.get().getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).remove(currentKeyStroke);
+                frameProvider.get().getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(importKeyStroke), action);
+                ResourceUtil.updateBundleKey(bundleName, action, importKeyStroke);
+            }
+        } catch (IOException ignored) {
+        }
+    }
+
+    @Override
+    public void exportPref(){
+        File configDir = new File(ResourceUtil.getAppDir().toUri());
+        List<String> fileNames = new ArrayList<>();
+
+        for (File file : Objects.requireNonNull(configDir.listFiles())){
+            fileNames.add(file.getName());
+        }
+
+        Path exportPath = Path.of(FileDialogUtil.saveFileDialog(frame.get(), "Export...", applicationModel.getDefaultDirectory(), new String[]{"*.oriconfig"}, null));
+
+        try (ZipOutputStream zout = new ZipOutputStream(new FileOutputStream(exportPath.toFile()))) {
+            fileNames.forEach(fileName -> {
+                Path filePath = ResourceUtil.getAppDir().resolve(fileName);
+                try (InputStream fis = new FileInputStream(filePath.toFile())) {
+                    zout.putNextEntry(new ZipEntry(fileName));
+                    fis.transferTo(zout);
+                    zout.closeEntry();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -197,11 +291,13 @@ public class FileSaveServiceImpl implements FileSaveService {
             } catch (InterruptedException | FileReadingException e) {
                 e.printStackTrace();
             }
+        } else if (exportFile.getName().endsWith(".dxf")) {
+            Dxf.exportFile(mainCreasePatternWorker.getSave_for_export(), exportFile);
         }
     }
 
     public File selectOpenFile() {
-        String fileName = openFileDialog(frame.get(), "Open File", applicationModel.getDefaultDirectory(), new String[]{"*.ori", "*.cp"}, "Supported files (.ori, .cp)");
+        String fileName = openFileDialog(frame.get(), "Open File", applicationModel.getDefaultDirectory(), new String[]{"*.ori", "*.cp", "*.fold"}, "Supported files (.ori, .cp, .fold)");
 
         if (fileName == null) {
             return null;
@@ -415,7 +511,14 @@ public class FileSaveServiceImpl implements FileSaveService {
             }
 
             Cp.exportFile(save, fname);
-        } else {
+        } else if (fname.getName().endsWith((".fold"))){
+            try {
+                fold.exportFile(mainCreasePatternWorker.getSave_for_export(), fname);
+            } catch (InterruptedException | FileReadingException e) {
+                e.printStackTrace();
+            }
+        }
+        else {
             JOptionPane.showMessageDialog(frame.get(), "Unknown file type, cannot save", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }

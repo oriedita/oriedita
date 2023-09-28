@@ -24,9 +24,9 @@ class CpTest {
         File saveFile = File.createTempFile("export", ".cp");
         Cp.exportFile(save, saveFile);
 
-        String expected = Files.readString(saveFile.toPath());
+        String expected = Files.readString(saveFile.toPath()).replace("\r","");
 
-        String actual = Files.readString(new File(birdbase.getFile()).toPath());
+        String actual = Files.readString(new File(birdbase.getFile()).toPath()).replace("\r","");
 
         Assertions.assertEquals(expected, actual);
     }

@@ -258,11 +258,11 @@ public class AppMenuBar {
         });
         prefButton.addActionListener(e -> {
             if(preferenceDialog == null){
-                preferenceDialog = new PreferenceDialog(applicationModel, lookAndFeelService, frameProvider, foldedFigureModel, "Preferences", frameProvider.get(), buttonService);
+                preferenceDialog = new PreferenceDialog(applicationModel, lookAndFeelService, frameProvider, foldedFigureModel, "Preferences", frameProvider.get(), buttonService, fileSaveService);
             }
             preferenceDialog.setSize(preferenceDialog.getRootPane().getPreferredSize());
             preferenceDialog.setMinimumSize(preferenceDialog.getRootPane().getMinimumSize());
-            preferenceDialog.setResizable(false);
+            preferenceDialog.setResizable(true);
             preferenceDialog.setData(applicationModel);
             preferenceDialog.setLocationRelativeTo(prefButton);
             preferenceDialog.setAlwaysOnTop(false);
