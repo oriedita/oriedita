@@ -35,7 +35,6 @@ import oriedita.editor.tools.LookAndFeelUtil;
 import oriedita.editor.tools.StringOp;
 import origami.crease_pattern.element.LineColor;
 import origami.folding.FoldedFigure;
-import origami.crease_pattern.element.LineSegment;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
@@ -298,11 +297,11 @@ public class LeftPanel {
         buttonService.registerButton(coloredXRayCheckBox, "coloredXRayAction");
         buttonService.registerButton(drawDiagonalGridlinesCheckBox, "drawDiagonalGridlinesAction");
 
-        buttonService.registerLabel(gridXPlusLabel, "labelPlus");
-        buttonService.registerLabel(gridYPlusLabel, "labelPlus");
-        buttonService.registerLabel(gridXSqrtLabel, "labelSqrt");
-        buttonService.registerLabel(gridYSqrtLabel, "labelSqrt");
-        buttonService.registerLabel(replaceLabel, "labelReplace");
+        buttonService.setIcon(gridXPlusLabel, "labelPlus");
+        buttonService.setIcon(gridYPlusLabel, "labelPlus");
+        buttonService.setIcon(gridXSqrtLabel, "labelSqrt");
+        buttonService.setIcon(gridYSqrtLabel, "labelSqrt");
+        buttonService.setIcon(replaceLabel, "labelReplace");
 
 
         undoRedo.addUndoActionListener(e -> mainCreasePatternWorker.undo());

@@ -18,8 +18,8 @@ import oriedita.editor.tools.KeyStrokeUtil;
 import oriedita.editor.tools.ResourceUtil;
 
 import javax.swing.AbstractAction;
-import javax.swing.AbstractButton;
 import javax.swing.Action;
+import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.InputMap;
 import javax.swing.JButton;
@@ -36,7 +36,6 @@ import javax.swing.JSlider;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
-import javax.swing.BorderFactory;
 import javax.swing.border.TitledBorder;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -53,9 +52,12 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
-import java.util.Map;
+import java.util.List;
+import java.util.Objects;
 
 public class PreferenceDialog extends JDialog {
     private JPanel contentPane;
@@ -123,9 +125,12 @@ public class PreferenceDialog extends JDialog {
     private JPanel hotkeyPanel;
     private int tempTransparency;
     private final ApplicationModel applicationModel;
+    private final ButtonService buttonService;
     private final ApplicationModel tempModel;
     private final FoldedFigureModel foldedFigureModel;
     private final FoldedFigureModel tempfoldedModel;
+
+    private final List<PropertyChangeListener> activeListeners = new ArrayList<>();
 
     public void setData(ApplicationModel applicationModel) {
         spotlightCB.setSelected(applicationModel.getDisplayPointSpotlight());
@@ -176,6 +181,7 @@ public class PreferenceDialog extends JDialog {
     ) {
         super(owner, name);
         this.applicationModel = appModel;
+        this.buttonService = buttonService;
         this.tempModel = new ApplicationModel();
         $$$setupUI$$$();
         this.tempModel.set(appModel);
@@ -190,7 +196,7 @@ public class PreferenceDialog extends JDialog {
         this.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentShown(ComponentEvent e) {
-                setupHotKey(buttonService, frameProvider);
+                setupHotKey(frameProvider);
 
             }
         });
@@ -404,7 +410,7 @@ public class PreferenceDialog extends JDialog {
         icon.setFocusable(false);
         icon.setName("");
         icon.setText("");
-        buttonService.registerLabel(icon, key);
+        buttonService.setIcon(icon, key);
 
         return icon;
     }
@@ -423,40 +429,28 @@ public class PreferenceDialog extends JDialog {
         return label;
     }
 
-    private JButton getKeyStrokeButton(ButtonService buttonService, FrameProvider frameProvider, int rowIndex, String key) {
-        Map<KeyStroke, AbstractButton> helpInputMap = buttonService.getHelpInputMap();
+    private JButton getKeyStrokeButton(FrameProvider frameProvider, int rowIndex, String key) {
         KeyStroke currentKeyStroke = getKeyBind(frameProvider, ActionType.values()[rowIndex].action());
-        AbstractButton button = buttonService.getPrefHotkeyMap().get(key);
 
         Action hotkeyAction = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 KeyStroke tempKeyStroke = getKeyBind(frameProvider, ActionType.values()[rowIndex].action());
-                new SelectKeyStrokeDialog(frameProvider.get(), button, helpInputMap, tempKeyStroke, newKeyStroke -> {
-                    if (newKeyStroke != null && helpInputMap.containsKey(newKeyStroke) && helpInputMap.get(newKeyStroke) != button) {
-                        String conflictingButton = (String) helpInputMap.get(newKeyStroke).getRootPane()
-                                .getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
-                                .get(newKeyStroke);
-                        JOptionPane.showMessageDialog(frameProvider.get(), "Conflicting KeyStroke! Conflicting with " + conflictingButton);
-                        return false;
-                    }
-
-                    ResourceUtil.updateBundleKey("hotkey", key, newKeyStroke == null ? "" : newKeyStroke.toString());
-
-                    helpInputMap.remove(tempKeyStroke);
-                    frameProvider.get().getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).remove(tempKeyStroke);
-
-                    if (newKeyStroke != null) {
-                        buttonService.addKeyStroke(newKeyStroke, button, key, true);
-                        putValue(Action.NAME, KeyStrokeUtil.toString(newKeyStroke));
-                    } else { putValue(Action.NAME, " "); }
-
-                    if (button != null) buttonService.setTooltip(button, key);
-
-                    return true;
-                });
+                new SelectKeyStrokeDialog(frameProvider.get(), key, buttonService, tempKeyStroke);
             }
         };
+        PropertyChangeListener listener = e -> {
+            if (Objects.equals(e.getPropertyName(), key)) {
+                KeyStroke ks = (KeyStroke) e.getNewValue();
+                if (ks != null) {
+                    hotkeyAction.putValue(Action.NAME, KeyStrokeUtil.toString(ks));
+                } else {
+                    hotkeyAction.putValue(Action.NAME, " ");
+                }
+            }
+        };
+        activeListeners.add(listener);
+        buttonService.addKeystrokeChangeListener(listener);
         JButton keyStrokeButton = new JButton(hotkeyAction);
         String ksString = KeyStrokeUtil.toString(currentKeyStroke);
         keyStrokeButton.setText(!ksString.isEmpty() ? ksString : " ");
@@ -464,7 +458,16 @@ public class PreferenceDialog extends JDialog {
         return keyStrokeButton;
     }
 
-    public void setupHotKey(ButtonService buttonService, FrameProvider frameProvider) {
+    @Override
+    public void dispose() {
+        super.dispose();
+        // remove all listeners from buttonService to prevent memory leak
+        for (PropertyChangeListener listener : activeListeners) {
+            buttonService.removeKeystrokeChangeListener(listener);
+        }
+    }
+
+    public void setupHotKey(FrameProvider frameProvider) {
         hotkeyPanel.removeAll();
         int rowIndex;
         final Spacer spacer1 = new Spacer();
@@ -479,7 +482,7 @@ public class PreferenceDialog extends JDialog {
             JLabel nameLabel = getTextLabel(rowIndex);
             hotkeyPanel.add(nameLabel, new GridConstraints(rowIndex, 1, 1, 1, GridConstraints.ANCHOR_NORTH, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
 
-            JButton keystrokeButton = getKeyStrokeButton(buttonService, frameProvider, rowIndex, key);
+            JButton keystrokeButton = getKeyStrokeButton(frameProvider, rowIndex, key);
             hotkeyPanel.add(keystrokeButton, new GridConstraints(rowIndex, 3, 1, 1, GridConstraints.ANCHOR_NORTH, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
 
             //TODO: a restore default button for hotkeys specifically

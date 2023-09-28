@@ -302,6 +302,7 @@ public class App {
         resetService.developmentView_initialization();
 
         buttonService.Button_shared_operation();
+        buttonService.loadAllKeyStrokes();
 
         mainCreasePatternWorker.setCamera(canvas.getCreasePatternCamera());
 
