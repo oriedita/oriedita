@@ -39,6 +39,7 @@ import javax.swing.MenuElement;
 import javax.swing.text.JTextComponent;
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.GraphicsEnvironment;
 import java.awt.KeyboardFocusManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -317,7 +318,9 @@ public class ButtonServiceImpl implements ButtonService {
         removeKeyStroke(key);
         if (keyStroke != null){
             keystrokes.put(key, keyStroke);
-            addUIKeystroke(key, keyStroke);
+            if (!GraphicsEnvironment.isHeadless()) {
+                addUIKeystroke(key, keyStroke);
+            }
         }
         setTooltip(key);
         keystrokeChangeSupport.firePropertyChange(key, oldValue, keyStroke);
@@ -393,7 +396,8 @@ public class ButtonServiceImpl implements ButtonService {
     }
 
     private void removeKeyStroke(String key) {
-        owner.get().getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).remove(keystrokes.get(key));
+        if (!GraphicsEnvironment.isHeadless())
+            owner.get().getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).remove(keystrokes.get(key));
         keystrokes.remove(key);
     }
 

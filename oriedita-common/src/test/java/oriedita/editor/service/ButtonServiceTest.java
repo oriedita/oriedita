@@ -3,6 +3,7 @@ package oriedita.editor.service;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import javax.swing.AbstractButton;
 import javax.swing.JButton;
 import javax.swing.KeyStroke;
 import java.beans.PropertyChangeListener;
@@ -11,9 +12,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static org.junit.jupiter.api.Assertions.*;
 
 public abstract class ButtonServiceTest {
+    static {
+        System.setProperty("java.awt.headless", "true"); // CI Tests are run in headless mode, so all test
+    }
+
     public static final String TEST_KEY = "test";
     public static final KeyStroke TEST_KEYSTROKE = KeyStroke.getKeyStroke("T");
     private ButtonService service;
+
     @BeforeEach
     void setUp() {
         service = createInstance();
@@ -23,7 +29,7 @@ public abstract class ButtonServiceTest {
 
     @Test
     public void testSetKeyStroke() {
-        JButton button = new JButton();
+        AbstractButton button = new AbstractButton() {};
         service.registerButton(button, TEST_KEY);
 
         service.setKeyStroke(TEST_KEYSTROKE, TEST_KEY);
