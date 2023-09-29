@@ -1,10 +1,7 @@
 package oriedita.editor.service;
 
-import oriedita.editor.FrameProvider;
 import oriedita.editor.exception.FileReadingException;
 import oriedita.editor.save.Save;
-
-import javax.swing.JPanel;
 import java.io.File;
 
 public interface FileSaveService {
@@ -12,9 +9,9 @@ public interface FileSaveService {
 
     void openFile();
 
-    void importPref (JPanel parent, FrameProvider frameProvider, ButtonService buttonService);
+    void importPref();
 
-    void exportPref ();
+    void exportPref();
 
     void importFile();
 

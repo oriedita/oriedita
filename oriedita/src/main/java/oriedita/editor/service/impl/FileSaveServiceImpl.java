@@ -36,10 +36,7 @@ import oriedita.editor.swing.dialog.FileDialogUtil;
 import oriedita.editor.swing.dialog.SaveTypeDialog;
 import oriedita.editor.tools.ResourceUtil;
 
-import javax.swing.InputMap;
-import javax.swing.JComponent;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import java.awt.Image;
 import java.awt.Toolkit;
@@ -51,7 +48,6 @@ import java.io.InputStream;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -77,6 +73,7 @@ public class FileSaveServiceImpl implements FileSaveService {
     private final ApplicationModel applicationModel;
     private final FoldedFiguresList foldedFiguresList;
     private final ResetService resetService;
+    private final ButtonService buttonService;
     private final BackgroundModel backgroundModel;
     private final SimpleDateFormat df = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss");
     private Path autoSavePath;
@@ -94,7 +91,8 @@ public class FileSaveServiceImpl implements FileSaveService {
             ApplicationModel applicationModel,
             FoldedFiguresList foldedFiguresList,
             ResetService resetService,
-            BackgroundModel backgroundModel) {
+            BackgroundModel backgroundModel,
+            ButtonService buttonService) {
         this.frame = frame;
         this.creasePatternCamera = creasePatternCamera;
         this.mainCreasePatternWorker = mainCreasePatternWorker;
@@ -104,6 +102,7 @@ public class FileSaveServiceImpl implements FileSaveService {
         this.applicationModel = applicationModel;
         this.foldedFiguresList = foldedFiguresList;
         this.resetService = resetService;
+        this.buttonService = buttonService;
         this.backgroundModel = backgroundModel;
     }
 
@@ -148,13 +147,18 @@ public class FileSaveServiceImpl implements FileSaveService {
     }
 
     @Override
-    public void importPref(JPanel parent, FrameProvider frameProvider, ButtonService buttonService) {
-        Path importPath = Path.of(FileDialogUtil.openFileDialog(frame.get(), "Import...", applicationModel.getDefaultDirectory(), new String[]{"*.oriconfig"}, null));
+    public void importPref() {
+        Path importPath = Path.of(FileDialogUtil.openFileDialog(
+                frame.get(),
+                "Import...",
+                applicationModel.getDefaultDirectory(),
+                new String[]{"*.oriconfig"},
+                null));
         File zipFile = importPath.toFile();
         String extension = ".oriconfig";
 
         if(!zipFile.getName().endsWith(extension)){
-            JOptionPane.showMessageDialog(parent, String.format("The zip file must have %s as the extension", extension),"Wrong import file format", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(frame.get(), String.format("The file must have %s as the extension", extension),"Wrong import file format", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
@@ -164,7 +168,7 @@ public class FileSaveServiceImpl implements FileSaveService {
                 if (ze.getName().equals("config.json")){
                     applicationModelPersistenceService.importApplicationModel(zis);
                 } else if (ze.getName().equals("hotkey.properties")){
-                    readImportHotkey(zis, ze, frameProvider, buttonService);
+                    readImportHotkey(zis, ze, buttonService);
                 }
             }
         } catch (IOException e) {
@@ -173,19 +177,14 @@ public class FileSaveServiceImpl implements FileSaveService {
         }
     }
 
-    private void readImportHotkey(ZipInputStream zis, ZipEntry ze, FrameProvider frameProvider, ButtonService buttonService){
+    private void readImportHotkey(ZipInputStream zis, ZipEntry ze, ButtonService buttonService){
         try {
             ResourceBundle userBundle = new PropertyResourceBundle(zis);
-            InputMap map = frameProvider.get().getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
 
             for(String action : userBundle.keySet()){
-                KeyStroke currentKeyStroke = Arrays.stream(map.keys()).filter(ks -> map.get(ks).equals(action)).findFirst().orElse(null);
                 String importKeyStroke = userBundle.getString(action);
                 String bundleName = ze.getName().split("\\.")[0];
-
-                buttonService.getHelpInputMap().remove(currentKeyStroke);
-                frameProvider.get().getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).remove(currentKeyStroke);
-                frameProvider.get().getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(importKeyStroke), action);
+                buttonService.setKeyStroke(KeyStroke.getKeyStroke(importKeyStroke), action);
                 ResourceUtil.updateBundleKey(bundleName, action, importKeyStroke);
             }
         } catch (IOException ignored) {

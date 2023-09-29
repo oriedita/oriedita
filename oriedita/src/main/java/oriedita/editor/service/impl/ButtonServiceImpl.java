@@ -1,5 +1,9 @@
 package oriedita.editor.service.impl;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.SetMultimap;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Any;
 import jakarta.enterprise.inject.Instance;
@@ -42,18 +46,15 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class ButtonServiceImpl implements ButtonService {
-    private final Map<String, List<AbstractButton>> registeredButtons;
-    private final Map<String, KeyStroke> keystrokes;
-    private final Map<KeyStroke, String> keystrokeActions;
+    private final SetMultimap<String, AbstractButton> registeredButtons;
+    private final BiMap<String, KeyStroke> keystrokes;
     private final Map<AbstractButton, String> buttonKeys;
 
     private final FrameProvider owner;
@@ -77,9 +78,8 @@ public class ButtonServiceImpl implements ButtonService {
         this.explanation = explanation;
         this.mainCreasePatternWorker = mainCreasePatternWorker;
         this.canvasModel = canvasModel;
-        registeredButtons = new HashMap<>();
-        keystrokes = new HashMap<>();
-        keystrokeActions = new HashMap<>();
+        registeredButtons = HashMultimap.create();
+        keystrokes = HashBiMap.create();
         buttonKeys = new HashMap<>();
     }
 
@@ -112,7 +112,7 @@ public class ButtonServiceImpl implements ButtonService {
 
         addButtonToRegisteredButtons(key, button);
         setAction(button, key);
-        setTooltip(button, key);
+        setTooltip(key);
 
         if (button instanceof JMenuItem) {
             JMenuItem menuItem = (JMenuItem) button;
@@ -246,12 +246,7 @@ public class ButtonServiceImpl implements ButtonService {
     }
 
     private void addButtonToRegisteredButtons(String key, AbstractButton button) {
-        if (!registeredButtons.containsKey(key)){
-            registeredButtons.put(key, new ArrayList<>());
-        }
-        if (!registeredButtons.get(key).contains(button)) {
-            registeredButtons.get(key).add(button);
-        }
+        registeredButtons.put(key, button);
         buttonKeys.put(button, key);
     }
 
@@ -268,11 +263,13 @@ public class ButtonServiceImpl implements ButtonService {
 
     @Override
     public Map<KeyStroke, AbstractButton> getHelpInputMap() {
-        return registeredButtons.entrySet().stream()
+        //noinspection OptionalGetWithoutIsPresent
+        return registeredButtons.asMap().entrySet().stream()
                 .filter(e -> keystrokes.containsKey(e.getKey()) && keystrokes.get(e.getKey()) != null)
                 .collect(Collectors.toMap(
                         e -> keystrokes.get(e.getKey()),
-                        e -> e.getValue().get(0)
+                        e -> e.getValue().stream().findFirst().get() // get is safe because MultiMap only contains
+                                                                     // keys with at least one entry
                 )
         );
     }
@@ -315,24 +312,19 @@ public class ButtonServiceImpl implements ButtonService {
     }
 
     @Override
-    public void setKeyStroke(KeyStroke keyStroke,String key) {
+    public void setKeyStroke(KeyStroke keyStroke, String key) {
         KeyStroke oldValue = keystrokes.get(key);
         removeKeyStroke(key);
         if (keyStroke != null){
             keystrokes.put(key, keyStroke);
-            keystrokeActions.put(keyStroke, key);
             addUIKeystroke(key, keyStroke);
         }
-        updateTooltips(key);
+        setTooltip(key);
         keystrokeChangeSupport.firePropertyChange(key, oldValue, keyStroke);
     }
 
-    private void updateTooltips(String key) {
-        registeredButtons.getOrDefault(key, new ArrayList<>()).forEach(button -> setTooltip(button, key));
-    }
-
     public String getActionFromKeystroke(KeyStroke stroke) {
-        return keystrokeActions.get(stroke);
+        return keystrokes.inverse().get(stroke);
     }
 
     private void addContextMenu(AbstractButton button, String key) {
@@ -388,12 +380,10 @@ public class ButtonServiceImpl implements ButtonService {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     if (!(KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner() instanceof JTextComponent)) {
-                        var buttonList = registeredButtons.getOrDefault(key, new ArrayList<>());
-                        if (!buttonList.isEmpty()){
-                            buttonList.get(0).doClick();
-                        } else {
-                            Logger.error("Unknown action activated: " + key);
-                        }
+                        registeredButtons.get(key).stream().findFirst().ifPresentOrElse(
+                                AbstractButton::doClick,
+                                () -> Logger.error("Unknown action activated: " + key)
+                        );
                     }
                 }
             };
@@ -403,15 +393,11 @@ public class ButtonServiceImpl implements ButtonService {
     }
 
     private void removeKeyStroke(String key) {
-        if (keystrokes.get(key) != null) {
-            keystrokeActions.remove(keystrokes.get(key));
-        }
         owner.get().getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).remove(keystrokes.get(key));
         keystrokes.remove(key);
     }
 
-    @Override
-    public void setTooltip(AbstractButton button, String key) {
+    public void setTooltip(String key) {
         String name = ResourceUtil.getBundleString("name", key);
         String keyStrokeString = ResourceUtil.getBundleString("hotkey", key);
         String tooltip = ResourceUtil.getBundleString("tooltip", key);

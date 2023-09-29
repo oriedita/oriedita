@@ -130,7 +130,7 @@ public class SaveTest {
 
             }
         };
-        fileSaveService = new FileSaveServiceImpl(null, creasePatternCamera, mainCreasePatternWorker, null, null, fileModel, applicationModel, new FoldedFiguresList(), resetService, null);
+        fileSaveService = new FileSaveServiceImpl(null, creasePatternCamera, mainCreasePatternWorker, null, null, fileModel, applicationModel, new FoldedFiguresList(), resetService, null, null);
     }
 
     @ParameterizedTest

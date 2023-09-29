@@ -13,7 +13,7 @@ public interface ButtonService {
 
     void registerButton(AbstractButton button, String key);
 
-    void registerButton(AbstractButton button, String key, boolean wantToReplace);
+    void registerButton(AbstractButton button, String key, boolean replaceUnderscoresInMenus);
 
     void loadAllKeyStrokes();
 
@@ -32,8 +32,6 @@ public interface ButtonService {
     void addDefaultListener(Container root, boolean replaceUnderscoresInMenus);
 
     void setKeyStroke(KeyStroke keyStroke, String key);
-
-    void setTooltip(AbstractButton button, String key);
 
     void addKeystrokeChangeListener(PropertyChangeListener listener);
 

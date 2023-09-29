@@ -365,7 +365,7 @@ public class PreferenceDialog extends JDialog {
         buttonCancel.addActionListener(e -> onCancel());
         restoreDefaultsButton.addActionListener(e -> onReset());
         importButton.addActionListener(e -> {
-            fileSaveService.importPref(contentPane, frameProvider, buttonService);
+            fileSaveService.importPref();
             setData(applicationModel);
             setupHotKey(buttonService, frameProvider);
         });
@@ -548,12 +548,14 @@ public class PreferenceDialog extends JDialog {
 
             // create csvReader object with parameter
             // file-reader and parser
-            CSVReader csvReader = new CSVReaderBuilder(inputStreamReader)
+            List<String[]> allData;
+            try (CSVReader csvReader = new CSVReaderBuilder(inputStreamReader)
                     .withCSVParser(parser)
-                    .build();
+                    .build()) {
 
-            // Read all data at once
-            List<String[]> allData = csvReader.readAll();
+                // Read all data at once
+                allData = csvReader.readAll();
+            }
 
             // Extract headers
             extractHeaders(allData);
