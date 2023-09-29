@@ -35,7 +35,7 @@ public class Epsilon {
     public static final double PARALLEL = factor * 0.5;
     public static final double FLAT = factor * 1E-4;
     public static final double QUAD_TREE_ITEM = factor * 0.5;
-    public static final double GRID_ANGLE_THRESHOLD = factor * 0.1;
+    public static final double GRID_ANGLE_THRESHOLD = 5;
     /**
      * For the most part, this is the smallest epsilon used in the code. Any value
      * that is even smaller is considered zero.
