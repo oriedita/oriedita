@@ -35,6 +35,7 @@ import origami.crease_pattern.element.Point;
 import java.io.File;
 import java.lang.annotation.Annotation;
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
@@ -44,7 +45,7 @@ import java.util.Objects;
  */
 public class SaveTest {
 
-    private static class MockInstance<T> implements Instance<T> {
+    public static class MockInstance<T> implements Instance<T> {
         private final T val;
 
         public MockInstance(T val) {
@@ -98,7 +99,7 @@ public class SaveTest {
 
         @Override
         public Iterator<T> iterator() {
-            return null;
+            return Collections.emptyIterator();
         }
     }
 
@@ -129,7 +130,7 @@ public class SaveTest {
 
             }
         };
-        fileSaveService = new FileSaveServiceImpl(null, creasePatternCamera, mainCreasePatternWorker, null, null, fileModel, applicationModel, new FoldedFiguresList(), resetService, null);
+        fileSaveService = new FileSaveServiceImpl(null, creasePatternCamera, mainCreasePatternWorker, null, null, fileModel, applicationModel, new FoldedFiguresList(), resetService, null, null);
     }
 
     @ParameterizedTest
@@ -142,7 +143,7 @@ public class SaveTest {
             fileSaveService.openFile(saveFile);
 
             FoldLineSet foldLineSet = mainCreasePatternWorker.getFoldLineSet();
-            List<Circle> list = (List<Circle>) foldLineSet.getCircles();
+            List<Circle> list = foldLineSet.getCircles();
 
             Assertions.assertEquals(1, list.size(), "Expected one circle");
 

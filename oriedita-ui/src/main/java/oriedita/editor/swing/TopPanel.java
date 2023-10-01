@@ -120,11 +120,11 @@ public class TopPanel implements PropertyChangeListener {
         buttonService.registerButton(backgroundLockButton, "backgroundLockAction");
         buttonService.registerButton(mouseSettingsCheckBox, "mouseSettingsAction");
 
-        buttonService.registerLabel(ratioLabel1, "labelPlus");
-        buttonService.registerLabel(ratioLabel2, "labelSqrt");
-        buttonService.registerLabel(ratioLabel3, "labelColon");
-        buttonService.registerLabel(ratioLabel4, "labelPlus");
-        buttonService.registerLabel(ratioLabel5, "labelSqrt");
+        buttonService.setIcon(ratioLabel1, "labelPlus");
+        buttonService.setIcon(ratioLabel2, "labelSqrt");
+        buttonService.setIcon(ratioLabel3, "labelColon");
+        buttonService.setIcon(ratioLabel4, "labelPlus");
+        buttonService.setIcon(ratioLabel5, "labelSqrt");
 
         internalDivisionRatioModel.bind(ratioATextField, "displayInternalDivisionRatioA");
         internalDivisionRatioModel.bind(ratioBTextField, "displayInternalDivisionRatioB");

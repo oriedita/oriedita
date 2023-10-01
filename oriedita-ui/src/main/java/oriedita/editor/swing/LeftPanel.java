@@ -300,11 +300,11 @@ public class LeftPanel {
         buttonService.registerButton(coloredXRayCheckBox, "coloredXRayAction");
         buttonService.registerButton(drawDiagonalGridlinesCheckBox, "drawDiagonalGridlinesAction");
 
-        buttonService.registerLabel(gridXPlusLabel, "labelPlus");
-        buttonService.registerLabel(gridYPlusLabel, "labelPlus");
-        buttonService.registerLabel(gridXSqrtLabel, "labelSqrt");
-        buttonService.registerLabel(gridYSqrtLabel, "labelSqrt");
-        buttonService.registerLabel(replaceLabel, "labelReplace");
+        buttonService.setIcon(gridXPlusLabel, "labelPlus");
+        buttonService.setIcon(gridYPlusLabel, "labelPlus");
+        buttonService.setIcon(gridXSqrtLabel, "labelSqrt");
+        buttonService.setIcon(gridYSqrtLabel, "labelSqrt");
+        buttonService.setIcon(replaceLabel, "labelReplace");
 
 
         undoRedo.addUndoActionListener(e -> mainCreasePatternWorker.undo());
