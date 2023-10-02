@@ -16,7 +16,7 @@
           <horizontalScrollBarPolicy value="31"/>
           <verticalScrollBarPolicy value="21"/>
         </properties>
-        <border type="none"/>
+        <border type="empty"/>
         <children>
           <grid id="b53b6" layout-manager="GridLayoutManager" row-count="20" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
             <margin top="5" left="5" bottom="5" right="5"/>
@@ -123,6 +123,7 @@
                     </constraints>
                     <properties>
                       <icon value="ppp/ookiku.png"/>
+                      <text value=""/>
                     </properties>
                   </component>
                   <component id="7ce55" class="javax.swing.JButton" binding="angleSystemBDecreaseButton">
