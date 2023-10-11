@@ -33,6 +33,7 @@ public class MouseHandlerReplaceTypeSelect extends BaseMouseHandlerBoxSelect {
 
         if (selectionStart.distance(p0) > Epsilon.UNKNOWN_1EN6) {//現状では赤を赤に変えたときもUNDO用に記録されてしまう20161218
             if (d.insideToReplaceType(selectionStart, p0, from, to)) {
+                d.fix2();
                 d.record();
             }
         } else {//現状では赤を赤に変えたときもUNDO用に記録されてしまう20161218
