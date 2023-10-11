@@ -12,12 +12,12 @@ import origami.crease_pattern.element.Point;
 
 @ApplicationScoped
 @Handles(MouseMode.REPLACE_LINE_TYPE_SELECT_72)
-public class MouseHandlerReplaceSelect extends BaseMouseHandlerBoxSelect {
+public class MouseHandlerReplaceTypeSelect extends BaseMouseHandlerBoxSelect {
 
     private ApplicationModel applicationModel;
 
     @Inject
-    public MouseHandlerReplaceSelect(ApplicationModel applicationModel) {
+    public MouseHandlerReplaceTypeSelect(ApplicationModel applicationModel) {
         this.applicationModel = applicationModel;
     }
 
@@ -32,32 +32,27 @@ public class MouseHandlerReplaceSelect extends BaseMouseHandlerBoxSelect {
         CustomLineTypes to = applicationModel.getCustomToLineType();
 
         if (selectionStart.distance(p0) > Epsilon.UNKNOWN_1EN6) {//現状では赤を赤に変えたときもUNDO用に記録されてしまう20161218
-            if (d.insideToReplace(selectionStart, p0, from, to)) {
-                d.fix2();
+            if (d.insideToReplaceType(selectionStart, p0, from, to)) {
                 d.record();
             }
         } else {//現状では赤を赤に変えたときもUNDO用に記録されてしまう20161218
             if (d.getFoldLineSet().closestLineSegmentDistance(p) < d.getSelectionDistance()) {//点pに最も近い線分の番号での、その距離を返す	public double closestLineSegmentDistance(Ten p)
                 LineSegment s = d.getFoldLineSet().closestLineSegmentSearch(p);
 
+                d.getFoldLineSet().deleteLine(s);
+
                 switch (from){
                     case ANY:
                         s.setColor(LineColor.fromNumber(to.getReplaceToTypeNumber()));
-                        d.fix2();
-                        d.record();
                         break;
                     case EGDE:
                         if (s.getColor() == LineColor.BLACK_0) {
                             s.setColor(LineColor.fromNumber(to.getReplaceToTypeNumber()));
-                            d.fix2();
-                            d.record();
                         }
                         break;
                     case MANDV:
                         if (s.getColor() == LineColor.RED_1 || s.getColor() == LineColor.BLUE_2) {
                             s.setColor(LineColor.fromNumber(to.getReplaceToTypeNumber()));
-                            d.fix2();
-                            d.record();
                         }
                         break;
                     case MOUNTAIN:
@@ -65,13 +60,13 @@ public class MouseHandlerReplaceSelect extends BaseMouseHandlerBoxSelect {
                     case AUX:
                         if (s.getColor() == LineColor.fromNumber(from.getNumber() - 1)) {
                             s.setColor(LineColor.fromNumber(to.getReplaceToTypeNumber()));
-                            d.fix2();
-                            d.record();
                         }
                         break;
                     default:
                         break;
                 }
+                d.addLineSegment(s);
+                d.record();
             }
         }
     }

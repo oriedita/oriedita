@@ -435,12 +435,11 @@ public class FoldLineSet {
         return i_r;
     }
 
-    public boolean insideToReplace(Polygon b, CustomLineTypes from, CustomLineTypes to){
+    public boolean insideToReplaceType(Polygon b, CustomLineTypes from, CustomLineTypes to){
         boolean i_r = false;
 
         for (int i = 1; i <= total; i++){
-            LineSegment s;
-            s = lineSegments.get(i);
+            LineSegment s = lineSegments.get(i);
 
             if(b.totu_boundary_inside(s)){
                 switch (from){
@@ -476,14 +475,13 @@ public class FoldLineSet {
         return i_r;
     }
 
-    public boolean insideToDelete(Polygon b, CustomLineTypes del){
+    public boolean insideToDeleteType(Polygon b, CustomLineTypes del){
         boolean i_r = false;
 
         FoldLineSave save = new FoldLineSave();
 
         for (int i = 1; i <= total; i++){
-            LineSegment s;
-            s = lineSegments.get(i);
+            LineSegment s = lineSegments.get(i);
 
             switch (del){
                 case ANY:

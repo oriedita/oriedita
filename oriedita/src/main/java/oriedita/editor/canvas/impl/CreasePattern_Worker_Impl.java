@@ -832,8 +832,8 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     }
 
     @Override
-    public boolean insideToDelete(Point p0a, Point p0b, CustomLineTypes del){
-        return foldLineSet.insideToDelete(createBox(p0a, p0b), del);
+    public boolean insideToDeleteType(Point p0a, Point p0b, CustomLineTypes del){
+        return foldLineSet.insideToDeleteType(createBox(p0a, p0b), del);
     }
 
     @Override
@@ -961,8 +961,8 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     }
 
     @Override
-    public boolean insideToReplace(Point p0a, Point p0b, CustomLineTypes from, CustomLineTypes to){
-        return foldLineSet.insideToReplace(createBox(p0a, p0b), from, to);
+    public boolean insideToReplaceType(Point p0a, Point p0b, CustomLineTypes from, CustomLineTypes to){
+        return foldLineSet.insideToReplaceType(createBox(p0a, p0b), from, to);
     }
 
     @Override
