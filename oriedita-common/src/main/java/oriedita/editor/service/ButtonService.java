@@ -3,6 +3,8 @@ package oriedita.editor.service;
 import javax.swing.AbstractButton;
 import javax.swing.JLabel;
 import javax.swing.KeyStroke;
+import javax.swing.text.JTextComponent;
+
 import java.awt.Container;
 import java.beans.PropertyChangeListener;
 import java.util.Map;
@@ -36,4 +38,6 @@ public interface ButtonService {
     void addKeystrokeChangeListener(PropertyChangeListener listener);
 
     void removeKeystrokeChangeListener(PropertyChangeListener listener);
+
+    public void registerTextField(JTextComponent textField, String key);
 }

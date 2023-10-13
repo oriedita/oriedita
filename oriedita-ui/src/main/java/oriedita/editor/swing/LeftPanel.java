@@ -304,6 +304,14 @@ public class LeftPanel {
         buttonService.registerButton(coloredXRayCheckBox, "coloredXRayAction");
         buttonService.registerButton(drawDiagonalGridlinesCheckBox, "drawDiagonalGridlinesAction");
 
+        buttonService.registerTextField(gridAngleTextField, "setGridAngleAction");
+        buttonService.registerTextField(gridXATextField,"setGridXAction");
+        buttonService.registerTextField(gridXBTextField,"setGridXAction");
+        buttonService.registerTextField(gridXCTextField,"setGridXAction");
+        buttonService.registerTextField(gridYATextField, "setGridYAction");
+        buttonService.registerTextField(gridYBTextField, "setGridYAction");
+        buttonService.registerTextField(gridYCTextField, "setGridYAction");
+        
         buttonService.setIcon(gridXPlusLabel, "labelPlus");
         buttonService.setIcon(gridYPlusLabel, "labelPlus");
         buttonService.setIcon(gridXSqrtLabel, "labelSqrt");
