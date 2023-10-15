@@ -36,6 +36,7 @@ public class FoldLineSet {
     private final Queue<LineSegment> Check3LineSegment = new ConcurrentLinkedQueue<>(); //Instantiation of line segments to store check information
     private final Queue<FlatFoldabilityViolation> cAMVViolations = new ConcurrentLinkedQueue<>();
     List<Circle> circles = new ArrayList<>(); //円のインスタンス化
+    List<LineSegment> reserveAux = new ArrayList<>();
 
     // Specify the point Q, delete the line segments AQ and QC, and add the line segment AC (however, only two line segments have Q as the end point) // When implemented, 1 when nothing is done Returns 0.
     // The procedure is (1) The point p is determined by clicking the mouse.
@@ -80,6 +81,24 @@ public class FoldLineSet {
 
     public Queue<FlatFoldabilityViolation> getcAMVViolations() {
         return cAMVViolations;
+    }
+
+    public void addLineSegmentForReplace(LineSegment s0){
+        addLine(s0);//Just add the information of s0 to the end of senbun of foldLineSet
+        int total_old = getTotal();
+        divideLineSegmentWithNewLines(total_old - 1, total_old);
+    }
+
+    public void replaceAux(CustomLineTypes from, CustomLineTypes to){
+        if(from == CustomLineTypes.AUX && to.getReplaceToTypeNumber() != LineColor.CYAN_3.getNumber()) {
+            for (LineSegment s : reserveAux) {
+                LineSegment auxChange = s.clone();
+                auxChange.setColor(LineColor.fromNumber(to.getReplaceToTypeNumber()));
+                deleteLine(s);
+                addLineSegmentForReplace(auxChange);
+            }
+            reserveAux.clear();
+        }
     }
 
     //Get the total number of line segments
@@ -441,7 +460,7 @@ public class FoldLineSet {
         for (int i = 1; i <= total; i++){
             LineSegment s = lineSegments.get(i);
 
-            if(b.totu_boundary_inside(s)){
+            if(b.totu_boundary_inside(s) && (from.getNumber() != to.getReplaceToTypeNumber())){
                 switch (from){
                     case ANY:
                         s.setColor(LineColor.fromNumber(to.getReplaceToTypeNumber()));
@@ -461,17 +480,26 @@ public class FoldLineSet {
                         break;
                     case MOUNTAIN:
                     case VALLEY:
-                    case AUX:
                         if (s.getColor() == LineColor.fromNumber(from.getNumber() - 1)) {
                             s.setColor(LineColor.fromNumber(to.getReplaceToTypeNumber()));
+                            i_r = true;
+                        }
+                        break;
+                    case AUX:
+                        if(s.getColor() == LineColor.fromNumber(from.getNumber() - 1)) {
+                            reserveAux.add(s);
                             i_r = true;
                         }
                         break;
                     default:
                         break;
                 }
+                if(from != CustomLineTypes.AUX){
+                    lineSegments.set(i, s);
+                }
             }
         }
+        replaceAux(from, to);
         return i_r;
     }
 
