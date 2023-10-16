@@ -36,7 +36,6 @@ public class FoldLineSet {
     private final Queue<LineSegment> Check3LineSegment = new ConcurrentLinkedQueue<>(); //Instantiation of line segments to store check information
     private final Queue<FlatFoldabilityViolation> cAMVViolations = new ConcurrentLinkedQueue<>();
     List<Circle> circles = new ArrayList<>(); //円のインスタンス化
-    List<LineSegment> reserveAux = new ArrayList<>();
 
     // Specify the point Q, delete the line segments AQ and QC, and add the line segment AC (however, only two line segments have Q as the end point) // When implemented, 1 when nothing is done Returns 0.
     // The procedure is (1) The point p is determined by clicking the mouse.
@@ -89,7 +88,7 @@ public class FoldLineSet {
         divideLineSegmentWithNewLines(total_old - 1, total_old);
     }
 
-    public void replaceAux(CustomLineTypes from, CustomLineTypes to){
+    public void replaceAux(CustomLineTypes from, CustomLineTypes to, List<LineSegment> reserveAux) {
         if(from == CustomLineTypes.AUX && to.getReplaceToTypeNumber() != LineColor.CYAN_3.getNumber()) {
             for (LineSegment s : reserveAux) {
                 LineSegment auxChange = s.clone();
@@ -456,6 +455,7 @@ public class FoldLineSet {
 
     public boolean insideToReplaceType(Polygon b, CustomLineTypes from, CustomLineTypes to){
         boolean i_r = false;
+        List<LineSegment> reserveAux = new ArrayList<>();
 
         for (int i = 1; i <= total; i++){
             LineSegment s = lineSegments.get(i);
@@ -499,7 +499,7 @@ public class FoldLineSet {
                 }
             }
         }
-        replaceAux(from, to);
+        replaceAux(from, to, reserveAux);
         return i_r;
     }
 

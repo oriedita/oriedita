@@ -39,16 +39,16 @@ public class MouseHandlerReplaceTypeSelect extends BaseMouseHandlerBoxSelect {
             if (d.getFoldLineSet().closestLineSegmentDistance(p) < d.getSelectionDistance()) {//点pに最も近い線分の番号での、その距離を返す	public double closestLineSegmentDistance(Ten p)
                 LineSegment s = d.getFoldLineSet().closestLineSegmentSearch(p);
 
-                d.getFoldLineSet().deleteLine(s);
-
                 switch (from){
                     case ANY:
+                        d.getFoldLineSet().deleteLine(s);
                         s.setColor(LineColor.fromNumber(to.getReplaceToTypeNumber()));
                         d.addLineSegment(s);
                         d.record();
                         break;
                     case EGDE:
                         if (s.getColor() == LineColor.BLACK_0) {
+                            d.getFoldLineSet().deleteLine(s);
                             s.setColor(LineColor.fromNumber(to.getReplaceToTypeNumber()));
                             d.addLineSegment(s);
                             d.record();
@@ -56,6 +56,7 @@ public class MouseHandlerReplaceTypeSelect extends BaseMouseHandlerBoxSelect {
                         break;
                     case MANDV:
                         if (s.getColor() == LineColor.RED_1 || s.getColor() == LineColor.BLUE_2) {
+                            d.getFoldLineSet().deleteLine(s);
                             s.setColor(LineColor.fromNumber(to.getReplaceToTypeNumber()));
                             d.addLineSegment(s);
                             d.record();
@@ -65,6 +66,7 @@ public class MouseHandlerReplaceTypeSelect extends BaseMouseHandlerBoxSelect {
                     case VALLEY:
                     case AUX:
                         if (s.getColor() == LineColor.fromNumber(from.getNumber() - 1)) {
+                            d.getFoldLineSet().deleteLine(s);
                             s.setColor(LineColor.fromNumber(to.getReplaceToTypeNumber()));
                             d.addLineSegment(s);
                             d.record();
