@@ -44,15 +44,21 @@ public class MouseHandlerReplaceTypeSelect extends BaseMouseHandlerBoxSelect {
                 switch (from){
                     case ANY:
                         s.setColor(LineColor.fromNumber(to.getReplaceToTypeNumber()));
+                        d.addLineSegment(s);
+                        d.record();
                         break;
                     case EGDE:
                         if (s.getColor() == LineColor.BLACK_0) {
                             s.setColor(LineColor.fromNumber(to.getReplaceToTypeNumber()));
+                            d.addLineSegment(s);
+                            d.record();
                         }
                         break;
                     case MANDV:
                         if (s.getColor() == LineColor.RED_1 || s.getColor() == LineColor.BLUE_2) {
                             s.setColor(LineColor.fromNumber(to.getReplaceToTypeNumber()));
+                            d.addLineSegment(s);
+                            d.record();
                         }
                         break;
                     case MOUNTAIN:
@@ -60,13 +66,13 @@ public class MouseHandlerReplaceTypeSelect extends BaseMouseHandlerBoxSelect {
                     case AUX:
                         if (s.getColor() == LineColor.fromNumber(from.getNumber() - 1)) {
                             s.setColor(LineColor.fromNumber(to.getReplaceToTypeNumber()));
+                            d.addLineSegment(s);
+                            d.record();
                         }
                         break;
                     default:
                         break;
                 }
-                d.addLineSegment(s);
-                d.record();
             }
         }
     }
