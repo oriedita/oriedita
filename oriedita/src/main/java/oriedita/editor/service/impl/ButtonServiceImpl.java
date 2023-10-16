@@ -139,7 +139,14 @@ public class ButtonServiceImpl implements ButtonService {
         };
         button.addActionListener(explanationUpdater);
     }
-
+    public void registerTextField(JTextComponent textField, String key){
+        textField.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                explanation.setExplanation(key);
+            }
+        });
+    }
     @Override
     public void loadAllKeyStrokes() {
         for (ActionType value : ActionType.values()) {
