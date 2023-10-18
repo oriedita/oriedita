@@ -37,6 +37,7 @@ import oriedita.editor.tools.StringOp;
 import origami.crease_pattern.element.LineColor;
 import origami.folding.FoldedFigure;
 
+import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -51,6 +52,7 @@ import javax.swing.JTextField;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
+import javax.swing.border.TitledBorder;
 import javax.swing.event.PopupMenuEvent;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -141,7 +143,6 @@ public class LeftPanel {
     private JButton colBlackButton;
     private JButton colCyanButton;
     private JButton lineSegmentDivisionSetButton;
-    private JCheckBox correctCpBeforeFoldingCheckBox;
     private JCheckBox selectPersistentCheckBox;
     private JCheckBox coloredXRayCheckBox;
     private JButton resetGridButton;
@@ -179,10 +180,12 @@ public class LeftPanel {
     private JLabel replaceLabel;
 
     private HashMap<MouseMode, JButton> selectionTransformationToolLookup;
-    public double convertAngle(double angle){
-        if(angle>=0) return angle%180;
-        else return 180+(angle%180);
+
+    public double convertAngle(double angle) {
+        if (angle >= 0) return angle % 180;
+        else return 180 + (angle % 180);
     }
+
     @Inject
     public LeftPanel(FrameProvider frameProvider,
                      @Named("normal") HistoryState historyState,
@@ -299,19 +302,18 @@ public class LeftPanel {
         buttonService.registerButton(undoRedo.getRedoButton(), "redoAction");
         buttonService.registerButton(undoRedo.getUndoButton(), "undoAction");
 
-        buttonService.registerButton(correctCpBeforeFoldingCheckBox, "correctCpBeforeFoldingAction");
         buttonService.registerButton(selectPersistentCheckBox, "selectPersistentAction");
         buttonService.registerButton(coloredXRayCheckBox, "coloredXRayAction");
         buttonService.registerButton(drawDiagonalGridlinesCheckBox, "drawDiagonalGridlinesAction");
 
         buttonService.registerTextField(gridAngleTextField, "setGridAngleAction");
-        buttonService.registerTextField(gridXATextField,"setGridXAction");
-        buttonService.registerTextField(gridXBTextField,"setGridXAction");
-        buttonService.registerTextField(gridXCTextField,"setGridXAction");
+        buttonService.registerTextField(gridXATextField, "setGridXAction");
+        buttonService.registerTextField(gridXBTextField, "setGridXAction");
+        buttonService.registerTextField(gridXCTextField, "setGridXAction");
         buttonService.registerTextField(gridYATextField, "setGridYAction");
         buttonService.registerTextField(gridYBTextField, "setGridYAction");
         buttonService.registerTextField(gridYCTextField, "setGridYAction");
-        
+
         buttonService.setIcon(gridXPlusLabel, "labelPlus");
         buttonService.setIcon(gridYPlusLabel, "labelPlus");
         buttonService.setIcon(gridXSqrtLabel, "labelSqrt");
@@ -549,7 +551,6 @@ public class LeftPanel {
             mainCreasePatternWorker.v_del_all_cc();
             Logger.info("mainDrawingWorker.v_del_all_cc()");
         });
-        correctCpBeforeFoldingCheckBox.addActionListener(e -> applicationModel.setCorrectCpBeforeFolding(correctCpBeforeFoldingCheckBox.isSelected()));
         selectPersistentCheckBox.addActionListener(e -> applicationModel.setSelectPersistent(selectPersistentCheckBox.isSelected()));
         drawTwoColoredCpButton.addActionListener(e -> foldingService.createTwoColoredCp());
         suitei_01Button.addActionListener(e -> {
@@ -700,7 +701,7 @@ public class LeftPanel {
         data.setGridYA(measuresModel.string2double(gridYATextField.getText(), data.getGridYA()));
         data.setGridYB(measuresModel.string2double(gridYBTextField.getText(), data.getGridYB()));
         data.setGridYC(measuresModel.string2double(gridYCTextField.getText(), data.getGridYC()));
-       
+
         gridModel.setGridAngle(convertAngle(measuresModel.string2double(gridAngleTextField.getText(), gridModel.getGridAngle())));
 
     }
@@ -740,8 +741,9 @@ public class LeftPanel {
         scrollPane1.setHorizontalScrollBarPolicy(31);
         scrollPane1.setVerticalScrollBarPolicy(21);
         root.add(scrollPane1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        scrollPane1.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
         final JPanel panel1 = new JPanel();
-        panel1.setLayout(new GridLayoutManager(23, 1, new Insets(5, 5, 5, 5), -1, -1));
+        panel1.setLayout(new GridLayoutManager(23, 1, new Insets(0, 0, 0, 0), -1, -1));
         scrollPane1.setViewportView(panel1);
         undoRedo = new UndoRedo();
         panel1.add(undoRedo.$$$getRootComponent$$$(), new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, 1, null, null, null, 0, false));
@@ -1143,19 +1145,16 @@ public class LeftPanel {
         final Spacer spacer5 = new Spacer();
         panel1.add(spacer5, new GridConstraints(19, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, new Dimension(-1, 5), new Dimension(-1, 5), null, 0, false));
         final JPanel panel14 = new JPanel();
-        panel14.setLayout(new GridLayoutManager(1, 3, new Insets(0, 0, 0, 0), 1, 1));
+        panel14.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 0, 0), 1, 1));
         panel1.add(panel14, new GridConstraints(20, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-        correctCpBeforeFoldingCheckBox = new JCheckBox();
-        correctCpBeforeFoldingCheckBox.setText("Correct");
-        panel14.add(correctCpBeforeFoldingCheckBox, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         selectPersistentCheckBox = new JCheckBox();
         selectPersistentCheckBox.setText("Persist");
         selectPersistentCheckBox.setToolTipText("ckbox_select_nokosi");
-        panel14.add(selectPersistentCheckBox, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        panel14.add(selectPersistentCheckBox, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         drawTwoColoredCpButton = new JButton();
         drawTwoColoredCpButton.setActionCommand("drawTwoColoredCpAction");
         drawTwoColoredCpButton.setIcon(new ImageIcon(getClass().getResource("/ppp/2syoku_tenkaizu.png")));
-        panel14.add(drawTwoColoredCpButton, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        panel14.add(drawTwoColoredCpButton, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         final JPanel panel15 = new JPanel();
         panel15.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 0, 0), 1, 1, true, false));
         panel1.add(panel15, new GridConstraints(21, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));

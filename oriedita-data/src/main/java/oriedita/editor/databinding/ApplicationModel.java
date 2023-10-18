@@ -49,7 +49,6 @@ public class ApplicationModel implements Serializable {
     private boolean mouseWheelMovesCreasePattern;
     private Color circleCustomizedColor;
     private boolean selectPersistent;
-    private boolean correctCpBeforeFolding;
     private boolean check4Enabled;
     private boolean advancedCheck4Display;
     private boolean helpVisible;
@@ -369,7 +368,6 @@ public class ApplicationModel implements Serializable {
         circleCustomizedColor = new Color(100, 200, 200);
 
         selectPersistent = false;
-        correctCpBeforeFolding = false;
         numPolygonCorners = 5;
         foldLineDividingNumber = 2;
         defaultDirectory = null;
@@ -496,16 +494,6 @@ public class ApplicationModel implements Serializable {
         int oldAuxLineWidth = this.auxLineWidth;
         this.auxLineWidth = auxLineWidth;
         this.pcs.firePropertyChange("auxLineWidth", oldAuxLineWidth, auxLineWidth);
-    }
-
-    public boolean getCorrectCpBeforeFolding() {
-        return correctCpBeforeFolding;
-    }
-
-    public void setCorrectCpBeforeFolding(boolean correctCpBeforeFolding) {
-        boolean oldCorrectCpBeforeFolding = this.correctCpBeforeFolding;
-        this.correctCpBeforeFolding = correctCpBeforeFolding;
-        this.pcs.firePropertyChange("correctCpBeforeFolding", oldCorrectCpBeforeFolding, correctCpBeforeFolding);
     }
 
     public boolean getSelectPersistent() {
@@ -835,7 +823,6 @@ public class ApplicationModel implements Serializable {
 
         circleCustomizedColor = applicationModel.getCircleCustomizedColor();
         selectPersistent = applicationModel.getSelectPersistent();
-        correctCpBeforeFolding = applicationModel.getCorrectCpBeforeFolding();
         check4Enabled = applicationModel.getCheck4Enabled();
         numPolygonCorners = applicationModel.getNumPolygonCorners();
         foldLineDividingNumber = applicationModel.getFoldLineDividingNumber();
