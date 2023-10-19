@@ -89,14 +89,16 @@ public class FoldLineSet {
     }
 
     public void replaceAux(CustomLineTypes from, CustomLineTypes to, List<LineSegment> reserveAux) {
-        if(from == CustomLineTypes.AUX && to.getReplaceToTypeNumber() != LineColor.CYAN_3.getNumber()) {
-            for (LineSegment s : reserveAux) {
-                LineSegment auxChange = s.clone();
-                auxChange.setColor(LineColor.fromNumber(to.getReplaceToTypeNumber()));
-                deleteLine(s);
-                addLineSegmentForReplace(auxChange);
+        if(from == CustomLineTypes.AUX || from == CustomLineTypes.ANY) {
+            if(to.getReplaceToTypeNumber() != LineColor.CYAN_3.getNumber()){
+                for (LineSegment s : reserveAux) {
+                    LineSegment auxChange = s.clone();
+                    auxChange.setColor(LineColor.fromNumber(to.getReplaceToTypeNumber()));
+                    deleteLine(s);
+                    addLineSegmentForReplace(auxChange);
+                }
+                reserveAux.clear();
             }
-            reserveAux.clear();
         }
     }
 
@@ -459,11 +461,16 @@ public class FoldLineSet {
 
         for (int i = 1; i <= total; i++){
             LineSegment s = lineSegments.get(i);
+            LineSegment temp = s.clone();
 
             if(b.totu_boundary_inside(s) && (from.getNumber() != to.getReplaceToTypeNumber())){
                 switch (from){
                     case ANY:
-                        s.setColor(LineColor.fromNumber(to.getReplaceToTypeNumber()));
+                        if(s.getColor() == LineColor.CYAN_3) {
+                            reserveAux.add(s);
+                        } else {
+                            s.setColor(LineColor.fromNumber(to.getReplaceToTypeNumber()));
+                        }
                         i_r = true;
                         break;
                     case EGDE:
@@ -494,8 +501,14 @@ public class FoldLineSet {
                     default:
                         break;
                 }
-                if(from != CustomLineTypes.AUX){
-                    lineSegments.set(i, s);
+                if(from != CustomLineTypes.AUX){ // if replace from is not AUX
+                    if(from != CustomLineTypes.ANY){ // if replace from is not ANY
+                        lineSegments.set(i, s);
+                    } else { // if replace from is ANY & og linetype is not Aux
+                        if(temp.getColor() != LineColor.CYAN_3){
+                            lineSegments.set(i, s);
+                        }
+                    }
                 }
             }
         }
