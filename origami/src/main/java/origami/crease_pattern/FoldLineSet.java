@@ -82,6 +82,22 @@ public class FoldLineSet {
         return cAMVViolations;
     }
 
+    public void addLineSegmentForReplace(LineSegment s0){
+        addLine(s0);//Just add the information of s0 to the end of senbun of foldLineSet
+        int total_old = getTotal();
+        divideLineSegmentWithNewLines(total_old - 1, total_old);
+    }
+
+    public void replaceAux(CustomLineTypes from, CustomLineTypes to, List<LineSegment> reserveAux) {
+        for (LineSegment s : reserveAux) {
+            LineSegment auxChange = s.clone();
+            auxChange.setColor(LineColor.fromNumber(to.getReplaceToTypeNumber()));
+            deleteLine(s);
+            addLineSegmentForReplace(auxChange);
+        }
+        reserveAux.clear();
+    }
+
     //Get the total number of line segments
     public int getTotal() {
         return total;
@@ -435,17 +451,22 @@ public class FoldLineSet {
         return i_r;
     }
 
-    public boolean insideToReplace(Polygon b, CustomLineTypes from, CustomLineTypes to){
+    public boolean insideToReplaceType(Polygon b, CustomLineTypes from, CustomLineTypes to){
         boolean i_r = false;
+        List<LineSegment> reserveAux = new ArrayList<>();
 
         for (int i = 1; i <= total; i++){
-            LineSegment s;
-            s = lineSegments.get(i);
+            LineSegment s = lineSegments.get(i);
+            LineSegment temp = s.clone();
 
-            if(b.totu_boundary_inside(s)){
+            if(b.totu_boundary_inside(s) && (from.getNumber() != to.getReplaceToTypeNumber())){
                 switch (from){
                     case ANY:
-                        s.setColor(LineColor.fromNumber(to.getReplaceToTypeNumber()));
+                        if(s.getColor() == LineColor.CYAN_3) {
+                            reserveAux.add(s);
+                        } else {
+                            s.setColor(LineColor.fromNumber(to.getReplaceToTypeNumber()));
+                        }
                         i_r = true;
                         break;
                     case EGDE:
@@ -462,28 +483,42 @@ public class FoldLineSet {
                         break;
                     case MOUNTAIN:
                     case VALLEY:
-                    case AUX:
                         if (s.getColor() == LineColor.fromNumber(from.getNumber() - 1)) {
                             s.setColor(LineColor.fromNumber(to.getReplaceToTypeNumber()));
+                            i_r = true;
+                        }
+                        break;
+                    case AUX:
+                        if(s.getColor() == LineColor.fromNumber(from.getNumber() - 1)) {
+                            reserveAux.add(s);
                             i_r = true;
                         }
                         break;
                     default:
                         break;
                 }
+                if(from != CustomLineTypes.AUX){ // if replace from is not AUX
+                    if(from != CustomLineTypes.ANY){ // if replace from is not ANY
+                        lineSegments.set(i, s);
+                    } else { // if replace from is ANY & og linetype is not Aux
+                        if(temp.getColor() != LineColor.CYAN_3){
+                            lineSegments.set(i, s);
+                        }
+                    }
+                }
             }
         }
+        replaceAux(from, to, reserveAux);
         return i_r;
     }
 
-    public boolean insideToDelete(Polygon b, CustomLineTypes del){
+    public boolean insideToDeleteType(Polygon b, CustomLineTypes del){
         boolean i_r = false;
 
         FoldLineSave save = new FoldLineSave();
 
         for (int i = 1; i <= total; i++){
-            LineSegment s;
-            s = lineSegments.get(i);
+            LineSegment s = lineSegments.get(i);
 
             switch (del){
                 case ANY:

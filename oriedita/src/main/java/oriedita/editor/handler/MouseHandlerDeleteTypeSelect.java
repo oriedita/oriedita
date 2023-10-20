@@ -31,7 +31,7 @@ public class MouseHandlerDeleteTypeSelect extends BaseMouseHandlerBoxSelect {
         CustomLineTypes del = applicationModel.getDelLineType();
 
         if (selectionStart.distance(p0) > Epsilon.UNKNOWN_1EN6) {//現状では赤を赤に変えたときもUNDO用に記録されてしまう20161218
-            if (d.insideToDelete(selectionStart, p0, del)) {
+            if (d.insideToDeleteType(selectionStart, p0, del)) {
                 d.record();
             }
         } else {//現状では赤を赤に変えたときもUNDO用に記録されてしまう20161218

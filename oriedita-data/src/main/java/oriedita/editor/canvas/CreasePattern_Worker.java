@@ -171,9 +171,9 @@ public interface CreasePattern_Worker {
 
     boolean insideToAux(Point p0a, Point p0b);
 
-    boolean insideToReplace(Point p0a, Point p0b, CustomLineTypes from, CustomLineTypes to);
+    boolean insideToReplaceType(Point p0a, Point p0b, CustomLineTypes from, CustomLineTypes to);
 
-    boolean insideToDelete(Point p0a, Point p0b, CustomLineTypes del);
+    boolean insideToDeleteType(Point p0a, Point p0b, CustomLineTypes del);
 
     void setFoldLineDividingNumber(int i);
 
