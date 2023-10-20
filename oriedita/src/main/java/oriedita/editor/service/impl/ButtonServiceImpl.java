@@ -104,7 +104,7 @@ public class ButtonServiceImpl implements ButtonService {
     }
 
     @Override
-    public void registerButton(AbstractButton button, String key, boolean replaceUnderscoresInMenus) {
+    public synchronized void registerButton(AbstractButton button, String key, boolean replaceUnderscoresInMenus) {
         String keyStrokeString = ResourceUtil.getBundleString("hotkey", key);
         KeyStroke keyStroke = KeyStroke.getKeyStroke(keyStrokeString);
         if (!StringOp.isEmpty(keyStrokeString) && keyStroke == null) {
