@@ -14,8 +14,6 @@ import oriedita.editor.databinding.FoldedFiguresList;
 import oriedita.editor.drawing.FoldedFigure_Drawer;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.folded_figure.FoldedFigure_01;
-import oriedita.editor.save.Save;
-import oriedita.editor.save.SaveProvider;
 import oriedita.editor.service.FoldingService;
 import oriedita.editor.service.TaskExecutorService;
 import oriedita.editor.swing.component.BulletinBoard;
@@ -117,19 +115,7 @@ public class FoldingServiceImpl implements FoldingService {
             foldedFiguresList.removeElement(foldedFiguresList.getSelectedItem());
         }
 
-        if (applicationModel.getCorrectCpBeforeFolding()) {// Automatically correct strange parts (branch-shaped fold lines, etc.) in the crease pattern
-            CreasePattern_Worker creasePatternWorker2 = backupCreasePatternWorker;
-            Save save = SaveProvider.createInstance();
-            mainCreasePatternWorker.getFoldLineSet().getSaveForSelectFolding(save);
-            creasePatternWorker2.setSave_for_reading(save);
-            creasePatternWorker2.point_removal();
-            creasePatternWorker2.overlapping_line_removal();
-            creasePatternWorker2.branch_trim();
-            creasePatternWorker2.organizeCircles();
-            lineSegmentsForFolding = creasePatternWorker2.getForFolding();
-        } else {
-            lineSegmentsForFolding = mainCreasePatternWorker.getForSelectFolding();
-        }
+        lineSegmentsForFolding = mainCreasePatternWorker.getForSelectFolding();
 
         //これより前のOZは古いOZ
         Foldable selectedFigure = initFoldedFigure();//OAZのアレイリストに、新しく折り上がり図をひとつ追加し、それを操作対象に指定し、foldedFigures(0)共通パラメータを引き継がせる。
