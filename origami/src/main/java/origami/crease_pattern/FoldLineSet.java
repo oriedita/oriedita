@@ -89,17 +89,13 @@ public class FoldLineSet {
     }
 
     public void replaceAux(CustomLineTypes from, CustomLineTypes to, List<LineSegment> reserveAux) {
-        if(from == CustomLineTypes.AUX || from == CustomLineTypes.ANY) {
-            if(to.getReplaceToTypeNumber() != LineColor.CYAN_3.getNumber()){
-                for (LineSegment s : reserveAux) {
-                    LineSegment auxChange = s.clone();
-                    auxChange.setColor(LineColor.fromNumber(to.getReplaceToTypeNumber()));
-                    deleteLine(s);
-                    addLineSegmentForReplace(auxChange);
-                }
-                reserveAux.clear();
-            }
+        for (LineSegment s : reserveAux) {
+            LineSegment auxChange = s.clone();
+            auxChange.setColor(LineColor.fromNumber(to.getReplaceToTypeNumber()));
+            deleteLine(s);
+            addLineSegmentForReplace(auxChange);
         }
+        reserveAux.clear();
     }
 
     //Get the total number of line segments
