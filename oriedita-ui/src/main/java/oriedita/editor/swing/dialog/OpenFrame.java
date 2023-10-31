@@ -52,20 +52,12 @@ public class OpenFrame extends JDialog {
         buttonService.registerButton(selectAnd3ClickCheckBox, "selectAnd3ClickAction");
 
         o_F_checkButton.addActionListener(e -> canvasModel.setMouseMode(MouseMode.FLAT_FOLDABLE_CHECK_63));
-        foldableLinePlusGridInputButton.addActionListener(e -> {
-            canvasModel.setMouseMode(MouseMode.FOLDABLE_LINE_INPUT_39);
-            canvasModel.setMouseModeAfterColorSelection(MouseMode.FOLDABLE_LINE_INPUT_39);
-
-            mainCreasePatternWorker.unselect_all(false);
-        });
         select_polygonButton.addActionListener(e -> canvasModel.setMouseMode(MouseMode.SELECT_POLYGON_66));
         unselect_polygonButton.addActionListener(e -> canvasModel.setMouseMode(MouseMode.UNSELECT_POLYGON_67));
         select_lXButton.addActionListener(e -> canvasModel.setMouseMode(MouseMode.SELECT_LINE_INTERSECTING_68));
         unselect_lXButton.addActionListener(e -> canvasModel.setMouseMode(MouseMode.UNSELECT_LINE_INTERSECTING_69));
         del_lButton.addActionListener(e -> canvasModel.setMouseMode(MouseMode.CREASE_DELETE_OVERLAPPING_64));
         del_l_XButton.addActionListener(e -> canvasModel.setMouseMode(MouseMode.CREASE_DELETE_INTERSECTING_65));
-
-        selectAnd3ClickCheckBox.addActionListener(e -> canvasModel.setCkbox_add_frame_SelectAnd3click_isSelected(selectAnd3ClickCheckBox.isSelected()));
 
         pack();
         setResizable(false);
