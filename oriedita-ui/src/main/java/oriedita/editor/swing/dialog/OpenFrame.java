@@ -156,7 +156,6 @@ public class OpenFrame extends JDialog {
         gbc = new GridBagConstraints();
         gbc.gridx = 2;
         gbc.gridy = 1;
-        gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         panel1.add(unselect_polygonButton, gbc);
         unselect_lXButton = new JButton();
@@ -165,7 +164,6 @@ public class OpenFrame extends JDialog {
         gbc = new GridBagConstraints();
         gbc.gridx = 2;
         gbc.gridy = 2;
-        gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         panel1.add(unselect_lXButton, gbc);
         del_l_XButton = new JButton();
@@ -173,7 +171,6 @@ public class OpenFrame extends JDialog {
         gbc = new GridBagConstraints();
         gbc.gridx = 2;
         gbc.gridy = 3;
-        gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         panel1.add(del_l_XButton, gbc);
         foldableLinePlusGridInputButton = new JButton();
@@ -181,7 +178,6 @@ public class OpenFrame extends JDialog {
         gbc = new GridBagConstraints();
         gbc.gridx = 2;
         gbc.gridy = 0;
-        gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         panel1.add(foldableLinePlusGridInputButton, gbc);
     }
