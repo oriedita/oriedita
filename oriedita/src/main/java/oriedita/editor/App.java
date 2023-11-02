@@ -6,6 +6,7 @@ import jakarta.inject.Named;
 import jico.Ico;
 import jico.ImageReadException;
 import org.tinylog.Logger;
+import oriedita.editor.action.ActionService;
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.databinding.AngleSystemModel;
 import oriedita.editor.databinding.ApplicationModel;
@@ -73,6 +74,7 @@ public class App {
     private final AngleSystemModel angleSystemModel;
     private final CameraModel cameraModel;
     private final ResetService resetService;
+    private final ActionService actionService;
     // ------------------------------------------------------------------------
     // Buffer screen settings VVVVVVVVVVVVVVVVVVVVVVVVV
     Canvas canvas;
@@ -102,7 +104,8 @@ public class App {
             BackgroundModel backgroundModel,
             AngleSystemModel angleSystemModel,
             CameraModel cameraModel,
-            ResetService resetService
+            ResetService resetService,
+            ActionService actionService
     ) {
         this.frameProvider = frameProvider;
         this.lookAndFeelService = lookAndFeelService;
@@ -122,6 +125,7 @@ public class App {
         this.angleSystemModel = angleSystemModel;
         this.cameraModel = cameraModel;
         this.resetService = resetService;
+        this.actionService = actionService;
     }
 
     public static boolean isPointInScreen(Point pos) {
