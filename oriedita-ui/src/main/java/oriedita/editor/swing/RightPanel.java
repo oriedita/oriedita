@@ -111,6 +111,7 @@ public class RightPanel {
     private JTextField measuredAngle3TextField;
     private JPanel root;
     private JButton textBtn;
+    private JScrollPane scrollPane1;
     private boolean darkMode;
 
     @Inject
@@ -863,5 +864,10 @@ public class RightPanel {
             default:
                 break;
         }
+    }
+
+    private void createUIComponents() {
+        scrollPane1 = new JScrollPane();
+        scrollPane1.getVerticalScrollBar().setUnitIncrement(16);
     }
 }
