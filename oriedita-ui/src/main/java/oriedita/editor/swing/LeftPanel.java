@@ -336,12 +336,6 @@ public class LeftPanel {
 
             mainCreasePatternWorker.unselect_all(false);
         });
-        lengthenCrease2Button.addActionListener(e -> {
-            canvasModel.setMouseMode(MouseMode.LENGTHEN_CREASE_SAME_COLOR_70);
-            canvasModel.setMouseModeAfterColorSelection(MouseMode.LENGTHEN_CREASE_SAME_COLOR_70);
-
-            mainCreasePatternWorker.unselect_all(false);
-        });
         rabbitEarButton.addActionListener(e -> {
             canvasModel.setMouseMode(MouseMode.INWARD_8);
             canvasModel.setMouseModeAfterColorSelection(MouseMode.INWARD_8);
@@ -369,18 +363,6 @@ public class LeftPanel {
         parallelDrawButton.addActionListener(e -> {
             canvasModel.setMouseMode(MouseMode.PARALLEL_DRAW_40);
             canvasModel.setMouseModeAfterColorSelection(MouseMode.PARALLEL_DRAW_40);
-
-            mainCreasePatternWorker.unselect_all(false);
-        });
-        setParallelDrawWidthButton.addActionListener(e -> {
-            canvasModel.setMouseMode(MouseMode.PARALLEL_DRAW_WIDTH_51);
-            canvasModel.setMouseModeAfterColorSelection(MouseMode.PARALLEL_DRAW_WIDTH_51);
-
-            mainCreasePatternWorker.unselect_all(false);
-        });
-        foldableLineDrawButton.addActionListener(e -> {
-            canvasModel.setMouseMode(MouseMode.FOLDABLE_LINE_DRAW_71);
-            canvasModel.setMouseModeAfterColorSelection(MouseMode.FOLDABLE_LINE_DRAW_71);
 
             mainCreasePatternWorker.unselect_all(false);
         });

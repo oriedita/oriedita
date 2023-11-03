@@ -257,23 +257,9 @@ public class RightPanel {
             angleSystemModel.setAngleSystemInputType(AngleSystemModel.AngleSystemInputType.DEG_1);
             canvasModel.setMouseMode(MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13);
         });
-        deg3Button.addActionListener(e -> {
-            angleSystemModel.setAngleSystemInputType(AngleSystemModel.AngleSystemInputType.DEG_3);
-            canvasModel.setMouseMode(MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_2_17);
-
-        });
         angleRestrictedButton.addActionListener(e -> {
             angleSystemModel.setAngleSystemInputType(AngleSystemModel.AngleSystemInputType.DEG_5);
             canvasModel.setMouseMode(MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_5_37);
-        });
-        deg2Button.addActionListener(e -> {
-            angleSystemModel.setAngleSystemInputType(AngleSystemModel.AngleSystemInputType.DEG_2);
-            canvasModel.setMouseMode(MouseMode.ANGLE_SYSTEM_16);
-
-        });
-        deg4Button.addActionListener(e -> {
-            angleSystemModel.setAngleSystemInputType(AngleSystemModel.AngleSystemInputType.DEG_4);
-            canvasModel.setMouseMode(MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18);
         });
         polygonSizeSetButton.addActionListener(e -> {
             applicationModel.setNumPolygonCorners(StringOp.String2int(polygonSizeTextField.getText(), applicationModel.getNumPolygonCorners()));
@@ -396,14 +382,6 @@ public class RightPanel {
         });
         measuredAngle3TextField.addActionListener(e -> measuresModel.setMeasuredAngle3(StringOp.String2double(measuredAngle3TextField.getText(), measuresModel.getMeasuredAngle3())));
 
-        ad_fncButton.addActionListener(e -> {
-            openFrame = new OpenFrame("additionalFrame", frameProvider.get(), canvasModel, mainCreasePatternWorker, buttonService, applicationModel);
-
-            openFrame.setData(null, canvasModel);
-
-            openFrame.setLocationRelativeTo(ad_fncButton);
-            openFrame.setVisible(true);
-        });
         textBtn.addActionListener(e -> {
             canvasModel.setMouseMode(MouseMode.TEXT);
             mainCreasePatternWorker.unselect_all();
