@@ -135,6 +135,7 @@ public class PreferenceDialog extends JDialog {
     private JPanel hotkeyPanel;
     private JButton importButton;
     private JButton exportButton;
+    private JScrollPane scrollPane1;
     private int tempTransparency;
     private final ApplicationModel applicationModel;
     private final ButtonService buttonService;
@@ -1162,7 +1163,6 @@ public class PreferenceDialog extends JDialog {
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         behavior2Panel.add(offsetCB, gbc);
-        final JScrollPane scrollPane1 = new JScrollPane();
         scrollPane1.setAutoscrolls(false);
         scrollPane1.setVerticalScrollBarPolicy(20);
         tabbedPane1.addTab("HOTKEYS", scrollPane1);
@@ -1195,6 +1195,9 @@ public class PreferenceDialog extends JDialog {
         labelsAnimSpeed.put(16, new JLabel("Slow"));
         labelsAnimSpeed.put(24, new JLabel("Slowest"));
         animationSpeedSlider.setLabelTable(labelsAnimSpeed);
+
+        scrollPane1 = new JScrollPane();
+        scrollPane1.getVerticalScrollBar().setUnitIncrement(16);
 
         hotkeyCategoryMap = new LinkedHashMap<>();
         categoryHeaderList = new ArrayList<>();

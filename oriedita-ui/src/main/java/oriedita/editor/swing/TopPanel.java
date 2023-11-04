@@ -220,11 +220,6 @@ public class TopPanel implements PropertyChangeListener {
         backgroundSetPositionButton.addActionListener(e -> {
             canvasModel.setMouseMode(MouseMode.BACKGROUND_CHANGE_POSITION_26);
         });
-        senbun_yoke_henkanButton.addActionListener(e -> {
-            canvasModel.setMouseMode(MouseMode.CREASE_ADVANCE_TYPE_30);
-
-            mainCreasePatternWorker.unselect_all();
-        });
     }
 
     public void setData(ApplicationModel applicationModel) {

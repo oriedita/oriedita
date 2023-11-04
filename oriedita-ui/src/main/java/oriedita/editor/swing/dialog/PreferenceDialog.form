@@ -707,7 +707,7 @@
                   </grid>
                 </children>
               </grid>
-              <scrollpane id="c3066">
+              <scrollpane id="c3066" binding="scrollPane1" custom-create="true">
                 <constraints>
                   <tabbedpane title="HOTKEYS"/>
                 </constraints>

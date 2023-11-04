@@ -56,6 +56,7 @@ public enum ActionType {
     drawCreaseRestrictedAction("drawCreaseRestrictedAction"),
     rabbitEarAction("rabbitEarAction"),
     foldableLineDrawAction("foldableLineDrawAction"),
+    foldableLinePlusGridInputAction("foldableLinePlusGridInputAction"),
     selectAction("selectAction"),
     selectAllAction("selectAllAction"),
     moveAction("moveAction"),
@@ -113,7 +114,12 @@ public enum ActionType {
     As100Action("As100Action"),
     lineColorAction("lineColorAction"),
     backColorAction("backColorAction"),
-    oriagari_sousaAction("oriagari_sousaAction");
+    oriagari_sousaAction("oriagari_sousaAction"),
+    deg2Action("deg2Action"),
+    deg3Action("deg3Action"),
+    deg4Action("deg4Action"),
+    ad_fncAction("ad_fncAction"),
+    selectAnd3ClickAction("selectAnd3ClickAction");
 
 
     static final Map<String, ActionType> actionMap;
