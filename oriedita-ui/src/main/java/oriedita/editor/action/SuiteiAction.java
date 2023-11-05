@@ -1,7 +1,6 @@
 package oriedita.editor.action;
 
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.service.FoldingService;
@@ -13,16 +12,18 @@ import java.awt.event.ActionEvent;
 @ActionHandler(ActionType.suitei_02Action)
 public class SuiteiAction extends AbstractOrieditaAction implements OrieditaAction {
     private final FoldingService foldingService;
-    @Inject
-    @Named("mainCreasePattern_Worker")
-    CreasePattern_Worker mainCreasePatternWorker;
+    private final CreasePattern_Worker mainCreasePatternWorker;
     private final ActionType actionType;
     private final FoldedFigure.EstimationOrder estimationOrder;
 
-    public SuiteiAction(FoldingService foldingService, ActionType actionType, FoldedFigure.EstimationOrder estimationOrder) {
+    public SuiteiAction(FoldingService foldingService,
+                        @Named("mainCreasePattern_Worker") CreasePattern_Worker mainCreasePatternWorker,
+                        ActionType actionType,
+                        FoldedFigure.EstimationOrder estimationOrder) {
+        this.foldingService = foldingService;
+        this.mainCreasePatternWorker = mainCreasePatternWorker;
         this.actionType = actionType;
         this.estimationOrder = estimationOrder;
-        this.foldingService = foldingService;
     }
 
     @Override
