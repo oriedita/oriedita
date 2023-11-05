@@ -626,7 +626,7 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
                         createMenuItem(foldPopUp, "foldedFigureFlipAction", "Flip");
                         createMenuItem(foldPopUp, "scaleAction", "Scale");
                         createMenuItem(foldPopUp, "foldedFigureTrashAction", "Delete");
-                        createMenuItem(foldPopUp, "duplicateAction", "Duplicate");
+                        createMenuItem(foldPopUp, "duplicateFoldedModelAction", "Duplicate");
                         if(foldedFiguresList.getActiveItem().getFoldedFigure().estimationStep != FoldedFigure.EstimationStep.STEP_10){
                             createMenuItem(foldPopUp, "suitei_02Action", "Wireframe");
                             createMenuItem(foldPopUp, "suitei_03Action", "X-ray");

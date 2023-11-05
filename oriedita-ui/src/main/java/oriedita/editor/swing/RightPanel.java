@@ -155,7 +155,7 @@ public class RightPanel {
         buttonService.registerButton(c_colButton, "c_colAction");
         buttonService.registerButton(l1Button, "l1Action");
         buttonService.registerButton(ad_fncButton, "ad_fncAction");
-        buttonService.registerButton(degButton, "degAction");
+        buttonService.registerButton(degButton, "deg1Action");
         buttonService.registerButton(deg3Button, "deg3Action");
         buttonService.registerButton(angleRestrictedButton, "angleRestrictedAction");
         buttonService.registerButton(deg2Button, "deg2Action");

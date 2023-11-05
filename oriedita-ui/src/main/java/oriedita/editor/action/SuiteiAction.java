@@ -12,17 +12,17 @@ import java.awt.event.ActionEvent;
 @ApplicationScoped
 @ActionHandler(ActionType.suitei_02Action)
 public class SuiteiAction extends AbstractOrieditaAction implements OrieditaAction {
-    @Inject
-    FoldingService foldingService;
+    private final FoldingService foldingService;
     @Inject
     @Named("mainCreasePattern_Worker")
     CreasePattern_Worker mainCreasePatternWorker;
     private final ActionType actionType;
     private final FoldedFigure.EstimationOrder estimationOrder;
 
-    public SuiteiAction(ActionType actionType, FoldedFigure.EstimationOrder estimationOrder) {
+    public SuiteiAction(FoldingService foldingService, ActionType actionType, FoldedFigure.EstimationOrder estimationOrder) {
         this.actionType = actionType;
         this.estimationOrder = estimationOrder;
+        this.foldingService = foldingService;
     }
 
     @Override

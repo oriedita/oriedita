@@ -11,15 +11,15 @@ import java.awt.event.ActionEvent;
 
 public class Oriagari_sousaAction extends AbstractOrieditaAction implements OrieditaAction {
     @Inject
-    CanvasModel canvasModel;
-    @Inject
     FoldedFiguresList foldedFiguresList;
+    private final CanvasModel canvasModel;
     private final ActionType actionType;
     private final FoldedFigureOperationMode foldedFigureOperationMode;
 
-    public Oriagari_sousaAction(ActionType actionType, FoldedFigureOperationMode foldedFigureOperationMode) {
+    public Oriagari_sousaAction(CanvasModel canvasModel, ActionType actionType, FoldedFigureOperationMode foldedFigureOperationMode) {
         this.actionType = actionType;
         this.foldedFigureOperationMode = foldedFigureOperationMode;
+        this.canvasModel = canvasModel;
     }
 
     @Override

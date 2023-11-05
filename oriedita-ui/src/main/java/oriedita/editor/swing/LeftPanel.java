@@ -317,12 +317,6 @@ public class LeftPanel {
         undoRedo.addUndoActionListener(e -> mainCreasePatternWorker.undo());
         undoRedo.addRedoActionListener(e -> mainCreasePatternWorker.redo());
 //        drawCreaseFreeButton.setAction(drawCreaseFreeAction);
-        lengthenCreaseButton.addActionListener(e -> {
-            canvasModel.setMouseMode(MouseMode.LENGTHEN_CREASE_5);
-            canvasModel.setMouseModeAfterColorSelection(MouseMode.LENGTHEN_CREASE_5);
-
-            mainCreasePatternWorker.unselect_all(false);
-        });
         lineSegmentDivisionSetButton.addActionListener(e -> {
             getData(applicationModel);
 

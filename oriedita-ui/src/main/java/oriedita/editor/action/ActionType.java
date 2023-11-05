@@ -149,7 +149,7 @@ public enum ActionType {
     del_l_typeAction("del_l_typeAction"),
     del_lAction("del_lAction"),
     del_l_XAction("del_l_XAction"),
-    degAction("degAction"),
+    deg1Action("deg1Action"),
     displayCommentsAction("displayCommentsAction"),
     displayCpLinesAction("displayCpLinesAction"),
     displayAuxLinesAction("displayAuxLinesAction"),
