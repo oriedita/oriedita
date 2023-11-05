@@ -7,7 +7,7 @@ public interface ActionService {
      * Perform logic registration
      * @param orieditaAction action attached with custom logic
      */
-    void registerAction(MattakuhidoiOrieditaAction orieditaAction);
+    void registerAction(OrieditaAction orieditaAction);
 
     /**
      * Return registered actions

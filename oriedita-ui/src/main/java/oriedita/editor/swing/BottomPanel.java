@@ -156,20 +156,7 @@ public class BottomPanel {
                 selectedFigure.redo();
             }
         });
-        oriagari_sousa_2Button.addActionListener(e -> {
-            canvasModel.setFoldedFigureOperationMode(FoldedFigureOperationMode.MODE_2);
-            FoldedFigure_Drawer selectedFigure = foldedFiguresList.getActiveItem();
 
-            if (selectedFigure != null) {
-                selectedFigure.getFoldedFigure().setAllPointStateFalse();
-                selectedFigure.record();
-            }
-
-            canvasModel.setMouseMode(MouseMode.MODIFY_CALCULATED_SHAPE_101);
-        });
-        foldedFigureMoveButton.addActionListener(e -> canvasModel.setMouseMode(MouseMode.MOVE_CALCULATED_SHAPE_102));
-        foldedFigureAntiAliasButton.addActionListener(e -> foldedFigureModel.toggleAntiAlias());
-        shadowButton.addActionListener(e -> foldedFigureModel.toggleDisplayShadows());
         foldedFigureBox.setModel(foldedFiguresList);
         foldedFigureBox.setRenderer(new IndexCellRenderer());
         foldedFigureBox.addMouseListener(new MouseAdapter() {

@@ -11,19 +11,28 @@ import java.awt.event.ActionEvent;
 
 @ApplicationScoped
 @ActionHandler(ActionType.suitei_02Action)
-public class Suitei02 extends AbstractOrieditaAction {
+public class SuiteiAction extends AbstractOrieditaAction implements OrieditaAction {
     @Inject
     FoldingService foldingService;
     @Inject
     @Named("mainCreasePattern_Worker")
     CreasePattern_Worker mainCreasePatternWorker;
+    private final ActionType actionType;
+    private final FoldedFigure.EstimationOrder estimationOrder;
 
-    @Inject
-    public Suitei02() {}
+    public SuiteiAction(ActionType actionType, FoldedFigure.EstimationOrder estimationOrder) {
+        this.actionType = actionType;
+        this.estimationOrder = estimationOrder;
+    }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        foldingService.fold(FoldedFigure.EstimationOrder.ORDER_2);//引数の意味は(i_fold_type , i_suitei_meirei);
+        foldingService.fold(estimationOrder);//引数の意味は(i_fold_type , i_suitei_meirei);
         mainCreasePatternWorker.unselect_all(false);
+    }
+
+    @Override
+    public ActionType getActionType(){
+        return actionType;
     }
 }

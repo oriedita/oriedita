@@ -24,7 +24,7 @@ public class ActionServiceImpl implements ActionService {
     }
 
     @Override
-    public synchronized void registerAction(MattakuhidoiOrieditaAction orieditaAction) { registeredActions.add(orieditaAction); }
+    public synchronized void registerAction(OrieditaAction orieditaAction) { registeredActions.add(orieditaAction); }
 
     @Override
     public List<OrieditaAction> getAllRegisteredActions() { return registeredActions; }

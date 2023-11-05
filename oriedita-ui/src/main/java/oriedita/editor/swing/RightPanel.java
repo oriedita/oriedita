@@ -20,7 +20,6 @@ import oriedita.editor.swing.component.ColorIcon;
 import oriedita.editor.swing.dialog.OpenFrame;
 import oriedita.editor.tools.LookAndFeelUtil;
 import oriedita.editor.tools.StringOp;
-import origami.crease_pattern.element.LineColor;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -189,11 +188,9 @@ public class RightPanel {
         buttonService.registerButton(ckOCheckBox, "ckOAction");
         buttonService.registerButton(ckTCheckBox, "ckTAction");
         buttonService.registerButton(cAMVCheckBox, "cAMVAction");
-        buttonService.registerButton(textBtn, "text");
+        buttonService.registerButton(textBtn, "textAction");
 
         ckOCheckBox.addActionListener(e -> {
-            mainCreasePatternWorker.unselect_all();
-
             if (ckOCheckBox.isSelected()) {
                 mainCreasePatternWorker.check1();//r_hitosiiとr_heikouhanteiは、hitosiiとheikou_hanteiのずれの許容程度
                 mainCreasePatternWorker.set_i_check1(true);
@@ -201,15 +198,7 @@ public class RightPanel {
                 mainCreasePatternWorker.set_i_check1(false);
             }
         });
-        fxOButton.addActionListener(e -> {
-
-            mainCreasePatternWorker.unselect_all();
-            mainCreasePatternWorker.fix1();
-            mainCreasePatternWorker.check1();
-        });
         ckTCheckBox.addActionListener(e -> {
-            mainCreasePatternWorker.unselect_all();
-
             if (ckTCheckBox.isSelected()) {
                 mainCreasePatternWorker.check2();//r_hitosiiとr_heikouhanteiは、hitosiiとheikou_hanteiのずれの許容程度
                 mainCreasePatternWorker.setCheck2(true);
@@ -217,30 +206,9 @@ public class RightPanel {
                 mainCreasePatternWorker.setCheck2(false);
             }
         });
-        fxTButton.addActionListener(e -> {
-            mainCreasePatternWorker.unselect_all();
-            mainCreasePatternWorker.fix2();
-            mainCreasePatternWorker.check2();
-        });
         cAMVCheckBox.addActionListener(e -> {
-            mainCreasePatternWorker.unselect_all();
-
             applicationModel.setCheck4Enabled(cAMVCheckBox.isSelected());
-
-            buttonService.Button_shared_operation();
         });
-        ck4_colorDecreaseButton.addActionListener(e -> mainCreasePatternWorker.lightenCheck4Color());
-        ck4_colorIncreaseButton.addActionListener(e -> mainCreasePatternWorker.darkenCheck4Color());
-        angleSystemADecreaseButton.addActionListener(e -> angleSystemModel.decreaseAngleSystemA());
-
-        angleSystemAButton.addActionListener(
-                e -> angleSystemModel.setCurrentAngleSystemDivider(angleSystemModel.getAngleSystemADivider()));
-        angleSystemAIncreaseButton.addActionListener(e -> angleSystemModel.increaseAngleSystemA());
-
-        angleSystemBDecreaseButton.addActionListener(e -> angleSystemModel.decreaseAngleSystemB());
-
-        angleSystemBButton.addActionListener(e -> angleSystemModel.setCurrentAngleSystemDivider(angleSystemModel.getAngleSystemBDivider()));
-        angleSystemBIncreaseButton.addActionListener(e -> angleSystemModel.increaseAngleSystemB());
         restrictedAngleABCSetButton.addActionListener(e -> {
             getData(angleSystemModel);
 
@@ -252,70 +220,12 @@ public class RightPanel {
 
             angleSystemModel.setCurrentDEF();
         });
-
-        degButton.addActionListener(e -> {
-            angleSystemModel.setAngleSystemInputType(AngleSystemModel.AngleSystemInputType.DEG_1);
-            canvasModel.setMouseMode(MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13);
-        });
-        angleRestrictedButton.addActionListener(e -> {
-            angleSystemModel.setAngleSystemInputType(AngleSystemModel.AngleSystemInputType.DEG_5);
-            canvasModel.setMouseMode(MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_5_37);
-        });
         polygonSizeSetButton.addActionListener(e -> {
             applicationModel.setNumPolygonCorners(StringOp.String2int(polygonSizeTextField.getText(), applicationModel.getNumPolygonCorners()));
             canvasModel.setMouseMode(MouseMode.POLYGON_SET_NO_CORNERS_29);
         });
         regularPolygonButton.addActionListener(e -> {
             applicationModel.setNumPolygonCorners(StringOp.String2int(polygonSizeTextField.getText(), applicationModel.getNumPolygonCorners()));
-            canvasModel.setMouseMode(MouseMode.POLYGON_SET_NO_CORNERS_29);
-            canvasModel.setMouseModeAfterColorSelection(MouseMode.POLYGON_SET_NO_CORNERS_29);
-
-            mainCreasePatternWorker.unselect_all();
-        });
-        circleDrawFreeButton.addActionListener(e -> {
-            canvasModel.setMouseMode(MouseMode.CIRCLE_DRAW_FREE_47);
-
-            mainCreasePatternWorker.unselect_all();
-        });
-        circleDrawButton.addActionListener(e -> {
-            canvasModel.setMouseMode(MouseMode.CIRCLE_DRAW_42);
-
-            mainCreasePatternWorker.unselect_all();
-        });
-        circleDrawSeparateButton.addActionListener(e -> {
-            canvasModel.setMouseMode(MouseMode.CIRCLE_DRAW_SEPARATE_44);
-
-            mainCreasePatternWorker.unselect_all();
-        });
-        circleDrawConcentricButton.addActionListener(e -> {
-            canvasModel.setMouseMode(MouseMode.CIRCLE_DRAW_CONCENTRIC_48);
-
-            mainCreasePatternWorker.unselect_all();
-        });
-        circleDrawConcentricSelectButton.addActionListener(e -> {
-            canvasModel.setMouseMode(MouseMode.CIRCLE_DRAW_CONCENTRIC_SELECT_49);
-
-            mainCreasePatternWorker.unselect_all();
-        });
-        circleDrawTwoConcentricButton.addActionListener(e -> {
-            canvasModel.setMouseMode(MouseMode.CIRCLE_DRAW_CONCENTRIC_TWO_CIRCLE_SELECT_50);
-
-            mainCreasePatternWorker.unselect_all();
-        });
-        circleDrawTangentLineButton.addActionListener(e -> {
-            canvasModel.setMouseMode(MouseMode.CIRCLE_DRAW_TANGENT_LINE_45);
-
-            mainCreasePatternWorker.unselect_all();
-        });
-        circleDrawThreePointButton.addActionListener(e -> {
-            canvasModel.setMouseMode(MouseMode.CIRCLE_DRAW_THREE_POINT_43);
-
-            mainCreasePatternWorker.unselect_all();
-        });
-        circleDrawInvertedButton.addActionListener(e -> {
-            canvasModel.setMouseMode(MouseMode.CIRCLE_DRAW_INVERTED_46);
-
-            mainCreasePatternWorker.unselect_all();
         });
         c_colButton.addActionListener(e -> {
             //以下にやりたいことを書く
@@ -327,35 +237,6 @@ public class RightPanel {
 
             canvasModel.setMouseMode(MouseMode.CIRCLE_CHANGE_COLOR_59);
         });
-        sen_tokutyuu_color_henkouButton.addActionListener(e -> {
-            canvasModel.setMouseMode(MouseMode.CIRCLE_CHANGE_COLOR_59);
-
-            mainCreasePatternWorker.unselect_all();
-        });
-        h_undoButton.addActionListener(e -> mainCreasePatternWorker.auxUndo());
-        h_redoButton.addActionListener(e -> mainCreasePatternWorker.auxRedo());
-        h_senhaba_sageButton.addActionListener(e -> applicationModel.decreaseAuxLineWidth());
-        h_senhaba_ageButton.addActionListener(e -> applicationModel.increaseAuxLineWidth());
-        colOrangeButton.addActionListener(e -> canvasModel.setAuxLiveLineColor(LineColor.ORANGE_4));
-        colYellowButton.addActionListener(e -> canvasModel.setAuxLiveLineColor(LineColor.YELLOW_7));
-        h_senbun_nyuryokuButton.addActionListener(e -> {
-            canvasModel.setMouseMode(MouseMode.DRAW_CREASE_FREE_1);
-
-            mainCreasePatternWorker.unselect_all();
-
-            canvasModel.setFoldLineAdditionalInputMode(FoldLineAdditionalInputMode.AUX_LINE_1);
-        });
-        h_senbun_sakujyoButton.addActionListener(e -> {
-            canvasModel.setMouseMode(MouseMode.LINE_SEGMENT_DELETE_3);
-            canvasModel.setFoldLineAdditionalInputMode(FoldLineAdditionalInputMode.AUX_LINE_1);
-
-            mainCreasePatternWorker.unselect_all();
-        });
-        l1Button.addActionListener(e -> {
-            canvasModel.setMouseMode(MouseMode.DISPLAY_LENGTH_BETWEEN_POINTS_1_53);
-
-            mainCreasePatternWorker.unselect_all();
-        });
         measuredLength1TextField.addActionListener(e -> measuresModel.setMeasuredLength1(StringOp.String2double(measuredLength1TextField.getText(), measuresModel.getMeasuredLength1())));
         l2Button.addActionListener(e -> {
             canvasModel.setMouseMode(MouseMode.DISPLAY_LENGTH_BETWEEN_POINTS_2_54);
@@ -363,29 +244,10 @@ public class RightPanel {
             mainCreasePatternWorker.unselect_all();
         });
         measuredLength2TextField.addActionListener(e -> measuresModel.setMeasuredLength2(StringOp.String2double(measuredLength2TextField.getText(), measuresModel.getMeasuredLength2())));
-        a1Button.addActionListener(e -> {
-            canvasModel.setMouseMode(MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_1_55);
-
-            mainCreasePatternWorker.unselect_all();
-        });
         measuredAngle1TextField.addActionListener(e -> measuresModel.setMeasuredAngle1(StringOp.String2double(measuredAngle1TextField.getText(), measuresModel.getMeasuredAngle1())));
-        a2Button.addActionListener(e -> {
-            canvasModel.setMouseMode(MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_2_56);
-
-            mainCreasePatternWorker.unselect_all();
-        });
         measuredAngle2TextField.addActionListener(e -> measuresModel.setMeasuredAngle2(StringOp.String2double(measuredAngle2TextField.getText(), measuresModel.getMeasuredAngle2())));
-        a3Button.addActionListener(e -> {
-            canvasModel.setMouseMode(MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_3_57);
-
-            mainCreasePatternWorker.unselect_all();
-        });
         measuredAngle3TextField.addActionListener(e -> measuresModel.setMeasuredAngle3(StringOp.String2double(measuredAngle3TextField.getText(), measuresModel.getMeasuredAngle3())));
 
-        textBtn.addActionListener(e -> {
-            canvasModel.setMouseMode(MouseMode.TEXT);
-            mainCreasePatternWorker.unselect_all();
-        });
         ActionListener listener = e -> restrictedAngleSetDEFButton.doClick();
         angleDTextField.addActionListener(listener);
         angleDTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(angleDTextField));
@@ -472,9 +334,9 @@ public class RightPanel {
      * @noinspection ALL
      */
     private void $$$setupUI$$$() {
+        createUIComponents();
         root = new JPanel();
         root.setLayout(new GridLayoutManager(1, 1, new Insets(2, 2, 2, 2), 2, 2));
-        final JScrollPane scrollPane1 = new JScrollPane();
         scrollPane1.setHorizontalScrollBarPolicy(31);
         scrollPane1.setVerticalScrollBarPolicy(21);
         root.add(scrollPane1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
