@@ -4,7 +4,6 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Any;
 import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
-import oriedita.editor.action.MattakuhidoiOrieditaAction;
 import oriedita.editor.action.OrieditaAction;
 import oriedita.editor.action.ActionService;
 

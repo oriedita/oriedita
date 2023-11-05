@@ -9,7 +9,7 @@ import jico.ImageReadException;
 import org.tinylog.Logger;
 import oriedita.editor.action.ActionService;
 import oriedita.editor.action.ActionType;
-import oriedita.editor.action.MattakuhidoiOrieditaAction;
+import oriedita.editor.action.LambdaAction;
 import oriedita.editor.action.Oriagari_sousaAction;
 import oriedita.editor.action.SuiteiAction;
 import oriedita.editor.canvas.CreasePattern_Worker;
@@ -377,115 +377,115 @@ public class App {
         // |---------------------------------------------------------------------------|
         // --- Left Panel ---
         // - line actions
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.colRedAction, () -> canvasModel.setLineColor(LineColor.RED_1)));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.colBlueAction, () -> canvasModel.setLineColor(LineColor.BLUE_2)));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.colBlackAction, () -> canvasModel.setLineColor(LineColor.BLACK_0)));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.colCyanAction, () -> canvasModel.setLineColor(LineColor.CYAN_3)));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.antiAliasToggleAction, applicationModel::toggleAntiAlias));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.lineWidthDecreaseAction, applicationModel::decreaseLineWidth));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.lineWidthIncreaseAction, applicationModel::increaseLineWidth));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.pointSizeDecreaseAction, applicationModel::decreasePointSize));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.pointSizeIncreaseAction, applicationModel::increasePointSize));
+        actionService.registerAction(new LambdaAction(ActionType.colRedAction, () -> canvasModel.setLineColor(LineColor.RED_1)));
+        actionService.registerAction(new LambdaAction(ActionType.colBlueAction, () -> canvasModel.setLineColor(LineColor.BLUE_2)));
+        actionService.registerAction(new LambdaAction(ActionType.colBlackAction, () -> canvasModel.setLineColor(LineColor.BLACK_0)));
+        actionService.registerAction(new LambdaAction(ActionType.colCyanAction, () -> canvasModel.setLineColor(LineColor.CYAN_3)));
+        actionService.registerAction(new LambdaAction(ActionType.antiAliasToggleAction, applicationModel::toggleAntiAlias));
+        actionService.registerAction(new LambdaAction(ActionType.lineWidthDecreaseAction, applicationModel::decreaseLineWidth));
+        actionService.registerAction(new LambdaAction(ActionType.lineWidthIncreaseAction, applicationModel::increaseLineWidth));
+        actionService.registerAction(new LambdaAction(ActionType.pointSizeDecreaseAction, applicationModel::decreasePointSize));
+        actionService.registerAction(new LambdaAction(ActionType.pointSizeIncreaseAction, applicationModel::increasePointSize));
 
         // - draw actions
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.lengthenCreaseAction, () -> {
+        actionService.registerAction(new LambdaAction(ActionType.lengthenCreaseAction, () -> {
             canvasModel.setMouseMode(MouseMode.LENGTHEN_CREASE_5);
             canvasModel.setMouseModeAfterColorSelection(MouseMode.LENGTHEN_CREASE_5);
             mainCreasePatternWorker.unselect_all(false);
         }));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.rabbitEarAction, () -> {
+        actionService.registerAction(new LambdaAction(ActionType.rabbitEarAction, () -> {
             canvasModel.setMouseMode(MouseMode.INWARD_8);
             canvasModel.setMouseModeAfterColorSelection(MouseMode.INWARD_8);
             mainCreasePatternWorker.unselect_all(false);
         }));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.perpendicularDrawAction, () -> {
+        actionService.registerAction(new LambdaAction(ActionType.perpendicularDrawAction, () -> {
             canvasModel.setMouseMode(MouseMode.PERPENDICULAR_DRAW_9);
             canvasModel.setMouseModeAfterColorSelection(MouseMode.PERPENDICULAR_DRAW_9);
             mainCreasePatternWorker.unselect_all(false);
         }));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.symmetricDrawAction, () -> {
+        actionService.registerAction(new LambdaAction(ActionType.symmetricDrawAction, () -> {
             canvasModel.setMouseMode(MouseMode.SYMMETRIC_DRAW_10);
             canvasModel.setMouseModeAfterColorSelection(MouseMode.SYMMETRIC_DRAW_10);
             mainCreasePatternWorker.unselect_all(false);
         }));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.senbun_b_nyuryokuAction, () -> {
+        actionService.registerAction(new LambdaAction(ActionType.senbun_b_nyuryokuAction, () -> {
             canvasModel.setMouseMode(MouseMode.LINE_SEGMENT_DIVISION_27);
             canvasModel.setMouseModeAfterColorSelection(MouseMode.LINE_SEGMENT_DIVISION_27);
             mainCreasePatternWorker.unselect_all(false);
         }));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.fishBoneDrawAction, () -> {
+        actionService.registerAction(new LambdaAction(ActionType.fishBoneDrawAction, () -> {
             canvasModel.setMouseMode(MouseMode.FISH_BONE_DRAW_33);
             canvasModel.setMouseModeAfterColorSelection(MouseMode.FISH_BONE_DRAW_33);
             mainCreasePatternWorker.unselect_all(false);
             buttonService.Button_shared_operation();
         }));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.doubleSymmetricDrawAction, () -> {
+        actionService.registerAction(new LambdaAction(ActionType.doubleSymmetricDrawAction, () -> {
             canvasModel.setMouseMode(MouseMode.DOUBLE_SYMMETRIC_DRAW_35);
             canvasModel.setMouseModeAfterColorSelection(MouseMode.DOUBLE_SYMMETRIC_DRAW_35);
             mainCreasePatternWorker.unselect_all(false);
             buttonService.Button_shared_operation();
         }));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.parallelDrawAction, () -> {
+        actionService.registerAction(new LambdaAction(ActionType.parallelDrawAction, () -> {
             canvasModel.setMouseMode(MouseMode.PARALLEL_DRAW_40);
             canvasModel.setMouseModeAfterColorSelection(MouseMode.PARALLEL_DRAW_40);
             mainCreasePatternWorker.unselect_all(false);
         }));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.continuousSymmetricDrawAction, () -> {
+        actionService.registerAction(new LambdaAction(ActionType.continuousSymmetricDrawAction, () -> {
             canvasModel.setMouseMode(MouseMode.CONTINUOUS_SYMMETRIC_DRAW_52);
             canvasModel.setMouseModeAfterColorSelection(MouseMode.CONTINUOUS_SYMMETRIC_DRAW_52);
             mainCreasePatternWorker.unselect_all(false);
         }));
 
         // - select and transform actions
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.selectAction, () -> canvasModel.setMouseMode(MouseMode.CREASE_SELECT_19)));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.unselectAction, () -> canvasModel.setMouseMode(MouseMode.CREASE_UNSELECT_20)));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.selectAllAction, mainCreasePatternWorker::select_all));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.unselectAllAction, mainCreasePatternWorker::unselect_all));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.reflectAction, () -> {
+        actionService.registerAction(new LambdaAction(ActionType.selectAction, () -> canvasModel.setMouseMode(MouseMode.CREASE_SELECT_19)));
+        actionService.registerAction(new LambdaAction(ActionType.unselectAction, () -> canvasModel.setMouseMode(MouseMode.CREASE_UNSELECT_20)));
+        actionService.registerAction(new LambdaAction(ActionType.selectAllAction, mainCreasePatternWorker::select_all));
+        actionService.registerAction(new LambdaAction(ActionType.unselectAllAction, mainCreasePatternWorker::unselect_all));
+        actionService.registerAction(new LambdaAction(ActionType.reflectAction, () -> {
             canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.MIRROR_5);
             canvasModel.setMouseMode(MouseMode.DRAW_CREASE_SYMMETRIC_12);
         }));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.moveAction, () -> {
+        actionService.registerAction(new LambdaAction(ActionType.moveAction, () -> {
             canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.MOVE_1);
             canvasModel.setMouseMode(MouseMode.CREASE_MOVE_21);
         }));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.copyAction, () -> {
+        actionService.registerAction(new LambdaAction(ActionType.copyAction, () -> {
             canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.COPY_3);
             canvasModel.setMouseMode(MouseMode.CREASE_COPY_22);
         }));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.move2p2pAction, () -> {
+        actionService.registerAction(new LambdaAction(ActionType.move2p2pAction, () -> {
             canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.MOVE4P_2);
             canvasModel.setMouseMode(MouseMode.CREASE_MOVE_4P_31);
         }));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.copy2p2pAction, () -> {
+        actionService.registerAction(new LambdaAction(ActionType.copy2p2pAction, () -> {
             canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.COPY4P_4);
             canvasModel.setMouseMode(MouseMode.CREASE_COPY_4P_32);
         }));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.deleteSelectedLineSegmentAction, () -> {
+        actionService.registerAction(new LambdaAction(ActionType.deleteSelectedLineSegmentAction, () -> {
             mainCreasePatternWorker.del_selected_senbun();
             mainCreasePatternWorker.record();
         }));
 
         // - line edit actions
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.v_del_allAction, mainCreasePatternWorker::v_del_all));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.v_del_all_ccAction, mainCreasePatternWorker::v_del_all_cc));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.zen_yama_tani_henkanAction, () -> {
+        actionService.registerAction(new LambdaAction(ActionType.v_del_allAction, mainCreasePatternWorker::v_del_all));
+        actionService.registerAction(new LambdaAction(ActionType.v_del_all_ccAction, mainCreasePatternWorker::v_del_all_cc));
+        actionService.registerAction(new LambdaAction(ActionType.zen_yama_tani_henkanAction, () -> {
             mainCreasePatternWorker.allMountainValleyChange();
             mainCreasePatternWorker.unselect_all(false);
         }));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.senbun_henkanAction, () -> {
+        actionService.registerAction(new LambdaAction(ActionType.senbun_henkanAction, () -> {
             canvasModel.setMouseMode(MouseMode.CHANGE_CREASE_TYPE_4);
             mainCreasePatternWorker.unselect_all(false);
         }));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.vertexAddAction, () -> {
+        actionService.registerAction(new LambdaAction(ActionType.vertexAddAction, () -> {
             canvasModel.setMouseMode(MouseMode.DRAW_POINT_14);
             mainCreasePatternWorker.unselect_all(false);
         }));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.vertexDeleteAction, () -> {
+        actionService.registerAction(new LambdaAction(ActionType.vertexDeleteAction, () -> {
             canvasModel.setMouseMode(MouseMode.DELETE_POINT_15);
             mainCreasePatternWorker.unselect_all(false);
         }));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.in_L_col_changeAction, () -> {
+        actionService.registerAction(new LambdaAction(ActionType.in_L_col_changeAction, () -> {
             canvasModel.setMouseMode(MouseMode.CREASE_MAKE_MV_34);
             canvasModel.setMouseModeAfterColorSelection(MouseMode.CREASE_MAKE_MV_34);
 
@@ -495,7 +495,7 @@ public class App {
 
             mainCreasePatternWorker.unselect_all(false);
         }));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.on_L_col_changeAction, () -> {
+        actionService.registerAction(new LambdaAction(ActionType.on_L_col_changeAction, () -> {
             canvasModel.setMouseMode(MouseMode.CREASES_ALTERNATE_MV_36);
             canvasModel.setMouseModeAfterColorSelection(MouseMode.CREASES_ALTERNATE_MV_36);
 
@@ -505,23 +505,23 @@ public class App {
 
             mainCreasePatternWorker.unselect_all(false);
         }));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.v_del_ccAction, () -> {
+        actionService.registerAction(new LambdaAction(ActionType.v_del_ccAction, () -> {
             canvasModel.setMouseMode(MouseMode.VERTEX_DELETE_ON_CREASE_41);
             mainCreasePatternWorker.unselect_all(false);
         }));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.senbun_henkan2Action, () -> {
+        actionService.registerAction(new LambdaAction(ActionType.senbun_henkan2Action, () -> {
             canvasModel.setMouseMode(MouseMode.CREASE_TOGGLE_MV_58);
             mainCreasePatternWorker.unselect_all(false);
         }));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.replace_lineAction, () -> {
+        actionService.registerAction(new LambdaAction(ActionType.replace_lineAction, () -> {
             canvasModel.setMouseMode(MouseMode.REPLACE_LINE_TYPE_SELECT_72);
             mainCreasePatternWorker.unselect_all(false);
         }));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.del_l_typeAction, () -> {
+        actionService.registerAction(new LambdaAction(ActionType.del_l_typeAction, () -> {
             canvasModel.setMouseMode(MouseMode.DELETE_LINE_TYPE_SELECT_73);
             mainCreasePatternWorker.unselect_all(false);
         }));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.trimBranchesAction, () -> {
+        actionService.registerAction(new LambdaAction(ActionType.trimBranchesAction, () -> {
             mainCreasePatternWorker.point_removal();
             mainCreasePatternWorker.overlapping_line_removal();
             mainCreasePatternWorker.branch_trim();
@@ -531,14 +531,14 @@ public class App {
         }));
 
         // - grid actions
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.gridSizeIncreaseAction, () -> gridModel.setGridSize(gridModel.getGridSize() * 2)));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.gridSizeDecreaseAction, () -> gridModel.setGridSize(Math.max(gridModel.getGridSize() / 2, 1))));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.changeGridStateAction, gridModel::advanceBaseState));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.gridLineWidthDecreaseAction, applicationModel::decreaseGridLineWidth));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.gridLineWidthIncreaseAction, applicationModel::increaseGridLineWidth));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.moveIntervalGridVerticalAction, gridModel::changeHorizontalScalePosition));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.moveIntervalGridHorizontalAction, gridModel::changeVerticalScalePosition));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.gridColorAction, () -> {
+        actionService.registerAction(new LambdaAction(ActionType.gridSizeIncreaseAction, () -> gridModel.setGridSize(gridModel.getGridSize() * 2)));
+        actionService.registerAction(new LambdaAction(ActionType.gridSizeDecreaseAction, () -> gridModel.setGridSize(Math.max(gridModel.getGridSize() / 2, 1))));
+        actionService.registerAction(new LambdaAction(ActionType.changeGridStateAction, gridModel::advanceBaseState));
+        actionService.registerAction(new LambdaAction(ActionType.gridLineWidthDecreaseAction, applicationModel::decreaseGridLineWidth));
+        actionService.registerAction(new LambdaAction(ActionType.gridLineWidthIncreaseAction, applicationModel::increaseGridLineWidth));
+        actionService.registerAction(new LambdaAction(ActionType.moveIntervalGridVerticalAction, gridModel::changeHorizontalScalePosition));
+        actionService.registerAction(new LambdaAction(ActionType.moveIntervalGridHorizontalAction, gridModel::changeVerticalScalePosition));
+        actionService.registerAction(new LambdaAction(ActionType.gridColorAction, () -> {
             //以下にやりたいことを書く
             Color color = JColorChooser.showDialog(frameProvider.get(), "Col", FlatLaf.isLafDark() ? Colors.GRID_LINE_DARK : Colors.GRID_LINE);
             if (color != null) {
@@ -546,7 +546,7 @@ public class App {
             }
             //以上でやりたいことは書き終わり
         }));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.intervalGridColorAction, () -> {
+        actionService.registerAction(new LambdaAction(ActionType.intervalGridColorAction, () -> {
             Color color = JColorChooser.showDialog(frameProvider.get(), "Col", FlatLaf.isLafDark() ? Colors.GRID_SCALE_DARK : Colors.GRID_SCALE);
             if (color != null) {
                 applicationModel.setGridScaleColor(color);
@@ -557,10 +557,10 @@ public class App {
         actionService.registerAction(new SuiteiAction(ActionType.suitei_01Action, FoldedFigure.EstimationOrder.ORDER_1));
         actionService.registerAction(new SuiteiAction(ActionType.suitei_02Action, FoldedFigure.EstimationOrder.ORDER_2));
         actionService.registerAction(new SuiteiAction(ActionType.suitei_03Action, FoldedFigure.EstimationOrder.ORDER_3));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.drawTwoColoredCpAction, foldingService::createTwoColoredCp));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.coloredXRayDecreaseAction, foldedFigureModel::decreaseTransparency));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.coloredXRayIncreaseAction, foldedFigureModel::increaseTransparency));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.koteimen_siteiAction, () -> {
+        actionService.registerAction(new LambdaAction(ActionType.drawTwoColoredCpAction, foldingService::createTwoColoredCp));
+        actionService.registerAction(new LambdaAction(ActionType.coloredXRayDecreaseAction, foldedFigureModel::decreaseTransparency));
+        actionService.registerAction(new LambdaAction(ActionType.coloredXRayIncreaseAction, foldedFigureModel::increaseTransparency));
+        actionService.registerAction(new LambdaAction(ActionType.koteimen_siteiAction, () -> {
             FoldedFigure_Drawer selectedFigure = foldedFiguresList.getActiveItem();
 
             if (selectedFigure != null && selectedFigure.getFoldedFigure().displayStyle != FoldedFigure.DisplayStyle.NONE_0) {
@@ -570,115 +570,115 @@ public class App {
 
         // |---------------------------------------------------------------------------|
         // --- Top Panel ---
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.backgroundSetPositionAction, () -> canvasModel.setMouseMode(MouseMode.BACKGROUND_CHANGE_POSITION_26)));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.rotateClockwiseAction, cameraModel::decreaseRotation));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.rotateAnticlockwiseAction, cameraModel::increaseRotation));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.transparentAction, canvas::createTransparentBackground));
+        actionService.registerAction(new LambdaAction(ActionType.backgroundSetPositionAction, () -> canvasModel.setMouseMode(MouseMode.BACKGROUND_CHANGE_POSITION_26)));
+        actionService.registerAction(new LambdaAction(ActionType.rotateClockwiseAction, cameraModel::decreaseRotation));
+        actionService.registerAction(new LambdaAction(ActionType.rotateAnticlockwiseAction, cameraModel::increaseRotation));
+        actionService.registerAction(new LambdaAction(ActionType.transparentAction, canvas::createTransparentBackground));
 
         // |---------------------------------------------------------------------------|
         // --- Right panel ---
         // - validation actions
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.ck4_colorDecreaseAction, mainCreasePatternWorker::lightenCheck4Color));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.ck4_colorIncreaseAction, mainCreasePatternWorker::darkenCheck4Color));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.ckTAction, mainCreasePatternWorker::unselect_all));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.ckOAction, mainCreasePatternWorker::unselect_all));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.fxOAction, () -> {
+        actionService.registerAction(new LambdaAction(ActionType.ck4_colorDecreaseAction, mainCreasePatternWorker::lightenCheck4Color));
+        actionService.registerAction(new LambdaAction(ActionType.ck4_colorIncreaseAction, mainCreasePatternWorker::darkenCheck4Color));
+        actionService.registerAction(new LambdaAction(ActionType.ckTAction, mainCreasePatternWorker::unselect_all));
+        actionService.registerAction(new LambdaAction(ActionType.ckOAction, mainCreasePatternWorker::unselect_all));
+        actionService.registerAction(new LambdaAction(ActionType.fxOAction, () -> {
             mainCreasePatternWorker.unselect_all();
             mainCreasePatternWorker.fix1();
             mainCreasePatternWorker.check1();
         }));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.fxTAction, () -> {
+        actionService.registerAction(new LambdaAction(ActionType.fxTAction, () -> {
             mainCreasePatternWorker.unselect_all();
             mainCreasePatternWorker.fix2();
             mainCreasePatternWorker.check2();
         }));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.cAMVAction, () -> {
+        actionService.registerAction(new LambdaAction(ActionType.cAMVAction, () -> {
             mainCreasePatternWorker.unselect_all();
             buttonService.Button_shared_operation();
         }));
 
         // - angle system actions
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.angleSystemADecreaseAction, angleSystemModel::decreaseAngleSystemA));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.angleSystemAAction, () -> angleSystemModel.setCurrentAngleSystemDivider(angleSystemModel.getAngleSystemADivider())));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.angleSystemAIncreaseAction, angleSystemModel::increaseAngleSystemA));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.angleSystemBDecreaseAction, angleSystemModel::decreaseAngleSystemB));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.angleSystemBAction, () -> angleSystemModel.setCurrentAngleSystemDivider(angleSystemModel.getAngleSystemBDivider())));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.angleSystemBIncreaseAction, angleSystemModel::increaseAngleSystemB));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.angleRestrictedAction, () -> {
+        actionService.registerAction(new LambdaAction(ActionType.angleSystemADecreaseAction, angleSystemModel::decreaseAngleSystemA));
+        actionService.registerAction(new LambdaAction(ActionType.angleSystemAAction, () -> angleSystemModel.setCurrentAngleSystemDivider(angleSystemModel.getAngleSystemADivider())));
+        actionService.registerAction(new LambdaAction(ActionType.angleSystemAIncreaseAction, angleSystemModel::increaseAngleSystemA));
+        actionService.registerAction(new LambdaAction(ActionType.angleSystemBDecreaseAction, angleSystemModel::decreaseAngleSystemB));
+        actionService.registerAction(new LambdaAction(ActionType.angleSystemBAction, () -> angleSystemModel.setCurrentAngleSystemDivider(angleSystemModel.getAngleSystemBDivider())));
+        actionService.registerAction(new LambdaAction(ActionType.angleSystemBIncreaseAction, angleSystemModel::increaseAngleSystemB));
+        actionService.registerAction(new LambdaAction(ActionType.angleRestrictedAction, () -> {
             angleSystemModel.setAngleSystemInputType(AngleSystemModel.AngleSystemInputType.DEG_5);
             canvasModel.setMouseMode(MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_5_37);
         }));
 
         // - angle restricted actions
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.degAction, () -> {
+        actionService.registerAction(new LambdaAction(ActionType.degAction, () -> {
             angleSystemModel.setAngleSystemInputType(AngleSystemModel.AngleSystemInputType.DEG_1);
             canvasModel.setMouseMode(MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13);
         }));
 
         // - polygon actions
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.regularPolygonAction, () -> {
+        actionService.registerAction(new LambdaAction(ActionType.regularPolygonAction, () -> {
             canvasModel.setMouseMode(MouseMode.POLYGON_SET_NO_CORNERS_29);
             canvasModel.setMouseModeAfterColorSelection(MouseMode.POLYGON_SET_NO_CORNERS_29);
             mainCreasePatternWorker.unselect_all();
         }));
 
         // circle actions
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.circleDrawFreeAction, () -> canvasModel.setMouseMode(MouseMode.CIRCLE_DRAW_FREE_47)));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.circleDrawAction, () -> canvasModel.setMouseMode(MouseMode.CIRCLE_DRAW_42)));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.circleDrawThreePointAction, () -> canvasModel.setMouseMode(MouseMode.CIRCLE_DRAW_THREE_POINT_43)));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.circleDrawSeparateAction, () -> canvasModel.setMouseMode(MouseMode.CIRCLE_DRAW_SEPARATE_44)));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.circleDrawTangentLineAction, () -> canvasModel.setMouseMode(MouseMode.CIRCLE_DRAW_TANGENT_LINE_45)));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.circleDrawInvertedAction, () -> canvasModel.setMouseMode(MouseMode.CIRCLE_DRAW_INVERTED_46)));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.circleDrawConcentricAction, () -> canvasModel.setMouseMode(MouseMode.CIRCLE_DRAW_CONCENTRIC_48)));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.circleDrawConcentricSelectAction, () -> canvasModel.setMouseMode(MouseMode.CIRCLE_DRAW_CONCENTRIC_SELECT_49)));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.circleDrawTwoConcentricAction, () -> canvasModel.setMouseMode(MouseMode.CIRCLE_DRAW_CONCENTRIC_TWO_CIRCLE_SELECT_50)));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.sen_tokutyuu_color_henkouAction, () -> {
+        actionService.registerAction(new LambdaAction(ActionType.circleDrawFreeAction, () -> canvasModel.setMouseMode(MouseMode.CIRCLE_DRAW_FREE_47)));
+        actionService.registerAction(new LambdaAction(ActionType.circleDrawAction, () -> canvasModel.setMouseMode(MouseMode.CIRCLE_DRAW_42)));
+        actionService.registerAction(new LambdaAction(ActionType.circleDrawThreePointAction, () -> canvasModel.setMouseMode(MouseMode.CIRCLE_DRAW_THREE_POINT_43)));
+        actionService.registerAction(new LambdaAction(ActionType.circleDrawSeparateAction, () -> canvasModel.setMouseMode(MouseMode.CIRCLE_DRAW_SEPARATE_44)));
+        actionService.registerAction(new LambdaAction(ActionType.circleDrawTangentLineAction, () -> canvasModel.setMouseMode(MouseMode.CIRCLE_DRAW_TANGENT_LINE_45)));
+        actionService.registerAction(new LambdaAction(ActionType.circleDrawInvertedAction, () -> canvasModel.setMouseMode(MouseMode.CIRCLE_DRAW_INVERTED_46)));
+        actionService.registerAction(new LambdaAction(ActionType.circleDrawConcentricAction, () -> canvasModel.setMouseMode(MouseMode.CIRCLE_DRAW_CONCENTRIC_48)));
+        actionService.registerAction(new LambdaAction(ActionType.circleDrawConcentricSelectAction, () -> canvasModel.setMouseMode(MouseMode.CIRCLE_DRAW_CONCENTRIC_SELECT_49)));
+        actionService.registerAction(new LambdaAction(ActionType.circleDrawTwoConcentricAction, () -> canvasModel.setMouseMode(MouseMode.CIRCLE_DRAW_CONCENTRIC_TWO_CIRCLE_SELECT_50)));
+        actionService.registerAction(new LambdaAction(ActionType.sen_tokutyuu_color_henkouAction, () -> {
             canvasModel.setMouseMode(MouseMode.CIRCLE_CHANGE_COLOR_59);
             mainCreasePatternWorker.unselect_all();
         }));
 
         // - other aux actions
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.colOrangeAction, () -> canvasModel.setAuxLiveLineColor(LineColor.ORANGE_4)));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.colYellowAction, () -> canvasModel.setAuxLiveLineColor(LineColor.YELLOW_7)));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.h_senhaba_sageAction, applicationModel::decreaseAuxLineWidth));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.h_senhaba_ageAction, applicationModel::increaseAuxLineWidth));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.h_undoAction, mainCreasePatternWorker::auxUndo));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.h_redoAction, mainCreasePatternWorker::auxRedo));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.h_senbun_nyuryokuAction, () -> {
+        actionService.registerAction(new LambdaAction(ActionType.colOrangeAction, () -> canvasModel.setAuxLiveLineColor(LineColor.ORANGE_4)));
+        actionService.registerAction(new LambdaAction(ActionType.colYellowAction, () -> canvasModel.setAuxLiveLineColor(LineColor.YELLOW_7)));
+        actionService.registerAction(new LambdaAction(ActionType.h_senhaba_sageAction, applicationModel::decreaseAuxLineWidth));
+        actionService.registerAction(new LambdaAction(ActionType.h_senhaba_ageAction, applicationModel::increaseAuxLineWidth));
+        actionService.registerAction(new LambdaAction(ActionType.h_undoAction, mainCreasePatternWorker::auxUndo));
+        actionService.registerAction(new LambdaAction(ActionType.h_redoAction, mainCreasePatternWorker::auxRedo));
+        actionService.registerAction(new LambdaAction(ActionType.h_senbun_nyuryokuAction, () -> {
             canvasModel.setMouseMode(MouseMode.DRAW_CREASE_FREE_1);
             canvasModel.setFoldLineAdditionalInputMode(FoldLineAdditionalInputMode.AUX_LINE_1);
             mainCreasePatternWorker.unselect_all();
         }));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.h_senbun_sakujyoButton, () -> {
+        actionService.registerAction(new LambdaAction(ActionType.h_senbun_sakujyoButton, () -> {
             canvasModel.setMouseMode(MouseMode.LINE_SEGMENT_DELETE_3);
             canvasModel.setFoldLineAdditionalInputMode(FoldLineAdditionalInputMode.AUX_LINE_1);
             mainCreasePatternWorker.unselect_all();
         }));
 
         // - lines & angles measuring actions
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.l1Action, () -> {
+        actionService.registerAction(new LambdaAction(ActionType.l1Action, () -> {
             canvasModel.setMouseMode(MouseMode.DISPLAY_LENGTH_BETWEEN_POINTS_1_53);
             mainCreasePatternWorker.unselect_all();
         }));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.l2Action, () -> {
+        actionService.registerAction(new LambdaAction(ActionType.l2Action, () -> {
             canvasModel.setMouseMode(MouseMode.DISPLAY_LENGTH_BETWEEN_POINTS_2_54);
             mainCreasePatternWorker.unselect_all();
         }));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.a1Action, () -> {
+        actionService.registerAction(new LambdaAction(ActionType.a1Action, () -> {
             canvasModel.setMouseMode(MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_1_55);
             mainCreasePatternWorker.unselect_all();
         }));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.a2Action, () -> {
+        actionService.registerAction(new LambdaAction(ActionType.a2Action, () -> {
             canvasModel.setMouseMode(MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_2_56);
             mainCreasePatternWorker.unselect_all();
         }));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.a3Action, () -> {
+        actionService.registerAction(new LambdaAction(ActionType.a3Action, () -> {
             canvasModel.setMouseMode(MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_3_57);
             mainCreasePatternWorker.unselect_all();
         }));
 
         // - text
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.textAction, () -> {
+        actionService.registerAction(new LambdaAction(ActionType.textAction, () -> {
             canvasModel.setMouseMode(MouseMode.TEXT);
             mainCreasePatternWorker.unselect_all();
         }));
@@ -686,26 +686,26 @@ public class App {
         // |---------------------------------------------------------------------------|
         // --- Bottom Panel ---
         // foldedFigure actions
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.foldedFigureMoveAction, () -> canvasModel.setMouseMode(MouseMode.MOVE_CALCULATED_SHAPE_102)));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.foldedFigureToggleAntiAliasAction, foldedFigureModel::toggleAntiAlias));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.foldedFigureToggleShadowAction, foldedFigureModel::toggleDisplayShadows));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.foldedFigureSizeIncreaseAction, () -> animationService.animate(Animations.ZOOM_FOLDED_MODEL,
+        actionService.registerAction(new LambdaAction(ActionType.foldedFigureMoveAction, () -> canvasModel.setMouseMode(MouseMode.MOVE_CALCULATED_SHAPE_102)));
+        actionService.registerAction(new LambdaAction(ActionType.foldedFigureToggleAntiAliasAction, foldedFigureModel::toggleAntiAlias));
+        actionService.registerAction(new LambdaAction(ActionType.foldedFigureToggleShadowAction, foldedFigureModel::toggleDisplayShadows));
+        actionService.registerAction(new LambdaAction(ActionType.foldedFigureSizeIncreaseAction, () -> animationService.animate(Animations.ZOOM_FOLDED_MODEL,
             foldedFigureModel::setScale,
             foldedFigureModel::getScale,
             scale -> foldedFigureModel.getScaleForZoomBy(-1, applicationModel.getZoomSpeed(), scale),
             AnimationDurations.ZOOM)
         ));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.foldedFigureSizeDecreaseAction, () -> animationService.animate(Animations.ZOOM_FOLDED_MODEL,
+        actionService.registerAction(new LambdaAction(ActionType.foldedFigureSizeDecreaseAction, () -> animationService.animate(Animations.ZOOM_FOLDED_MODEL,
             foldedFigureModel::setScale,
             foldedFigureModel::getScale,
             scale -> foldedFigureModel.getScaleForZoomBy(1, applicationModel.getZoomSpeed(), scale),
             AnimationDurations.ZOOM)
         ));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.foldedFigureRotateClockwiseAction, () -> {
+        actionService.registerAction(new LambdaAction(ActionType.foldedFigureRotateClockwiseAction, () -> {
             double rotation = foldedFigureModel.getState() == FoldedFigure.State.BACK_1 ? foldedFigureModel.getRotation() + 11.25 : foldedFigureModel.getRotation() - 11.25;
             foldedFigureModel.setRotation(OritaCalc.angle_between_m180_180(rotation));
         }));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.foldedFigureRotateAntiClockwiseAction, () -> {
+        actionService.registerAction(new LambdaAction(ActionType.foldedFigureRotateAntiClockwiseAction, () -> {
             double rotation = foldedFigureModel.getState() != FoldedFigure.State.BACK_1 ? foldedFigureModel.getRotation() + 11.25 : foldedFigureModel.getRotation() - 11.25;
             foldedFigureModel.setRotation(OritaCalc.angle_between_m180_180(rotation));
         }));
@@ -714,15 +714,15 @@ public class App {
 
         // |---------------------------------------------------------------------------|
         // --- AppMenuBar ---
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.toggleHelpAction, applicationModel::toggleHelpVisible));
+        actionService.registerAction(new LambdaAction(ActionType.toggleHelpAction, applicationModel::toggleHelpVisible));
 
         // --- OpenFrame ---
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.o_F_checkAction, () -> canvasModel.setMouseMode(MouseMode.FLAT_FOLDABLE_CHECK_63)));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.del_lAction, () -> canvasModel.setMouseMode(MouseMode.CREASE_DELETE_OVERLAPPING_64)));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.del_l_XAction, () -> canvasModel.setMouseMode(MouseMode.CREASE_DELETE_INTERSECTING_65)));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.select_polygonAction, () -> canvasModel.setMouseMode(MouseMode.SELECT_POLYGON_66)));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.unselect_polygonAction, () -> canvasModel.setMouseMode(MouseMode.UNSELECT_POLYGON_67)));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.select_lXAction, () -> canvasModel.setMouseMode(MouseMode.SELECT_LINE_INTERSECTING_68)));
-        actionService.registerAction(new MattakuhidoiOrieditaAction(ActionType.unselect_lXAction, () -> canvasModel.setMouseMode(MouseMode.UNSELECT_LINE_INTERSECTING_69)));
+        actionService.registerAction(new LambdaAction(ActionType.o_F_checkAction, () -> canvasModel.setMouseMode(MouseMode.FLAT_FOLDABLE_CHECK_63)));
+        actionService.registerAction(new LambdaAction(ActionType.del_lAction, () -> canvasModel.setMouseMode(MouseMode.CREASE_DELETE_OVERLAPPING_64)));
+        actionService.registerAction(new LambdaAction(ActionType.del_l_XAction, () -> canvasModel.setMouseMode(MouseMode.CREASE_DELETE_INTERSECTING_65)));
+        actionService.registerAction(new LambdaAction(ActionType.select_polygonAction, () -> canvasModel.setMouseMode(MouseMode.SELECT_POLYGON_66)));
+        actionService.registerAction(new LambdaAction(ActionType.unselect_polygonAction, () -> canvasModel.setMouseMode(MouseMode.UNSELECT_POLYGON_67)));
+        actionService.registerAction(new LambdaAction(ActionType.select_lXAction, () -> canvasModel.setMouseMode(MouseMode.SELECT_LINE_INTERSECTING_68)));
+        actionService.registerAction(new LambdaAction(ActionType.unselect_lXAction, () -> canvasModel.setMouseMode(MouseMode.UNSELECT_LINE_INTERSECTING_69)));
     }
 }
