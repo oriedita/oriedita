@@ -65,6 +65,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.util.ArrayDeque;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Queue;
@@ -378,6 +379,84 @@ public class App {
     }
 
     private void registerActionsInitial(ActionService actionService){
+        // setMouseMode actions
+        Map<ActionType, MouseMode> mouseModeActions = new HashMap<>() {{
+            put(ActionType.selectAction, MouseMode.CREASE_SELECT_19);
+            put(ActionType.unselectAction, MouseMode.CREASE_UNSELECT_20);
+            put(ActionType.moveCreasePatternAction, MouseMode.MOVE_CREASE_PATTERN_2);
+            put(ActionType.backgroundSetPositionAction, MouseMode.BACKGROUND_CHANGE_POSITION_26);
+            put(ActionType.circleDrawAction, MouseMode.CIRCLE_DRAW_42);
+            put(ActionType.circleDrawThreePointAction, MouseMode.CIRCLE_DRAW_THREE_POINT_43);
+            put(ActionType.circleDrawSeparateAction, MouseMode.CIRCLE_DRAW_SEPARATE_44);
+            put(ActionType.circleDrawTangentLineAction, MouseMode.CIRCLE_DRAW_TANGENT_LINE_45);
+            put(ActionType.circleDrawInvertedAction, MouseMode.CIRCLE_DRAW_INVERTED_46);
+            put(ActionType.circleDrawFreeAction, MouseMode.CIRCLE_DRAW_FREE_47);
+            put(ActionType.circleDrawConcentricAction, MouseMode.CIRCLE_DRAW_CONCENTRIC_48);
+            put(ActionType.circleDrawConcentricSelectAction, MouseMode.CIRCLE_DRAW_CONCENTRIC_SELECT_49);
+            put(ActionType.circleDrawTwoConcentricAction, MouseMode.CIRCLE_DRAW_CONCENTRIC_TWO_CIRCLE_SELECT_50);
+            put(ActionType.foldedFigureMoveAction, MouseMode.MOVE_CALCULATED_SHAPE_102);
+            put(ActionType.o_F_checkAction, MouseMode.FLAT_FOLDABLE_CHECK_63);
+            put(ActionType.del_lAction, MouseMode.CREASE_DELETE_OVERLAPPING_64);
+            put(ActionType.del_l_XAction, MouseMode.CREASE_DELETE_INTERSECTING_65);
+            put(ActionType.select_polygonAction, MouseMode.SELECT_POLYGON_66);
+            put(ActionType.unselect_polygonAction, MouseMode.UNSELECT_POLYGON_67);
+            put(ActionType.select_lXAction, MouseMode.SELECT_LINE_INTERSECTING_68);
+            put(ActionType.unselect_lXAction, MouseMode.UNSELECT_LINE_INTERSECTING_69);
+        }};
+
+        for (Map.Entry<ActionType, MouseMode> entry : mouseModeActions.entrySet()){
+            actionService.registerAction(actionFactory.setMouseModeAction(entry.getKey(), entry.getValue()));
+        }
+
+        // setMouseModeWithUnselect actions
+        Map<ActionType, MouseMode> mouseModeWithUnselectActions = new HashMap<>() {{
+            put(ActionType.senbun_henkanAction, MouseMode.CHANGE_CREASE_TYPE_4);
+            put(ActionType.vertexAddAction, MouseMode.DRAW_POINT_14);
+            put(ActionType.vertexDeleteAction, MouseMode.DELETE_POINT_15);
+            put(ActionType.toMountainAction, MouseMode.CREASE_MAKE_MOUNTAIN_23);
+            put(ActionType.toValleyAction, MouseMode.CREASE_MAKE_VALLEY_24);
+            put(ActionType.toEdgeAction, MouseMode.CREASE_MAKE_EDGE_25);
+            put(ActionType.toAuxAction, MouseMode.CREASE_MAKE_AUX_60);
+            put(ActionType.v_del_ccAction, MouseMode.VERTEX_DELETE_ON_CREASE_41);
+            put(ActionType.senbun_henkan2Action, MouseMode.CREASE_TOGGLE_MV_58);
+            put(ActionType.replace_lineAction, MouseMode.REPLACE_LINE_TYPE_SELECT_72);
+            put(ActionType.del_l_typeAction, MouseMode.DELETE_LINE_TYPE_SELECT_73);
+            put(ActionType.senbun_yoke_henkanAction, MouseMode.CREASE_ADVANCE_TYPE_30);
+            put(ActionType.sen_tokutyuu_color_henkouAction, MouseMode.CIRCLE_CHANGE_COLOR_59);
+            put(ActionType.l1Action, MouseMode.DISPLAY_LENGTH_BETWEEN_POINTS_1_53);
+            put(ActionType.l2Action, MouseMode.DISPLAY_LENGTH_BETWEEN_POINTS_2_54);
+            put(ActionType.a1Action, MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_1_55);
+            put(ActionType.a2Action, MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_2_56);
+            put(ActionType.a3Action, MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_3_57);
+            put(ActionType.textAction, MouseMode.TEXT);
+        }};
+
+        for (Map.Entry<ActionType, MouseMode> entry : mouseModeWithUnselectActions.entrySet()){
+            actionService.registerAction(actionFactory.setMouseModeWithUnselectAction(entry.getKey(), entry.getValue()));
+        }
+
+        // setMouseModeWithAfterColorAndUnselect actions
+        Map<ActionType, MouseMode> mouseModeWithAfterColorAndUnselectActions = new HashMap<>() {{
+            put(ActionType.lengthenCreaseAction, MouseMode.LENGTHEN_CREASE_5);
+            put(ActionType.angleBisectorAction, MouseMode.SQUARE_BISECTOR_7);
+            put(ActionType.rabbitEarAction, MouseMode.INWARD_8);
+            put(ActionType.perpendicularDrawAction, MouseMode.PERPENDICULAR_DRAW_9);
+            put(ActionType.symmetricDrawAction, MouseMode.SYMMETRIC_DRAW_10);
+            put(ActionType.drawCreaseRestrictedAction, MouseMode.DRAW_CREASE_RESTRICTED_11);
+            put(ActionType.senbun_b_nyuryokuAction, MouseMode.LINE_SEGMENT_DIVISION_27);
+            put(ActionType.makeFlatFoldableAction, MouseMode.VERTEX_MAKE_ANGULARLY_FLAT_FOLDABLE_38);
+            put(ActionType.parallelDrawAction, MouseMode.PARALLEL_DRAW_40);
+            put(ActionType.setParallelDrawWidthAction, MouseMode.PARALLEL_DRAW_WIDTH_51);
+            put(ActionType.continuousSymmetricDrawAction, MouseMode.CONTINUOUS_SYMMETRIC_DRAW_52);
+            put(ActionType.lengthenCrease2Action, MouseMode.LENGTHEN_CREASE_SAME_COLOR_70);
+            put(ActionType.foldableLineDrawAction, MouseMode.FOLDABLE_LINE_DRAW_71);
+            put(ActionType.regularPolygonAction, MouseMode.POLYGON_SET_NO_CORNERS_29);
+        }};
+
+        for (Map.Entry<ActionType, MouseMode> entry : mouseModeWithAfterColorAndUnselectActions.entrySet()){
+            actionService.registerAction(actionFactory.setMouseModeWithAfterColorAndUnselectAction(entry.getKey(), entry.getValue()));
+        }
+
         // |---------------------------------------------------------------------------|
         // Categorized by sections in each panel (improvements towards such are appreciated)
         // |---------------------------------------------------------------------------|
@@ -395,13 +474,6 @@ public class App {
         actionService.registerAction(new LambdaAction(ActionType.lineStyleChangeAction, applicationModel::advanceLineStyle));
 
         // - draw actions
-        actionService.registerAction(actionFactory.setMouseModeWithAfterColorAndUnselectAction(ActionType.lengthenCreaseAction, MouseMode.LENGTHEN_CREASE_5));
-        actionService.registerAction(actionFactory.setMouseModeWithAfterColorAndUnselectAction(ActionType.angleBisectorAction, MouseMode.SQUARE_BISECTOR_7));
-        actionService.registerAction(actionFactory.setMouseModeWithAfterColorAndUnselectAction(ActionType.rabbitEarAction, MouseMode.INWARD_8));
-        actionService.registerAction(actionFactory.setMouseModeWithAfterColorAndUnselectAction(ActionType.perpendicularDrawAction, MouseMode.PERPENDICULAR_DRAW_9));
-        actionService.registerAction(actionFactory.setMouseModeWithAfterColorAndUnselectAction(ActionType.symmetricDrawAction, MouseMode.SYMMETRIC_DRAW_10));
-        actionService.registerAction(actionFactory.setMouseModeWithAfterColorAndUnselectAction(ActionType.drawCreaseRestrictedAction, MouseMode.DRAW_CREASE_RESTRICTED_11));
-        actionService.registerAction(actionFactory.setMouseModeWithAfterColorAndUnselectAction(ActionType.senbun_b_nyuryokuAction, MouseMode.LINE_SEGMENT_DIVISION_27));
         actionService.registerAction(new LambdaAction(ActionType.fishBoneDrawAction, () -> {
             canvasModel.setMouseMode(MouseMode.FISH_BONE_DRAW_33);
             canvasModel.setMouseModeAfterColorSelection(MouseMode.FISH_BONE_DRAW_33);
@@ -414,16 +486,8 @@ public class App {
             mainCreasePatternWorker.unselect_all(false);
             buttonService.Button_shared_operation();
         }));
-        actionService.registerAction(actionFactory.setMouseModeWithAfterColorAndUnselectAction(ActionType.makeFlatFoldableAction, MouseMode.VERTEX_MAKE_ANGULARLY_FLAT_FOLDABLE_38));
-        actionService.registerAction(actionFactory.setMouseModeWithAfterColorAndUnselectAction(ActionType.parallelDrawAction, MouseMode.PARALLEL_DRAW_40));
-        actionService.registerAction(actionFactory.setMouseModeWithAfterColorAndUnselectAction(ActionType.setParallelDrawWidthAction, MouseMode.PARALLEL_DRAW_WIDTH_51));
-        actionService.registerAction(actionFactory.setMouseModeWithAfterColorAndUnselectAction(ActionType.continuousSymmetricDrawAction, MouseMode.CONTINUOUS_SYMMETRIC_DRAW_52));
-        actionService.registerAction(actionFactory.setMouseModeWithAfterColorAndUnselectAction(ActionType.lengthenCrease2Action, MouseMode.LENGTHEN_CREASE_SAME_COLOR_70));
-        actionService.registerAction(actionFactory.setMouseModeWithAfterColorAndUnselectAction(ActionType.foldableLineDrawAction, MouseMode.FOLDABLE_LINE_DRAW_71));
 
         // - select and transform actions
-        actionService.registerAction(actionFactory.setMouseModeAction(ActionType.selectAction, MouseMode.CREASE_SELECT_19));
-        actionService.registerAction(actionFactory.setMouseModeAction(ActionType.unselectAction, MouseMode.CREASE_UNSELECT_20));
         actionService.registerAction(new LambdaAction(ActionType.selectAllAction, mainCreasePatternWorker::select_all));
         actionService.registerAction(new LambdaAction(ActionType.unselectAllAction, mainCreasePatternWorker::unselect_all));
         actionService.registerAction(actionFactory.selectionOperationAction(ActionType.moveAction, CanvasModel.SelectionOperationMode.MOVE_1, MouseMode.CREASE_MOVE_21));
@@ -446,13 +510,6 @@ public class App {
         actionService.registerAction(actionFactory.setMouseModeLineTypeDeleteAction(ActionType.lineSegmentDeleteAction, MouseMode.LINE_SEGMENT_DELETE_3, FoldLineAdditionalInputMode.POLY_LINE_0));
         actionService.registerAction(actionFactory.setMouseModeLineTypeDeleteAction(ActionType.edgeLineSegmentDeleteAction, MouseMode.LINE_SEGMENT_DELETE_3, FoldLineAdditionalInputMode.BLACK_LINE_2));
         actionService.registerAction(actionFactory.setMouseModeLineTypeDeleteAction(ActionType.auxLiveLineSegmentDeleteAction, MouseMode.LINE_SEGMENT_DELETE_3, FoldLineAdditionalInputMode.AUX_LIVE_LINE_3));
-        actionService.registerAction(actionFactory.setMouseModeWithUnselectAction(ActionType.senbun_henkanAction, MouseMode.CHANGE_CREASE_TYPE_4));
-        actionService.registerAction(actionFactory.setMouseModeWithUnselectAction(ActionType.vertexAddAction, MouseMode.DRAW_POINT_14));
-        actionService.registerAction(actionFactory.setMouseModeWithUnselectAction(ActionType.vertexDeleteAction, MouseMode.DELETE_POINT_15));
-        actionService.registerAction(actionFactory.setMouseModeWithUnselectAction(ActionType.toMountainAction, MouseMode.CREASE_MAKE_MOUNTAIN_23));
-        actionService.registerAction(actionFactory.setMouseModeWithUnselectAction(ActionType.toValleyAction, MouseMode.CREASE_MAKE_VALLEY_24));
-        actionService.registerAction(actionFactory.setMouseModeWithUnselectAction(ActionType.toEdgeAction, MouseMode.CREASE_MAKE_EDGE_25));
-        actionService.registerAction(actionFactory.setMouseModeWithUnselectAction(ActionType.toAuxAction, MouseMode.CREASE_MAKE_AUX_60));
         actionService.registerAction(new LambdaAction(ActionType.in_L_col_changeAction, () -> {
             canvasModel.setMouseMode(MouseMode.CREASE_MAKE_MV_34);
             canvasModel.setMouseModeAfterColorSelection(MouseMode.CREASE_MAKE_MV_34);
@@ -473,10 +530,6 @@ public class App {
 
             mainCreasePatternWorker.unselect_all(false);
         }));
-        actionService.registerAction(actionFactory.setMouseModeWithUnselectAction(ActionType.v_del_ccAction, MouseMode.VERTEX_DELETE_ON_CREASE_41));
-        actionService.registerAction(actionFactory.setMouseModeWithUnselectAction(ActionType.senbun_henkan2Action, MouseMode.CREASE_TOGGLE_MV_58));
-        actionService.registerAction(actionFactory.setMouseModeWithUnselectAction(ActionType.replace_lineAction, MouseMode.REPLACE_LINE_TYPE_SELECT_72));
-        actionService.registerAction(actionFactory.setMouseModeWithUnselectAction(ActionType.del_l_typeAction, MouseMode.DELETE_LINE_TYPE_SELECT_73));
         actionService.registerAction(new LambdaAction(ActionType.trimBranchesAction, () -> {
             mainCreasePatternWorker.point_removal();
             mainCreasePatternWorker.overlapping_line_removal();
@@ -527,13 +580,10 @@ public class App {
         // |---------------------------------------------------------------------------|
         // --- Top Panel ---
         // - transform CP(crease pattern) actions
-        actionService.registerAction(actionFactory.setMouseModeAction(ActionType.moveCreasePatternAction, MouseMode.MOVE_CREASE_PATTERN_2));
         actionService.registerAction(new LambdaAction(ActionType.rotateClockwiseAction, cameraModel::decreaseRotation));
         actionService.registerAction(new LambdaAction(ActionType.rotateAnticlockwiseAction, cameraModel::increaseRotation));
 
         // - background actions
-        actionService.registerAction(actionFactory.setMouseModeAction(ActionType.backgroundSetPositionAction, MouseMode.BACKGROUND_CHANGE_POSITION_26));
-        actionService.registerAction(actionFactory.setMouseModeWithUnselectAction(ActionType.senbun_yoke_henkanAction, MouseMode.CREASE_ADVANCE_TYPE_30));
         actionService.registerAction(new LambdaAction(ActionType.transparentAction, canvas::createTransparentBackground));
         actionService.registerAction(new LambdaAction(ActionType.backgroundLockAction, () -> backgroundModel.setLockBackground(!backgroundModel.isLockBackground())));
         actionService.registerAction(new LambdaAction(ActionType.backgroundToggleAction, () -> backgroundModel.setDisplayBackground(!backgroundModel.isDisplayBackground())));
@@ -573,21 +623,6 @@ public class App {
         actionService.registerAction(actionFactory.degAction(ActionType.deg4Action, MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18, AngleSystemModel.AngleSystemInputType.DEG_4));
         actionService.registerAction(actionFactory.degAction(ActionType.angleRestrictedAction, MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_5_37, AngleSystemModel.AngleSystemInputType.DEG_5));
 
-        // - polygon actions
-        actionService.registerAction(actionFactory.setMouseModeWithAfterColorAndUnselectAction(ActionType.regularPolygonAction, MouseMode.POLYGON_SET_NO_CORNERS_29));
-
-        // circle actions
-        actionService.registerAction(actionFactory.setMouseModeAction(ActionType.circleDrawAction, MouseMode.CIRCLE_DRAW_42));
-        actionService.registerAction(actionFactory.setMouseModeAction(ActionType.circleDrawThreePointAction, MouseMode.CIRCLE_DRAW_THREE_POINT_43));
-        actionService.registerAction(actionFactory.setMouseModeAction(ActionType.circleDrawSeparateAction, MouseMode.CIRCLE_DRAW_SEPARATE_44));
-        actionService.registerAction(actionFactory.setMouseModeAction(ActionType.circleDrawTangentLineAction, MouseMode.CIRCLE_DRAW_TANGENT_LINE_45));
-        actionService.registerAction(actionFactory.setMouseModeAction(ActionType.circleDrawInvertedAction, MouseMode.CIRCLE_DRAW_INVERTED_46));
-        actionService.registerAction(actionFactory.setMouseModeAction(ActionType.circleDrawFreeAction, MouseMode.CIRCLE_DRAW_FREE_47));
-        actionService.registerAction(actionFactory.setMouseModeAction(ActionType.circleDrawConcentricAction, MouseMode.CIRCLE_DRAW_CONCENTRIC_48));
-        actionService.registerAction(actionFactory.setMouseModeAction(ActionType.circleDrawConcentricSelectAction, MouseMode.CIRCLE_DRAW_CONCENTRIC_SELECT_49));
-        actionService.registerAction(actionFactory.setMouseModeAction(ActionType.circleDrawTwoConcentricAction, MouseMode.CIRCLE_DRAW_CONCENTRIC_TWO_CIRCLE_SELECT_50));
-        actionService.registerAction(actionFactory.setMouseModeWithUnselectAction(ActionType.sen_tokutyuu_color_henkouAction, MouseMode.CIRCLE_CHANGE_COLOR_59));
-
         // - other aux actions
         actionService.registerAction(new LambdaAction(ActionType.colOrangeAction, () -> canvasModel.setAuxLiveLineColor(LineColor.ORANGE_4)));
         actionService.registerAction(new LambdaAction(ActionType.colYellowAction, () -> canvasModel.setAuxLiveLineColor(LineColor.YELLOW_7)));
@@ -598,20 +633,9 @@ public class App {
         actionService.registerAction(actionFactory.setMouseModeLineTypeDeleteAction(ActionType.h_senbun_nyuryokuAction, MouseMode.DRAW_CREASE_FREE_1, FoldLineAdditionalInputMode.AUX_LINE_1));
         actionService.registerAction(actionFactory.setMouseModeLineTypeDeleteAction(ActionType.h_senbun_nyuryokuAction, MouseMode.LINE_SEGMENT_DELETE_3, FoldLineAdditionalInputMode.AUX_LINE_1));
 
-        // - lines & angles measuring actions
-        actionService.registerAction(actionFactory.setMouseModeWithUnselectAction(ActionType.l1Action, MouseMode.DISPLAY_LENGTH_BETWEEN_POINTS_1_53));
-        actionService.registerAction(actionFactory.setMouseModeWithUnselectAction(ActionType.l2Action, MouseMode.DISPLAY_LENGTH_BETWEEN_POINTS_2_54));
-        actionService.registerAction(actionFactory.setMouseModeWithUnselectAction(ActionType.a1Action, MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_1_55));
-        actionService.registerAction(actionFactory.setMouseModeWithUnselectAction(ActionType.a2Action, MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_2_56));
-        actionService.registerAction(actionFactory.setMouseModeWithUnselectAction(ActionType.a3Action, MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_3_57));
-
-        // - text
-        actionService.registerAction(actionFactory.setMouseModeWithUnselectAction(ActionType.textAction, MouseMode.TEXT));
-
         // |---------------------------------------------------------------------------|
         // --- Bottom Panel ---
         // foldedFigure actions
-        actionService.registerAction(actionFactory.setMouseModeAction(ActionType.foldedFigureMoveAction, MouseMode.MOVE_CALCULATED_SHAPE_102));
         actionService.registerAction(new LambdaAction(ActionType.foldedFigureToggleAntiAliasAction, foldedFigureModel::toggleAntiAlias));
         actionService.registerAction(new LambdaAction(ActionType.foldedFigureToggleShadowAction, foldedFigureModel::toggleDisplayShadows));
         actionService.registerAction(new LambdaAction(ActionType.foldedFigureSizeIncreaseAction, () -> {
@@ -643,16 +667,6 @@ public class App {
         // --- AppMenuBar ---
         actionService.registerAction(new LambdaAction(ActionType.IMPORT, fileSaveService::importFile));
         actionService.registerAction(new LambdaAction(ActionType.toggleHelpAction, applicationModel::toggleHelpVisible));
-
-        // --- OpenFrame ---
-        actionService.registerAction(actionFactory.setMouseModeWithAfterColorAndUnselectAction(ActionType.foldableLinePlusGridInputAction, MouseMode.FOLDABLE_LINE_INPUT_39));
-        actionService.registerAction(actionFactory.setMouseModeAction(ActionType.o_F_checkAction, MouseMode.FLAT_FOLDABLE_CHECK_63));
-        actionService.registerAction(actionFactory.setMouseModeAction(ActionType.del_lAction, MouseMode.CREASE_DELETE_OVERLAPPING_64));
-        actionService.registerAction(actionFactory.setMouseModeAction(ActionType.del_l_XAction, MouseMode.CREASE_DELETE_INTERSECTING_65));
-        actionService.registerAction(actionFactory.setMouseModeAction(ActionType.select_polygonAction, MouseMode.SELECT_POLYGON_66));
-        actionService.registerAction(actionFactory.setMouseModeAction(ActionType.unselect_polygonAction, MouseMode.UNSELECT_POLYGON_67));
-        actionService.registerAction(actionFactory.setMouseModeAction(ActionType.select_lXAction, MouseMode.SELECT_LINE_INTERSECTING_68));
-        actionService.registerAction(actionFactory.setMouseModeAction(ActionType.unselect_lXAction, MouseMode.UNSELECT_LINE_INTERSECTING_69));
 
         // --- others ---
         actionService.registerAction(new LambdaAction(ActionType.scaleAction, () -> {animationService.animate(Animations.ZOOM_FOLDED_MODEL,
