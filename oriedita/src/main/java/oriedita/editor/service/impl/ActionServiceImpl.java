@@ -28,5 +28,5 @@ public class ActionServiceImpl implements ActionService {
     @Override
     public List<OrieditaAction> getAllRegisteredActions() { return registeredActions; }
 
-    private void extractActionInstances(Instance<OrieditaAction> actions){ actions.stream().forEach(registeredActions::add); }
+    private void extractActionInstances(Instance<OrieditaAction> actions){ actions.stream().forEach(this::registerAction); }
 }
