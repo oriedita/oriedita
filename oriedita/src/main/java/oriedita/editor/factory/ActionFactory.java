@@ -17,6 +17,7 @@ import oriedita.editor.canvas.FoldLineAdditionalInputMode;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.databinding.AngleSystemModel;
 import oriedita.editor.databinding.CanvasModel;
+import oriedita.editor.databinding.FoldedFiguresList;
 import oriedita.editor.handler.FoldedFigureOperationMode;
 import oriedita.editor.service.FoldingService;
 import origami.folding.FoldedFigure;
@@ -32,6 +33,8 @@ public class ActionFactory {
     AngleSystemModel angleSystemModel;
     @Inject
     FoldingService foldingService;
+    @Inject
+    FoldedFiguresList foldedFiguresList;
 
     @Named("SetMouseModeAction")
     public SetMouseModeAction setMouseModeAction(ActionType actionType, MouseMode mouseMode){
@@ -65,7 +68,7 @@ public class ActionFactory {
 
     @Named("Oriagari_sousaAction")
     public Oriagari_sousaAction oriagari_sousaAction(ActionType actionType, FoldedFigureOperationMode foldedFigureOperationMode){
-        return new Oriagari_sousaAction(canvasModel, actionType, foldedFigureOperationMode);
+        return new Oriagari_sousaAction(canvasModel, foldedFiguresList, actionType, foldedFigureOperationMode);
     }
 
     @Named("DegAction")

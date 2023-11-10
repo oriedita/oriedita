@@ -661,7 +661,7 @@ public class App {
             foldedFigureModel.setRotation(OritaCalc.angle_between_m180_180(rotation));
         }));
         actionService.registerAction(actionFactory.oriagari_sousaAction(ActionType.oriagari_sousaAction, FoldedFigureOperationMode.MODE_1));
-        actionService.registerAction(actionFactory.oriagari_sousaAction(ActionType.oriagari_sousa2Action, FoldedFigureOperationMode.MODE_2));
+        actionService.registerAction(actionFactory.oriagari_sousaAction(ActionType.oriagari_sousa_2Action, FoldedFigureOperationMode.MODE_2));
 
         // |---------------------------------------------------------------------------|
         // --- AppMenuBar ---

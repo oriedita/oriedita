@@ -115,7 +115,7 @@ public enum ActionType {
     lineColorAction("lineColorAction"),
     backColorAction("backColorAction"),
     oriagari_sousaAction("oriagari_sousaAction"),
-    oriagari_sousa2Action("oriagari_sousa2Action"),
+    oriagari_sousa_2Action("oriagari_sousa_2Action"),
     deg2Action("deg2Action"),
     deg3Action("deg3Action"),
     deg4Action("deg4Action"),
