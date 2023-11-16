@@ -187,7 +187,11 @@ public enum ActionType {
     unselect_lXAction("unselect_lXAction"),
     a1Action("a1Action"),
     a2Action("a2Action"),
-    a3Action("a3Action");
+    a3Action("a3Action"),
+    c_colAction("c_colAction"),
+    restrictedAngleABCSetAction("restrictedAngleABCSetAction"),
+    restrictedAngleSetDEFAction("restrictedAngleSetDEFAction"),
+    addColorConstraintAction("addColorConstraintAction");
 
 
     static final Map<String, ActionType> actionMap;

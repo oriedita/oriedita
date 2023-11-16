@@ -452,7 +452,6 @@ public class LeftPanel {
                 gridModel.setGridAngle(convertAngle(measuresModel.string2double(gridAngleTextField.getText(), gridModel.getGridAngle())));
             }
         });
-        resetGridButton.addActionListener(e -> gridModel.reset());
         drawDiagonalGridlinesCheckBox.addActionListener(e -> gridModel.setDrawDiagonalGridlines(drawDiagonalGridlinesCheckBox.isSelected()));
     }
 

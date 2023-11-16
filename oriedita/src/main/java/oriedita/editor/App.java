@@ -402,6 +402,7 @@ public class App {
             put(ActionType.unselect_polygonAction, MouseMode.UNSELECT_POLYGON_67);
             put(ActionType.select_lXAction, MouseMode.SELECT_LINE_INTERSECTING_68);
             put(ActionType.unselect_lXAction, MouseMode.UNSELECT_LINE_INTERSECTING_69);
+            put(ActionType.addColorConstraintAction, MouseMode.ADD_FOLDING_CONSTRAINT);
         }};
 
         for (Map.Entry<ActionType, MouseMode> entry : mouseModeActions.entrySet()){
@@ -444,6 +445,8 @@ public class App {
             put(ActionType.symmetricDrawAction, MouseMode.SYMMETRIC_DRAW_10);
             put(ActionType.drawCreaseRestrictedAction, MouseMode.DRAW_CREASE_RESTRICTED_11);
             put(ActionType.senbun_b_nyuryokuAction, MouseMode.LINE_SEGMENT_DIVISION_27);
+            put(ActionType.fishBoneDrawAction, MouseMode.FISH_BONE_DRAW_33);
+            put(ActionType.doubleSymmetricDrawAction, MouseMode.DOUBLE_SYMMETRIC_DRAW_35);
             put(ActionType.makeFlatFoldableAction, MouseMode.VERTEX_MAKE_ANGULARLY_FLAT_FOLDABLE_38);
             put(ActionType.parallelDrawAction, MouseMode.PARALLEL_DRAW_40);
             put(ActionType.setParallelDrawWidthAction, MouseMode.PARALLEL_DRAW_WIDTH_51);
@@ -472,20 +475,6 @@ public class App {
         actionService.registerAction(new LambdaAction(ActionType.pointSizeDecreaseAction, applicationModel::decreasePointSize));
         actionService.registerAction(new LambdaAction(ActionType.pointSizeIncreaseAction, applicationModel::increasePointSize));
         actionService.registerAction(new LambdaAction(ActionType.lineStyleChangeAction, applicationModel::advanceLineStyle));
-
-        // - draw actions
-        actionService.registerAction(new LambdaAction(ActionType.fishBoneDrawAction, () -> {
-            canvasModel.setMouseMode(MouseMode.FISH_BONE_DRAW_33);
-            canvasModel.setMouseModeAfterColorSelection(MouseMode.FISH_BONE_DRAW_33);
-            mainCreasePatternWorker.unselect_all(false);
-            buttonService.Button_shared_operation();
-        }));
-        actionService.registerAction(new LambdaAction(ActionType.doubleSymmetricDrawAction, () -> {
-            canvasModel.setMouseMode(MouseMode.DOUBLE_SYMMETRIC_DRAW_35);
-            canvasModel.setMouseModeAfterColorSelection(MouseMode.DOUBLE_SYMMETRIC_DRAW_35);
-            mainCreasePatternWorker.unselect_all(false);
-            buttonService.Button_shared_operation();
-        }));
 
         // - select and transform actions
         actionService.registerAction(new LambdaAction(ActionType.selectAllAction, mainCreasePatternWorker::select_all));
@@ -547,6 +536,7 @@ public class App {
         actionService.registerAction(new LambdaAction(ActionType.gridLineWidthIncreaseAction, applicationModel::increaseGridLineWidth));
         actionService.registerAction(new LambdaAction(ActionType.moveIntervalGridVerticalAction, gridModel::changeHorizontalScalePosition));
         actionService.registerAction(new LambdaAction(ActionType.moveIntervalGridHorizontalAction, gridModel::changeVerticalScalePosition));
+        actionService.registerAction(new LambdaAction(ActionType.gridConfigureResetAction, gridModel::reset));
         actionService.registerAction(new LambdaAction(ActionType.gridColorAction, () -> {
             //以下にやりたいことを書く
             Color color = JColorChooser.showDialog(frameProvider.get(), "Col", FlatLaf.isLafDark() ? Colors.GRID_LINE_DARK : Colors.GRID_LINE);

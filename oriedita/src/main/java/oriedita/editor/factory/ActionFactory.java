@@ -19,6 +19,7 @@ import oriedita.editor.databinding.AngleSystemModel;
 import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.databinding.FoldedFiguresList;
 import oriedita.editor.handler.FoldedFigureOperationMode;
+import oriedita.editor.service.ButtonService;
 import oriedita.editor.service.FoldingService;
 import origami.folding.FoldedFigure;
 
@@ -35,6 +36,8 @@ public class ActionFactory {
     FoldingService foldingService;
     @Inject
     FoldedFiguresList foldedFiguresList;
+    @Inject
+    ButtonService buttonService;
 
     @Named("SetMouseModeAction")
     public SetMouseModeAction setMouseModeAction(ActionType actionType, MouseMode mouseMode){
@@ -48,7 +51,7 @@ public class ActionFactory {
 
     @Named("SetMouseModeWithAfterColorAndUnselectAction")
     public SetMouseModeWithAfterColorAndUnselectAction setMouseModeWithAfterColorAndUnselectAction(ActionType actionType, MouseMode mouseMode){
-        return new SetMouseModeWithAfterColorAndUnselectAction(canvasModel, mainCreasePattern_Worker, actionType, mouseMode);
+        return new SetMouseModeWithAfterColorAndUnselectAction(canvasModel, mainCreasePattern_Worker, buttonService, actionType, mouseMode);
     }
 
     @Named("SetMouseModeLineTypeDeleteAction")
@@ -73,6 +76,6 @@ public class ActionFactory {
 
     @Named("DegAction")
     public DegAction degAction(ActionType actionType, MouseMode mouseMode, AngleSystemModel.AngleSystemInputType angleSystemInputType){
-        return new DegAction(canvasModel, angleSystemModel, actionType, mouseMode, angleSystemInputType);
+        return new DegAction(canvasModel, angleSystemModel, buttonService, actionType, mouseMode, angleSystemInputType);
     }
 }
