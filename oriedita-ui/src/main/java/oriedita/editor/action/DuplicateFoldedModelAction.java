@@ -12,7 +12,7 @@ import origami.folding.FoldedFigure;
 import java.awt.event.ActionEvent;
 
 @ApplicationScoped
-@ActionHandler(ActionType.duplicate)
+@ActionHandler(ActionType.duplicateFoldedModelAction)
 public class DuplicateFoldedModelAction extends AbstractOrieditaAction {
     @Inject
     FoldingService foldingService;

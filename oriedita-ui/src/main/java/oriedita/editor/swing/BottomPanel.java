@@ -13,6 +13,7 @@ import oriedita.editor.databinding.FoldedFiguresList;
 import oriedita.editor.databinding.MeasuresModel;
 import oriedita.editor.drawing.FoldedFigure_Drawer;
 import oriedita.editor.handler.FoldedFigureOperationMode;
+import oriedita.editor.handler.PopupMenuAdapter;
 import oriedita.editor.service.AnimationService;
 import oriedita.editor.service.ButtonService;
 import oriedita.editor.service.TaskService;
@@ -32,7 +33,6 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.event.PopupMenuEvent;
-import javax.swing.event.PopupMenuListener;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Insets;
@@ -140,7 +140,6 @@ public class BottomPanel {
         goToFoldedFigureTextField.addActionListener(e -> goToFoldedFigureButton.doClick());
         goToFoldedFigureTextField.getDocument().addDocumentListener(new OnlyIntAdapter(goToFoldedFigureTextField));
         goToFoldedFigureTextField.addKeyListener(new InputEnterKeyAdapter(goToFoldedFigureTextField));
-        constraintButton.addActionListener(e -> canvasModel.setMouseMode(MouseMode.ADD_FOLDING_CONSTRAINT));
 
         undoRedo.addUndoActionListener(e -> {
             FoldedFigure_Drawer selectedFigure = foldedFiguresList.getActiveItem();
@@ -156,20 +155,7 @@ public class BottomPanel {
                 selectedFigure.redo();
             }
         });
-        oriagari_sousa_2Button.addActionListener(e -> {
-            canvasModel.setFoldedFigureOperationMode(FoldedFigureOperationMode.MODE_2);
-            FoldedFigure_Drawer selectedFigure = foldedFiguresList.getActiveItem();
 
-            if (selectedFigure != null) {
-                selectedFigure.getFoldedFigure().setAllPointStateFalse();
-                selectedFigure.record();
-            }
-
-            canvasModel.setMouseMode(MouseMode.MODIFY_CALCULATED_SHAPE_101);
-        });
-        foldedFigureMoveButton.addActionListener(e -> canvasModel.setMouseMode(MouseMode.MOVE_CALCULATED_SHAPE_102));
-        foldedFigureAntiAliasButton.addActionListener(e -> foldedFigureModel.toggleAntiAlias());
-        shadowButton.addActionListener(e -> foldedFigureModel.toggleDisplayShadows());
         foldedFigureBox.setModel(foldedFiguresList);
         foldedFigureBox.setRenderer(new IndexCellRenderer());
         foldedFigureBox.addMouseListener(new MouseAdapter() {
@@ -180,22 +166,12 @@ public class BottomPanel {
                 }
             }
         });
-        foldedFigureBox.addPopupMenuListener(new PopupMenuListener() {
-            @Override
-            public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
-
-            }
-
+        foldedFigureBox.addPopupMenuListener(new PopupMenuAdapter() {
             @Override
             public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
                 if (applicationModel.getDisplayNumbers()) {
                     applicationModel.setDisplayNumbers(false);
                 }
-            }
-
-            @Override
-            public void popupMenuCanceled(PopupMenuEvent e) {
-
             }
         });
     }

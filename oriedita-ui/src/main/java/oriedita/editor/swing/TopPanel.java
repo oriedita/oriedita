@@ -204,7 +204,6 @@ public class TopPanel implements PropertyChangeListener {
                         AnimationDurations.ZOOM);
             }
         });
-        rotateAnticlockwiseButton.addActionListener(e -> creasePatternCameraModel.increaseRotation());
         rotationSetButton.addActionListener(e -> creasePatternCameraModel.setRotation(measuresModel.string2double(rotationTextField.getText(), creasePatternCameraModel.getRotation())));
         rotationTextField.addActionListener(e -> rotationSetButton.doClick());
         rotationTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(rotationTextField));
@@ -214,11 +213,6 @@ public class TopPanel implements PropertyChangeListener {
             public void focusLost(FocusEvent e) {
                 creasePatternCameraModel.setRotation(measuresModel.string2double(rotationTextField.getText(), creasePatternCameraModel.getRotation()));
             }
-        });
-        rotateClockwiseButton.addActionListener(e -> creasePatternCameraModel.decreaseRotation());
-        transparentButton.addActionListener(e -> canvas.createTransparentBackground());
-        backgroundSetPositionButton.addActionListener(e -> {
-            canvasModel.setMouseMode(MouseMode.BACKGROUND_CHANGE_POSITION_26);
         });
     }
 

@@ -44,17 +44,6 @@ public class FoldedFigureResize extends JPanel {
                 animationService.animate(Animations.ZOOM_FOLDED_MODEL, foldedFigureModel::setScale, foldedFigureModel::getScale,
                         s -> measuresModel.string2double(foldedFigureSizeTextField.getText(), foldedFigureModel.getScale()), AnimationDurations.ZOOM)
         );
-        foldedFigureSizeDecreaseButton.addActionListener(e ->
-                animationService.animate(Animations.ZOOM_FOLDED_MODEL,
-                        foldedFigureModel::setScale,
-                        foldedFigureModel::getScale,
-                        scale -> foldedFigureModel.getScaleForZoomBy(1, applicationModel.getZoomSpeed(), scale),
-                        AnimationDurations.ZOOM));
-        foldedFigureSizeIncreaseButton.addActionListener(e -> animationService.animate(Animations.ZOOM_FOLDED_MODEL,
-                foldedFigureModel::setScale,
-                foldedFigureModel::getScale,
-                scale -> foldedFigureModel.getScaleForZoomBy(-1, applicationModel.getZoomSpeed(), scale),
-                AnimationDurations.ZOOM));
         foldedFigureSizeTextField.addActionListener(e -> foldedFigureSizeSetButton.doClick());
         foldedFigureSizeTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(foldedFigureSizeTextField));
         foldedFigureSizeTextField.addKeyListener(new InputEnterKeyAdapter(foldedFigureSizeTextField));
