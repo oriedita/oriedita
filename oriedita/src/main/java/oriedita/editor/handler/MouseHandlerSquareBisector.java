@@ -154,15 +154,18 @@ public class MouseHandlerSquareBisector extends BaseMouseHandlerInputRestricted 
                 d.lineStepAdd(new LineSegment(OritaCalc.findProjection(OritaCalc.moveParallel(tempPerpenLine, -25.0), midPoint), midPoint, LineColor.PURPLE_8));
                 d.lineStepAdd(new LineSegment(midPoint, OritaCalc.findProjection(OritaCalc.moveParallel(tempPerpenLine, 25.0), midPoint), LineColor.PURPLE_8));
             }
-            // Step 2.a: Click on the purple indicators auto expand the bisector from the purple indictors to the nearest lines
-            // (Works but weird cut-offs in some cases)
+            // Step 2.a: Click on the purple indicators auto expand the bisector from the purple indicators to the nearest lines
+            // (Works but might come out a bit weirdly in some cases)
             if(d.getLineStep().size() == 5 && d.getClosestPoint(p).distance(p) > d.getSelectionDistance()){
                 if (OritaCalc.determineLineSegmentDistance(p, d.getLineStep().get(3)) < d.getSelectionDistance() ||
                         OritaCalc.determineLineSegmentDistance(p, d.getLineStep().get(4)) < d.getSelectionDistance()) {
-                    d.getLineStep().get(3).setColor(d.getLineColor());
-                    d.getLineStep().get(4).setColor(d.getLineColor());
-                    d.addLineSegment(extendToIntersectionPoint_2(d.getLineStep().get(3)));
-                    d.addLineSegment(extendToIntersectionPoint_2(d.getLineStep().get(4)));
+                    LineSegment s1 = new LineSegment(d.getLineStep().get(3).getA(), d.getLineStep().get(3).getB(), d.getLineColor());
+                    s1.set(extendToIntersectionPoint_2(s1));
+                    d.addLineSegment(s1);
+
+                    LineSegment s2 = new LineSegment(s1.getB(), OritaCalc.point_rotate(s1.getA(), s1.getB(), 180), d.getLineColor());
+                    s2.set(extendToIntersectionPoint_2(s2));
+                    d.addLineSegment(s2);
                     d.record();
                     d.getLineStep().clear();
                 }
