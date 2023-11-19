@@ -2,12 +2,14 @@ package oriedita.editor.handler;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import org.tinylog.Logger;
 import oriedita.editor.canvas.MouseMode;
 import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
+import origami.crease_pattern.element.StraightLine;
 
 @ApplicationScoped
 @Handles(MouseMode.SQUARE_BISECTOR_7)
@@ -34,7 +36,7 @@ public class MouseHandlerSquareBisector extends BaseMouseHandlerInputRestricted 
         if ((d.getLineStep().isEmpty() || d.getLineStep().get(0).determineLength() > 0)) {
             // Click 2 lines to form bisect and then a destination line
             // Only in first line click, no point is allowed within the selection radius
-            if (d.getLineStep().size() == 0 && d.getClosestPoint(p).distance(p) > d.getSelectionDistance()) {
+            if (d.getLineStep().isEmpty() && d.getClosestPoint(p).distance(p) > d.getSelectionDistance()) {
                 line.set(d.getClosestLineSegment(p));
                 if (OritaCalc.determineLineSegmentDistance(p, line) < d.getSelectionDistance()) {
                     line.setColor(LineColor.GREEN_6);
@@ -42,7 +44,7 @@ public class MouseHandlerSquareBisector extends BaseMouseHandlerInputRestricted 
                 }
                 return;
             }
-            if (d.getLineStep().size() >= 1) {
+            if (!d.getLineStep().isEmpty()) {
                 line.set(d.getClosestLineSegment(p));
                 if (OritaCalc.determineLineSegmentDistance(p, line) < d.getSelectionDistance()) {
                     line.setColor(LineColor.GREEN_6);
@@ -75,6 +77,9 @@ public class MouseHandlerSquareBisector extends BaseMouseHandlerInputRestricted 
 
     //マウス操作(ボタンを離したとき)を行う関数
     public void mouseReleased(Point p0) {
+        Point p = new Point();
+        p.set(d.getCamera().TV2object(p0));
+
         // Calculation for 3 points
         if (d.getLineStep().size() == 4 && d.getLineStep().get(0).determineLength() < Epsilon.UNKNOWN_1EN4) {
             //三角形の内心を求める    public Ten oc.naisin(Ten ta,Ten tb,Ten tc)
@@ -147,12 +152,23 @@ public class MouseHandlerSquareBisector extends BaseMouseHandlerInputRestricted 
                 */
                 LineSegment tempPerpenLine = new LineSegment();
                 tempPerpenLine.set(d.getLineStep().get(1).getA(), projectedPoint);
-                d.lineStepAdd(new LineSegment(midPoint, OritaCalc.findProjection(OritaCalc.moveParallel(tempPerpenLine, -25.0), midPoint)));
-                d.getLineStep().get(3).setColor(LineColor.PURPLE_8);
-                d.lineStepAdd(new LineSegment(midPoint, OritaCalc.findProjection(OritaCalc.moveParallel(tempPerpenLine, 25.0), midPoint)));
-                d.getLineStep().get(4).setColor(LineColor.PURPLE_8);
+                d.lineStepAdd(new LineSegment(OritaCalc.findProjection(OritaCalc.moveParallel(tempPerpenLine, -25.0), midPoint), midPoint, LineColor.PURPLE_8));
+                d.lineStepAdd(new LineSegment(midPoint, OritaCalc.findProjection(OritaCalc.moveParallel(tempPerpenLine, 25.0), midPoint), LineColor.PURPLE_8));
             }
-            // Step 2: Get the 2 destination lines and form the actual bisector
+            // Step 2.a: Click on the purple indicators auto expand the bisector from the purple indictors to the nearest lines
+            // (Works but weird cut-offs in some cases)
+            if(d.getLineStep().size() == 5 && d.getClosestPoint(p).distance(p) > d.getSelectionDistance()){
+                if (OritaCalc.determineLineSegmentDistance(p, d.getLineStep().get(3)) < d.getSelectionDistance() ||
+                        OritaCalc.determineLineSegmentDistance(p, d.getLineStep().get(4)) < d.getSelectionDistance()) {
+                    d.getLineStep().get(3).setColor(d.getLineColor());
+                    d.getLineStep().get(4).setColor(d.getLineColor());
+                    d.addLineSegment(extendToIntersectionPoint_2(d.getLineStep().get(3)));
+                    d.addLineSegment(extendToIntersectionPoint_2(d.getLineStep().get(4)));
+                    d.record();
+                    d.getLineStep().clear();
+                }
+            }
+            // Step 2.b: Get the 2 destination lines and form the actual bisector
             if (d.getLineStep().size() == 7) {
                 // Find 2 intersection points
                 Point intersect1 = new Point();
@@ -161,17 +177,74 @@ public class MouseHandlerSquareBisector extends BaseMouseHandlerInputRestricted 
                 intersect2.set(OritaCalc.findIntersection(d.getLineStep().get(3), d.getLineStep().get(6)));
 
                 // Draw the bisector
-                LineSegment bisector = new LineSegment(intersect1, intersect2);
-                bisector.setColor(d.getLineColor());
+                LineSegment bisector = new LineSegment(intersect1, intersect2, d.getLineColor());
 
                 if (Epsilon.high.gt0(bisector.determineLength())) {
                     d.addLineSegment(bisector);
                     d.record();
                 }
-
                 d.getLineStep().clear();
             }
         }
+    }
+
+    public LineSegment extendToIntersectionPoint_2(LineSegment s0) {//Extend s0 from point b in the opposite direction of a to the point where it intersects another polygonal line. Returns a new line // Returns the same line if it does not intersect another polygonal line
+        LineSegment add_sen = new LineSegment();
+        add_sen.set(s0);
+
+        Point kousa_point = new Point(1000000.0, 1000000.0); //この方法だと、エラーの原因になりうる。本当なら全線分のx_max、y_max以上の点を取ればいい。今後修正予定20161120
+        double kousa_point_distance = kousa_point.distance(add_sen.getA());
+
+        StraightLine tyoku1 = new StraightLine(add_sen.getA(), add_sen.getB());
+        StraightLine.Intersection i_intersection_flg;//元の線分を直線としたものと、他の線分の交差状態
+        LineSegment.Intersection i_lineSegment_intersection_flg;//元の線分と、他の線分の交差状態
+
+        Logger.info("AAAAA_");
+        for (int i = 1; i <= d.getFoldLineSet().getTotal(); i++) {
+            i_intersection_flg = tyoku1.lineSegment_intersect_reverse_detail(d.getFoldLineSet().get(i));//0=この直線は与えられた線分と交差しない、1=X型で交差する、2=T型で交差する、3=線分は直線に含まれる。
+            i_lineSegment_intersection_flg = OritaCalc.determineLineSegmentIntersectionSweet(s0, d.getFoldLineSet().get(i), Epsilon.UNKNOWN_1EN5, Epsilon.UNKNOWN_1EN5);//20180408なぜかこの行の様にs0のままだと、i_senbun_kousa_flgがおかしくならない。
+
+            if (i_intersection_flg.isIntersecting() && !i_lineSegment_intersection_flg.isEndpointIntersection()) {
+                kousa_point.set(OritaCalc.findIntersection(tyoku1, d.getFoldLineSet().get(i)));
+                if (kousa_point.distance(add_sen.getA()) > Epsilon.UNKNOWN_1EN5) {
+                    if (kousa_point.distance(add_sen.getA()) < kousa_point_distance) {
+                        double d_kakudo = OritaCalc.angle(add_sen.getA(), add_sen.getB(), add_sen.getA(), kousa_point);
+                        if (d_kakudo < 1.0 || d_kakudo > 359.0) {
+                            kousa_point_distance = kousa_point.distance(add_sen.getA());
+                            add_sen.set(add_sen.getA(), kousa_point);
+                        }
+                    }
+                }
+
+            }
+
+            if (i_intersection_flg == StraightLine.Intersection.INCLUDED_3 && i_lineSegment_intersection_flg != LineSegment.Intersection.PARALLEL_EQUAL_31) {
+                kousa_point.set(d.getFoldLineSet().get(i).getA());
+                if (kousa_point.distance(add_sen.getA()) > Epsilon.UNKNOWN_1EN5) {
+                    if (kousa_point.distance(add_sen.getA()) < kousa_point_distance) {
+                        double d_kakudo = OritaCalc.angle(add_sen.getA(), add_sen.getB(), add_sen.getA(), kousa_point);
+                        if (d_kakudo < 1.0 || d_kakudo > 359.0) {
+                            kousa_point_distance = kousa_point.distance(add_sen.getA());
+                            add_sen.set(add_sen.getA(), kousa_point);
+                        }
+                    }
+                }
+
+                kousa_point.set(d.getFoldLineSet().get(i).getB());
+                if (kousa_point.distance(add_sen.getA()) > Epsilon.UNKNOWN_1EN5) {
+                    if (kousa_point.distance(add_sen.getA()) < kousa_point_distance) {
+                        double d_kakudo = OritaCalc.angle(add_sen.getA(), add_sen.getB(), add_sen.getA(), kousa_point);
+                        if (d_kakudo < 1.0 || d_kakudo > 359.0) {
+                            kousa_point_distance = kousa_point.distance(add_sen.getA());
+                            add_sen.set(add_sen.getA(), kousa_point);
+                        }
+                    }
+                }
+            }
+        }
+
+        add_sen.set(s0.getB(), add_sen.getB());
+        return add_sen;
     }
 }
 
