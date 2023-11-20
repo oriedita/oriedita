@@ -30,7 +30,7 @@ public class MouseHandlerAxiom5 extends BaseMouseHandlerInputRestricted{
         Point p = new Point();
         p.set(d.getCamera().TV2object(p0));
 
-        // First point
+        // First point (target point)
         if(d.getLineStep().isEmpty()){
             Point closestPoint = d.getClosestPoint(p);
             if (p.distance(closestPoint) < d.getSelectionDistance()) {
@@ -39,7 +39,7 @@ public class MouseHandlerAxiom5 extends BaseMouseHandlerInputRestricted{
             }
         }
 
-        // First line
+        // First line (target segment)
         // Won't accept any line that contains the first point, either containing it or meeting it by extension
         if(d.getLineStep().size() == 1){
             LineSegment closestLineSegment = new LineSegment();
@@ -52,14 +52,10 @@ public class MouseHandlerAxiom5 extends BaseMouseHandlerInputRestricted{
             return;
         }
 
-        // Second point
-        // Won't accept any point that are at nowhere point-clickable, or inside / an extension of clicked line,
+        // Second point (pivot point)
         if(d.getLineStep().size() == 2){
             Point closestPoint = d.getClosestPoint(p);
-            LineSegment temp = new LineSegment(closestPoint, d.getLineStep().get(1).determineClosestEndpoint(closestPoint));
-            if (p.distance(closestPoint) < d.getSelectionDistance() &&
-                    OritaCalc.determineLineSegmentDistance(closestPoint, d.getLineStep().get(1)) > Epsilon.UNKNOWN_1EN4 &&
-                    OritaCalc.isLineSegmentParallel(new StraightLine(temp), new StraightLine(d.getLineStep().get(1))) == OritaCalc.ParallelJudgement.NOT_PARALLEL) {
+            if (p.distance(closestPoint) < d.getSelectionDistance()) {
                 d.lineStepAdd(new LineSegment(closestPoint, closestPoint, d.getLineColor()));
                 return;
             }
@@ -132,38 +128,68 @@ public class MouseHandlerAxiom5 extends BaseMouseHandlerInputRestricted{
     }
     public void drawCircleAndLineSegmentBisectors(Circle cir, LineSegment s) {
         if(cir.getR() > Epsilon.UNKNOWN_1EN7){
-            double length_a = OritaCalc.determineLineSegmentDistance(cir.determineCenter(), s); //Distance between the center of a straight line and a circle
+            LineSegment secondTemp = new LineSegment(d.getLineStep().get(2).getA(), d.getLineStep().get(1).determineClosestEndpoint(d.getLineStep().get(2).getA()));
+            double length_a; //Distance between the center of a circle and target segment
+
+            // If pivot point is within / extension of the target segment ()
+            if(OritaCalc.isLineSegmentParallel(new StraightLine(secondTemp), new StraightLine(d.getLineStep().get(1))) == OritaCalc.ParallelJudgement.PARALLEL_EQUAL){
+                length_a = 0.0;
+            } else{
+                length_a = OritaCalc.determineLineSegmentDistance(cir.determineCenter(), s);
+            }
 
             // intersect at one point or not at all
             if(Math.abs(length_a - cir.getR()) < Epsilon.UNKNOWN_1EN6 || length_a > cir.getR()){ d.getLineStep().clear(); }
             else {  // intersect at two points
                 LineSegment temp = new LineSegment(d.getLineStep().get(0).getA(), d.getLineStep().get(1).determineClosestEndpoint(d.getLineStep().get(0).getA()));
                 LineSegment l = new LineSegment(d.getLineStep().get(0).getA(), d.getLineStep().get(2).getA());
-                Point center = cir.determineCenter();
-
-                Point projectPoint = new Point(OritaCalc.findProjection(d.getLineStep().get(1), center));
-                LineSegment projectLine = new LineSegment(center, projectPoint);
+                Point center = new Point();
+                Point projectPoint = new Point();
+                LineSegment projectLine = new LineSegment();
+                LineSegment l1 = new LineSegment();
+                LineSegment l2 = new LineSegment();
 
                 double length_b = Math.sqrt((cir.getR() * cir.getR()) - (length_a * length_a));
 
+                // If pivot point is within / extension of the target segment
+                if(OritaCalc.isLineSegmentParallel(new StraightLine(secondTemp), new StraightLine(d.getLineStep().get(1))) == OritaCalc.ParallelJudgement.PARALLEL_EQUAL){
+                    center.set(d.getLineStep().get(2).getA());
 
-                LineSegment l1 = new LineSegment(projectPoint, OritaCalc.findProjection(OritaCalc.moveParallel(projectLine, length_b), projectPoint));
-//                    d.lineStepAdd(new LineSegment(center, l1.getB(), LineColor.ORANGE_4));
-                l1.set(new LineSegment(center, l1.getB()));
+                    // If pivot point is outside the target segment
+                    if(d.getLineStep().get(1).determineLength() - OritaCalc.distance(d.getLineStep().get(1).getA(), center) > 0 &&
+                            OritaCalc.distance(d.getLineStep().get(1).getB(), center) - d.getLineStep().get(1).determineLength() > 0){
+                        l1.set(new LineSegment(center, OritaCalc.point_rotate(center, d.getLineStep().get(1).getA(), 180)));
+                    } else{
+                        l1.set(new LineSegment(center, d.getLineStep().get(1).getA()));
+                    }
+                    if(d.getLineStep().get(1).determineLength() - OritaCalc.distance(d.getLineStep().get(1).getB(), center) > 0 &&
+                            OritaCalc.distance(d.getLineStep().get(1).getA(), center) - d.getLineStep().get(1).determineLength() > 0){
+                        l2.set(new LineSegment(center, OritaCalc.point_rotate(center, d.getLineStep().get(1).getB(), 180)));
+                    } else{
+                        l2.set(new LineSegment(center, d.getLineStep().get(1).getB()));
+                    }
 
-                LineSegment l2 = new LineSegment(projectPoint, OritaCalc.findProjection(OritaCalc.moveParallel(projectLine, -length_b), projectPoint));
-//                    d.lineStepAdd(new LineSegment(center, l2.getB(), LineColor.ORANGE_4));
-                l2.set(new LineSegment(center, l2.getB()));
+                } else{
+                    center.set(cir.determineCenter());
+                    projectPoint.set(OritaCalc.findProjection(d.getLineStep().get(1), center));
+                    projectLine.set(center, projectPoint);
+
+                    l1 = new LineSegment(projectPoint, OritaCalc.findProjection(OritaCalc.moveParallel(projectLine, length_b), projectPoint));
+                    l1.set(new LineSegment(center, l1.getB()));
+
+                    l2 = new LineSegment(projectPoint, OritaCalc.findProjection(OritaCalc.moveParallel(projectLine, -length_b), projectPoint));
+                    l2.set(new LineSegment(center, l2.getB()));
+                }
 
                 Point center1 = new Point(OritaCalc.center(center, l1.determineFurthestEndpoint(center), l.determineFurthestEndpoint(center)));
                 Point center2 = new Point(OritaCalc.center(center, l2.determineFurthestEndpoint(center), l.determineFurthestEndpoint(center)));
 
-                // if first point is not contained in/extension of first line
+                // if target point is not contained in/extension of target segment
                 if(OritaCalc.isLineSegmentParallel(new StraightLine(temp), new StraightLine(d.getLineStep().get(1))) == OritaCalc.ParallelJudgement.NOT_PARALLEL){
                     d.lineStepAdd(new LineSegment(center, center1, LineColor.PURPLE_8));
                     d.lineStepAdd(new LineSegment(center, center2, LineColor.PURPLE_8));
                 }
-                // if first point is contained in/extension of first line
+                // if target point is contained in/extension of target segment
                 if(OritaCalc.isLineSegmentParallel(new StraightLine(l1), new StraightLine(l)) == OritaCalc.ParallelJudgement.PARALLEL_EQUAL){
                     d.lineStepAdd(new LineSegment(center, center2, LineColor.PURPLE_8));
                     d.lineStepAdd(new LineSegment(center, center2, LineColor.PURPLE_8));
