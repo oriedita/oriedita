@@ -171,6 +171,15 @@ public class MouseHandlerAxiom5 extends BaseMouseHandlerInputRestricted{
                     } else{
                         l2.set(new LineSegment(center, targetSegment.getB()));
                     }
+                } else {
+                    if(OritaCalc.distance(pivot, targetSegment.getA()) < Epsilon.UNKNOWN_1EN4){
+                        l1.set(new LineSegment(center, OritaCalc.point_rotate(center, targetSegment.getB(), 180)));
+                        l2.set(new LineSegment(center, targetSegment.getB()));
+                    }
+                    if(OritaCalc.distance(pivot, targetSegment.getB()) < Epsilon.UNKNOWN_1EN4){
+                        l2.set(new LineSegment(center, OritaCalc.point_rotate(center, targetSegment.getA(), 180)));
+                        l1.set(new LineSegment(center, targetSegment.getA()));
+                    }
                 }
 
                 // Center points for placeholders to draw bisecting indicators on
