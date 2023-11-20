@@ -88,7 +88,7 @@ public class MouseHandlerAxiom5 extends BaseMouseHandlerInputRestricted{
         // first 3 are clicked
         if(d.getLineStep().size() == 3){
             Circle cir = new Circle(d.getLineStep().get(2).getA(), OritaCalc.distance(d.getLineStep().get(0).getA(), d.getLineStep().get(2).getA()), LineColor.PURPLE_8);
-            drawCircleAndLineSegmentBisectors(cir, d.getLineStep().get(1));
+            drawCircleAndLineSegmentBisectors(cir, d.getLineStep().get(0).getA(), d.getLineStep().get(1), d.getLineStep().get(2).getA());
         }
 
         // Case 1: Click on the purple indicators auto expand the bisector from the purple indicators to the nearest lines
@@ -126,23 +126,23 @@ public class MouseHandlerAxiom5 extends BaseMouseHandlerInputRestricted{
             d.getLineStep().clear();
         }
     }
-    public void drawCircleAndLineSegmentBisectors(Circle cir, LineSegment s) {
+    public void drawCircleAndLineSegmentBisectors(Circle cir, Point target, LineSegment targetSegment, Point pivot) {
         if(cir.getR() > Epsilon.UNKNOWN_1EN7){
-            LineSegment secondTemp = new LineSegment(d.getLineStep().get(2).getA(), d.getLineStep().get(1).determineClosestEndpoint(d.getLineStep().get(2).getA()));
+            LineSegment secondTemp = new LineSegment(pivot, targetSegment.determineClosestEndpoint(pivot));
             double length_a; //Distance between the center of a circle and target segment
 
             // If pivot point is within / extension of the target segment ()
-            if(OritaCalc.isLineSegmentParallel(new StraightLine(secondTemp), new StraightLine(d.getLineStep().get(1))) == OritaCalc.ParallelJudgement.PARALLEL_EQUAL){
+            if(OritaCalc.isLineSegmentParallel(new StraightLine(secondTemp), new StraightLine(targetSegment)) == OritaCalc.ParallelJudgement.PARALLEL_EQUAL){
                 length_a = 0.0;
             } else{
-                length_a = OritaCalc.determineLineSegmentDistance(cir.determineCenter(), s);
+                length_a = OritaCalc.determineLineSegmentDistance(cir.determineCenter(), targetSegment);
             }
 
             // intersect at one point or not at all
             if(Math.abs(length_a - cir.getR()) < Epsilon.UNKNOWN_1EN6 || length_a > cir.getR()){ d.getLineStep().clear(); }
             else {  // intersect at two points
-                LineSegment temp = new LineSegment(d.getLineStep().get(0).getA(), d.getLineStep().get(1).determineClosestEndpoint(d.getLineStep().get(0).getA()));
-                LineSegment l = new LineSegment(d.getLineStep().get(0).getA(), d.getLineStep().get(2).getA());
+                LineSegment temp = new LineSegment(target, targetSegment.determineClosestEndpoint(target));
+                LineSegment l = new LineSegment(target, pivot);
                 Point center = new Point();
                 Point projectPoint = new Point();
                 LineSegment projectLine = new LineSegment();
@@ -152,26 +152,29 @@ public class MouseHandlerAxiom5 extends BaseMouseHandlerInputRestricted{
                 double length_b = Math.sqrt((cir.getR() * cir.getR()) - (length_a * length_a));
 
                 // If pivot point is within / extension of the target segment
-                if(OritaCalc.isLineSegmentParallel(new StraightLine(secondTemp), new StraightLine(d.getLineStep().get(1))) == OritaCalc.ParallelJudgement.PARALLEL_EQUAL){
-                    center.set(d.getLineStep().get(2).getA());
+                if(OritaCalc.isLineSegmentParallel(new StraightLine(secondTemp), new StraightLine(targetSegment)) == OritaCalc.ParallelJudgement.PARALLEL_EQUAL){
+                    center.set(pivot);
+
+                    boolean isOutsideSegmentA = targetSegment.determineLength() > OritaCalc.distance(targetSegment.getA(), center) &&
+                            OritaCalc.distance(targetSegment.getB(), center) > targetSegment.determineLength();
+                    boolean isOutsideSegmentB = targetSegment.determineLength() > OritaCalc.distance(targetSegment.getB(), center) &&
+                            OritaCalc.distance(targetSegment.getA(), center) > targetSegment.determineLength();
 
                     // If pivot point is outside the target segment
-                    if(d.getLineStep().get(1).determineLength() - OritaCalc.distance(d.getLineStep().get(1).getA(), center) > 0 &&
-                            OritaCalc.distance(d.getLineStep().get(1).getB(), center) - d.getLineStep().get(1).determineLength() > 0){
-                        l1.set(new LineSegment(center, OritaCalc.point_rotate(center, d.getLineStep().get(1).getA(), 180)));
+                    if(isOutsideSegmentA){
+                        l1.set(new LineSegment(center, OritaCalc.point_rotate(center, targetSegment.getB(), 180)));
                     } else{
-                        l1.set(new LineSegment(center, d.getLineStep().get(1).getA()));
+                        l1.set(new LineSegment(center, targetSegment.getA()));
                     }
-                    if(d.getLineStep().get(1).determineLength() - OritaCalc.distance(d.getLineStep().get(1).getB(), center) > 0 &&
-                            OritaCalc.distance(d.getLineStep().get(1).getA(), center) - d.getLineStep().get(1).determineLength() > 0){
-                        l2.set(new LineSegment(center, OritaCalc.point_rotate(center, d.getLineStep().get(1).getB(), 180)));
+                    if(isOutsideSegmentB){
+                        l2.set(new LineSegment(center, OritaCalc.point_rotate(center, targetSegment.getA(), 180)));
                     } else{
-                        l2.set(new LineSegment(center, d.getLineStep().get(1).getB()));
+                        l2.set(new LineSegment(center, targetSegment.getB()));
                     }
 
                 } else{
                     center.set(cir.determineCenter());
-                    projectPoint.set(OritaCalc.findProjection(d.getLineStep().get(1), center));
+                    projectPoint.set(OritaCalc.findProjection(targetSegment, center));
                     projectLine.set(center, projectPoint);
 
                     l1 = new LineSegment(projectPoint, OritaCalc.findProjection(OritaCalc.moveParallel(projectLine, length_b), projectPoint));
@@ -185,7 +188,7 @@ public class MouseHandlerAxiom5 extends BaseMouseHandlerInputRestricted{
                 Point center2 = new Point(OritaCalc.center(center, l2.determineFurthestEndpoint(center), l.determineFurthestEndpoint(center)));
 
                 // if target point is not contained in/extension of target segment
-                if(OritaCalc.isLineSegmentParallel(new StraightLine(temp), new StraightLine(d.getLineStep().get(1))) == OritaCalc.ParallelJudgement.NOT_PARALLEL){
+                if(OritaCalc.isLineSegmentParallel(new StraightLine(temp), new StraightLine(targetSegment)) == OritaCalc.ParallelJudgement.NOT_PARALLEL){
                     d.lineStepAdd(new LineSegment(center, center1, LineColor.PURPLE_8));
                     d.lineStepAdd(new LineSegment(center, center2, LineColor.PURPLE_8));
                 }
