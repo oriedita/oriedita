@@ -186,6 +186,7 @@ public class MouseHandlerAxiom5 extends BaseMouseHandlerInputRestricted{
                 Point center1 = new Point(OritaCalc.center(center, l1.determineFurthestEndpoint(center), l.determineFurthestEndpoint(center)));
                 Point center2 = new Point(OritaCalc.center(center, l2.determineFurthestEndpoint(center), l.determineFurthestEndpoint(center)));
 
+                // If l and l1/l2 are aligned, get center from triangle formed by center, and furthest points of l1 and l2
                 if(OritaCalc.isLineSegmentParallel(new StraightLine(l.determineFurthestEndpoint(center), center), new StraightLine(center, l1.determineFurthestEndpoint(center))) == OritaCalc.ParallelJudgement.PARALLEL_EQUAL){
                     center1 = OritaCalc.center(l.determineFurthestEndpoint(center), l1.determineFurthestEndpoint(center), l2.determineFurthestEndpoint(center));
                 }
@@ -193,23 +194,29 @@ public class MouseHandlerAxiom5 extends BaseMouseHandlerInputRestricted{
                     center2 = OritaCalc.center(l.determineFurthestEndpoint(center), l1.determineFurthestEndpoint(center), l2.determineFurthestEndpoint(center));
                 }
 
-                LineSegment temp = new LineSegment(target, targetSegment.determineClosestEndpoint(target)); // for check alignment between target point and target segment
+                // If l1 and l2 are not aligned
+                if(OritaCalc.isLineSegmentParallel(new StraightLine(l1), new StraightLine(l2)) == OritaCalc.ParallelJudgement.NOT_PARALLEL){
+                    LineSegment temp = new LineSegment(target, targetSegment.determineClosestEndpoint(target)); // for check alignment between target point and target segment
 
-                // If target point is not within target segment span
-                if(OritaCalc.isLineSegmentParallel(new StraightLine(temp), new StraightLine(targetSegment)) == OritaCalc.ParallelJudgement.NOT_PARALLEL){
-                    d.lineStepAdd(new LineSegment(center, center1, LineColor.PURPLE_8));
-                    d.lineStepAdd(new LineSegment(center, center2, LineColor.PURPLE_8));
-                    return;
-                }
-                // If target point is within target segment span
-                if(OritaCalc.isLineSegmentParallel(new StraightLine(l1), new StraightLine(l)) == OritaCalc.ParallelJudgement.PARALLEL_EQUAL){
-                    d.lineStepAdd(new LineSegment(center, center2, LineColor.PURPLE_8));
-                    d.lineStepAdd(new LineSegment(center, center2, LineColor.PURPLE_8));
-                    return;
-                }
-                if(OritaCalc.isLineSegmentParallel(new StraightLine(l2), new StraightLine(l)) == OritaCalc.ParallelJudgement.PARALLEL_EQUAL){
-                    d.lineStepAdd(new LineSegment(center, center1, LineColor.PURPLE_8));
-                    d.lineStepAdd(new LineSegment(center, center1, LineColor.PURPLE_8));
+                    // If target point is not within target segment span
+                    if(OritaCalc.isLineSegmentParallel(new StraightLine(temp), new StraightLine(targetSegment)) == OritaCalc.ParallelJudgement.NOT_PARALLEL){
+                        d.lineStepAdd(new LineSegment(center, center1, LineColor.PURPLE_8));
+                        d.lineStepAdd(new LineSegment(center, center2, LineColor.PURPLE_8));
+                        return;
+                    }
+                    // If target point is within target segment span
+                    if(OritaCalc.isLineSegmentParallel(new StraightLine(l1), new StraightLine(l)) == OritaCalc.ParallelJudgement.PARALLEL_EQUAL){
+                        d.lineStepAdd(new LineSegment(center, center2, LineColor.PURPLE_8));
+                        d.lineStepAdd(new LineSegment(center, center2, LineColor.PURPLE_8));
+                        return;
+                    }
+                    if(OritaCalc.isLineSegmentParallel(new StraightLine(l2), new StraightLine(l)) == OritaCalc.ParallelJudgement.PARALLEL_EQUAL){
+                        d.lineStepAdd(new LineSegment(center, center1, LineColor.PURPLE_8));
+                        d.lineStepAdd(new LineSegment(center, center1, LineColor.PURPLE_8));
+                    }
+                } else{ // If l1 and l2 are aligned, it means that both the target and pivot points must be within target segment span
+                    d.lineStepAdd(new LineSegment(pivot, OritaCalc.findProjection(OritaCalc.moveParallel(l1, 25.0), pivot), LineColor.PURPLE_8));
+                    d.lineStepAdd(new LineSegment(pivot, OritaCalc.findProjection(OritaCalc.moveParallel(l2, -25.0), pivot), LineColor.PURPLE_8));
                 }
             }
         }
