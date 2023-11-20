@@ -104,7 +104,7 @@ public class MouseHandlerAxiom5 extends BaseMouseHandlerInputRestricted{
                 s1.set(extendToIntersectionPoint_2(s1));
                 d.addLineSegment(s1);
 
-                LineSegment s2 = new LineSegment(s1.getB(), OritaCalc.point_rotate(s1.getB(), s1.getA(), 180), d.getLineColor());
+                LineSegment s2 = new LineSegment(s1.getB(), OritaCalc.point_rotate(s1.getA(), s1.getB(), 180), d.getLineColor());
                 s2.set(extendToIntersectionPoint_2(s2));
                 d.addLineSegment(s2);
 
