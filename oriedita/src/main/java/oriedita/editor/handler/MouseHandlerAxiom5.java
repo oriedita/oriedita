@@ -171,7 +171,7 @@ public class MouseHandlerAxiom5 extends BaseMouseHandlerInputRestricted{
                     } else{
                         l2.set(new LineSegment(center, targetSegment.getB()));
                     }
-                } else {
+                } else { // If pivot point is within the target segment span AND touching one of the ends of target segment
                     if(OritaCalc.distance(pivot, targetSegment.getA()) < Epsilon.UNKNOWN_1EN4){
                         l1.set(new LineSegment(center, OritaCalc.point_rotate(center, targetSegment.getB(), 180)));
                         l2.set(new LineSegment(center, targetSegment.getB()));
