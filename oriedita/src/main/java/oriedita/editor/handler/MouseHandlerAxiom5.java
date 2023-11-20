@@ -44,10 +44,8 @@ public class MouseHandlerAxiom5 extends BaseMouseHandlerInputRestricted{
         if(d.getLineStep().size() == 1){
             LineSegment closestLineSegment = new LineSegment();
             closestLineSegment.set(d.getClosestLineSegment(p));
-            LineSegment temp = new LineSegment(d.getLineStep().get(0).getA(), closestLineSegment.determineClosestEndpoint(d.getLineStep().get(0).getA()));
 
-            if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.getSelectionDistance() &&
-                    OritaCalc.isLineSegmentParallel(new StraightLine(temp), new StraightLine(closestLineSegment)) == OritaCalc.ParallelJudgement.NOT_PARALLEL) {
+            if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.getSelectionDistance()) {
                 closestLineSegment.setColor(LineColor.GREEN_6);
                 d.lineStepAdd(closestLineSegment);
             }
@@ -111,7 +109,7 @@ public class MouseHandlerAxiom5 extends BaseMouseHandlerInputRestricted{
                 s1.set(extendToIntersectionPoint_2(s1));
                 d.addLineSegment(s1);
 
-                LineSegment s2 = new LineSegment(s1.getB(), OritaCalc.point_rotate(s1.getA(), s1.getB(), 180), d.getLineColor());
+                LineSegment s2 = new LineSegment(s1.getB(), OritaCalc.point_rotate(s1.getB(), s1.getA(), 180), d.getLineColor());
                 s2.set(extendToIntersectionPoint_2(s2));
                 d.addLineSegment(s2);
 
@@ -139,6 +137,7 @@ public class MouseHandlerAxiom5 extends BaseMouseHandlerInputRestricted{
             // intersect at one point or not at all
             if(Math.abs(length_a - cir.getR()) < Epsilon.UNKNOWN_1EN6 || length_a > cir.getR()){ d.getLineStep().clear(); }
             else {  // intersect at two points
+                LineSegment temp = new LineSegment(d.getLineStep().get(0).getA(), d.getLineStep().get(1).determineClosestEndpoint(d.getLineStep().get(0).getA()));
                 LineSegment l = new LineSegment(d.getLineStep().get(0).getA(), d.getLineStep().get(2).getA());
                 Point center = cir.determineCenter();
 
@@ -147,23 +146,34 @@ public class MouseHandlerAxiom5 extends BaseMouseHandlerInputRestricted{
 
                 double length_b = Math.sqrt((cir.getR() * cir.getR()) - (length_a * length_a));
 
+
                 LineSegment l1 = new LineSegment(projectPoint, OritaCalc.findProjection(OritaCalc.moveParallel(projectLine, length_b), projectPoint));
-//                d.lineStepAdd(new LineSegment(center, l1.getB(), LineColor.ORANGE_4));
+//                    d.lineStepAdd(new LineSegment(center, l1.getB(), LineColor.ORANGE_4));
                 l1.set(new LineSegment(center, l1.getB()));
 
                 LineSegment l2 = new LineSegment(projectPoint, OritaCalc.findProjection(OritaCalc.moveParallel(projectLine, -length_b), projectPoint));
-//                d.lineStepAdd(new LineSegment(center, l2.getB(), LineColor.ORANGE_4));
+//                    d.lineStepAdd(new LineSegment(center, l2.getB(), LineColor.ORANGE_4));
                 l2.set(new LineSegment(center, l2.getB()));
 
                 Point center1 = new Point(OritaCalc.center(center, l1.determineFurthestEndpoint(center), l.determineFurthestEndpoint(center)));
                 Point center2 = new Point(OritaCalc.center(center, l2.determineFurthestEndpoint(center), l.determineFurthestEndpoint(center)));
 
-                d.lineStepAdd(new LineSegment(center, center1, LineColor.PURPLE_8));
-                d.lineStepAdd(new LineSegment(center, center2, LineColor.PURPLE_8));
+                // if first point is not contained in/extension of first line
+                if(OritaCalc.isLineSegmentParallel(new StraightLine(temp), new StraightLine(d.getLineStep().get(1))) == OritaCalc.ParallelJudgement.NOT_PARALLEL){
+                    d.lineStepAdd(new LineSegment(center, center1, LineColor.PURPLE_8));
+                    d.lineStepAdd(new LineSegment(center, center2, LineColor.PURPLE_8));
+                }
+                // if first point is contained in/extension of first line
+                if(OritaCalc.isLineSegmentParallel(new StraightLine(l1), new StraightLine(l)) == OritaCalc.ParallelJudgement.PARALLEL_EQUAL){
+                    d.lineStepAdd(new LineSegment(center, center2, LineColor.PURPLE_8));
+                    d.lineStepAdd(new LineSegment(center, center2, LineColor.PURPLE_8));
+                }
+                if(OritaCalc.isLineSegmentParallel(new StraightLine(l2), new StraightLine(l)) == OritaCalc.ParallelJudgement.PARALLEL_EQUAL){
+                    d.lineStepAdd(new LineSegment(center, center1, LineColor.PURPLE_8));
+                    d.lineStepAdd(new LineSegment(center, center1, LineColor.PURPLE_8));
+                }
             }
         }
-
-
     }
 
     public LineSegment extendToIntersectionPoint_2(LineSegment s0) {//Extend s0 from point b in the opposite direction of a to the point where it intersects another polygonal line. Returns a new line // Returns the same line if it does not intersect another polygonal line
