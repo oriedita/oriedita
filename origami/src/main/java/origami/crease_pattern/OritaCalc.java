@@ -646,6 +646,11 @@ public class OritaCalc {
         return isLineSegmentParallel(t1, t2, Epsilon.UNKNOWN_01);
     }
 
+    //A function that determines whether two straight lines are parallel.
+    public static ParallelJudgement isLineSegmentParallel(LineSegment s1, LineSegment s2) {
+        return isLineSegmentParallel(new StraightLine(s1), new StraightLine(s2));
+    }
+
     //A function that determines whether two line segments are parallel.
     public static ParallelJudgement isLineSegmentParallel(LineSegment s1, LineSegment s2, double r) {
         return isLineSegmentParallel(lineSegmentToStraightLine(s1), lineSegmentToStraightLine(s2), r);

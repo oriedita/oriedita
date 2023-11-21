@@ -192,7 +192,8 @@ public enum ActionType {
     restrictedAngleABCSetAction("restrictedAngleABCSetAction"),
     restrictedAngleSetDEFAction("restrictedAngleSetDEFAction"),
     addColorConstraintAction("addColorConstraintAction"),
-    axiom5Action("axiom5Action");
+    axiom5Action("axiom5Action"),
+    axiom7Action("axiom7Action");
 
 
     static final Map<String, ActionType> actionMap;

@@ -109,6 +109,15 @@
               <text value="Ax5"/>
             </properties>
           </component>
+          <component id="b08d0" class="javax.swing.JButton" binding="axiom7Button">
+            <constraints>
+              <grid row="4" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties>
+              <text value="Ax7"/>
+            </properties>
+          </component>
         </children>
       </grid>
     </children>
