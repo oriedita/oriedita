@@ -132,7 +132,7 @@ public class MouseHandlerAxiom5 extends BaseMouseHandlerInputRestricted{
 
             // If pivot point is not within the target segment span
             if(OritaCalc.isLineSegmentParallel(secondTemp, targetSegment) != OritaCalc.ParallelJudgement.PARALLEL_EQUAL){
-                length_a = OritaCalc.determineLineSegmentDistance(center, targetSegment);
+                length_a = OritaCalc.distance(center, OritaCalc.findProjection(targetSegment, center));
             }
 
             // Intersect at one point or not at all
