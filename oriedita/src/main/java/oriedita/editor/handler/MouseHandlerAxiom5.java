@@ -135,9 +135,14 @@ public class MouseHandlerAxiom5 extends BaseMouseHandlerInputRestricted{
                 length_a = OritaCalc.distance(center, OritaCalc.findProjection(targetSegment, center));
             }
 
-            // Intersect at one point or not at all
-            if(Math.abs(length_a - radius) < Epsilon.UNKNOWN_1EN7 || length_a > radius){ d.getLineStep().clear(); }
-            else {  // Intersect at two points
+            // Intersect at one point
+            if(Math.abs(length_a - radius) < Epsilon.UNKNOWN_1EN7){
+                d.addLineSegment(new LineSegment(pivot, target, d.getLineColor()));
+                d.record();
+                d.getLineStep().clear();
+            } else if (length_a > radius) { // Doesn't intersect
+                d.getLineStep().clear();
+            } else {  // Intersect at two points
                 LineSegment l = new LineSegment(target, pivot);
                 Point projectPoint = new Point(OritaCalc.findProjection(targetSegment, center));
                 LineSegment projectLine = new LineSegment(center, projectPoint);
@@ -196,7 +201,7 @@ public class MouseHandlerAxiom5 extends BaseMouseHandlerInputRestricted{
                 }
 
                 if(OritaCalc.distance(center1, OritaCalc.findProjection(targetSegment, center1)) > Epsilon.UNKNOWN_1EN7 ||
-                        OritaCalc.distance(center1, OritaCalc.findProjection(targetSegment, center2)) > Epsilon.UNKNOWN_1EN7){
+                        OritaCalc.distance(center2, OritaCalc.findProjection(targetSegment, center2)) > Epsilon.UNKNOWN_1EN7){
                     LineSegment temp = new LineSegment(target, targetSegment.determineClosestEndpoint(target)); // for check alignment between target point and target segment
 
                     // If target point is not within target segment span
