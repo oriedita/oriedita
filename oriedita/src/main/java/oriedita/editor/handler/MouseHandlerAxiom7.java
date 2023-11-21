@@ -61,7 +61,7 @@ public class MouseHandlerAxiom7 extends BaseMouseHandlerInputRestricted{
             // Don't allow segment that is parallel to target segment
             if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.getSelectionDistance() &&
                     OritaCalc.isLineSegmentParallel(closestLineSegment, d.getLineStep().get(1)) == OritaCalc.ParallelJudgement.NOT_PARALLEL) {
-                closestLineSegment.setColor(LineColor.GREEN_6);
+                closestLineSegment.setColor(LineColor.ORANGE_4);
                 d.lineStepAdd(closestLineSegment);
             }
             return;
