@@ -111,11 +111,9 @@ public class MouseHandlerAxiom7 extends BaseMouseHandlerInputRestricted{
                 if(d1 < d2){
                     s2.set(new LineSegment(d.getLineStep().get(3).getA(), d.getLineStep().get(3).getB()));
                     s1.set(s2);
-                    s1.set(fullExtendUntilHit(d.getLineStep().get(3).getA(), s1));
                 } else {
                     s2.set(new LineSegment(d.getLineStep().get(4).getA(), d.getLineStep().get(4).getB()));
                     s1.set(s2);
-                    s1.set(fullExtendUntilHit(d.getLineStep().get(4).getA(), s1));
                 }
 
                 s2.set(fullExtendUntilHit(s2.getB(), new LineSegment(s2.getB(), OritaCalc.point_rotate(s2.getA(), s2.getB(), 180), d.getLineColor())));
