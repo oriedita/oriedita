@@ -104,22 +104,18 @@ public class MouseHandlerAxiom7 extends BaseMouseHandlerInputRestricted{
                     OritaCalc.determineLineSegmentDistance(p, d.getLineStep().get(4)) < d.getSelectionDistance()) {
                 double d1 = OritaCalc.distance(p, d.getLineStep().get(3).getB());
                 double d2 = OritaCalc.distance(p, d.getLineStep().get(4).getB());
-
-                LineSegment s1 = new LineSegment();
-                LineSegment s2 = new LineSegment();
+                LineSegment s = new LineSegment();
 
                 if(d1 < d2){
-                    s2.set(new LineSegment(d.getLineStep().get(3).getA(), d.getLineStep().get(3).getB()));
-                    s1.set(s2);
+                    s.set(new LineSegment(d.getLineStep().get(3).getA(), d.getLineStep().get(3).getB()));
                 } else {
-                    s2.set(new LineSegment(d.getLineStep().get(4).getA(), d.getLineStep().get(4).getB()));
-                    s1.set(s2);
+                    s.set(new LineSegment(d.getLineStep().get(4).getA(), d.getLineStep().get(4).getB()));
                 }
 
-                s2.set(fullExtendUntilHit(s2.getB(), new LineSegment(s2.getB(), OritaCalc.point_rotate(s2.getA(), s2.getB(), 180), d.getLineColor())));
+                s.set(s.getB(), s.getA(), d.getLineColor());
+                s.set(fullExtendUntilHit(s));
 
-                d.addLineSegment(s1);
-                d.addLineSegment(s2);
+                d.addLineSegment(s);
                 d.record();
                 d.getLineStep().clear();
             }
@@ -144,8 +140,8 @@ public class MouseHandlerAxiom7 extends BaseMouseHandlerInputRestricted{
         if (extendLine != null) {
             Point mid = OritaCalc.midPoint(target.getA(), OritaCalc.findIntersection(extendLine, targetSegment));
 
-            LineSegment s1 = fullExtendUntilHit(mid, new LineSegment(mid, OritaCalc.findProjection(OritaCalc.moveParallel(extendLine, 25), mid), LineColor.PURPLE_8));
-            LineSegment s2 = fullExtendUntilHit(mid, new LineSegment(mid, OritaCalc.findProjection(OritaCalc.moveParallel(extendLine, -25), mid), LineColor.PURPLE_8));
+            LineSegment s1 = fullExtendUntilHit(new LineSegment(mid, OritaCalc.findProjection(OritaCalc.moveParallel(extendLine, 25), mid), LineColor.PURPLE_8));
+            LineSegment s2 = fullExtendUntilHit(new LineSegment(mid, OritaCalc.findProjection(OritaCalc.moveParallel(extendLine, -25), mid), LineColor.PURPLE_8));
 
             d.lineStepAdd(s1);
             d.lineStepAdd(s2);
@@ -239,7 +235,8 @@ public class MouseHandlerAxiom7 extends BaseMouseHandlerInputRestricted{
         return null;
     }
 
-    public LineSegment fullExtendUntilHit(Point point, LineSegment s0){
+    public LineSegment fullExtendUntilHit(LineSegment s0){
+        Point point = s0.getA();
         s0.set(extendToIntersectionPoint_2(s0));
         s0.set(point, s0.determineFurthestEndpoint(point));
         return s0;
