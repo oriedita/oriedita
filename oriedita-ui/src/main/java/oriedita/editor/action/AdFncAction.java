@@ -2,10 +2,7 @@ package oriedita.editor.action;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.inject.Named;
 import oriedita.editor.FrameProvider;
-import oriedita.editor.canvas.CreasePattern_Worker;
-import oriedita.editor.databinding.ApplicationModel;
 import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.service.ButtonService;
 import oriedita.editor.swing.dialog.OpenFrame;
@@ -24,18 +21,11 @@ public class AdFncAction extends AbstractOrieditaAction{
     FrameProvider frameProvider;
 
     @Inject
-    @Named("mainCreasePattern_Worker")
-    CreasePattern_Worker mainCreasePatternWorker;
-
-    @Inject
     ButtonService buttonService;
-
-    @Inject
-    ApplicationModel applicationModel;
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        openFrame = new OpenFrame("additionalFrame", frameProvider.get(), canvasModel, mainCreasePatternWorker, buttonService, applicationModel);
+        openFrame = new OpenFrame("additionalFrame", frameProvider.get(), buttonService);
 
         openFrame.setData(null, canvasModel);
         openFrame.setLocationRelativeTo(frameProvider.get());

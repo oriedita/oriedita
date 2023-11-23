@@ -641,9 +641,79 @@ public class OritaCalc {
 
     }
 
+    public static LineSegment extendToIntersectionPoint_2(FoldLineSet foldLineSet, LineSegment s0) {//Extend s0 from point b in the opposite direction of a to the point where it intersects another polygonal line. Returns a new line // Returns the same line if it does not intersect another polygonal line
+        LineSegment add_sen = new LineSegment();
+        add_sen.set(s0);
+
+        Point kousa_point = new Point(1000000.0, 1000000.0); //この方法だと、エラーの原因になりうる。本当なら全線分のx_max、y_max以上の点を取ればいい。今後修正予定20161120
+        double kousa_point_distance = kousa_point.distance(add_sen.getA());
+
+        StraightLine tyoku1 = new StraightLine(add_sen.getA(), add_sen.getB());
+        StraightLine.Intersection i_intersection_flg;//元の線分を直線としたものと、他の線分の交差状態
+        LineSegment.Intersection i_lineSegment_intersection_flg;//元の線分と、他の線分の交差状態
+
+        for (int i = 1; i <= foldLineSet.getTotal(); i++) {
+            i_intersection_flg = tyoku1.lineSegment_intersect_reverse_detail(foldLineSet.get(i));//0=この直線は与えられた線分と交差しない、1=X型で交差する、2=T型で交差する、3=線分は直線に含まれる。
+            i_lineSegment_intersection_flg = OritaCalc.determineLineSegmentIntersectionSweet(s0, foldLineSet.get(i), Epsilon.UNKNOWN_1EN5, Epsilon.UNKNOWN_1EN5);//20180408なぜかこの行の様にs0のままだと、i_senbun_kousa_flgがおかしくならない。
+
+            if (i_intersection_flg.isIntersecting() && !i_lineSegment_intersection_flg.isEndpointIntersection()) {
+                kousa_point.set(OritaCalc.findIntersection(tyoku1, foldLineSet.get(i)));
+                if (kousa_point.distance(add_sen.getA()) > Epsilon.UNKNOWN_1EN5) {
+                    if (kousa_point.distance(add_sen.getA()) < kousa_point_distance) {
+                        double d_kakudo = OritaCalc.angle(add_sen.getA(), add_sen.getB(), add_sen.getA(), kousa_point);
+                        if (d_kakudo < 1.0 || d_kakudo > 359.0) {
+                            kousa_point_distance = kousa_point.distance(add_sen.getA());
+                            add_sen.set(add_sen.getA(), kousa_point);
+                        }
+                    }
+                }
+
+            }
+
+            if (i_intersection_flg == StraightLine.Intersection.INCLUDED_3 && i_lineSegment_intersection_flg != LineSegment.Intersection.PARALLEL_EQUAL_31) {
+                kousa_point.set(foldLineSet.get(i).getA());
+                if (kousa_point.distance(add_sen.getA()) > Epsilon.UNKNOWN_1EN5) {
+                    if (kousa_point.distance(add_sen.getA()) < kousa_point_distance) {
+                        double d_kakudo = OritaCalc.angle(add_sen.getA(), add_sen.getB(), add_sen.getA(), kousa_point);
+                        if (d_kakudo < 1.0 || d_kakudo > 359.0) {
+                            kousa_point_distance = kousa_point.distance(add_sen.getA());
+                            add_sen.set(add_sen.getA(), kousa_point);
+                        }
+                    }
+                }
+
+                kousa_point.set(foldLineSet.get(i).getB());
+                if (kousa_point.distance(add_sen.getA()) > Epsilon.UNKNOWN_1EN5) {
+                    if (kousa_point.distance(add_sen.getA()) < kousa_point_distance) {
+                        double d_kakudo = OritaCalc.angle(add_sen.getA(), add_sen.getB(), add_sen.getA(), kousa_point);
+                        if (d_kakudo < 1.0 || d_kakudo > 359.0) {
+                            kousa_point_distance = kousa_point.distance(add_sen.getA());
+                            add_sen.set(add_sen.getA(), kousa_point);
+                        }
+                    }
+                }
+            }
+        }
+
+        add_sen.set(s0.getB(), add_sen.getB());
+        return add_sen;
+    }
+
+    public static LineSegment fullExtendUntilHit(FoldLineSet foldLineSet, LineSegment s0){
+        Point point = s0.getA();
+        s0.set(extendToIntersectionPoint_2(foldLineSet, s0));
+        s0.set(point, s0.determineFurthestEndpoint(point));
+        return s0;
+    }
+
     //A function that determines whether two straight lines are parallel.
     public static ParallelJudgement isLineSegmentParallel(StraightLine t1, StraightLine t2) {
         return isLineSegmentParallel(t1, t2, Epsilon.UNKNOWN_01);
+    }
+
+    //A function that determines whether two straight lines are parallel.
+    public static ParallelJudgement isLineSegmentParallel(LineSegment s1, LineSegment s2) {
+        return isLineSegmentParallel(new StraightLine(s1), new StraightLine(s2));
     }
 
     //A function that determines whether two line segments are parallel.

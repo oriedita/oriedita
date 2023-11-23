@@ -454,6 +454,8 @@ public class App {
             put(ActionType.lengthenCrease2Action, MouseMode.LENGTHEN_CREASE_SAME_COLOR_70);
             put(ActionType.foldableLineDrawAction, MouseMode.FOLDABLE_LINE_DRAW_71);
             put(ActionType.regularPolygonAction, MouseMode.POLYGON_SET_NO_CORNERS_29);
+            put(ActionType.axiom5Action, MouseMode.AXIOM_5);
+            put(ActionType.axiom7Action, MouseMode.AXIOM_7);
         }};
 
         for (Map.Entry<ActionType, MouseMode> entry : mouseModeWithAfterColorAndUnselectActions.entrySet()){
