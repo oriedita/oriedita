@@ -2,9 +2,7 @@ package oriedita.editor.swing.dialog;
 
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
-import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.canvas.MouseMode;
-import oriedita.editor.databinding.ApplicationModel;
 import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.service.ButtonService;
 import javax.swing.ImageIcon;
@@ -31,11 +29,11 @@ public class OpenFrame extends JDialog {
     private JButton del_lButton;
     private JButton del_l_XButton;
     private JPanel panel;
-    private ApplicationModel applicationModel;
+    private JButton axiom5Button;
+    private JButton axiom7Button;
 
-    public OpenFrame(String name, Frame owner, CanvasModel canvasModel, CreasePattern_Worker mainCreasePatternWorker, ButtonService buttonService, ApplicationModel applicationModel) {
+    public OpenFrame(String name, Frame owner, ButtonService buttonService) {
         super(owner, name);
-        this.applicationModel = applicationModel;
 
         setContentPane($$$getRootComponent$$$());
 
@@ -50,6 +48,8 @@ public class OpenFrame extends JDialog {
         buttonService.registerButton(del_lButton, "del_lAction");
         buttonService.registerButton(del_l_XButton, "del_l_XAction");
         buttonService.registerButton(selectAnd3ClickCheckBox, "selectAnd3ClickAction");
+        buttonService.registerButton(axiom5Button, "axiom5Action");
+        buttonService.registerButton(axiom7Button, "axiom7Action");
 
         pack();
         setResizable(false);
@@ -164,6 +164,20 @@ public class OpenFrame extends JDialog {
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         panel1.add(foldableLinePlusGridInputButton, gbc);
+        axiom5Button = new JButton();
+        axiom5Button.setText("Ax5");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 4;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        panel1.add(axiom5Button, gbc);
+        axiom7Button = new JButton();
+        axiom7Button.setText("Ax7");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 2;
+        gbc.gridy = 4;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        panel1.add(axiom7Button, gbc);
     }
 
     /**

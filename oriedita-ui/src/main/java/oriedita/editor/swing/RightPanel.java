@@ -237,11 +237,11 @@ public class RightPanel {
 
             canvasModel.setMouseMode(MouseMode.CIRCLE_CHANGE_COLOR_59);
         });
-        measuredLength1TextField.addActionListener(e -> measuresModel.setMeasuredLength1(StringOp.String2double(measuredLength1TextField.getText(), measuresModel.getMeasuredLength1())));
-        measuredLength2TextField.addActionListener(e -> measuresModel.setMeasuredLength2(StringOp.String2double(measuredLength2TextField.getText(), measuresModel.getMeasuredLength2())));
-        measuredAngle1TextField.addActionListener(e -> measuresModel.setMeasuredAngle1(StringOp.String2double(measuredAngle1TextField.getText(), measuresModel.getMeasuredAngle1())));
-        measuredAngle2TextField.addActionListener(e -> measuresModel.setMeasuredAngle2(StringOp.String2double(measuredAngle2TextField.getText(), measuresModel.getMeasuredAngle2())));
-        measuredAngle3TextField.addActionListener(e -> measuresModel.setMeasuredAngle3(StringOp.String2double(measuredAngle3TextField.getText(), measuresModel.getMeasuredAngle3())));
+        measuredLength1TextField.addMouseListener(new TextFieldTempPopupAdapter(measuredLength1TextField, "Copied"));
+        measuredLength2TextField.addMouseListener(new TextFieldTempPopupAdapter(measuredLength2TextField, "Copied"));
+        measuredAngle1TextField.addMouseListener(new TextFieldTempPopupAdapter(measuredAngle1TextField, "Copied"));
+        measuredAngle2TextField.addMouseListener(new TextFieldTempPopupAdapter(measuredAngle2TextField, "Copied"));
+        measuredAngle3TextField.addMouseListener(new TextFieldTempPopupAdapter(measuredAngle3TextField, "Copied"));
 
         ActionListener listener = e -> restrictedAngleSetDEFButton.doClick();
         angleDTextField.addActionListener(listener);
