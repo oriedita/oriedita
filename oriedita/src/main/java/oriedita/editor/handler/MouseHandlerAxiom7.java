@@ -8,7 +8,6 @@ import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
-import origami.crease_pattern.element.StraightLine;
 
 @ApplicationScoped
 @Handles(MouseMode.AXIOM_7)
@@ -102,18 +101,9 @@ public class MouseHandlerAxiom7 extends BaseMouseHandlerInputRestricted{
         if(d.getLineStep().size() == 5 && d.getClosestPoint(p).distance(p) > d.getSelectionDistance()){
             if (OritaCalc.determineLineSegmentDistance(p, d.getLineStep().get(3)) < d.getSelectionDistance() ||
                     OritaCalc.determineLineSegmentDistance(p, d.getLineStep().get(4)) < d.getSelectionDistance()) {
-                double d1 = OritaCalc.distance(p, d.getLineStep().get(3).getB());
-                double d2 = OritaCalc.distance(p, d.getLineStep().get(4).getB());
-                LineSegment s = new LineSegment();
-
-                if(d1 < d2){
-                    s.set(new LineSegment(d.getLineStep().get(3).getA(), d.getLineStep().get(3).getB()));
-                } else {
-                    s.set(new LineSegment(d.getLineStep().get(4).getA(), d.getLineStep().get(4).getB()));
-                }
-
+                LineSegment s = d.get_moyori_step_lineSegment(p, 4, 5);
                 s.set(s.getB(), s.getA(), d.getLineColor());
-                s.set(fullExtendUntilHit(s));
+                s.set(OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), s));
 
                 d.addLineSegment(s);
                 d.record();
@@ -140,72 +130,14 @@ public class MouseHandlerAxiom7 extends BaseMouseHandlerInputRestricted{
         if (extendLine != null) {
             Point mid = OritaCalc.midPoint(target.getA(), OritaCalc.findIntersection(extendLine, targetSegment));
 
-            LineSegment s1 = fullExtendUntilHit(new LineSegment(mid, OritaCalc.findProjection(OritaCalc.moveParallel(extendLine, 25), mid), LineColor.PURPLE_8));
-            LineSegment s2 = fullExtendUntilHit(new LineSegment(mid, OritaCalc.findProjection(OritaCalc.moveParallel(extendLine, -25), mid), LineColor.PURPLE_8));
+            LineSegment s1 = OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), new LineSegment(mid, OritaCalc.findProjection(OritaCalc.moveParallel(extendLine, 25), mid), LineColor.PURPLE_8));
+            LineSegment s2 = OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), new LineSegment(mid, OritaCalc.findProjection(OritaCalc.moveParallel(extendLine, -25), mid), LineColor.PURPLE_8));
 
             d.lineStepAdd(s1);
             d.lineStepAdd(s2);
             return mid;
         }
         return null;
-    }
-
-    public LineSegment extendToIntersectionPoint_2(LineSegment s0) {//Extend s0 from point b in the opposite direction of a to the point where it intersects another polygonal line. Returns a new line // Returns the same line if it does not intersect another polygonal line
-        LineSegment add_sen = new LineSegment();
-        add_sen.set(s0);
-
-        Point kousa_point = new Point(1000000.0, 1000000.0); //この方法だと、エラーの原因になりうる。本当なら全線分のx_max、y_max以上の点を取ればいい。今後修正予定20161120
-        double kousa_point_distance = kousa_point.distance(add_sen.getA());
-
-        StraightLine tyoku1 = new StraightLine(add_sen.getA(), add_sen.getB());
-        StraightLine.Intersection i_intersection_flg;//元の線分を直線としたものと、他の線分の交差状態
-        LineSegment.Intersection i_lineSegment_intersection_flg;//元の線分と、他の線分の交差状態
-
-        for (int i = 1; i <= d.getFoldLineSet().getTotal(); i++) {
-            i_intersection_flg = tyoku1.lineSegment_intersect_reverse_detail(d.getFoldLineSet().get(i));//0=この直線は与えられた線分と交差しない、1=X型で交差する、2=T型で交差する、3=線分は直線に含まれる。
-            i_lineSegment_intersection_flg = OritaCalc.determineLineSegmentIntersectionSweet(s0, d.getFoldLineSet().get(i), Epsilon.UNKNOWN_1EN5, Epsilon.UNKNOWN_1EN5);//20180408なぜかこの行の様にs0のままだと、i_senbun_kousa_flgがおかしくならない。
-
-            if (i_intersection_flg.isIntersecting() && !i_lineSegment_intersection_flg.isEndpointIntersection()) {
-                kousa_point.set(OritaCalc.findIntersection(tyoku1, d.getFoldLineSet().get(i)));
-                if (kousa_point.distance(add_sen.getA()) > Epsilon.UNKNOWN_1EN5) {
-                    if (kousa_point.distance(add_sen.getA()) < kousa_point_distance) {
-                        double d_kakudo = OritaCalc.angle(add_sen.getA(), add_sen.getB(), add_sen.getA(), kousa_point);
-                        if (d_kakudo < 1.0 || d_kakudo > 359.0) {
-                            kousa_point_distance = kousa_point.distance(add_sen.getA());
-                            add_sen.set(add_sen.getA(), kousa_point);
-                        }
-                    }
-                }
-
-            }
-
-            if (i_intersection_flg == StraightLine.Intersection.INCLUDED_3 && i_lineSegment_intersection_flg != LineSegment.Intersection.PARALLEL_EQUAL_31) {
-                kousa_point.set(d.getFoldLineSet().get(i).getA());
-                if (kousa_point.distance(add_sen.getA()) > Epsilon.UNKNOWN_1EN5) {
-                    if (kousa_point.distance(add_sen.getA()) < kousa_point_distance) {
-                        double d_kakudo = OritaCalc.angle(add_sen.getA(), add_sen.getB(), add_sen.getA(), kousa_point);
-                        if (d_kakudo < 1.0 || d_kakudo > 359.0) {
-                            kousa_point_distance = kousa_point.distance(add_sen.getA());
-                            add_sen.set(add_sen.getA(), kousa_point);
-                        }
-                    }
-                }
-
-                kousa_point.set(d.getFoldLineSet().get(i).getB());
-                if (kousa_point.distance(add_sen.getA()) > Epsilon.UNKNOWN_1EN5) {
-                    if (kousa_point.distance(add_sen.getA()) < kousa_point_distance) {
-                        double d_kakudo = OritaCalc.angle(add_sen.getA(), add_sen.getB(), add_sen.getA(), kousa_point);
-                        if (d_kakudo < 1.0 || d_kakudo > 359.0) {
-                            kousa_point_distance = kousa_point.distance(add_sen.getA());
-                            add_sen.set(add_sen.getA(), kousa_point);
-                        }
-                    }
-                }
-            }
-        }
-
-        add_sen.set(s0.getB(), add_sen.getB());
-        return add_sen;
     }
 
     public LineSegment getExtendedSegment(LineSegment s_o, LineSegment s_k, LineColor icolo) {
@@ -233,12 +165,5 @@ public class MouseHandlerAxiom7 extends BaseMouseHandlerInputRestricted{
         }
 
         return null;
-    }
-
-    public LineSegment fullExtendUntilHit(LineSegment s0){
-        Point point = s0.getA();
-        s0.set(extendToIntersectionPoint_2(s0));
-        s0.set(point, s0.determineFurthestEndpoint(point));
-        return s0;
     }
 }
