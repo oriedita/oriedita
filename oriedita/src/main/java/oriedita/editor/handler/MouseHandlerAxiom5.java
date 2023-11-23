@@ -129,7 +129,18 @@ public class MouseHandlerAxiom5 extends BaseMouseHandlerInputRestricted{
 
             // Intersect at one point
             if(Math.abs(length_a - radius) < Epsilon.UNKNOWN_1EN7){
-                d.addLineSegment(new LineSegment(pivot, target, d.getLineColor()));
+                Point projectionPoint = OritaCalc.findProjection(targetSegment, pivot);
+                LineSegment projectionLine = new LineSegment(pivot, projectionPoint);
+
+                LineSegment s = new LineSegment();
+
+                if(OritaCalc.isLineSegmentParallel(new LineSegment(pivot, target), projectionLine) == OritaCalc.ParallelJudgement.NOT_PARALLEL){
+                    s.set(OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), new LineSegment(pivot, OritaCalc.center(pivot, target, projectionPoint), d.getLineColor())));
+                } else{
+                    s.set(OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), new LineSegment(pivot, projectionPoint, d.getLineColor())));
+                }
+
+                d.addLineSegment(s);
                 d.record();
                 d.getLineStep().clear();
             } else if (length_a > radius) { // Doesn't intersect
