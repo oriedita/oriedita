@@ -2,9 +2,7 @@ package oriedita.editor.swing.dialog;
 
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
-import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.canvas.MouseMode;
-import oriedita.editor.databinding.ApplicationModel;
 import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.service.ButtonService;
 import javax.swing.ImageIcon;
@@ -31,11 +29,11 @@ public class OpenFrame extends JDialog {
     private JButton del_lButton;
     private JButton del_l_XButton;
     private JPanel panel;
-    private ApplicationModel applicationModel;
+    private JButton axiom5Button;
+    private JButton axiom7Button;
 
-    public OpenFrame(String name, Frame owner, CanvasModel canvasModel, CreasePattern_Worker mainCreasePatternWorker, ButtonService buttonService, ApplicationModel applicationModel) {
+    public OpenFrame(String name, Frame owner, ButtonService buttonService) {
         super(owner, name);
-        this.applicationModel = applicationModel;
 
         setContentPane($$$getRootComponent$$$());
 
@@ -50,22 +48,8 @@ public class OpenFrame extends JDialog {
         buttonService.registerButton(del_lButton, "del_lAction");
         buttonService.registerButton(del_l_XButton, "del_l_XAction");
         buttonService.registerButton(selectAnd3ClickCheckBox, "selectAnd3ClickAction");
-
-        o_F_checkButton.addActionListener(e -> canvasModel.setMouseMode(MouseMode.FLAT_FOLDABLE_CHECK_63));
-        foldableLinePlusGridInputButton.addActionListener(e -> {
-            canvasModel.setMouseMode(MouseMode.FOLDABLE_LINE_INPUT_39);
-            canvasModel.setMouseModeAfterColorSelection(MouseMode.FOLDABLE_LINE_INPUT_39);
-
-            mainCreasePatternWorker.unselect_all(false);
-        });
-        select_polygonButton.addActionListener(e -> canvasModel.setMouseMode(MouseMode.SELECT_POLYGON_66));
-        unselect_polygonButton.addActionListener(e -> canvasModel.setMouseMode(MouseMode.UNSELECT_POLYGON_67));
-        select_lXButton.addActionListener(e -> canvasModel.setMouseMode(MouseMode.SELECT_LINE_INTERSECTING_68));
-        unselect_lXButton.addActionListener(e -> canvasModel.setMouseMode(MouseMode.UNSELECT_LINE_INTERSECTING_69));
-        del_lButton.addActionListener(e -> canvasModel.setMouseMode(MouseMode.CREASE_DELETE_OVERLAPPING_64));
-        del_l_XButton.addActionListener(e -> canvasModel.setMouseMode(MouseMode.CREASE_DELETE_INTERSECTING_65));
-
-        selectAnd3ClickCheckBox.addActionListener(e -> canvasModel.setCkbox_add_frame_SelectAnd3click_isSelected(selectAnd3ClickCheckBox.isSelected()));
+        buttonService.registerButton(axiom5Button, "axiom5Action");
+        buttonService.registerButton(axiom7Button, "axiom7Action");
 
         pack();
         setResizable(false);
@@ -156,7 +140,6 @@ public class OpenFrame extends JDialog {
         gbc = new GridBagConstraints();
         gbc.gridx = 2;
         gbc.gridy = 1;
-        gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         panel1.add(unselect_polygonButton, gbc);
         unselect_lXButton = new JButton();
@@ -165,7 +148,6 @@ public class OpenFrame extends JDialog {
         gbc = new GridBagConstraints();
         gbc.gridx = 2;
         gbc.gridy = 2;
-        gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         panel1.add(unselect_lXButton, gbc);
         del_l_XButton = new JButton();
@@ -173,7 +155,6 @@ public class OpenFrame extends JDialog {
         gbc = new GridBagConstraints();
         gbc.gridx = 2;
         gbc.gridy = 3;
-        gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         panel1.add(del_l_XButton, gbc);
         foldableLinePlusGridInputButton = new JButton();
@@ -181,9 +162,22 @@ public class OpenFrame extends JDialog {
         gbc = new GridBagConstraints();
         gbc.gridx = 2;
         gbc.gridy = 0;
-        gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         panel1.add(foldableLinePlusGridInputButton, gbc);
+        axiom5Button = new JButton();
+        axiom5Button.setText("Ax5");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 4;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        panel1.add(axiom5Button, gbc);
+        axiom7Button = new JButton();
+        axiom7Button.setText("Ax7");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 2;
+        gbc.gridy = 4;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        panel1.add(axiom7Button, gbc);
     }
 
     /**

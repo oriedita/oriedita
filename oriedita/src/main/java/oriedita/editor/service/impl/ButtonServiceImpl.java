@@ -5,12 +5,11 @@ import com.google.common.collect.HashBiMap;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.enterprise.inject.Any;
-import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import org.tinylog.Logger;
 import oriedita.editor.FrameProvider;
+import oriedita.editor.action.ActionService;
 import oriedita.editor.action.ActionType;
 import oriedita.editor.action.OrieditaAction;
 import oriedita.editor.canvas.CreasePattern_Worker;
@@ -59,26 +58,26 @@ public class ButtonServiceImpl implements ButtonService {
     private final Map<AbstractButton, String> buttonKeys;
 
     private final FrameProvider owner;
-    private final Instance<OrieditaAction> actions;
     private final HelpDialog explanation;
     private final CreasePattern_Worker mainCreasePatternWorker;
     private final CanvasModel canvasModel;
+    private final ActionService actionService;
 
     private final PropertyChangeSupport keystrokeChangeSupport = new PropertyChangeSupport(this);
 
     @Inject
     public ButtonServiceImpl(
             FrameProvider frame,
-            @Any Instance<OrieditaAction> actions,
             HelpDialog explanation,
             @Named("mainCreasePattern_Worker") CreasePattern_Worker mainCreasePatternWorker,
-            CanvasModel canvasModel
+            CanvasModel canvasModel,
+            ActionService actionService
     ) {
         this.owner = frame;
-        this.actions = actions;
         this.explanation = explanation;
         this.mainCreasePatternWorker = mainCreasePatternWorker;
         this.canvasModel = canvasModel;
+        this.actionService = actionService;
         registeredButtons = HashMultimap.create();
         keystrokes = HashBiMap.create();
         buttonKeys = new HashMap<>();
@@ -104,7 +103,7 @@ public class ButtonServiceImpl implements ButtonService {
     }
 
     @Override
-    public void registerButton(AbstractButton button, String key, boolean replaceUnderscoresInMenus) {
+    public synchronized void registerButton(AbstractButton button, String key, boolean replaceUnderscoresInMenus) {
         String keyStrokeString = ResourceUtil.getBundleString("hotkey", key);
         KeyStroke keyStroke = KeyStroke.getKeyStroke(keyStrokeString);
         if (!StringOp.isEmpty(keyStrokeString) && keyStroke == null) {
@@ -241,7 +240,7 @@ public class ButtonServiceImpl implements ButtonService {
 
         if (type != null) {
             String text = button.getText();
-            actions.stream()
+            actionService.getAllRegisteredActions().stream()
                     .filter(a -> a.getActionType().equals(type))
                     .findFirst()
                     .ifPresentOrElse(
@@ -382,7 +381,7 @@ public class ButtonServiceImpl implements ButtonService {
     }
 
     private void addUIKeystroke(String key, KeyStroke keyStroke) {
-        Action action = actions.stream()
+        Action action = actionService.getAllRegisteredActions().stream()
                 .filter(a -> Objects.equals(a.getActionType().action(), key))
                 .findFirst().orElse(null);
         if (action == null) {

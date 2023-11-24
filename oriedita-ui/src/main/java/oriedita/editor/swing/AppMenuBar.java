@@ -393,12 +393,6 @@ public class AppMenuBar {
                 // We don't know how to paste this
             }
         });
-        selectAllButton.addActionListener(e -> mainCreasePatternWorker.select_all());
-        unselectAllButton.addActionListener(e -> mainCreasePatternWorker.unselect_all());
-        invertMVButton.addActionListener(e -> {
-            mainCreasePatternWorker.allMountainValleyChange();
-            mainCreasePatternWorker.unselect_all(false);
-        });
     }
 
     public AppMenuBarUI getAppMenuBarUI() {
