@@ -86,9 +86,6 @@ public class Svg {
 
         boolean flipped = camera.determineIsCameraMirrored();
 
-        Point t_ob = new Point();
-        Point t_tv = new Point();
-
         String str_stroke;
         str_stroke = "black";
         String str_strokewidth;
@@ -112,9 +109,10 @@ public class Svg {
             pw.print("<path d=\"");
 
             pw.print("M ");
-            t_ob.setX(otta_Men_zu.getPointX(otta_Men_zu.getPointId(im, 1)));
-            t_ob.setY(otta_Men_zu.getPointY(otta_Men_zu.getPointId(im, 1)));
-            t_tv.set(camera.object2TV(t_ob));
+            Point t_ob = new Point(
+                    otta_Men_zu.getPointX(otta_Men_zu.getPointId(im, 1)),
+                    otta_Men_zu.getPointY(otta_Men_zu.getPointId(im, 1)));
+            Point t_tv = camera.object2TV(t_ob);
             String b_t_tv_x = String.format("%.2f", t_tv.getX());
             String b_t_tv_y = String.format("%.2f", t_tv.getY());
 
@@ -125,9 +123,10 @@ public class Svg {
 
             for (int i = 2; i <= otta_Men_zu.getPointsCount(im); i++) {
                 pw.print("L ");
-                t_ob.setX(otta_Men_zu.getPointX(otta_Men_zu.getPointId(im, i)));
-                t_ob.setY(otta_Men_zu.getPointY(otta_Men_zu.getPointId(im, i)));
-                t_tv.set(camera.object2TV(t_ob));
+                t_ob = new Point(
+                        otta_Men_zu.getPointX(otta_Men_zu.getPointId(im, i)),
+                        otta_Men_zu.getPointY(otta_Men_zu.getPointId(im, i)));
+                t_tv = camera.object2TV(t_ob);
                 String b_t_tv_x_i = String.format("%.2f", t_tv.getX());
                 String b_t_tv_y_i = String.format("%.2f", t_tv.getY());
 
@@ -170,14 +169,9 @@ public class Svg {
         PointSet subFace_figure = foldedFigure.getFoldedFigure().wireFrame_worker3.get();
         boolean front_back = camera.determineIsCameraMirrored();
 
-        Point t0 = new Point();
-        Point t1 = new Point();
         LineSegment s_ob = new LineSegment();
         LineSegment s_tv = new LineSegment();
 
-        Point a = new Point();
-        Point b = new Point();
-        StringBuilder str_zahyou;
         String str_stroke = "black";
         String str_strokewidth = "1";
 
@@ -225,22 +219,26 @@ public class Svg {
                 //折り上がり図を描くときのSubFaceの色を決めるのはここまで
 
                 //折り上がり図を描くときのim番目のSubFaceの多角形の頂点の座標（PC表示上）を求める
+                Point t0;
+                Point t1;
                 for (int i = 1; i <= subFace_figure.getPointsCount(im) - 1; i++) {
-                    t0.setX(subFace_figure.getPointX(subFace_figure.getPointId(im, i)));
-                    t0.setY(subFace_figure.getPointY(subFace_figure.getPointId(im, i)));
-                    t1.set(camera.object2TV(t0));
+                    t0 = new Point(
+                            subFace_figure.getPointX(subFace_figure.getPointId(im, i)),
+                            subFace_figure.getPointY(subFace_figure.getPointId(im, i)));
+                    t1 = camera.object2TV(t0);
                     x[i] = String.format("%.2f", t1.getX());
                     y[i] = String.format("%.2f", t1.getY());
                 }
 
-                t0.setX(subFace_figure.getPointX(subFace_figure.getPointId(im, subFace_figure.getPointsCount(im))));
-                t0.setY(subFace_figure.getPointY(subFace_figure.getPointId(im, subFace_figure.getPointsCount(im))));
-                t1.set(camera.object2TV(t0));
+                t0 = new Point(
+                        subFace_figure.getPointX(subFace_figure.getPointId(im, subFace_figure.getPointsCount(im))),
+                        subFace_figure.getPointY(subFace_figure.getPointId(im, subFace_figure.getPointsCount(im))));
+                t1 = camera.object2TV(t0);
                 x[0] = String.format("%.2f", t1.getX());
                 y[0] = String.format("%.2f", t1.getY());
                 //折り上がり図を描くときのim番目のSubFaceの多角形の頂点の座標（PC表示上）を求めるのはここまで
 
-                str_zahyou = new StringBuilder(x[0] + "," + y[0]);
+                StringBuilder str_zahyou = new StringBuilder(x[0] + "," + y[0]);
                 for (int i = 1; i <= subFace_figure.getPointsCount(im) - 1; i++) {
                     str_zahyou.append(" ").append(x[i]).append(",").append(y[i]);
                 }
@@ -293,8 +291,8 @@ public class Svg {
                 s_ob.set(subFace_figure.getBeginX(ib), subFace_figure.getBeginY(ib), subFace_figure.getEndX(ib), subFace_figure.getEndY(ib));
                 s_tv.set(camera.object2TV(s_ob));
 
-                a.set(s_tv.getA());
-                b.set(s_tv.getB());
+                Point a = s_tv.getA();
+                Point b = s_tv.getB();
 
                 String b_ax = String.format("%.2f", a.getX());
                 String b_ay = String.format("%.2f", a.getY());
@@ -347,14 +345,10 @@ public class Svg {
     }
 
     public static void exportSvgWithCamera(PrintWriter pw, FoldLineSet foldLineSet, Camera camera, float fCreasePatternLineWidth, int lineWidth, LineStyle lineStyle, int pointSize) {//引数はカメラ設定、線幅、画面X幅、画面y高さ
-        LineSegment s_tv = new LineSegment();
-        Point a = new Point();
-        Point b = new Point();
-
-        String str_stroke;
-        String str_strokewidth = Integer.toString(lineWidth);
 
         //Drawing of crease pattern Polygonal lines other than auxiliary live lines
+        String str_stroke;
+        String str_strokewidth = Integer.toString(lineWidth);
         for (int i = 1; i <= foldLineSet.getTotal(); i++) {
             LineSegment s = foldLineSet.get(i);
             LineColor color = s.getColor();
@@ -420,9 +414,9 @@ public class Svg {
                     throw new IllegalArgumentException();
             }
 
-            s_tv.set(camera.object2TV(s));
-            a.set(s_tv.getA());
-            b.set(s_tv.getB());
+            LineSegment s_tv = camera.object2TV(s);
+            Point a = s_tv.getA();
+            Point b = s_tv.getB();
 
             BigDecimal b_ax = new BigDecimal(String.valueOf(a.getX()));
             double x1 = b_ax.setScale(2, RoundingMode.HALF_UP).doubleValue();

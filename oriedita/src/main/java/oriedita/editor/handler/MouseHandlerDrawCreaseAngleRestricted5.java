@@ -23,8 +23,7 @@ public class MouseHandlerDrawCreaseAngleRestricted5 extends BaseMouseHandlerInpu
 
     //マウス操作(mouseMode==37　でボタンを押したとき)時の作業
     public void mousePressed(Point p0) {
-        Point p = new Point();
-        p.set(d.getCamera().TV2object(p0));
+        Point p = d.getCamera().TV2object(p0);
         start = d.getClosestPoint(p);
         if (p.distance(start) > d.getSelectionDistance()) {
             return;
@@ -70,8 +69,7 @@ public class MouseHandlerDrawCreaseAngleRestricted5 extends BaseMouseHandlerInpu
     }
 
     public Point syuusei_point_A_37(Point p0) {
-        Point p = new Point();
-        p.set(d.getCamera().TV2object(p0));
+        Point p = d.getCamera().TV2object(p0);
         return SnappingUtil.snapToActiveAngleSystem(d, start, p, angleSystemModel.getCurrentAngleSystemDivider(), angleSystemModel.getAngles());
     }
 

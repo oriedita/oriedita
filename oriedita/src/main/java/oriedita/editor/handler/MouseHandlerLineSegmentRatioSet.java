@@ -22,8 +22,7 @@ public class MouseHandlerLineSegmentRatioSet extends BaseMouseHandlerInputRestri
     public void mousePressed(Point p0) {
         d.getLineStep().clear();
 
-        Point p = new Point();
-        p.set(d.getCamera().TV2object(p0));
+        Point p = d.getCamera().TV2object(p0);
 
         Point closestPoint = d.getClosestPoint(p);
         if (p.distance(closestPoint) < d.getSelectionDistance()) {
@@ -41,8 +40,7 @@ public class MouseHandlerLineSegmentRatioSet extends BaseMouseHandlerInputRestri
 
     //マウス操作(mouseMode==28線分入力 でドラッグしたとき)を行う関数----------------------------------------------------
     public void mouseDragged(Point p0) {
-        Point p = new Point();
-        p.set(d.getCamera().TV2object(p0));
+        Point p = d.getCamera().TV2object(p0);
         d.getLineStep().get(0).setA(p);
 
         if (d.getGridInputAssist()) {
@@ -59,8 +57,7 @@ public class MouseHandlerLineSegmentRatioSet extends BaseMouseHandlerInputRestri
 
     //マウス操作(mouseMode==28線分入力　でボタンを離したとき)を行う関数----------------------------------------------------
     public void mouseReleased(Point p0) {
-        Point p = new Point();
-        p.set(d.getCamera().TV2object(p0));
+        Point p = d.getCamera().TV2object(p0);
 
         d.getLineStep().get(0).setA(p);
         Point closestPoint = d.getClosestPoint(p);

@@ -21,9 +21,6 @@ import java.util.stream.Collectors;
 @ApplicationScoped
 @Handles(MouseMode.VORONOI_CREATE_62)
 public class MouseHandlerVoronoiCreate extends BaseMouseHandler {
-    public List<LineSegmentVoronoi> getVoronoiLineSet() {
-        return voronoiLineSet;
-    }
 
     private List<LineSegmentVoronoi> voronoiLineSet = new ArrayList<>();
     List<LineSegmentVoronoi> lineSegment_voronoi_onePoint = new ArrayList<>(); //Line segment around one point in Voronoi diagram
@@ -43,8 +40,7 @@ public class MouseHandlerVoronoiCreate extends BaseMouseHandler {
             LineSegment candidate = new LineSegment();
             candidate.setActive(LineSegment.ActiveState.ACTIVE_BOTH_3);
 
-            Point p = new Point();
-            p.set(d.getCamera().TV2object(p0));
+            Point p = d.getCamera().TV2object(p0);
 
             Point closest_point = d.getClosestPoint(p);
             if (p.distance(closest_point) < d.getSelectionDistance()) {
@@ -71,8 +67,7 @@ public class MouseHandlerVoronoiCreate extends BaseMouseHandler {
         if (d.getLineStep().isEmpty()) {
             reset();
         }
-        Point p = new Point();
-        p.set(d.getCamera().TV2object(p0));
+        Point p = d.getCamera().TV2object(p0);
 
         //Arranged i_line_step_size to be only the conventional Voronoi mother point (yet, we have not decided whether to add the point p as line_step to the Voronoi mother point)
         List<LineSegment> ls = s_step_no_1_top_continue_no_point_no_number();
@@ -312,8 +307,7 @@ public class MouseHandlerVoronoiCreate extends BaseMouseHandler {
 // 1	交点まで縮小	削除		削除
 //
 
-                            Point kouten = new Point();
-                            kouten.set(OritaCalc.findIntersection(s_begin, s_kizon));
+                            Point kouten = OritaCalc.findIntersection(s_begin, s_kizon);
 
                             Point a = d.getLineStep().get(d.getLineStep().size() - 1).getA();
                             if ((t_begin.sameSide(a, s_kizon.getA()) >= 0) && (t_begin.sameSide(a, s_kizon.getB()) >= 0)) {
@@ -387,8 +381,7 @@ public class MouseHandlerVoronoiCreate extends BaseMouseHandler {
 
             Point a = d.getLineStep().get(center_point_count).getA();
             if (parallel == OritaCalc.ParallelJudgement.NOT_PARALLEL) {//When the line segment to be added and the existing line segment are non-parallel
-                Point intersection = new Point();
-                intersection.set(OritaCalc.findIntersection(add_straightLine, existing_straightLine));
+                Point intersection = OritaCalc.findIntersection(add_straightLine, existing_straightLine);
 
                 if ((add_straightLine.sameSide(a, existing_lineSegment.getA()) <= 0) &&
                         (add_straightLine.sameSide(a, existing_lineSegment.getB()) <= 0)) {

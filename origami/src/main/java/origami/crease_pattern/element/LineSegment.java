@@ -2,15 +2,13 @@ package origami.crease_pattern.element;
 
 import java.awt.Color;
 import java.io.Serializable;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.Objects;
 
 public class LineSegment implements Serializable, Cloneable {
     private static final Color DEFAULT_COLOR = new Color(100, 200, 200);
 
-    protected final Point a = new Point(); //Branch a point
-    protected final Point b = new Point(); //Branch b point
+    protected Point a; //Branch a point
+    protected Point b; //Branch b point
     protected ActiveState active;//0 is inactive. 1 is active in a. 2 is active in b. 3 is active in both a and b.
     protected LineColor color;//Color specification 　0=black,1=blue,2=red.
 
@@ -22,61 +20,49 @@ public class LineSegment implements Serializable, Cloneable {
 
     //コンストラクタ
     public LineSegment() {
-        a.set(0.0, 0.0);
-        b.set(0.0, 0.0);
+        a = new Point(0.0, 0.0);
+        b = new Point(0.0, 0.0);
         active = ActiveState.INACTIVE_0;
         color = LineColor.BLACK_0;
         selected = 0;
     }
 
     public LineSegment(Point t1, Point t2) {
-        a.set(t1);
-        b.set(t2);
+        a = t1;
+        b = t2;
         active = ActiveState.INACTIVE_0;
         color = LineColor.BLACK_0;
         selected = 0;
     }
 
     public LineSegment(Point t1, Point t2, LineColor color) {
-        a.set(t1);
-        b.set(t2);
+        a = t1;
+        b = t2;
         active = ActiveState.INACTIVE_0;
         this.color = color;
         selected = 0;
     }
 
     public LineSegment(double i1, double i2, double i3, double i4) {
-        a.set(i1, i2);
-        b.set(i3, i4);
+        a = new Point(i1, i2);
+        b = new Point(i3, i4);
         active = ActiveState.INACTIVE_0;
         color = LineColor.BLACK_0;
         selected = 0;
     }
 
     public void reset() {
-        a.set(0.0, 0.0);
-        b.set(0.0, 0.0);
+        a = new Point(0.0, 0.0);
+        b = new Point(0.0, 0.0);
         active = ActiveState.INACTIVE_0;
         color = LineColor.BLACK_0;
         selected = 0;
     }
 
-    //d2s Double is changed to a string. Rounded to the second decimal place (""); public void display (String str0) is used only.
-    public String d2s(double d0) {
-        BigDecimal bd = new BigDecimal(d0);
-
-        //Rounded to the first decimal place
-        BigDecimal bd1 = bd.setScale(1, RoundingMode.HALF_UP);
-
-        String sr;
-        sr = bd1.toString();
-        return sr;
-    }
-
     //-------------------------------------------
     public void set(LineSegment s) {
-        a.set(s.getA());
-        b.set(s.getB());
+        a = s.getA();
+        b = s.getB();
         active = s.getActive();
         color = s.getColor();
         selected = s.getSelected();
@@ -86,8 +72,8 @@ public class LineSegment implements Serializable, Cloneable {
 
     //----------
     public void set(double ax, double ay, double bx, double by) {
-        a.set(ax, ay);
-        b.set(bx, by);
+        a = new Point(ax, ay);
+        b = new Point(bx, by);
     }
 
     //----------
@@ -164,17 +150,6 @@ public class LineSegment implements Serializable, Cloneable {
         selected = i;
     }
 
-    //This line segment is activated depending on whether it is close to a certain point.
-    public void activate(Point p, double r) {
-        active = ActiveState.INACTIVE_0;
-        if (p.distanceSquared(a) <= r * r) {
-            active = ActiveState.ACTIVE_A_1;
-        }
-        if (p.distanceSquared(b) <= r * r) {
-            active = ActiveState.ACTIVE_B_2;
-        }
-    }
-
     //Deactivate this line segment
     public void deactivate() {
         active = ActiveState.INACTIVE_0;
@@ -182,27 +157,27 @@ public class LineSegment implements Serializable, Cloneable {
 
     //Exchange the coordinates of both end points a and b
     public void a_b_swap() {
-        Point t_temp = new Point(a);
-        a.set(b);
-        b.set(t_temp);
+        Point t_temp = a;
+        a = b;
+        b = t_temp;
     }
 
 
     public Point getA() {
-        return new Point(a.getX(), a.getY());
+        return a;
     }
 
     //----------
     public void setA(Point p) {
-        set(p.getX(), p.getY(), b.getX(), b.getY());
+        a = p;
     }
 
     public Point getB() {
-        return new Point(b.getX(), b.getY());
+        return b;
     }
 
     public void setB(Point p) {
-        set(a.getX(), a.getY(), p.getX(), p.getY());
+        b = p;
     }
 
     public Point determineClosestEndpoint(Point p) {//Returns the endpoint closest to point P

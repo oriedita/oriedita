@@ -25,8 +25,7 @@ public class MouseHandlerDoubleSymmetricDraw extends BaseMouseHandlerInputRestri
     public void mousePressed(Point p0) {
         d.getLineStep().clear();
 
-        Point p = new Point();
-        p.set(d.getCamera().TV2object(p0));
+        Point p = d.getCamera().TV2object(p0);
         Point closestPoint = d.getClosestPoint(p);
         if (p.distance(closestPoint) > d.getSelectionDistance()) {
             return;
@@ -42,8 +41,7 @@ public class MouseHandlerDoubleSymmetricDraw extends BaseMouseHandlerInputRestri
     //マウス操作(mouseMode==35　でボタンを離したとき)を行う関数----------------------------------------------------
     public void mouseReleased(Point p0) {
         if (d.getLineStep().size() == 1) {
-            Point p = new Point();
-            p.set(d.getCamera().TV2object(p0));
+            Point p = d.getCamera().TV2object(p0);
             Point closestPoint = d.getClosestPoint(p);
 
             d.getLineStep().get(0).setA(closestPoint);
@@ -60,16 +58,14 @@ public class MouseHandlerDoubleSymmetricDraw extends BaseMouseHandlerInputRestri
                         }//T字型 s1が縦棒
 
                         if (i_jikkou) {
-                            Point t_moto = new Point();
-                            t_moto.set(s.getA());
+                            Point t_moto = s.getA();
                             Logger.info("i_senbun_kousa_hantei_" + i_lineSegment_intersection_decision);
                             if (OritaCalc.determineLineSegmentDistance(t_moto, d.getLineStep().get(0)) < OritaCalc.determineLineSegmentDistance(s.getB(), d.getLineStep().get(0))) {
-                                t_moto.set(s.getB());
+                                t_moto = s.getB();
                             }
 
                             //２つの点t1,t2を通る直線に関して、点pの対照位置にある点を求める public Ten oc.sentaisyou_ten_motome(Ten t1,Ten t2,Ten p){
-                            Point t_taisyou = new Point();
-                            t_taisyou.set(OritaCalc.findLineSymmetryPoint(d.getLineStep().get(0).getA(), d.getLineStep().get(0).getB(), t_moto));
+                            Point t_taisyou = OritaCalc.findLineSymmetryPoint(d.getLineStep().get(0).getA(), d.getLineStep().get(0).getB(), t_moto);
 
                             LineSegment add_sen = new LineSegment(OritaCalc.findIntersection(s, d.getLineStep().get(0)), t_taisyou);
 

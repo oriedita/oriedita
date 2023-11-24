@@ -77,14 +77,12 @@ public class AnimationServiceImpl implements AnimationService {
             return;
         }
         animate(key+"_x", x -> {
-            Point newP = new Point();
-            newP.set(getter.get());
+            Point newP = getter.get();
             newP.setX(x);
             setter.accept(newP);
         }, () -> getter.get().getX(), to.getX(), time, interpolation);
         animate(key+"_y", y -> {
-            Point newP = new Point();
-            newP.set(getter.get());
+            Point newP = getter.get();
             newP.setY(y);
             setter.accept(newP);
         }, () -> getter.get().getY(), to.getY(), time, interpolation);

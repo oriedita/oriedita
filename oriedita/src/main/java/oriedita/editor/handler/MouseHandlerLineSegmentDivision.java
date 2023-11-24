@@ -16,8 +16,7 @@ public class MouseHandlerLineSegmentDivision extends BaseMouseHandlerInputRestri
 
     //マウス操作(mouseMode==27線分入力　でボタンを押したとき)時の作業----------------------------------------------------
     public void mousePressed(Point p0) {
-        Point p = new Point();
-        p.set(d.getCamera().TV2object(p0));
+        Point p = d.getCamera().TV2object(p0);
         Point closest_point = d.getClosestPoint(p);
         if (p.distance(closest_point) < d.getSelectionDistance()) {
             d.lineStepAdd(new LineSegment(p, closest_point, d.getLineColor()));
@@ -33,8 +32,7 @@ public class MouseHandlerLineSegmentDivision extends BaseMouseHandlerInputRestri
 
     //マウス操作(mouseMode==27線分入力　でドラッグしたとき)を行う関数----------------------------------------------------
     public void mouseDragged(Point p0) {
-        Point p = new Point();
-        p.set(d.getCamera().TV2object(p0));
+        Point p = d.getCamera().TV2object(p0);
         d.getLineStep().get(0).setA(p);
         if (d.getGridInputAssist()) {
             d.getLineCandidate().clear();
@@ -48,8 +46,7 @@ public class MouseHandlerLineSegmentDivision extends BaseMouseHandlerInputRestri
 
     //マウス操作(mouseMode==27線分入力　でボタンを離したとき)を行う関数----------------------------------------------------
     public void mouseReleased(Point p0) {
-        Point p = new Point();
-        p.set(d.getCamera().TV2object(p0));
+        Point p = d.getCamera().TV2object(p0);
 
         d.getLineStep().get(0).setA(p);
 

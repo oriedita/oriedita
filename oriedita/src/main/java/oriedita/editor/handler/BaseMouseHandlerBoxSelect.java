@@ -22,10 +22,9 @@ public abstract class BaseMouseHandlerBoxSelect extends BaseMouseHandler {
 
     @Override
     public void mousePressed(Point p0) {
-        selectionStart.set(p0);
+        selectionStart = p0;
 
-        Point p = new Point();
-        p.set(d.getCamera().TV2object(p0));
+        Point p = d.getCamera().TV2object(p0);
         lines = new LineSegment[4];
         lines[0] = new LineSegment(p, p, LineColor.MAGENTA_5);
         lines[1] = new LineSegment(p, p, LineColor.MAGENTA_5);

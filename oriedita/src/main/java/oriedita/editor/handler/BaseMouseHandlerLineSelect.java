@@ -28,8 +28,7 @@ public abstract class BaseMouseHandlerLineSelect extends BaseMouseHandler {
 
             LineSegment candidate = new LineSegment();
             candidate.setActive(LineSegment.ActiveState.ACTIVE_BOTH_3);
-            Point p = new Point();
-            p.set(d.getCamera().TV2object(p0));
+            Point p = d.getCamera().TV2object(p0);
 
             Point closestPoint = d.getClosestPoint(p);
             if (p.distance(closestPoint) < d.getSelectionDistance()) {
@@ -46,8 +45,7 @@ public abstract class BaseMouseHandlerLineSelect extends BaseMouseHandler {
 
     @Override
     public void mousePressed(Point p0) {
-        Point p = new Point();
-        p.set(d.getCamera().TV2object(p0));
+        Point p = d.getCamera().TV2object(p0);
 
         LineSegment s = new LineSegment(p, p);
 
@@ -77,8 +75,7 @@ public abstract class BaseMouseHandlerLineSelect extends BaseMouseHandler {
     public void mouseDragged(Point p0) {
         //近くの既成点かマウス位置表示
 
-        Point p = new Point();
-        p.set(d.getCamera().TV2object(p0));
+        Point p = d.getCamera().TV2object(p0);
 
         d.getLineStep().get(0).setA(p);
         selectionLine.setA(p);

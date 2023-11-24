@@ -15,7 +15,7 @@ import java.util.EnumSet;
 @ApplicationScoped
 @Handles(MouseMode.MOVE_CREASE_PATTERN_2)
 public class MouseHandlerMoveCreasePattern implements MouseModeHandler {
-    private final Point mouse_temp0 = new Point();//マウスの動作対応時に、一時的に使うTen
+    private Point mouse_temp0 = new Point();//マウスの動作対応時に、一時的に使うTen
 
     private final Camera creasePatternCamera;
     private final FoldedFiguresList foldedFiguresList;
@@ -41,7 +41,7 @@ public class MouseHandlerMoveCreasePattern implements MouseModeHandler {
     @Override
     public void mousePressed(Point p0) {
         creasePatternCamera.camera_position_specify_from_TV(p0);
-        mouse_temp0.set(p0);
+        mouse_temp0 = p0;
     }
 
     @Override
@@ -61,7 +61,7 @@ public class MouseHandlerMoveCreasePattern implements MouseModeHandler {
         }
 //20180225追加　ここまで
 
-        mouse_temp0.set(p0);
+        mouse_temp0 = p0;
     }
 
     @Override
@@ -82,6 +82,6 @@ public class MouseHandlerMoveCreasePattern implements MouseModeHandler {
         }
 //20180225追加　ここまで
 
-        mouse_temp0.set(p0);
+        mouse_temp0 = p0;
     }
 }

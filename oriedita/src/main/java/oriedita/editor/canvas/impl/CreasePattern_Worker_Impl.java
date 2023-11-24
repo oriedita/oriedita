@@ -89,10 +89,10 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     private final List<LineSegment> lineCandidate = new ArrayList<>();
     private final Camera camera = new Camera();
     //mouseMode==61//長方形内選択（paintの選択に似せた選択機能）の時に使う
-    private final Point operationFrame_p1 = new Point();//TV座標
-    private final Point operationFrame_p2 = new Point();//TV座標
-    private final Point operationFrame_p3 = new Point();//TV座標
-    private final Point operationFrame_p4 = new Point();//TV座標
+    private Point operationFrame_p1 = new Point();//TV座標
+    private Point operationFrame_p2 = new Point();//TV座標
+    private Point operationFrame_p3 = new Point();//TV座標
+    private Point operationFrame_p4 = new Point();//TV座標
     private final SelectedTextModel textModel;
     private double selectionDistance = 50.0;//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<Value for determining whether an input point is close to an existing point or line segment
     private int pointSize = 1;
@@ -297,14 +297,6 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     public LineSegmentSet get() {
         Save save = SaveProvider.createInstance();
         foldLineSet.getSave(save);
-        lineSegmentSet.setSave(save);
-        return lineSegmentSet;
-    }
-
-    @Override
-    public LineSegmentSet getForFolding() {
-        Save save = SaveProvider.createInstance();
-        foldLineSet.getMemo_for_folding(save);
         lineSegmentSet.setSave(save);
         return lineSegmentSet;
     }
@@ -565,14 +557,10 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
 
         //mouseMode==61//長方形内選択（paintの選択に似せた選択機能）の時に使う
         if (!hideOperationFrame && canvasModel.getMouseMode() == MouseMode.OPERATION_FRAME_CREATE_61 && lineStep.size() == 4) {
-            Point p1 = new Point();
-            p1.set(camera.TV2object(operationFrame_p1));
-            Point p2 = new Point();
-            p2.set(camera.TV2object(operationFrame_p2));
-            Point p3 = new Point();
-            p3.set(camera.TV2object(operationFrame_p3));
-            Point p4 = new Point();
-            p4.set(camera.TV2object(operationFrame_p4));
+            Point p1 = camera.TV2object(operationFrame_p1);
+            Point p2 = camera.TV2object(operationFrame_p2);
+            Point p3 = camera.TV2object(operationFrame_p3);
+            Point p4 = camera.TV2object(operationFrame_p4);
 
             lineStep.get(0).set(p1, p2, LineColor.GREEN_6);
             lineStep.get(1).set(p2, p3, LineColor.GREEN_6);
@@ -672,15 +660,15 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     public Point getClosestPoint(Point t0) {
         // When dividing paper 1/1 Only the end point of the folding line is the reference point. The grid point never becomes the reference point.
         // When dividing paper from 1/2 to 1/512 The end point of the polygonal line and the grid point in the paper frame (-200.0, -200.0 _ 200.0, 200.0) are the reference points.
-        Point t1 = new Point(); //End point of the polygonal line
-        Point t3 = new Point(); //Center of circle
 
-        t1.set(foldLineSet.closestPoint(t0)); // foldLineSet.closestPoint returns (100000.0,100000.0) if there is no close point
+        //End point of the polygonal line
+        Point t1 = foldLineSet.closestPoint(t0); // foldLineSet.closestPoint returns (100000.0,100000.0) if there is no close point
 
-        t3.set(foldLineSet.closestCenter(t0)); // foldLineSet.closestCenter returns (100000.0,100000.0) if there is no close point
+        //Center of circle
+        Point t3 = foldLineSet.closestCenter(t0); // foldLineSet.closestCenter returns (100000.0,100000.0) if there is no close point
 
         if (t0.distanceSquared(t1) > t0.distanceSquared(t3)) {
-            t1.set(t3);
+            t1 = t3;
         }
 
         if (grid.getBaseState() == GridModel.State.HIDDEN) {
@@ -726,10 +714,9 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     //-----------------------------------------------62ここまで　//20181121　iactiveをtppに置き換える
     @Override
     public Point getGridPosition(Point p0) {
-        Point p = new Point();
-        p.set(camera.TV2object(p0));
+        Point p = camera.TV2object(p0);
         Point closestPoint = getClosestPoint(p);
-        return new Point(grid.getPosition(closestPoint));
+        return grid.getPosition(closestPoint);
     }
 
     @Override
@@ -874,7 +861,7 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
             i_kousa_flg = tyoku1.lineSegment_intersect_reverse_detail(foldLineSet.get(i));//0=この直線は与えられた線分と交差しない、1=X型で交差する、2=T型で交差する、3=線分は直線に含まれる。
 
             if (i_kousa_flg.isIntersecting()) {
-                kousa_point.set(OritaCalc.findIntersection(tyoku1, foldLineSet.get(i)));
+                kousa_point = OritaCalc.findIntersection(tyoku1, foldLineSet.get(i));
                 if (kousa_point.distance(add_sen.getA()) > Epsilon.UNKNOWN_1EN5) {
                     if (kousa_point.distance(add_sen.getA()) < kousa_ten_kyori) {
                         double d_kakudo = OritaCalc.angle(add_sen.getA(), add_sen.getB(), add_sen.getA(), kousa_point);
@@ -1207,11 +1194,6 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     }
 
     @Override
-    public void setCheck3(boolean i) {
-        check3 = i;
-    }
-
-    @Override
     public boolean isCheck4() {
         return check4;
     }
@@ -1239,6 +1221,28 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     @Override
     public Point getOperationFrame_p4() {
         return operationFrame_p4;
+    }
+
+    @Override
+    public void setOperationFramePoint(int index, Point p) {
+
+        switch (index) {
+            case 1:
+                operationFrame_p1 = p;
+                break;
+            case 2:
+                operationFrame_p2 = p;
+                break;
+            case 3:
+                operationFrame_p3 = p;
+                break;
+            case 4:
+                operationFrame_p4 = p;
+                break;
+            default:
+                throw new IllegalArgumentException("invalid index");
+        }
+        operationFrameBox.set(index, p);
     }
 
     @Override

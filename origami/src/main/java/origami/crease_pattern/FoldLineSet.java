@@ -604,14 +604,9 @@ public class FoldLineSet {
             }
         }
 
-        Point ec = new Point();//円の中心座標を入れる変数
 
         for (Circle circle : circles) {
-            Circle e_temp = new Circle();
-            e_temp.set(circle);
-            ec.set(e_temp.determineCenter());
-
-            save.addCircle(e_temp);
+            save.addCircle(circle);
         }
 
         reset();
@@ -777,11 +772,6 @@ public class FoldLineSet {
         return i_r;
     }
 
-    public int get_select(int i) {
-        LineSegment s = lineSegments.get(i);
-        return s.getSelected();
-    }
-
     public void delSelectedLineSegmentFast() {
         FoldLineSave memo_temp = new FoldLineSave();
         getMemoExceptSelected(memo_temp, 2);
@@ -942,20 +932,18 @@ public class FoldLineSet {
         if (sj.determineMaxY() < si.determineMinY()) {
             return LineSegment.Intersection.NO_INTERSECTION_0;
         }
-        Point intersect_point = new Point();
-        StraightLine.Intersection intersect_flg0, intersect_flg1;
 
         // Here, as the idea of "how two line segments A and B intersect", (1) make the line segment A a straight line, and make the line segment B a line segment as it is (2) a line segment. Think of whether the two endpoints of B are both on one side of the straight line, or separately on both sides of the straight line.
         // After this confirmation is completed, next, make the line segment B a straight line, make the line segment A a line segment as it is, and confirm in the same way. Considering how the two line segments A and B intersect.
 
         StraightLine straightLine0 = new StraightLine(si.getA(), si.getB());
-        intersect_flg0 = straightLine0.lineSegment_intersect_reverse_detail(sj);//senbun_kousa_hantei(Senbun s0){//0=この直線は与えられた線分と交差しない、1=X型で交差する、2=T型で交差する、3=線分は直線に含まれる。
+        StraightLine.Intersection intersect_flg0 = straightLine0.lineSegment_intersect_reverse_detail(sj);//senbun_kousa_hantei(Senbun s0){//0=この直線は与えられた線分と交差しない、1=X型で交差する、2=T型で交差する、3=線分は直線に含まれる。
         if (intersect_flg0 == StraightLine.Intersection.NONE_0) {
             return LineSegment.Intersection.NO_INTERSECTION_0;
         }
 
         StraightLine straightLine1 = new StraightLine(sj.getA(), sj.getB());
-        intersect_flg1 = straightLine1.lineSegment_intersect_reverse_detail(si);
+        StraightLine.Intersection intersect_flg1 = straightLine1.lineSegment_intersect_reverse_detail(si);
         if (intersect_flg1 == StraightLine.Intersection.NONE_0) {
             return LineSegment.Intersection.NO_INTERSECTION_0;
         }
@@ -963,8 +951,9 @@ public class FoldLineSet {
         // --------------------------------------
         //	X intersection
         // --------------------------------------
+        Point intersect_point;
         if ((intersect_flg0 == StraightLine.Intersection.INTERSECT_X_1) && (intersect_flg1 == StraightLine.Intersection.INTERSECT_X_1)) {//(intersect_flg0==1)&&(intersect_flg1==1) 加える折線と既存の折線はX型で交わる
-            intersect_point.set(OritaCalc.findIntersection(straightLine0, straightLine1));
+            intersect_point = OritaCalc.findIntersection(straightLine0, straightLine1);
 
             if (((si.getColor() != LineColor.CYAN_3) && (sj.getColor() != LineColor.CYAN_3))
                     || ((si.getColor() == LineColor.CYAN_3) && (sj.getColor() == LineColor.CYAN_3))) {
@@ -1002,9 +991,7 @@ public class FoldLineSet {
         // --------------------------------------
         if ((intersect_flg0 == StraightLine.Intersection.INTERSECT_X_1) && (intersect_flg1 == StraightLine.Intersection.INTERSECT_T_A_21)) {//加える折線と既存の折線はT型(加える折線が縦、既存の折線が横)で交わる(縦のa点で交わる)
 
-            Point pk = new Point();
-            pk.set(OritaCalc.findProjection(OritaCalc.lineSegmentToStraightLine(sj), si.getA()));//pkは点pの（線分を含む直線上の）影
-            intersect_point.set(pk);//交差点は折線i上のs0の端点の影 20161129
+            intersect_point = OritaCalc.findProjection(OritaCalc.lineSegmentToStraightLine(sj), si.getA());//交差点は折線i上のs0の端点の影 20161129
             //foldLineSet.senbun_bunkatu(i , kousa_ten);  //i番目の線分(端点aとb)を点pで分割する。i番目の線分abをapに変え、線分pbを加える。
             //以上で操作終了			kousa_ten.set(oc.kouten_motome(straightLine0,straightLine1));
 
@@ -1032,9 +1019,7 @@ public class FoldLineSet {
         //	T交差(加える折線のb点で交わる)
         // --------------------------------------
         if ((intersect_flg0 == StraightLine.Intersection.INTERSECT_X_1) && (intersect_flg1 == StraightLine.Intersection.INTERSECT_T_B_22)) {//加える折線と既存の折線はT型(加える折線が縦、既存の折線が横)で交わる(縦のb点で交わる)
-            Point pk = new Point();
-            pk.set(OritaCalc.findProjection(OritaCalc.lineSegmentToStraightLine(sj), si.getB()));//pkは点pの（線分を含む直線上の）影
-            intersect_point.set(pk);//交差点は折線i上のs0の端点の影 20161129
+            intersect_point = OritaCalc.findProjection(OritaCalc.lineSegmentToStraightLine(sj), si.getB());//交差点は折線i上のs0の端点の影 20161129
             //foldLineSet.senbun_bunkatu(i , kousa_ten);  //i番目の線分(端点aとb)を点pで分割する。i番目の線分abをapに変え、線分pbを加える。
             //以上で操作終了			kousa_ten.set(oc.kouten_motome(straightLine0,straightLine1));
 
@@ -1062,9 +1047,7 @@ public class FoldLineSet {
         //	T intersection (intersect at point a of the original polygonal line)
         // --------------------------------------
         if ((intersect_flg0 == StraightLine.Intersection.INTERSECT_T_A_21) && (intersect_flg1 == StraightLine.Intersection.INTERSECT_X_1)) {//The added fold line and the existing fold line intersect at a T shape (the added fold line is horizontal and the existing fold line is vertical) (intersect at the vertical a point).
-            Point pk = new Point();
-            pk.set(OritaCalc.findProjection(OritaCalc.lineSegmentToStraightLine(si), sj.getA()));//pk is the projection (on a straight line including the line segment) of point p
-            intersect_point.set(pk);//交差点は折線i上のs0の端点の影 20161129
+            intersect_point = OritaCalc.findProjection(OritaCalc.lineSegmentToStraightLine(si), sj.getA());//交差点は折線i上のs0の端点の影 20161129
             //foldLineSet.senbun_bunkatu(i , kousa_ten);  //i番目の線分(端点aとb)を点pで分割する。i番目の線分abをapに変え、線分pbを加える。
             //This is the end of the operation 			kousa_ten.set(oc.kouten_motome(straightLine0,straightLine1));
 
@@ -1092,9 +1075,7 @@ public class FoldLineSet {
         //	T intersection (intersect at point b of the original polygonal line)
         // --------------------------------------
         if ((intersect_flg0 == StraightLine.Intersection.INTERSECT_T_B_22) && (intersect_flg1 == StraightLine.Intersection.INTERSECT_X_1)) {//The added fold line and the existing fold line intersect at a T shape (the added fold line is horizontal and the existing fold line is vertical) (intersect at the vertical a point).
-            Point pk = new Point();
-            pk.set(OritaCalc.findProjection(OritaCalc.lineSegmentToStraightLine(si), sj.getB()));//pkは点pの（線分を含む直線上の）影
-            intersect_point.set(pk);//The intersection is the shadow of the end point of s0 on the polygonal line i 20161129
+            intersect_point = OritaCalc.findProjection(OritaCalc.lineSegmentToStraightLine(si), sj.getB());//The intersection is the shadow of the end point of s0 on the polygonal line i 20161129
             //foldLineSet.senbun_bunkatu(i , kousa_ten);  //i番目の線分(端点aとb)を点pで分割する。i番目の線分abをapに変え、線分pbを加える。
             //以上で操作終了			kousa_ten.set(oc.kouten_motome(straightLine0,straightLine1));
 
@@ -1123,14 +1104,10 @@ public class FoldLineSet {
         //	加える折線と既存の折線は平行
         // --------------------------------------
         if (intersect_flg0 == StraightLine.Intersection.INCLUDED_3) {//加える折線と既存の折線は同一直線上にある
-            Point p1 = new Point();
-            p1.set(si.getA());
-            Point p2 = new Point();
-            p2.set(si.getB());
-            Point p3 = new Point();
-            p3.set(sj.getA());
-            Point p4 = new Point();
-            p4.set(sj.getB());
+            Point p1 = si.getA();
+            Point p2 = si.getB();
+            Point p3 = sj.getA();
+            Point p4 = sj.getB();
 
             //setiactive(j,100)とされた折線は、kousabunkatu(int i1,int i2,int i3,int i4)の操作が戻った後で削除される。
 
@@ -1524,10 +1501,8 @@ public class FoldLineSet {
     }
 
     public void deleteLineSegment_vertex(LineSegment s) {//When erasing the i-th fold line, if the end point of the fold line can also be erased, erase it.
-        Point pa = new Point();
-        pa.set(s.getA());
-        Point pb = new Point();
-        pb.set(s.getB());
+        Point pa = s.getA();
+        Point pb = s.getB();
         deleteLine(s);
 
         del_V(pa, Epsilon.UNKNOWN_1EN6, Epsilon.UNKNOWN_1EN6);
@@ -1679,16 +1654,16 @@ public class FoldLineSet {
     public Point closestPoint(Point p) {
         Point p_return = new Point();
         p_return.set(100000.0, 100000.0);
-        Point p_temp = new Point();
+        Point p_temp;
         for (int i = 1; i <= total; i++) {
             LineSegment si = lineSegments.get(i);
-            p_temp.set(si.getA());
+            p_temp = si.getA();
             if (p.distanceSquared(p_temp) < p.distanceSquared(p_return)) {
-                p_return.set(p_temp.getX(), p_temp.getY());
+                p_return = new Point(p_temp.getX(), p_temp.getY());
             }
-            p_temp.set(si.getB());
+            p_temp = si.getB();
             if (p.distanceSquared(p_temp) < p.distanceSquared(p_return)) {
-                p_return.set(p_temp.getX(), p_temp.getY());
+                p_return = new Point(p_temp.getX(), p_temp.getY());
             }
 
         }
@@ -1697,40 +1672,34 @@ public class FoldLineSet {
 
     //Returns the "center point of the circle" closest to the point p
     public Point closestCenter(Point p) {
-        Point p_return = new Point();
-        p_return.set(100000.0, 100000.0);
-        Point p_temp = new Point();
+        Point closestCenter = new Point(100000.0, 100000.0);
         for (Circle circle : circles) {
-            Circle e_temp = new Circle();
-            e_temp.set(circle);
-            p_temp.set(e_temp.determineCenter());
-            if (p.distanceSquared(p_temp) < p.distanceSquared(p_return)) {
-                p_return.set(p_temp.getX(), p_temp.getY());
+            Point currentCenter = circle.determineCenter();
+            if (p.distanceSquared(currentCenter) < p.distanceSquared(closestCenter)) {
+                closestCenter = new Point(currentCenter.getX(), currentCenter.getY());
             }
         }
-        return p_return;
+        return closestCenter;
     }
 
     //Returns the "end point of the line segment" closest to the point p. However, auxiliary live lines are not applicable
     public Point closestPointOfFoldLine(Point p) {
-        Point p_return = new Point();
-        p_return.set(100000.0, 100000.0);
-        Point p_temp = new Point();
+        Point closestPoint = new Point(100000.0, 100000.0);
         for (int i = 1; i <= total; i++) {
             LineSegment si = lineSegments.get(i);
             if (si.getColor().isFoldingLine()) {
-                p_temp.set(si.getA());
-                if (p.distanceSquared(p_temp) < p.distanceSquared(p_return)) {
-                    p_return.set(p_temp.getX(), p_temp.getY());
+                Point pointA = si.getA();
+                if (p.distanceSquared(pointA) < p.distanceSquared(closestPoint)) {
+                    closestPoint = pointA;
                 }
-                p_temp.set(si.getB());
-                if (p.distanceSquared(p_temp) < p.distanceSquared(p_return)) {
-                    p_return.set(p_temp.getX(), p_temp.getY());
+                Point pointB = si.getB();
+                if (p.distanceSquared(pointB) < p.distanceSquared(closestPoint)) {
+                    closestPoint = pointB;
                 }
 
             }
         }
-        return p_return;
+        return closestPoint;
     }
 
     public LineSegment del_V(LineSegment si, LineSegment sj) {//Erasing when two fold lines are the same color and there are no end points for other fold lines
@@ -1862,8 +1831,7 @@ public class FoldLineSet {
     }
 
     public boolean del_V(Point p, double hikiyose_hankei, double r) {
-        Point q = new Point();
-        q.set(closestPoint(p));//q is the end point closer to the point p
+        Point q = closestPoint(p);//q is the end point closer to the point p
         if (q.distanceSquared(p) > hikiyose_hankei * hikiyose_hankei) {
             return false;
         }
@@ -1939,8 +1907,7 @@ public class FoldLineSet {
 
 
     public boolean del_V_cc(Point p, double hikiyose_hankei, double r) {//2つの折線の色が違った場合カラーチェンジして、点削除する。黒赤は赤赤、黒青は青青、青赤は黒にする
-        Point q = new Point();
-        q.set(closestPoint(p));//qは点pに近い方の端点
+        Point q = closestPoint(p);//qは点pに近い方の端点
         if (q.distanceSquared(p) > hikiyose_hankei * hikiyose_hankei) {
             return false;
         }
@@ -2075,18 +2042,15 @@ public class FoldLineSet {
     //If the end point of the line segment closest to the point p and the end point closer to the point p is the apex, how many line segments are out (the number of line segments with an end point within the apex and r)
     // for del_V Function of
     public int vertex_syuui_numLines_for_del_V(Point p, double r) {//del_V用の関数
-        Point q = new Point();
-        q.set(closestPoint(p));//qは点pに近い方の端点
-        Point p_temp = new Point();
-
+        Point q = closestPoint(p);//qは点pに近い方の端点
 
         int i_return = 0;
         int i_temp = 1;//ここのi_tempはi_temp=1-i_tempの形でつかうので、0,1,0,1,0,1,,,という風に変化していく
         for (int i = 1; i <= total; i++) {
             LineSegment si = lineSegments.get(i);
-            p_temp.set(si.getA());
+            Point p_temp = si.getA();
             if (q.distanceSquared(si.getB()) < q.distanceSquared(si.getA())) {
-                p_temp.set(si.getB());
+                p_temp = si.getB();
             }
             if (q.distanceSquared(p_temp) < r * r) {
                 i_temp = 1 - i_temp;
@@ -2099,42 +2063,16 @@ public class FoldLineSet {
         return i_return;
     }
 
-    //Divide the polygonal line i by the projection of the point p. However, if the projection of point p is considered to be the same as the end point of any polygonal line, nothing is done.
-    public void applyLineSegmentDivide(Point p, int i) {//何もしない=0,分割した=1
-        LineSegment s = lineSegments.get(i);
-
-        LineSegment mts = new LineSegment(s.getA(), s.getB());//mtsは点pに最も近い線分
-
-        //直線t上の点pの影の位置（点pと最も近い直線t上の位置）を求める。public Ten oc.kage_motome(Tyokusen t,Ten p){}
-        //線分を含む直線を得る public Tyokusen oc.Senbun2Tyokusen(Senbun s){}
-        Point pk = new Point();
-        pk.set(OritaCalc.findProjection(OritaCalc.lineSegmentToStraightLine(mts), p));//pkは点pの（線分を含む直線上の）影
-        //線分の分割-----------------------------------------
-        applyLineSegmentDivide(s, pk);  //i番目の線分(端点aとb)を点pで分割する。i番目の線分abをapに変え、線分pbを加える。
-    }
-
     public void move(double dx, double dy) {//折線集合全体の位置を移動する。
-        Point temp_a = new Point();
-        Point temp_b = new Point();
+        Point delta = new Point(dx, dy);
         for (int i = 1; i <= total; i++) {
             LineSegment s = lineSegments.get(i);
-            temp_a.set(s.getA());
-            temp_b.set(s.getB());
-            temp_a.setX(temp_a.getX() + dx);
-            temp_a.setY(temp_a.getY() + dy);
-            temp_b.setX(temp_b.getX() + dx);
-            temp_b.setY(temp_b.getY() + dy);
-            s.setA(temp_a);
-            s.setB(temp_b);
+            s.setA(s.getA().moveNew(delta));
+            s.setB(s.getB().moveNew(delta));
         }
 
         for (Circle circle : circles) {
-            Circle e_temp = new Circle();
-            e_temp.set(circle);
-
-            e_temp.setX(e_temp.getX() + dx);
-            e_temp.setY(e_temp.getY() + dy);
-            circle.set(e_temp);
+            circle.setCenter(circle.determineCenter().moveNew(delta));
         }
     }
 
@@ -2144,19 +2082,14 @@ public class FoldLineSet {
 
         double dx = tc.getX() - ta.getX();
         double dy = tc.getY() - ta.getY();
+        Point delta = new Point(dx, dy);
 
-        Point temp_a = new Point();
-        Point temp_b = new Point();
         for (int i = 1; i <= total; i++) {
             LineSegment s = lineSegments.get(i);
-            temp_a.set(OritaCalc.point_rotate(ta, s.getA(), d, r));
-            temp_b.set(OritaCalc.point_rotate(ta, s.getB(), d, r));
-            temp_a.setX(temp_a.getX() + dx);
-            temp_a.setY(temp_a.getY() + dy);
-            temp_b.setX(temp_b.getX() + dx);
-            temp_b.setY(temp_b.getY() + dy);
-            s.setA(temp_a);
-            s.setB(temp_b);
+            Point newA = OritaCalc.point_rotate(ta, s.getA(), d, r).moveNew(delta);
+            Point newB = OritaCalc.point_rotate(ta, s.getB(), d, r).moveNew(delta);
+            s.setA(newA);
+            s.setB(newB);
         }
     }
 

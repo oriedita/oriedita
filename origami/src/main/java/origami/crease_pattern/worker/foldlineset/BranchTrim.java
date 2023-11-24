@@ -45,10 +45,8 @@ public class BranchTrim {
     public static void deleteLineSegment_vertex(FoldLineSet foldLineSet, int i) {//When erasing the i-th fold line, if the end point of the fold line can also be erased, erase it.
         LineSegment s = foldLineSet.get(i);
 
-        Point pa = new Point();
-        pa.set(s.getA());
-        Point pb = new Point();
-        pb.set(s.getB());
+        Point pa = s.getA();
+        Point pb = s.getB();
         foldLineSet.deleteLine(i);
 
         foldLineSet.del_V(pa, Epsilon.UNKNOWN_1EN6, Epsilon.UNKNOWN_1EN6);

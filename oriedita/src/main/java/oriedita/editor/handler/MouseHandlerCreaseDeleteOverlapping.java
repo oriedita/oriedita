@@ -22,8 +22,7 @@ public class MouseHandlerCreaseDeleteOverlapping extends BaseMouseHandlerInputRe
     public void mousePressed(Point p0) {
         d.getLineStep().clear();
 
-        Point p = new Point();
-        p.set(d.getCamera().TV2object(p0));
+        Point p = d.getCamera().TV2object(p0);
         Point closest_point = d.getClosestPoint(p);
         if (p.distance(closest_point) > d.getSelectionDistance()) {
             return;
@@ -40,8 +39,7 @@ public class MouseHandlerCreaseDeleteOverlapping extends BaseMouseHandlerInputRe
     //マウス操作(mouseMode==64　でボタンを離したとき)を行う関数----------------------------------------------------
     public void mouseReleased(Point p0) {
         if (d.getLineStep().size() == 1) {
-            Point p = new Point();
-            p.set(d.getCamera().TV2object(p0));
+            Point p = d.getCamera().TV2object(p0);
             Point closest_point = d.getClosestPoint(p);
             d.getLineStep().get(0).setA(closest_point);
             if (p.distance(closest_point) <= d.getSelectionDistance()) {

@@ -24,11 +24,10 @@ public class MouseHandlerCreasesAlternateMV extends BaseMouseHandlerInputRestric
 
     //マウス操作(mouseMode==36　でボタンを押したとき)時の作業----------------------------------------------------
     public void mousePressed(Point p0) {
-        Point p = new Point();
-        p.set(d.getCamera().TV2object(p0));
+        Point p = d.getCamera().TV2object(p0);
         Point closestPoint = d.getClosestPoint(p);
         if (p.distance(closestPoint) > d.getSelectionDistance()) {
-            closestPoint.set(p);
+            closestPoint = p;
         }
         d.lineStepAdd(new LineSegment(p, closestPoint, d.getLineColor()));
     }
@@ -44,11 +43,10 @@ public class MouseHandlerCreasesAlternateMV extends BaseMouseHandlerInputRestric
         SortingBox<LineSegment> nbox = new SortingBox<>();
 
         if (d.getLineStep().size() == 1) {
-            Point p = new Point();
-            p.set(d.getCamera().TV2object(p0));
+            Point p = d.getCamera().TV2object(p0);
             Point closestPoint = d.getClosestPoint(p);
             if (p.distance(closestPoint) > d.getSelectionDistance()) {
-                closestPoint.set(p);
+                closestPoint = p;
             }
             d.getLineStep().get(0).setA(closestPoint);
             if (Epsilon.high.gt0(d.getLineStep().get(0).determineLength())) {

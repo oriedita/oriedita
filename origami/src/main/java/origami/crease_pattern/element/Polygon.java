@@ -30,7 +30,7 @@ public class Polygon {
 
     //Set the i-th vertex of the polygon
     public void set(int i, Point p) {
-        vertices[i].set(p);
+        vertices[i] = p;
     }
 
     public int size() {
@@ -59,10 +59,10 @@ public class Polygon {
         }
 
         i_intersection++;
-        intersection[i_intersection].set(s0.getA());
+        intersection[i_intersection] = s0.getA();
 
         i_intersection++;
-        intersection[i_intersection].set(s0.getB());
+        intersection[i_intersection] = s0.getB();
 
         LineSegment.Intersection kh; //oc.senbun_kousa_hantei(s0,s)の値の格納用
 
@@ -79,61 +79,61 @@ public class Polygon {
 
             if (kh == LineSegment.Intersection.INTERSECTS_1) {
                 i_intersection++;
-                intersection[i_intersection].set(OritaCalc.findIntersection(s0, s));
+                intersection[i_intersection] = OritaCalc.findIntersection(s0, s);
             }
             if (kh == LineSegment.Intersection.INTERSECTS_TSHAPE_S2_VERTICAL_BAR_27) {
                 i_intersection++;
-                intersection[i_intersection].set(OritaCalc.findIntersection(s0, s));
+                intersection[i_intersection] = OritaCalc.findIntersection(s0, s);
             }
             if (kh == LineSegment.Intersection.INTERSECTS_TSHAPE_S2_VERTICAL_BAR_28) {
                 i_intersection++;
-                intersection[i_intersection].set(OritaCalc.findIntersection(s0, s));
+                intersection[i_intersection] = OritaCalc.findIntersection(s0, s);
             }
             if (kh == LineSegment.Intersection.PARALLEL_START_OF_S1_CONTAINS_START_OF_S2_321) {
                 i_intersection++;
-                intersection[i_intersection].set(s.getB());
+                intersection[i_intersection] = s.getB();
             }
             if (kh == LineSegment.Intersection.PARALLEL_START_OF_S1_CONTAINS_END_OF_S2_331) {
                 i_intersection++;
-                intersection[i_intersection].set(s.getA());
+                intersection[i_intersection] = s.getA();
             }
             if (kh == LineSegment.Intersection.PARALLEL_END_OF_S1_CONTAINS_START_OF_S2_341) {
                 i_intersection++;
-                intersection[i_intersection].set(s.getB());
+                intersection[i_intersection] = s.getB();
             }
             if (kh == LineSegment.Intersection.PARALLEL_END_OF_S1_CONTAINS_END_OF_S2_351) {
                 i_intersection++;
-                intersection[i_intersection].set(s.getA());
+                intersection[i_intersection] = s.getA();
             }
 
             if (kh == LineSegment.Intersection.PARALLEL_S1_INCLUDES_S2_361) {
                 i_intersection++;
-                intersection[i_intersection].set(s.getA());
+                intersection[i_intersection] = s.getA();
                 i_intersection++;
-                intersection[i_intersection].set(s.getB());
+                intersection[i_intersection] = s.getB();
             }
             if (kh == LineSegment.Intersection.PARALLEL_S1_INCLUDES_S2_362) {
                 i_intersection++;
-                intersection[i_intersection].set(s.getA());
+                intersection[i_intersection] = s.getA();
                 i_intersection++;
-                intersection[i_intersection].set(s.getB());
+                intersection[i_intersection] = s.getB();
             }
 
             if (kh == LineSegment.Intersection.PARALLEL_S1_END_OVERLAPS_S2_START_371) {
                 i_intersection++;
-                intersection[i_intersection].set(s.getA());
+                intersection[i_intersection] = s.getA();
             }
             if (kh == LineSegment.Intersection.PARALLEL_S1_END_OVERLAPS_S2_START_371) {
                 i_intersection++;
-                intersection[i_intersection].set(s.getB());
+                intersection[i_intersection] = s.getB();
             }
             if (kh == LineSegment.Intersection.PARALLEL_S1_START_OVERLAPS_S2_END_373) {
                 i_intersection++;
-                intersection[i_intersection].set(s.getB());
+                intersection[i_intersection] = s.getB();
             }
             if (kh == LineSegment.Intersection.PARALLEL_S1_START_OVERLAPS_S2_START_374) {
                 i_intersection++;
-                intersection[i_intersection].set(s.getA());
+                intersection[i_intersection] = s.getA();
             }
 
         }
@@ -192,13 +192,11 @@ public class Polygon {
     // Returns 1 if present, 0 otherwise
     public boolean convex_inside(LineSegment s0) {
         int iflag = 0;//
-        LineSegment.Intersection kh; //For storing the value of oc.line_intersect_decide (s0, s)
 
-        LineSegment s = new LineSegment();
         for (int i = 1, j = vertexCount; i <= vertexCount; j = i++) {
-            s.set(vertices[j], vertices[i]); //線分
+            LineSegment s = new LineSegment(vertices[j], vertices[i]); //線分
             // We need to use the sweet version here, or things can go very wrong
-            kh = OritaCalc.determineLineSegmentIntersectionSweet(s0, s);
+            LineSegment.Intersection kh = OritaCalc.determineLineSegmentIntersectionSweet(s0, s);
             if (kh == LineSegment.Intersection.INTERSECTS_1) {
                 return true;
             }
@@ -381,28 +379,27 @@ public class Polygon {
 
     //Find the points inside the polygon
     public Point insidePoint_find() {
-        Point tn = new Point();
+        Point tn;
         Point tr = new Point();
         double distance = -10.0;
 
         for (int i = 2; i <= vertexCount - 1; i++) {
-            tn.set(OritaCalc.center(vertices[i - 1], vertices[i], vertices[i + 1]));
+            tn = OritaCalc.center(vertices[i - 1], vertices[i], vertices[i + 1]);
             if ((distance < findDistance(tn)) && (inside(tn) == Intersection.INSIDE)) {
                 distance = findDistance(tn);
-                tr.set(tn);
+                tr = tn;
             }
         }
         //
-        tn.set(OritaCalc.center(vertices[vertexCount - 1], vertices[vertexCount], vertices[1]));
+        tn = OritaCalc.center(vertices[vertexCount - 1], vertices[vertexCount], vertices[1]);
         if ((distance < findDistance(tn)) && (inside(tn) == Intersection.INSIDE)) {
             distance = findDistance(tn);
-            tr.set(tn);
+            tr = tn;
         }
         //
-        tn.set(OritaCalc.center(vertices[vertexCount], vertices[1], vertices[2]));
+        tn = OritaCalc.center(vertices[vertexCount], vertices[1], vertices[2]);
         if ((distance < findDistance(tn)) && (inside(tn) == Intersection.INSIDE)) {
-            distance = findDistance(tn);
-            tr.set(tn);
+            tr = tn;
         }
         //
         return tr;

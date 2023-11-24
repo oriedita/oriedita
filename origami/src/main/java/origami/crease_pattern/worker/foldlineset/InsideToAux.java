@@ -112,15 +112,10 @@ public class InsideToAux {
             return false;
         }//これはSenbunにi_min_yがちゃんと定義されているときでないとうまくいかない
 
-        Point p1 = new Point();
-        p1.set(si.getA());
-        Point p2 = new Point();
-        p2.set(si.getB());
-        Point p3 = new Point();
-        p3.set(sj.getA());
-        Point p4 = new Point();
-        p4.set(sj.getB());
-        Point pk = new Point();
+        Point p1 = si.getA();
+        Point p2 = si.getB();
+        Point p3 = sj.getA();
+        Point p4 = sj.getB();
 
         double ixmax = si.determineAX();
         double ixmin = si.determineAX();
@@ -172,9 +167,10 @@ public class InsideToAux {
         }
 
         LineSegment.Intersection intersection = OritaCalc.determineLineSegmentIntersection(si, sj);
+        Point pk;
         switch (intersection) {
             case INTERSECTS_1:
-                pk.set(OritaCalc.findIntersection(si, sj));
+                pk = (OritaCalc.findIntersection(si, sj));
                 si.setA(p1);
                 si.setB(pk);
                 sj.setA(p3);
@@ -184,14 +180,14 @@ public class InsideToAux {
                 return true;
             case INTERSECTS_TSHAPE_S1_VERTICAL_BAR_25:
             case INTERSECTS_TSHAPE_S1_VERTICAL_BAR_26:
-                pk.set(OritaCalc.findIntersection(si, sj));
+                pk = OritaCalc.findIntersection(si, sj);
                 sj.setA(p3);
                 sj.setB(pk);
                 foldLineSet.addLine(p4, pk, sj.getColor());
                 return true;
             case INTERSECTS_TSHAPE_S2_VERTICAL_BAR_27:
             case INTERSECTS_TSHAPE_S2_VERTICAL_BAR_28:
-                pk.set(OritaCalc.findIntersection(si, sj));
+                pk = OritaCalc.findIntersection(si, sj);
                 si.setA(p1);
                 si.setB(pk);
                 foldLineSet.addLine(p2, pk, si.getColor());
@@ -199,7 +195,7 @@ public class InsideToAux {
             case NO_INTERSECTION_0: //このifないと本来この後で処理されるべき条件がここで処理されてしまうことある
                 if (OritaCalc.determineLineSegmentDistance(si.getA(), sj) < Epsilon.UNKNOWN_001) {
                     if (OritaCalc.determineClosestLineSegmentEndpoint(si.getA(), sj, Epsilon.UNKNOWN_001) == 3) { //20161107 わずかに届かない場合
-                        pk.set(OritaCalc.findIntersection(si, sj));
+                        pk = OritaCalc.findIntersection(si, sj);
                         sj.setA(p3);
                         sj.setB(pk);
                         foldLineSet.addLine(p4, pk, sj.getColor());
@@ -209,7 +205,7 @@ public class InsideToAux {
 
                 if (OritaCalc.determineLineSegmentDistance(si.getB(), sj) < Epsilon.UNKNOWN_001) {
                     if (OritaCalc.determineClosestLineSegmentEndpoint(si.getB(), sj, Epsilon.UNKNOWN_001) == 3) { //20161107 わずかに届かない場合
-                        pk.set(OritaCalc.findIntersection(si, sj));
+                        pk = OritaCalc.findIntersection(si, sj);
                         sj.setA(p3);
                         sj.setB(pk);
                         foldLineSet.addLine(p4, pk, sj.getColor());
@@ -219,7 +215,7 @@ public class InsideToAux {
 
                 if (OritaCalc.determineLineSegmentDistance(sj.getA(), si) < Epsilon.UNKNOWN_001) {
                     if (OritaCalc.determineClosestLineSegmentEndpoint(sj.getA(), si, Epsilon.UNKNOWN_001) == 3) { //20161107 わずかに届かない場合
-                        pk.set(OritaCalc.findIntersection(si, sj));
+                        pk = OritaCalc.findIntersection(si, sj);
                         si.setA(p1);
                         si.setB(pk);
                         foldLineSet.addLine(p2, pk, si.getColor());
@@ -229,7 +225,7 @@ public class InsideToAux {
 
                 if (OritaCalc.determineLineSegmentDistance(sj.getB(), si) < Epsilon.UNKNOWN_001) {
                     if (OritaCalc.determineClosestLineSegmentEndpoint(sj.getB(), si, Epsilon.UNKNOWN_001) == 3) { //20161107 わずかに届かない場合
-                        pk.set(OritaCalc.findIntersection(si, sj));    //<<<<<<<<<<<<<<<<<<<<<<<
+                        pk = OritaCalc.findIntersection(si, sj);    //<<<<<<<<<<<<<<<<<<<<<<<
                         si.setA(p1);
                         si.setB(pk);
                         foldLineSet.addLine(p2, pk, si.getColor());

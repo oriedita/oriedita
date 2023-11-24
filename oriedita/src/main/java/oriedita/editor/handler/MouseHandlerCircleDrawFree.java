@@ -27,8 +27,7 @@ public class MouseHandlerCircleDrawFree extends BaseMouseHandler {
         d.getCircleStep().clear();
         d.getLineStep().clear();
 
-        Point p = new Point();
-        p.set(d.getCamera().TV2object(p0));
+        Point p = d.getCamera().TV2object(p0);
         Point closestPoint = d.getClosestPoint(p);
         if (p.distance(closestPoint) > d.getSelectionDistance()) {
             d.lineStepAdd(new LineSegment(p, p, LineColor.CYAN_3));
@@ -47,8 +46,7 @@ public class MouseHandlerCircleDrawFree extends BaseMouseHandler {
 
     //マウス操作(mouseMode==47 円入力　でドラッグしたとき)を行う関数----------------------------------------------------
     public void mouseDragged(Point p0) {
-        Point p = new Point();
-        p.set(d.getCamera().TV2object(p0));
+        Point p = d.getCamera().TV2object(p0);
         d.getLineStep().get(0).setA(p);
         d.getCircleStep().get(0).setR(OritaCalc.distance(d.getLineStep().get(0).getA(), d.getLineStep().get(0).getB()));
     }
@@ -57,8 +55,7 @@ public class MouseHandlerCircleDrawFree extends BaseMouseHandler {
     public void mouseReleased(Point p0) {
         if (d.getLineStep().size() == 1) {
 
-            Point p = new Point();
-            p.set(d.getCamera().TV2object(p0));
+            Point p = d.getCamera().TV2object(p0);
             Point closestPoint = d.getClosestPoint(p);
 
             if (p.distance(closestPoint) <= d.getSelectionDistance()) {

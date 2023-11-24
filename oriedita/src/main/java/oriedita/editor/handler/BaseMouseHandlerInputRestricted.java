@@ -14,8 +14,7 @@ public abstract class BaseMouseHandlerInputRestricted extends BaseMouseHandler {
             d.getLineCandidate().clear();
             LineSegment candidate = new LineSegment();
             candidate.setActive(LineSegment.ActiveState.ACTIVE_BOTH_3);
-            Point p = new Point();
-            p.set(d.getCamera().TV2object(p0));
+            Point p = d.getCamera().TV2object(p0);
             Point closestPoint = d.getClosestPoint(p);
             if (p.distance(closestPoint) < d.getSelectionDistance()) {
                 candidate.set(closestPoint, closestPoint);

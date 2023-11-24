@@ -28,8 +28,7 @@ public class MouseHandlerCreaseMove4p extends BaseMouseHandlerInputRestricted {
 
     //マウス操作(mouseMode==31move2p2p　でボタンを押したとき)時の作業----------------------------------------------------
     public void mousePressed(Point p0) {
-        Point p = new Point();
-        p.set(d.getCamera().TV2object(p0));
+        Point p = d.getCamera().TV2object(p0);
 
         Point closestPoint = d.getClosestPoint(p);
 

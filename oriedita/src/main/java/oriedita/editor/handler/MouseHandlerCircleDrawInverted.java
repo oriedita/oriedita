@@ -25,8 +25,7 @@ public class MouseHandlerCircleDrawInverted extends BaseMouseHandler {
 
     //マウス操作(ボタンを押したとき)時の作業
     public void mousePressed(Point p0) {
-        Point p = new Point();
-        p.set(d.getCamera().TV2object(p0));
+        Point p = d.getCamera().TV2object(p0);
 
         Circle closest_circumference = new Circle(100000.0, 100000.0, 10.0, LineColor.PURPLE_8); //Circle with the circumference closest to the mouse
         closest_circumference.set(d.getClosestCircleMidpoint(p));

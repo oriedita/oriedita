@@ -14,7 +14,7 @@ import origami.crease_pattern.element.Point;
 @Handles(MouseMode.DELETE_LINE_TYPE_SELECT_73)
 public class MouseHandlerDeleteTypeSelect extends BaseMouseHandlerBoxSelect {
 
-    private ApplicationModel applicationModel;
+    private final ApplicationModel applicationModel;
 
     @Inject
     public MouseHandlerDeleteTypeSelect(ApplicationModel applicationModel) {
@@ -25,8 +25,7 @@ public class MouseHandlerDeleteTypeSelect extends BaseMouseHandlerBoxSelect {
         super.mouseReleased(p0);
         d.getLineStep().clear();
 
-        Point p = new Point();
-        p.set(d.getCamera().TV2object(p0));
+        Point p = d.getCamera().TV2object(p0);
 
         CustomLineTypes del = applicationModel.getDelLineType();
 

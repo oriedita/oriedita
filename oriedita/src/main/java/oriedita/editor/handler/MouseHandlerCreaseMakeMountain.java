@@ -15,11 +15,6 @@ public class MouseHandlerCreaseMakeMountain extends BaseMouseHandlerBoxSelect {
     public MouseHandlerCreaseMakeMountain() {
     }
 
-    @Override
-    public void mouseMoved(Point p0) {
-
-    }
-
     /**
      * マウス操作(mouseMode==23 でボタンを離したとき)を行う関数
      * <p>
@@ -38,8 +33,7 @@ public class MouseHandlerCreaseMakeMountain extends BaseMouseHandlerBoxSelect {
                 d.record();
             }
         } else {//現状では赤を赤に変えたときもUNDO用に記録されてしまう20161218
-            Point p = new Point();
-            p.set(d.getCamera().TV2object(p0));
+            Point p = d.getCamera().TV2object(p0);
             if (d.getFoldLineSet().closestLineSegmentDistance(p) < d.getSelectionDistance()) {//点pに最も近い線分の番号での、その距離を返す	public double closestLineSegmentDistance(Ten p)
                 d.getFoldLineSet().closestLineSegmentSearch(p).setColor(LineColor.RED_1);
                 d.fix2();

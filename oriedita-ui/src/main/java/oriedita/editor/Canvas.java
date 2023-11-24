@@ -97,7 +97,7 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
 
     private MouseModeHandler activeMouseHandler;
 
-    private final Point p_mouse_object_position = new Point();//マウスのオブジェクト座標上の位置
+    private Point p_mouse_object_position = new Point();//マウスのオブジェクト座標上の位置
     private final Point p_mouse_TV_position = new Point();//マウスのTV座標上の位置
 
     private Background_camera h_cam = new Background_camera();
@@ -105,7 +105,7 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
     private TextEditingArea cpTextEditingArea;
 
     private int btn = 0;//Stores which button in the center of the left and right is pressed. 1 =
-    private final Point mouse_temp0 = new Point();//マウスの動作対応時に、一時的に使うTen
+    private Point mouse_temp0 = new Point();//マウスの動作対応時に、一時的に使うTen
 
     private boolean displayPointSpotlight;
     private boolean displayPointOffset;
@@ -601,7 +601,7 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
                         break;
                 }
 
-                mouse_temp0.set(p);
+                mouse_temp0 = p;
                 canvasUI.repaint();
                 return;
             case MouseEvent.BUTTON3:
@@ -694,7 +694,7 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
                             break;
                     }
 
-                    mouse_temp0.set(p);
+                    mouse_temp0 = p;
                     canvasUI.repaint();
                     return;
 
@@ -776,7 +776,7 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
                             break;
                     }
 
-                    mouse_temp0.set(p);
+                    mouse_temp0 = p;
                     canvasUI.repaint();
                     mouseDraggedValid = false;
                     mouseReleasedValid = false;
@@ -886,7 +886,7 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
     public void mouse_object_position(Point p) {//この関数はmouseMoved等と違ってマウスイベントが起きても自動では認識されない
         p_mouse_TV_position.set(p.getX(), p.getY());
 
-        p_mouse_object_position.set(creasePatternCamera.TV2object(p_mouse_TV_position));
+        p_mouse_object_position = creasePatternCamera.TV2object(p_mouse_TV_position);
     }
 
     public void setData(PropertyChangeEvent e, BackgroundModel backgroundModel) {

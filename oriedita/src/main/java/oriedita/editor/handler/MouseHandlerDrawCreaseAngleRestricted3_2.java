@@ -40,8 +40,7 @@ public class MouseHandlerDrawCreaseAngleRestricted3_2 extends BaseMouseHandlerIn
 
 
         double kakudo;
-        Point p = new Point();
-        p.set(d.getCamera().TV2object(p0));
+        Point p = d.getCamera().TV2object(p0);
 
         if ((d.getLineStep().size() == 0) || (d.getLineStep().size() == 1)) {
             Point closest_point = d.getClosestPoint(p);
@@ -123,17 +122,15 @@ public class MouseHandlerDrawCreaseAngleRestricted3_2 extends BaseMouseHandlerIn
             }
 
             if (OritaCalc.determineLineSegmentDistance(p, closest_step_lineSegment) < d.getSelectionDistance()) {
-                Point mokuhyou_point = new Point();
-                mokuhyou_point.set(OritaCalc.findProjection(closest_step_lineSegment, p));
+                Point mokuhyou_point = OritaCalc.findProjection(closest_step_lineSegment, p);
 
                 LineSegment closestLineSegment = new LineSegment();
                 closestLineSegment.set(d.getClosestLineSegment(p));
                 if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.getSelectionDistance()) {//最寄折線が近い場合
                     if (OritaCalc.isLineSegmentParallel(closest_step_lineSegment, closestLineSegment, Epsilon.UNKNOWN_1EN6) == OritaCalc.ParallelJudgement.NOT_PARALLEL) {//最寄折線が最寄step折線と平行の場合は除外
-                        Point mokuhyou_point2 = new Point();
-                        mokuhyou_point2.set(OritaCalc.findIntersection(closest_step_lineSegment, closestLineSegment));
+                        Point mokuhyou_point2 = OritaCalc.findIntersection(closest_step_lineSegment, closestLineSegment);
                         if (p.distance(mokuhyou_point) * 2.0 > p.distance(mokuhyou_point2)) {
-                            mokuhyou_point.set(mokuhyou_point2);
+                            mokuhyou_point = mokuhyou_point2;
                         }
 
                     }

@@ -8,7 +8,8 @@ public class Point implements Serializable {
     double x, y;
 
     public Point(Point p) {
-        set(p);
+        x = p.getX();
+        y = p.getY();
     }
 
     public Point() {
@@ -36,11 +37,6 @@ public class Point implements Serializable {
     public Point(double a, Point p, double b, Point q) {
         x = a * p.getX() + b * q.getX();
         y = a * p.getY() + b * q.getY();
-    }
-
-    public void set(Point p) {
-        x = p.getX();
-        y = p.getY();
     }
 
     public void set(double i, double j) {
@@ -74,11 +70,6 @@ public class Point implements Serializable {
         y = 0.0;
     }
 
-    public void parallel_move(double x1, double y1) {
-        x = x + x1;
-        y = y + y1;
-    }
-
     /**
      * Function to find the distance (double) to other points ----------------------------------------------------
      */
@@ -110,6 +101,10 @@ public class Point implements Serializable {
         y = y + addPoint.getY();
     }
 
+    public Point moveNew(Point addPoint) {
+        return new Point(x + addPoint.getX(), y + addPoint.getY());
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -123,10 +118,4 @@ public class Point implements Serializable {
         return Objects.hash(x, y);
     }
 
-    /**
-     * @return new Point with the coordinates rounded to full numbers
-     */
-    public Point rounded() {
-        return new Point(Math.round(x), Math.round(y));
-    }
 }

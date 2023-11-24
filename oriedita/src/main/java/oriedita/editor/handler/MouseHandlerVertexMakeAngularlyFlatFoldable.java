@@ -32,7 +32,7 @@ public class MouseHandlerVertexMakeAngularlyFlatFoldable extends BaseMouseHandle
             if (d.getLineStep().size() == 0) {
                 i_step_for_move_4p = CreasePattern_Worker.FourPointStep.STEP_0;
             }
-            Point p = new Point();
+            Point p;
 
             switch (i_step_for_move_4p) {
                 case STEP_0:
@@ -42,7 +42,7 @@ public class MouseHandlerVertexMakeAngularlyFlatFoldable extends BaseMouseHandle
                     LineSegment candidate = new LineSegment();
                     candidate.setActive(LineSegment.ActiveState.ACTIVE_BOTH_3);
                     d.getLineCandidate().clear();
-                    p.set(d.getCamera().TV2object(p0));
+                    p = d.getCamera().TV2object(p0);
 
                     LineSegment closestLineSegment = new LineSegment();
                     closestLineSegment.set(d.get_moyori_step_lineSegment(p, 1, d.getLineStep().size()));
@@ -55,7 +55,7 @@ public class MouseHandlerVertexMakeAngularlyFlatFoldable extends BaseMouseHandle
                 }
                 case STEP_2: {
                     d.getLineCandidate().clear();
-                    p.set(d.getCamera().TV2object(p0));
+                    p = d.getCamera().TV2object(p0);
 
                     LineSegment closestLineSegment = new LineSegment();
                     closestLineSegment.set(d.getClosestLineSegment(p));
@@ -73,8 +73,7 @@ public class MouseHandlerVertexMakeAngularlyFlatFoldable extends BaseMouseHandle
     public void mousePressed(Point p0) {//Returns 1 only if all the work is done and a new polygonal line is added. Otherwise, it returns 0.
         d.getLineCandidate().clear();
 
-        Point p = new Point();
-        p.set(d.getCamera().TV2object(p0));
+        Point p = d.getCamera().TV2object(p0);
         if (d.getLineStep().size() == 0) {
             i_step_for_move_4p = CreasePattern_Worker.FourPointStep.STEP_0;
         }
@@ -83,8 +82,7 @@ public class MouseHandlerVertexMakeAngularlyFlatFoldable extends BaseMouseHandle
             case STEP_0:
                 double decision_distance = Epsilon.UNKNOWN_1EN6;
 
-                Point t1 = new Point();
-                t1.set(d.getFoldLineSet().closestPointOfFoldLine(p));//点pに最も近い、「線分の端点」を返すori_s.mottomo_tikai_Tenは近い点がないと p_return.set(100000.0,100000.0)と返してくる
+                Point t1 = d.getFoldLineSet().closestPointOfFoldLine(p);//点pに最も近い、「線分の端点」を返すori_s.mottomo_tikai_Tenは近い点がないと p_return.set(100000.0,100000.0)と返してくる
 
 
                 if (p.distance(t1) < d.getSelectionDistance()) {
@@ -218,8 +216,7 @@ public class MouseHandlerVertexMakeAngularlyFlatFoldable extends BaseMouseHandle
                     closestLineSegment.setColor(LineColor.GREEN_6);
                     d.lineStepAdd(closestLineSegment);
 
-                    Point kousa_point = new Point();
-                    kousa_point.set(OritaCalc.findIntersection(d.getLineStep().get(0), d.getLineStep().get(1)));
+                    Point kousa_point = OritaCalc.findIntersection(d.getLineStep().get(0), d.getLineStep().get(1));
                     LineSegment add_sen = new LineSegment(kousa_point, d.getLineStep().get(0).getA(), icol_temp);//20180503変更
                     if (Epsilon.high.gt0(add_sen.determineLength())) {//最寄の既存折線が有効の場合
                         d.addLineSegment(add_sen);

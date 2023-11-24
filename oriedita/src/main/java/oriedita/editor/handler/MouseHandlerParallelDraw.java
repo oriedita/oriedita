@@ -28,8 +28,7 @@ public class MouseHandlerParallelDraw extends BaseMouseHandlerInputRestricted {
 
     //マウス操作(ボタンを押したとき)時の作業
     public void mousePressed(Point p0) {
-        Point p = new Point();
-        p.set(d.getCamera().TV2object(p0));
+        Point p = d.getCamera().TV2object(p0);
         if (d.getLineStep().size() == 0) {
             Point closestPoint = d.getClosestPoint(p);
 
@@ -89,14 +88,14 @@ public class MouseHandlerParallelDraw extends BaseMouseHandlerInputRestricted {
         }
 
         if (OritaCalc.isLineSegmentParallel(s_o, s_k, Epsilon.UNKNOWN_1EN7) == OritaCalc.ParallelJudgement.PARALLEL_EQUAL) {//0=平行でない、1=平行で２直線が一致しない、2=平行で２直線が一致する
-            cross_point.set(s_k.getA());
+            cross_point = s_k.getA();
             if (OritaCalc.distance(s_o.getA(), s_k.getA()) > OritaCalc.distance(s_o.getA(), s_k.getB())) {
-                cross_point.set(s_k.getB());
+                cross_point = s_k.getB();
             }
         }
 
         if (OritaCalc.isLineSegmentParallel(s_o, s_k, Epsilon.UNKNOWN_1EN7) == OritaCalc.ParallelJudgement.NOT_PARALLEL) {//0=平行でない、1=平行で２直線が一致しない、2=平行で２直線が一致する
-            cross_point.set(OritaCalc.findIntersection(s_o, s_k));
+            cross_point = OritaCalc.findIntersection(s_o, s_k);
         }
 
         LineSegment add_sen = new LineSegment(cross_point, s_o.getA(), icolo);

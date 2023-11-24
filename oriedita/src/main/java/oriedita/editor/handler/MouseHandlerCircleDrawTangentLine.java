@@ -27,8 +27,7 @@ public class MouseHandlerCircleDrawTangentLine extends BaseMouseHandler {
 
     //マウス操作(ボタンを押したとき)時の作業
     public void mousePressed(Point p0) {
-        Point p = new Point();
-        p.set(d.getCamera().TV2object(p0));
+        Point p = d.getCamera().TV2object(p0);
         closest_circumference.set(d.getClosestCircleMidpoint(p));
 
         if (d.getCircleStep().size() == 0 || d.getCircleStep().size() == 1) {
@@ -66,10 +65,8 @@ public class MouseHandlerCircleDrawTangentLine extends BaseMouseHandler {
             Circle firstCircle = d.getCircleStep().get(0);
             Circle secondCircle = d.getCircleStep().get(1);
 
-            Point c1 = new Point();
-            c1.set(firstCircle.determineCenter());
-            Point c2 = new Point();
-            c2.set(secondCircle.determineCenter());
+            Point c1 = firstCircle.determineCenter();
+            Point c2 = secondCircle.determineCenter();
 
             double x1 = firstCircle.getX();
             double y1 = firstCircle.getY();
@@ -92,8 +89,7 @@ public class MouseHandlerCircleDrawTangentLine extends BaseMouseHandler {
             }//接線0本の場合
 
             if (Math.abs((xp * xp + yp * yp) - (r1 - r2) * (r1 - r2)) < Epsilon.UNKNOWN_1EN7) {//外接線1本の場合
-                Point kouten = new Point();
-                kouten.set(OritaCalc.internalDivisionRatio(c1, c2, -r1, r2));
+                Point kouten = OritaCalc.internalDivisionRatio(c1, c2, -r1, r2);
                 StraightLine ty = new StraightLine(c1, kouten);
                 ty.orthogonalize(kouten);
 
@@ -135,8 +131,7 @@ public class MouseHandlerCircleDrawTangentLine extends BaseMouseHandler {
                 d.lineStepAdd(new LineSegment(new Point(xr1, yr1), OritaCalc.findProjection(t1, new Point(x2, y2)), LineColor.PURPLE_8));
                 d.lineStepAdd(new LineSegment(new Point(xr2, yr2), OritaCalc.findProjection(t2, new Point(x2, y2)), LineColor.PURPLE_8));
 
-                Point kouten = new Point();
-                kouten.set(OritaCalc.internalDivisionRatio(c1, c2, r1, r2));
+                Point kouten = OritaCalc.internalDivisionRatio(c1, c2, r1, r2);
                 StraightLine ty = new StraightLine(c1, kouten);
                 ty.orthogonalize(kouten);
                 LineSegment s = OritaCalc.circle_to_straightLine_no_intersect_wo_connect_LineSegment(new Circle(kouten, (r1 + r2) / 2.0, LineColor.BLACK_0), ty);

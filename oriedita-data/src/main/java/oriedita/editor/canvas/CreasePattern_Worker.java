@@ -47,8 +47,6 @@ public interface CreasePattern_Worker {
 
     LineSegmentSet get();
 
-    LineSegmentSet getForFolding();
-
     //折畳み推定用にselectされた線分集合の折線数を intとして出力する。//icolが3(cyan＝水色)以上の補助線はカウントしない
     int getFoldLineTotalForSelectFolding();
 
@@ -198,8 +196,6 @@ public interface CreasePattern_Worker {
 
     void check4();
 
-    void setCheck3(boolean i);
-
     void setCheck4(boolean i);
 
     void lightenCheck4Color();
@@ -264,6 +260,8 @@ public interface CreasePattern_Worker {
 
     Point getOperationFrame_p4();
 
+    void setOperationFramePoint(int index, Point p);
+
     int getNumPolygonCorners();
 
     Color getCustomCircleColor();
@@ -274,9 +272,9 @@ public interface CreasePattern_Worker {
 
     TextWorker getTextWorker();
 
-    public void addPropertyChangeListener(PropertyChangeListener listener);
+    void addPropertyChangeListener(PropertyChangeListener listener);
 
-    public void removePropertyChangeListener(PropertyChangeListener listener);
+    void removePropertyChangeListener(PropertyChangeListener listener);
 
     void setGridConfigurationData(GridModel gridModel);
 

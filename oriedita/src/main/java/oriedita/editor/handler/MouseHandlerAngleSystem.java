@@ -46,11 +46,6 @@ public class MouseHandlerAngleSystem extends BaseMouseHandlerInputRestricted {
         this.angleSystemModel = angleSystemModel;
     }
 
-    @Override
-    public EnumSet<Feature> getSubscribedFeatures() {
-        return EnumSet.of(Feature.BUTTON_1);
-    }
-
     public void mouseMoved(Point p0) {
         super.mouseMoved(p0);
         Point p = d.getCamera().TV2object(p0);
@@ -81,8 +76,7 @@ public class MouseHandlerAngleSystem extends BaseMouseHandlerInputRestricted {
 
     //マウス操作(ボタンを押したとき)時の作業
     public void mousePressed(Point p0) {
-        Point p = new Point();
-        p.set(d.getCamera().TV2object(p0));
+        Point p = d.getCamera().TV2object(p0);
 
         // Apply values from mouseMoved
         switch (currentStep) {
@@ -133,8 +127,7 @@ public class MouseHandlerAngleSystem extends BaseMouseHandlerInputRestricted {
             LineSegment s = new LineSegment();
             s.set(closestLineSegment);
             s.setColor(LineColor.GREEN_6);
-            Point startingPoint = new Point();
-            startingPoint.set(OritaCalc.findIntersection(s, direction));
+            Point startingPoint = OritaCalc.findIntersection(s, direction);
             return new LineSegment(startingPoint, pEnd, d.getLineColor());
         }
         return null;

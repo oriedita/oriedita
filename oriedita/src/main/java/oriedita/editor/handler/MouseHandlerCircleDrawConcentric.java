@@ -24,8 +24,7 @@ public class MouseHandlerCircleDrawConcentric extends BaseMouseHandler {
 
     //マウス操作(mouseMode==48 同心円　線分入力　でボタンを押したとき)時の作業----------------------------------------------------
     public void mousePressed(Point p0) {
-        Point p = new Point();
-        p.set(d.getCamera().TV2object(p0));
+        Point p = d.getCamera().TV2object(p0);
         Circle closest_circumference = new Circle(); //Circle with the circumference closest to the mouse
         closest_circumference.set(d.getClosestCircleMidpoint(p));
         Point closestPoint = d.getClosestPoint(p);
@@ -53,8 +52,7 @@ public class MouseHandlerCircleDrawConcentric extends BaseMouseHandler {
 
     //マウス操作(mouseMode==48 同心円　線分入力　でドラッグしたとき)を行う関数----------------------------------------------------
     public void mouseDragged(Point p0) {
-        Point p = new Point();
-        p.set(d.getCamera().TV2object(p0));
+        Point p = d.getCamera().TV2object(p0);
         if ((d.getLineStep().size() == 1) && (d.getCircleStep().size() == 2)) {
             d.getLineStep().get(0).setA(p);
             d.getCircleStep().get(1).setR(d.getCircleStep().get(0).getR() + d.getLineStep().get(0).determineLength());
@@ -69,8 +67,7 @@ public class MouseHandlerCircleDrawConcentric extends BaseMouseHandler {
 
             d.getCircleStep().clear();
 
-            Point p = new Point();
-            p.set(d.getCamera().TV2object(p0));
+            Point p = d.getCamera().TV2object(p0);
             Point closestPoint = d.getClosestPoint(p);
             d.getLineStep().get(0).setA(closestPoint);
             if (p.distance(closestPoint) <= d.getSelectionDistance()) {

@@ -30,8 +30,7 @@ public class MouseHandlerCircleDraw extends BaseMouseHandler {
 
     //マウス操作(mouseMode==42 円入力　でボタンを押したとき)時の作業----------------------------------------------------
     public void mousePressed(Point p0) {
-        Point p = new Point();
-        p.set(d.getCamera().TV2object(p0));
+        Point p = d.getCamera().TV2object(p0);
         Point closestPoint = d.getClosestPoint(p);
         d.getCircleStep().clear();
         d.getLineStep().clear();
@@ -43,8 +42,7 @@ public class MouseHandlerCircleDraw extends BaseMouseHandler {
 
     //マウス操作(mouseMode==42 円入力　でドラッグしたとき)を行う関数----------------------------------------------------
     public void mouseDragged(Point p0) {
-        Point p = new Point();
-        p.set(d.getCamera().TV2object(p0));
+        Point p = d.getCamera().TV2object(p0);
         if (previewLine != null) {
             previewLine.setA(p);
             if (previewCircle != null) {
@@ -56,8 +54,7 @@ public class MouseHandlerCircleDraw extends BaseMouseHandler {
     //マウス操作(mouseMode==42 円入力　でボタンを離したとき)を行う関数----------------------------------------------------
     public void mouseReleased(Point p0) {
         if (previewLine != null) {
-            Point p = new Point();
-            p.set(d.getCamera().TV2object(p0));
+            Point p = d.getCamera().TV2object(p0);
             Point closestPoint = d.getClosestPoint(p);
             previewLine.setA(closestPoint);
             if (p.distance(closestPoint) <= d.getSelectionDistance()) {

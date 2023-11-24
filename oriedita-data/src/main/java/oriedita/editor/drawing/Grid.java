@@ -39,7 +39,7 @@ public class Grid {
     double d_grid_cy = d_grid_by - d_grid_ay;
 
     double okx0 = -200.0;//obiject系での格子のx座標の原点
-    double oky0 = +200.0;//obiject系での格子のy座標の原点
+    double oky0 = 200.0;//obiject系での格子のy座標の原点
 
     double diagonal_max = 1.0;//The longer diagonal of the unit cell
     double diagonal_min = 1.0;//The shorter diagonal of the unit cell
@@ -273,16 +273,8 @@ public class Grid {
         return (int) Math.ceil(b_index_max);
     }
 
-    public Color getGridColor() {
-        return grid_color;
-    }
-
     public void setGridColor(Color color0) {
         grid_color = color0;
-    }
-
-    public Color getGridScaleColor() {
-        return gridScaleColor;
     }
 
     public void setGridScaleColor(Color color0) {
@@ -511,7 +503,7 @@ public class Grid {
                 if (baseState == GridModel.State.FULL || (baseState == GridModel.State.WITHIN_PAPER && isWithinPaper(t_tmp))) {
                     if (t0.distance(t_tmp) <= distance_min) {
                         distance_min = t0.distance(t_tmp);
-                        t2.set(t_tmp);
+                        t2 = t_tmp;
                     }
                 }
             }

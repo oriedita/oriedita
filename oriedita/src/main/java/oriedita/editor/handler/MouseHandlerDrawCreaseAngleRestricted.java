@@ -38,8 +38,7 @@ public class MouseHandlerDrawCreaseAngleRestricted extends BaseMouseHandler {
 
         int i_jyunnbi_step_suu = 1;//動作の準備として人間が選択するステップ数
 
-        Point p = new Point();
-        p.set(d.getCamera().TV2object(p0));
+        Point p = d.getCamera().TV2object(p0);
 
         if (d.getLineStep().size() == 0) {    //第１段階として、線分を選択
             LineSegment closestLineSegment = new LineSegment();
@@ -93,7 +92,7 @@ public class MouseHandlerDrawCreaseAngleRestricted extends BaseMouseHandler {
                 double[] jk = angleSystemModel.getAngles();
 
                 LineSegment s_kiso = new LineSegment(d.getLineStep().get(0).getA(), d.getLineStep().get(0).getB());
-                double angle = 0.0;
+                double angle;
                 i_jyun = false;
                 for (int i = 0; i < 6; i++) {
                     i_jyun = !i_jyun;
@@ -183,8 +182,7 @@ public class MouseHandlerDrawCreaseAngleRestricted extends BaseMouseHandler {
                 }
 
                 //line_step[20]とs_step[21]の交点はoc.kouten_motome(Senbun s1,Senbun s2)で求める//２つの線分を直線とみなして交点を求める関数。線分としては交差しなくても、直線として交差している場合の交点を返す
-                Point kousa_point = new Point();
-                kousa_point.set(OritaCalc.findIntersection(d.getLineStep().get(1 + (honsuu) + (honsuu)), d.getLineStep().get(1 + (honsuu) + (honsuu) + 1)));
+                Point kousa_point = OritaCalc.findIntersection(d.getLineStep().get(1 + honsuu + honsuu), d.getLineStep().get(1 + honsuu + honsuu + 1));
 
                 LineSegment add_sen = new LineSegment(kousa_point, d.getLineStep().get(1 + (honsuu) + (honsuu)).getA());
                 add_sen.setColor(d.getLineColor());

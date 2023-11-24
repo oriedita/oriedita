@@ -35,13 +35,11 @@ public class MouseHandlerFlatFoldableCheck extends BaseMouseHandler {
         if (d.getLineStep().size() == 0) {
             i_O_F_C = false;
 
-            Point p = new Point();
-            p.set(d.getCamera().TV2object(p0));
+            Point p = d.getCamera().TV2object(p0);
             d.lineStepAdd(new LineSegment(p, p, LineColor.YELLOW_7));
         } else {
             if (!i_O_F_C) {
-                Point p = new Point();
-                p.set(d.getCamera().TV2object(p0));
+                Point p = d.getCamera().TV2object(p0);
                 d.lineStepAdd(new LineSegment(d.getLineStep().get(d.getLineStep().size() - 1).getB(), p, LineColor.YELLOW_7));
             }
         }
@@ -53,8 +51,7 @@ public class MouseHandlerFlatFoldableCheck extends BaseMouseHandler {
 
     public void mouseDragged(Point p0) {
         if (!i_O_F_C) {
-            Point p = new Point();
-            p.set(d.getCamera().TV2object(p0));
+            Point p = d.getCamera().TV2object(p0);
             d.getLineStep().get(d.getLineStep().size() - 1).setB(p);
         }
     }
@@ -64,8 +61,7 @@ public class MouseHandlerFlatFoldableCheck extends BaseMouseHandler {
 
 
         if (!i_O_F_C) {
-            Point p = new Point();
-            p.set(d.getCamera().TV2object(p0));
+            Point p = d.getCamera().TV2object(p0);
             d.getLineStep().get(d.getLineStep().size() - 1).setB(p);
 
 

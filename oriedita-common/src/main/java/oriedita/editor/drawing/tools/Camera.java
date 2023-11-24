@@ -181,19 +181,15 @@ public class Camera implements Serializable { // Mediation between actual coordi
     }
 
     public Point object2TV(Point t_ob) {
-        Point t_tv = new Point();
-        double x1, y1;
-        double x2, y2;
-        x1 = t_ob.getX() - camera_position_x;
-        y1 = t_ob.getY() - camera_position_y;
-        x2 = cos_rad * x1 + sin_rad * y1;
-        y2 = -sin_rad * x1 + cos_rad * y1;
+        double x1 = t_ob.getX() - camera_position_x;
+        double y1 = t_ob.getY() - camera_position_y;
+        double x2 = cos_rad * x1 + sin_rad * y1;
+        double y2 = -sin_rad * x1 + cos_rad * y1;
 
         x2 = x2 * camera_mirror;       //鏡
         x2 = x2 * camera_zoom_x;
         y2 = y2 * camera_zoom_y;
-        t_tv.setX(x2 + display_position_x);
-        t_tv.setY(y2 + display_position_y);
+        Point t_tv = new Point(x2 + display_position_x, y2 + display_position_y);
         if (parent != null) {
             t_tv = parent.object2TV(t_tv);
         }
@@ -209,21 +205,9 @@ public class Camera implements Serializable { // Mediation between actual coordi
     }
 
     public Circle object2TV(Circle s_ob) {
-        Circle s_tv = new Circle();
-        s_tv.set(s_ob);
-
-        Point p_ob = new Point();
-        p_ob.setX(s_ob.getX());
-        p_ob.setY(s_ob.getY());
-
-        Point p_tv = new Point();
-        p_tv.set(object2TV(p_ob));
-
-        s_tv.setX(p_tv.getX());
-        s_tv.setY(p_tv.getY());
-        s_tv.setR(s_tv.getR() * camera_zoom_x);
-
-        return s_tv;
+        Point p_ob = s_ob.determineCenter();
+        Point p_tv = object2TV(p_ob);
+        return new Circle(p_tv, s_ob.getR() * camera_zoom_x, s_ob.getColor());
     }
 
     public Point TV2object(Point t_tv) {

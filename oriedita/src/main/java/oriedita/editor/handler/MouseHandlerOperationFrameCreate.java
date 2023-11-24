@@ -24,8 +24,7 @@ public class MouseHandlerOperationFrameCreate extends BaseMouseHandler {
         if (d.getGridInputAssist()) {
             d.getLineCandidate().clear();
 
-            Point p = new Point();
-            p.set(d.getCamera().TV2object(p0));
+            Point p = d.getCamera().TV2object(p0);
             Point closest_point = d.getClosestPoint(p);
 
             if (p.distance(closest_point) < d.getSelectionDistance()) {
@@ -40,17 +39,11 @@ public class MouseHandlerOperationFrameCreate extends BaseMouseHandler {
 
     //マウス操作(mouseMode==61　長方形内選択でボタンを押したとき)時の作業----------------------------------------------------
     public void mousePressed(Point p0) {
-        Point p = new Point();
-        p.set(d.getCamera().TV2object(p0));
-        Point p_new = new Point();
-        Point p_ob1 = new Point();
-        p_ob1.set(d.getCamera().TV2object(d.getOperationFrame_p1()));
-        Point p_ob2 = new Point();
-        p_ob2.set(d.getCamera().TV2object(d.getOperationFrame_p2()));
-        Point p_ob3 = new Point();
-        p_ob3.set(d.getCamera().TV2object(d.getOperationFrame_p3()));
-        Point p_ob4 = new Point();
-        p_ob4.set(d.getCamera().TV2object(d.getOperationFrame_p4()));
+        Point p = d.getCamera().TV2object(p0);
+        Point p_ob1 = d.getCamera().TV2object(d.getOperationFrame_p1());
+        Point p_ob2 = d.getCamera().TV2object(d.getOperationFrame_p2());
+        Point p_ob3 = d.getCamera().TV2object(d.getOperationFrame_p3());
+        Point p_ob4 = d.getCamera().TV2object(d.getOperationFrame_p4());
 
         double distance_min = 100000.0;
 
@@ -58,6 +51,7 @@ public class MouseHandlerOperationFrameCreate extends BaseMouseHandler {
         if (d.getLineStep().size() == 0) {
             operationFrameMode = CreasePattern_Worker.OperationFrameMode.CREATE_1;
         }
+        Point p_new;
         if (d.getLineStep().size() == 4) {
             if (d.getOperationFrameBox().inside(p0) == Polygon.Intersection.OUTSIDE) {
                 operationFrameMode = CreasePattern_Worker.OperationFrameMode.CREATE_1;
@@ -73,31 +67,31 @@ public class MouseHandlerOperationFrameCreate extends BaseMouseHandler {
 
 
             if (p.distance(p_ob1) < d.getSelectionDistance()) {
-                p_new.set(d.getOperationFrame_p1());
-                d.getOperationFrame_p1().set(d.getOperationFrame_p3());
-                d.getOperationFrame_p3().set(p_new);
+                p_new = d.getOperationFrame_p1();
+                d.setOperationFramePoint(1, d.getOperationFrame_p3());
+                d.setOperationFramePoint(3, p_new);
                 operationFrameMode = CreasePattern_Worker.OperationFrameMode.MOVE_POINTS_2;
             }
             if (p.distance(p_ob2) < d.getSelectionDistance()) {
-                p_new.set(d.getOperationFrame_p2());
-                d.getOperationFrame_p2().set(d.getOperationFrame_p1());
-                d.getOperationFrame_p1().set(d.getOperationFrame_p4());
-                d.getOperationFrame_p4().set(d.getOperationFrame_p3());
-                d.getOperationFrame_p3().set(p_new);
+                p_new = d.getOperationFrame_p2();
+                d.setOperationFramePoint(2, d.getOperationFrame_p1());
+                d.setOperationFramePoint(1, d.getOperationFrame_p4());
+                d.setOperationFramePoint(4, d.getOperationFrame_p3());
+                d.setOperationFramePoint(3, p_new);
                 operationFrameMode = CreasePattern_Worker.OperationFrameMode.MOVE_POINTS_2;
             }
             if (p.distance(p_ob3) < d.getSelectionDistance()) {
-                p_new.set(d.getOperationFrame_p3());
-                d.getOperationFrame_p1().set(d.getOperationFrame_p1());
-                d.getOperationFrame_p3().set(p_new);
+                p_new = d.getOperationFrame_p3();
+                d.setOperationFramePoint(1, d.getOperationFrame_p1());
+                d.setOperationFramePoint(3, p_new);
                 operationFrameMode = CreasePattern_Worker.OperationFrameMode.MOVE_POINTS_2;
             }
             if (p.distance(p_ob4) < d.getSelectionDistance()) {
-                p_new.set(d.getOperationFrame_p4());
-                d.getOperationFrame_p4().set(d.getOperationFrame_p1());
-                d.getOperationFrame_p1().set(d.getOperationFrame_p2());
-                d.getOperationFrame_p2().set(d.getOperationFrame_p3());
-                d.getOperationFrame_p3().set(p_new);
+                p_new = d.getOperationFrame_p4();
+                d.setOperationFramePoint(4, d.getOperationFrame_p1());
+                d.setOperationFramePoint(1, d.getOperationFrame_p2());
+                d.setOperationFramePoint(2, d.getOperationFrame_p3());
+                d.setOperationFramePoint(3, p_new);
                 operationFrameMode = CreasePattern_Worker.OperationFrameMode.MOVE_POINTS_2;
             }
 
@@ -105,16 +99,16 @@ public class MouseHandlerOperationFrameCreate extends BaseMouseHandler {
 
         if (operationFrameMode == CreasePattern_Worker.OperationFrameMode.MOVE_SIDES_3) {
             while (OritaCalc.determineLineSegmentDistance(p, p_ob1, p_ob2) != distance_min) {
-                p_new.set(d.getOperationFrame_p1());
-                d.getOperationFrame_p1().set(d.getOperationFrame_p2());
-                d.getOperationFrame_p2().set(d.getOperationFrame_p3());
-                d.getOperationFrame_p3().set(d.getOperationFrame_p4());
-                d.getOperationFrame_p4().set(p_new);
-                p_new.set(p_ob1);
-                p_ob1.set(p_ob2);
-                p_ob2.set(p_ob3);
-                p_ob3.set(p_ob4);
-                p_ob4.set(p_new);
+                p_new = d.getOperationFrame_p1();
+                d.setOperationFramePoint(1, d.getOperationFrame_p2());
+                d.setOperationFramePoint(2, d.getOperationFrame_p3());
+                d.setOperationFramePoint(3, d.getOperationFrame_p4());
+                d.setOperationFramePoint(4, p_new);
+                p_new = p_ob1;
+                p_ob1 = p_ob2;
+                p_ob2 = p_ob3;
+                p_ob3 = p_ob4;
+                p_ob4 = p_new;
             }
 
         }
@@ -126,27 +120,26 @@ public class MouseHandlerOperationFrameCreate extends BaseMouseHandler {
             d.lineStepAdd(new LineSegment());
             d.lineStepAdd(new LineSegment());
 
-            p_new.set(p);
+            p_new = p;
 
             Point closest_point = d.getClosestPoint(p);
 
             if (p.distance(closest_point) < d.getSelectionDistance()) {
-                p_new.set(closest_point);
+                p_new = closest_point;
 
             }
 
-            d.getOperationFrame_p1().set(d.getCamera().object2TV(p_new));
-            d.getOperationFrame_p2().set(d.getCamera().object2TV(p_new));
-            d.getOperationFrame_p3().set(d.getCamera().object2TV(p_new));
-            d.getOperationFrame_p4().set(d.getCamera().object2TV(p_new));
+            d.setOperationFramePoint(1, d.getCamera().object2TV(p_new));
+            d.setOperationFramePoint(2, d.getCamera().object2TV(p_new));
+            d.setOperationFramePoint(3, d.getCamera().object2TV(p_new));
+            d.setOperationFramePoint(4, d.getCamera().object2TV(p_new));
         }
     }
 
     //マウス操作(mouseMode==61　長方形内選択でドラッグしたとき)を行う関数----------------------------------------------------
     public void mouseDragged(Point p0) {
 
-        Point p = new Point();
-        p.set(d.getCamera().TV2object(p0));
+        Point p = d.getCamera().TV2object(p0);
         if (operationFrameMode == CreasePattern_Worker.OperationFrameMode.MOVE_POINTS_2) {
             operationFrameMode = CreasePattern_Worker.OperationFrameMode.CREATE_1;
         }
@@ -154,7 +147,7 @@ public class MouseHandlerOperationFrameCreate extends BaseMouseHandler {
         Point p_new = new Point();
 
         if (!d.getGridInputAssist()) {
-            p_new.set(p);
+            p_new = p;
         }
 
         if (d.getGridInputAssist()) {
@@ -168,7 +161,7 @@ public class MouseHandlerOperationFrameCreate extends BaseMouseHandler {
             }
             d.getLineCandidate().get(0).setActive(LineSegment.ActiveState.ACTIVE_BOTH_3);
 
-            p_new.set(d.getLineCandidate().get(0).getA());
+            p_new = d.getLineCandidate().get(0).getA();
         }
 
 
@@ -195,9 +188,9 @@ public class MouseHandlerOperationFrameCreate extends BaseMouseHandler {
 
 
         if (operationFrameMode == CreasePattern_Worker.OperationFrameMode.CREATE_1) {
-            d.getOperationFrame_p3().set(d.getCamera().object2TV(p_new));
-            d.getOperationFrame_p2().set(d.getOperationFrame_p1().getX(), d.getOperationFrame_p3().getY());
-            d.getOperationFrame_p4().set(d.getOperationFrame_p3().getX(), d.getOperationFrame_p1().getY());
+            d.setOperationFramePoint(3, d.getCamera().object2TV(p_new));
+            d.setOperationFramePoint(2, new Point(d.getOperationFrame_p1().getX(), d.getOperationFrame_p3().getY()));
+            d.setOperationFramePoint(4, new Point(d.getOperationFrame_p3().getX(), d.getOperationFrame_p1().getY()));
         }
     }
 
@@ -206,15 +199,13 @@ public class MouseHandlerOperationFrameCreate extends BaseMouseHandler {
     //マウス操作(mouseMode==61 長方形内選択　でボタンを離したとき)を行う関数----------------------------------------------------
     public void mouseReleased(Point p0) {
 
-        Point p = new Point();
-        p.set(d.getCamera().TV2object(p0));
+        Point p = d.getCamera().TV2object(p0);
 
-        Point p_new = new Point();
-        p_new.set(p);
+        Point p_new = p;
 
         Point closest_point = d.getClosestPoint(p);
         if (p.distance(closest_point) <= d.getSelectionDistance()) {
-            p_new.set(closest_point);/*line_step[1].seta(moyori_ten);*/
+            p_new = closest_point;/*line_step[1].seta(moyori_ten);*/
         }
 
         if (operationFrameMode == CreasePattern_Worker.OperationFrameMode.MOVE_SIDES_3) {
@@ -239,9 +230,9 @@ public class MouseHandlerOperationFrameCreate extends BaseMouseHandler {
         }
 
         if (operationFrameMode == CreasePattern_Worker.OperationFrameMode.CREATE_1) {
-            d.getOperationFrame_p3().set(d.getCamera().object2TV(p_new));
-            d.getOperationFrame_p2().set(d.getOperationFrame_p1().getX(), d.getOperationFrame_p3().getY());
-            d.getOperationFrame_p4().set(d.getOperationFrame_p3().getX(), d.getOperationFrame_p1().getY());
+            d.setOperationFramePoint(3, d.getCamera().object2TV(p_new));
+            d.setOperationFramePoint(2, new Point(d.getOperationFrame_p1().getX(), d.getOperationFrame_p3().getY()));
+            d.setOperationFramePoint(4, new Point(d.getOperationFrame_p3().getX(), d.getOperationFrame_p1().getY()));
         }
 
         d.getOperationFrameBox().set(1, d.getOperationFrame_p1());

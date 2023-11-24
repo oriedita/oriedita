@@ -17,8 +17,7 @@ public class MouseHandlerSymmetricDraw extends BaseMouseHandlerInputRestricted {
 
     //マウス操作(ボタンを押したとき)時の作業
     public void mousePressed(Point p0) {
-        Point p = new Point();
-        p.set(d.getCamera().TV2object(p0));
+        Point p = d.getCamera().TV2object(p0);
         Point closestPoint = d.getClosestPoint(p);
         if (p.distance(closestPoint) < d.getSelectionDistance()) {
             d.lineStepAdd(new LineSegment(closestPoint, closestPoint, d.getLineColor()));
@@ -39,8 +38,7 @@ public class MouseHandlerSymmetricDraw extends BaseMouseHandlerInputRestricted {
     public void mouseReleased(Point p0) {
         if (d.getLineStep().size() == 3) {
             //２つの点t1,t2を通る直線に関して、点pの対照位置にある点を求める public Ten oc.sentaisyou_ten_motome(Ten t1,Ten t2,Ten p){
-            Point t_taisyou = new Point();
-            t_taisyou.set(OritaCalc.findLineSymmetryPoint(d.getLineStep().get(1).getA(), d.getLineStep().get(2).getA(), d.getLineStep().get(0).getA()));
+            Point t_taisyou = OritaCalc.findLineSymmetryPoint(d.getLineStep().get(1).getA(), d.getLineStep().get(2).getA(), d.getLineStep().get(0).getA());
 
             LineSegment add_sen = new LineSegment(d.getLineStep().get(1).getA(), t_taisyou);
 

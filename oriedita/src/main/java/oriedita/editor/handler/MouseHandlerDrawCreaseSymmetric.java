@@ -26,8 +26,7 @@ public class MouseHandlerDrawCreaseSymmetric extends BaseMouseHandlerInputRestri
 
     //マウス操作(mouseMode==12鏡映モード　でボタンを押したとき)時の作業----------------------------------------------------
     public void mousePressed(Point p0) {
-        Point p = new Point();
-        p.set(d.getCamera().TV2object(p0));
+        Point p = d.getCamera().TV2object(p0);
 
         if (d.getLineStep().size() == 0) {    //第1段階として、点を選択
             Point closest_point = d.getClosestPoint(p);

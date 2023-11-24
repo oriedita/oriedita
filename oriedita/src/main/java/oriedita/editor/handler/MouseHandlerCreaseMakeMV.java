@@ -22,8 +22,7 @@ public class MouseHandlerCreaseMakeMV extends BaseMouseHandlerInputRestricted {
 
     //マウス操作(mouseMode==34　でボタンを押したとき)時の作業----------------------------------------------------
     public void mousePressed(Point p0) {
-        Point p = new Point();
-        p.set(d.getCamera().TV2object(p0));
+        Point p = d.getCamera().TV2object(p0);
         Point closest_point = d.getClosestPoint(p);
         if (p.distance(closest_point) > d.getSelectionDistance()) {
             d.getLineStep().clear();
@@ -45,8 +44,7 @@ public class MouseHandlerCreaseMakeMV extends BaseMouseHandlerInputRestricted {
         SortingBox<LineSegment> nbox = new SortingBox<>();
 
         if (d.getLineStep().size() == 1) {
-            Point p = new Point();
-            p.set(d.getCamera().TV2object(p0));
+            Point p = d.getCamera().TV2object(p0);
             Point closest_point = d.getClosestPoint(p);
             d.getLineStep().get(0).setA(closest_point);
             if (p.distance(closest_point) <= d.getSelectionDistance()) {

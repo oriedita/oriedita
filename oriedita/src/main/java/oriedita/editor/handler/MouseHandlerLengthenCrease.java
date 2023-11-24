@@ -26,8 +26,7 @@ public class MouseHandlerLengthenCrease extends BaseMouseHandler {
     public void mouseMoved(Point p0) {
         //マウスで選択できる候補点を表示する。常にマウスの位置自身が候補点となる。
         if (d.getGridInputAssist()) {
-            Point p = new Point();
-            p.set(d.getCamera().TV2object(p0));
+            Point p = d.getCamera().TV2object(p0);
 
             d.getLineCandidate().clear();
             d.getLineCandidate().add(new LineSegment(p, p, d.getLineColor()));
@@ -36,8 +35,7 @@ public class MouseHandlerLengthenCrease extends BaseMouseHandler {
 
     //マウス操作(ボタンを押したとき)時の作業
     public void mousePressed(Point p0) {
-        Point p = new Point();
-        p.set(d.getCamera().TV2object(p0));
+        Point p = d.getCamera().TV2object(p0);
 
         d.getLineCandidate().clear();
 
@@ -53,8 +51,7 @@ public class MouseHandlerLengthenCrease extends BaseMouseHandler {
 
     //マウス操作(ドラッグしたとき)を行う関数
     public void mouseDragged(Point p0) {
-        Point p = new Point();
-        p.set(d.getCamera().TV2object(p0));
+        Point p = d.getCamera().TV2object(p0);
         if (d.getLineStep().size() == 1) {
             d.getLineStep().get(0).setB(p);
         }
@@ -65,8 +62,7 @@ public class MouseHandlerLengthenCrease extends BaseMouseHandler {
 
     //マウス操作(ボタンを離したとき)を行う関数
     public void mouseReleased(Point p0) {
-        Point p = new Point();
-        p.set(d.getCamera().TV2object(p0));
+        Point p = d.getCamera().TV2object(p0);
         LineSegment closestLineSegment = new LineSegment();
         closestLineSegment.set(d.getClosestLineSegment(p));
 
@@ -147,8 +143,7 @@ public class MouseHandlerLengthenCrease extends BaseMouseHandler {
                         //最初に選んだ線分と2番目に選んだ線分が平行でない場合
                         if (OritaCalc.isLineSegmentParallel(entyou_kouho_nbox.getValue(i), closestLineSegment, Epsilon.UNKNOWN_1EN6) == OritaCalc.ParallelJudgement.NOT_PARALLEL) { //２つの線分が平行かどうかを判定する関数。oc.heikou_hantei(Tyokusen t1,Tyokusen t2)//0=平行でない
                             //line_step[1]とs_step[2]の交点はoc.kouten_motome(Senbun s1,Senbun s2)で求める//２つの線分を直線とみなして交点を求める関数。線分としては交差しなくても、直線として交差している場合の交点を返す
-                            Point kousa_point = new Point();
-                            kousa_point.set(OritaCalc.findIntersection(entyou_kouho_nbox.getValue(i), closestLineSegment));
+                            Point kousa_point = OritaCalc.findIntersection(entyou_kouho_nbox.getValue(i), closestLineSegment);
                             //addLineSegment =new Senbun(kousa_ten,foldLineSet.get(entyou_kouho_nbox.get_int(i)).get_tikai_hasi(kousa_ten));
                             addLineSegment.setA(kousa_point);
                             addLineSegment.setB(entyou_kouho_nbox.getValue(i).determineClosestEndpoint(kousa_point));
@@ -178,8 +173,7 @@ public class MouseHandlerLengthenCrease extends BaseMouseHandler {
                     for (int i = 1; i <= entyou_kouho_nbox.getTotal(); i++) {
                         LineSegment moto_no_sen = new LineSegment();
                         moto_no_sen.set(entyou_kouho_nbox.getValue(i));
-                        Point p_point = new Point();
-                        p_point.set(OritaCalc.findIntersection(moto_no_sen, d.getLineStep().get(0)));
+                        Point p_point = OritaCalc.findIntersection(moto_no_sen, d.getLineStep().get(0));
 
                         if (p_point.distance(moto_no_sen.getA()) < p_point.distance(moto_no_sen.getB())) {
                             moto_no_sen.a_b_swap();
@@ -232,7 +226,7 @@ public class MouseHandlerLengthenCrease extends BaseMouseHandler {
             if (i_intersection_flg.isIntersecting()) {
                 if (!i_lineSegment_intersection_flg.isEndpointIntersection()) {
                     //Logger.info("i_intersection_flg = "+i_intersection_flg  +      " ; i_lineSegment_intersection_flg = "+i_lineSegment_intersection_flg);
-                    kousa_point.set(OritaCalc.findIntersection(tyoku1, d.getFoldLineSet().get(i)));
+                    kousa_point = OritaCalc.findIntersection(tyoku1, d.getFoldLineSet().get(i));
                     if (kousa_point.distance(add_sen.getA()) > Epsilon.UNKNOWN_1EN5) {
                         if (kousa_point.distance(add_sen.getA()) < kousa_point_distance) {
                             double d_kakudo = OritaCalc.angle(add_sen.getA(), add_sen.getB(), add_sen.getA(), kousa_point);
@@ -252,7 +246,7 @@ public class MouseHandlerLengthenCrease extends BaseMouseHandler {
                     Logger.info("i_intersection_flg = " + i_intersection_flg + " ; i_lineSegment_intersection_flg = " + i_lineSegment_intersection_flg);
 
 
-                    kousa_point.set(d.getFoldLineSet().get(i).getA());
+                    kousa_point = d.getFoldLineSet().get(i).getA();
                     if (kousa_point.distance(add_sen.getA()) > Epsilon.UNKNOWN_1EN5) {
                         if (kousa_point.distance(add_sen.getA()) < kousa_point_distance) {
                             double d_kakudo = OritaCalc.angle(add_sen.getA(), add_sen.getB(), add_sen.getA(), kousa_point);
@@ -263,7 +257,7 @@ public class MouseHandlerLengthenCrease extends BaseMouseHandler {
                         }
                     }
 
-                    kousa_point.set(d.getFoldLineSet().get(i).getB());
+                    kousa_point = d.getFoldLineSet().get(i).getB();
                     if (kousa_point.distance(add_sen.getA()) > Epsilon.UNKNOWN_1EN5) {
                         if (kousa_point.distance(add_sen.getA()) < kousa_point_distance) {
                             double d_kakudo = OritaCalc.angle(add_sen.getA(), add_sen.getB(), add_sen.getA(), kousa_point);

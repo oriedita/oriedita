@@ -30,8 +30,7 @@ public class MouseHandlerFoldableLineInput extends BaseMouseHandlerInputRestrict
         if (d.getGridInputAssist()) {
             d.getLineCandidate().clear();
 
-            Point p = new Point();
-            p.set(d.getCamera().TV2object(p0));
+            Point p = d.getCamera().TV2object(p0);
 
             if (d.getLineStep().size() == 0) {
                 i_step_for_copy_4p = CreasePattern_Worker.FourPointStep.STEP_0;
@@ -110,8 +109,7 @@ public class MouseHandlerFoldableLineInput extends BaseMouseHandlerInputRestrict
 
     //マウス操作(ボタンを押したとき)時の作業--------------
     public void mousePressed(Point p0) {
-        Point p = new Point();
-        p.set(d.getCamera().TV2object(p0));
+        Point p = d.getCamera().TV2object(p0);
 
         if (d.getLineStep().size() == 0) {
             i_step_for_copy_4p = CreasePattern_Worker.FourPointStep.STEP_0;
@@ -285,8 +283,7 @@ public class MouseHandlerFoldableLineInput extends BaseMouseHandlerInputRestrict
                     s.set(closestLineSegment);
                     s.setColor(LineColor.GREEN_6);
                     d.lineStepAdd(s);
-                    Point kousa_point = new Point();
-                    kousa_point.set(OritaCalc.findIntersection(d.getLineStep().get(0), d.getLineStep().get(1)));
+                    Point kousa_point = OritaCalc.findIntersection(d.getLineStep().get(0), d.getLineStep().get(1));
                     LineSegment add_sen = new LineSegment(kousa_point, d.getLineStep().get(0).getA(), d.getLineColor());
                     if (Epsilon.high.gt0(add_sen.determineLength())) {//最寄の既存折線が有効の場合
                         d.addLineSegment(add_sen);

@@ -110,13 +110,6 @@ public class DrawingUtil {
         g.drawLine((int) s_tv.determineAX(), (int) s_tv.determineAY(), (int) s_tv.determineBX(), (int) s_tv.determineBY()); //直線
     }
 
-    //Draw a pointing diagram around the specified Point
-    public static void pointingAt4(Graphics g, LineSegment s_tv, int color_transparency) {
-        g.setColor(Colors.get(new Color(255, 0, 147, color_transparency)));
-
-        g.drawLine((int) s_tv.determineAX(), (int) s_tv.determineAY(), (int) s_tv.determineBX(), (int) s_tv.determineBY()); //直線
-    }
-
     public static void setColor(Graphics g, LineColor i) {
         switch (i) {
             case BLACK_0:
@@ -217,8 +210,7 @@ public class DrawingUtil {
     }
 
     public static void drawCircle(Graphics g, Circle circle, Camera camera, float lineWidth, int pointSize) {
-        Point a = new Point();
-        a.set(camera.object2TV(circle.determineCenter()));//この場合のaは描画座標系での円の中心の位置
+        Point a = camera.object2TV(circle.determineCenter());//この場合のaは描画座標系での円の中心の位置
 
         Graphics2D g2 = (Graphics2D) g;
         g2.setStroke(new BasicStroke(lineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));//基本指定A　　線の太さや線の末端の形状
@@ -233,7 +225,7 @@ public class DrawingUtil {
         double d_width = circle.getR() * camera.getCameraZoomX();//d_habaは描画時の円の半径。なお、camera.get_camera_bairitsu_x()＝camera.get_camera_bairitsu_y()を前提としている。
         g2.draw(new Ellipse2D.Double(a.getX() - d_width, a.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
 
-        a.set(camera.object2TV(circle.determineCenter()));//この場合のaは描画座標系での円の中心の位置
+        a = camera.object2TV(circle.determineCenter());//この場合のaは描画座標系での円の中心の位置
 
         g2.setStroke(new BasicStroke(lineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));//基本指定A　　線の太さや線の末端の形状
         g.setColor(Colors.get(new Color(0, 255, 255, 255)));
@@ -388,10 +380,8 @@ public class DrawingUtil {
     public static void drawCircleStep(Graphics g, Circle c, Camera camera) {
         Graphics2D g2 = (Graphics2D) g;
         setColor(g, c.getColor());
-        Point a = new Point();
-
-        a.set(camera.object2TV(c.determineCenter()));//この場合のs_tvは描画座標系での円の中心の位置
-        a.set(a.getX() + Epsilon.UNKNOWN_1EN6, a.getY() + Epsilon.UNKNOWN_1EN6);//なぜEpsilon.UNKNOWN_0000001を足すかというと,ディスプレイに描画するとき元の折線が新しい折線に影響されて動いてしまうのを防ぐため
+        Point a = camera.object2TV(c.determineCenter());//この場合のs_tvは描画座標系での円の中心の位置
+        a = new Point(a.getX() + Epsilon.UNKNOWN_1EN6, a.getY() + Epsilon.UNKNOWN_1EN6);//なぜEpsilon.UNKNOWN_0000001を足すかというと,ディスプレイに描画するとき元の折線が新しい折線に影響されて動いてしまうのを防ぐため
 
         double d_width = c.getR() * camera.getCameraZoomX();//d_habaは描画時の円の半径。なお、camera.get_camera_bairitsu_x()＝camera.get_camera_bairitsu_y()を前提としている。
 

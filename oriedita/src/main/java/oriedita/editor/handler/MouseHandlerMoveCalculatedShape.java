@@ -16,7 +16,7 @@ import java.util.EnumSet;
 @ApplicationScoped
 @Handles(MouseMode.MOVE_CALCULATED_SHAPE_102)
 public class MouseHandlerMoveCalculatedShape implements MouseModeHandler {
-    private final Point mouse_temp0 = new Point();//マウスの動作対応時に、一時的に使うTen
+    private Point mouse_temp0 = new Point();//マウスの動作対応時に、一時的に使うTen
 
     private final FoldedFiguresList foldedFiguresList;
     private final Camera creasePatternCamera;
@@ -68,7 +68,7 @@ public class MouseHandlerMoveCalculatedShape implements MouseModeHandler {
                 break;
         }
 
-        mouse_temp0.set(p0);
+        mouse_temp0 = p0;
     }
 
     @Override
@@ -93,7 +93,7 @@ public class MouseHandlerMoveCalculatedShape implements MouseModeHandler {
                 break;
         }
 
-        mouse_temp0.set(p0);//mouse_temp0は一時的に使うTen、mouse_temp0.tano_Ten_iti(p)はmouse_temp0から見たpの位置
+        mouse_temp0 = p0;//mouse_temp0は一時的に使うTen、mouse_temp0.tano_Ten_iti(p)はmouse_temp0から見たpの位置
     }
 
     @Override

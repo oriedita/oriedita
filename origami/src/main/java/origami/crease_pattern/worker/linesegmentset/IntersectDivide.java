@@ -48,7 +48,6 @@ public class IntersectDivide {
         Point p2 = new Point(si.getB());
         Point p3 = new Point(sj.getA());
         Point p4 = new Point(sj.getB());
-        Point pk = new Point();
 
         double ixmax = Math.max(si.determineAX(), si.determineBX());
         double ixmin = Math.min(si.determineAX(), si.determineBX());
@@ -76,9 +75,10 @@ public class IntersectDivide {
         // It is important to use the sweet version here, or glitches may occur
         LineSegment.Intersection intersect_decide = OritaCalc.determineLineSegmentIntersectionSweet(si, sj);
 
+        Point pk;
         switch (intersect_decide) {
             case INTERSECTS_1:
-                pk.set(OritaCalc.findIntersection(si, sj));
+                pk = (OritaCalc.findIntersection(si, sj));
 
                 si.setA(p1);
                 si.setB(pk);
@@ -89,7 +89,7 @@ public class IntersectDivide {
                 return 2;
             case INTERSECTS_TSHAPE_S1_VERTICAL_BAR_25:
             case INTERSECTS_TSHAPE_S1_VERTICAL_BAR_26:
-                pk.set(OritaCalc.findIntersection(si, sj));
+                pk = (OritaCalc.findIntersection(si, sj));
 
                 sj.setA(p3);
                 sj.setB(pk);
@@ -98,7 +98,7 @@ public class IntersectDivide {
 
             case INTERSECTS_TSHAPE_S2_VERTICAL_BAR_27:
             case INTERSECTS_TSHAPE_S2_VERTICAL_BAR_28:
-                pk.set(OritaCalc.findIntersection(si, sj));
+                pk = (OritaCalc.findIntersection(si, sj));
 
                 si.setA(p1);
                 si.setB(pk);

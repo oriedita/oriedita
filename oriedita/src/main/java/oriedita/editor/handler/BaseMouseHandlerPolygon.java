@@ -16,14 +16,13 @@ public abstract class BaseMouseHandlerPolygon extends BaseMouseHandler {
 //マウス操作(マウスを動かしたとき)を行う関数
         if (d.getGridInputAssist()) {
             d.getLineCandidate().clear();
-            Point p = new Point();
-            p.set(d.getCamera().TV2object(p0));
+            Point p = d.getCamera().TV2object(p0);
 
             LineSegment candidate = new LineSegment();
             candidate.setActive(LineSegment.ActiveState.ACTIVE_BOTH_3);
             Point closest_point = d.getClosestPoint(p);
             if (p.distance(closest_point) > p.distance(d.getLineStep().get(0).getA())) {
-                closest_point.set(d.getLineStep().get(0).getA());
+                closest_point = d.getLineStep().get(0).getA();
             }
 
             if (p.distance(closest_point) < d.getSelectionDistance()) {
@@ -46,13 +45,12 @@ public abstract class BaseMouseHandlerPolygon extends BaseMouseHandler {
 
         LineSegment s = new LineSegment();
         s.setColor(LineColor.MAGENTA_5);
-        Point p = new Point();
-        p.set(d.getCamera().TV2object(p0));
+        Point p = d.getCamera().TV2object(p0);
 
-        if (d.getLineStep().size() == 0) {
+        if (d.getLineStep().isEmpty()) {
             Point closest_point = d.getClosestPoint(p);
             if (p.distance(closest_point) > d.getSelectionDistance()) {
-                closest_point.set(p);
+                closest_point = p;
             }
             s.set(closest_point, p);
 
@@ -65,8 +63,7 @@ public abstract class BaseMouseHandlerPolygon extends BaseMouseHandler {
 
     @Override
     public void mouseDragged(Point p0) {
-        Point p = new Point();
-        p.set(d.getCamera().TV2object(p0));
+        Point p = d.getCamera().TV2object(p0);
 
         d.getLineStep().get(d.getLineStep().size() - 1).setB(p);
 
@@ -78,7 +75,7 @@ public abstract class BaseMouseHandlerPolygon extends BaseMouseHandler {
             candidate.setActive(LineSegment.ActiveState.ACTIVE_BOTH_3);
             Point closest_point = d.getClosestPoint(p);
             if (p.distance(closest_point) > p.distance(d.getLineStep().get(0).getA())) {
-                closest_point.set(d.getLineStep().get(0).getA());
+                closest_point = d.getLineStep().get(0).getA();
             }
 
 
@@ -97,11 +94,10 @@ public abstract class BaseMouseHandlerPolygon extends BaseMouseHandler {
 
     @Override
     public void mouseReleased(Point p0) {
-        Point p = new Point();
-        p.set(d.getCamera().TV2object(p0));
+        Point p = d.getCamera().TV2object(p0);
         Point closest_point = d.getClosestPoint(p);
         if (p.distance(closest_point) > d.getSelectionDistance()) {
-            closest_point.set(p);
+            closest_point = p;
         }
 
         d.getLineStep().get(d.getLineStep().size() - 1).setB(closest_point);

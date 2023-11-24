@@ -23,8 +23,7 @@ public class MouseHandlerParallelDrawWidth extends BaseMouseHandler {
 
     //マウス操作(mouseMode==51 平行線　幅指定入力モード　でボタンを押したとき)時の作業----------------------------------------------------
     public void mousePressed(Point p0) {
-        Point p = new Point();
-        p.set(d.getCamera().TV2object(p0));
+        Point p = d.getCamera().TV2object(p0);
 
         Point closest_point = d.getClosestPoint(p);
 
@@ -67,8 +66,7 @@ public class MouseHandlerParallelDrawWidth extends BaseMouseHandler {
 
     //マウス操作(mouseMode==51 平行線　幅指定入力モード　でドラッグしたとき)を行う関数----------------------------------------------------
     public void mouseDragged(Point p0) {
-        Point p = new Point();
-        p.set(d.getCamera().TV2object(p0));
+        Point p = d.getCamera().TV2object(p0);
         if ((d.getLineStep().size() == 4) && (d.getCircleStep().size() == 0)) {
             d.getLineStep().get(1).setA(p);
             d.getLineStep().get(2).set(OritaCalc.moveParallel(d.getLineStep().get(0), d.getLineStep().get(1).determineLength()));
@@ -80,8 +78,7 @@ public class MouseHandlerParallelDrawWidth extends BaseMouseHandler {
 
     //マウス操作(mouseMode==51 平行線　幅指定入力モード　でボタンを離したとき)を行う関数----------------------------------------------------
     public void mouseReleased(Point p0) {
-        Point p = new Point();
-        p.set(d.getCamera().TV2object(p0));
+        Point p = d.getCamera().TV2object(p0);
         Point closest_point = d.getClosestPoint(p);
 
         if ((d.getLineStep().size() == 4) && (d.getCircleStep().size() == 0)) {

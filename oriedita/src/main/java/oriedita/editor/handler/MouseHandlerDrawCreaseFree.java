@@ -19,8 +19,7 @@ public class MouseHandlerDrawCreaseFree extends BaseMouseHandler {
         if (d.getGridInputAssist()) {
             d.getLineCandidate().clear();
 
-            Point p = new Point();
-            p.set(d.getCamera().TV2object(p0));
+            Point p = d.getCamera().TV2object(p0);
             Point closestPoint = d.getClosestPoint(p);
 
             LineSegment candidate = new LineSegment();
@@ -47,8 +46,7 @@ public class MouseHandlerDrawCreaseFree extends BaseMouseHandler {
         LineSegment s = new LineSegment();
         s.setActive(LineSegment.ActiveState.ACTIVE_B_2);
 
-        Point p = new Point();
-        p.set(d.getCamera().TV2object(p0));
+        Point p = d.getCamera().TV2object(p0);
 
         Point closestPoint = d.getClosestPoint(p);
 
@@ -69,8 +67,7 @@ public class MouseHandlerDrawCreaseFree extends BaseMouseHandler {
     }
 
     public void mouseDragged(Point p0) {
-        Point p = new Point();
-        p.set(d.getCamera().TV2object(p0));
+        Point p = d.getCamera().TV2object(p0);
 
         if (!d.getGridInputAssist()) {
             d.getLineStep().get(0).setA(p);
@@ -107,9 +104,7 @@ public class MouseHandlerDrawCreaseFree extends BaseMouseHandler {
     }
 
     public void mouseReleased(Point p0) {
-        Point p = new Point();
-
-        p.set(d.getCamera().TV2object(p0));
+        Point p = d.getCamera().TV2object(p0);
         d.getLineStep().get(0).setA(p);
         Point closestPoint = d.getClosestPoint(p);
 
