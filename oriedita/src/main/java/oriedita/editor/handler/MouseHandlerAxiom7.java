@@ -43,9 +43,8 @@ public class MouseHandlerAxiom7 extends BaseMouseHandlerInputRestricted{
             LineSegment closestLineSegment = new LineSegment();
             closestLineSegment.set(d.getClosestLineSegment(p));
 
-            LineSegment temp = new LineSegment(d.getLineStep().get(0).getA(), closestLineSegment.determineClosestEndpoint(d.getLineStep().get(0).getA()));
             if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.getSelectionDistance() &&
-                    OritaCalc.isLineSegmentParallel(temp, closestLineSegment) == OritaCalc.ParallelJudgement.NOT_PARALLEL) {
+                    !OritaCalc.isPointWithinLineSpan(d.getLineStep().get(0).getA(), closestLineSegment)) {
                 closestLineSegment.setColor(LineColor.GREEN_6);
                 d.lineStepAdd(closestLineSegment);
             }

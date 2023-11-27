@@ -2,7 +2,6 @@ package origami.crease_pattern;
 
 import origami.Epsilon;
 import origami.crease_pattern.element.Circle;
-import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.StraightLine;
@@ -641,6 +640,7 @@ public class OritaCalc {
 
     }
 
+    //---------------------------
     public static LineSegment extendToIntersectionPoint_2(FoldLineSet foldLineSet, LineSegment s0) {//Extend s0 from point b in the opposite direction of a to the point where it intersects another polygonal line. Returns a new line // Returns the same line if it does not intersect another polygonal line
         LineSegment add_sen = new LineSegment();
         add_sen.set(s0);
@@ -699,6 +699,7 @@ public class OritaCalc {
         return add_sen;
     }
 
+    //---------------------------
     public static LineSegment fullExtendUntilHit(FoldLineSet foldLineSet, LineSegment s0){
         Point point = s0.getA();
         s0.set(extendToIntersectionPoint_2(foldLineSet, s0));
@@ -1150,37 +1151,37 @@ public class OritaCalc {
         return new LineSegment(s.getA(), new Point(s.getA().getX() + newDx, s.getA().getY() + nexDy));
     }
 
+    /**
+     * Check if a Point is within the span of a LineSegment. The span is an imaginary line infinitely expanded from the LineSegment
+     * @param p0 a target Point
+     * @param s0 a LineSegment
+     * @return true if the target point is within the span, false if otherwise
+     */
+    public static boolean isPointWithinLineSpan(Point p0, LineSegment s0){ // Check if point p0 is within the span of segment s0
+        if(OritaCalc.distance(p0, s0.getA()) < Epsilon.UNKNOWN_1EN7 ||
+                OritaCalc.distance(p0, s0.getB()) < Epsilon.UNKNOWN_1EN7){
+            return true;
+        }
+        LineSegment temp = new LineSegment(p0, s0.determineClosestEndpoint(p0));
+        return OritaCalc.isLineSegmentParallel(temp, s0) == ParallelJudgement.PARALLEL_EQUAL;
+    }
+
+    /**
+     * Check if a Point is within the span of a LineSegment (formed by 2 Points). The span is an imaginary line infinitely expanded from the LineSegment
+     * @param p0 a target Point
+     * @param p1 an endpoint of the LineSegment
+     * @param p2 other endpoint of the LineSegment
+     * @return true if the target point is within the span, false if otherwise
+     */
+    public static boolean isPointWithinLineSpan(Point p0, Point p1, Point p2){
+        return isPointWithinLineSpan(p0, new LineSegment(p1, p2));
+    }
+
+    //--------------------------------------------------------
+
     public enum ParallelJudgement {
         NOT_PARALLEL,
         PARALLEL_NOT_EQUAL,
         PARALLEL_EQUAL,
-    }
-
-    public static LineSegment s_step_additional_intersection(LineSegment s_o, LineSegment s_k, LineColor icolo) {
-
-        Point cross_point = new Point();
-
-        if (OritaCalc.isLineSegmentParallel(s_o, s_k, Epsilon.UNKNOWN_1EN7) == OritaCalc.ParallelJudgement.PARALLEL_NOT_EQUAL) {//0=平行でない、1=平行で２直線が一致しない、2=平行で２直線が一致する
-            return null;
-        }
-
-        if (OritaCalc.isLineSegmentParallel(s_o, s_k, Epsilon.UNKNOWN_1EN7) == OritaCalc.ParallelJudgement.PARALLEL_EQUAL) {//0=平行でない、1=平行で２直線が一致しない、2=平行で２直線が一致する
-            cross_point.set(s_k.getA());
-            if (OritaCalc.distance(s_o.getA(), s_k.getA()) > OritaCalc.distance(s_o.getA(), s_k.getB())) {
-                cross_point.set(s_k.getB());
-            }
-        }
-
-        if (OritaCalc.isLineSegmentParallel(s_o, s_k, Epsilon.UNKNOWN_1EN7) == OritaCalc.ParallelJudgement.NOT_PARALLEL) {//0=平行でない、1=平行で２直線が一致しない、2=平行で２直線が一致する
-            cross_point.set(OritaCalc.findIntersection(s_o, s_k));
-        }
-
-        LineSegment add_sen = new LineSegment(cross_point, s_o.getA(), icolo);
-
-        if (Epsilon.high.gt0(add_sen.determineLength())) {
-            return add_sen;
-        }
-
-        return null;
     }
 }

@@ -119,12 +119,11 @@ public class MouseHandlerAxiom5 extends BaseMouseHandlerInputRestricted{
         // Make sure circle radius is not 0
         if(radius <= Epsilon.UNKNOWN_1EN7){ return; }
 
-        LineSegment secondTemp = new LineSegment(pivot, targetSegment.determineClosestEndpoint(pivot)); //  for checks alignment between pivot point and target segment
         double length_a = 0.0; //Distance between the center of the circle and target segment
         Point center = new Point(pivot);
 
         // If pivot point is not within the target segment span
-        if(OritaCalc.isLineSegmentParallel(secondTemp, targetSegment) != OritaCalc.ParallelJudgement.PARALLEL_EQUAL){
+        if(!OritaCalc.isPointWithinLineSpan(pivot, targetSegment)){
             length_a = OritaCalc.distance(center, OritaCalc.findProjection(targetSegment, center));
         }
 
@@ -157,8 +156,7 @@ public class MouseHandlerAxiom5 extends BaseMouseHandlerInputRestricted{
             LineSegment l2 = new LineSegment(projectPoint, OritaCalc.findProjection(OritaCalc.moveParallel(projectLine, -length_b), projectPoint));
             l2.set(new LineSegment(center, l2.getB()));
 
-            OritaCalc.ParallelJudgement pivotSegmentJudgement = OritaCalc.isLineSegmentParallel(secondTemp, targetSegment);
-            processPivotWithinSegmentSpan(pivotSegmentJudgement, l1, l2, center, targetSegment, pivot);
+            processPivotWithinSegmentSpan(l1, l2, center, targetSegment, pivot);
 
             // Center points for placeholders to draw bisecting indicators on
             Point center1 = new Point(OritaCalc.center(center, l1.determineFurthestEndpoint(center), l.determineFurthestEndpoint(center)));
@@ -178,9 +176,9 @@ public class MouseHandlerAxiom5 extends BaseMouseHandlerInputRestricted{
         }
     }
 
-    private void processPivotWithinSegmentSpan(OritaCalc.ParallelJudgement judgement, LineSegment l1, LineSegment l2, Point center, LineSegment targetSegment, Point pivot){
+    private void processPivotWithinSegmentSpan(LineSegment l1, LineSegment l2, Point center, LineSegment targetSegment, Point pivot){
         // If pivot point is within the target segment span
-        if(judgement == OritaCalc.ParallelJudgement.PARALLEL_EQUAL){
+        if(OritaCalc.isPointWithinLineSpan(pivot, targetSegment)){
             // pivot within span
             boolean isOutsideSegmentA = targetSegment.determineLength() > OritaCalc.distance(targetSegment.getA(), center) &&
                     OritaCalc.distance(targetSegment.getB(), center) > targetSegment.determineLength();
@@ -211,10 +209,8 @@ public class MouseHandlerAxiom5 extends BaseMouseHandlerInputRestricted{
     private void determineIndicators(LineSegment l, LineSegment l1, LineSegment l2, Point center, Point center1, Point center2, Point target, LineSegment targetSegment, Point pivot){
         if(OritaCalc.distance(center1, OritaCalc.findProjection(targetSegment, center1)) > Epsilon.UNKNOWN_1EN7 ||
                 OritaCalc.distance(center2, OritaCalc.findProjection(targetSegment, center2)) > Epsilon.UNKNOWN_1EN7){
-            LineSegment temp = new LineSegment(target, targetSegment.determineClosestEndpoint(target)); // for check alignment between target point and target segment
-
             // If target point is not within target segment span
-            if(OritaCalc.isLineSegmentParallel(temp, targetSegment) == OritaCalc.ParallelJudgement.NOT_PARALLEL){
+            if(!OritaCalc.isPointWithinLineSpan(target, targetSegment)){
                 //target not in span 1
                 LineSegment s1 = OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), new LineSegment(center, center1, LineColor.PURPLE_8));
                 LineSegment s2 = OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), new LineSegment(center, center2, LineColor.PURPLE_8));
