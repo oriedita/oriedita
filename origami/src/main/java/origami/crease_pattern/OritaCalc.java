@@ -2,7 +2,6 @@ package origami.crease_pattern;
 
 import origami.Epsilon;
 import origami.crease_pattern.element.Circle;
-import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.StraightLine;
@@ -1152,13 +1151,28 @@ public class OritaCalc {
         return new LineSegment(s.getA(), new Point(s.getA().getX() + newDx, s.getA().getY() + nexDy));
     }
 
-    // Check if point p0 is within the span of segment s0
-    public static boolean isPointWithinLineSpan(Point p0, LineSegment s0){
+    /**
+     * Check if a Point is within the span of a LineSegment. The span is an imaginary line infinitely expanded from the LineSegment
+     * @param p0 a target Point
+     * @param s0 a LineSegment
+     * @return true if the target point is within the span, false if otherwise
+     */
+    public static boolean isPointWithinLineSpan(Point p0, LineSegment s0){ // Check if point p0 is within the span of segment s0
+        if(OritaCalc.distance(p0, s0.getA()) < Epsilon.UNKNOWN_1EN7 ||
+                OritaCalc.distance(p0, s0.getB()) < Epsilon.UNKNOWN_1EN7){
+            return true;
+        }
         LineSegment temp = new LineSegment(p0, s0.determineClosestEndpoint(p0));
         return OritaCalc.isLineSegmentParallel(temp, s0) == ParallelJudgement.PARALLEL_EQUAL;
     }
 
-    // Check if p0 is within the span of a segment, formed by p1 and p2
+    /**
+     * Check if a Point is within the span of a LineSegment (formed by 2 Points). The span is an imaginary line infinitely expanded from the LineSegment
+     * @param p0 a target Point
+     * @param p1 an endpoint of the LineSegment
+     * @param p2 other endpoint of the LineSegment
+     * @return true if the target point is within the span, false if otherwise
+     */
     public static boolean isPointWithinLineSpan(Point p0, Point p1, Point p2){
         return isPointWithinLineSpan(p0, new LineSegment(p1, p2));
     }
