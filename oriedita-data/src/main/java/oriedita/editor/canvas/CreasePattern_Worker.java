@@ -14,7 +14,6 @@ import origami.crease_pattern.element.Circle;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
-import origami.crease_pattern.element.Polygon;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -114,9 +113,7 @@ public interface CreasePattern_Worker {
     //-----------------------------------------------62ここまで　//20181121　iactiveをtppに置き換える
     Point getGridPosition(Point p0);
 
-    int getDrawingStage();
-
-    void setDrawingStage(int i);
+    void resetLineStep(int i);
 
     int getCandidateSize();
 
@@ -242,8 +239,6 @@ public interface CreasePattern_Worker {
 
     FoldLineSet getAuxLines();
 
-    Polygon getOperationFrameBox();
-
     boolean isCheck1();
 
     boolean isCheck2();
@@ -252,15 +247,7 @@ public interface CreasePattern_Worker {
 
     boolean isCheck4();
 
-    Point getOperationFrame_p1();
-
-    Point getOperationFrame_p2();
-
-    Point getOperationFrame_p3();
-
-    Point getOperationFrame_p4();
-
-    void setOperationFramePoint(int index, Point p);
+    OperationFrame getOperationFrame();
 
     int getNumPolygonCorners();
 

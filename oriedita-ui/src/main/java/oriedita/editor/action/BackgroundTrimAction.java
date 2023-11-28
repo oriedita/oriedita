@@ -54,11 +54,11 @@ public class BackgroundTrimAction extends AbstractOrieditaAction{
         }
 
 //枠設定時の背景を枠内のみ残してトリム 20181204
-        if ((canvasModel.getMouseMode() == MouseMode.OPERATION_FRAME_CREATE_61) && (mainCreasePatternWorker.getDrawingStage() == 4)) {//枠線が表示されている状態
-            int xmin = (int) mainCreasePatternWorker.getOperationFrameBox().getXMin();
-            int xmax = (int) mainCreasePatternWorker.getOperationFrameBox().getXMax();
-            int ymin = (int) mainCreasePatternWorker.getOperationFrameBox().getYMin();
-            int ymax = (int) mainCreasePatternWorker.getOperationFrameBox().getYMax();
+        if ((canvasModel.getMouseMode() == MouseMode.OPERATION_FRAME_CREATE_61) && (mainCreasePatternWorker.getOperationFrame().isActive())) {//枠線が表示されている状態
+            int xmin = (int) mainCreasePatternWorker.getOperationFrame().getPolygon().getXMin();
+            int xmax = (int) mainCreasePatternWorker.getOperationFrame().getPolygon().getXMax();
+            int ymin = (int) mainCreasePatternWorker.getOperationFrame().getPolygon().getYMin();
+            int ymax = (int) mainCreasePatternWorker.getOperationFrame().getPolygon().getYMax();
 
             backgroundModel.setBackgroundImage(offsc_background.getSubimage(xmin, ymin, xmax - xmin, ymax - ymin));
 

@@ -188,11 +188,11 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
                     paintComponent(g);
                     setHideOperationFrame(false);
 
-                    if (canvasModel.getMouseMode() == MouseMode.OPERATION_FRAME_CREATE_61 && mainCreasePatternWorker.getDrawingStage() == 4) { //枠設定時の枠内のみ書き出し 20180524
-                        int xMin = (int) mainCreasePatternWorker.getOperationFrameBox().getXMin();
-                        int xMax = (int) mainCreasePatternWorker.getOperationFrameBox().getXMax();
-                        int yMin = (int) mainCreasePatternWorker.getOperationFrameBox().getYMin();
-                        int yMax = (int) mainCreasePatternWorker.getOperationFrameBox().getYMax();
+                    if (canvasModel.getMouseMode() == MouseMode.OPERATION_FRAME_CREATE_61 && mainCreasePatternWorker.getOperationFrame().isActive()) { //枠設定時の枠内のみ書き出し 20180524
+                        int xMin = (int) mainCreasePatternWorker.getOperationFrame().getPolygon().getXMin();
+                        int xMax = (int) mainCreasePatternWorker.getOperationFrame().getPolygon().getXMax();
+                        int yMin = (int) mainCreasePatternWorker.getOperationFrame().getPolygon().getYMin();
+                        int yMax = (int) mainCreasePatternWorker.getOperationFrame().getPolygon().getYMax();
 
                         ImageIO.write(myImage.getSubimage(xMin, yMin, xMax - xMin + 1, yMax - yMin + 1), formatName, file);
 

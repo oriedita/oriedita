@@ -251,7 +251,7 @@ public class AppMenuBar {
         saveAsButton.addActionListener(e -> fileSaveService.saveAsFile());
         exportButton.addActionListener(e -> {
             if (canvasModel.getMouseMode() != MouseMode.OPERATION_FRAME_CREATE_61) {
-                mainCreasePatternWorker.setDrawingStage(0);
+                mainCreasePatternWorker.resetLineStep(0);
             }//枠設定時(==61)には、その枠を消さないためにes1.set_i_egaki_dankaiを０にしないでおく　20180524
 
             fileSaveService.exportFile();

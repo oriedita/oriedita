@@ -55,11 +55,6 @@ public class Point implements Serializable {
         y = yy;
     }
 
-    public void reset() {
-        x = 0.0;
-        y = 0.0;
-    }
-
     /**
      * Function to find the distance (double) to other points ----------------------------------------------------
      */

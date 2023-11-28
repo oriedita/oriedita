@@ -260,7 +260,7 @@ public class ButtonServiceImpl implements ButtonService {
     @Override
     public void Button_shared_operation(boolean resetLineStep) {
         if (resetLineStep) {
-            mainCreasePatternWorker.setDrawingStage(0);
+            mainCreasePatternWorker.resetLineStep(0);
         }
         mainCreasePatternWorker.resetCircleStep();
         // TODO RESET VORONOI mouseHandlerVoronoiCreate.getVoronoiLineSet().clear();
@@ -303,7 +303,7 @@ public class ButtonServiceImpl implements ButtonService {
                 AbstractButton button = (AbstractButton) component1;
                 String key = button.getActionCommand();
 
-                if (key != null && !"".equals(key)) {
+                if (key != null && !key.isEmpty()) {
                     registerButton(button, key, replaceUnderscoresInMenus);
                 }
             }

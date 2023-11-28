@@ -6,6 +6,7 @@ import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.canvas.FoldLineAdditionalInputMode;
 import oriedita.editor.canvas.LineStyle;
 import oriedita.editor.canvas.MouseMode;
+import oriedita.editor.canvas.OperationFrame;
 import oriedita.editor.canvas.TextWorker;
 import oriedita.editor.databinding.AngleSystemModel;
 import oriedita.editor.databinding.ApplicationModel;
@@ -72,7 +73,6 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     private final FileModel fileModel;
     private final FoldLineSet foldLineSet;    //Store polygonal lines
     private final Grid grid = new Grid();
-    private final Polygon operationFrameBox = new Polygon(4);    //Instantiation of selection box (TV coordinates)
     private final HistoryState historyState;
     private final HistoryState auxHistoryState;
     /**
@@ -89,10 +89,6 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     private final List<LineSegment> lineCandidate = new ArrayList<>();
     private final Camera camera = new Camera();
     //mouseMode==61//長方形内選択（paintの選択に似せた選択機能）の時に使う
-    private Point operationFrame_p1 = new Point();//TV座標
-    private Point operationFrame_p2 = new Point();//TV座標
-    private Point operationFrame_p3 = new Point();//TV座標
-    private Point operationFrame_p4 = new Point();//TV座標
     private final SelectedTextModel textModel;
     private double selectionDistance = 50.0;//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<Value for determining whether an input point is close to an existing point or line segment
     private int pointSize = 1;
@@ -121,6 +117,7 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     //--------------------------------------------
     private CanvasModel.SelectionOperationMode i_select_mode = CanvasModel.SelectionOperationMode.NORMAL_0;//=0は通常のセレクト操作
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+    private final OperationFrame operationFrame;
 
     public CreasePattern_Worker_Impl(Camera creasePatternCamera,
                                      HistoryState normalHistoryState,
@@ -151,6 +148,8 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
         this.foldLineSet = foldLineSet;
 
         lineColor = LineColor.BLACK_0;
+
+        this.operationFrame = new OperationFrame();
 
         text_cp_setumei = "1/";
         s_title = "no title";
@@ -557,10 +556,10 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
 
         //mouseMode==61//長方形内選択（paintの選択に似せた選択機能）の時に使う
         if (!hideOperationFrame && canvasModel.getMouseMode() == MouseMode.OPERATION_FRAME_CREATE_61 && lineStep.size() == 4) {
-            Point p1 = camera.TV2object(operationFrame_p1);
-            Point p2 = camera.TV2object(operationFrame_p2);
-            Point p3 = camera.TV2object(operationFrame_p3);
-            Point p4 = camera.TV2object(operationFrame_p4);
+            Point p1 = camera.TV2object(operationFrame.getP1());
+            Point p2 = camera.TV2object(operationFrame.getP2());
+            Point p3 = camera.TV2object(operationFrame.getP3());
+            Point p4 = camera.TV2object(operationFrame.getP4());
 
             lineStep.get(0).set(p1, p2, LineColor.GREEN_6);
             lineStep.get(1).set(p2, p3, LineColor.GREEN_6);
@@ -719,18 +718,13 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
         return grid.getPosition(closestPoint);
     }
 
-    @Override
-    public int getDrawingStage() {
-        return lineStep.size();
-    }
-
     /**
      * Used when OperationFrame is temporarily hidden.
      *
      * @param i New number of steps.
      */
     @Override
-    public void setDrawingStage(int i) {
+    public void resetLineStep(int i) {
         lineStep.clear();
 
         for (int j = 0; j < i; j++) {
@@ -1169,11 +1163,6 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     }
 
     @Override
-    public Polygon getOperationFrameBox() {
-        return operationFrameBox;
-    }
-
-    @Override
     public boolean isCheck1() {
         return check1;
     }
@@ -1204,45 +1193,8 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     }
 
     @Override
-    public Point getOperationFrame_p1() {
-        return operationFrame_p1;
-    }
-
-    @Override
-    public Point getOperationFrame_p2() {
-        return operationFrame_p2;
-    }
-
-    @Override
-    public Point getOperationFrame_p3() {
-        return operationFrame_p3;
-    }
-
-    @Override
-    public Point getOperationFrame_p4() {
-        return operationFrame_p4;
-    }
-
-    @Override
-    public void setOperationFramePoint(int index, Point p) {
-
-        switch (index) {
-            case 1:
-                operationFrame_p1 = p;
-                break;
-            case 2:
-                operationFrame_p2 = p;
-                break;
-            case 3:
-                operationFrame_p3 = p;
-                break;
-            case 4:
-                operationFrame_p4 = p;
-                break;
-            default:
-                throw new IllegalArgumentException("invalid index");
-        }
-        operationFrameBox.set(index, p);
+    public OperationFrame getOperationFrame() {
+        return this.operationFrame;
     }
 
     @Override
