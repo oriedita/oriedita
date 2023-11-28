@@ -672,25 +672,25 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
 
                     switch (canvasModel.getMouseInCpOrFoldedFigure()) {
                         case CREASE_PATTERN_0: // 展開図移動。
-                            creasePatternCamera.displayPositionMove(mouse_temp0.other_Point_position(p));
+                            creasePatternCamera.displayPositionMove(mouse_temp0.delta(p));
                             mainCreasePatternWorker.setCamera(creasePatternCamera);
                             cpTextEditingArea.update();
                             break;
                         case FOLDED_FRONT_1:
                             if (selectedFigure != null)
-                                selectedFigure.getFoldedFigureFrontCamera().displayPositionMove(mouse_temp0.other_Point_position(p));
+                                selectedFigure.getFoldedFigureFrontCamera().displayPositionMove(mouse_temp0.delta(p));
                             break;
                         case FOLDED_BACK_2:
                             if (selectedFigure != null)
-                                selectedFigure.getFoldedFigureRearCamera().displayPositionMove(mouse_temp0.other_Point_position(p));
+                                selectedFigure.getFoldedFigureRearCamera().displayPositionMove(mouse_temp0.delta(p));
                             break;
                         case TRANSPARENT_FRONT_3:
                             if (selectedFigure != null)
-                                selectedFigure.getTransparentFrontCamera().displayPositionMove(mouse_temp0.other_Point_position(p));
+                                selectedFigure.getTransparentFrontCamera().displayPositionMove(mouse_temp0.delta(p));
                             break;
                         case TRANSPARENT_BACK_4:
                             if (selectedFigure != null)
-                                selectedFigure.getTransparentRearCamera().displayPositionMove(mouse_temp0.other_Point_position(p));
+                                selectedFigure.getTransparentRearCamera().displayPositionMove(mouse_temp0.delta(p));
                             break;
                     }
 
@@ -754,25 +754,25 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
                     FoldedFigure_Drawer selectedFigure = foldedFiguresList.getActiveItem();
                     switch (canvasModel.getMouseInCpOrFoldedFigure()) {
                         case CREASE_PATTERN_0:
-                            creasePatternCamera.displayPositionMove(mouse_temp0.other_Point_position(p));
+                            creasePatternCamera.displayPositionMove(mouse_temp0.delta(p));
                             mainCreasePatternWorker.setCamera(creasePatternCamera);
                             // Move all other objects along.
                             break;
                         case FOLDED_FRONT_1:
                             if (selectedFigure != null)
-                                selectedFigure.getFoldedFigureFrontCamera().displayPositionMove(mouse_temp0.other_Point_position(p));
+                                selectedFigure.getFoldedFigureFrontCamera().displayPositionMove(mouse_temp0.delta(p));
                             break;
                         case FOLDED_BACK_2:
                             if (selectedFigure != null)
-                                selectedFigure.getFoldedFigureRearCamera().displayPositionMove(mouse_temp0.other_Point_position(p));
+                                selectedFigure.getFoldedFigureRearCamera().displayPositionMove(mouse_temp0.delta(p));
                             break;
                         case TRANSPARENT_FRONT_3:
                             if (selectedFigure != null)
-                                selectedFigure.getTransparentFrontCamera().displayPositionMove(mouse_temp0.other_Point_position(p));
+                                selectedFigure.getTransparentFrontCamera().displayPositionMove(mouse_temp0.delta(p));
                             break;
                         case TRANSPARENT_BACK_4:
                             if (selectedFigure != null)
-                                selectedFigure.getTransparentRearCamera().displayPositionMove(mouse_temp0.other_Point_position(p));
+                                selectedFigure.getTransparentRearCamera().displayPositionMove(mouse_temp0.delta(p));
                             break;
                     }
 

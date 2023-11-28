@@ -77,19 +77,19 @@ public class MouseHandlerMoveCalculatedShape implements MouseModeHandler {
 
         switch (canvasModel.getMouseInCpOrFoldedFigure()) {
             case CREASE_PATTERN_0:
-                creasePatternCamera.displayPositionMove(mouse_temp0.other_Point_position(p0));
+                creasePatternCamera.displayPositionMove(mouse_temp0.delta(p0));
                 break;
             case FOLDED_FRONT_1:
-                selectedFigure.getFoldedFigureFrontCamera().displayPositionMove(mouse_temp0.other_Point_position(p0));
+                selectedFigure.getFoldedFigureFrontCamera().displayPositionMove(mouse_temp0.delta(p0));
                 break;
             case FOLDED_BACK_2:
-                selectedFigure.getFoldedFigureRearCamera().displayPositionMove(mouse_temp0.other_Point_position(p0));
+                selectedFigure.getFoldedFigureRearCamera().displayPositionMove(mouse_temp0.delta(p0));
                 break;
             case TRANSPARENT_FRONT_3:
-                selectedFigure.getTransparentFrontCamera().displayPositionMove(mouse_temp0.other_Point_position(p0));
+                selectedFigure.getTransparentFrontCamera().displayPositionMove(mouse_temp0.delta(p0));
                 break;
             case TRANSPARENT_BACK_4:
-                selectedFigure.getTransparentRearCamera().displayPositionMove(mouse_temp0.other_Point_position(p0));
+                selectedFigure.getTransparentRearCamera().displayPositionMove(mouse_temp0.delta(p0));
                 break;
         }
 

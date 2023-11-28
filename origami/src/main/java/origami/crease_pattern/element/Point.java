@@ -78,8 +78,11 @@ public class Point implements Serializable {
 
     /**
      * When looking at the own Point as a reference, the positions of other points are returned as Points.
+     * <p>
+     * example: <code>new Point(1, 2).delta(new Point(3,2)); // returns (2, 0)</code>
+     * </p>
      */
-    public Point other_Point_position(Point taPoint) {
+    public Point delta(Point taPoint) {
         Point rPoint = new Point();
         rPoint.setX(taPoint.getX() - x);
         rPoint.setY(taPoint.getY() - y);

@@ -246,7 +246,7 @@ public class Camera implements Serializable { // Mediation between actual coordi
         if (parent != null) {
             Point origin = parent.TV2object(new Point(0,0));
             Point delta_tr = parent.TV2object(tuika);
-            tuika = origin.other_Point_position(delta_tr);
+            tuika = origin.delta(delta_tr);
         }
         display_position_x = display_position_x + tuika.getX();
         display_position_y = display_position_y + tuika.getY();
