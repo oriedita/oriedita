@@ -272,7 +272,7 @@ public class OritaCalc {
         }
 
         if (isLineSegmentParallel(t1, t2, rhei) == ParallelJudgement.NOT_PARALLEL) {    //Two straight lines are not parallel
-            Point pk = new Point(findIntersection(t1, t2));    //<<<<<<<<<<<<<<<<<<<<<<<
+            Point pk = findIntersection(t1, t2);    //<<<<<<<<<<<<<<<<<<<<<<<
             if ((isInside(p1, pk, p2) >= 1) && (isInside(p3, pk, p4) >= 1)) {
                 if (equal(p1, p3, rhit)) {
                     return LineSegment.Intersection.INTERSECTS_LSHAPE_S1_START_S2_START_21;
@@ -1023,7 +1023,7 @@ public class OritaCalc {
         StraightLine t0 = new StraightLine();
         t0.set(circle_to_circle_no_intersection_wo_tooru_straightLine(e1, e2));
         StraightLine t1 = new StraightLine(e1.determineCenter(), e2.determineCenter());
-        Point intersection_t0t1 = new Point(findIntersection(t0, t1));
+        Point intersection_t0t1 = findIntersection(t0, t1);
         double length_a = t0.calculateDistance(e1.determineCenter());  //t0とt1の交点からe1の中心までの長さ
 
 //double length_a=kyori(intersection_t0t1,e1.get_tyuusin());  //t0とt1の交点からe1の中心までの長さ
@@ -1042,7 +1042,7 @@ public class OritaCalc {
     // --------qqqqqqqqqqqqqqq-----------------------
     public static LineSegment circle_to_straightLine_no_intersect_wo_connect_LineSegment(Circle e1, StraightLine t0) {
 
-        Point kouten_t0t1 = new Point(findProjection(t0, e1.determineCenter()));
+        Point kouten_t0t1 = findProjection(t0, e1.determineCenter());
         double length_a = t0.calculateDistance(e1.determineCenter());  //t0とt1の交点からe1の中心までの長さ
 
         double length_b = Math.sqrt(e1.getR() * e1.getR() - length_a * length_a); //t0とt1の交点からe1とe2の交点までの長さ

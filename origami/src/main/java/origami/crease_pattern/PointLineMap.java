@@ -51,7 +51,7 @@ public class PointLineMap {
             }
         }
         if (pt == null) {
-            points.add(pt = new Point(p));
+            points.add(p);
             qt.grow(1);
         }
         map.computeIfAbsent(pt, k -> new ArrayList<>()).add(l);

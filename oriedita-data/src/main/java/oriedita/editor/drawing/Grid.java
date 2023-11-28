@@ -194,10 +194,10 @@ public class Grid {
     }
 
     private int get_a_index_min(Point p_a, Point p_b, Point p_c, Point p_d) {//obj座標系の4つの点を指定し、各点のaベクトルの指数より小さい整数の指数を得る。
-        Point p_a_index = new Point(getPosition(p_a));
-        Point p_b_index = new Point(getPosition(p_b));
-        Point p_c_index = new Point(getPosition(p_c));
-        Point p_d_index = new Point(getPosition(p_d));
+        Point p_a_index = getPosition(p_a);
+        Point p_b_index = getPosition(p_b);
+        Point p_c_index = getPosition(p_c);
+        Point p_d_index = getPosition(p_d);
 
         double a_index_min = p_a_index.getX();
         if (p_b_index.getX() < a_index_min) {
@@ -214,10 +214,10 @@ public class Grid {
     }
 
     private int get_a_index_max(Point p_a, Point p_b, Point p_c, Point p_d) {//obj座標系の4つの点を指定し、各点のaベクトルの指数より大きい整数の指数を得る。
-        Point p_a_index = new Point(getPosition(p_a));
-        Point p_b_index = new Point(getPosition(p_b));
-        Point p_c_index = new Point(getPosition(p_c));
-        Point p_d_index = new Point(getPosition(p_d));
+        Point p_a_index = getPosition(p_a);
+        Point p_b_index = getPosition(p_b);
+        Point p_c_index = getPosition(p_c);
+        Point p_d_index = getPosition(p_d);
 
         double a_index_max = p_a_index.getX();
         if (p_b_index.getX() > a_index_max) {
@@ -234,10 +234,10 @@ public class Grid {
     }
 
     private int get_b_index_min(Point p_a, Point p_b, Point p_c, Point p_d) {//obj座標系の4つの点を指定し、各点のbベクトルの指数より小さい整数の指数を得る。
-        Point p_a_index = new Point(getPosition(p_a));
-        Point p_b_index = new Point(getPosition(p_b));
-        Point p_c_index = new Point(getPosition(p_c));
-        Point p_d_index = new Point(getPosition(p_d));
+        Point p_a_index = getPosition(p_a);
+        Point p_b_index = getPosition(p_b);
+        Point p_c_index = getPosition(p_c);
+        Point p_d_index = getPosition(p_d);
 
         double b_index_min = p_a_index.getY();
         if (p_b_index.getY() < b_index_min) {
@@ -254,10 +254,10 @@ public class Grid {
     }
 
     private int get_b_index_max(Point p_a, Point p_b, Point p_c, Point p_d) {//Specify four points in the obj coordinate system and get an integer exponent greater than the exponent of the b vector at each point.
-        Point p_a_index = new Point(getPosition(p_a));
-        Point p_b_index = new Point(getPosition(p_b));
-        Point p_c_index = new Point(getPosition(p_c));
-        Point p_d_index = new Point(getPosition(p_d));
+        Point p_a_index = getPosition(p_a);
+        Point p_b_index = getPosition(p_b);
+        Point p_c_index = getPosition(p_c);
+        Point p_d_index = getPosition(p_d);
 
         double b_index_max = p_a_index.getY();
         if (p_b_index.getY() > b_index_max) {
@@ -301,10 +301,10 @@ public class Grid {
         Point p0_c = new Point(p0x_max, p0y_max);//TV system coordinates of corner at the bottom right of the screen
         Point p0_d = new Point(p0x_max, 0);//TV system coordinates of corner on the upper right of the screen
 
-        Point p_a = new Point(camera.TV2object(p0_a));//Obj system coordinates of the upper left corner of the screen
-        Point p_b = new Point(camera.TV2object(p0_b));//Obj system coordinates of the lower left corner of the screen
-        Point p_c = new Point(camera.TV2object(p0_c));//Obj system coordinates of the lower right corner of the screen
-        Point p_d = new Point(camera.TV2object(p0_d));//Obj system coordinates of the upper right corner of the screen
+        Point p_a = camera.TV2object(p0_a);//Obj system coordinates of the upper left corner of the screen
+        Point p_b = camera.TV2object(p0_b);//Obj system coordinates of the lower left corner of the screen
+        Point p_c = camera.TV2object(p0_c);//Obj system coordinates of the lower right corner of the screen
+        Point p_d = camera.TV2object(p0_d);//Obj system coordinates of the upper right corner of the screen
 
         int grid_screen_a_max = get_a_index_max(p_a, p_b, p_c, p_d);
         int grid_screen_a_min = get_a_index_min(p_a, p_b, p_c, p_d);

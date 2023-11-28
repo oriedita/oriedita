@@ -32,9 +32,8 @@ public class Check4 {
         //Selection of whether the place to be checked can be folded flat
         for (Point point : map.getPoints()) {
             service.submit(() -> {
-                Point p = new Point(point);
                 try {
-                    Optional<FlatFoldabilityViolation> violation = findFlatfoldabilityViolation(p, map.getLines(point));
+                    Optional<FlatFoldabilityViolation> violation = findFlatfoldabilityViolation(point, map.getLines(point));
                     violation.ifPresent(e -> foldLineSet.getcAMVViolations().add(e));
                 } catch (InterruptedException e) {
                     // finish thread.

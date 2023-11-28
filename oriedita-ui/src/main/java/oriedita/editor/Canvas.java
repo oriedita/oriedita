@@ -318,7 +318,7 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
                 }
 
                 if (displayGridInputAssist) {
-                    Point gridIndex = new Point(mainCreasePatternWorker.getGridPosition(p_mouse_TV_position));//20201024高密度入力がオンならばrepaint（画面更新）のたびにここで最寄り点を求めているので、描き職人で別途最寄り点を求めていることと二度手間になっている。
+                    Point gridIndex = mainCreasePatternWorker.getGridPosition(p_mouse_TV_position);//20201024高密度入力がオンならばrepaint（画面更新）のたびにここで最寄り点を求めているので、描き職人で別途最寄り点を求めていることと二度手間になっている。
 
                     double dx_ind = gridIndex.getX();
                     double dy_ind = gridIndex.getY();

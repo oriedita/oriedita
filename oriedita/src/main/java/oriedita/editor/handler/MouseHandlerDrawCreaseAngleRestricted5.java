@@ -38,7 +38,7 @@ public class MouseHandlerDrawCreaseAngleRestricted5 extends BaseMouseHandlerInpu
     //マウス操作(mouseMode==37　でドラッグしたとき)を行う関数
     public void mouseDragged(Point p0) {
         if (d.getLineStep().size() == 1) {
-            Point syuusei_point = new Point(syuusei_point_A_37(p0));
+            Point syuusei_point = syuusei_point_A_37(p0);
 
             d.getLineStep().get(0).setA(syuusei_point);
             d.getLineStep().get(0).setColor(d.getLineColor());
@@ -57,7 +57,7 @@ public class MouseHandlerDrawCreaseAngleRestricted5 extends BaseMouseHandlerInpu
     //マウス操作(mouseMode==37　でボタンを離したとき)を行う関数----------------------------------------------------
     public void mouseReleased(Point p0) {
         if (d.getLineStep().size() == 1) {
-            Point syuusei_point = new Point(syuusei_point_A_37(p0));
+            Point syuusei_point = syuusei_point_A_37(p0);
             d.getLineStep().get(0).setA(kouho_point_A_37(syuusei_point));
             if (Epsilon.high.gt0(d.getLineStep().get(0).determineLength())) {
                 d.addLineSegment(d.getLineStep().get(0));

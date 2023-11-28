@@ -44,10 +44,10 @@ public class IntersectDivide {
         LineSegment si = lineSegmentSet.get(i);
         LineSegment sj = lineSegmentSet.get(j);
 
-        Point p1 = new Point(si.getA());
-        Point p2 = new Point(si.getB());
-        Point p3 = new Point(sj.getA());
-        Point p4 = new Point(sj.getB());
+        Point p1 = si.getA();
+        Point p2 = si.getB();
+        Point p3 = sj.getA();
+        Point p4 = sj.getB();
 
         double ixmax = Math.max(si.determineAX(), si.determineBX());
         double ixmin = Math.min(si.determineAX(), si.determineBX());

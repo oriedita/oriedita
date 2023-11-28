@@ -658,8 +658,7 @@ public class PointSet implements Serializable {
 
     public void getSave(PointSave save) {
         for (int i = 1; i <= numPoints; i++) {
-            Point p = new Point(points[i]);
-            save.addPoint(p);
+            save.addPoint(points[i]);
         }
     }
 

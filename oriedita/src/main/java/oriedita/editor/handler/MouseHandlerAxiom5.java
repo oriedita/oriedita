@@ -103,8 +103,8 @@ public class MouseHandlerAxiom5 extends BaseMouseHandlerInputRestricted{
 
         // Case 2: Click on destination line and check of mouse point is closer to one of the 2 purple indicators
         if(d.getLineStep().size() == 6){
-            Point intersectPoint1 = new Point(OritaCalc.findIntersection(d.getLineStep().get(3), d.getLineStep().get(5)));
-            Point intersectPoint2 = new Point(OritaCalc.findIntersection(d.getLineStep().get(4), d.getLineStep().get(5)));
+            Point intersectPoint1 = OritaCalc.findIntersection(d.getLineStep().get(3), d.getLineStep().get(5));
+            Point intersectPoint2 = OritaCalc.findIntersection(d.getLineStep().get(4), d.getLineStep().get(5));
 
             double d1 = OritaCalc.distance(p, intersectPoint1);
             double d2 = OritaCalc.distance(p, intersectPoint2);
@@ -119,11 +119,10 @@ public class MouseHandlerAxiom5 extends BaseMouseHandlerInputRestricted{
 
         LineSegment secondTemp = new LineSegment(pivot, targetSegment.determineClosestEndpoint(pivot)); //  for checks alignment between pivot point and target segment
         double length_a = 0.0; //Distance between the center of the circle and target segment
-        Point center = new Point(pivot);
 
         // If pivot point is not within the target segment span
         if(OritaCalc.isLineSegmentParallel(secondTemp, targetSegment) != OritaCalc.ParallelJudgement.PARALLEL_EQUAL){
-            length_a = OritaCalc.distance(center, OritaCalc.findProjection(targetSegment, center));
+            length_a = OritaCalc.distance(pivot, OritaCalc.findProjection(targetSegment, pivot));
         }
 
         // Intersect at one point
@@ -145,34 +144,34 @@ public class MouseHandlerAxiom5 extends BaseMouseHandlerInputRestricted{
             d.getLineStep().clear();
         } else {  // Intersect at two points
             LineSegment l = new LineSegment(target, pivot);
-            Point projectPoint = new Point(OritaCalc.findProjection(targetSegment, center));
-            LineSegment projectLine = new LineSegment(center, projectPoint);
+            Point projectPoint = OritaCalc.findProjection(targetSegment, pivot);
+            LineSegment projectLine = new LineSegment(pivot, projectPoint);
 
             // Length of the last segment of a right triangle (circle center, projection point, and the ultimate guiding point for indicators)
             double length_b = Math.sqrt((radius * radius) - (length_a * length_a));
             LineSegment l1 = new LineSegment(projectPoint, OritaCalc.findProjection(OritaCalc.moveParallel(projectLine, length_b), projectPoint));
-            l1.set(new LineSegment(center, l1.getB()));
+            l1.set(new LineSegment(pivot, l1.getB()));
             LineSegment l2 = new LineSegment(projectPoint, OritaCalc.findProjection(OritaCalc.moveParallel(projectLine, -length_b), projectPoint));
-            l2.set(new LineSegment(center, l2.getB()));
+            l2.set(new LineSegment(pivot, l2.getB()));
 
             OritaCalc.ParallelJudgement pivotSegmentJudgement = OritaCalc.isLineSegmentParallel(secondTemp, targetSegment);
-            processPivotWithinSegmentSpan(pivotSegmentJudgement, l1, l2, center, targetSegment, pivot);
+            processPivotWithinSegmentSpan(pivotSegmentJudgement, l1, l2, pivot, targetSegment, pivot);
 
             // Center points for placeholders to draw bisecting indicators on
-            Point center1 = new Point(OritaCalc.center(center, l1.determineFurthestEndpoint(center), l.determineFurthestEndpoint(center)));
-            Point center2 = new Point(OritaCalc.center(center, l2.determineFurthestEndpoint(center), l.determineFurthestEndpoint(center)));
+            Point center1 = OritaCalc.center(pivot, l1.determineFurthestEndpoint(pivot), l.determineFurthestEndpoint(pivot));
+            Point center2 = OritaCalc.center(pivot, l2.determineFurthestEndpoint(pivot), l.determineFurthestEndpoint(pivot));
 
             // If l and l1/l2 are aligned
-            if(OritaCalc.isLineSegmentParallel(new StraightLine(l.determineFurthestEndpoint(center), center), new StraightLine(center, l1.determineFurthestEndpoint(center))) == OritaCalc.ParallelJudgement.PARALLEL_EQUAL){
-                LineSegment seg = new LineSegment(center, OritaCalc.findProjection(OritaCalc.moveParallel(l, 1), center));
-                center1 = OritaCalc.center(l.determineFurthestEndpoint(center), l1.determineFurthestEndpoint(center), seg.determineFurthestEndpoint(center));
+            if(OritaCalc.isLineSegmentParallel(new StraightLine(l.determineFurthestEndpoint(pivot), pivot), new StraightLine(pivot, l1.determineFurthestEndpoint(pivot))) == OritaCalc.ParallelJudgement.PARALLEL_EQUAL){
+                LineSegment seg = new LineSegment(pivot, OritaCalc.findProjection(OritaCalc.moveParallel(l, 1), pivot));
+                center1 = OritaCalc.center(l.determineFurthestEndpoint(pivot), l1.determineFurthestEndpoint(pivot), seg.determineFurthestEndpoint(pivot));
             }
-            if(OritaCalc.isLineSegmentParallel(new StraightLine(l.determineFurthestEndpoint(center), center), new StraightLine(center, l2.determineFurthestEndpoint(center))) == OritaCalc.ParallelJudgement.PARALLEL_EQUAL){
-                LineSegment seg = new LineSegment(center, OritaCalc.findProjection(OritaCalc.moveParallel(l, 1), center));
-                center2 = OritaCalc.center(l.determineFurthestEndpoint(center), l2.determineFurthestEndpoint(center), seg.determineFurthestEndpoint(center));
+            if(OritaCalc.isLineSegmentParallel(new StraightLine(l.determineFurthestEndpoint(pivot), pivot), new StraightLine(pivot, l2.determineFurthestEndpoint(pivot))) == OritaCalc.ParallelJudgement.PARALLEL_EQUAL){
+                LineSegment seg = new LineSegment(pivot, OritaCalc.findProjection(OritaCalc.moveParallel(l, 1), pivot));
+                center2 = OritaCalc.center(l.determineFurthestEndpoint(pivot), l2.determineFurthestEndpoint(pivot), seg.determineFurthestEndpoint(pivot));
             }
 
-            determineIndicators(l, l1, l2, center, center1, center2, target, targetSegment, pivot);
+            determineIndicators(l, l1, l2, pivot, center1, center2, target, targetSegment, pivot);
         }
     }
 
