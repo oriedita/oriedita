@@ -39,16 +39,6 @@ public class Point implements Serializable {
         y = a * p.getY() + b * q.getY();
     }
 
-    public void set(double i, double j) {
-        x = i;
-        y = j;
-    }
-
-    public void set(double a, Point p, double b, Point q) {
-        x = a * p.getX() + b * q.getX();
-        y = a * p.getY() + b * q.getY();
-    }
-
     public double getX() {
         return x;
     }
@@ -96,12 +86,7 @@ public class Point implements Serializable {
         return rPoint;
     }
 
-    public void move(Point addPoint) {
-        x = x + addPoint.getX();
-        y = y + addPoint.getY();
-    }
-
-    public Point moveNew(Point addPoint) {
+    public Point move(Point addPoint) {
         return new Point(x + addPoint.getX(), y + addPoint.getY());
     }
 

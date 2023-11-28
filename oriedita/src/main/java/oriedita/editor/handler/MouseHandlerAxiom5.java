@@ -26,8 +26,7 @@ public class MouseHandlerAxiom5 extends BaseMouseHandlerInputRestricted{
 
     @Override
     public void mousePressed(Point p0) {
-        Point p = new Point();
-        p.set(d.getCamera().TV2object(p0));
+        Point p = d.getCamera().TV2object(p0);
 
         // 1. target point
         if(d.getLineStep().isEmpty()){
@@ -79,8 +78,7 @@ public class MouseHandlerAxiom5 extends BaseMouseHandlerInputRestricted{
 
     @Override
     public void mouseReleased(Point p0) {
-        Point p = new Point();
-        p.set(d.getCamera().TV2object(p0));
+        Point p = d.getCamera().TV2object(p0);
 
         // first 3 are clicked
         if(d.getLineStep().size() == 3){

@@ -53,11 +53,10 @@ public class MouseHandlerFishBoneDraw extends BaseMouseHandlerInputRestricted {
                     double dy = (d.getLineStep().get(0).determineAY() - d.getLineStep().get(0).determineBY()) * d.getGrid().getGridWidth() / d.getLineStep().get(0).determineLength();
                     LineColor icol_temp = d.getLineColor();
 
-                    Point pxy = new Point();
                     for (int i = 0; i <= (int) Math.floor(d.getLineStep().get(0).determineLength() / d.getGrid().getGridWidth()); i++) {
                         double px = d.getLineStep().get(0).determineBX() + (double) i * dx;
                         double py = d.getLineStep().get(0).determineBY() + (double) i * dy;
-                        pxy.set(px, py);
+                        Point pxy = new Point(px, py);
 
 
                         if (d.getFoldLineSet().closestLineSegmentDistanceExcludingParallel(pxy, d.getLineStep().get(0)) > Epsilon.UNKNOWN_0001) {

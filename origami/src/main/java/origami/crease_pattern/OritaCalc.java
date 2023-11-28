@@ -878,7 +878,6 @@ public class OritaCalc {
     //A function that finds a point at the control position of point p with respect to a straight line passing through two points t1 and t2.
     public static Point findLineSymmetryPoint(Point t1, Point t2, Point p) {
         Point p1;  // p1.set(s.geta());
-        Point p2 = new Point();  // p2.set(s.getb());
 
         StraightLine s1 = new StraightLine(t1, t2);
         StraightLine s2 = new StraightLine(t1, t2);
@@ -886,8 +885,7 @@ public class OritaCalc {
         s2.orthogonalize(p);//Find the straight line s2 that passes through the point p and is orthogonal to s1.
 
         p1 = findIntersection(s1, s2);
-        p2.set(2.0 * p1.getX() - p.getX(), 2.0 * p1.getY() - p.getY());
-        return p2;
+        return new Point(2.0 * p1.getX() - p.getX(), 2.0 * p1.getY() - p.getY());
     }
 
     //A function that keeps the angle greater than -180.0 degrees and less than 180.0 degrees
@@ -990,8 +988,7 @@ public class OritaCalc {
                 LineSegment s_ab = new LineSegment(a, b);
                 double nx = (d_internalDivisionRatio_t * s_ab.determineAX() + d_internalDivisionRatio_s * s_ab.determineBX()) / (d_internalDivisionRatio_s + d_internalDivisionRatio_t);
                 double ny = (d_internalDivisionRatio_t * s_ab.determineAY() + d_internalDivisionRatio_s * s_ab.determineBY()) / (d_internalDivisionRatio_s + d_internalDivisionRatio_t);
-                r_point.set(nx, ny);
-                return r_point;
+                return new Point(nx, ny);
             }
         }
     }

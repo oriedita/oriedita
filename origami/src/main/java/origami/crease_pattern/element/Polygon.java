@@ -289,7 +289,6 @@ public class Polygon {
     public Intersection inside(Point p) {      //0 = outside, 1 = boundary, 2 = inside
         LineSegment s = new LineSegment();
         LineSegment sq = new LineSegment();
-        Point q = new Point();
 
         int kousakaisuu = 0;
         int jyuuji_kousakaisuu;
@@ -316,7 +315,7 @@ public class Polygon {
 
             //確実に外部にある点qと、点pで線分を作る。
             rad += 1.0;
-            q.set((100000.0 * Math.cos(rad)), (100000.0 * Math.sin(rad))); //<<<<<<<<<<<<<<<<<<
+            Point q = new Point((100000.0 * Math.cos(rad)), (100000.0 * Math.sin(rad))); //<<<<<<<<<<<<<<<<<<
 
             sq.set(p, q);
 

@@ -225,10 +225,7 @@ public class WireFrame_Worker_Drawer {
             pb = cam_rear.TV2object(p1);
         }
 
-        Point p_u = new Point();
-        p_u.set(ugokasu_maeno_sentaku_point.getX(), ugokasu_maeno_sentaku_point.getY());
-        p_u.move(pa.other_Point_position(pb));
-
+        Point p_u = ugokasu_maeno_sentaku_point.move(pa.other_Point_position(pb));
         pointSet.statePointMove(p_u);
     }
 
@@ -252,9 +249,7 @@ public class WireFrame_Worker_Drawer {
         }
 
 
-        Point p_u = new Point();
-        p_u.set(ugokasu_maeno_sentaku_point.getX(), ugokasu_maeno_sentaku_point.getY());
-        p_u.move(pa.other_Point_position(pb));
+        Point p_u = ugokasu_maeno_sentaku_point.move(pa.other_Point_position(pb));
 
         pointSet.statePointMove(p_u);
     }

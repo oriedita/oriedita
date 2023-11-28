@@ -1652,8 +1652,7 @@ public class FoldLineSet {
 
     //Returns the "end point of the line segment" closest to the point p
     public Point closestPoint(Point p) {
-        Point p_return = new Point();
-        p_return.set(100000.0, 100000.0);
+        Point p_return = new Point(100000.0, 100000.0);
         Point p_temp;
         for (int i = 1; i <= total; i++) {
             LineSegment si = lineSegments.get(i);
@@ -2067,12 +2066,12 @@ public class FoldLineSet {
         Point delta = new Point(dx, dy);
         for (int i = 1; i <= total; i++) {
             LineSegment s = lineSegments.get(i);
-            s.setA(s.getA().moveNew(delta));
-            s.setB(s.getB().moveNew(delta));
+            s.setA(s.getA().move(delta));
+            s.setB(s.getB().move(delta));
         }
 
         for (Circle circle : circles) {
-            circle.setCenter(circle.determineCenter().moveNew(delta));
+            circle.setCenter(circle.determineCenter().move(delta));
         }
     }
 
@@ -2086,8 +2085,8 @@ public class FoldLineSet {
 
         for (int i = 1; i <= total; i++) {
             LineSegment s = lineSegments.get(i);
-            Point newA = OritaCalc.point_rotate(ta, s.getA(), d, r).moveNew(delta);
-            Point newB = OritaCalc.point_rotate(ta, s.getB(), d, r).moveNew(delta);
+            Point newA = OritaCalc.point_rotate(ta, s.getA(), d, r).move(delta);
+            Point newB = OritaCalc.point_rotate(ta, s.getB(), d, r).move(delta);
             s.setA(newA);
             s.setB(newB);
         }
