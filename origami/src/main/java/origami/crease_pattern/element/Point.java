@@ -5,7 +5,8 @@ import java.util.Objects;
 
 public class Point implements Serializable {
     //Used to represent point coordinates, direction vectors, etc.
-    double x, y;
+    private final double x;
+    private final double y;
 
     public Point(Point p) {
         x = p.getX();
@@ -43,16 +44,16 @@ public class Point implements Serializable {
         return x;
     }
 
-    public void setX(double xx) {
-        x = xx;
+    public Point withX(double x) {
+        return new Point(x, this.y);
+    }
+
+    public Point withY(double y) {
+        return new Point(this.x, y);
     }
 
     public double getY() {
         return y;
-    }
-
-    public void setY(double yy) {
-        y = yy;
     }
 
     /**
@@ -78,12 +79,14 @@ public class Point implements Serializable {
      * </p>
      */
     public Point delta(Point taPoint) {
-        Point rPoint = new Point();
-        rPoint.setX(taPoint.getX() - x);
-        rPoint.setY(taPoint.getY() - y);
-        return rPoint;
+        return new Point(taPoint.getX() - x, taPoint.getY() - y);
     }
 
+    /**
+     * Returns a new Point which is the old point, moved by addPoint
+     * @param addPoint amount to move
+     * @return moved point
+     */
     public Point move(Point addPoint) {
         return new Point(x + addPoint.getX(), y + addPoint.getY());
     }

@@ -67,18 +67,10 @@ public class DrawingUtil {
 
     //Draw a cross around the designated Point
     public static void cross(Graphics g, Point t, double length, double width, LineColor icolor) {
-        Point tx0 = new Point();
-        Point tx1 = new Point();
-        Point ty0 = new Point();
-        Point ty1 = new Point();
-        tx0.setX(t.getX() - length);
-        tx0.setY(t.getY());
-        tx1.setX(t.getX() + length);
-        tx1.setY(t.getY());
-        ty0.setX(t.getX());
-        ty0.setY(t.getY() - length);
-        ty1.setX(t.getX());
-        ty1.setY(t.getY() + length);
+        Point tx0 = new Point(t.getX() - length, t.getY());
+        Point tx1 = new Point(t.getX() + length, t.getY());
+        Point ty0 = new Point(t.getX(), t.getY() - length);
+        Point ty1 = new Point(t.getX(), t.getY() + length);
         widthLine(g, tx0, tx1, width, icolor);
         widthLine(g, ty0, ty1, width, icolor);
     }

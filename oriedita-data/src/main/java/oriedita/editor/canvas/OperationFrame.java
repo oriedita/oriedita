@@ -16,11 +16,11 @@ public class OperationFrame {
     }
 
     public void setFramePointX(int index, double x) {
-        rect.set(index, new Point(x, rect.get(index).getY()));
+        rect.set(index, rect.get(index).withX(x));
     }
 
     public void setFramePointY(int index, double y) {
-        rect.set(index, new Point(rect.get(index).getX(), y));
+        rect.set(index, rect.get(index).withY(y));
     }
 
     public Point getP1() {

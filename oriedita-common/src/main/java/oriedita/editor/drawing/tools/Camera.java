@@ -169,10 +169,7 @@ public class Camera implements Serializable { // Mediation between actual coordi
     }
 
     public Point getCameraPosition() {
-        Point pointPosition = new Point();
-        pointPosition.setX(camera_position_x);
-        pointPosition.setY(camera_position_y);
-        return pointPosition;
+        return new Point(camera_position_x, camera_position_y);
     }
 
     public void setCameraPosition(Point p) {
@@ -214,7 +211,6 @@ public class Camera implements Serializable { // Mediation between actual coordi
         if (parent != null) {
             t_tv = parent.TV2object(t_tv);
         }
-        Point t_ob = new Point();
         double x1, y1;
         double x2, y2;
         x1 = t_tv.getX();
@@ -229,9 +225,7 @@ public class Camera implements Serializable { // Mediation between actual coordi
         x2 = cos_rad * x1 - sin_rad * y1;
         y2 = sin_rad * x1 + cos_rad * y1;
 
-        t_ob.setX(x2 + camera_position_x);
-        t_ob.setY(y2 + camera_position_y);
-        return t_ob;
+        return new Point(x2 + camera_position_x, y2 + camera_position_y);
     }
 
     public LineSegment TV2object(LineSegment s_tv) {

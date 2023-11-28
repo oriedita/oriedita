@@ -112,28 +112,28 @@ public class LineSegment implements Serializable, Cloneable {
      * Larger when rounding up the x-coordinate of the end point
      */
     public int determineMaxX() {
-        return Math.max((int) Math.ceil(a.x), (int) Math.ceil(b.x));
+        return Math.max((int) Math.ceil(a.getX()), (int) Math.ceil(b.getX()));
     }
 
     /**
      * The smaller one when truncating the x-coordinate of the end point
      */
     public int determineMinX() {
-        return Math.min((int) Math.floor(a.x), (int) Math.floor(b.x));
+        return Math.min((int) Math.floor(a.getX()), (int) Math.floor(b.getX()));
     }
 
     /**
      * Larger when rounding up the y-coordinate of the end point
      */
     public int determineMaxY() {
-        return Math.max((int) Math.ceil(a.y), (int) Math.ceil(b.y));
+        return Math.max((int) Math.ceil(a.getY()), (int) Math.ceil(b.getY()));
     }
 
     /**
      * The smaller one when truncating the y coordinate of the end point
      */
     public int determineMinY() {
-        return Math.min((int) Math.floor(a.y), (int) Math.floor(b.y));
+        return Math.min((int) Math.floor(a.getY()), (int) Math.floor(b.getY()));
     }
 
     public LineColor getColor() {
