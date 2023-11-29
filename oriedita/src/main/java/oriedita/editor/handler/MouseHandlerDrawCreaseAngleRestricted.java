@@ -72,7 +72,7 @@ public class MouseHandlerDrawCreaseAngleRestricted extends BaseMouseHandler {
 
                 }
 
-                s_kiso.set(d.getLineStep().get(0).getB(), d.getLineStep().get(0).getA());
+                s_kiso = new LineSegment(d.getLineStep().get(0).getB(), d.getLineStep().get(0).getA());
                 angle = 0.0;
                 i_jyun = false;
                 for (int i = 1; i <= honsuu; i++) {
@@ -116,7 +116,7 @@ public class MouseHandlerDrawCreaseAngleRestricted extends BaseMouseHandler {
                     d.lineStepAdd(s);
                 }
 
-                s_kiso.set(d.getLineStep().get(0).getB(), d.getLineStep().get(0).getA());
+                s_kiso = new LineSegment(d.getLineStep().get(0).getB(), d.getLineStep().get(0).getA());
                 i_jyun = false;
                 for (int i = 1; i <= 6; i++) {
                     i_jyun = !i_jyun;

@@ -34,17 +34,23 @@ public class LineSegmentVoronoi extends LineSegment {
         voronoiB = s.getVoronoiB();
     }
 
+    public LineSegmentVoronoi withB(Point b) {
+        LineSegmentVoronoi v = new LineSegmentVoronoi(this);
+        v.b = b;
+        return v;
+    }
+
+    public LineSegmentVoronoi withA(Point a) {
+        LineSegmentVoronoi v = new LineSegmentVoronoi(this);
+        v.a = a;
+        return v;
+    }
+
     @Override
     public void reset() {
         super.reset();
         voronoiA = 0;
         voronoiB = 0;
-    }
-
-    public void set(Point p, Point q, LineColor ic, ActiveState ia, int v_a, int v_b) {
-        set(p, q, ic, ia);
-        voronoiA = v_a;
-        voronoiB = v_b;
     }
 
     public int getVoronoiA() {

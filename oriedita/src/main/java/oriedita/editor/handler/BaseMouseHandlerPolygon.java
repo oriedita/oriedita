@@ -14,24 +14,23 @@ public abstract class BaseMouseHandlerPolygon extends BaseMouseHandler {
     @Override
     public void mouseMoved(Point p0) {
 //マウス操作(マウスを動かしたとき)を行う関数
+        updateGridAssistCandidate(p0);
+    }
+
+    private void updateGridAssistCandidate(Point p0) {
         if (d.getGridInputAssist()) {
             d.getLineCandidate().clear();
-            Point p = d.getCamera().TV2object(p0);
 
-            LineSegment candidate = new LineSegment();
-            candidate.setActive(LineSegment.ActiveState.ACTIVE_BOTH_3);
+            Point p = d.getCamera().TV2object(p0);
             Point closest_point = d.getClosestPoint(p);
             if (p.distance(closest_point) > p.distance(d.getLineStep().get(0).getA())) {
                 closest_point = d.getLineStep().get(0).getA();
             }
 
             if (p.distance(closest_point) < d.getSelectionDistance()) {
-                candidate.set(closest_point, closest_point);
-            } else {
-                candidate.set(p, p);
+                p = closest_point;
             }
-
-            candidate.setColor(LineColor.MAGENTA_5);
+            LineSegment candidate = new LineSegment(p, p, LineColor.MAGENTA_5, LineSegment.ActiveState.ACTIVE_BOTH_3);
             d.getLineCandidate().add(candidate);
         }
     }
@@ -43,20 +42,21 @@ public abstract class BaseMouseHandlerPolygon extends BaseMouseHandler {
             d.getLineStep().clear();
         }
 
-        LineSegment s = new LineSegment();
-        s.setColor(LineColor.MAGENTA_5);
         Point p = d.getCamera().TV2object(p0);
 
+        LineSegment s;
         if (d.getLineStep().isEmpty()) {
             Point closest_point = d.getClosestPoint(p);
             if (p.distance(closest_point) > d.getSelectionDistance()) {
                 closest_point = p;
             }
-            s.set(closest_point, p);
+            s = new LineSegment(closest_point, p);
 
         } else {//ここでi_egaki_dankai=0となることはない。
-            s.set(d.getLineStep().get(d.getLineStep().size() - 1).getB(), p);
+            s = new LineSegment(d.getLineStep().get(d.getLineStep().size() - 1).getB(), p);
         }
+
+        s.setColor(LineColor.MAGENTA_5);
 
         d.lineStepAdd(s);
     }
@@ -64,32 +64,8 @@ public abstract class BaseMouseHandlerPolygon extends BaseMouseHandler {
     @Override
     public void mouseDragged(Point p0) {
         Point p = d.getCamera().TV2object(p0);
-
         d.getLineStep().get(d.getLineStep().size() - 1).setB(p);
-
-
-        if (d.getGridInputAssist()) {
-            d.getLineCandidate().clear();
-
-            LineSegment candidate = new LineSegment();
-            candidate.setActive(LineSegment.ActiveState.ACTIVE_BOTH_3);
-            Point closest_point = d.getClosestPoint(p);
-            if (p.distance(closest_point) > p.distance(d.getLineStep().get(0).getA())) {
-                closest_point = d.getLineStep().get(0).getA();
-            }
-
-
-            if (p.distance(closest_point) < d.getSelectionDistance()) {
-                candidate.set(closest_point, closest_point);
-            } else {
-                candidate.set(p, p);
-            }
-            candidate.setColor(LineColor.MAGENTA_5);
-
-            d.getLineCandidate().add(candidate);
-
-            d.getLineStep().get(d.getLineStep().size() - 1).setB(candidate.getA());
-        }
+        updateGridAssistCandidate(p0);
     }
 
     @Override

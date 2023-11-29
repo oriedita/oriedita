@@ -136,8 +136,7 @@ public class MouseHandlerSquareBisector extends BaseMouseHandlerInputRestricted 
                  At this point, there should be 3 lines in lineStep (first 2 initial line clicks and a line for midpoint)
                  --> Next 2 should be at index 3 and 4
                 */
-                LineSegment tempPerpenLine = new LineSegment();
-                tempPerpenLine.set(d.getLineStep().get(1).getA(), projectedPoint);
+                LineSegment tempPerpenLine = new LineSegment(d.getLineStep().get(1).getA(), projectedPoint);
                 d.lineStepAdd(new LineSegment(midPoint, OritaCalc.findProjection(OritaCalc.moveParallel(tempPerpenLine, -25.0), midPoint)));
                 d.getLineStep().get(3).setColor(LineColor.PURPLE_8);
                 d.lineStepAdd(new LineSegment(midPoint, OritaCalc.findProjection(OritaCalc.moveParallel(tempPerpenLine, 25.0), midPoint)));

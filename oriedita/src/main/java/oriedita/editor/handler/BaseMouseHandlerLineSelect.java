@@ -26,19 +26,13 @@ public abstract class BaseMouseHandlerLineSelect extends BaseMouseHandler {
         if (d.getGridInputAssist()) {
             d.getLineCandidate().clear();
 
-            LineSegment candidate = new LineSegment();
-            candidate.setActive(LineSegment.ActiveState.ACTIVE_BOTH_3);
-            Point p = d.getCamera().TV2object(p0);
-
-            Point closestPoint = d.getClosestPoint(p);
-            if (p.distance(closestPoint) < d.getSelectionDistance()) {
-                candidate.set(closestPoint, closestPoint);
-            } else {
-                candidate.set(p, p);
+            Point candidatePoint = d.getCamera().TV2object(p0);
+            Point closestPoint = d.getClosestPoint(candidatePoint);
+            if (candidatePoint.distance(closestPoint) < d.getSelectionDistance()) {
+                candidatePoint = closestPoint;
             }
-
-            candidate.setColor(LineColor.MAGENTA_5);
-
+            LineSegment candidate = new LineSegment(
+                    candidatePoint, candidatePoint, LineColor.MAGENTA_5, LineSegment.ActiveState.ACTIVE_BOTH_3);
             d.getLineCandidate().add(candidate);
         }
     }
@@ -51,11 +45,11 @@ public abstract class BaseMouseHandlerLineSelect extends BaseMouseHandler {
 
         Point closest_point = d.getClosestPoint(p);
         if (p.distance(closest_point) < d.getSelectionDistance()) {
-            s.set(p, closest_point);
+            s = s.withB(closest_point);
         }
         s.setColor(LineColor.MAGENTA_5);
-        d.lineStepAdd(s);
         s.setActive(LineSegment.ActiveState.ACTIVE_B_2);
+        d.lineStepAdd(s);
         selectionLine = s;
     }
 
@@ -66,9 +60,13 @@ public abstract class BaseMouseHandlerLineSelect extends BaseMouseHandler {
     }
 
     private void snapLine() {
-        selectionLine.setA(SnappingUtil.snapToClosePointInActiveAngleSystem(d, selectionLine.getB(), selectionLine.getA(), angleSystemModel.getCurrentAngleSystemDivider(), angleSystemModel.getAngles()));
+        selectionLine.setA(SnappingUtil.snapToClosePointInActiveAngleSystem(
+                d, selectionLine.getB(), selectionLine.getA(),
+                angleSystemModel.getCurrentAngleSystemDivider(), angleSystemModel.getAngles()));
 
-        d.getLineStep().get(0).setA(SnappingUtil.snapToClosePointInActiveAngleSystem(d, d.getLineStep().get(0).getB(), d.getLineStep().get(0).getA(), angleSystemModel.getCurrentAngleSystemDivider(), angleSystemModel.getAngles()));
+        d.getLineStep().get(0).setA(SnappingUtil.snapToClosePointInActiveAngleSystem(
+                d, d.getLineStep().get(0).getB(), d.getLineStep().get(0).getA(),
+                angleSystemModel.getCurrentAngleSystemDivider(), angleSystemModel.getAngles()));
     }
 
     @Override

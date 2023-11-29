@@ -78,7 +78,7 @@ public class MouseHandlerDrawCreaseAngleRestricted2 extends BaseMouseHandlerInpu
                     d.lineStepAdd(s);
                 }
 
-                s_kiso.set(d.getLineStep().get(0).getB(), d.getLineStep().get(0).getA());
+                s_kiso = new LineSegment(d.getLineStep().get(0).getB(), d.getLineStep().get(0).getA());
                 angle = 0.0;
                 i_jyun = false;
                 for (int i = 1; i <= honsuu; i++) {
@@ -119,7 +119,7 @@ public class MouseHandlerDrawCreaseAngleRestricted2 extends BaseMouseHandlerInpu
                     d.lineStepAdd(s);
                 }
 
-                s_kiso.set(d.getLineStep().get(0).getB(), d.getLineStep().get(0).getA());
+                s_kiso = new LineSegment(d.getLineStep().get(0).getB(), d.getLineStep().get(0).getA());
                 for (int i = 0; i < 6; i++) {
                     angle = jk[i];
                     LineSegment s = OritaCalc.lineSegment_rotate(s_kiso, angle, 10.0);

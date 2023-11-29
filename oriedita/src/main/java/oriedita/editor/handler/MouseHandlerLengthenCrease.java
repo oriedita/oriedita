@@ -4,17 +4,56 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.tinylog.Logger;
 import oriedita.editor.canvas.MouseMode;
+import oriedita.editor.drawing.tools.Camera;
+import oriedita.editor.drawing.tools.DrawingUtil;
 import origami.Epsilon;
+import origami.crease_pattern.FoldLineSet;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami.folding.util.SortingBox;
 
+import java.awt.Graphics2D;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Stream;
+
 @ApplicationScoped
 @Handles(MouseMode.LENGTHEN_CREASE_5)
 public class MouseHandlerLengthenCrease extends BaseMouseHandler {
-    SortingBox<LineSegment> entyou_kouho_nbox = new SortingBox<>();
+    SortingBox<LineSegment> linesToExtendSortingBox = new SortingBox<>();
+    List<LineSegment> linesToExtend = new ArrayList<>();
+    LineSegment selectionLine;
+    Point extensionPoint;
+    Step currentStep = Step.START;
+    private enum Step {
+        START,
+        DRAW_SELECTION_LINE,
+        DRAW_EXTENSION_POINT
+    }
+
+    @Override
+    public void reset() {
+        super.reset();
+        linesToExtend.clear();
+        selectionLine = null;
+        extensionPoint = null;
+        currentStep = Step.START;
+    }
+
+    @Override
+    public void drawPreview(Graphics2D g2, Camera camera, DrawingSettings settings) {
+        super.drawPreview(g2, camera, settings);
+        LineSegment extensionLine = extensionPoint == null?
+                null : new LineSegment(extensionPoint, extensionPoint, LineColor.MAGENTA_5, LineSegment.ActiveState.ACTIVE_B_2);
+        Stream.concat(
+                Stream.of(selectionLine, extensionLine),
+                linesToExtend.stream())
+                .filter(Objects::nonNull)
+                .forEach(l -> DrawingUtil.drawLineStep(g2, l, camera, settings.getLineWidth(), d.getGridInputAssist()));
+    }
 
     @Inject
     public MouseHandlerLengthenCrease() {
@@ -38,12 +77,12 @@ public class MouseHandlerLengthenCrease extends BaseMouseHandler {
 
         d.getLineCandidate().clear();
 
-        if (d.getLineStep().size() == 0) {
-            entyou_kouho_nbox.reset();
-
-            d.lineStepAdd(new LineSegment(p, p, LineColor.MAGENTA_5));
-        } else if (d.getLineStep().size() >= 2) {
-            d.lineStepAdd(new LineSegment(p, p, LineColor.MAGENTA_5));
+        if (currentStep == Step.START) {
+            linesToExtendSortingBox.reset();
+            selectionLine = new LineSegment(p, p, LineColor.MAGENTA_5, LineSegment.ActiveState.ACTIVE_BOTH_3);
+            currentStep = Step.DRAW_SELECTION_LINE;
+        } else if (currentStep == Step.DRAW_EXTENSION_POINT) {
+            extensionPoint = p;
         }
 
     }
@@ -51,152 +90,133 @@ public class MouseHandlerLengthenCrease extends BaseMouseHandler {
     //マウス操作(ドラッグしたとき)を行う関数
     public void mouseDragged(Point p0) {
         Point p = d.getCamera().TV2object(p0);
-        if (d.getLineStep().size() == 1) {
-            d.getLineStep().get(0).setB(p);
-        }
-        if (d.getLineStep().size() > 1) {
-            d.getLineStep().get(d.getLineStep().size() - 1).set(p, p);
+        if (currentStep == Step.DRAW_SELECTION_LINE) {
+            selectionLine = selectionLine.withB(p);
+        } else if (currentStep == Step.DRAW_EXTENSION_POINT) {
+            extensionPoint = p;
         }
     }
 
     //マウス操作(ボタンを離したとき)を行う関数
     public void mouseReleased(Point p0) {
         Point p = d.getCamera().TV2object(p0);
-        LineSegment closestLineSegment = new LineSegment(d.getClosestLineSegment(p));
+        LineSegment closestLineSegment = d.getClosestLineSegment(p);
+        FoldLineSet lineSet = d.getFoldLineSet();
+        if (currentStep == Step.DRAW_SELECTION_LINE) {
+            selectionLine = selectionLine.withB(p);
 
-        if (d.getLineStep().size() == 1) {
-            d.getLineStep().get(0).setB(p);
+            for (int i = 1; i <= lineSet.getTotal(); i++) {
+                LineSegment s = lineSet.get(i);
+                LineSegment.Intersection i_lineSegment_intersection_decision =
+                        OritaCalc.determineLineSegmentIntersection(s, selectionLine, Epsilon.UNKNOWN_1EN4);
+                boolean lineIntersectsSelectionLine =
+                        i_lineSegment_intersection_decision == LineSegment.Intersection.INTERSECTS_1;
 
-            for (int i = 1; i <= d.getFoldLineSet().getTotal(); i++) {
-                LineSegment s = d.getFoldLineSet().get(i);
-                LineSegment.Intersection i_lineSegment_intersection_decision = OritaCalc.determineLineSegmentIntersection(s, d.getLineStep().get(0), Epsilon.UNKNOWN_1EN4);
-                boolean i_jikkou = i_lineSegment_intersection_decision == LineSegment.Intersection.INTERSECTS_1;
-
-                if (i_jikkou) {
-                    entyou_kouho_nbox.addByWeight(s, OritaCalc.distance(d.getLineStep().get(0).getA(), OritaCalc.findIntersection(s, d.getLineStep().get(0))));
+                if (lineIntersectsSelectionLine) {
+                    linesToExtendSortingBox.addByWeight(s,
+                            OritaCalc.distance(selectionLine.getA(), OritaCalc.findIntersection(s, selectionLine)));
                 }
             }
 
-            if ((entyou_kouho_nbox.getTotal() == 0) && (d.getLineStep().get(0).determineLength() <= Epsilon.UNKNOWN_1EN6)) {//延長する候補になる折線を選ぶために描いた線分s_step[1]が点状のときの処理
+            if ((linesToExtendSortingBox.getTotal() == 0) && (selectionLine.determineLength() <= Epsilon.UNKNOWN_1EN6)) {//延長する候補になる折線を選ぶために描いた線分s_step[1]が点状のときの処理
                 if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.getSelectionDistance()) {
                     //entyou_kouho_nboxに1本の情報しか入らないのでdoubleの部分はどうでもよいので適当に1.0にした。
-                    entyou_kouho_nbox.addByWeight(d.getFoldLineSet().closestLineSegmentSearch(p), 1.0);
-
-                    d.getLineStep().get(0).setB(OritaCalc.findLineSymmetryPoint(closestLineSegment.getA(), closestLineSegment.getB(), p));
-
-                    d.getLineStep().get(0).set(//lineStep.get(0)を短くして、表示時に目立たない様にする。
-                            OritaCalc.point_double(OritaCalc.midPoint(d.getLineStep().get(0).getA(), d.getLineStep().get(0).getB()), d.getLineStep().get(0).getA(), Epsilon.UNKNOWN_1EN5 / d.getLineStep().get(0).determineLength())
-                            ,
-                            OritaCalc.point_double(OritaCalc.midPoint(d.getLineStep().get(0).getA(), d.getLineStep().get(0).getB()), d.getLineStep().get(0).getB(), Epsilon.UNKNOWN_1EN5 / d.getLineStep().get(0).determineLength())
-                    );
-
+                    LineSegment closestLine = lineSet.closestLineSegmentSearch(p);
+                    linesToExtendSortingBox.addByWeight(closestLine, 1.0);
+                    Point newp = OritaCalc.findProjection(closestLine, selectionLine.getB());
+                    if (OritaCalc.determineLineSegmentDistance(newp, closestLine) > Epsilon.UNKNOWN_1EN6) {
+                        newp = closestLine.determineClosestEndpoint(newp);
+                    }
+                    selectionLine = selectionLine.withCoordinates(newp, newp);
                 }
-
             }
 
-            Logger.info(" entyou_kouho_nbox.getsousuu() = " + entyou_kouho_nbox.getTotal());
+            Logger.info(" entyou_kouho_nbox.getsousuu() = " + linesToExtendSortingBox.getTotal());
 
-
-            if (entyou_kouho_nbox.getTotal() == 0) {
-                d.getLineStep().clear();
+            if (linesToExtendSortingBox.getTotal() == 0) {
+                reset();
                 return;
             }
-            if (entyou_kouho_nbox.getTotal() >= 0) {
-                for (int i = 2; i <= entyou_kouho_nbox.getTotal() + 1; i++) {
-                    LineSegment s = new LineSegment(entyou_kouho_nbox.getValue(i - 1));
-                    s.setColor(LineColor.GREEN_6);
+            for (int i = 1; i <= linesToExtendSortingBox.getTotal(); i++) {
+                LineSegment s = new LineSegment(linesToExtendSortingBox.getValue(i));
+                s.setColor(LineColor.GREEN_6);
+                s.setActive(LineSegment.ActiveState.ACTIVE_BOTH_3);
 
-                    d.lineStepAdd(s);
-                }
-                return;
+                linesToExtend.add(s);
             }
+            currentStep = Step.DRAW_EXTENSION_POINT;
             return;
         }
 
 
-        if (d.getLineStep().size() >= 3) {
+        if (currentStep == Step.DRAW_EXTENSION_POINT) {
             if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) >= d.getSelectionDistance()) {
-                d.getLineStep().clear();
+                reset();
                 return;
             }
-
-            if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.getSelectionDistance()) {
-
-
-                //最初に選んだ延長候補線分群中に2番目に選んだ線分と等しいものがあるかどうかを判断する。
-                boolean i_senbun_entyou_mode = false;// i_senbun_entyou_mode=0なら最初に選んだ延長候補線分群中に2番目に選んだ線分と等しいものがない。1ならある。
-                for (int i = 1; i <= entyou_kouho_nbox.getTotal(); i++) {
-                    if (OritaCalc.determineLineSegmentIntersection(entyou_kouho_nbox.getValue(i), closestLineSegment, Epsilon.UNKNOWN_1EN6) == LineSegment.Intersection.PARALLEL_EQUAL_31) {//線分が同じならoc.senbun_kousa_hantei==31
-                        i_senbun_entyou_mode = true;
-                    }
+            //最初に選んだ延長候補線分群中に2番目に選んだ線分と等しいものがあるかどうかを判断する。
+            boolean i_senbun_entyou_mode = false;// i_senbun_entyou_mode=0なら最初に選んだ延長候補線分群中に2番目に選んだ線分と等しいものがない。1ならある。
+            for (int i = 1; i <= linesToExtendSortingBox.getTotal(); i++) {
+                if (OritaCalc.determineLineSegmentIntersection(linesToExtendSortingBox.getValue(i), closestLineSegment, Epsilon.UNKNOWN_1EN6) == LineSegment.Intersection.PARALLEL_EQUAL_31) {//線分が同じならoc.senbun_kousa_hantei==31
+                    i_senbun_entyou_mode = true;
                 }
-
-
-                LineSegment addLineSegment = new LineSegment();
-                //最初に選んだ延長候補線分群中に2番目に選んだ線分と等しいものがない場合
-                if (!i_senbun_entyou_mode) {
-                    int sousuu_old = d.getFoldLineSet().getTotal();//(1)
-                    for (int i = 1; i <= entyou_kouho_nbox.getTotal(); i++) {
-                        //最初に選んだ線分と2番目に選んだ線分が平行でない場合
-                        if (OritaCalc.isLineSegmentParallel(entyou_kouho_nbox.getValue(i), closestLineSegment, Epsilon.UNKNOWN_1EN6) == OritaCalc.ParallelJudgement.NOT_PARALLEL) { //２つの線分が平行かどうかを判定する関数。oc.heikou_hantei(Tyokusen t1,Tyokusen t2)//0=平行でない
-                            //line_step[1]とs_step[2]の交点はoc.kouten_motome(Senbun s1,Senbun s2)で求める//２つの線分を直線とみなして交点を求める関数。線分としては交差しなくても、直線として交差している場合の交点を返す
-                            Point kousa_point = OritaCalc.findIntersection(entyou_kouho_nbox.getValue(i), closestLineSegment);
-                            //addLineSegment =new Senbun(kousa_ten,foldLineSet.get(entyou_kouho_nbox.get_int(i)).get_tikai_hasi(kousa_ten));
-                            addLineSegment.setA(kousa_point);
-                            addLineSegment.setB(entyou_kouho_nbox.getValue(i).determineClosestEndpoint(kousa_point));
-
-
-                            if (Epsilon.high.gt0(addLineSegment.determineLength())) {
-                                if (getMouseMode() == MouseMode.LENGTHEN_CREASE_5) {
-                                    addLineSegment.setColor(d.getLineColor());
-                                }
-                                if (getMouseMode() == MouseMode.LENGTHEN_CREASE_SAME_COLOR_70) {
-                                    addLineSegment.setColor(entyou_kouho_nbox.getValue(i).getColor());
-                                }
-
-                                //addsenbun(addLineSegment);
-                                d.getFoldLineSet().addLine(addLineSegment);//ori_sのsenbunの最後にs0の情報をを加えるだけ//(2)
-                            }
-                        }
-                    }
-                    d.getFoldLineSet().applyLineSegmentCircleIntersection(sousuu_old, d.getFoldLineSet().getTotal(), 0, d.getFoldLineSet().numCircles() - 1);//(3)
-                    d.getFoldLineSet().divideLineSegmentWithNewLines(sousuu_old, d.getFoldLineSet().getTotal());//(4)
-
-
-                } else {
-                    //最初に選んだ延長候補線分群中に2番目に選んだ線分と等しいものがある場合
-
-                    int sousuu_old = d.getFoldLineSet().getTotal();//(1)
-                    for (int i = 1; i <= entyou_kouho_nbox.getTotal(); i++) {
-                        LineSegment moto_no_sen = new LineSegment(entyou_kouho_nbox.getValue(i));
-                        Point p_point = OritaCalc.findIntersection(moto_no_sen, d.getLineStep().get(0));
-
-                        if (p_point.distance(moto_no_sen.getA()) < p_point.distance(moto_no_sen.getB())) {
-                            moto_no_sen.a_b_swap();
-                        }
-                        addLineSegment = OritaCalc.extendToIntersectionPoint_2(d.getFoldLineSet(), moto_no_sen);
-
-
-                        if (Epsilon.high.gt0(addLineSegment.determineLength())) {
-                            if (getMouseMode() == MouseMode.LENGTHEN_CREASE_5) {
-                                addLineSegment.setColor(d.getLineColor());
-                            }
-                            if (getMouseMode() == MouseMode.LENGTHEN_CREASE_SAME_COLOR_70) {
-                                addLineSegment.setColor(entyou_kouho_nbox.getValue(i).getColor());
-                            }
-
-                            d.getFoldLineSet().addLine(addLineSegment);//ori_sのsenbunの最後にs0の情報をを加えるだけ//(2)
-                        }
-
-                    }
-                    d.getFoldLineSet().applyLineSegmentCircleIntersection(sousuu_old, d.getFoldLineSet().getTotal(), 0, d.getFoldLineSet().numCircles() - 1);//(3)
-                    d.getFoldLineSet().divideLineSegmentWithNewLines(sousuu_old, d.getFoldLineSet().getTotal());//(4)
-                }
-
-                d.record();
-
-                d.getLineStep().clear();
             }
+
+
+            LineSegment addLineSegment;
+            //最初に選んだ延長候補線分群中に2番目に選んだ線分と等しいものがない場合
+            if (!i_senbun_entyou_mode) {
+                int sousuu_old = lineSet.getTotal();//(1)
+                for (int i = 1; i <= linesToExtendSortingBox.getTotal(); i++) {
+                    //最初に選んだ線分と2番目に選んだ線分が平行でない場合
+                    LineSegment s = linesToExtendSortingBox.getValue(i);
+                    if (OritaCalc.isLineSegmentParallel(s, closestLineSegment, Epsilon.UNKNOWN_1EN6) == OritaCalc.ParallelJudgement.NOT_PARALLEL) { //２つの線分が平行かどうかを判定する関数。oc.heikou_hantei(Tyokusen t1,Tyokusen t2)//0=平行でない
+                        //line_step[1]とs_step[2]の交点はoc.kouten_motome(Senbun s1,Senbun s2)で求める//２つの線分を直線とみなして交点を求める関数。線分としては交差しなくても、直線として交差している場合の交点を返す
+                        Point kousa_point = OritaCalc.findIntersection(s, closestLineSegment);
+                        addLineSegment = new LineSegment(
+                                kousa_point, s.determineClosestEndpoint(kousa_point));
+
+                        addExtendedLineSegment(lineSet, addLineSegment, s);
+                    }
+                }
+                lineSet.applyLineSegmentCircleIntersection(sousuu_old, lineSet.getTotal(), 0, lineSet.numCircles() - 1);//(3)
+
+
+            } else {
+                //最初に選んだ延長候補線分群中に2番目に選んだ線分と等しいものがある場合
+
+                int sousuu_old = lineSet.getTotal();//(1)
+                for (int i = 1; i <= linesToExtendSortingBox.getTotal(); i++) {
+                    LineSegment lineToExtend = new LineSegment(linesToExtendSortingBox.getValue(i));
+                    Point p_point = OritaCalc.findIntersection(lineToExtend, selectionLine);
+
+                    if (p_point.distance(lineToExtend.getA()) < p_point.distance(lineToExtend.getB())) {
+                        lineToExtend.a_b_swap();
+                    }
+                    addLineSegment = OritaCalc.extendToIntersectionPoint_2(lineSet, lineToExtend);
+                    addExtendedLineSegment(lineSet, addLineSegment, lineToExtend);
+                }
+                lineSet.applyLineSegmentCircleIntersection(sousuu_old, lineSet.getTotal(), 0, lineSet.numCircles() - 1);//(3)
+            }
+
+            d.record();
+
+            reset();
+
+        }
+    }
+
+    private void addExtendedLineSegment(FoldLineSet lineSet, LineSegment addLineSegment, LineSegment original) {
+        if (Epsilon.high.gt0(addLineSegment.determineLength())) {
+            if (getMouseMode() == MouseMode.LENGTHEN_CREASE_5) {
+                addLineSegment.setColor(d.getLineColor());
+            }
+            if (getMouseMode() == MouseMode.LENGTHEN_CREASE_SAME_COLOR_70) {
+                addLineSegment.setColor(original.getColor());
+            }
+
+            lineSet.addLine(addLineSegment);//ori_sのsenbunの最後にs0の情報をを加えるだけ//(2)
+            lineSet.divideLineSegmentWithNewLines(lineSet.getTotal()-1, lineSet.getTotal());//(4)
         }
     }
 }

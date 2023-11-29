@@ -12,8 +12,8 @@ public class LineSegment implements Serializable, Cloneable {
     protected ActiveState active;//0 is inactive. 1 is active in a. 2 is active in b. 3 is active in both a and b.
     protected LineColor color;//Color specification 　0=black,1=blue,2=red.
 
-    protected int customized = 0;//Custom property parameters
-    protected Color customizedColor = DEFAULT_COLOR;//Color if custom made
+    protected int customized;//Custom property parameters
+    protected Color customizedColor;//Color if custom made
 
     protected int selected;//0 is not selected. 1 or more is set appropriately according to the situation
 
@@ -31,12 +31,22 @@ public class LineSegment implements Serializable, Cloneable {
         this(t1, t2, color, ActiveState.INACTIVE_0);
     }
 
-    public LineSegment(Point p1, Point p2, LineColor color, ActiveState active){
+    public LineSegment(Point a, Point b, LineColor color, ActiveState active){
+        this(a, b, color, active, 0, 0, DEFAULT_COLOR);
+    }
+
+    public LineSegment(
+            Point p1, Point p2,
+            LineColor color, ActiveState active,
+            int selected,
+            int customized, Color customizedColor){
         a = p1;
         b = p2;
         this.active = active;
         this.color = color;
-        selected = 0;
+        this.selected = selected;
+        this.customizedColor = customizedColor;
+        this.customized = customized;
     }
 
     public LineSegment(double i1, double i2, double i3, double i4) {
@@ -44,13 +54,11 @@ public class LineSegment implements Serializable, Cloneable {
     }
 
     public LineSegment(LineSegment s0){
-        a = s0.getA();
-        b = s0.getB();
-        active = ActiveState.INACTIVE_0;
-        color = s0.getColor();
-        selected = 0;
-        customized = s0.getCustomized();
-        customizedColor = s0.getCustomizedColor();
+        this(
+                s0.getA(), s0.getB(),
+                s0.getColor(), s0.getActive(),
+                s0.getSelected(),
+                s0.getCustomized(), s0.getCustomizedColor());
     }
 
     public void reset() {
@@ -67,26 +75,28 @@ public class LineSegment implements Serializable, Cloneable {
         b = new Point(bx, by);
     }
 
-    //----------
-    public void set(double ax, double ay, double bx, double by, LineColor ic) {
-        set(ax, ay, bx, by);
-        color = ic;
+    public LineSegment withCoordinates(double ax, double ay, double bx, double by){
+        Point a = new Point(ax, ay);
+        Point b = new Point(bx, by);
+        return withCoordinates(a, b);
     }
 
-    //---------
-    public void set(Point p, Point q, LineColor ic, ActiveState ia) {
-        set(p, q);
-        color = ic;
-        active = ia;
+    public LineSegment withCoordinates(Point a, Point b) {
+        return new LineSegment(a, b,
+                this.getColor(), this.getActive(),
+                this.getSelected(), this.getCustomized(), this.getCustomizedColor());
     }
 
-    public void set(Point p, Point q, LineColor ic) {
-        set(p, q);
-        color = ic;
+    public LineSegment withB(Point b) {
+        return new LineSegment(this.getA(), b,
+                this.getColor(), this.getActive(),
+                this.getSelected(), this.getCustomized(), this.getCustomizedColor());
     }
 
-    public void set(Point p, Point q) {
-        set(p.getX(), p.getY(), q.getX(), q.getY());
+    public LineSegment withA(Point a) {
+        return new LineSegment(a, this.getB(),
+                this.getColor(), this.getActive(),
+                this.getSelected(), this.getCustomized(), this.getCustomizedColor());
     }
 
     /**

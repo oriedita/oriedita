@@ -66,13 +66,12 @@ public class Polygon {
 
         LineSegment.Intersection kh; //oc.senbun_kousa_hantei(s0,s)の値の格納用
 
-        LineSegment s = new LineSegment();
-
         for (int i = 1; i <= vertexCount; i++) {
+            LineSegment s;
             if (i == vertexCount) {
-                s.set(vertices[vertexCount], vertices[1]); //Line segment
+                s = new LineSegment(vertices[vertexCount], vertices[1]); //Line segment
             } else {
-                s.set(vertices[i], vertices[i + 1]);
+                s = new LineSegment(vertices[i], vertices[i + 1]);
             } //Line segment
 
             kh = OritaCalc.determineLineSegmentIntersection(s0, s);
@@ -242,9 +241,9 @@ public class Polygon {
     }
 
     public boolean totu_boundary_inside(Circle c) {
-        LineSegment s = new LineSegment();
+        LineSegment s;
         for (int i = 1; i <= vertexCount - 1; i++) {
-            s.set(vertices[i], vertices[i + 1]); //線分
+            s = new LineSegment(vertices[i], vertices[i + 1]); //線分
             if (OritaCalc.determineLineSegmentDistance(c.determineCenter(), s) <= c.getR()) {
                 if ((OritaCalc.distance(s.getA(), c.determineCenter()) >= c.getR()) || (OritaCalc.distance(s.getA(), c.determineCenter()) >= c.getR())) {
                     return true;
@@ -252,7 +251,7 @@ public class Polygon {
             }
         }
 
-        s.set(vertices[vertexCount], vertices[1]); //線分
+        s = new LineSegment(vertices[vertexCount], vertices[1]); //線分
         if (OritaCalc.determineLineSegmentDistance(c.determineCenter(), s) <= c.getR()) {
             if ((OritaCalc.distance(s.getA(), c.determineCenter()) >= c.getR()) || (OritaCalc.distance(s.getA(), c.determineCenter()) >= c.getR())) {
                 return true;
@@ -267,16 +266,16 @@ public class Polygon {
     public boolean totu_boundary_inside(LineSegment s0) {// Returns 1 if even part of s0 touches a polygon.
         LineSegment.Intersection kh; //oc.line_intersect_decide(s0,s)の値の格納用
 
-        LineSegment s = new LineSegment();
+        LineSegment s;
         for (int i = 1; i <= vertexCount - 1; i++) {
-            s.set(vertices[i], vertices[i + 1]); //線分
+            s = new LineSegment(vertices[i], vertices[i + 1]); //線分
             kh = OritaCalc.determineLineSegmentIntersection(s0, s);
             if (kh != LineSegment.Intersection.NO_INTERSECTION_0) {
                 return true;
             }
         }
 
-        s.set(vertices[vertexCount], vertices[1]); //線分
+        s = new LineSegment(vertices[vertexCount], vertices[1]); //線分
         kh = OritaCalc.determineLineSegmentIntersection(s0, s);
         if (kh != LineSegment.Intersection.NO_INTERSECTION_0) {
             return true;
@@ -287,8 +286,6 @@ public class Polygon {
 
     //A function that determines if a point is inside this polygon (true) or not (false)----------------------------------
     public Intersection inside(Point p) {      //0 = outside, 1 = boundary, 2 = inside
-        LineSegment s = new LineSegment();
-        LineSegment sq = new LineSegment();
 
         int kousakaisuu = 0;
         int jyuuji_kousakaisuu;
@@ -296,13 +293,14 @@ public class Polygon {
         double rad = 0.0;//A radian used to make sure that there is an external point.
 
         //First, it is determined whether the point p is on the boundary line of the polygon.
+        LineSegment s;
         for (int i = 1; i <= vertexCount - 1; i++) {
-            s.set(vertices[i], vertices[i + 1]);
+            s = new LineSegment(vertices[i], vertices[i + 1]);
             if (OritaCalc.determineLineSegmentDistance(p, s) < Epsilon.UNKNOWN_001) {
                 return Intersection.BORDER;
             }
         }
-        s.set(vertices[vertexCount], vertices[1]);
+        s = new LineSegment(vertices[vertexCount], vertices[1]);
         if (OritaCalc.determineLineSegmentDistance(p, s) < Epsilon.UNKNOWN_001) {
             return Intersection.OUTSIDE;
         }
@@ -317,10 +315,10 @@ public class Polygon {
             rad += 1.0;
             Point q = new Point((100000.0 * Math.cos(rad)), (100000.0 * Math.sin(rad))); //<<<<<<<<<<<<<<<<<<
 
-            sq.set(p, q);
+            LineSegment sq = new LineSegment(p, q);
 
             for (int i = 1; i <= vertexCount - 1; i++) {
-                s.set(vertices[i], vertices[i + 1]); //線分
+                s = new LineSegment(vertices[i], vertices[i + 1]); //線分
                 if (OritaCalc.determineLineSegmentIntersection(sq, s, 0.0).isIntersection()) {
                     kousakaisuu++;
                 }
@@ -329,7 +327,7 @@ public class Polygon {
                 }
             }
 
-            s.set(vertices[vertexCount], vertices[1]); //線分
+            s = new LineSegment(vertices[vertexCount], vertices[1]); //線分
             if (OritaCalc.determineLineSegmentIntersection(sq, s, 0.0).isIntersection()) {
                 kousakaisuu++;
             }

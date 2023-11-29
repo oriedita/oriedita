@@ -119,18 +119,6 @@ public class FoldLineSet {
         return lineSegments.get(i);
     }
 
-    //Enter the value of the i-th line segment
-    public void set(int i, Point p, Point q) {
-        LineSegment s = lineSegments.get(i);
-        s.setA(p);
-        s.setB(q);
-    }
-
-    //Enter the value of the i-th line segment
-    public void set(int i, Point p, Point q, LineColor ic, LineSegment.ActiveState ia) {
-        LineSegment s = lineSegments.get(i);
-        s.set(p, q, ic, ia);
-    }
 
     //Enter the color of the i-th line segment
     public void setColor(int i, LineColor icol) {
@@ -1415,8 +1403,7 @@ public class FoldLineSet {
     public void addLine(Point pi, Point pj, LineSegment s0) {//Ten piからTen pjまでの線分を追加。この追加する線分のその他のパラメータはs0と同じ
         total++;
 
-        LineSegment s = new LineSegment(s0);
-        s.set(pi, pj);
+        LineSegment s = s0.withCoordinates(pi, pj);
 
         lineSegments.add(s);
     }
@@ -1434,8 +1421,7 @@ public class FoldLineSet {
     public void addLine(double ax, double ay, double bx, double by, LineColor ic) {
         total++;
 
-        LineSegment s = new LineSegment();
-        s.set(ax, ay, bx, by, ic);
+        LineSegment s = new LineSegment(new Point(ax, ay), new Point(bx, by), ic);
 
         lineSegments.add(s);
     }

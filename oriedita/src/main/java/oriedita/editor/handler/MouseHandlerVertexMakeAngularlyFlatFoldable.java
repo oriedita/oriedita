@@ -39,15 +39,14 @@ public class MouseHandlerVertexMakeAngularlyFlatFoldable extends BaseMouseHandle
                     super.mouseMoved(p0);
                     break;
                 case STEP_1: {
-                    LineSegment candidate = new LineSegment();
-                    candidate.setActive(LineSegment.ActiveState.ACTIVE_BOTH_3);
                     d.getLineCandidate().clear();
                     p = d.getCamera().TV2object(p0);
 
                     LineSegment closestLineSegment = new LineSegment(
                             d.getClosestLineStepSegment(p, 1, d.getLineStep().size()));
                     if ((d.getLineStep().size() >= 2) && (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.getSelectionDistance())) {
-                        candidate.set(closestLineSegment.getA(), closestLineSegment.getB());
+                        LineSegment candidate = new LineSegment(closestLineSegment.getA(), closestLineSegment.getB(),
+                                LineColor.BLACK_0, LineSegment.ActiveState.ACTIVE_BOTH_3);
                         d.getLineCandidate().add(candidate);
                         return;
                     }
@@ -153,9 +152,9 @@ public class MouseHandlerVertexMakeAngularlyFlatFoldable extends BaseMouseHandle
                                 LineSegment s_kiso = new LineSegment();
                                 LineSegment nboxLineSegment = nbox.getValue(i);
                                 if (t1.distance(nboxLineSegment.getA()) < decision_distance) {
-                                    s_kiso.set(nboxLineSegment.getA(), nboxLineSegment.getB());
+                                    s_kiso = new LineSegment(nboxLineSegment.getA(), nboxLineSegment.getB());
                                 } else if (t1.distance(nboxLineSegment.getB()) < decision_distance) {
-                                    s_kiso.set(nboxLineSegment.getB(), nboxLineSegment.getA());
+                                    s_kiso = new LineSegment(nboxLineSegment.getB(), nboxLineSegment.getA());
                                 }
 
                                 double s_kiso_length = s_kiso.determineLength();

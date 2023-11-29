@@ -22,14 +22,10 @@ public class MouseHandlerDrawCreaseFree extends BaseMouseHandler {
             Point p = d.getCamera().TV2object(p0);
             Point closestPoint = d.getClosestPoint(p);
 
-            LineSegment candidate = new LineSegment();
-            candidate.setActive(LineSegment.ActiveState.ACTIVE_BOTH_3);
-
             if (p.distance(closestPoint) < d.getSelectionDistance()) {
-                candidate.set(closestPoint, closestPoint);
-            } else {
-                candidate.set(p, p);
+                p = closestPoint;
             }
+            LineSegment candidate = new LineSegment(p, p);
 
             if (d.getI_foldLine_additional() == FoldLineAdditionalInputMode.POLY_LINE_0) {
                 candidate.setColor(d.getLineColor());
@@ -37,23 +33,21 @@ public class MouseHandlerDrawCreaseFree extends BaseMouseHandler {
             if (d.getI_foldLine_additional() == FoldLineAdditionalInputMode.AUX_LINE_1) {
                 candidate.setColor(d.getAuxLineColor());
             }
+            candidate.setActive(LineSegment.ActiveState.ACTIVE_BOTH_3);
 
             d.getLineCandidate().add(candidate);
         }
     }
 
     public void mousePressed(Point p0) {
-        LineSegment s = new LineSegment();
-        s.setActive(LineSegment.ActiveState.ACTIVE_B_2);
 
         Point p = d.getCamera().TV2object(p0);
 
+        LineSegment s = new LineSegment(p, p);
         Point closestPoint = d.getClosestPoint(p);
 
         if (p.distance(closestPoint) < d.getSelectionDistance()) {
-            s.set(p, closestPoint);
-        } else {
-            s.set(p, p);
+            s = s.withB(closestPoint);
         }
 
         if (d.getI_foldLine_additional() == FoldLineAdditionalInputMode.POLY_LINE_0) {
@@ -62,6 +56,7 @@ public class MouseHandlerDrawCreaseFree extends BaseMouseHandler {
         if (d.getI_foldLine_additional() == FoldLineAdditionalInputMode.AUX_LINE_1) {
             s.setColor(d.getAuxLineColor());
         }
+        s.setActive(LineSegment.ActiveState.ACTIVE_B_2);
 
         d.lineStepAdd(s);
     }
@@ -83,23 +78,19 @@ public class MouseHandlerDrawCreaseFree extends BaseMouseHandler {
             d.getLineCandidate().clear();
 
             Point closestPoint = d.getClosestPoint(p);
-
-            LineSegment candidate = new LineSegment();
-            candidate.setActive(LineSegment.ActiveState.ACTIVE_BOTH_3);
-
             if (p.distance(closestPoint) < d.getSelectionDistance()) {
-                candidate.set(closestPoint, closestPoint);
-            } else {
-                candidate.set(p, p);
+                p = closestPoint;
             }
+
+            LineSegment candidate = new LineSegment(p, p);
             if (d.getI_foldLine_additional() == FoldLineAdditionalInputMode.POLY_LINE_0) {
                 candidate.setColor(d.getLineColor());
             }
             if (d.getI_foldLine_additional() == FoldLineAdditionalInputMode.AUX_LINE_1) {
                 candidate.setColor(d.getAuxLineColor());
             }
+            candidate.setActive(LineSegment.ActiveState.ACTIVE_BOTH_3);
             d.getLineCandidate().add(candidate);
-            d.getLineStep().get(0).setA(candidate.getA());
         }
     }
 

@@ -639,7 +639,7 @@ public class OritaCalc {
                         double d_kakudo = OritaCalc.angle(add_sen.getA(), add_sen.getB(), add_sen.getA(), kousa_point);
                         if (d_kakudo < 1.0 || d_kakudo > 359.0) {
                             kousa_point_distance = kousa_point.distance(add_sen.getA());
-                            add_sen.set(add_sen.getA(), kousa_point);
+                            add_sen = add_sen.withB(kousa_point);
                         }
                     }
                 }
@@ -653,7 +653,7 @@ public class OritaCalc {
                         double d_kakudo = OritaCalc.angle(add_sen.getA(), add_sen.getB(), add_sen.getA(), kousa_point);
                         if (d_kakudo < 1.0 || d_kakudo > 359.0) {
                             kousa_point_distance = kousa_point.distance(add_sen.getA());
-                            add_sen.set(add_sen.getA(), kousa_point);
+                            add_sen = add_sen.withB(kousa_point);
                         }
                     }
                 }
@@ -664,14 +664,14 @@ public class OritaCalc {
                         double d_kakudo = OritaCalc.angle(add_sen.getA(), add_sen.getB(), add_sen.getA(), kousa_point);
                         if (d_kakudo < 1.0 || d_kakudo > 359.0) {
                             kousa_point_distance = kousa_point.distance(add_sen.getA());
-                            add_sen.set(add_sen.getA(), kousa_point);
+                            add_sen = add_sen.withB(kousa_point);
                         }
                     }
                 }
             }
         }
 
-        add_sen.set(s0.getB(), add_sen.getB());
+        add_sen = add_sen.withA(s0.getB());
         return add_sen;
     }
 
@@ -808,15 +808,6 @@ public class OritaCalc {
 
         double bx1 = r * (Mcd * (b.getX() - a.getX()) - Msd * (b.getY() - a.getY())) + a.getX();
         double by1 = r * (Msd * (b.getX() - a.getX()) + Mcd * (b.getY() - a.getY())) + a.getY();
-
-        return new Point(bx1, by1);
-    }
-
-    //------------------------------------
-    //A function that returns a point centered on point a and based on point b with a distance of ab times r (returns a new point without changing the original point) 20161224 Unverified
-    public static Point point_double(Point a, Point b, double r) {
-        double bx1 = r * (b.getX() - a.getX()) + a.getX();
-        double by1 = r * (b.getY() - a.getY()) + a.getY();
 
         return new Point(bx1, by1);
     }

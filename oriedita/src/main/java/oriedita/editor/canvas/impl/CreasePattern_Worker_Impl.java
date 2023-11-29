@@ -561,10 +561,10 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
             Point p3 = camera.TV2object(operationFrame.getP3());
             Point p4 = camera.TV2object(operationFrame.getP4());
 
-            lineStep.get(0).set(p1, p2, LineColor.GREEN_6);
-            lineStep.get(1).set(p2, p3, LineColor.GREEN_6);
-            lineStep.get(2).set(p3, p4, LineColor.GREEN_6);
-            lineStep.get(3).set(p4, p1, LineColor.GREEN_6);
+            lineStep.set(0, new LineSegment(p1, p2, LineColor.GREEN_6));
+            lineStep.set(1, new LineSegment(p2, p3, LineColor.GREEN_6));
+            lineStep.set(2, new LineSegment(p3, p4, LineColor.GREEN_6));
+            lineStep.set(3, new LineSegment(p4, p1, LineColor.GREEN_6));
         }
 
         //線分入力時の一時的なs_step線分を描く　

@@ -439,8 +439,6 @@ public class Orh {
             save.addLineSegment(new LineSegment());
             save.addCircle(new Circle());
         }
-
-        java.util.List<LineSegment> lineSegments = save.getLineSegments();
         //First the total number of line segments was calculated
 
         Circle e_temp = new Circle();
@@ -470,11 +468,11 @@ public class Orh {
                 str = tk.nextToken();
                 number = Integer.parseInt(str) - 1;
             }
+            LineSegment s = save.getLineSegments().get(number);
             if ((reading_flag == 1) && (str.equals("色"))) {
                 str = tk.nextToken();
                 ic = LineColor.from(str);
-                LineSegment s0 = save.getLineSegments().get(number);
-                s0.setColor(ic);
+                s.setColor(ic);
             }
 
             if (reading_flag == 1) {
@@ -482,43 +480,37 @@ public class Orh {
                 if (st_new[0].equals("<tpp")) {
                     String[] s_new = st_new[1].split("<", 2);
                     int i_customized = (Integer.parseInt(s_new[0]));
-                    LineSegment s0 = lineSegments.get(number);
-                    s0.setCustomized(i_customized);
+                    s.setCustomized(i_customized);
                 }
 
                 if (st_new[0].equals("<tpp_color_R")) {
                     String[] s_new = st_new[1].split("<", 2);
                     i_customized_color_R = (Integer.parseInt(s_new[0]));
-                    LineSegment s0 = lineSegments.get(number);
-                    s0.setCustomizedColor(new Color(i_customized_color_R, i_customized_color_G, i_customized_color_B));
+                    s.setCustomizedColor(new Color(i_customized_color_R, i_customized_color_G, i_customized_color_B));
                 }
 
                 if (st_new[0].equals("<tpp_color_G")) {
                     String[] s_new = st_new[1].split("<", 2);
                     i_customized_color_G = (Integer.parseInt(s_new[0]));
-                    LineSegment s0 = lineSegments.get(number);
-                    s0.setCustomizedColor(new Color(i_customized_color_R, i_customized_color_G, i_customized_color_B));
+                    s.setCustomizedColor(new Color(i_customized_color_R, i_customized_color_G, i_customized_color_B));
                 }
                 if (st_new[0].equals("<tpp_color_B")) {
                     String[] s_new = st_new[1].split("<", 2);
                     i_customized_color_B = (Integer.parseInt(s_new[0]));
-                    LineSegment s0 = lineSegments.get(number);
-                    s0.setCustomizedColor(new Color(i_customized_color_R, i_customized_color_G, i_customized_color_B));
+                    s.setCustomizedColor(new Color(i_customized_color_R, i_customized_color_G, i_customized_color_B));
                 }
             }
 
             if ((reading_flag == 1) && (str.equals("iactive"))) {//20181110追加
                 str = tk.nextToken();
                 is = LineSegment.ActiveState.valueOf(str);
-                LineSegment s0 = lineSegments.get(number);
-                s0.setActive(is);
+                s.setActive(is);
             }
 
             if ((reading_flag == 1) && (str.equals("選択"))) {
                 str = tk.nextToken();
                 int isel = Integer.parseInt(str);
-                LineSegment s0 = lineSegments.get(number);
-                s0.setSelected(isel);
+                s.setSelected(isel);
             }
             if ((reading_flag == 1) && (str.equals("座標"))) {
                 str = tk.nextToken();
@@ -530,10 +522,10 @@ public class Orh {
                 str = tk.nextToken();
                 by = Double.parseDouble(str);
 
-                LineSegment s0 = lineSegments.get(number);
-                s0.set(ax, ay, bx, by);
+                s = s.withCoordinates(ax, ay, bx, by);
             }
-
+            // TODO: test performance, implement and use LineSegmentBuilder if too slow
+            save.getLineSegments().set(number, s);
             if (str.equals("<円集合>")) {
                 reading_flag = 3;
             }

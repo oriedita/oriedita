@@ -20,14 +20,11 @@ public class MouseHandlerPolygonSetNoCorners extends BaseMouseHandler {
     public void mouseMoved(Point p0) {
         if (d.getGridInputAssist()) {
             d.getLineCandidate().clear();
-            LineSegment candidate = new LineSegment();
-            candidate.setActive(LineSegment.ActiveState.ACTIVE_BOTH_3);
             Point p = d.getCamera().TV2object(p0);
             Point closestPoint = d.getClosestPoint(p);
             if (p.distance(closestPoint) < d.getSelectionDistance()) {
-                candidate.set(closestPoint, closestPoint);
-                candidate.setColor(d.getLineColor());
-
+                LineSegment candidate = new LineSegment(closestPoint, closestPoint,
+                        d.getLineColor(), LineSegment.ActiveState.ACTIVE_BOTH_3);
                 d.getLineCandidate().add(candidate);
             }
         }

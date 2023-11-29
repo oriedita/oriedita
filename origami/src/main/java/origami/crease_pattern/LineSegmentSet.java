@@ -23,7 +23,9 @@ public class LineSegmentSet {
     public LineSegmentSet(PointSet pointSet) {
         reset(pointSet.getNumLines());
         for (int i = 1; i <= pointSet.getNumLines(); i++) {
-            lineSegments.get(i - 1).set(pointSet.getPoint(pointSet.getBegin(i)), pointSet.getPoint(pointSet.getEnd(i)), pointSet.getColor(i), LineSegment.ActiveState.INACTIVE_0);
+            lineSegments.set(i - 1,
+                    new LineSegment(pointSet.getPoint(pointSet.getBegin(i)), pointSet.getPoint(pointSet.getEnd(i)),
+                            pointSet.getColor(i), LineSegment.ActiveState.INACTIVE_0));
         }
     }
 
@@ -93,9 +95,7 @@ public class LineSegmentSet {
      * Add line segment
      */
     public void addLine(Point pi, Point pj, LineColor i_c) {
-        LineSegment s = new LineSegment();
-        s.set(pi, pj, i_c);
-
+        LineSegment s = new LineSegment(pi, pj, i_c);
         lineSegments.add(s);
     }
 

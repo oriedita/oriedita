@@ -16,17 +16,14 @@ public class MouseHandlerDrawCreaseRestricted extends BaseMouseHandlerInputRestr
 
     //マウス操作(mouseMode==11線分入力　でボタンを押したとき)時の作業----------------------------------------------------
     public void mousePressed(Point p0) {
-        LineSegment s = new LineSegment();
         Point p = d.getCamera().TV2object(p0);
         Point closest_point = d.getClosestPoint(p);
         if (p.distance(closest_point) > d.getSelectionDistance()) {
             return;
         }
-        s.set(p, closest_point);
-        s.setColor(d.getLineColor());
+        LineSegment s = new LineSegment(p, closest_point, d.getLineColor(), LineSegment.ActiveState.ACTIVE_B_2);
 
         d.lineStepAdd(s);
-        s.setActive(LineSegment.ActiveState.ACTIVE_B_2);
     }
 
     //マウス操作(mouseMode==11線分入力　でドラッグしたとき)を行う関数----------------------------------------------------

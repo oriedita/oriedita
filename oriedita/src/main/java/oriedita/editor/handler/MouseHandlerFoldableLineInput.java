@@ -180,9 +180,9 @@ public class MouseHandlerFoldableLineInput extends BaseMouseHandlerInputRestrict
                                 LineSegment s_kiso = new LineSegment();
                                 LineSegment nboxLineSegment = nbox.getValue(i);
                                 if (closest_point.distance(nboxLineSegment.getA()) < decision_distance) {
-                                    s_kiso.set(nboxLineSegment.getA(), nboxLineSegment.getB());
+                                    s_kiso = new LineSegment(nboxLineSegment.getA(), nboxLineSegment.getB());
                                 } else if (closest_point.distance(nboxLineSegment.getB()) < decision_distance) {
-                                    s_kiso.set(nboxLineSegment.getB(), nboxLineSegment.getA());
+                                    s_kiso = new LineSegment(nboxLineSegment.getB(), nboxLineSegment.getA());
                                 }
 
                                 double s_kiso_length = s_kiso.determineLength();

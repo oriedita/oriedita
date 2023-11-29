@@ -136,8 +136,7 @@ public class MouseHandlerDrawCreaseAngleRestricted3_2 extends BaseMouseHandlerIn
 
                 }
 
-                LineSegment add_sen = new LineSegment();
-                add_sen.set(mokuhyou_point, d.getLineStep().get(1).getA());
+                LineSegment add_sen = new LineSegment(mokuhyou_point, d.getLineStep().get(1).getA());
                 add_sen.setColor(d.getLineColor());
                 d.addLineSegment(add_sen);
                 d.record();
