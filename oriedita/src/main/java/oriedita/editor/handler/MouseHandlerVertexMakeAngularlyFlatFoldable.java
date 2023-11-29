@@ -44,8 +44,8 @@ public class MouseHandlerVertexMakeAngularlyFlatFoldable extends BaseMouseHandle
                     d.getLineCandidate().clear();
                     p = d.getCamera().TV2object(p0);
 
-                    LineSegment closestLineSegment = new LineSegment();
-                    closestLineSegment.set(d.get_moyori_step_lineSegment(p, 1, d.getLineStep().size()));
+                    LineSegment closestLineSegment = new LineSegment(
+                            d.getClosestLineStepSegment(p, 1, d.getLineStep().size()));
                     if ((d.getLineStep().size() >= 2) && (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.getSelectionDistance())) {
                         candidate.set(closestLineSegment.getA(), closestLineSegment.getB());
                         d.getLineCandidate().add(candidate);
@@ -57,8 +57,7 @@ public class MouseHandlerVertexMakeAngularlyFlatFoldable extends BaseMouseHandle
                     d.getLineCandidate().clear();
                     p = d.getCamera().TV2object(p0);
 
-                    LineSegment closestLineSegment = new LineSegment();
-                    closestLineSegment.set(d.getClosestLineSegment(p));
+                    LineSegment closestLineSegment = new LineSegment(d.getClosestLineSegment(p));
                     if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.getSelectionDistance()) {//最寄の既存折線が近い場合
                         d.getLineCandidate().add(closestLineSegment);
                         return;
@@ -177,8 +176,8 @@ public class MouseHandlerVertexMakeAngularlyFlatFoldable extends BaseMouseHandle
                 workDone = false;
                 return;
             case STEP_1: {
-                LineSegment closestLineSegment = new LineSegment();
-                closestLineSegment.set(d.get_moyori_step_lineSegment(p, 1, d.getLineStep().size()));
+                LineSegment closestLineSegment = new LineSegment(
+                        d.getClosestLineStepSegment(p, 1, d.getLineStep().size()));
                 if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.getSelectionDistance()) {
                     i_step_for_move_4p = CreasePattern_Worker.FourPointStep.STEP_2;
                     d.getLineStep().clear();
@@ -195,10 +194,9 @@ public class MouseHandlerVertexMakeAngularlyFlatFoldable extends BaseMouseHandle
                 break;
             }
             case STEP_2: {
-                LineSegment closestLineSegment = new LineSegment();
-                closestLineSegment.set(d.getClosestLineSegment(p));
-                LineSegment moyori_step_lineSegment = new LineSegment();
-                moyori_step_lineSegment.set(d.get_moyori_step_lineSegment(p, 1, d.getLineStep().size()));
+                LineSegment closestLineSegment = new LineSegment(d.getClosestLineSegment(p));
+                LineSegment moyori_step_lineSegment = new LineSegment(
+                        d.getClosestLineStepSegment(p, 1, d.getLineStep().size()));
                 if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) >= d.getSelectionDistance()) {//最寄の既存折線が遠くて選択無効の場合
                     if (OritaCalc.determineLineSegmentDistance(p, moyori_step_lineSegment) < d.getSelectionDistance()) {//最寄のstep_senbunが近い場合
                         workDone = false;

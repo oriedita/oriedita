@@ -109,7 +109,6 @@ public class WireFrame_Worker_Drawer {
     }
 
     public void drawing_with_camera(Graphics g, FoldedFigure.State ip4) {
-        LineSegment s_tv = new LineSegment();
         g.setColor(Colors.get(Color.black));
         for (int i = 1; i <= pointSet.getNumLines(); i++) {
             if (pointSet.getColor(i) == LineColor.BLACK_0) {
@@ -122,23 +121,24 @@ public class WireFrame_Worker_Drawer {
                 g.setColor(Colors.get(Color.blue));
             }
 
+            LineSegment s_tv;
             switch (ip4) {
                 case FRONT_0:
-                    s_tv.set(cam_front.object2TV(pointSet.getLineSegmentFromLineId(i)));
+                    s_tv = cam_front.object2TV(pointSet.getLineSegmentFromLineId(i));
                     g.drawLine(gx(s_tv.determineAX()), gy(s_tv.determineAY()), gx(s_tv.determineBX()), gy(s_tv.determineBY())); //Straight line
 
                     break;
                 case BACK_1:
-                    s_tv.set(cam_rear.object2TV(pointSet.getLineSegmentFromLineId(i)));
+                    s_tv = cam_rear.object2TV(pointSet.getLineSegmentFromLineId(i));
                     g.drawLine(gx(s_tv.determineAX()), gy(s_tv.determineAY()), gx(s_tv.determineBX()), gy(s_tv.determineBY())); //Straight line
 
                     break;
                 case BOTH_2:
                 case TRANSPARENT_3:
-                    s_tv.set(cam_front.object2TV(pointSet.getLineSegmentFromLineId(i)));
+                    s_tv = cam_front.object2TV(pointSet.getLineSegmentFromLineId(i));
                     g.drawLine(gx(s_tv.determineAX()), gy(s_tv.determineAY()), gx(s_tv.determineBX()), gy(s_tv.determineBY())); //Straight line
 
-                    s_tv.set(cam_rear.object2TV(pointSet.getLineSegmentFromLineId(i)));
+                    s_tv = cam_rear.object2TV(pointSet.getLineSegmentFromLineId(i));
                     g.drawLine(gx(s_tv.determineAX()), gy(s_tv.determineAY()), gx(s_tv.determineBX()), gy(s_tv.determineBY())); //Straight line
 
                     break;

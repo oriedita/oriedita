@@ -26,15 +26,15 @@ public class MouseHandlerSquareBisector extends BaseMouseHandlerInputRestricted 
 
     //マウス操作(ボタンを押したとき)時の作業
     public void mousePressed(Point p0) {
-        LineSegment line = new LineSegment();
         Point p = d.getCamera().TV2object(p0);
 
         // If condition is for 2 lines bisect
         if ((d.getLineStep().isEmpty() || d.getLineStep().get(0).determineLength() > 0)) {
             // Click 2 lines to form bisect and then a destination line
             // Only in first line click, no point is allowed within the selection radius
+            LineSegment line;
             if (d.getLineStep().size() == 0 && d.getClosestPoint(p).distance(p) > d.getSelectionDistance()) {
-                line.set(d.getClosestLineSegment(p));
+                line = new LineSegment(d.getClosestLineSegment(p));
                 if (OritaCalc.determineLineSegmentDistance(p, line) < d.getSelectionDistance()) {
                     line.setColor(LineColor.GREEN_6);
                     d.lineStepAdd(line);
@@ -42,7 +42,7 @@ public class MouseHandlerSquareBisector extends BaseMouseHandlerInputRestricted 
                 return;
             }
             if (d.getLineStep().size() >= 1) {
-                line.set(d.getClosestLineSegment(p));
+                line = new LineSegment(d.getClosestLineSegment(p));
                 if (OritaCalc.determineLineSegmentDistance(p, line) < d.getSelectionDistance()) {
                     line.setColor(LineColor.GREEN_6);
                     d.lineStepAdd(line);
@@ -58,8 +58,7 @@ public class MouseHandlerSquareBisector extends BaseMouseHandlerInputRestricted 
                     d.lineStepAdd(new LineSegment(closestPoint, closestPoint, d.getLineColor()));
                 }
             } else if (d.getLineStep().size() == 3) {
-                LineSegment closestLineSegment = new LineSegment();
-                closestLineSegment.set(d.getClosestLineSegment(p));
+                LineSegment closestLineSegment = new LineSegment(d.getClosestLineSegment(p));
                 if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.getSelectionDistance()) {
                     closestLineSegment.setColor(LineColor.GREEN_6);
                     d.lineStepAdd(closestLineSegment);

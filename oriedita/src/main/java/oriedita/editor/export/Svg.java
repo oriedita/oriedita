@@ -169,9 +169,6 @@ public class Svg {
         PointSet subFace_figure = foldedFigure.getFoldedFigure().wireFrame_worker3.get();
         boolean front_back = camera.determineIsCameraMirrored();
 
-        LineSegment s_ob = new LineSegment();
-        LineSegment s_tv = new LineSegment();
-
         String str_stroke = "black";
         String str_strokewidth = "1";
 
@@ -288,8 +285,8 @@ public class Svg {
             }
 
             if (drawing_flg) {//棒を描く。
-                s_ob.set(subFace_figure.getBeginX(ib), subFace_figure.getBeginY(ib), subFace_figure.getEndX(ib), subFace_figure.getEndY(ib));
-                s_tv.set(camera.object2TV(s_ob));
+                LineSegment s_ob = new LineSegment(subFace_figure.getBeginX(ib), subFace_figure.getBeginY(ib), subFace_figure.getEndX(ib), subFace_figure.getEndY(ib));
+                LineSegment s_tv = camera.object2TV(s_ob);
 
                 Point a = s_tv.getA();
                 Point b = s_tv.getB();

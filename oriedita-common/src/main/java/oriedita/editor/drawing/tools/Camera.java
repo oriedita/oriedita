@@ -194,8 +194,7 @@ public class Camera implements Serializable { // Mediation between actual coordi
     }
 
     public LineSegment object2TV(LineSegment s_ob) {
-        LineSegment s_tv = new LineSegment();
-        s_tv.set(s_ob);
+        LineSegment s_tv = new LineSegment(s_ob);
         s_tv.setA(object2TV(s_ob.getA()));
         s_tv.setB(object2TV(s_ob.getB()));
         return s_tv;
@@ -229,8 +228,7 @@ public class Camera implements Serializable { // Mediation between actual coordi
     }
 
     public LineSegment TV2object(LineSegment s_tv) {
-        LineSegment s_ob = new LineSegment();
-        s_ob.set(s_tv);
+        LineSegment s_ob = new LineSegment(s_tv);
         s_ob.setA(TV2object(s_tv.getA()));
         s_ob.setB(TV2object(s_tv.getB()));
         return s_ob;

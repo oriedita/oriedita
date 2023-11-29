@@ -28,8 +28,7 @@ public class MouseHandlerParallelDrawWidth extends BaseMouseHandler {
         Point closest_point = d.getClosestPoint(p);
 
         if ((d.getLineStep().size() == 0) && (d.getCircleStep().size() == 0)) {
-            LineSegment closestLineSegment = new LineSegment();
-            closestLineSegment.set(d.getClosestLineSegment(p));
+            LineSegment closestLineSegment = new LineSegment(d.getClosestLineSegment(p));
             if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.getSelectionDistance()) {
                 closestLineSegment.setColor(LineColor.GREEN_6);
                 d.lineStepAdd(closestLineSegment);
@@ -43,12 +42,10 @@ public class MouseHandlerParallelDrawWidth extends BaseMouseHandler {
             }
 
             d.lineStepAdd(new LineSegment(p, closest_point, LineColor.CYAN_3));
-            LineSegment segment2 = new LineSegment();
-            segment2.set(d.getLineStep().get(0));
+            LineSegment segment2 = new LineSegment(d.getLineStep().get(0));
             segment2.setColor(LineColor.PURPLE_8);
             d.lineStepAdd(segment2);
-            LineSegment segment3 = new LineSegment();
-            segment3.set(d.getLineStep().get(0));
+            LineSegment segment3 = new LineSegment(d.getLineStep().get(0));
             segment3.setColor(LineColor.PURPLE_8);
             d.lineStepAdd(segment3);
 
@@ -57,10 +54,10 @@ public class MouseHandlerParallelDrawWidth extends BaseMouseHandler {
 
 
         if ((d.getLineStep().size() == 4) && (d.getCircleStep().size() == 0)) {
-            LineSegment closest_step_lineSegment = d.get_moyori_step_lineSegment(p, 3, 4);
+            LineSegment closest_step_lineSegment = new LineSegment(d.getClosestLineStepSegment(p, 3, 4));
             d.getLineStep().remove(3);
 
-            d.getLineStep().get(2).set(closest_step_lineSegment);
+            d.getLineStep().set(2, closest_step_lineSegment);
         }
     }
 
@@ -69,9 +66,9 @@ public class MouseHandlerParallelDrawWidth extends BaseMouseHandler {
         Point p = d.getCamera().TV2object(p0);
         if ((d.getLineStep().size() == 4) && (d.getCircleStep().size() == 0)) {
             d.getLineStep().get(1).setA(p);
-            d.getLineStep().get(2).set(OritaCalc.moveParallel(d.getLineStep().get(0), d.getLineStep().get(1).determineLength()));
+            d.getLineStep().set(2, OritaCalc.moveParallel(d.getLineStep().get(0), d.getLineStep().get(1).determineLength()));
             d.getLineStep().get(2).setColor(LineColor.PURPLE_8);
-            d.getLineStep().get(3).set(OritaCalc.moveParallel(d.getLineStep().get(0), -d.getLineStep().get(1).determineLength()));
+            d.getLineStep().set(3, OritaCalc.moveParallel(d.getLineStep().get(0), -d.getLineStep().get(1).determineLength()));
             d.getLineStep().get(3).setColor(LineColor.PURPLE_8);
         }
     }
@@ -97,9 +94,9 @@ public class MouseHandlerParallelDrawWidth extends BaseMouseHandler {
                 d.getLineStep().remove(1);
                 return;
             }
-            d.getLineStep().get(2).set(OritaCalc.moveParallel(d.getLineStep().get(0), d.getLineStep().get(1).determineLength()));
+            d.getLineStep().set(2, OritaCalc.moveParallel(d.getLineStep().get(0), d.getLineStep().get(1).determineLength()));
             d.getLineStep().get(2).setColor(LineColor.PURPLE_8);
-            d.getLineStep().get(3).set(OritaCalc.moveParallel(d.getLineStep().get(0), -d.getLineStep().get(1).determineLength()));
+            d.getLineStep().set(3, OritaCalc.moveParallel(d.getLineStep().get(0), -d.getLineStep().get(1).determineLength()));
             d.getLineStep().get(3).setColor(LineColor.PURPLE_8);
         }
 

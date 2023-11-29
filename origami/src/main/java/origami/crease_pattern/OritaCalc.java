@@ -619,8 +619,7 @@ public class OritaCalc {
     }
 
     public static LineSegment extendToIntersectionPoint_2(FoldLineSet foldLineSet, LineSegment s0) {//Extend s0 from point b in the opposite direction of a to the point where it intersects another polygonal line. Returns a new line // Returns the same line if it does not intersect another polygonal line
-        LineSegment add_sen = new LineSegment();
-        add_sen.set(s0);
+        LineSegment add_sen = new LineSegment(s0);
 
         Point kousa_point = new Point(1000000.0, 1000000.0); //この方法だと、エラーの原因になりうる。本当なら全線分のx_max、y_max以上の点を取ればいい。今後修正予定20161120
         double kousa_point_distance = kousa_point.distance(add_sen.getA());
@@ -678,9 +677,8 @@ public class OritaCalc {
 
     public static LineSegment fullExtendUntilHit(FoldLineSet foldLineSet, LineSegment s0){
         Point point = s0.getA();
-        s0.set(extendToIntersectionPoint_2(foldLineSet, s0));
-        s0.set(point, s0.determineFurthestEndpoint(point));
-        return s0;
+        LineSegment extended = extendToIntersectionPoint_2(foldLineSet, s0);
+        return new LineSegment(point, extended.determineFurthestEndpoint(point));
     }
 
     //A function that determines whether two straight lines are parallel.
@@ -1082,10 +1080,8 @@ public class OritaCalc {
 
         double bai = d0 / distance(t1, t2);
 
-        LineSegment s1 = new LineSegment();
-        s1.set(lineSegment_rotate(new LineSegment(tm, t1), 90.0, bai));
-        LineSegment s2 = new LineSegment();
-        s2.set(lineSegment_rotate(new LineSegment(tm, t2), 90.0, bai));
+        LineSegment s1 = lineSegment_rotate(new LineSegment(tm, t1), 90.0, bai);
+        LineSegment s2 = lineSegment_rotate(new LineSegment(tm, t2), 90.0, bai);
 
         return new LineSegment(s1.getB(), s2.getB());
     }

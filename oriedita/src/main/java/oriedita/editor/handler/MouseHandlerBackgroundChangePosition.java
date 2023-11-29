@@ -60,14 +60,10 @@ public class MouseHandlerBackgroundChangePosition extends BaseMouseHandler {
     //マウス操作(ボタンを離したとき)を行う関数
     public void mouseReleased(Point p0) {
         if (d.getLineStep().size() == 4) {
-            LineSegment s_1 = new LineSegment();
-            s_1.set(d.getLineStep().get(0));
-            LineSegment s_2 = new LineSegment();
-            s_2.set(d.getLineStep().get(1));
-            LineSegment s_3 = new LineSegment();
-            s_3.set(d.getLineStep().get(2));
-            LineSegment s_4 = new LineSegment();
-            s_4.set(d.getLineStep().get(3));
+            LineSegment s_1 = d.getLineStep().get(0);
+            LineSegment s_2 = d.getLineStep().get(1);
+            LineSegment s_3 = d.getLineStep().get(2);
+            LineSegment s_4 = d.getLineStep().get(3);
             resetService.Button_shared_operation();
 
             backgroundModel.setLockBackground(false);

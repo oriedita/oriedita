@@ -104,7 +104,7 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     private String s_title; //Used to hold the title that appears at the top of the frame
     private boolean check1 = false;//=0 check1を実施しない、1=実施する　　
     private boolean check2 = false;//=0 check2を実施しない、1=実施する　
-    private boolean check3 = false;//=0 check3を実施しない、1=実施する　
+    private boolean check3 = false;//=0 check3を実施しない、1=実施する　// TODO: intellij says this field is never written to, double check if check3 can be removed
     private boolean check4 = false;//=0 check4を実施しない、1=実施する　
     private boolean isSelectionEmpty;
     //---------------------------------
@@ -689,7 +689,7 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
 
     //------------------------------------------------------
     @Override
-    public LineSegment get_moyori_step_lineSegment(Point t0, int imin, int imax) {
+    public LineSegment getClosestLineStepSegment(Point t0, int imin, int imax) {
         int minrid = -100;
         double minr = 100000;
         for (int i = imin; i <= imax; i++) {
@@ -843,8 +843,7 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
 
     @Override
     public LineSegment extendToIntersectionPoint(LineSegment s0) {//Extend s0 from point a to b, until it intersects another polygonal line. Returns a new line // Returns the same line if it does not intersect another polygonal line
-        LineSegment add_sen = new LineSegment();
-        add_sen.set(s0);
+        LineSegment add_sen = new LineSegment(s0);
         Point kousa_point = new Point(1000000.0, 1000000.0); //この方法だと、エラーの原因になりうる。本当なら全線分のx_max、y_max以上の点を取ればいい。今後修正予定20161120
         double kousa_ten_kyori = kousa_point.distance(add_sen.getA());
 
@@ -861,7 +860,7 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
                         double d_kakudo = OritaCalc.angle(add_sen.getA(), add_sen.getB(), add_sen.getA(), kousa_point);
                         if (d_kakudo < 1.0 || d_kakudo > 359.0) {
                             kousa_ten_kyori = kousa_point.distance(add_sen.getA());
-                            add_sen.set(add_sen.getA(), kousa_point);
+                            add_sen = new LineSegment(add_sen.getA(), kousa_point);
                         }
                     }
                 }
@@ -904,12 +903,10 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     }
 
     @Override
-    public void all_s_step_to_orisen() {//20181014
-
-        LineSegment add_sen = new LineSegment();
+    public void addPreviewLinesToCp() {//20181014
         for (LineSegment s : lineStep) {
             if (Epsilon.high.gt0(s.determineLength())) {
-                add_sen.set(s);
+                LineSegment add_sen = new LineSegment(s);
                 add_sen.setColor(lineColor);
                 addLineSegment(add_sen);
             } else {

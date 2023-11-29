@@ -21,8 +21,7 @@ public class InsideToAux {
                 if (b.totu_boundary_inside(s)) {
                     okikae_suu = okikae_suu + 1;
 
-                    LineSegment add_sen = new LineSegment();
-                    add_sen.set(s);
+                    LineSegment add_sen = new LineSegment(s);
                     add_sen.setColor(LineColor.CYAN_3);
 
                     foldLineSet.deleteLine(i);

@@ -112,10 +112,10 @@ public class MouseHandlerVoronoiCreate extends BaseMouseHandler {
         } else {//Removed Voronoi mother points with order i_mouse_modeA_62_point_overlapping
             //順番がi_mouse_modeA_62_ten_kasanariのボロノイ母点と順番が最後(=i_egaki_dankai)のボロノイ母点を入れ替える
             //line_step[i]の入れ替え
-            LineSegment S_replace = new LineSegment();
-            S_replace.set(d.getLineStep().get(i_mouse_modeA_62_point_overlapping));
-            d.getLineStep().get(i_mouse_modeA_62_point_overlapping).set(d.getLineStep().get(d.getLineStep().size() - 1));
-            d.getLineStep().get(d.getLineStep().size() - 1).set(S_replace);
+            LineSegment S_replace = new LineSegment(d.getLineStep().get(i_mouse_modeA_62_point_overlapping));
+            d.getLineStep().set(i_mouse_modeA_62_point_overlapping,
+                    new LineSegment(d.getLineStep().get(d.getLineStep().size() - 1)));
+            d.getLineStep().set(d.getLineStep().size() - 1, S_replace);
 
 
             for (LineSegmentVoronoi lsv : voronoiLineSet) {
@@ -225,8 +225,7 @@ public class MouseHandlerVoronoiCreate extends BaseMouseHandler {
         //ボロノイ図も表示するようにs_stepの後にボロノイ図の線を入れる
 
         for (LineSegmentVoronoi lsv : voronoiLineSet) {
-            LineSegment s = new LineSegment();
-            s.set(lsv);
+            LineSegment s = new LineSegment(lsv);
             s.setActive(LineSegment.ActiveState.INACTIVE_0);
             s.setColor(LineColor.MAGENTA_5);
             d.getLineStep().add(s);
@@ -263,14 +262,12 @@ public class MouseHandlerVoronoiCreate extends BaseMouseHandler {
         voronoiLineSet.forEach(s -> s.setSelected(0));
 
         //
-        LineSegmentVoronoi s_begin = new LineSegmentVoronoi();
-        LineSegmentVoronoi s_end = new LineSegmentVoronoi();
 
         for (int ia = 0; ia < lineSegment_voronoi_onePoint.size() - 1; ia++) {
             for (int ib = ia + 1; ib < lineSegment_voronoi_onePoint.size(); ib++) {
 
-                s_begin.set(lineSegment_voronoi_onePoint.get(ia));
-                s_end.set(lineSegment_voronoi_onePoint.get(ib));
+                LineSegmentVoronoi s_begin = new LineSegmentVoronoi(lineSegment_voronoi_onePoint.get(ia));
+                LineSegmentVoronoi s_end = new LineSegmentVoronoi(lineSegment_voronoi_onePoint.get(ib));
 
                 StraightLine t_begin = new StraightLine(s_begin);
 
@@ -343,9 +340,8 @@ public class MouseHandlerVoronoiCreate extends BaseMouseHandler {
         for (int i_e_d = 0; i_e_d < d.getLineStep().size(); i_e_d++) {
             if (i_e_d != center_point_count) {
                 //Find the line segment to add
-                LineSegmentVoronoi add_lineSegment = new LineSegmentVoronoi();
-
-                add_lineSegment.set(OritaCalc.bisection(d.getLineStep().get(i_e_d).getA(), d.getLineStep().get(center_point_count).getA(), 1000.0));
+                LineSegmentVoronoi add_lineSegment = new LineSegmentVoronoi(
+                        OritaCalc.bisection(d.getLineStep().get(i_e_d).getA(), d.getLineStep().get(center_point_count).getA(), 1000.0));
 
                 Logger.info("center_point_count= " + center_point_count + " ,i_e_d= " + i_e_d);
 
@@ -371,8 +367,7 @@ public class MouseHandlerVoronoiCreate extends BaseMouseHandler {
         int i_saisyo = lineSegment_voronoi_onePoint.size() - 1;
         for (int i = i_saisyo; i >= 0; i--) {
             //Organize existing line segments
-            LineSegmentVoronoi existing_lineSegment = new LineSegmentVoronoi();
-            existing_lineSegment.set(lineSegment_voronoi_onePoint.get(i));
+            LineSegmentVoronoi existing_lineSegment = new LineSegmentVoronoi(lineSegment_voronoi_onePoint.get(i));
             StraightLine existing_straightLine = new StraightLine(existing_lineSegment);
 
             //Fight the line segment to be added with the existing line segment

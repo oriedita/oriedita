@@ -61,8 +61,7 @@ public class FoldLineSet {
     public void set(FoldLineSet foldLineSet) {
         setTotal(foldLineSet.getTotal());
         for (int i = 0; i <= total; i++) {
-            LineSegment s = lineSegments.get(i);
-            s.set(foldLineSet.get(i));
+            lineSegments.set(i, foldLineSet.get(i));
         }
     }
 
@@ -88,7 +87,7 @@ public class FoldLineSet {
         divideLineSegmentWithNewLines(total_old - 1, total_old);
     }
 
-    public void replaceAux(CustomLineTypes from, CustomLineTypes to, List<LineSegment> reserveAux) {
+    public void replaceAux(CustomLineTypes to, List<LineSegment> reserveAux) {
         for (LineSegment s : reserveAux) {
             LineSegment auxChange = s.clone();
             auxChange.setColor(LineColor.fromNumber(to.getReplaceToTypeNumber()));
@@ -211,16 +210,6 @@ public class FoldLineSet {
     }
 
     //Output the line segment set information as Memo for folding estimation. // Do not write out auxiliary lines with icol of 3 (cyan = light blue) or more in the memo
-    public void getMemo_for_folding(LineSegmentSave save) {
-        for (int i = 1; i <= total; i++) {
-            LineSegment s = lineSegments.get(i);
-            if (s.getColor().isFoldingLine()) {
-                save.addLineSegment(s.clone());
-            }
-        }
-    }
-
-    //Output the line segment set information as Memo for folding estimation. // Do not write out auxiliary lines with icol of 3 (cyan = light blue) or more in the memo
     public void getSaveForSelectFolding(LineSegmentSave save) {
         for (int i = 1; i <= total; i++) {
             LineSegment s = lineSegments.get(i);
@@ -278,15 +267,13 @@ public class FoldLineSet {
         for (LineSegment s : memo1.getLineSegments()) {
             //First the total number of line segments was calculated
 
-            LineSegment s0 = new LineSegment();
-            s0.set(s);
+            LineSegment s0 = new LineSegment(s);
 
             lineSegments.add(s0);
             total++;
         }
         for (Circle c : memo1.getCircles()) {
-            Circle c0 = new Circle();
-            c0.set(c);
+            Circle c0 = new Circle(c);
 
             circles.add(c0);
         }
@@ -508,7 +495,7 @@ public class FoldLineSet {
                 }
             }
         }
-        replaceAux(from, to, reserveAux);
+        replaceAux(to, reserveAux);
         return i_r;
     }
 
@@ -819,13 +806,13 @@ public class FoldLineSet {
         for (int i = 1; i <= total; i++) {
             if (!removal_flg[i]) {
                 smax = smax + 1;
-                snew[smax].set(lineSegments.get(i));
+                snew[smax] = new LineSegment(lineSegments.get(i));
             }
         }
 
         setTotal(smax);
         for (int i = 1; i <= total; i++) {
-            lineSegments.get(i).set(snew[i]);
+            lineSegments.set(i, snew[i]);
         }
     }
 
@@ -1364,8 +1351,7 @@ public class FoldLineSet {
                         } else if (OritaCalc.distance(ei.determineCenter(), ej.determineCenter()) < Math.abs(ei.getR() - ej.getR())) {
                             //Two circles do not intersect
                         } else {//Two circles intersect at two points
-                            LineSegment lineSegment = new LineSegment();
-                            lineSegment.set(OritaCalc.circle_to_circle_no_intersection_wo_musubu_lineSegment(ei, ej));
+                            LineSegment lineSegment = OritaCalc.circle_to_circle_no_intersection_wo_musubu_lineSegment(ei, ej);
 
                             addCircle(lineSegment.getA(), 0.0);
                             addCircle(lineSegment.getB(), 0.0);
@@ -1397,8 +1383,7 @@ public class FoldLineSet {
                     } else if (tc_kyori > ej.getR()) {
                         //Circles and straight lines do not intersect
                     } else {//Circle and straight line intersect at two points
-                        LineSegment k_senb = new LineSegment();
-                        k_senb.set(OritaCalc.circle_to_straightLine_no_intersect_wo_connect_LineSegment(ej, ti));
+                        LineSegment k_senb = OritaCalc.circle_to_straightLine_no_intersect_wo_connect_LineSegment(ej, ti);
 
                         if (OritaCalc.determineLineSegmentDistance(k_senb.getA(), si) < Epsilon.UNKNOWN_1EN5) {
                             addCircle(k_senb.getA(), 0.0);
@@ -1421,8 +1406,7 @@ public class FoldLineSet {
     public void addLine(Point pi, Point pj, LineColor i_c) {
         total++;
 
-        LineSegment s = new LineSegment();
-        s.set(pi, pj, i_c);
+        LineSegment s = new LineSegment(pi, pj, i_c);
 
         lineSegments.add(s);
     }
@@ -1431,8 +1415,7 @@ public class FoldLineSet {
     public void addLine(Point pi, Point pj, LineSegment s0) {//Ten piからTen pjまでの線分を追加。この追加する線分のその他のパラメータはs0と同じ
         total++;
 
-        LineSegment s = new LineSegment();
-        s.set(s0);
+        LineSegment s = new LineSegment(s0);
         s.set(pi, pj);
 
         lineSegments.add(s);
@@ -1442,8 +1425,7 @@ public class FoldLineSet {
     public void addLine(Point pi, Point pj, LineColor i_c, LineSegment.ActiveState i_a) {
         total++;
 
-        LineSegment s = new LineSegment();
-        s.set(pi, pj, i_c, i_a);
+        LineSegment s = new LineSegment(pi, pj, i_c, i_a);
 
         lineSegments.add(s);
     }
@@ -1462,11 +1444,7 @@ public class FoldLineSet {
     public void addLine(Point pi, Point pj) {
         total++;
 
-        LineSegment s = new LineSegment();
-
-        s.setA(pi);
-        s.setB(pj);
-
+        LineSegment s = new LineSegment(pi, pj);
         lineSegments.add(s);
     }
 

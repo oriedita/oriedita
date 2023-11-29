@@ -36,15 +36,13 @@ public class MouseHandlerParallelDraw extends BaseMouseHandlerInputRestricted {
                 d.lineStepAdd(new LineSegment(closestPoint, closestPoint, d.getLineColor()));
             }
         } else if (d.getLineStep().size() == 1) {
-            LineSegment closestLineSegment = new LineSegment();
-            closestLineSegment.set(d.getClosestLineSegment(p));
+            LineSegment closestLineSegment = new LineSegment(d.getClosestLineSegment(p));
             if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.getSelectionDistance()) {
                 closestLineSegment.setColor(LineColor.GREEN_6);
                 d.lineStepAdd(closestLineSegment);
             }
         } else if (d.getLineStep().size() == 2) {
-            LineSegment closestLineSegment = new LineSegment();
-            closestLineSegment.set(d.getClosestLineSegment(p));
+            LineSegment closestLineSegment = new LineSegment(d.getClosestLineSegment(p));
             if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.getSelectionDistance()) {
                 closestLineSegment.setColor(LineColor.GREEN_6);
                 d.lineStepAdd(closestLineSegment);
@@ -101,7 +99,7 @@ public class MouseHandlerParallelDraw extends BaseMouseHandlerInputRestricted {
         LineSegment add_sen = new LineSegment(cross_point, s_o.getA(), icolo);
 
         if (Epsilon.high.gt0(add_sen.determineLength())) {
-            d.getLineStep().get(i_e_d).set(add_sen);
+            d.getLineStep().set(i_e_d, add_sen);
             return 1;
         }
 

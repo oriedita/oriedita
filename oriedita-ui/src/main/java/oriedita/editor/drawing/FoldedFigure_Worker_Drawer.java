@@ -45,11 +45,12 @@ public class FoldedFigure_Worker_Drawer {
     }
 
     private static void drawLine(Graphics2D g2, Camera camera, PointSet subFace_figure, int ib) {
-        LineSegment s_ob = new LineSegment();
-        LineSegment s_tv = new LineSegment();
 
-        s_ob.set(subFace_figure.getBeginX(ib), subFace_figure.getBeginY(ib), subFace_figure.getEndX(ib), subFace_figure.getEndY(ib));
-        s_tv.set(camera.object2TV(s_ob));
+        LineSegment s_ob = new LineSegment(subFace_figure.getBeginX(ib),
+                subFace_figure.getBeginY(ib),
+                subFace_figure.getEndX(ib),
+                subFace_figure.getEndY(ib));
+        LineSegment s_tv = camera.object2TV(s_ob);
 
         Path2D.Double line = new Path2D.Double();
         line.moveTo(s_tv.determineAX(), s_tv.determineAY());
@@ -293,13 +294,9 @@ public class FoldedFigure_Worker_Drawer {
 
                     //-----------------------------------------------
                     //棒の中点を通る直交線上の点
-                    o_bmtx = o_bmx + o_btx;
-                    o_bmty = o_bmy + o_bty;
 
-                    if (subFace_figure.inside(new origami.crease_pattern.element.Point(o_bmx + Epsilon.UNKNOWN_001 * o_btx, o_bmy + Epsilon.UNKNOWN_001 * o_bty), im) != origami.crease_pattern.element.Polygon.Intersection.OUTSIDE) {//0=外部、　1=境界、　2=内部
+                    if (subFace_figure.inside(new Point(o_bmx + Epsilon.UNKNOWN_001 * o_btx, o_bmy + Epsilon.UNKNOWN_001 * o_bty), im) != origami.crease_pattern.element.Polygon.Intersection.OUTSIDE) {//0=外部、　1=境界、　2=内部
                         Path2D.Double path = new Path2D.Double();
-                        t0 = new Point(o_bmtx, o_bmty);
-                        t1 = camera.object2TV(t0);
                         //影の長方形
 
                         // ---------- [0] ----------------

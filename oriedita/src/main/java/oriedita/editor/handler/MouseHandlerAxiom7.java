@@ -39,8 +39,7 @@ public class MouseHandlerAxiom7 extends BaseMouseHandlerInputRestricted{
         // 2. target segment
         // Don't allow segment that spans through the target point
         if(d.getLineStep().size() == 1){
-            LineSegment closestLineSegment = new LineSegment();
-            closestLineSegment.set(d.getClosestLineSegment(p));
+            LineSegment closestLineSegment = new LineSegment(d.getClosestLineSegment(p));
 
             LineSegment temp = new LineSegment(d.getLineStep().get(0).getA(), closestLineSegment.determineClosestEndpoint(d.getLineStep().get(0).getA()));
             if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.getSelectionDistance() &&
@@ -53,8 +52,7 @@ public class MouseHandlerAxiom7 extends BaseMouseHandlerInputRestricted{
 
         // 3. reference segment
         if(d.getLineStep().size() == 2){
-            LineSegment closestLineSegment = new LineSegment();
-            closestLineSegment.set(d.getClosestLineSegment(p));
+            LineSegment closestLineSegment = new LineSegment(d.getClosestLineSegment(p));
 
             // Don't allow segment that is parallel to target segment
             if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.getSelectionDistance() &&
@@ -69,8 +67,7 @@ public class MouseHandlerAxiom7 extends BaseMouseHandlerInputRestricted{
         // 4. destination line (case 2)
         // Don't accept segment that is parallel to the purple indicators
         if(d.getLineStep().size() == 5){
-            LineSegment closestLineSegment = new LineSegment();
-            closestLineSegment.set(d.getClosestLineSegment(p));
+            LineSegment closestLineSegment = new LineSegment(d.getClosestLineSegment(p));
 
             if (!(OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.getSelectionDistance()) ||
                     OritaCalc.isLineSegmentParallel(closestLineSegment, d.getLineStep().get(3)) != OritaCalc.ParallelJudgement.NOT_PARALLEL) {
@@ -99,9 +96,9 @@ public class MouseHandlerAxiom7 extends BaseMouseHandlerInputRestricted{
         if(d.getLineStep().size() == 5 && d.getClosestPoint(p).distance(p) > d.getSelectionDistance()){
             if (OritaCalc.determineLineSegmentDistance(p, d.getLineStep().get(3)) < d.getSelectionDistance() ||
                     OritaCalc.determineLineSegmentDistance(p, d.getLineStep().get(4)) < d.getSelectionDistance()) {
-                LineSegment s = d.get_moyori_step_lineSegment(p, 4, 5);
-                s.set(s.getB(), s.getA(), d.getLineColor());
-                s.set(OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), s));
+                LineSegment s = d.getClosestLineStepSegment(p, 4, 5);
+                s = new LineSegment(s.getB(), s.getA(), d.getLineColor());
+                s = OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), s);
 
                 d.addLineSegment(s);
                 d.record();

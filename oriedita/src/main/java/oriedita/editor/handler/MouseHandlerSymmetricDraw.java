@@ -42,7 +42,7 @@ public class MouseHandlerSymmetricDraw extends BaseMouseHandlerInputRestricted {
 
             LineSegment add_sen = new LineSegment(d.getLineStep().get(1).getA(), t_taisyou);
 
-            add_sen.set(d.extendToIntersectionPoint(add_sen));
+            add_sen = d.extendToIntersectionPoint(add_sen);
             add_sen.setColor(d.getLineColor());
             if (Epsilon.high.gt0(add_sen.determineLength())) {
                 d.addLineSegment(add_sen);

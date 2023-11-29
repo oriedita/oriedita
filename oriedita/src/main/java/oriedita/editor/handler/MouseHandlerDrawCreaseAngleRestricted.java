@@ -41,8 +41,7 @@ public class MouseHandlerDrawCreaseAngleRestricted extends BaseMouseHandler {
         Point p = d.getCamera().TV2object(p0);
 
         if (d.getLineStep().size() == 0) {    //第１段階として、線分を選択
-            LineSegment closestLineSegment = new LineSegment();
-            closestLineSegment.set(d.getClosestLineSegment(p));
+            LineSegment closestLineSegment = new LineSegment(d.getClosestLineSegment(p));
             if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.getSelectionDistance()) {
                 closestLineSegment.setColor(LineColor.MAGENTA_5);
                 d.lineStepAdd(closestLineSegment);
@@ -66,9 +65,8 @@ public class MouseHandlerDrawCreaseAngleRestricted extends BaseMouseHandler {
                 for (int i = 1; i <= honsuu; i++) {
                     i_jyun = !i_jyun;
 
-                    LineSegment s = new LineSegment();
                     angle = angle + d_angle_system;
-                    s.set(OritaCalc.lineSegment_rotate(s_kiso, angle, 10.0));
+                    LineSegment s = OritaCalc.lineSegment_rotate(s_kiso, angle, 10.0);
                     s.setColor(i_jyun ? LineColor.ORANGE_4 : LineColor.GREEN_6);
                     d.lineStepAdd(s);
 
@@ -80,9 +78,7 @@ public class MouseHandlerDrawCreaseAngleRestricted extends BaseMouseHandler {
                 for (int i = 1; i <= honsuu; i++) {
                     i_jyun = !i_jyun;
                     angle = angle + d_angle_system;
-                    LineSegment s = new LineSegment();
-
-                    s.set(OritaCalc.lineSegment_rotate(s_kiso, angle, 10.0));
+                    LineSegment s = OritaCalc.lineSegment_rotate(s_kiso, angle, 10.0);
                     s.setColor(i_jyun ? LineColor.ORANGE_4 : LineColor.GREEN_6);
 
                     d.lineStepAdd(s);
@@ -98,8 +94,7 @@ public class MouseHandlerDrawCreaseAngleRestricted extends BaseMouseHandler {
                     i_jyun = !i_jyun;
 
                     angle = jk[i];
-                    LineSegment s = new LineSegment();
-                    s.set(OritaCalc.lineSegment_rotate(s_kiso, angle, 10.0));
+                    LineSegment s = OritaCalc.lineSegment_rotate(s_kiso, angle, 10.0);
                     if (i == 0) {
                         s.setColor(LineColor.GREEN_6);
                     }
@@ -127,8 +122,7 @@ public class MouseHandlerDrawCreaseAngleRestricted extends BaseMouseHandler {
                     i_jyun = !i_jyun;
 
                     angle = jk[i];
-                    LineSegment s = new LineSegment();
-                    s.set(OritaCalc.lineSegment_rotate(s_kiso, angle, 10.0));
+                    LineSegment s = OritaCalc.lineSegment_rotate(s_kiso, angle, 10.0);
                     if (i == 1) {
                         s.setColor(LineColor.GREEN_6);
                     }
@@ -154,17 +148,15 @@ public class MouseHandlerDrawCreaseAngleRestricted extends BaseMouseHandler {
         } else if (d.getLineStep().size() == i_jyunnbi_step_suu + (honsuu) + (honsuu)) {//19     //動作の準備としてソフトが返答するステップ数が終わった状態で実行
             int i_tikai_s_step_suu = 0;
 
-            LineSegment closestLineSegment = new LineSegment();
-
             //line_step[2から10]までとs_step[11から19]まで
-            closestLineSegment.set(d.get_moyori_step_lineSegment(p, 2, 1 + (honsuu)));
+            LineSegment closestLineSegment = new LineSegment(d.getClosestLineStepSegment(p, 2, 1 + (honsuu)));
             if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.getSelectionDistance()) {
                 i_tikai_s_step_suu++;
                 d.lineStepAdd(closestLineSegment);
             }
 
             //line_step[2から10]までとs_step[11から19]まで
-            closestLineSegment.set(d.get_moyori_step_lineSegment(p, 1 + (honsuu) + 1, 1 + (honsuu) + (honsuu)));
+            closestLineSegment = new LineSegment(d.getClosestLineStepSegment(p, 1 + (honsuu) + 1, 1 + (honsuu) + (honsuu)));
             if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.getSelectionDistance()) {
                 i_tikai_s_step_suu++;
                 d.lineStepAdd(closestLineSegment);    //line_step[i_egaki_dankai].setcolor(lineColor);

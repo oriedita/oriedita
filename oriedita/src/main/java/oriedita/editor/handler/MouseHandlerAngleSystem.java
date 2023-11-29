@@ -15,7 +15,6 @@ import origami.crease_pattern.element.Point;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -124,8 +123,7 @@ public class MouseHandlerAngleSystem extends BaseMouseHandlerInputRestricted {
     private LineSegment determineLineSegmentToAdd(Point p) {
         LineSegment closestLineSegment = d.getClosestLineSegment(p);
         if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.getSelectionDistance()) {
-            LineSegment s = new LineSegment();
-            s.set(closestLineSegment);
+            LineSegment s = new LineSegment(closestLineSegment);
             s.setColor(LineColor.GREEN_6);
             Point startingPoint = OritaCalc.findIntersection(s, direction);
             return new LineSegment(startingPoint, pEnd, d.getLineColor());
@@ -139,8 +137,7 @@ public class MouseHandlerAngleSystem extends BaseMouseHandlerInputRestricted {
         if (closestLineSegmentO.isPresent()) {
             LineSegment closestLineSegment = closestLineSegmentO.get();
             if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.getSelectionDistance()) {
-                LineSegment s = new LineSegment();
-                s.set(closestLineSegment);
+                LineSegment s = new LineSegment(closestLineSegment);
                 s.setColor(LineColor.BLUE_2);
                 return s;
             }
@@ -182,8 +179,7 @@ public class MouseHandlerAngleSystem extends BaseMouseHandlerInputRestricted {
             double[] angles = angleSystemModel.getAngles();
 
             for (int i = 0; i < 6; i++) {
-                LineSegment s = new LineSegment();
-                s.set(OritaCalc.lineSegment_rotate(startingSegment, angles[i], 1.0));
+                LineSegment s = OritaCalc.lineSegment_rotate(startingSegment, angles[i], 1.0);
                 s.setActive(LineSegment.ActiveState.ACTIVE_BOTH_3);
                 candidates.add(s);
                 s.setColor(customAngleColors[i % 3]);

@@ -62,8 +62,7 @@ public class MouseHandlerLengthenCrease extends BaseMouseHandler {
     //マウス操作(ボタンを離したとき)を行う関数
     public void mouseReleased(Point p0) {
         Point p = d.getCamera().TV2object(p0);
-        LineSegment closestLineSegment = new LineSegment();
-        closestLineSegment.set(d.getClosestLineSegment(p));
+        LineSegment closestLineSegment = new LineSegment(d.getClosestLineSegment(p));
 
         if (d.getLineStep().size() == 1) {
             d.getLineStep().get(0).setB(p);
@@ -104,8 +103,7 @@ public class MouseHandlerLengthenCrease extends BaseMouseHandler {
             }
             if (entyou_kouho_nbox.getTotal() >= 0) {
                 for (int i = 2; i <= entyou_kouho_nbox.getTotal() + 1; i++) {
-                    LineSegment s = new LineSegment();
-                    s.set(entyou_kouho_nbox.getValue(i - 1));
+                    LineSegment s = new LineSegment(entyou_kouho_nbox.getValue(i - 1));
                     s.setColor(LineColor.GREEN_6);
 
                     d.lineStepAdd(s);
@@ -170,14 +168,13 @@ public class MouseHandlerLengthenCrease extends BaseMouseHandler {
 
                     int sousuu_old = d.getFoldLineSet().getTotal();//(1)
                     for (int i = 1; i <= entyou_kouho_nbox.getTotal(); i++) {
-                        LineSegment moto_no_sen = new LineSegment();
-                        moto_no_sen.set(entyou_kouho_nbox.getValue(i));
+                        LineSegment moto_no_sen = new LineSegment(entyou_kouho_nbox.getValue(i));
                         Point p_point = OritaCalc.findIntersection(moto_no_sen, d.getLineStep().get(0));
 
                         if (p_point.distance(moto_no_sen.getA()) < p_point.distance(moto_no_sen.getB())) {
                             moto_no_sen.a_b_swap();
                         }
-                        addLineSegment.set(OritaCalc.extendToIntersectionPoint_2(d.getFoldLineSet(), moto_no_sen));
+                        addLineSegment = OritaCalc.extendToIntersectionPoint_2(d.getFoldLineSet(), moto_no_sen);
 
 
                         if (Epsilon.high.gt0(addLineSegment.determineLength())) {

@@ -58,7 +58,6 @@ public class MouseHandlerDrawCreaseSymmetric extends BaseMouseHandlerInputRestri
 
     //マウス操作(mouseMode==12鏡映モード　でボタンを離したとき)を行う関数----------------------------------------------------
     public void mouseReleased(Point p0) {
-        LineSegment adds = new LineSegment();
         if (d.getLineStep().size() == 2) {
             canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.NORMAL_0);//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
             int old_sousuu = d.getFoldLineSet().getTotal();
@@ -66,7 +65,7 @@ public class MouseHandlerDrawCreaseSymmetric extends BaseMouseHandlerInputRestri
             for (int i = 1; i <= d.getFoldLineSet().getTotal(); i++) {
                 LineSegment s = d.getFoldLineSet().get(i);
                 if (s.getSelected() == 2) {
-                    adds.set(OritaCalc.findLineSymmetryLineSegment(s, d.getLineStep().get(0)));
+                    LineSegment adds = OritaCalc.findLineSymmetryLineSegment(s, d.getLineStep().get(0));
                     adds.setColor(s.getColor());
 
                     d.getFoldLineSet().addLine(adds);

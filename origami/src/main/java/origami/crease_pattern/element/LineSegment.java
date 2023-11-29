@@ -20,35 +20,27 @@ public class LineSegment implements Serializable, Cloneable {
 
     //コンストラクタ
     public LineSegment() {
-        a = new Point(0.0, 0.0);
-        b = new Point(0.0, 0.0);
-        active = ActiveState.INACTIVE_0;
-        color = LineColor.BLACK_0;
-        selected = 0;
+        this(new Point(0,0), new Point(0,0));
     }
 
     public LineSegment(Point t1, Point t2) {
-        a = t1;
-        b = t2;
-        active = ActiveState.INACTIVE_0;
-        color = LineColor.BLACK_0;
-        selected = 0;
+        this(t1, t2, LineColor.BLACK_0, ActiveState.INACTIVE_0);
     }
 
     public LineSegment(Point t1, Point t2, LineColor color) {
-        a = t1;
-        b = t2;
-        active = ActiveState.INACTIVE_0;
+        this(t1, t2, color, ActiveState.INACTIVE_0);
+    }
+
+    public LineSegment(Point p1, Point p2, LineColor color, ActiveState active){
+        a = p1;
+        b = p2;
+        this.active = active;
         this.color = color;
         selected = 0;
     }
 
     public LineSegment(double i1, double i2, double i3, double i4) {
-        a = new Point(i1, i2);
-        b = new Point(i3, i4);
-        active = ActiveState.INACTIVE_0;
-        color = LineColor.BLACK_0;
-        selected = 0;
+        this(new Point(i1, i2), new Point(i3, i4));
     }
 
     public LineSegment(LineSegment s0){
@@ -67,17 +59,6 @@ public class LineSegment implements Serializable, Cloneable {
         active = ActiveState.INACTIVE_0;
         color = LineColor.BLACK_0;
         selected = 0;
-    }
-
-    //-------------------------------------------
-    public void set(LineSegment s) {
-        a = s.getA();
-        b = s.getB();
-        active = s.getActive();
-        color = s.getColor();
-        selected = s.getSelected();
-        setCustomized(s.getCustomized());
-        setCustomizedColor(s.getCustomizedColor());
     }
 
     //----------

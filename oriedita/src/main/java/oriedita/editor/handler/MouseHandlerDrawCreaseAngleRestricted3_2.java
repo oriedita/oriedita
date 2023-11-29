@@ -113,9 +113,9 @@ public class MouseHandlerDrawCreaseAngleRestricted3_2 extends BaseMouseHandlerIn
         }
 
         if (d.getLineStep().size() == 2 + (honsuu)) {
-            LineSegment closest_step_lineSegment = new LineSegment(100000.0, 100000.0, 100000.0, 100000.0 + Epsilon.UNKNOWN_01); //マウス最寄のstep線分(線分追加のための準備をするための線分)。なお、ここで宣言する必要はないので、どこで宣言すべきか要検討20161113
 
-            closest_step_lineSegment.set(d.get_moyori_step_lineSegment(p, 3, 2 + (honsuu)));
+            //マウス最寄のstep線分(線分追加のための準備をするための線分)。なお、ここで宣言する必要はないので、どこで宣言すべきか要検討20161113
+            LineSegment closest_step_lineSegment = new LineSegment(d.getClosestLineStepSegment(p, 3, 2 + (honsuu)));
             if (OritaCalc.determineLineSegmentDistance(p, closest_step_lineSegment) >= d.getSelectionDistance()) {
                 d.getLineStep().clear();
                 return;
@@ -124,8 +124,7 @@ public class MouseHandlerDrawCreaseAngleRestricted3_2 extends BaseMouseHandlerIn
             if (OritaCalc.determineLineSegmentDistance(p, closest_step_lineSegment) < d.getSelectionDistance()) {
                 Point mokuhyou_point = OritaCalc.findProjection(closest_step_lineSegment, p);
 
-                LineSegment closestLineSegment = new LineSegment();
-                closestLineSegment.set(d.getClosestLineSegment(p));
+                LineSegment closestLineSegment = new LineSegment(d.getClosestLineSegment(p));
                 if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.getSelectionDistance()) {//最寄折線が近い場合
                     if (OritaCalc.isLineSegmentParallel(closest_step_lineSegment, closestLineSegment, Epsilon.UNKNOWN_1EN6) == OritaCalc.ParallelJudgement.NOT_PARALLEL) {//最寄折線が最寄step折線と平行の場合は除外
                         Point mokuhyou_point2 = OritaCalc.findIntersection(closest_step_lineSegment, closestLineSegment);

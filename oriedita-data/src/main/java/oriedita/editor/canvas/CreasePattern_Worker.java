@@ -105,7 +105,7 @@ public interface CreasePattern_Worker {
     LineSegment getClosestLineSegment(Point t0);
 
     //------------------------------------------------------
-    LineSegment get_moyori_step_lineSegment(Point t0, int imin, int imax);
+    LineSegment getClosestLineStepSegment(Point t0, int imin, int imax);
 
     //------------------------------
     Circle getClosestCircleMidpoint(Point t0);
@@ -156,7 +156,7 @@ public interface CreasePattern_Worker {
 
     void v_del_all_cc();
 
-    void all_s_step_to_orisen();
+    void addPreviewLinesToCp();
 
     boolean insideToMountain(Point p0a, Point p0b);
 

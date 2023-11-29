@@ -67,16 +67,14 @@ public class MouseHandlerPolygonSetNoCorners extends BaseMouseHandler {
     //マウス操作(mouseMode==29正多角形入力　でボタンを離したとき)を行う関数----------------------------------------------------
     public void mouseReleased(Point p0) {
         if (d.getLineStep().size() == 2) {
-            LineSegment s_tane = new LineSegment();
-            LineSegment s_deki = new LineSegment();
 
 
-            s_tane.set(d.getLineStep().get(0));
+            LineSegment s_tane = new LineSegment(d.getLineStep().get(0));
             s_tane.setColor(d.getLineColor());
             d.addLineSegment(s_tane);
             for (int i = 2; i <= d.getNumPolygonCorners(); i++) {
-                s_deki.set(OritaCalc.lineSegment_rotate(s_tane, (double) (d.getNumPolygonCorners() - 2) * 180.0 / (double) d.getNumPolygonCorners()));
-                s_tane.set(s_deki.getB(), s_deki.getA());
+                LineSegment s_deki = OritaCalc.lineSegment_rotate(s_tane, (double) (d.getNumPolygonCorners() - 2) * 180.0 / (double) d.getNumPolygonCorners());
+                s_tane = new LineSegment(s_deki.getB(), s_deki.getA());
                 s_tane.setColor(d.getLineColor());
                 d.addLineSegment(s_tane);
 

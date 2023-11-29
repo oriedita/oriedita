@@ -4,8 +4,8 @@ public class LineSegmentVoronoi extends LineSegment {
     int voronoiA;
     int voronoiB;
 
-    public LineSegmentVoronoi() {
-        super();
+    public LineSegmentVoronoi(LineSegment ls) {
+        super(ls);
         voronoiA = 0;
         voronoiB = 0;
     }
@@ -28,8 +28,8 @@ public class LineSegmentVoronoi extends LineSegment {
         voronoiB = 0;
     }
 
-    public void set(LineSegmentVoronoi s) {
-        super.set(s);
+    public LineSegmentVoronoi(LineSegmentVoronoi s) {
+        super(s);
         voronoiA = s.getVoronoiA();
         voronoiB = s.getVoronoiB();
     }

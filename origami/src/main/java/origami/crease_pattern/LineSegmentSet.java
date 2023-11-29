@@ -35,8 +35,7 @@ public class LineSegmentSet {
         reset(ss.getNumLineSegments());
 
         for (int i = 0; i < lineSegments.size(); i++) {
-            LineSegment s = lineSegments.get(i);
-            s.set(ss.lineSegments.get(i));
+            lineSegments.set(i, ss.lineSegments.get(i));
         }
     }
 
@@ -80,8 +79,7 @@ public class LineSegmentSet {
         lineSegments.clear();
         for (LineSegment s :
                 memo1.getLineSegments()) {
-            LineSegment s0 = new LineSegment();
-            s0.set(s);
+            LineSegment s0 = new LineSegment(s);
             lineSegments.add(s0);
         }
     }
@@ -112,5 +110,9 @@ public class LineSegmentSet {
             }
         }
         return true;
+    }
+
+    public void set(int i, LineSegment lineSegment) {
+        lineSegments.set(i, lineSegment);
     }
 }

@@ -29,8 +29,7 @@ public class MouseHandlerCreaseMakeAux extends BaseMouseHandlerBoxSelect {
             if (d.getFoldLineSet().closestLineSegmentDistance(p) < d.getSelectionDistance()) {//点pに最も近い線分の番号での、その距離を返す	public double closestLineSegmentDistance(Ten p)
                 LineSegment closestLineSegment = d.getFoldLineSet().closestLineSegmentSearchReversedOrder(p);
                 if (closestLineSegment.getColor().getNumber() < 3) {
-                    LineSegment add_sen = new LineSegment();
-                    add_sen.set(closestLineSegment);
+                    LineSegment add_sen = new LineSegment(closestLineSegment);
                     add_sen.setColor(LineColor.CYAN_3);
 
                     d.getFoldLineSet().deleteLineSegment_vertex(closestLineSegment);

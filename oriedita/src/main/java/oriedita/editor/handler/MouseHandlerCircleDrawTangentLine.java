@@ -42,8 +42,8 @@ public class MouseHandlerCircleDrawTangentLine extends BaseMouseHandler {
 
             d.getCircleStep().add(stepCircle);
         } else if (d.getLineStep().size() > 1) {//			i_egaki_dankai=0;i_circle_drawing_stage=1;
-            LineSegment closest_step_lineSegment = new LineSegment();
-            closest_step_lineSegment.set(d.get_moyori_step_lineSegment(p, 1, d.getLineStep().size()));
+            LineSegment closest_step_lineSegment = new LineSegment(
+                    d.getClosestLineStepSegment(p, 1, d.getLineStep().size()));
 
             if (OritaCalc.determineLineSegmentDistance(p, closest_step_lineSegment) > d.getSelectionDistance()) {
                 return;

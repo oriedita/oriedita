@@ -182,8 +182,7 @@ public class Check4 {
 
         LinkedHashMap<LineSegment, Boolean> littleBigLittleViolations = new LinkedHashMap<>();
         for (int k = 1; k <= nbox.getTotal(); k++) {//kは角度の順番
-            LineSegment copy = new LineSegment();
-            copy.set(nbox.getValue(k));
+            LineSegment copy = new LineSegment(nbox.getValue(k));
 
             if (copy.getA().distance(p) > Epsilon.UNKNOWN_1EN6) {
                 copy.a_b_swap();
@@ -255,8 +254,7 @@ public class Check4 {
                         result = nbox11;
                         break;
                     } else {
-                        LineSegment copy = new LineSegment();
-                        copy.set(nbox.getValue(1));
+                        LineSegment copy = new LineSegment(nbox.getValue(1));
 
                         if (copy.getA().distance(p) > Epsilon.UNKNOWN_1EN6) {
                             copy.a_b_swap();
@@ -353,8 +351,7 @@ public class Check4 {
 
         LinkedHashMap<LineSegment, Boolean> littleBigLittleViolations = new LinkedHashMap<>();
         for (int k = 1; k <= nbox.getTotal(); k++) {//kは角度の順番
-            LineSegment copy = new LineSegment();
-            copy.set(nbox.getValue(k));
+            LineSegment copy = new LineSegment(nbox.getValue(k));
 
             if (copy.getA().distance(p) > Epsilon.UNKNOWN_1EN6) {
                 copy.a_b_swap();
@@ -432,8 +429,7 @@ public class Check4 {
 
                     return nbox1;
                 } else {
-                    LineSegment copy = new LineSegment();
-                    copy.set(nbox0.getValue(k));
+                    LineSegment copy = new LineSegment(nbox0.getValue(k));
 
                     if (copy.getA().distance(p) > Epsilon.UNKNOWN_1EN6) {
                         copy.a_b_swap();
@@ -468,7 +464,6 @@ public class Check4 {
         }
         odd = Math.abs(odd);
         even = Math.abs(even);
-        boolean flat = Math.abs(even - odd) < Epsilon.FLAT;
-        return flat;
+        return Math.abs(even - odd) < Epsilon.FLAT;
     }
 }

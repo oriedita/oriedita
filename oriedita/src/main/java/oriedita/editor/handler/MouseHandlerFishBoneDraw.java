@@ -65,7 +65,7 @@ public class MouseHandlerFishBoneDraw extends BaseMouseHandlerInputRestricted {
 
                             LineSegment adds = new LineSegment(px, py, px - dy, py + dx);
                             if (kouten_ari_nasi(adds) == 1) {
-                                adds.set(d.extendToIntersectionPoint(adds));
+                                adds = d.extendToIntersectionPoint(adds);
                                 adds.setColor(icol_temp);
 
                                 d.addLineSegment(adds);
@@ -75,7 +75,7 @@ public class MouseHandlerFishBoneDraw extends BaseMouseHandlerInputRestricted {
 
                             LineSegment adds2 = new LineSegment(px, py, px + dy, py - dx);
                             if (kouten_ari_nasi(adds2) == 1) {
-                                adds2.set(d.extendToIntersectionPoint(adds2));
+                                adds2 = d.extendToIntersectionPoint(adds2);
                                 adds2.setColor(icol_temp);
 
                                 d.addLineSegment(adds2);
@@ -102,8 +102,7 @@ public class MouseHandlerFishBoneDraw extends BaseMouseHandlerInputRestricted {
     }
 
     public int kouten_ari_nasi(LineSegment s0) {//If s0 is extended from the point a to the b direction and intersects with another polygonal line, 0 is returned if it is not 1. The intersecting line segments at the a store have no intersection with this function.
-        LineSegment add_line = new LineSegment();
-        add_line.set(s0);
+        LineSegment add_line = new LineSegment(s0);
         StraightLine tyoku1 = new StraightLine(add_line.getA(), add_line.getB());
         StraightLine.Intersection i_intersection_flg;
         for (int i = 1; i <= d.getFoldLineSet().getTotal(); i++) {

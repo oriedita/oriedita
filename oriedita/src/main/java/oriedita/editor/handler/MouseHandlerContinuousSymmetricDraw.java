@@ -87,8 +87,7 @@ public class MouseHandlerContinuousSymmetricDraw extends BaseMouseHandlerInputRe
             return;
         }
 
-        LineSegment s = new LineSegment();
-        s.set(toolbox.getLengthenUntilIntersectionLineSegment_new());
+        LineSegment s = new LineSegment(toolbox.getLengthenUntilIntersectionLineSegment_new());
         d.lineStepAdd(s);
         s.setActive(LineSegment.ActiveState.ACTIVE_BOTH_3);
         if (start != null && Epsilon.high.eq0(start.distance(s.getB()))) {
@@ -107,8 +106,8 @@ public class MouseHandlerContinuousSymmetricDraw extends BaseMouseHandlerInputRe
 
         //最も近い交点が折線とＸ字型の場合無条件に種を生成し、散布。
         if (toolbox.getLengthenUntilIntersectionFlg_new() == StraightLine.Intersection.INTERSECT_X_1) {
-            LineSegment kousaten_made_nobasi_saisyono_lineSegment = new LineSegment();
-            kousaten_made_nobasi_saisyono_lineSegment.set(toolbox.getLengthenUntilIntersectionFirstLineSegment_new());
+            LineSegment kousaten_made_nobasi_saisyono_lineSegment = new LineSegment(
+                    toolbox.getLengthenUntilIntersectionFirstLineSegment_new());
             Point new_a = toolbox.getLengthenUntilIntersectionPoint_new();//Ten new_aは最も近い交点
             Point new_b = OritaCalc.findLineSymmetryPoint(kousaten_made_nobasi_saisyono_lineSegment.getA(), kousaten_made_nobasi_saisyono_lineSegment.getB(), a);//２つの点t1,t2を通る直線に関して、点pの対照位置にある点を求める public Ten oc.sentaisyou_ten_motome(Ten t1,Ten t2,Ten p){
 
@@ -141,8 +140,8 @@ public class MouseHandlerContinuousSymmetricDraw extends BaseMouseHandlerInputRe
                 StraightLine tyoku2 = new StraightLine(t_m_s_nbox.getValue(1));
                 intersection = tyoku2.lineSegment_intersect_reverse_detail(t_m_s_nbox.getValue(2));
                 if (intersection == StraightLine.Intersection.INCLUDED_3) {
-                    LineSegment kousaten_made_nobasi_saisyono_lineSegment = new LineSegment();
-                    kousaten_made_nobasi_saisyono_lineSegment.set(toolbox.getLengthenUntilIntersectionFirstLineSegment_new());
+                    LineSegment kousaten_made_nobasi_saisyono_lineSegment = new LineSegment(
+                            toolbox.getLengthenUntilIntersectionFirstLineSegment_new());
 
                     Point new_a = toolbox.getLengthenUntilIntersectionPoint_new();//Ten new_aは最も近い交点
                     Point new_b = OritaCalc.findLineSymmetryPoint(kousaten_made_nobasi_saisyono_lineSegment.getA(), kousaten_made_nobasi_saisyono_lineSegment.getB(), a);//２つの点t1,t2を通る直線に関して、点pの対照位置にある点を求める public Ten oc.sentaisyou_ten_motome(Ten t1,Ten t2,Ten p){
@@ -160,8 +159,8 @@ public class MouseHandlerContinuousSymmetricDraw extends BaseMouseHandlerInputRe
                     StraightLine tyoku2 = new StraightLine(t_m_s_nbox.getValue(2));
                     intersection = tyoku2.lineSegment_intersect_reverse_detail(t_m_s_nbox.getValue(3));
                     if (intersection == StraightLine.Intersection.INCLUDED_3) {
-                        LineSegment kousaten_made_nobasi_saisyono_lineSegment = new LineSegment();
-                        kousaten_made_nobasi_saisyono_lineSegment.set(toolbox.getLengthenUntilIntersectionFirstLineSegment_new());
+                        LineSegment kousaten_made_nobasi_saisyono_lineSegment = new LineSegment(
+                                toolbox.getLengthenUntilIntersectionFirstLineSegment_new());
 
                         Point new_a = toolbox.getLengthenUntilIntersectionPoint_new();//Ten new_aは最も近い交点
                         Point new_b = OritaCalc.findLineSymmetryPoint(kousaten_made_nobasi_saisyono_lineSegment.getA(), kousaten_made_nobasi_saisyono_lineSegment.getB(), a);//２つの点t1,t2を通る直線に関して、点pの対照位置にある点を求める public Ten oc.sentaisyou_ten_motome(Ten t1,Ten t2,Ten p){
@@ -176,8 +175,8 @@ public class MouseHandlerContinuousSymmetricDraw extends BaseMouseHandlerInputRe
                     StraightLine tyoku2 = new StraightLine(t_m_s_nbox.getValue(3));
                     intersection = tyoku2.lineSegment_intersect_reverse_detail(t_m_s_nbox.getValue(1));
                     if (intersection == StraightLine.Intersection.INCLUDED_3) {
-                        LineSegment kousaten_made_nobasi_saisyono_lineSegment = new LineSegment();
-                        kousaten_made_nobasi_saisyono_lineSegment.set(toolbox.getLengthenUntilIntersectionFirstLineSegment_new());
+                        LineSegment kousaten_made_nobasi_saisyono_lineSegment = new LineSegment(
+                                toolbox.getLengthenUntilIntersectionFirstLineSegment_new());
 
                         Point new_a = toolbox.getLengthenUntilIntersectionPoint_new();//Ten new_aは最も近い交点
                         Point new_b = OritaCalc.findLineSymmetryPoint(kousaten_made_nobasi_saisyono_lineSegment.getA(), kousaten_made_nobasi_saisyono_lineSegment.getB(), a);//２つの点t1,t2を通る直線に関して、点pの対照位置にある点を求める public Ten oc.sentaisyou_ten_motome(Ten t1,Ten t2,Ten p){
@@ -192,8 +191,8 @@ public class MouseHandlerContinuousSymmetricDraw extends BaseMouseHandlerInputRe
                     StraightLine tyoku2 = new StraightLine(t_m_s_nbox.getValue(1));
                     intersection = tyoku2.lineSegment_intersect_reverse_detail(t_m_s_nbox.getValue(2));
                     if (intersection == StraightLine.Intersection.INCLUDED_3) {
-                        LineSegment kousaten_made_nobasi_saisyono_lineSegment = new LineSegment();
-                        kousaten_made_nobasi_saisyono_lineSegment.set(toolbox.getLengthenUntilIntersectionFirstLineSegment_new());
+                        LineSegment kousaten_made_nobasi_saisyono_lineSegment = new LineSegment(
+                                toolbox.getLengthenUntilIntersectionFirstLineSegment_new());
 
                         Point new_a = toolbox.getLengthenUntilIntersectionPoint_new();//Ten new_aは最も近い交点
                         Point new_b = OritaCalc.findLineSymmetryPoint(kousaten_made_nobasi_saisyono_lineSegment.getA(), kousaten_made_nobasi_saisyono_lineSegment.getB(), a);//２つの点t1,t2を通る直線に関して、点pの対照位置にある点を求める public Ten oc.sentaisyou_ten_motome(Ten t1,Ten t2,Ten p){

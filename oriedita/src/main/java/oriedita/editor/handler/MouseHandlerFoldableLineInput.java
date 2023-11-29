@@ -42,8 +42,7 @@ public class MouseHandlerFoldableLineInput extends BaseMouseHandlerInputRestrict
                     super.mouseMoved(p0);
                     break;
                 case STEP_1: {
-                    LineSegment closestLineSegment = new LineSegment();
-                    closestLineSegment.set(d.get_moyori_step_lineSegment(p, 1, d.getLineStep().size()));
+                    LineSegment closestLineSegment = new LineSegment(d.getClosestLineStepSegment(p, 1, d.getLineStep().size()));
                     if ((d.getLineStep().size() >= 2) && (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.getSelectionDistance())) {
                         d.getLineCandidate().clear();
                         d.getLineCandidate().add(closestLineSegment);
@@ -85,10 +84,9 @@ public class MouseHandlerFoldableLineInput extends BaseMouseHandlerInputRestrict
                         return;
                     }
 
-                    LineSegment closestLineSegment = new LineSegment();
-                    closestLineSegment.set(d.getClosestLineSegment(p));
-                    LineSegment moyori_step_lineSegment = new LineSegment();
-                    moyori_step_lineSegment.set(d.get_moyori_step_lineSegment(p, 1, d.getLineStep().size()));
+                    LineSegment closestLineSegment = new LineSegment(d.getClosestLineSegment(p));
+                    LineSegment moyori_step_lineSegment = new LineSegment(
+                            d.getClosestLineStepSegment(p, 1, d.getLineStep().size()));
                     if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) >= d.getSelectionDistance()) {//最寄の既存折線が遠い場合
                         if (OritaCalc.determineLineSegmentDistance(p, moyori_step_lineSegment) < d.getSelectionDistance()) {//最寄のstep_senbunが近い場合
                             return;
@@ -215,13 +213,11 @@ public class MouseHandlerFoldableLineInput extends BaseMouseHandlerInputRestrict
                 return;
             }
             case STEP_1: {
-                LineSegment closestLineSegment = new LineSegment();
-                closestLineSegment.set(d.get_moyori_step_lineSegment(p, 1, d.getLineStep().size()));
+                LineSegment closestLineSegment = new LineSegment(d.getClosestLineStepSegment(p, 1, d.getLineStep().size()));
                 if ((d.getLineStep().size() >= 2) && (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.getSelectionDistance())) {
                     i_step_for_copy_4p = CreasePattern_Worker.FourPointStep.STEP_2;
                     d.getLineStep().clear();
-                    LineSegment s = new LineSegment();
-                    s.set(closestLineSegment);
+                    LineSegment s = new LineSegment(closestLineSegment);
                     d.lineStepAdd(s);
                     return;
                 }
@@ -262,11 +258,10 @@ public class MouseHandlerFoldableLineInput extends BaseMouseHandlerInputRestrict
                     return;
                 }
 
-                LineSegment closestLineSegment = new LineSegment();
-                closestLineSegment.set(d.getClosestLineSegment(p));
+                LineSegment closestLineSegment = new LineSegment(d.getClosestLineSegment(p));
 
-                LineSegment moyori_step_lineSegment = new LineSegment();
-                moyori_step_lineSegment.set(d.get_moyori_step_lineSegment(p, 1, d.getLineStep().size()));
+                LineSegment moyori_step_lineSegment = new LineSegment(
+                        d.getClosestLineStepSegment(p, 1, d.getLineStep().size()));
                 if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) >= d.getSelectionDistance()) {//最寄の既存折線が遠い場合
                     if (OritaCalc.determineLineSegmentDistance(p, moyori_step_lineSegment) < d.getSelectionDistance()) {//最寄のstep_senbunが近い場合
                         return;
@@ -279,8 +274,7 @@ public class MouseHandlerFoldableLineInput extends BaseMouseHandlerInputRestrict
                 }
 
                 if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.getSelectionDistance()) {//最寄の既存折線が近い場合
-                    LineSegment s = new LineSegment();
-                    s.set(closestLineSegment);
+                    LineSegment s = new LineSegment(closestLineSegment);
                     s.setColor(LineColor.GREEN_6);
                     d.lineStepAdd(s);
                     Point kousa_point = OritaCalc.findIntersection(d.getLineStep().get(0), d.getLineStep().get(1));

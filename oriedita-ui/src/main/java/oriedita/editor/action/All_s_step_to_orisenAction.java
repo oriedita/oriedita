@@ -29,7 +29,7 @@ public class All_s_step_to_orisenAction extends AbstractOrieditaAction {
         Logger.info("lineStep_Size = " + mainCreasePatternWorker.getLineStep().size());
         Logger.info("candidate_size = " + mainCreasePatternWorker.getCandidateSize());
 
-        mainCreasePatternWorker.all_s_step_to_orisen();
+        mainCreasePatternWorker.addPreviewLinesToCp();
         mainCreasePatternWorker.getLineStep().clear();
     }
 }
