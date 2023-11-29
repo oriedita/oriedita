@@ -43,10 +43,10 @@ public abstract class BaseMouseHandlerBoxSelect extends BaseMouseHandler {
         Point p19_c = d.getCamera().TV2object(p0);
         Point p19_d = d.getCamera().TV2object(p19_4);
 
-        lines[0] = new LineSegment(p19_a, p19_b);
-        lines[1] = new LineSegment(p19_b, p19_c);
-        lines[2] = new LineSegment(p19_c, p19_d);
-        lines[3] = new LineSegment(p19_d, p19_a);
+        lines[0] = lines[0].withCoordinates(p19_a, p19_b);
+        lines[1] = lines[1].withCoordinates(p19_b, p19_c);
+        lines[2] = lines[2].withCoordinates(p19_c, p19_d);
+        lines[3] = lines[3].withCoordinates(p19_d, p19_a);
     }
 
     @Override

@@ -238,7 +238,7 @@ public class ButtonServiceImpl implements ButtonService {
     private void setAction(AbstractButton button, String key) {
         ActionType type = ActionType.fromAction(key);
 
-        if (type != null) {
+        if (type != null && actionService != null) {
             String text = button.getText();
             actionService.getAllRegisteredActions().stream()
                     .filter(a -> a.getActionType().equals(type))
@@ -381,6 +381,10 @@ public class ButtonServiceImpl implements ButtonService {
     }
 
     private void addUIKeystroke(String key, KeyStroke keyStroke) {
+        if (GraphicsEnvironment.isHeadless() || actionService == null) {
+            Logger.warn("running in headless mode or testing, skipping ButtonServiceImpl.addUIKeystroke");
+            return;
+        }
         Action action = actionService.getAllRegisteredActions().stream()
                 .filter(a -> Objects.equals(a.getActionType().action(), key))
                 .findFirst().orElse(null);
