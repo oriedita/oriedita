@@ -61,20 +61,6 @@ public class LineSegment implements Serializable, Cloneable {
                 s0.getCustomized(), s0.getCustomizedColor());
     }
 
-    public void reset() {
-        a = new Point(0.0, 0.0);
-        b = new Point(0.0, 0.0);
-        active = ActiveState.INACTIVE_0;
-        color = LineColor.BLACK_0;
-        selected = 0;
-    }
-
-    //----------
-    public void set(double ax, double ay, double bx, double by) {
-        a = new Point(ax, ay);
-        b = new Point(bx, by);
-    }
-
     public LineSegment withCoordinates(double ax, double ay, double bx, double by){
         Point a = new Point(ax, ay);
         Point b = new Point(bx, by);
@@ -85,6 +71,10 @@ public class LineSegment implements Serializable, Cloneable {
         return new LineSegment(a, b,
                 this.getColor(), this.getActive(),
                 this.getSelected(), this.getCustomized(), this.getCustomizedColor());
+    }
+
+    public LineSegment withSwappedCoordinates() {
+        return withCoordinates(getB(), getA());
     }
 
     public LineSegment withB(Point b) {
@@ -154,13 +144,6 @@ public class LineSegment implements Serializable, Cloneable {
     //Deactivate this line segment
     public void deactivate() {
         active = ActiveState.INACTIVE_0;
-    }
-
-    //Exchange the coordinates of both end points a and b
-    public void a_b_swap() {
-        Point t_temp = a;
-        a = b;
-        b = t_temp;
     }
 
 

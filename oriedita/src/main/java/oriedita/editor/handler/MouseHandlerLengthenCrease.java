@@ -191,7 +191,7 @@ public class MouseHandlerLengthenCrease extends BaseMouseHandler {
                     Point p_point = OritaCalc.findIntersection(lineToExtend, selectionLine);
 
                     if (p_point.distance(lineToExtend.getA()) < p_point.distance(lineToExtend.getB())) {
-                        lineToExtend.a_b_swap();
+                        lineToExtend = lineToExtend.withSwappedCoordinates();
                     }
                     addLineSegment = OritaCalc.extendToIntersectionPoint_2(lineSet, lineToExtend);
                     addExtendedLineSegment(lineSet, addLineSegment, lineToExtend);

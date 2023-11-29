@@ -107,8 +107,7 @@ public class MouseHandlerFoldableLineDraw extends BaseMouseHandler {
             moyori_point_memo = closest_point;
             if (p.distance(moyori_point_memo) > d.getSelectionDistance()) {
                 operationMode = MouseMode.DRAW_CREASE_FREE_1;
-
-                d.getLineStep().get(0).a_b_swap();
+                d.getLineStep().set(0, d.getLineStep().get(0).withSwappedCoordinates());
                 d.getLineStep().get(0).setColor(d.getLineColor());
                 operationModeChangeable = false;
             }

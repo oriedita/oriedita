@@ -46,13 +46,6 @@ public class LineSegmentVoronoi extends LineSegment {
         return v;
     }
 
-    @Override
-    public void reset() {
-        super.reset();
-        voronoiA = 0;
-        voronoiB = 0;
-    }
-
     public int getVoronoiA() {
         return voronoiA;
     }

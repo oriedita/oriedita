@@ -60,7 +60,7 @@ public abstract class BaseMouseHandlerLineSelect extends BaseMouseHandler {
     }
 
     private void snapLine() {
-        selectionLine.setA(SnappingUtil.snapToClosePointInActiveAngleSystem(
+        selectionLine = selectionLine.withA(SnappingUtil.snapToClosePointInActiveAngleSystem(
                 d, selectionLine.getB(), selectionLine.getA(),
                 angleSystemModel.getCurrentAngleSystemDivider(), angleSystemModel.getAngles()));
 

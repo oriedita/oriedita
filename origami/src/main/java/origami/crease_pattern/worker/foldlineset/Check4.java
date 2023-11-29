@@ -185,7 +185,7 @@ public class Check4 {
             LineSegment copy = new LineSegment(nbox.getValue(k));
 
             if (copy.getA().distance(p) > Epsilon.UNKNOWN_1EN6) {
-                copy.a_b_swap();
+                copy = copy.withSwappedCoordinates();
             }
             littleBigLittleViolations.put(copy, false);
         }
@@ -257,7 +257,7 @@ public class Check4 {
                         LineSegment copy = new LineSegment(nbox.getValue(1));
 
                         if (copy.getA().distance(p) > Epsilon.UNKNOWN_1EN6) {
-                            copy.a_b_swap();
+                            copy = copy.withSwappedCoordinates();
                         }
                         littleBigLittleViolations.put(copy, true);
                     }
@@ -354,7 +354,7 @@ public class Check4 {
             LineSegment copy = new LineSegment(nbox.getValue(k));
 
             if (copy.getA().distance(p) > Epsilon.UNKNOWN_1EN6) {
-                copy.a_b_swap();
+                copy = copy.withSwappedCoordinates();
             }
             littleBigLittleViolations.put(copy, false);
         }
@@ -432,7 +432,7 @@ public class Check4 {
                     LineSegment copy = new LineSegment(nbox0.getValue(k));
 
                     if (copy.getA().distance(p) > Epsilon.UNKNOWN_1EN6) {
-                        copy.a_b_swap();
+                        copy = copy.withSwappedCoordinates();
                     }
                     violating.put(copy, true);
                 }
