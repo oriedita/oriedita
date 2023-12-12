@@ -315,7 +315,7 @@ public class LeftPanel {
         buttonService.setIcon(gridYSqrtLabel, "labelSqrt");
         buttonService.setIcon(replaceLabel, "labelReplace");
 
-
+        // Disable switchReplaceButton if "Any" or "M & V" is active
         switchReplaceButton.setEnabled(CustomLineTypes.from(fromLineDropBox.getSelectedIndex() - 1) != CustomLineTypes.ANY &&
                 CustomLineTypes.from(fromLineDropBox.getSelectedIndex() - 1) != CustomLineTypes.MANDV);
 
@@ -348,6 +348,7 @@ public class LeftPanel {
         fromLineDropBox.addActionListener(e -> {
             applicationModel.setCustomFromLineType(CustomLineTypes.from(fromLineDropBox.getSelectedIndex() - 1));
 
+            // Disable switchReplaceButton if "Any" or "M & V" is active
             switchReplaceButton.setEnabled(CustomLineTypes.from(fromLineDropBox.getSelectedIndex() - 1) != CustomLineTypes.ANY &&
                     CustomLineTypes.from(fromLineDropBox.getSelectedIndex() - 1) != CustomLineTypes.MANDV);
         });
@@ -374,9 +375,11 @@ public class LeftPanel {
             CustomLineTypes tempFrom = applicationModel.getCustomFromLineType();
             CustomLineTypes tempTo = applicationModel.getCustomToLineType();
 
+            // Set from line type
             fromLineDropBox.setSelectedIndex(tempTo.getNumber() + 1);
             applicationModel.setCustomFromLineType(CustomLineTypes.from(fromLineDropBox.getSelectedIndex() - 1));
 
+            // Set to line type
             if (tempFrom == CustomLineTypes.EGDE) {
                 toLineDropBox.setSelectedIndex(tempFrom.getNumber());
                 applicationModel.setCustomToLineType(CustomLineTypes.from(toLineDropBox.getSelectedIndex()));
