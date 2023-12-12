@@ -170,6 +170,7 @@ public class LeftPanel {
     private JComboBox<String> toLineDropBox;
     private JLabel replaceLabel;
     private JScrollPane scrollPane1;
+    private JButton switchReplaceButton;
 
     private HashMap<MouseMode, JButton> selectionTransformationToolLookup;
 
@@ -255,6 +256,7 @@ public class LeftPanel {
         buttonService.registerButton(del_l_typeButton, "del_l_typeAction");
         buttonService.registerButton(trimBranchesButton, "trimBranchesAction");
         buttonService.registerButton(replace_lineButton, "replace_lineAction");
+        buttonService.registerButton(switchReplaceButton, "switchReplaceAction");
         buttonService.registerButton(zen_yama_tani_henkanButton, "zen_yama_tani_henkanAction");
         buttonService.registerButton(senbun_henkan2Button, "senbun_henkan2Action");
         buttonService.registerButton(senbun_henkanButton, "senbun_henkanAction");
@@ -314,6 +316,9 @@ public class LeftPanel {
         buttonService.setIcon(replaceLabel, "labelReplace");
 
 
+        switchReplaceButton.setEnabled(CustomLineTypes.from(fromLineDropBox.getSelectedIndex() - 1) != CustomLineTypes.ANY &&
+                CustomLineTypes.from(fromLineDropBox.getSelectedIndex() - 1) != CustomLineTypes.MANDV);
+
         undoRedo.addUndoActionListener(e -> mainCreasePatternWorker.undo());
         undoRedo.addRedoActionListener(e -> mainCreasePatternWorker.redo());
 //        drawCreaseFreeButton.setAction(drawCreaseFreeAction);
@@ -332,12 +337,8 @@ public class LeftPanel {
                 getData(applicationModel);
             }
         });
-        senbun_b_nyuryokuButton.addActionListener(e -> {
-            getData(applicationModel);
-        });
-        delTypeDropBox.addActionListener(e -> {
-            applicationModel.setDelLineType(CustomLineTypes.from(delTypeDropBox.getSelectedIndex() - 1));
-        });
+        senbun_b_nyuryokuButton.addActionListener(e -> getData(applicationModel));
+        delTypeDropBox.addActionListener(e -> applicationModel.setDelLineType(CustomLineTypes.from(delTypeDropBox.getSelectedIndex() - 1)));
         delTypeDropBox.addPopupMenuListener(new PopupMenuAdapter() {
             @Override
             public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
@@ -346,6 +347,9 @@ public class LeftPanel {
         });
         fromLineDropBox.addActionListener(e -> {
             applicationModel.setCustomFromLineType(CustomLineTypes.from(fromLineDropBox.getSelectedIndex() - 1));
+
+            switchReplaceButton.setEnabled(CustomLineTypes.from(fromLineDropBox.getSelectedIndex() - 1) != CustomLineTypes.ANY &&
+                    CustomLineTypes.from(fromLineDropBox.getSelectedIndex() - 1) != CustomLineTypes.MANDV);
         });
         fromLineDropBox.addPopupMenuListener(new PopupMenuAdapter() {
             @Override
@@ -364,6 +368,21 @@ public class LeftPanel {
             @Override
             public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
                 replace_lineButton.doClick();
+            }
+        });
+        switchReplaceButton.addActionListener(e -> {
+            CustomLineTypes tempFrom = applicationModel.getCustomFromLineType();
+            CustomLineTypes tempTo = applicationModel.getCustomToLineType();
+
+            fromLineDropBox.setSelectedIndex(tempTo.getNumber() + 1);
+            applicationModel.setCustomFromLineType(CustomLineTypes.from(fromLineDropBox.getSelectedIndex() - 1));
+
+            if (tempFrom == CustomLineTypes.EGDE) {
+                toLineDropBox.setSelectedIndex(tempFrom.getNumber());
+                applicationModel.setCustomToLineType(CustomLineTypes.from(toLineDropBox.getSelectedIndex()));
+            } else {
+                toLineDropBox.setSelectedIndex(tempFrom.getNumber() - 1);
+                applicationModel.setCustomToLineType(CustomLineTypes.from(toLineDropBox.getSelectedIndex() + 1));
             }
         });
         selectPersistentCheckBox.addActionListener(e -> applicationModel.setSelectPersistent(selectPersistentCheckBox.isSelected()));
@@ -729,7 +748,7 @@ public class LeftPanel {
         senbun_henkanButton.setIcon(new ImageIcon(getClass().getResource("/ppp/senbun_henkan.png")));
         panel7.add(senbun_henkanButton, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         final JPanel panel8 = new JPanel();
-        panel8.setLayout(new GridLayoutManager(1, 4, new Insets(0, 0, 0, 0), 1, 1));
+        panel8.setLayout(new GridLayoutManager(1, 5, new Insets(0, 0, 0, 0), 1, 1));
         panel1.add(panel8, new GridConstraints(10, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         replace_lineButton = new JButton();
         replace_lineButton.setText("Button");
@@ -755,6 +774,9 @@ public class LeftPanel {
         defaultComboBoxModel3.addElement("A");
         toLineDropBox.setModel(defaultComboBoxModel3);
         panel8.add(toLineDropBox, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        switchReplaceButton = new JButton();
+        switchReplaceButton.setText("⇆");
+        panel8.add(switchReplaceButton, new GridConstraints(0, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         in_L_col_changeButton = new JButton();
         in_L_col_changeButton.setActionCommand("in_L_col_changeAction");
         in_L_col_changeButton.setIcon(new ImageIcon(getClass().getResource("/ppp/in_L_col_change.png")));
