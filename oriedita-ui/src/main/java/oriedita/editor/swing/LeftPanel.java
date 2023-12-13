@@ -173,6 +173,7 @@ public class LeftPanel {
     private JButton switchReplaceButton;
 
     private HashMap<MouseMode, JButton> selectionTransformationToolLookup;
+    private boolean isReplaceHold;
 
     public double convertAngle(double angle) {
         if (angle >= 0) return angle % 180;
@@ -214,6 +215,8 @@ public class LeftPanel {
         this.selectionTransformationToolLookup.put(MouseMode.CREASE_COPY_22, copyButton);
         this.selectionTransformationToolLookup.put(MouseMode.CREASE_MOVE_4P_31, move2p2pButton);
         this.selectionTransformationToolLookup.put(MouseMode.CREASE_COPY_4P_32, copy2p2pButton);
+
+        isReplaceHold = false;
     }
 
     public void init() {
@@ -1030,7 +1033,7 @@ public class LeftPanel {
             // The look and feel is not set yet, so it must be read from the applicationModel
             boolean isDark = LookAndFeelUtil.determineLafDark(data.getLaf());
 
-            for (JButton button : Arrays.asList(colBlackButton, colRedButton, colBlueButton, colCyanButton, senbun_henkan2Button)) {
+            for (JButton button : Arrays.asList(colBlackButton, colRedButton, colBlueButton, colCyanButton)) {
                 button.setForeground(Colors.restore(button.getForeground(), isDark));
                 button.setBackground(Colors.restore(button.getBackground(), isDark));
             }
@@ -1157,19 +1160,14 @@ public class LeftPanel {
             }
         }
 
-        if (e.getPropertyName() == null || e.getPropertyName().equals("mouseMode") || e.getPropertyName().equals("foldLineAdditionalInputMode")) {
-            Color buttonBg = UIManager.getColor("Button.background");
-            Color buttonFg = UIManager.getColor("Button.foreground");
-            senbun_henkan2Button.setBackground(buttonBg);
-            senbun_henkan2Button.setForeground(buttonFg);
+        if (canvasModel.getMouseMode() == MouseMode.REPLACE_LINE_TYPE_SELECT_72 && switchReplaceButton.isEnabled()) {
+            if (canvasModel.getToggleLineColor() && !isReplaceHold || !canvasModel.getToggleLineColor() && isReplaceHold) {
+                CustomLineTypes temp = applicationModel.getCustomFromLineType();
 
-            switch (data.getMouseMode()) {
-                case CREASE_TOGGLE_MV_58:
-                    senbun_henkan2Button.setBackground(Colors.get(new Color(138, 43, 226)));
-                    senbun_henkan2Button.setForeground(Colors.get(Color.white));
-                    break;
-                default:
-                    break;
+                applicationModel.setCustomFromLineType(applicationModel.getCustomToLineType());
+                applicationModel.setCustomToLineType(temp);
+
+                isReplaceHold = !isReplaceHold;
             }
         }
     }
