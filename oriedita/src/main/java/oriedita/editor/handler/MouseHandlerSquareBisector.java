@@ -34,7 +34,7 @@ public class MouseHandlerSquareBisector extends BaseMouseHandlerInputRestricted 
         if ((d.getLineStep().isEmpty() || d.getLineStep().get(0).determineLength() > 0)) {
             // Click 2 lines to form bisect and then a destination line
             // Only in first line click, no point is allowed within the selection radius
-            if (d.getLineStep().size() == 0 && d.getClosestPoint(p).distance(p) > d.getSelectionDistance()) {
+            if (d.getLineStep().isEmpty() && d.getClosestPoint(p).distance(p) > d.getSelectionDistance()) {
                 line.set(d.getClosestLineSegment(p));
                 if (OritaCalc.determineLineSegmentDistance(p, line) < d.getSelectionDistance()) {
                     line.setColor(LineColor.GREEN_6);
@@ -42,13 +42,20 @@ public class MouseHandlerSquareBisector extends BaseMouseHandlerInputRestricted 
                 }
                 return;
             }
-            if (d.getLineStep().size() >= 1) {
+            if (!d.getLineStep().isEmpty()) {
                 line.set(d.getClosestLineSegment(p));
-                if (OritaCalc.determineLineSegmentDistance(p, line) < d.getSelectionDistance()) {
+                if(d.getLineStep().size() == 1 && OritaCalc.determineLineSegmentDistance(p, line) < d.getSelectionDistance() &&
+                        (OritaCalc.distance(OritaCalc.findProjection(d.getLineStep().get(0), line.getA()), line.getA()) > Epsilon.UNKNOWN_1EN7 ||
+                                OritaCalc.distance(OritaCalc.findProjection(d.getLineStep().get(0), line.getB()), line.getB()) > Epsilon.UNKNOWN_1EN7)){
                     line.setColor(LineColor.GREEN_6);
                     d.lineStepAdd(line);
+                    return;
                 }
-                return;
+                if (d.getLineStep().size() > 1 && OritaCalc.determineLineSegmentDistance(p, line) < d.getSelectionDistance()) {
+                    line.setColor(LineColor.GREEN_6);
+                    d.lineStepAdd(line);
+                    return;
+                }
             }
         }
         // Else if condition is for 3 points bisect
@@ -75,6 +82,9 @@ public class MouseHandlerSquareBisector extends BaseMouseHandlerInputRestricted 
 
     //マウス操作(ボタンを離したとき)を行う関数
     public void mouseReleased(Point p0) {
+        Point p = new Point();
+        p.set(d.getCamera().TV2object(p0));
+
         // Calculation for 3 points
         if (d.getLineStep().size() == 4 && d.getLineStep().get(0).determineLength() < Epsilon.UNKNOWN_1EN4) {
             //三角形の内心を求める    public Ten oc.naisin(Ten ta,Ten tb,Ten tc)
@@ -97,7 +107,7 @@ public class MouseHandlerSquareBisector extends BaseMouseHandlerInputRestricted 
         }
         // Calculation for 2 lines
         else if (d.getLineStep().size() >= 2 && d.getLineStep().get(0).determineLength() > 0) {
-            // When there are 3 lines and the first 2 lines aren't parallel
+            // When the first 2 lines aren't parallel
             if (OritaCalc.isLineSegmentParallel(d.getLineStep().get(0), d.getLineStep().get(1), Epsilon.UNKNOWN_1EN4) == OritaCalc.ParallelJudgement.NOT_PARALLEL && d.getLineStep().size() == 3) {
                 // Find intersection of 2 lines
                 Point intersection = new Point();
@@ -138,7 +148,6 @@ public class MouseHandlerSquareBisector extends BaseMouseHandlerInputRestricted 
                 // Get midpoint
                 Point midPoint = new Point();
                 midPoint.set(OritaCalc.midPoint(d.getLineStep().get(1).getA(), projectedPoint));
-                d.lineStepAdd(new LineSegment(midPoint, midPoint, d.getLineColor()));
 
                 /*
                  Draw purple indicators for bisector
@@ -147,30 +156,42 @@ public class MouseHandlerSquareBisector extends BaseMouseHandlerInputRestricted 
                 */
                 LineSegment tempPerpenLine = new LineSegment();
                 tempPerpenLine.set(d.getLineStep().get(1).getA(), projectedPoint);
-                d.lineStepAdd(new LineSegment(midPoint, OritaCalc.findProjection(OritaCalc.moveParallel(tempPerpenLine, -25.0), midPoint)));
-                d.getLineStep().get(3).setColor(LineColor.PURPLE_8);
-                d.lineStepAdd(new LineSegment(midPoint, OritaCalc.findProjection(OritaCalc.moveParallel(tempPerpenLine, 25.0), midPoint)));
-                d.getLineStep().get(4).setColor(LineColor.PURPLE_8);
+                d.lineStepAdd(OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), new LineSegment(midPoint, OritaCalc.findProjection(OritaCalc.moveParallel(tempPerpenLine, -1.0), midPoint), LineColor.PURPLE_8)));
+                d.lineStepAdd(OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), new LineSegment(midPoint, OritaCalc.findProjection(OritaCalc.moveParallel(tempPerpenLine, 1.0), midPoint), LineColor.PURPLE_8)));
+                return;
             }
-            // Step 2: Get the 2 destination lines and form the actual bisector
-            if (d.getLineStep().size() == 7) {
-                // Find 2 intersection points
-                Point intersect1 = new Point();
-                intersect1.set(OritaCalc.findIntersection(d.getLineStep().get(3), d.getLineStep().get(5)));
-                Point intersect2 = new Point();
-                intersect2.set(OritaCalc.findIntersection(d.getLineStep().get(3), d.getLineStep().get(6)));
+        }
 
-                // Draw the bisector
-                LineSegment bisector = new LineSegment(intersect1, intersect2);
-                bisector.setColor(d.getLineColor());
+        // Step 2.a: Click on the purple indicators auto expand the bisector from the purple indicators to the nearest lines
+        // (Works but might come out a bit weirdly in some cases)
+        if(d.getLineStep().size() == 4 && d.getClosestPoint(p).distance(p) > d.getSelectionDistance()){
+            if (OritaCalc.determineLineSegmentDistance(p, d.getLineStep().get(2)) < d.getSelectionDistance() ||
+                    OritaCalc.determineLineSegmentDistance(p, d.getLineStep().get(3)) < d.getSelectionDistance()) {
+                LineSegment s = d.get_moyori_step_lineSegment(p, 3, 4);
+                s.set(s.getB(), s.getA(), d.getLineColor());
+                s.set(OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), s));
 
-                if (Epsilon.high.gt0(bisector.determineLength())) {
-                    d.addLineSegment(bisector);
-                    d.record();
-                }
-
+                d.addLineSegment(s);
+                d.record();
                 d.getLineStep().clear();
             }
+        }
+        // Step 2.b: Get the 2 destination lines and form the actual bisector
+        if (d.getLineStep().size() == 6) {
+            // Find 2 intersection points
+            Point intersect1 = new Point();
+            intersect1.set(OritaCalc.findIntersection(d.getLineStep().get(2), d.getLineStep().get(4)));
+            Point intersect2 = new Point();
+            intersect2.set(OritaCalc.findIntersection(d.getLineStep().get(2), d.getLineStep().get(5)));
+
+            // Draw the bisector
+            LineSegment bisector = new LineSegment(intersect1, intersect2, d.getLineColor());
+
+            if (Epsilon.high.gt0(bisector.determineLength())) {
+                d.addLineSegment(bisector);
+                d.record();
+            }
+            d.getLineStep().clear();
         }
     }
 }
