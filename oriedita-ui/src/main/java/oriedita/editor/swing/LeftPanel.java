@@ -319,8 +319,8 @@ public class LeftPanel {
         buttonService.setIcon(replaceLabel, "labelReplace");
 
         // Disable switchReplaceButton if "Any" or "M & V" is active
-        switchReplaceButton.setEnabled(CustomLineTypes.from(fromLineDropBox.getSelectedIndex() - 1) != CustomLineTypes.ANY &&
-                CustomLineTypes.from(fromLineDropBox.getSelectedIndex() - 1) != CustomLineTypes.MANDV);
+        switchReplaceButton.setEnabled(applicationModel.getCustomFromLineType() != CustomLineTypes.ANY &&
+                applicationModel.getCustomFromLineType() != CustomLineTypes.MANDV);
 
         undoRedo.addUndoActionListener(e -> mainCreasePatternWorker.undo());
         undoRedo.addRedoActionListener(e -> mainCreasePatternWorker.redo());
@@ -352,8 +352,8 @@ public class LeftPanel {
             applicationModel.setCustomFromLineType(CustomLineTypes.from(fromLineDropBox.getSelectedIndex() - 1));
 
             // Disable switchReplaceButton if "Any" or "M & V" is active
-            switchReplaceButton.setEnabled(CustomLineTypes.from(fromLineDropBox.getSelectedIndex() - 1) != CustomLineTypes.ANY &&
-                    CustomLineTypes.from(fromLineDropBox.getSelectedIndex() - 1) != CustomLineTypes.MANDV);
+        switchReplaceButton.setEnabled(applicationModel.getCustomFromLineType() != CustomLineTypes.ANY &&
+                applicationModel.getCustomFromLineType() != CustomLineTypes.MANDV);
         });
         fromLineDropBox.addPopupMenuListener(new PopupMenuAdapter() {
             @Override
@@ -372,23 +372,6 @@ public class LeftPanel {
             @Override
             public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
                 replace_lineButton.doClick();
-            }
-        });
-        switchReplaceButton.addActionListener(e -> {
-            CustomLineTypes tempFrom = applicationModel.getCustomFromLineType();
-            CustomLineTypes tempTo = applicationModel.getCustomToLineType();
-
-            // Set from line type
-            fromLineDropBox.setSelectedIndex(tempTo.getNumber() + 1);
-            applicationModel.setCustomFromLineType(CustomLineTypes.from(fromLineDropBox.getSelectedIndex() - 1));
-
-            // Set to line type
-            if (tempFrom == CustomLineTypes.EGDE) {
-                toLineDropBox.setSelectedIndex(tempFrom.getNumber());
-                applicationModel.setCustomToLineType(CustomLineTypes.from(toLineDropBox.getSelectedIndex()));
-            } else {
-                toLineDropBox.setSelectedIndex(tempFrom.getNumber() - 1);
-                applicationModel.setCustomToLineType(CustomLineTypes.from(toLineDropBox.getSelectedIndex() + 1));
             }
         });
         selectPersistentCheckBox.addActionListener(e -> applicationModel.setSelectPersistent(selectPersistentCheckBox.isSelected()));
