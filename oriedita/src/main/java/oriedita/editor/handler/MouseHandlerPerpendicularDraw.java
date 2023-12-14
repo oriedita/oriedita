@@ -89,9 +89,6 @@ public class MouseHandlerPerpendicularDraw extends BaseMouseHandlerInputRestrict
 
     //マウス操作(ボタンを離したとき)を行う関数
     public void mouseReleased(Point p0) {
-        Point p = new Point();
-        p.set(d.getCamera().TV2object(p0));
-
         if (d.getLineStep().size() == 2) {
             //直線t上の点pの影の位置（点pと最も近い直線t上の位置）を求める。public Ten oc.kage_motome(Tyokusen t,Ten p){
             LineSegment add_sen = new LineSegment(d.getLineStep().get(0).getA(), OritaCalc.findProjection(OritaCalc.lineSegmentToStraightLine(d.getLineStep().get(1)), d.getLineStep().get(0).getA()), d.getLineColor());
@@ -105,7 +102,6 @@ public class MouseHandlerPerpendicularDraw extends BaseMouseHandlerInputRestrict
         }
 
         if (d.getLineStep().size() == 5) {
-
             LineSegment point = d.getLineStep().get(0); //Point
             LineSegment perpendicular = d.getLineStep().get(2); //One of the two purple indicators
             LineSegment destinationLine = d.getLineStep().get(4); //Third line

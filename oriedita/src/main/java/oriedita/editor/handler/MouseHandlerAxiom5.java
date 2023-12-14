@@ -2,7 +2,6 @@ package oriedita.editor.handler;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import org.tinylog.Logger;
 import oriedita.editor.canvas.MouseMode;
 import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
@@ -194,14 +193,12 @@ public class MouseHandlerAxiom5 extends BaseMouseHandlerInputRestricted{
             // pivot within span
             if(OritaCalc.distance(pivot, targetSegment.getA()) < Epsilon.UNKNOWN_1EN7){
                 //pivot within span touching A
-                Logger.info("pivot touching A");
                 l1.set(new LineSegment(pivot, OritaCalc.point_rotate(pivot, targetSegment.getB(), 180)));
                 l2.set(new LineSegment(pivot, targetSegment.getB()));
                 return;
             }
             if(OritaCalc.distance(pivot, targetSegment.getB()) < Epsilon.UNKNOWN_1EN7){
                 //pivot within span touching B
-                Logger.info("pivot touching B");
                 l1.set(new LineSegment(pivot, targetSegment.getA()));
                 l2.set(new LineSegment(pivot, OritaCalc.point_rotate(pivot, targetSegment.getA(), 180)));
                 return;
