@@ -18,7 +18,7 @@ public class MouseHandlerPerpendicularDraw extends BaseMouseHandlerInputRestrict
 
     //マウス操作(マウスを動かしたとき)を行う関数
     public void mouseMoved(Point p0) {
-        if (d.getLineStep().size() == 0) {
+        if (d.getLineStep().isEmpty()) {
             super.mouseMoved(p0);
         }
     }
@@ -31,7 +31,7 @@ public class MouseHandlerPerpendicularDraw extends BaseMouseHandlerInputRestrict
         p.set(d.getCamera().TV2object(p0));
 
         //Step 1: Click a point
-        if (d.getLineStep().size() == 0) {
+        if (d.getLineStep().isEmpty()) {
             Point closestPoint = d.getClosestPoint(p);
             if (p.distance(closestPoint) < d.getSelectionDistance()) {
                 d.lineStepAdd(new LineSegment(closestPoint, closestPoint, d.getLineColor()));
@@ -53,16 +53,25 @@ public class MouseHandlerPerpendicularDraw extends BaseMouseHandlerInputRestrict
 
             //Step 3 (situational if clicked base line): Show purple candidate line if the selected line goes through the selected point
             if (OritaCalc.determineLineSegmentDistance(d.getLineStep().get(0).getA(), d.getLineStep().get(1)) < Epsilon.UNKNOWN_1EN4) {
-                d.lineStepAdd(new LineSegment(d.getLineStep().get(0).getA(), OritaCalc.findProjection(OritaCalc.moveParallel(d.getLineStep().get(1), 25.0), d.getLineStep().get(0).getA())));
-                d.lineStepAdd(new LineSegment(d.getLineStep().get(0).getA(), OritaCalc.findProjection(OritaCalc.moveParallel(d.getLineStep().get(1), -25.0), d.getLineStep().get(0).getA())));
-                d.getLineStep().get(2).setColor(LineColor.PURPLE_8);
-                d.getLineStep().get(3).setColor(LineColor.PURPLE_8);
+                d.lineStepAdd(OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), new LineSegment(d.getLineStep().get(0).getA(), OritaCalc.findProjection(OritaCalc.moveParallel(d.getLineStep().get(1), 1.0), d.getLineStep().get(0).getA()), LineColor.PURPLE_8)));
+                d.lineStepAdd(OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), new LineSegment(d.getLineStep().get(0).getA(), OritaCalc.findProjection(OritaCalc.moveParallel(d.getLineStep().get(1), -1.0), d.getLineStep().get(0).getA()), LineColor.PURPLE_8)));
             }
             return;
         }
 
-        //Continuation from step 3: Click a final destination line
+        //Continuation from step 3: Click on a destination line / the indicator
         if (d.getLineStep().size() == 4) {
+            if (OritaCalc.determineLineSegmentDistance(p, d.getLineStep().get(2)) < d.getSelectionDistance() ||
+                    OritaCalc.determineLineSegmentDistance(p, d.getLineStep().get(3)) < d.getSelectionDistance()) {
+                LineSegment s = d.get_moyori_step_lineSegment(p, 3, 4);
+                s.set(s.getB(), s.getA(), d.getLineColor());
+                s.set(OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), s));
+
+                d.addLineSegment(s);
+                d.record();
+                d.getLineStep().clear();
+                return;
+            }
 
             LineSegment closestLineSegment = new LineSegment();
             closestLineSegment.set(d.getClosestLineSegment(p));
@@ -80,9 +89,10 @@ public class MouseHandlerPerpendicularDraw extends BaseMouseHandlerInputRestrict
 
     //マウス操作(ボタンを離したとき)を行う関数
     public void mouseReleased(Point p0) {
+        Point p = new Point();
+        p.set(d.getCamera().TV2object(p0));
 
         if (d.getLineStep().size() == 2) {
-
             //直線t上の点pの影の位置（点pと最も近い直線t上の位置）を求める。public Ten oc.kage_motome(Tyokusen t,Ten p){
             LineSegment add_sen = new LineSegment(d.getLineStep().get(0).getA(), OritaCalc.findProjection(OritaCalc.lineSegmentToStraightLine(d.getLineStep().get(1)), d.getLineStep().get(0).getA()), d.getLineColor());
 
@@ -92,7 +102,9 @@ public class MouseHandlerPerpendicularDraw extends BaseMouseHandlerInputRestrict
             }
 
             d.getLineStep().clear();
-        } else if (d.getLineStep().size() == 5) {
+        }
+
+        if (d.getLineStep().size() == 5) {
 
             LineSegment point = d.getLineStep().get(0); //Point
             LineSegment perpendicular = d.getLineStep().get(2); //One of the two purple indicators
