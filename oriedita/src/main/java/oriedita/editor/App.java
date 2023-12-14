@@ -491,12 +491,6 @@ public class App {
             mainCreasePatternWorker.del_selected_senbun();
             mainCreasePatternWorker.record();
         }));
-        actionService.registerAction(new LambdaAction(ActionType.switchReplaceAction, () -> {
-            CustomLineTypes temp = applicationModel.getCustomFromLineType();
-
-            applicationModel.setCustomFromLineType(applicationModel.getCustomToLineType());
-            applicationModel.setCustomToLineType(temp);
-        }));
 
         // - line edit actions
         actionService.registerAction(new LambdaAction(ActionType.v_del_allAction, mainCreasePatternWorker::v_del_all));
@@ -535,6 +529,12 @@ public class App {
             mainCreasePatternWorker.organizeCircles();
             mainCreasePatternWorker.record();
             mainCreasePatternWorker.unselect_all(false);
+        }));
+        actionService.registerAction(new LambdaAction(ActionType.switchReplaceAction, () -> {
+            CustomLineTypes temp = applicationModel.getCustomFromLineType();
+
+            applicationModel.setCustomFromLineType(applicationModel.getCustomToLineType());
+            applicationModel.setCustomToLineType(temp);
         }));
 
         // - grid actions
