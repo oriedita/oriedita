@@ -88,10 +88,10 @@ public class FoldLineSet {
         divideLineSegmentWithNewLines(total_old - 1, total_old);
     }
 
-    public void replaceAux(CustomLineTypes from, CustomLineTypes to, List<LineSegment> reserveAux) {
+    public void replaceAux(CustomLineTypes to, List<LineSegment> reserveAux) {
         for (LineSegment s : reserveAux) {
             LineSegment auxChange = s.clone();
-            auxChange.setColor(LineColor.fromNumber(to.getReplaceToTypeNumber()));
+            auxChange.setColor(LineColor.fromNumber(to.getNumberForLineColor()));
             deleteLine(s);
             addLineSegmentForReplace(auxChange);
         }
@@ -459,32 +459,32 @@ public class FoldLineSet {
             LineSegment s = lineSegments.get(i);
             LineSegment temp = s.clone();
 
-            if(b.totu_boundary_inside(s) && (from.getNumber() != to.getReplaceToTypeNumber())){
+            if(b.totu_boundary_inside(s) && (from.getNumber() != to.getNumber())){
                 switch (from){
                     case ANY:
                         if(s.getColor() == LineColor.CYAN_3) {
                             reserveAux.add(s);
                         } else {
-                            s.setColor(LineColor.fromNumber(to.getReplaceToTypeNumber()));
+                            s.setColor(LineColor.fromNumber(to.getNumberForLineColor()));
                         }
                         i_r = true;
                         break;
                     case EGDE:
                         if (s.getColor() == LineColor.BLACK_0) {
-                            s.setColor(LineColor.fromNumber(to.getReplaceToTypeNumber()));
+                            s.setColor(LineColor.fromNumber(to.getNumberForLineColor()));
                             i_r = true;
                         }
                         break;
                     case MANDV:
                         if (s.getColor() == LineColor.RED_1 || s.getColor() == LineColor.BLUE_2) {
-                            s.setColor(LineColor.fromNumber(to.getReplaceToTypeNumber()));
+                            s.setColor(LineColor.fromNumber(to.getNumberForLineColor()));
                             i_r = true;
                         }
                         break;
                     case MOUNTAIN:
                     case VALLEY:
                         if (s.getColor() == LineColor.fromNumber(from.getNumber() - 1)) {
-                            s.setColor(LineColor.fromNumber(to.getReplaceToTypeNumber()));
+                            s.setColor(LineColor.fromNumber(to.getNumberForLineColor()));
                             i_r = true;
                         }
                         break;
@@ -508,7 +508,7 @@ public class FoldLineSet {
                 }
             }
         }
-        replaceAux(from, to, reserveAux);
+        replaceAux(to, reserveAux);
         return i_r;
     }
 

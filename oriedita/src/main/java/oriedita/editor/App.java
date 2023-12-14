@@ -37,6 +37,7 @@ import oriedita.editor.swing.AppMenuBar;
 import oriedita.editor.swing.Editor;
 import oriedita.editor.swing.dialog.HelpDialog;
 import oriedita.editor.tools.ResourceUtil;
+import origami.crease_pattern.CustomLineTypes;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineColor;
 import origami.folding.FoldedFigure;
@@ -528,6 +529,12 @@ public class App {
             mainCreasePatternWorker.organizeCircles();
             mainCreasePatternWorker.record();
             mainCreasePatternWorker.unselect_all(false);
+        }));
+        actionService.registerAction(new LambdaAction(ActionType.switchReplaceAction, () -> {
+            CustomLineTypes temp = applicationModel.getCustomFromLineType();
+
+            applicationModel.setCustomFromLineType(applicationModel.getCustomToLineType());
+            applicationModel.setCustomToLineType(temp);
         }));
 
         // - grid actions
