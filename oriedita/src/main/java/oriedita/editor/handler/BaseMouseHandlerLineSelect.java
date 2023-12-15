@@ -64,9 +64,9 @@ public abstract class BaseMouseHandlerLineSelect extends BaseMouseHandler {
                 d, selectionLine.getB(), selectionLine.getA(),
                 angleSystemModel.getCurrentAngleSystemDivider(), angleSystemModel.getAngles()));
 
-        d.getLineStep().get(0).setA(SnappingUtil.snapToClosePointInActiveAngleSystem(
+        d.getLineStep().set(0, d.getLineStep().get(0).withA(SnappingUtil.snapToClosePointInActiveAngleSystem(
                 d, d.getLineStep().get(0).getB(), d.getLineStep().get(0).getA(),
-                angleSystemModel.getCurrentAngleSystemDivider(), angleSystemModel.getAngles()));
+                angleSystemModel.getCurrentAngleSystemDivider(), angleSystemModel.getAngles())));
     }
 
     @Override
@@ -75,20 +75,17 @@ public abstract class BaseMouseHandlerLineSelect extends BaseMouseHandler {
 
         Point p = d.getCamera().TV2object(p0);
 
-        d.getLineStep().get(0).setA(p);
-        selectionLine.setA(p);
-
         Point closestPoint = d.getClosestPoint(p);
         if (p.distance(closestPoint) < d.getSelectionDistance() && !snapping) {
-            selectionLine = new LineSegment(closestPoint, selectionLine.getB(), LineColor.MAGENTA_5);
+            selectionLine = selectionLine.withA(closestPoint);
         } else {
-            selectionLine = new LineSegment(p, selectionLine.getB(), LineColor.MAGENTA_5);
+            selectionLine = selectionLine.withA(p);
         }
         if (d.getGridInputAssist()) {
             d.getLineCandidate().clear();
             d.getLineCandidate().add(selectionLine);
         }
-        d.getLineStep().get(0).setA(selectionLine.getA());
+        d.getLineStep().set(0, selectionLine);
         if (snapping) {
             snapLine();
         }

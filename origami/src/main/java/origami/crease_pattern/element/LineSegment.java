@@ -151,11 +151,6 @@ public class LineSegment implements Serializable, Cloneable {
         return a;
     }
 
-    //----------
-    public void setA(Point p) {
-        a = p;
-    }
-
     public Point getB() {
         return b;
     }
@@ -249,6 +244,12 @@ public class LineSegment implements Serializable, Cloneable {
 
         // TODO: copy mutable state here, so the clone can't change the internals of the original
         return clone;
+    }
+
+    public LineSegment withAB(Point a, Point b) {
+        return new LineSegment(a, b,
+                this.getColor(), this.getActive(),
+                this.getSelected(), this.getCustomized(), this.getCustomizedColor());
     }
 
     /**

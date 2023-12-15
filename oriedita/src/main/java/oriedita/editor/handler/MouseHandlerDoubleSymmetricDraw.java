@@ -44,7 +44,7 @@ public class MouseHandlerDoubleSymmetricDraw extends BaseMouseHandlerInputRestri
             Point p = d.getCamera().TV2object(p0);
             Point closestPoint = d.getClosestPoint(p);
 
-            d.getLineStep().get(0).setA(closestPoint);
+            d.getLineStep().set(0, d.getLineStep().get(0).withA(closestPoint));
             if (p.distance(closestPoint) <= d.getSelectionDistance()) {
                 if (Epsilon.high.gt0(d.getLineStep().get(0).determineLength())) {
                     int imax = d.getFoldLineSet().getTotal();

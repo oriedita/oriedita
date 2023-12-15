@@ -35,7 +35,7 @@ public class MouseHandlerDrawCreaseRestricted extends BaseMouseHandlerInputRestr
         }
 
         Point p = d.getCamera().TV2object(p0);
-        d.getLineStep().get(0).setA(p);
+        d.getLineStep().set(0, d.getLineStep().get(0).withA(p));
         d.getLineStep().get(0).setColor(d.getLineColor());
 
         if (d.getGridInputAssist()) {
@@ -44,7 +44,7 @@ public class MouseHandlerDrawCreaseRestricted extends BaseMouseHandlerInputRestr
             Point closestPoint = d.getClosestPoint(p);
             if (p.distance(closestPoint) < d.getSelectionDistance()) {
                 d.getLineCandidate().add(new LineSegment(closestPoint, closestPoint, d.getLineColor()));
-                d.getLineStep().get(0).setA(d.getLineCandidate().get(0).getA());
+                d.getLineStep().set(0, d.getLineStep().get(0).withA(d.getLineCandidate().get(0).getA()));
             }
         }
     }//近い既存点のみ表示
@@ -54,7 +54,7 @@ public class MouseHandlerDrawCreaseRestricted extends BaseMouseHandlerInputRestr
         if (d.getLineStep().size() == 1) {
             Point p = d.getCamera().TV2object(p0);
             Point closestPoint = d.getClosestPoint(p);
-            d.getLineStep().get(0).setA(closestPoint);
+            d.getLineStep().set(0, d.getLineStep().get(0).withA(closestPoint));
             if (p.distance(closestPoint) <= d.getSelectionDistance()) {
                 if (Epsilon.high.gt0(d.getLineStep().get(0).determineLength())) {
                     d.addLineSegment(d.getLineStep().get(0));

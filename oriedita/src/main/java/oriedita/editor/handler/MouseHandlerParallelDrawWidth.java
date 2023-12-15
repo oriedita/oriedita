@@ -65,7 +65,7 @@ public class MouseHandlerParallelDrawWidth extends BaseMouseHandler {
     public void mouseDragged(Point p0) {
         Point p = d.getCamera().TV2object(p0);
         if ((d.getLineStep().size() == 4) && (d.getCircleStep().size() == 0)) {
-            d.getLineStep().get(1).setA(p);
+            d.getLineStep().set(1, d.getLineStep().get(1).withA(p));
             d.getLineStep().set(2, OritaCalc.moveParallel(d.getLineStep().get(0), d.getLineStep().get(1).determineLength()));
             d.getLineStep().get(2).setColor(LineColor.PURPLE_8);
             d.getLineStep().set(3, OritaCalc.moveParallel(d.getLineStep().get(0), -d.getLineStep().get(1).determineLength()));
@@ -86,7 +86,7 @@ public class MouseHandlerParallelDrawWidth extends BaseMouseHandler {
                 return;
             }
 
-            d.getLineStep().get(1).setA(closest_point);
+            d.getLineStep().set(1, d.getLineStep().get(1).withA(closest_point));
 
             if (Epsilon.high.le0(d.getLineStep().get(1).determineLength())) {
                 d.getLineStep().remove(3);

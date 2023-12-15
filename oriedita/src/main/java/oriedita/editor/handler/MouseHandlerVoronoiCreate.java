@@ -280,7 +280,9 @@ public class MouseHandlerVoronoiCreate extends BaseMouseHandler {
                 // Before adding a new cell to voronoiLineSet, process so that there is no existing line segment of voronoiLineSet that is inside the new cell.
 
                 //20181109ここでori_v.の既存のボロノイ線分(iactive()が必ずicolorより小さくなっている)を探す
-                for (LineSegmentVoronoi s_kizon : voronoiLineSet) {
+                int finalI_begin = i_begin;
+                int finalI_end = i_end;
+                voronoiLineSet = voronoiLineSet.stream().map(s_kizon -> {
                     int i_kizon_syou = s_kizon.getVoronoiA();
                     int i_kizon_dai = s_kizon.getVoronoiB();
 
@@ -289,17 +291,15 @@ public class MouseHandlerVoronoiCreate extends BaseMouseHandler {
                         i_kizon_syou = s_kizon.getVoronoiB();
                     }
 
-                    if (i_kizon_syou == i_begin) {
-                        if (i_kizon_dai == i_end) {
-
-//20181110ここポイント
-//
-//	-1		0		1
-//-1 	何もせず	何もせず	交点まで縮小
-// 0	何もせず	有り得ない	削除
-// 1	交点まで縮小	削除		削除
-//
-
+                    if (i_kizon_syou == finalI_begin) {
+                        if (i_kizon_dai == finalI_end) {
+                            //20181110ここポイント
+                            //
+                            //	-1		0		1
+                            //-1 	何もせず	何もせず	交点まで縮小
+                            // 0	何もせず	有り得ない	削除
+                            // 1	交点まで縮小	削除		削除
+                            //
                             Point kouten = OritaCalc.findIntersection(s_begin, s_kizon);
 
                             Point a = d.getLineStep().get(d.getLineStep().size() - 1).getA();
@@ -308,15 +308,16 @@ public class MouseHandlerVoronoiCreate extends BaseMouseHandler {
                             }
 
                             if ((t_begin.sameSide(a, s_kizon.getA()) == -1) && (t_begin.sameSide(a, s_kizon.getB()) == 1)) {
-                                s_kizon.setB(kouten);
+                                return s_kizon.withB(kouten);
                             }
 
                             if ((t_begin.sameSide(a, s_kizon.getA()) == 1) && (t_begin.sameSide(a, s_kizon.getB()) == -1)) {
-                                s_kizon.setA(kouten);
+                                return s_kizon.withA(kouten);
                             }
                         }
                     }
-                }
+                    return s_kizon;
+                }).collect(Collectors.toList());
             }
         }
 

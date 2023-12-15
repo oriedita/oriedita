@@ -49,14 +49,14 @@ public class Fold {
         for (int i = 0; i < rootFrame.getEdges().size(); i++) {
             Edge edge = rootFrame.getEdges().get(i);
 
-            LineSegment ls = new LineSegment();
             double ax = edge.getStart().getX();
             double ay = edge.getStart().getY();
-            ls.setA(new Point(ax, ay));
             double bx = edge.getEnd().getX();
             double by = edge.getEnd().getY();
-            ls.setB(new Point(bx, by));
-            ls.setColor(getColor(edge.getAssignment()));
+            LineSegment ls = new LineSegment(
+                    new Point(ax, ay),
+                    new Point(bx, by),
+                    getColor(edge.getAssignment()));
 
             minX = Math.min(Math.min(minX, ax), bx);
             minY = Math.min(Math.min(minY, ay), by);

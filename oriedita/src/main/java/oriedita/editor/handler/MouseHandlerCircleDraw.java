@@ -44,7 +44,7 @@ public class MouseHandlerCircleDraw extends BaseMouseHandler {
     public void mouseDragged(Point p0) {
         Point p = d.getCamera().TV2object(p0);
         if (previewLine != null) {
-            previewLine.setA(p);
+            previewLine = previewLine.withA(p);
             if (previewCircle != null) {
                 previewCircle.setR(previewLine.determineLength());
             }
@@ -56,7 +56,7 @@ public class MouseHandlerCircleDraw extends BaseMouseHandler {
         if (previewLine != null) {
             Point p = d.getCamera().TV2object(p0);
             Point closestPoint = d.getClosestPoint(p);
-            previewLine.setA(closestPoint);
+            previewLine = previewLine.withA(closestPoint);
             if (p.distance(closestPoint) <= d.getSelectionDistance()) {
                 if (Epsilon.high.gt0(previewLine.determineLength())) {
                     d.addCircle(previewLine.determineBX(), previewLine.determineBY(), previewLine.determineLength(), LineColor.CYAN_3);

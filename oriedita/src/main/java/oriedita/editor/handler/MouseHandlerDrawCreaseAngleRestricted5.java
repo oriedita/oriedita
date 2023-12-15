@@ -40,7 +40,7 @@ public class MouseHandlerDrawCreaseAngleRestricted5 extends BaseMouseHandlerInpu
         if (d.getLineStep().size() == 1) {
             Point syuusei_point = syuusei_point_A_37(p0);
 
-            d.getLineStep().get(0).setA(syuusei_point);
+            d.getLineStep().set(0, d.getLineStep().get(0).withA(syuusei_point));
             d.getLineStep().get(0).setColor(d.getLineColor());
 
             if (d.getGridInputAssist()) {
@@ -49,7 +49,7 @@ public class MouseHandlerDrawCreaseAngleRestricted5 extends BaseMouseHandlerInpu
                 candidate.setActive(LineSegment.ActiveState.ACTIVE_BOTH_3);
 
                 d.getLineCandidate().add(candidate);
-                d.getLineStep().get(0).setA(kouho_point_A_37(syuusei_point));
+                d.getLineStep().set(0, d.getLineStep().get(0).withA(kouho_point_A_37(syuusei_point)));
             }
         }
     }
@@ -58,7 +58,7 @@ public class MouseHandlerDrawCreaseAngleRestricted5 extends BaseMouseHandlerInpu
     public void mouseReleased(Point p0) {
         if (d.getLineStep().size() == 1) {
             Point syuusei_point = syuusei_point_A_37(p0);
-            d.getLineStep().get(0).setA(kouho_point_A_37(syuusei_point));
+            d.getLineStep().set(0, d.getLineStep().get(0).withA(kouho_point_A_37(syuusei_point)));
             if (Epsilon.high.gt0(d.getLineStep().get(0).determineLength())) {
                 d.addLineSegment(d.getLineStep().get(0));
                 d.record();

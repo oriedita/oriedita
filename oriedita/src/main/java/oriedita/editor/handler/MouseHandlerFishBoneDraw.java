@@ -45,7 +45,7 @@ public class MouseHandlerFishBoneDraw extends BaseMouseHandlerInputRestricted {
         if (d.getLineStep().size() == 1) {
             Point p = d.getCamera().TV2object(p0);
             Point closest_point = d.getClosestPoint(p);
-            d.getLineStep().get(0).setA(closest_point);
+            d.getLineStep().set(0, d.getLineStep().get(0).withA(closest_point));
 
             if (p.distance(closest_point) <= d.getSelectionDistance()) {  //マウスで指定した点が、最寄点と近かったときに実施
                 if (Epsilon.high.gt0(d.getLineStep().get(0).determineLength())) {  //lineStep.get(0)が、線の時（=点状ではない時）に実施

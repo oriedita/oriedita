@@ -48,7 +48,7 @@ public class MouseHandlerCreasesAlternateMV extends BaseMouseHandlerInputRestric
             if (p.distance(closestPoint) > d.getSelectionDistance()) {
                 closestPoint = p;
             }
-            d.getLineStep().get(0).setA(closestPoint);
+            d.getLineStep().set(0, d.getLineStep().get(0).withA(closestPoint));
             if (Epsilon.high.gt0(d.getLineStep().get(0).determineLength())) {
                 for (int i = 1; i <= d.getFoldLineSet().getTotal(); i++) {
                     LineSegment s = d.getFoldLineSet().get(i);

@@ -65,7 +65,7 @@ public class MouseHandlerDrawCreaseFree extends BaseMouseHandler {
         Point p = d.getCamera().TV2object(p0);
 
         if (!d.getGridInputAssist()) {
-            d.getLineStep().get(0).setA(p);
+            d.getLineStep().set(0, d.getLineStep().get(0).withA(p));
 
             if (d.getI_foldLine_additional() == FoldLineAdditionalInputMode.AUX_LINE_1) {
                 d.getLineStep().get(0).setColor(d.getAuxLineColor());
@@ -96,11 +96,11 @@ public class MouseHandlerDrawCreaseFree extends BaseMouseHandler {
 
     public void mouseReleased(Point p0) {
         Point p = d.getCamera().TV2object(p0);
-        d.getLineStep().get(0).setA(p);
+        d.getLineStep().set(0, d.getLineStep().get(0).withA(p));
         Point closestPoint = d.getClosestPoint(p);
 
         if (p.distance(closestPoint) <= d.getSelectionDistance()) {
-            d.getLineStep().get(0).setA(closestPoint);
+            d.getLineStep().set(0, d.getLineStep().get(0).withA(closestPoint));
         }
         if (Epsilon.high.gt0(d.getLineStep().get(0).determineLength())) {
             if (d.getI_foldLine_additional() == FoldLineAdditionalInputMode.POLY_LINE_0) {

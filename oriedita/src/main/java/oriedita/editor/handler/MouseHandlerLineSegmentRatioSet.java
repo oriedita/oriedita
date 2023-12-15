@@ -41,7 +41,7 @@ public class MouseHandlerLineSegmentRatioSet extends BaseMouseHandlerInputRestri
     //マウス操作(mouseMode==28線分入力 でドラッグしたとき)を行う関数----------------------------------------------------
     public void mouseDragged(Point p0) {
         Point p = d.getCamera().TV2object(p0);
-        d.getLineStep().get(0).setA(p);
+        d.getLineStep().set(0, d.getLineStep().get(0).withA(p));
 
         if (d.getGridInputAssist()) {
             d.getLineCandidate().clear();
@@ -51,7 +51,7 @@ public class MouseHandlerLineSegmentRatioSet extends BaseMouseHandlerInputRestri
             } else {
                 d.getLineCandidate().add(new LineSegment(p, p, d.getLineColor()));
             }
-            d.getLineStep().get(0).setA(d.getLineCandidate().get(0).getA());
+            d.getLineStep().set(0, d.getLineStep().get(0).withA(d.getLineCandidate().get(0).getA()));
         }
     }
 
@@ -60,12 +60,13 @@ public class MouseHandlerLineSegmentRatioSet extends BaseMouseHandlerInputRestri
         Point p = d.getCamera().TV2object(p0);
 
         LineSegment l0 = d.getLineStep().get(0);
-        l0.setA(p);
+        l0 = l0.withA(p);
         Point closestPoint = d.getClosestPoint(p);
 
         if (p.distance(closestPoint) <= d.getSelectionDistance()) {
-            l0.setA(closestPoint);
+            l0 = l0.withA(closestPoint);
         }
+        d.getLineStep().set(0, l0);
         if (Epsilon.high.gt0(l0.determineLength())) {
             double internalDivisionRatio_s = internalDivisionRatioModel.getInternalDivisionRatioS();
             double internalDivisionRatio_t = internalDivisionRatioModel.getInternalDivisionRatioT();

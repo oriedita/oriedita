@@ -46,7 +46,7 @@ public class MouseHandlerCreaseMakeMV extends BaseMouseHandlerInputRestricted {
         if (d.getLineStep().size() == 1) {
             Point p = d.getCamera().TV2object(p0);
             Point closest_point = d.getClosestPoint(p);
-            d.getLineStep().get(0).setA(closest_point);
+            d.getLineStep().set(0, d.getLineStep().get(0).withA(closest_point));
             if (p.distance(closest_point) <= d.getSelectionDistance()) {
                 if (Epsilon.high.gt0(d.getLineStep().get(0).determineLength())) {
                     for (int i = 1; i <= d.getFoldLineSet().getTotal(); i++) {
