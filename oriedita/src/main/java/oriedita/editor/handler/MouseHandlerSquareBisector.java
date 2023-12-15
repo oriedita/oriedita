@@ -31,7 +31,7 @@ public class MouseHandlerSquareBisector extends BaseMouseHandlerInputRestricted 
         p.set(d.getCamera().TV2object(p0));
 
         // If condition is for 2 lines bisect
-        if ((d.getLineStep().isEmpty() || d.getLineStep().get(0).determineLength() > 0)) {
+        if (d.getLineStep().isEmpty() || d.getLineStep().get(0).determineLength() > 0) {
             // Click 2 lines to form bisect and then a destination line
             // Only in first line click, no point is allowed within the selection radius
             if (d.getLineStep().isEmpty() && d.getClosestPoint(p).distance(p) > d.getSelectionDistance()) {
