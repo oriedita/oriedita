@@ -53,7 +53,7 @@ public class MouseHandlerAxiom5 extends BaseMouseHandlerInputRestricted{
         // 3. pivot point
         if(d.getLineStep().size() == 2){
             Point closestPoint = d.getClosestPoint(p);
-            if (p.distance(closestPoint) < d.getSelectionDistance()) {
+            if (p.distance(closestPoint) < d.getSelectionDistance() && OritaCalc.determineLineSegmentDistance(closestPoint, d.getLineStep().get(0)) > Epsilon.UNKNOWN_1EN7) {
                 d.lineStepAdd(new LineSegment(closestPoint, closestPoint, d.getLineColor()));
                 return;
             }
