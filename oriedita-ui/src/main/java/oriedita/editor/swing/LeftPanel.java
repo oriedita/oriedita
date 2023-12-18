@@ -9,23 +9,16 @@ import jakarta.inject.Named;
 import org.tinylog.Logger;
 import oriedita.editor.Canvas;
 import oriedita.editor.Colors;
-import oriedita.editor.FrameProvider;
-import oriedita.editor.action.ActionHandler;
-import oriedita.editor.action.ActionType;
-import oriedita.editor.action.DrawCreaseFreeAction;
 import oriedita.editor.canvas.CreasePattern_Worker;
-import oriedita.editor.canvas.FoldLineAdditionalInputMode;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.databinding.ApplicationModel;
 import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.databinding.FoldedFigureModel;
-import oriedita.editor.databinding.FoldedFiguresList;
 import oriedita.editor.databinding.GridModel;
 import oriedita.editor.databinding.MeasuresModel;
 import oriedita.editor.handler.PopupMenuAdapter;
 import origami.crease_pattern.CustomLineTypes;
 import oriedita.editor.service.ButtonService;
-import oriedita.editor.service.FoldingService;
 import oriedita.editor.service.HistoryState;
 import oriedita.editor.swing.component.ColorIcon;
 import oriedita.editor.swing.component.UndoRedo;
@@ -60,7 +53,6 @@ import java.util.HashMap;
 
 @ApplicationScoped
 public class LeftPanel {
-    private final FrameProvider frameProvider;
     private final HistoryState historyState;
     private final MeasuresModel measuresModel;
     private final ButtonService buttonService;
@@ -69,9 +61,6 @@ public class LeftPanel {
     private final FoldedFigureModel foldedFigureModel;
     private final GridModel gridModel;
     private final CanvasModel canvasModel;
-    private final DrawCreaseFreeAction drawCreaseFreeAction;
-    private final FoldingService foldingService;
-    private final FoldedFiguresList foldedFiguresList;
     private JPanel root;
 
     private JTextField lineSegmentDivisionTextField;
@@ -181,19 +170,14 @@ public class LeftPanel {
     }
 
     @Inject
-    public LeftPanel(FrameProvider frameProvider,
-                     @Named("normal") HistoryState historyState,
+    public LeftPanel(@Named("normal") HistoryState historyState,
                      MeasuresModel measuresModel,
                      ButtonService buttonService,
                      @Named("mainCreasePattern_Worker") CreasePattern_Worker mainCreasePatternWorker,
                      ApplicationModel applicationModel,
                      FoldedFigureModel foldedFigureModel,
                      GridModel gridModel,
-                     CanvasModel canvasModel,
-                     @ActionHandler(ActionType.drawCreaseFreeAction) DrawCreaseFreeAction drawCreaseFreeAction,
-                     FoldingService foldingService,
-                     FoldedFiguresList foldedFiguresList) {
-        this.frameProvider = frameProvider;
+                     CanvasModel canvasModel) {
         this.historyState = historyState;
         this.measuresModel = measuresModel;
         this.buttonService = buttonService;
@@ -202,11 +186,8 @@ public class LeftPanel {
         this.foldedFigureModel = foldedFigureModel;
         this.gridModel = gridModel;
         this.canvasModel = canvasModel;
-        this.drawCreaseFreeAction = drawCreaseFreeAction;
-        this.foldingService = foldingService;
-        this.foldedFiguresList = foldedFiguresList;
 
-        this.selectionTransformationToolLookup = new HashMap<MouseMode, JButton>();
+        this.selectionTransformationToolLookup = new HashMap<>();
 
         $$$setupUI$$$();
         this.selectionTransformationToolLookup.put(null, deleteSelectedLineSegmentButton);
@@ -226,7 +207,7 @@ public class LeftPanel {
         gridModel.addPropertyChangeListener(e -> setData(gridModel));
         foldedFigureModel.addPropertyChangeListener(e -> setData(foldedFigureModel));
         canvasModel.addPropertyChangeListener(e -> setData(e, canvasModel));
-        mainCreasePatternWorker.addPropertyChangeListener(e -> setData(e, mainCreasePatternWorker));
+        mainCreasePatternWorker.addPropertyChangeListener(this::setData);
         historyState.addPropertyChangeListener(e -> setData(historyState));
 
         setData(historyState);
@@ -324,7 +305,6 @@ public class LeftPanel {
 
         undoRedo.addUndoActionListener(e -> mainCreasePatternWorker.undo());
         undoRedo.addRedoActionListener(e -> mainCreasePatternWorker.redo());
-//        drawCreaseFreeButton.setAction(drawCreaseFreeAction);
         lineSegmentDivisionSetButton.addActionListener(e -> {
             getData(applicationModel);
 
@@ -352,8 +332,8 @@ public class LeftPanel {
             applicationModel.setCustomFromLineType(CustomLineTypes.from(fromLineDropBox.getSelectedIndex() - 1));
 
             // Disable switchReplaceButton if "Any" or "M & V" is active
-        switchReplaceButton.setEnabled(applicationModel.getCustomFromLineType() != CustomLineTypes.ANY &&
-                applicationModel.getCustomFromLineType() != CustomLineTypes.MANDV);
+            switchReplaceButton.setEnabled(applicationModel.getCustomFromLineType() != CustomLineTypes.ANY &&
+                    applicationModel.getCustomFromLineType() != CustomLineTypes.MANDV);
         });
         fromLineDropBox.addPopupMenuListener(new PopupMenuAdapter() {
             @Override
@@ -1053,7 +1033,7 @@ public class LeftPanel {
         if (selectionTransformationToolLookup.containsKey(currentMouseMode)) {
 
             JButton sttButton = selectionTransformationToolLookup.get(currentMouseMode);
-            LineBorder highlight = null;
+            LineBorder highlight;
 
             if (!nonEmptySelection) {
                 highlight = new LineBorder(Color.yellow);
@@ -1072,7 +1052,7 @@ public class LeftPanel {
 
         if (e.getPropertyName() == null || e.getPropertyName().equals("mouseMode") || e.getPropertyName().equals("foldLineAdditionalInputMode")) {
             MouseMode m = data.getMouseMode();
-            FoldLineAdditionalInputMode f = data.getFoldLineAdditionalInputMode();
+//            FoldLineAdditionalInputMode f = data.getFoldLineAdditionalInputMode();
 
             drawCreaseFreeButton.setSelected(m == MouseMode.DRAW_CREASE_FREE_1);
             senbun_henkanButton.setSelected(m == MouseMode.CHANGE_CREASE_TYPE_4);
@@ -1110,48 +1090,76 @@ public class LeftPanel {
             replace_lineButton.setSelected(m == MouseMode.REPLACE_LINE_TYPE_SELECT_72);
         }
 
-        if (e.getPropertyName() == null || e.getPropertyName().equals("lineColor") || e.getPropertyName().equals("toggleLineColor")) {
-            Color gray = Colors.get(new Color(150, 150, 150));
+        switch (canvasModel.getMouseMode()) {
+            case REPLACE_LINE_TYPE_SELECT_72:
+                if (switchReplaceButton.isEnabled()) {
+                    if ((canvasModel.getToggleLineColor() && !isReplaceHold) || (!canvasModel.getToggleLineColor() && isReplaceHold)) {
+                        CustomLineTypes temp = applicationModel.getCustomFromLineType();
 
-            colBlackButton.setBackground(gray);
-            colRedButton.setBackground(gray);
-            colBlueButton.setBackground(gray);
-            colCyanButton.setBackground(gray);
-            colBlackButton.setForeground(Colors.get(Color.black));
-            colRedButton.setForeground(Colors.get(Color.black));
-            colBlueButton.setForeground(Colors.get(Color.black));
-            colCyanButton.setForeground(Colors.get(Color.black));
+                        applicationModel.setCustomFromLineType(applicationModel.getCustomToLineType());
+                        applicationModel.setCustomToLineType(temp);
 
-            switch (data.calculateLineColor()) {
-                case BLACK_0:
-                    colBlackButton.setBackground(Colors.get(Color.black));
-                    colBlackButton.setForeground(Colors.get(Color.white));
-                    break;
-                case RED_1:
-                    colRedButton.setBackground(Colors.get(Color.red));
-                    colRedButton.setForeground(Colors.get(Color.black));
-                    break;
-                case BLUE_2:
-                    colBlueButton.setBackground(Colors.get(Color.blue));
-                    colBlueButton.setForeground(Colors.get(Color.black));
-                    break;
-                case CYAN_3:
-                    colCyanButton.setBackground(Colors.get(Color.cyan));
-                    colCyanButton.setForeground(Colors.get(Color.black));
-                default:
-                    break;
-            }
-        }
+                        isReplaceHold = !isReplaceHold;
+                    }
+                }
+                break;
+            case DRAW_CREASE_FREE_1:
+            case LENGTHEN_CREASE_5:
+            case INWARD_8:
+            case PERPENDICULAR_DRAW_9:
+            case SYMMETRIC_DRAW_10:
+            case DRAW_CREASE_RESTRICTED_11:
+            case DRAW_CREASE_ANGLE_RESTRICTED_13:
+            case ANGLE_SYSTEM_16:
+            case DRAW_CREASE_ANGLE_RESTRICTED_2_17:
+            case DRAW_CREASE_ANGLE_RESTRICTED_3_18:
+            case LINE_SEGMENT_DIVISION_27:
+            case LINE_SEGMENT_RATIO_SET_28:
+            case POLYGON_SET_NO_CORNERS_29:
+            case FISH_BONE_DRAW_33:
+            case CREASE_MAKE_MV_34:
+            case DOUBLE_SYMMETRIC_DRAW_35:
+            case CREASES_ALTERNATE_MV_36:
+            case DRAW_CREASE_ANGLE_RESTRICTED_5_37:
+            case VERTEX_MAKE_ANGULARLY_FLAT_FOLDABLE_38:
+            case PARALLEL_DRAW_40:
+            case PARALLEL_DRAW_WIDTH_51:
+            case CONTINUOUS_SYMMETRIC_DRAW_52:
+            case VORONOI_CREATE_62:
+            case FOLDABLE_LINE_DRAW_71:
+                Color gray = Colors.get(new Color(150, 150, 150));
 
-        if (canvasModel.getMouseMode() == MouseMode.REPLACE_LINE_TYPE_SELECT_72 && switchReplaceButton.isEnabled()) {
-            if (canvasModel.getToggleLineColor() && !isReplaceHold || !canvasModel.getToggleLineColor() && isReplaceHold) {
-                CustomLineTypes temp = applicationModel.getCustomFromLineType();
+                colBlackButton.setBackground(gray);
+                colRedButton.setBackground(gray);
+                colBlueButton.setBackground(gray);
+                colCyanButton.setBackground(gray);
+                colBlackButton.setForeground(Colors.get(Color.black));
+                colRedButton.setForeground(Colors.get(Color.black));
+                colBlueButton.setForeground(Colors.get(Color.black));
+                colCyanButton.setForeground(Colors.get(Color.black));
 
-                applicationModel.setCustomFromLineType(applicationModel.getCustomToLineType());
-                applicationModel.setCustomToLineType(temp);
-
-                isReplaceHold = !isReplaceHold;
-            }
+                switch (data.calculateLineColor()) {
+                    case BLACK_0:
+                        colBlackButton.setBackground(Colors.get(Color.black));
+                        colBlackButton.setForeground(Colors.get(Color.white));
+                        break;
+                    case RED_1:
+                        colRedButton.setBackground(Colors.get(Color.red));
+                        colRedButton.setForeground(Colors.get(Color.black));
+                        break;
+                    case BLUE_2:
+                        colBlueButton.setBackground(Colors.get(Color.blue));
+                        colBlueButton.setForeground(Colors.get(Color.black));
+                        break;
+                    case CYAN_3:
+                        colCyanButton.setBackground(Colors.get(Color.cyan));
+                        colCyanButton.setForeground(Colors.get(Color.black));
+                    default:
+                        break;
+                }
+                break;
+            default:
+                break;
         }
     }
 
@@ -1159,7 +1167,7 @@ public class LeftPanel {
         coloredXRayCheckBox.setSelected(foldedFigureModel.isTransparencyColor());
     }
 
-    public void setData(PropertyChangeEvent e, CreasePattern_Worker mainCreasePatternWorker) {
+    public void setData(PropertyChangeEvent e) {
         Logger.info(e.toString());
         if ("isSelectionEmpty".equals(e.getPropertyName())) {
             refreshButtons();
