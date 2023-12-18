@@ -133,7 +133,7 @@ public class RightPanel {
         applicationModel.addPropertyChangeListener(e -> setData(applicationModel));
         angleSystemModel.addPropertyChangeListener(e -> setData(angleSystemModel));
         measuresModel.addPropertyChangeListener(e -> setData(measuresModel));
-        canvasModel.addPropertyChangeListener(e -> setData(e, canvasModel, applicationModel));
+        canvasModel.addPropertyChangeListener(e -> setData(e, canvasModel));
 
         auxHistoryState.addPropertyChangeListener(e -> setData(auxHistoryState));
 
@@ -656,7 +656,7 @@ public class RightPanel {
         }
     }
 
-    public void setData(PropertyChangeEvent e, CanvasModel data, ApplicationModel applicationModel) {
+    public void setData(PropertyChangeEvent e, CanvasModel data) {
         if (openFrame != null) openFrame.setData(e, data);
 
         if (e.getPropertyName() == null || e.getPropertyName().equals("mouseMode") || e.getPropertyName().equals("foldLineAdditionalInputMode")) {
@@ -688,16 +688,18 @@ public class RightPanel {
             angleRestrictedButton.setSelected(m == MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_5_37);
         }
 
-        switch (data.getAuxLiveLineColor()) {
-            case ORANGE_4:
-                colOrangeButton.setBackground(Color.ORANGE);
-                colYellowButton.setBackground(new Color(150, 150, 150));
-                break;
-            case YELLOW_7:
-                colYellowButton.setBackground(Color.YELLOW);
-                colOrangeButton.setBackground(new Color(150, 150, 150));
-            default:
-                break;
+        if (data.getMouseMode() == MouseMode.DRAW_CREASE_FREE_1 && data.getFoldLineAdditionalInputMode() == FoldLineAdditionalInputMode.AUX_LINE_1) {
+            switch (data.calculateAuxColor()) {
+                case ORANGE_4:
+                    colOrangeButton.setBackground(Color.ORANGE);
+                    colYellowButton.setBackground(new Color(150, 150, 150));
+                    break;
+                case YELLOW_7:
+                    colYellowButton.setBackground(Color.YELLOW);
+                    colOrangeButton.setBackground(new Color(150, 150, 150));
+                default:
+                    break;
+            }
         }
     }
 

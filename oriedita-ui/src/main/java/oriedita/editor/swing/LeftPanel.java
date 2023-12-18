@@ -10,6 +10,7 @@ import org.tinylog.Logger;
 import oriedita.editor.Canvas;
 import oriedita.editor.Colors;
 import oriedita.editor.canvas.CreasePattern_Worker;
+import oriedita.editor.canvas.FoldLineAdditionalInputMode;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.databinding.ApplicationModel;
 import oriedita.editor.databinding.CanvasModel;
@@ -163,6 +164,7 @@ public class LeftPanel {
 
     private HashMap<MouseMode, JButton> selectionTransformationToolLookup;
     private boolean isReplaceHold;
+    private boolean isDelTypeHold;
 
     public double convertAngle(double angle) {
         if (angle >= 0) return angle % 180;
@@ -198,6 +200,7 @@ public class LeftPanel {
         this.selectionTransformationToolLookup.put(MouseMode.CREASE_COPY_4P_32, copy2p2pButton);
 
         isReplaceHold = false;
+        isDelTypeHold = false;
     }
 
     public void init() {
@@ -1052,7 +1055,6 @@ public class LeftPanel {
 
         if (e.getPropertyName() == null || e.getPropertyName().equals("mouseMode") || e.getPropertyName().equals("foldLineAdditionalInputMode")) {
             MouseMode m = data.getMouseMode();
-//            FoldLineAdditionalInputMode f = data.getFoldLineAdditionalInputMode();
 
             drawCreaseFreeButton.setSelected(m == MouseMode.DRAW_CREASE_FREE_1);
             senbun_henkanButton.setSelected(m == MouseMode.CHANGE_CREASE_TYPE_4);
@@ -1090,6 +1092,17 @@ public class LeftPanel {
             replace_lineButton.setSelected(m == MouseMode.REPLACE_LINE_TYPE_SELECT_72);
         }
 
+        Color gray = Colors.get(new Color(150, 150, 150));
+
+        colBlackButton.setBackground(gray);
+        colRedButton.setBackground(gray);
+        colBlueButton.setBackground(gray);
+        colCyanButton.setBackground(gray);
+        colBlackButton.setForeground(Colors.get(Color.black));
+        colRedButton.setForeground(Colors.get(Color.black));
+        colBlueButton.setForeground(Colors.get(Color.black));
+        colCyanButton.setForeground(Colors.get(Color.black));
+
         switch (canvasModel.getMouseMode()) {
             case REPLACE_LINE_TYPE_SELECT_72:
                 if (switchReplaceButton.isEnabled()) {
@@ -1103,8 +1116,22 @@ public class LeftPanel {
                     }
                 }
                 break;
+            case DELETE_LINE_TYPE_SELECT_73:
+                if ((canvasModel.getToggleLineColor() && !isDelTypeHold) || (!canvasModel.getToggleLineColor() && isDelTypeHold)) {
+                    if (applicationModel.getDelLineType() == CustomLineTypes.MOUNTAIN) {
+                        applicationModel.setDelLineType(CustomLineTypes.VALLEY);
+                        isDelTypeHold = !isDelTypeHold;
+                    } else if (applicationModel.getDelLineType() == CustomLineTypes.VALLEY) {
+                        applicationModel.setDelLineType(CustomLineTypes.MOUNTAIN);
+                        isDelTypeHold = !isDelTypeHold;
+                    }
+                }
+                break;
+            case AXIOM_5:
+            case AXIOM_7:
             case DRAW_CREASE_FREE_1:
             case LENGTHEN_CREASE_5:
+            case SQUARE_BISECTOR_7:
             case INWARD_8:
             case PERPENDICULAR_DRAW_9:
             case SYMMETRIC_DRAW_10:
@@ -1122,21 +1149,16 @@ public class LeftPanel {
             case CREASES_ALTERNATE_MV_36:
             case DRAW_CREASE_ANGLE_RESTRICTED_5_37:
             case VERTEX_MAKE_ANGULARLY_FLAT_FOLDABLE_38:
+            case FOLDABLE_LINE_INPUT_39:
             case PARALLEL_DRAW_40:
+            case CIRCLE_DRAW_TANGENT_LINE_45:
             case PARALLEL_DRAW_WIDTH_51:
             case CONTINUOUS_SYMMETRIC_DRAW_52:
             case VORONOI_CREATE_62:
             case FOLDABLE_LINE_DRAW_71:
-                Color gray = Colors.get(new Color(150, 150, 150));
-
-                colBlackButton.setBackground(gray);
-                colRedButton.setBackground(gray);
-                colBlueButton.setBackground(gray);
-                colCyanButton.setBackground(gray);
-                colBlackButton.setForeground(Colors.get(Color.black));
-                colRedButton.setForeground(Colors.get(Color.black));
-                colBlueButton.setForeground(Colors.get(Color.black));
-                colCyanButton.setForeground(Colors.get(Color.black));
+                if (canvasModel.getMouseMode() == MouseMode.DRAW_CREASE_FREE_1 && data.getFoldLineAdditionalInputMode() == FoldLineAdditionalInputMode.AUX_LINE_1) {
+                    break;
+                }
 
                 switch (data.calculateLineColor()) {
                     case BLACK_0:
