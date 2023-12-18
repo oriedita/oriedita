@@ -52,7 +52,7 @@ public class MouseHandlerPerpendicularDraw extends BaseMouseHandlerInputRestrict
             d.lineStepAdd(closestLineSegment);
 
             //Step 3 (situational if clicked base line): Show purple candidate line if the selected line goes through the selected point
-            if (OritaCalc.determineLineSegmentDistance(d.getLineStep().get(0).getA(), d.getLineStep().get(1)) < Epsilon.UNKNOWN_1EN4) {
+            if (OritaCalc.isPointWithinLineSpan(d.getLineStep().get(0).getA(), d.getLineStep().get(1))) {
                 d.lineStepAdd(OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), new LineSegment(d.getLineStep().get(0).getA(), OritaCalc.findProjection(OritaCalc.moveParallel(d.getLineStep().get(1), 1.0), d.getLineStep().get(0).getA()), LineColor.PURPLE_8)));
                 d.lineStepAdd(OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), new LineSegment(d.getLineStep().get(0).getA(), OritaCalc.findProjection(OritaCalc.moveParallel(d.getLineStep().get(1), -1.0), d.getLineStep().get(0).getA()), LineColor.PURPLE_8)));
             }
