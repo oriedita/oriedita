@@ -81,6 +81,7 @@ public class MouseHandlerCircleDrawTangentLine extends BaseMouseHandler {
             d.addLineSegment(closest_step_lineSegment);
             d.record();
             d.getLineStep().clear();
+            d.getCircleStep().clear();
         }
     }
 
