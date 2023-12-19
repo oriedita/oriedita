@@ -54,10 +54,6 @@ public class MouseHandlerCircleDrawTangentLine extends BaseMouseHandler {
                    d.getLineStep().clear();
                    d.getCircleStep().clear();
                    return;
-               } else if (Math.abs(closest_circumference.getR() - OritaCalc.distance(closest_circumference.determineCenter(), d.getLineStep().get(0).getA())) < Epsilon.UNKNOWN_1EN7) {
-                   d.getLineStep().clear();
-                   d.getCircleStep().clear();
-                   return;
                }
             }
 
@@ -213,6 +209,12 @@ public class MouseHandlerCircleDrawTangentLine extends BaseMouseHandler {
 
         //point-circle tangent
         if(d.getCircleStep().size() == 1 && d.getLineStep().size() == 1){
+            if(Math.abs(closest_circumference.getR() - OritaCalc.distance(closest_circumference.determineCenter(), d.getLineStep().get(0).getA())) < Epsilon.UNKNOWN_1EN7){
+                LineSegment projectionLine = new LineSegment(closest_circumference.determineCenter(), d.getLineStep().get(0).getA());
+                d.lineStepAdd(OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), new LineSegment(d.getLineStep().get(0).getA(), OritaCalc.findProjection(OritaCalc.moveParallel(projectionLine, 1), d.getLineStep().get(0).getA()), LineColor.PURPLE_8)));
+                d.lineStepAdd(OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), new LineSegment(d.getLineStep().get(0).getA(), OritaCalc.findProjection(OritaCalc.moveParallel(projectionLine, -1), d.getLineStep().get(0).getA()), LineColor.PURPLE_8)));
+                return;
+            }
             LineSegment diameter = new LineSegment(d.getLineStep().get(0).getA(), d.getCircleStep().get(0).determineCenter());
             Circle constructCir = new Circle(diameter, LineColor.GREEN_6);
             LineSegment connectSegment = OritaCalc.circle_to_circle_no_intersection_wo_musubu_lineSegment(constructCir, d.getCircleStep().get(0));
