@@ -66,9 +66,21 @@ public class MouseHandlerAxiom7 extends BaseMouseHandlerInputRestricted{
         }
 
         // index 3 and 4 are the purple indicators
-        // 4. destination line (case 2)
+        // 4. indicators (case 1) & destination line (case 2)
         // Don't accept segment that is parallel to the purple indicators
         if(d.getLineStep().size() == 5){
+            if (OritaCalc.determineLineSegmentDistance(p, d.getLineStep().get(3)) < d.getSelectionDistance() ||
+                    OritaCalc.determineLineSegmentDistance(p, d.getLineStep().get(4)) < d.getSelectionDistance()) {
+                LineSegment s = d.get_moyori_step_lineSegment(p, 4, 5);
+                s.set(s.getB(), s.getA(), d.getLineColor());
+                s.set(OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), s));
+
+                d.addLineSegment(s);
+                d.record();
+                d.getLineStep().clear();
+                return;
+            }
+
             LineSegment closestLineSegment = new LineSegment();
             closestLineSegment.set(d.getClosestLineSegment(p));
 
@@ -95,21 +107,6 @@ public class MouseHandlerAxiom7 extends BaseMouseHandlerInputRestricted{
             midPoint = drawAxiom7FoldIndicators(d.getLineStep().get(0), d.getLineStep().get(1), d.getLineStep().get(2));
         }
 
-        // Case 1: Click on the purple indicators auto expand the purple indicators to the nearest lines
-        // (Kinda works)
-        if(d.getLineStep().size() == 5 && d.getClosestPoint(p).distance(p) > d.getSelectionDistance()){
-            if (OritaCalc.determineLineSegmentDistance(p, d.getLineStep().get(3)) < d.getSelectionDistance() ||
-                    OritaCalc.determineLineSegmentDistance(p, d.getLineStep().get(4)) < d.getSelectionDistance()) {
-                LineSegment s = d.get_moyori_step_lineSegment(p, 4, 5);
-                s.set(s.getB(), s.getA(), d.getLineColor());
-                s.set(OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), s));
-
-                d.addLineSegment(s);
-                d.record();
-                d.getLineStep().clear();
-            }
-        }
-
         // Case 2: Click on destination line to extend result line from midpoint
         if(d.getLineStep().size() == 6){
             LineSegment midTemp = new LineSegment(midPoint, midPoint);
@@ -130,8 +127,8 @@ public class MouseHandlerAxiom7 extends BaseMouseHandlerInputRestricted{
 
         Point mid = OritaCalc.midPoint(target.getA(), OritaCalc.findIntersection(extendLine, targetSegment));
 
-        LineSegment s1 = OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), new LineSegment(mid, OritaCalc.findProjection(OritaCalc.moveParallel(extendLine, 25), mid), LineColor.PURPLE_8));
-        LineSegment s2 = OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), new LineSegment(mid, OritaCalc.findProjection(OritaCalc.moveParallel(extendLine, -25), mid), LineColor.PURPLE_8));
+        LineSegment s1 = OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), new LineSegment(mid, OritaCalc.findProjection(OritaCalc.moveParallel(extendLine, 1), mid), LineColor.PURPLE_8));
+        LineSegment s2 = OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), new LineSegment(mid, OritaCalc.findProjection(OritaCalc.moveParallel(extendLine, -1), mid), LineColor.PURPLE_8));
 
         d.lineStepAdd(s1);
         d.lineStepAdd(s2);

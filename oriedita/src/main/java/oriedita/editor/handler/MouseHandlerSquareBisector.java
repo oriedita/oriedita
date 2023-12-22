@@ -31,7 +31,7 @@ public class MouseHandlerSquareBisector extends BaseMouseHandlerInputRestricted 
         p.set(d.getCamera().TV2object(p0));
 
         // If condition is for 2 lines bisect
-        if ((d.getLineStep().isEmpty() || d.getLineStep().get(0).determineLength() > 0)) {
+        if (d.getLineStep().isEmpty() || d.getLineStep().get(0).determineLength() > 0) {
             // Click 2 lines to form bisect and then a destination line
             // Only in first line click, no point is allowed within the selection radius
             if (d.getLineStep().isEmpty() && d.getClosestPoint(p).distance(p) > d.getSelectionDistance()) {
@@ -55,6 +55,19 @@ public class MouseHandlerSquareBisector extends BaseMouseHandlerInputRestricted 
                     line.setColor(LineColor.GREEN_6);
                     d.lineStepAdd(line);
                     return;
+                }
+                if(d.getLineStep().size() == 4){
+                    if (OritaCalc.determineLineSegmentDistance(p, d.getLineStep().get(2)) < d.getSelectionDistance() ||
+                            OritaCalc.determineLineSegmentDistance(p, d.getLineStep().get(3)) < d.getSelectionDistance()) {
+                        LineSegment s = d.get_moyori_step_lineSegment(p, 3, 4);
+                        s.set(s.getB(), s.getA(), d.getLineColor());
+                        s.set(OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), s));
+
+                        d.addLineSegment(s);
+                        d.record();
+                        d.getLineStep().clear();
+                        return;
+                    }
                 }
             }
         }
@@ -162,20 +175,6 @@ public class MouseHandlerSquareBisector extends BaseMouseHandlerInputRestricted 
             }
         }
 
-        // Step 2.a: Click on the purple indicators auto expand the bisector from the purple indicators to the nearest lines
-        // (Works but might come out a bit weirdly in some cases)
-        if(d.getLineStep().size() == 4 && d.getClosestPoint(p).distance(p) > d.getSelectionDistance()){
-            if (OritaCalc.determineLineSegmentDistance(p, d.getLineStep().get(2)) < d.getSelectionDistance() ||
-                    OritaCalc.determineLineSegmentDistance(p, d.getLineStep().get(3)) < d.getSelectionDistance()) {
-                LineSegment s = d.get_moyori_step_lineSegment(p, 3, 4);
-                s.set(s.getB(), s.getA(), d.getLineColor());
-                s.set(OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), s));
-
-                d.addLineSegment(s);
-                d.record();
-                d.getLineStep().clear();
-            }
-        }
         // Step 2.b: Get the 2 destination lines and form the actual bisector
         if (d.getLineStep().size() == 6) {
             // Find 2 intersection points
