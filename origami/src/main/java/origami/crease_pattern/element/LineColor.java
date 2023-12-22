@@ -54,6 +54,13 @@ public enum LineColor {
         return this;
     }
 
+    public LineColor changeAuxColor() {
+        if (this == ORANGE_4) return YELLOW_7;
+        if (this == YELLOW_7) return ORANGE_4;
+
+        return this;
+    }
+
     public int getNumber() {
         return this.type;
     }

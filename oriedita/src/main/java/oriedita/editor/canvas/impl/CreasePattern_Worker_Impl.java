@@ -1068,7 +1068,7 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     @Override
     public void setData(CanvasModel data) {
         setColor(data.calculateLineColor());
-        setAuxLineColor(data.getAuxLiveLineColor());
+        setAuxLineColor(data.calculateAuxColor());
         setFoldLineAdditional(data.getFoldLineAdditionalInputMode());
         i_select_mode = data.getSelectionOperationMode();
     }

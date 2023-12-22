@@ -630,7 +630,7 @@ public class App {
         actionService.registerAction(new LambdaAction(ActionType.h_undoAction, mainCreasePatternWorker::auxUndo));
         actionService.registerAction(new LambdaAction(ActionType.h_redoAction, mainCreasePatternWorker::auxRedo));
         actionService.registerAction(actionFactory.setMouseModeLineTypeDeleteAction(ActionType.h_senbun_nyuryokuAction, MouseMode.DRAW_CREASE_FREE_1, FoldLineAdditionalInputMode.AUX_LINE_1));
-        actionService.registerAction(actionFactory.setMouseModeLineTypeDeleteAction(ActionType.h_senbun_nyuryokuAction, MouseMode.LINE_SEGMENT_DELETE_3, FoldLineAdditionalInputMode.AUX_LINE_1));
+        actionService.registerAction(actionFactory.setMouseModeLineTypeDeleteAction(ActionType.h_senbun_sakujyoButton, MouseMode.LINE_SEGMENT_DELETE_3, FoldLineAdditionalInputMode.AUX_LINE_1));
 
         // |---------------------------------------------------------------------------|
         // --- Bottom Panel ---
