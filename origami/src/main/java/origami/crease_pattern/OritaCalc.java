@@ -699,12 +699,28 @@ public class OritaCalc {
         return add_sen;
     }
 
-    //---------------------------
+    //Fully extend a line until it hits a line nearest to it
     public static LineSegment fullExtendUntilHit(FoldLineSet foldLineSet, LineSegment s0){
-        Point point = s0.getA();
-        s0.set(extendToIntersectionPoint_2(foldLineSet, s0));
-        s0.set(point, s0.determineFurthestEndpoint(point));
-        return s0;
+        LineSegment temp = getSegmentWithLength(s0, 0.5);
+        Point point = temp.getA();
+        temp.set(extendToIntersectionPoint_2(foldLineSet, temp));
+        temp.set(point, temp.determineFurthestEndpoint(point));
+        return temp;
+    }
+
+    /**
+     * Return a lineSegment with a certain length (assuming A is the starting point).
+     * @param s0 a LineSegment
+     * @param length a double value for desired length. Use negative value to flip the segment.
+     * @return a LineSegment with new endpoint to match the length
+     */
+    public static LineSegment getSegmentWithLength(LineSegment s0, double length){
+        double scaleFactor = length / s0.determineLength();
+
+        double newX = s0.determineAX() + (s0.determineBX() - s0.determineAX()) * scaleFactor;
+        double newY = s0.determineAY() + (s0.determineBY() - s0.determineAY()) * scaleFactor;
+
+        return new LineSegment(s0.getA(), new Point(newX, newY), s0.getColor());
     }
 
     //A function that determines whether two straight lines are parallel.
