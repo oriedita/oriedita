@@ -37,8 +37,7 @@ public class MouseHandlerDrawCreaseSymmetric extends BaseMouseHandlerInputRestri
             Point closest_point = d.getClosestPoint(p);
             if (p.distance(closest_point) < d.getSelectionDistance()) {
                 d.lineStepAdd(new LineSegment(closest_point, closest_point, LineColor.fromNumber(d.getLineStep().size() + 1)));
-
-                d.getLineStep().get(0).setB(d.getLineStep().get(1).getB());
+                d.getLineStep().set(0, d.getLineStep().get(0).withB(d.getLineStep().get(1).getB()));
             } else {
                 d.getLineStep().clear();
                 canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.NORMAL_0);//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。

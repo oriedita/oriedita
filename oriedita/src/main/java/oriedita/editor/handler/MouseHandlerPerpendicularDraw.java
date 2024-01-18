@@ -95,7 +95,9 @@ public class MouseHandlerPerpendicularDraw extends BaseMouseHandlerInputRestrict
             LineSegment perpendicular = d.getLineStep().get(2); //One of the two purple indicators
             LineSegment destinationLine = d.getLineStep().get(4); //Third line
 
-            point.setB(new Point(point.determineAX() + perpendicular.determineBX() - perpendicular.determineAX(), point.determineAY() + perpendicular.determineBY() - perpendicular.determineAY()));
+            point = point.withB(new Point(
+                    point.determineAX() + perpendicular.determineBX() - perpendicular.determineAX(),
+                    point.determineAY() + perpendicular.determineBY() - perpendicular.determineAY()));
 
             if (s_step_additional_intersection(4, point, destinationLine, d.getLineColor()) > 0) {
                 d.addLineSegment(destinationLine);

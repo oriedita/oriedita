@@ -62,7 +62,10 @@ public class PointLineMap {
     }
 
     public List<LineSegment> getLines(Point p) {
-        return Collections.unmodifiableList(map.get(p));
+        if (map.containsKey(p)){
+            return Collections.unmodifiableList(map.get(p));
+        }
+        return Collections.emptyList();
     }
 
     public void replaceLine(LineSegment oldLine, LineSegment newLine) {

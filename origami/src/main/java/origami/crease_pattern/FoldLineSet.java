@@ -1396,51 +1396,37 @@ public class FoldLineSet {
 
     //線分の追加-------------------------------
     public void addLine(Point pi, Point pj, LineColor i_c) {
-        total++;
-
-        LineSegment s = new LineSegment(pi, pj, i_c);
-
-        lineSegments.add(s);
+        addLineInternal(new LineSegment(pi, pj, i_c));
     }
 
     //線分の追加-------------------------------wwwwwwwwww
     public void addLine(Point pi, Point pj, LineSegment s0) {//Ten piからTen pjまでの線分を追加。この追加する線分のその他のパラメータはs0と同じ
-        total++;
-
-        LineSegment s = s0.withCoordinates(pi, pj);
-
-        lineSegments.add(s);
+        addLineInternal(s0.withAB(pi, pj));
     }
 
     //線分の追加-------------------------------
     public void addLine(Point pi, Point pj, LineColor i_c, LineSegment.ActiveState i_a) {
-        total++;
-
-        LineSegment s = new LineSegment(pi, pj, i_c, i_a);
-
-        lineSegments.add(s);
+        addLineInternal(new LineSegment(pi, pj, i_c, i_a));
     }
 
     //Add line segment -------------------------------
     public void addLine(double ax, double ay, double bx, double by, LineColor ic) {
-        total++;
-
-        LineSegment s = new LineSegment(new Point(ax, ay), new Point(bx, by), ic);
-
-        lineSegments.add(s);
+        addLineInternal(new LineSegment(new Point(ax, ay), new Point(bx, by), ic));
     }
 
     //線分の追加-------------------------------
-    public void addLine(Point pi, Point pj) {
-        total++;
-
-        LineSegment s = new LineSegment(pi, pj);
-        lineSegments.add(s);
+    public void addLine(Point a, Point b) {
+        addLineInternal(new LineSegment(a, b));
     }
 
     //線分の追加-------------------------------
     public void addLine(LineSegment s0) {
-        addLine(s0.getA(), s0.getB(), s0.getColor(), s0.getActive());//20181110追加
+        addLineInternal(new LineSegment(s0));
+    }
+
+    private void addLineInternal(LineSegment s0) {
+        total++;
+        lineSegments.add(s0);
     }
 
     //線分の削除-----------------------------------------
@@ -1459,13 +1445,11 @@ public class FoldLineSet {
 
     //線分の分割-----------------qqqqq------------------------
     public void applyLineSegmentDivide(LineSegment s0, Point p) {   //Divide the i-th line segment (end points a and b) at point p. Change the i-th line segment ab to ap and add the line segment pb.
-        LineSegment s1 = new LineSegment(p, s0.getB());//Create the i-th line segment ab before changing it to ap
-        LineColor i_c = s0.getColor();
-
-        s0.setB(p);//Change the i-th line segment ab to ap
-
-        s1.setColor(i_c);
+        LineSegment s1 = s0.withA(p);
+        LineSegment s2 = s0.withB(p);
+        deleteLine(s0);
         addLine(s1);
+        addLine(s2);
     }
 
     public void deleteLineSegment_vertex(LineSegment s) {//When erasing the i-th fold line, if the end point of the fold line can also be erased, erase it.

@@ -64,7 +64,9 @@ public abstract class BaseMouseHandlerPolygon extends BaseMouseHandler {
     @Override
     public void mouseDragged(Point p0) {
         Point p = d.getCamera().TV2object(p0);
-        d.getLineStep().get(d.getLineStep().size() - 1).setB(p);
+        d.getLineStep().set(
+                d.getLineStep().size() - 1,
+                d.getLineStep().get(d.getLineStep().size() - 1).withB(p));
         updateGridAssistCandidate(p0);
     }
 
@@ -76,11 +78,16 @@ public abstract class BaseMouseHandlerPolygon extends BaseMouseHandler {
             closest_point = p;
         }
 
-        d.getLineStep().get(d.getLineStep().size() - 1).setB(closest_point);
+        d.getLineStep().set(
+                d.getLineStep().size() - 1,
+                d.getLineStep().get(d.getLineStep().size() - 1).withB(p));
 
         if (d.getLineStep().size() >= 2) {
             if (p.distance(d.getLineStep().get(0).getA()) <= d.getSelectionDistance()) {
-                d.getLineStep().get(d.getLineStep().size() - 1).setB(d.getLineStep().get(0).getA());
+
+                d.getLineStep().set(
+                        d.getLineStep().size() - 1,
+                        d.getLineStep().get(d.getLineStep().size() - 1).withB(d.getLineStep().get(0).getA()));
                 //i_O_F_C=1;
                 polygonCompleted = true;
             }

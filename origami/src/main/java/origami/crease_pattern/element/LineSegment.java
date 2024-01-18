@@ -247,9 +247,7 @@ public class LineSegment implements Serializable, Cloneable {
     }
 
     public LineSegment withAB(Point a, Point b) {
-        return new LineSegment(a, b,
-                this.getColor(), this.getActive(),
-                this.getSelected(), this.getCustomized(), this.getCustomizedColor());
+        return withCoordinates(a, b);
     }
 
     /**

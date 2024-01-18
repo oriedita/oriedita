@@ -26,9 +26,9 @@ public class Point implements Serializable {
                 '}';
     }
 
-    public Point(double i, double j) {
-        x = i;
-        y = j;
+    public Point(double x, double y) {
+        this.x = x;
+        this.y = y;
     }
 
     public static Point mid(Point p, Point q) {

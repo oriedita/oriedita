@@ -223,7 +223,7 @@ public class MouseHandlerFoldableLineInput extends BaseMouseHandlerInputRestrict
                 }
                 Point closest_point = d.getClosestPoint(p);
                 if (p.distance(closest_point) < d.getSelectionDistance()) {
-                    d.getLineStep().get(0).setB(closest_point);
+                    d.getLineStep().set(0, d.getLineStep().get(0).withB(closest_point));
                     i_step_for_copy_4p = CreasePattern_Worker.FourPointStep.STEP_2;
                     return;
                 }
@@ -254,7 +254,7 @@ public class MouseHandlerFoldableLineInput extends BaseMouseHandlerInputRestrict
                 }
 
                 if (p.distance(closest_point) < d.getSelectionDistance()) {
-                    d.getLineStep().get(0).setB(closest_point);
+                    d.getLineStep().set(0, d.getLineStep().get(0).withB(closest_point));
                     return;
                 }
 
@@ -289,7 +289,7 @@ public class MouseHandlerFoldableLineInput extends BaseMouseHandlerInputRestrict
                     //最寄の既存折線が無効の場合
                     closest_point = d.getClosestPoint(p);
                     if (p.distance(closest_point) < d.getSelectionDistance()) {
-                        d.getLineStep().get(0).setB(closest_point);
+                        d.getLineStep().set(0, d.getLineStep().get(0).withB(closest_point));
                         return;
                     }
                     //最寄のstep_senbunが近い場合

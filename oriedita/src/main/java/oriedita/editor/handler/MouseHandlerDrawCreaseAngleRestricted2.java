@@ -52,7 +52,7 @@ public class MouseHandlerDrawCreaseAngleRestricted2 extends BaseMouseHandlerInpu
                 d.getLineStep().clear();
             } else if (p.distance(closest_point) < d.getSelectionDistance()) {
                 d.lineStepAdd(new LineSegment(closest_point, closest_point, LineColor.fromNumber(d.getLineStep().size() + 1)));
-                d.getLineStep().get(0).setB(d.getLineStep().get(1).getB());
+                d.getLineStep().set(0, d.getLineStep().get(0).withB(d.getLineStep().get(1).getB()));
             }
         } else if (d.getLineStep().size() == i_jyunnbi_step_suu) {    //if(i_egaki_dankai==1){        //動作の準備として人間が選択するステップ数が終わった状態で実行
             boolean i_jyun;//i_jyunは線を描くとき順番に色を変えたいとき使う

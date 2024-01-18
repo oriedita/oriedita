@@ -840,11 +840,15 @@ public class OritaCalc {
         return new LineSegment(ax1, ay1, bx1, by1);
     }
 
-    //A function that returns a line segment obtained by multiplying the line segment ab by r with a as the center (returns a new line segment without changing the original line segment)
-    public static LineSegment lineSegment_double(LineSegment s0, double r) {
+    /**
+     * A function that returns a line segment obtained by multiplying the line segment ab by lengthMultiplier with a as the center
+     * (returns a new line segment without changing the original line segment)
+     */
 
-        double bx1 = r * (s0.determineBX() - s0.determineAX()) + s0.determineAX();
-        double by1 = r * (s0.determineBY() - s0.determineAY()) + s0.determineAY();
+    public static LineSegment changeLength(LineSegment s0, double lengthMultiplier) {
+
+        double bx1 = lengthMultiplier * (s0.determineBX() - s0.determineAX()) + s0.determineAX();
+        double by1 = lengthMultiplier * (s0.determineBY() - s0.determineAY()) + s0.determineAY();
 
         double ax1 = s0.determineAX();
         double ay1 = s0.determineAY();

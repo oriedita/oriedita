@@ -49,7 +49,7 @@ public class MouseHandlerPolygonSetNoCorners extends BaseMouseHandler {
             } else if (p.distance(closestPoint) < d.getSelectionDistance()) {
 
                 d.lineStepAdd(new LineSegment(closestPoint, closestPoint, LineColor.fromNumber(d.getLineStep().size() + 1)));
-                d.getLineStep().get(0).setB(d.getLineStep().get(1).getB());
+                d.getLineStep().set(0, d.getLineStep().get(0).withB(d.getLineStep().get(1).getB()));
             }
             if (Epsilon.high.le0(d.getLineStep().get(0).determineLength())) {
                 d.getLineStep().clear();

@@ -61,7 +61,9 @@ public class MouseHandlerParallelDraw extends BaseMouseHandlerInputRestricted {
             LineSegment s1 = d.getLineStep().get(1);
             LineSegment s2 = d.getLineStep().get(2);
 
-            s0.setB(new Point(s0.determineAX() + s1.determineBX() - s1.determineAX(), s0.determineAY() + s1.determineBY() - s1.determineAY()));
+            s0 = s0.withB(new Point(
+                    s0.determineAX() + s1.determineBX() - s1.determineAX(),
+                    s0.determineAY() + s1.determineBY() - s1.determineAY()));
 
             if (s_step_additional_intersection(2, s0, s2, d.getLineColor()) > 0) {
                 d.addLineSegment(s2);

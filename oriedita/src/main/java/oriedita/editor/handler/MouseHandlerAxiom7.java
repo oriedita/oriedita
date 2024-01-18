@@ -108,8 +108,12 @@ public class MouseHandlerAxiom7 extends BaseMouseHandlerInputRestricted{
 
         // Case 2: Click on destination line to extend result line from midpoint
         if(d.getLineStep().size() == 6){
-            LineSegment midTemp = new LineSegment(midPoint, midPoint);
-            midTemp.setB(new Point(midTemp.determineAX() + d.getLineStep().get(3).determineBX() - d.getLineStep().get(3).determineAX(), midTemp.determineAY() + d.getLineStep().get(3).determineBY() - d.getLineStep().get(3).determineAY()));
+            LineSegment ls3 = d.getLineStep().get(3);
+            LineSegment midTemp = new LineSegment(
+                    midPoint,
+                    new Point(
+                            midPoint.getX() + ls3.determineBX() - ls3.determineAX(),
+                            midPoint.getY() + ls3.determineBY() - ls3.determineAY()));
             LineSegment result = getExtendedSegment(midTemp, d.getLineStep().get(5), d.getLineColor());
             d.addLineSegment(result);
             d.record();
@@ -118,8 +122,10 @@ public class MouseHandlerAxiom7 extends BaseMouseHandlerInputRestricted{
     }
 
     public Point drawAxiom7FoldIndicators(LineSegment target, LineSegment targetSegment, LineSegment refSegment){
-        LineSegment temp = new LineSegment(target);
-        temp.setB(new Point(temp.determineAX() + refSegment.determineBX() - refSegment.determineAX(), temp.determineAY() + refSegment.determineBY() - refSegment.determineAY()));
+        LineSegment temp = target.withB(
+                new Point(
+                        target.determineAX() + refSegment.determineBX() - refSegment.determineAX(),
+                        target.determineAY() + refSegment.determineBY() - refSegment.determineAY()));
         LineSegment extendLine = getExtendedSegment(temp, targetSegment, LineColor.PURPLE_8);
 
         if (extendLine == null) { return null; }
