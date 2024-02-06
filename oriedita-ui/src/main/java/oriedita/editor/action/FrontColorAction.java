@@ -4,9 +4,12 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import oriedita.editor.FrameProvider;
 import oriedita.editor.databinding.FoldedFigureModel;
+import oriedita.editor.swing.CustomColorChooserPanel;
 
 import javax.swing.JColorChooser;
-import java.awt.Color;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 
 @ApplicationScoped
@@ -24,10 +27,20 @@ public class FrontColorAction extends AbstractOrieditaAction{
     public void actionPerformed(ActionEvent e) {
         //以下にやりたいことを書く
 
-        Color frontColor = JColorChooser.showDialog(frameProvider.get(), "F_col", Color.white);
+//        Color frontColor = JColorChooser.showDialog(frameProvider.get(), "F_col", Color.white);
+//
+//        if (frontColor != null) {
+//            foldedFigureModel.setFrontColor(frontColor);
+//        }
 
-        if (frontColor != null) {
-            foldedFigureModel.setFrontColor(frontColor);
-        }
+        JFrame frame = new JFrame();
+        frame.setMinimumSize(new Dimension(700, 250));
+        frame.setPreferredSize(new Dimension(700, 250));
+        frame.setLocationRelativeTo(null);
+
+        JPanel colorChooserPanel = new CustomColorChooserPanel(foldedFigureModel.getFrontColor());
+        frame.add(colorChooserPanel);
+
+        frame.setVisible(true);
     }
 }
