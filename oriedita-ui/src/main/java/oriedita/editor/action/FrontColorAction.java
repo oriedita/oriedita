@@ -9,6 +9,7 @@ import oriedita.editor.swing.CustomColorChooserPanel;
 import javax.swing.JColorChooser;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 
@@ -38,7 +39,7 @@ public class FrontColorAction extends AbstractOrieditaAction{
         frame.setPreferredSize(new Dimension(700, 250));
         frame.setLocationRelativeTo(null);
 
-        JPanel colorChooserPanel = new CustomColorChooserPanel(foldedFigureModel.getFrontColor());
+        JPanel colorChooserPanel = new CustomColorChooserPanel(foldedFigureModel, foldedFigureModel.getFrontColor());
         frame.add(colorChooserPanel);
 
         frame.setVisible(true);
