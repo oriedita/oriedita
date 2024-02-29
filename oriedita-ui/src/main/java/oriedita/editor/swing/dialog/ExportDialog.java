@@ -91,7 +91,8 @@ public class ExportDialog extends JDialog {
         listModel.add(2, new ExportOption(".jpg", "JPEG (.jpg)"));
         listModel.add(3, new ExportOption(".orh", "Orihime save (.orh)"));
         listModel.add(4, new ExportOption(".cp", "Crease pattern (.cp)"));
-        listModel.add(4, new ExportOption(".fold", "FOLD (.fold)"));
+        listModel.add(5, new ExportOption(".fold", "FOLD (.fold)"));
+        listModel.add(6, new ExportOption(".dxf", "DXF (.dxf)"));
 
         list1.setModel(listModel);
 

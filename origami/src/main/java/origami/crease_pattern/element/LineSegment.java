@@ -45,11 +45,27 @@ public class LineSegment implements Serializable, Cloneable {
         selected = 0;
     }
 
+    public LineSegment(LineSegment s0, LineColor color){
+        a.set(s0.getA());
+        b.set(s0.getB());
+        active = ActiveState.INACTIVE_0;
+        this.color = color;
+        selected = 0;
+    }
+
     public LineSegment(double i1, double i2, double i3, double i4) {
         a.set(i1, i2);
         b.set(i3, i4);
         active = ActiveState.INACTIVE_0;
         color = LineColor.BLACK_0;
+        selected = 0;
+    }
+
+    public LineSegment(LineSegment s0){
+        a.set(s0.getA());
+        b.set(s0.getB());
+        active = ActiveState.INACTIVE_0;
+        color = s0.getColor();
         selected = 0;
     }
 

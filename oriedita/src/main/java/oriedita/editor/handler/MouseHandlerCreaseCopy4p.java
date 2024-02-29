@@ -118,7 +118,6 @@ public class MouseHandlerCreaseCopy4p extends BaseMouseHandlerInputRestricted {
             d.getFoldLineSet().divideLineSegmentWithNewLines(sousuu_old, sousuu_new);
 
             d.record();
-            canvasModel.setMouseMode(MouseMode.CREASE_SELECT_19);
 
             d.getLineStep().clear();
         }

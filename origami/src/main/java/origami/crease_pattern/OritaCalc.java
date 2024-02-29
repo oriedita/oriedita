@@ -2,7 +2,6 @@ package origami.crease_pattern;
 
 import origami.Epsilon;
 import origami.crease_pattern.element.Circle;
-import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.StraightLine;
@@ -641,9 +640,97 @@ public class OritaCalc {
 
     }
 
+    //---------------------------
+    public static LineSegment extendToIntersectionPoint_2(FoldLineSet foldLineSet, LineSegment s0) {//Extend s0 from point b in the opposite direction of a to the point where it intersects another polygonal line. Returns a new line // Returns the same line if it does not intersect another polygonal line
+        LineSegment add_sen = new LineSegment();
+        add_sen.set(s0);
+
+        Point kousa_point = new Point(1000000.0, 1000000.0); //この方法だと、エラーの原因になりうる。本当なら全線分のx_max、y_max以上の点を取ればいい。今後修正予定20161120
+        double kousa_point_distance = kousa_point.distance(add_sen.getA());
+
+        StraightLine tyoku1 = new StraightLine(add_sen.getA(), add_sen.getB());
+        StraightLine.Intersection i_intersection_flg;//元の線分を直線としたものと、他の線分の交差状態
+        LineSegment.Intersection i_lineSegment_intersection_flg;//元の線分と、他の線分の交差状態
+
+        for (int i = 1; i <= foldLineSet.getTotal(); i++) {
+            i_intersection_flg = tyoku1.lineSegment_intersect_reverse_detail(foldLineSet.get(i));//0=この直線は与えられた線分と交差しない、1=X型で交差する、2=T型で交差する、3=線分は直線に含まれる。
+            i_lineSegment_intersection_flg = OritaCalc.determineLineSegmentIntersectionSweet(s0, foldLineSet.get(i), Epsilon.UNKNOWN_1EN5, Epsilon.UNKNOWN_1EN5);//20180408なぜかこの行の様にs0のままだと、i_senbun_kousa_flgがおかしくならない。
+
+            if (i_intersection_flg.isIntersecting() && !i_lineSegment_intersection_flg.isEndpointIntersection()) {
+                kousa_point.set(OritaCalc.findIntersection(tyoku1, foldLineSet.get(i)));
+                if (kousa_point.distance(add_sen.getA()) > Epsilon.UNKNOWN_1EN5) {
+                    if (kousa_point.distance(add_sen.getA()) < kousa_point_distance) {
+                        double d_kakudo = OritaCalc.angle(add_sen.getA(), add_sen.getB(), add_sen.getA(), kousa_point);
+                        if (d_kakudo < 1.0 || d_kakudo > 359.0) {
+                            kousa_point_distance = kousa_point.distance(add_sen.getA());
+                            add_sen.set(add_sen.getA(), kousa_point);
+                        }
+                    }
+                }
+
+            }
+
+            if (i_intersection_flg == StraightLine.Intersection.INCLUDED_3 && i_lineSegment_intersection_flg != LineSegment.Intersection.PARALLEL_EQUAL_31) {
+                kousa_point.set(foldLineSet.get(i).getA());
+                if (kousa_point.distance(add_sen.getA()) > Epsilon.UNKNOWN_1EN5) {
+                    if (kousa_point.distance(add_sen.getA()) < kousa_point_distance) {
+                        double d_kakudo = OritaCalc.angle(add_sen.getA(), add_sen.getB(), add_sen.getA(), kousa_point);
+                        if (d_kakudo < 1.0 || d_kakudo > 359.0) {
+                            kousa_point_distance = kousa_point.distance(add_sen.getA());
+                            add_sen.set(add_sen.getA(), kousa_point);
+                        }
+                    }
+                }
+
+                kousa_point.set(foldLineSet.get(i).getB());
+                if (kousa_point.distance(add_sen.getA()) > Epsilon.UNKNOWN_1EN5) {
+                    if (kousa_point.distance(add_sen.getA()) < kousa_point_distance) {
+                        double d_kakudo = OritaCalc.angle(add_sen.getA(), add_sen.getB(), add_sen.getA(), kousa_point);
+                        if (d_kakudo < 1.0 || d_kakudo > 359.0) {
+                            kousa_point_distance = kousa_point.distance(add_sen.getA());
+                            add_sen.set(add_sen.getA(), kousa_point);
+                        }
+                    }
+                }
+            }
+        }
+
+        add_sen.set(s0.getB(), add_sen.getB());
+        return add_sen;
+    }
+
+    //Fully extend a line until it hits a line nearest to it
+    public static LineSegment fullExtendUntilHit(FoldLineSet foldLineSet, LineSegment s0){
+        LineSegment temp = getSegmentWithLength(s0, 0.5);
+        Point point = temp.getA();
+        temp.set(extendToIntersectionPoint_2(foldLineSet, temp));
+        temp.set(point, temp.determineFurthestEndpoint(point));
+        return temp;
+    }
+
+    /**
+     * Return a lineSegment with a certain length (assuming A is the starting point).
+     * @param s0 a LineSegment
+     * @param length a double value for desired length. Use negative value to flip the segment.
+     * @return a LineSegment with new endpoint to match the length
+     */
+    public static LineSegment getSegmentWithLength(LineSegment s0, double length){
+        double scaleFactor = length / s0.determineLength();
+
+        double newX = s0.determineAX() + (s0.determineBX() - s0.determineAX()) * scaleFactor;
+        double newY = s0.determineAY() + (s0.determineBY() - s0.determineAY()) * scaleFactor;
+
+        return new LineSegment(s0.getA(), new Point(newX, newY), s0.getColor());
+    }
+
     //A function that determines whether two straight lines are parallel.
     public static ParallelJudgement isLineSegmentParallel(StraightLine t1, StraightLine t2) {
         return isLineSegmentParallel(t1, t2, Epsilon.UNKNOWN_01);
+    }
+
+    //A function that determines whether two straight lines are parallel.
+    public static ParallelJudgement isLineSegmentParallel(LineSegment s1, LineSegment s2) {
+        return isLineSegmentParallel(new StraightLine(s1), new StraightLine(s2));
     }
 
     //A function that determines whether two line segments are parallel.
@@ -1080,37 +1167,37 @@ public class OritaCalc {
         return new LineSegment(s.getA(), new Point(s.getA().getX() + newDx, s.getA().getY() + nexDy));
     }
 
+    /**
+     * Check if a Point is within the span of a LineSegment. The span is an imaginary line infinitely expanded from the LineSegment
+     * @param p0 a target Point
+     * @param s0 a LineSegment
+     * @return true if the target point is within the span, false if otherwise
+     */
+    public static boolean isPointWithinLineSpan(Point p0, LineSegment s0){ // Check if point p0 is within the span of segment s0
+        if(OritaCalc.distance(p0, s0.getA()) < Epsilon.UNKNOWN_1EN7 ||
+                OritaCalc.distance(p0, s0.getB()) < Epsilon.UNKNOWN_1EN7){
+            return true;
+        }
+        LineSegment temp = new LineSegment(p0, s0.determineClosestEndpoint(p0));
+        return OritaCalc.isLineSegmentParallel(temp, s0) == ParallelJudgement.PARALLEL_EQUAL;
+    }
+
+    /**
+     * Check if a Point is within the span of a LineSegment (formed by 2 Points). The span is an imaginary line infinitely expanded from the LineSegment
+     * @param p0 a target Point
+     * @param p1 an endpoint of the LineSegment
+     * @param p2 other endpoint of the LineSegment
+     * @return true if the target point is within the span, false if otherwise
+     */
+    public static boolean isPointWithinLineSpan(Point p0, Point p1, Point p2){
+        return isPointWithinLineSpan(p0, new LineSegment(p1, p2));
+    }
+
+    //--------------------------------------------------------
+
     public enum ParallelJudgement {
         NOT_PARALLEL,
         PARALLEL_NOT_EQUAL,
         PARALLEL_EQUAL,
-    }
-
-    public static LineSegment s_step_additional_intersection(LineSegment s_o, LineSegment s_k, LineColor icolo) {
-
-        Point cross_point = new Point();
-
-        if (OritaCalc.isLineSegmentParallel(s_o, s_k, Epsilon.UNKNOWN_1EN7) == OritaCalc.ParallelJudgement.PARALLEL_NOT_EQUAL) {//0=平行でない、1=平行で２直線が一致しない、2=平行で２直線が一致する
-            return null;
-        }
-
-        if (OritaCalc.isLineSegmentParallel(s_o, s_k, Epsilon.UNKNOWN_1EN7) == OritaCalc.ParallelJudgement.PARALLEL_EQUAL) {//0=平行でない、1=平行で２直線が一致しない、2=平行で２直線が一致する
-            cross_point.set(s_k.getA());
-            if (OritaCalc.distance(s_o.getA(), s_k.getA()) > OritaCalc.distance(s_o.getA(), s_k.getB())) {
-                cross_point.set(s_k.getB());
-            }
-        }
-
-        if (OritaCalc.isLineSegmentParallel(s_o, s_k, Epsilon.UNKNOWN_1EN7) == OritaCalc.ParallelJudgement.NOT_PARALLEL) {//0=平行でない、1=平行で２直線が一致しない、2=平行で２直線が一致する
-            cross_point.set(OritaCalc.findIntersection(s_o, s_k));
-        }
-
-        LineSegment add_sen = new LineSegment(cross_point, s_o.getA(), icolo);
-
-        if (Epsilon.high.gt0(add_sen.determineLength())) {
-            return add_sen;
-        }
-
-        return null;
     }
 }

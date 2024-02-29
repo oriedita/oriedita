@@ -24,6 +24,14 @@
         </dependency>
         <dependency>
             <groupId>oriedita</groupId>
+            <artifactId>oriedita-common</artifactId>
+            <version>1.0.1-SNAPSHOT</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>oriedita</groupId>
             <artifactId>oriedita-data</artifactId>
             <version>1.0.1-SNAPSHOT</version>
         </dependency>
@@ -39,6 +47,11 @@
         <dependency>
             <groupId>org.tinylog</groupId>
             <artifactId>tinylog-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>32.0.0-jre</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>

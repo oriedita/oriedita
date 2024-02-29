@@ -82,6 +82,22 @@ public class FoldLineSet {
         return cAMVViolations;
     }
 
+    public void addLineSegmentForReplace(LineSegment s0){
+        addLine(s0);//Just add the information of s0 to the end of senbun of foldLineSet
+        int total_old = getTotal();
+        divideLineSegmentWithNewLines(total_old - 1, total_old);
+    }
+
+    public void replaceAux(CustomLineTypes to, List<LineSegment> reserveAux) {
+        for (LineSegment s : reserveAux) {
+            LineSegment auxChange = s.clone();
+            auxChange.setColor(LineColor.fromNumber(to.getNumberForLineColor()));
+            deleteLine(s);
+            addLineSegmentForReplace(auxChange);
+        }
+        reserveAux.clear();
+    }
+
     //Get the total number of line segments
     public int getTotal() {
         return total;
@@ -213,6 +229,17 @@ public class FoldLineSet {
             }
         }
     }
+    
+    public boolean isSelectionEmpty(){
+        for (int i = 1; i <= total; i++) {
+            LineSegment s = lineSegments.get(i);
+            if (s.getSelected() == 2) {
+                //We finish the calculation on the first selected crease in an attempt to finish faster than O(n) in the best case scenario
+                return false;
+            }
+        }
+        return true;
+    }
 
     //The number of broken lines of the line segment set selected for folding estimation is output as an int.
     // Do not count auxiliary lines with icol of 3 (cyan = light blue) or more
@@ -338,15 +365,17 @@ public class FoldLineSet {
         }
     }
 
-    public void select(Polygon p) {
+    public boolean select(Polygon p) {
+        boolean anyLinesSelected = false;
+
         for (int i = 1; i <= total; i++) {
             LineSegment s = lineSegments.get(i);
             if (p.totu_boundary_inside(s)) {
-
                 s.setSelected(2);
-
+                anyLinesSelected = true;
             }
         }
+        return anyLinesSelected;
     }
 
     public void unselect(Polygon p) {
@@ -422,55 +451,111 @@ public class FoldLineSet {
         return i_r;
     }
 
-    public boolean insideToReplace(Polygon b, int from, int to){
+    public boolean insideToReplaceType(Polygon b, CustomLineTypes from, CustomLineTypes to){
         boolean i_r = false;
+        List<LineSegment> reserveAux = new ArrayList<>();
 
         for (int i = 1; i <= total; i++){
-            LineSegment s;
-            s = lineSegments.get(i);
-            if(b.totu_boundary_inside(s)){
-                // From "Any"
-                if(from == -1){
-                    s.setColor(LineColor.fromNumber(to));
-                    i_r = true;
-                }
-                // From other line types
-                else {
-                    if(s.getColor().getNumber() == from){
-                        s.setColor(LineColor.fromNumber(to));
+            LineSegment s = lineSegments.get(i);
+            LineSegment temp = s.clone();
+
+            if(b.totu_boundary_inside(s) && (from.getNumber() != to.getNumber())){
+                switch (from){
+                    case ANY:
+                        if(s.getColor() == LineColor.CYAN_3) {
+                            reserveAux.add(s);
+                        } else {
+                            s.setColor(LineColor.fromNumber(to.getNumberForLineColor()));
+                        }
                         i_r = true;
+                        break;
+                    case EGDE:
+                        if (s.getColor() == LineColor.BLACK_0) {
+                            s.setColor(LineColor.fromNumber(to.getNumberForLineColor()));
+                            i_r = true;
+                        }
+                        break;
+                    case MANDV:
+                        if (s.getColor() == LineColor.RED_1 || s.getColor() == LineColor.BLUE_2) {
+                            s.setColor(LineColor.fromNumber(to.getNumberForLineColor()));
+                            i_r = true;
+                        }
+                        break;
+                    case MOUNTAIN:
+                    case VALLEY:
+                        if (s.getColor() == LineColor.fromNumber(from.getNumber() - 1)) {
+                            s.setColor(LineColor.fromNumber(to.getNumberForLineColor()));
+                            i_r = true;
+                        }
+                        break;
+                    case AUX:
+                        if(s.getColor() == LineColor.fromNumber(from.getNumber() - 1)) {
+                            reserveAux.add(s);
+                            i_r = true;
+                        }
+                        break;
+                    default:
+                        break;
+                }
+                if(from != CustomLineTypes.AUX){ // if replace from is not AUX
+                    if(from != CustomLineTypes.ANY){ // if replace from is not ANY
+                        lineSegments.set(i, s);
+                    } else { // if replace from is ANY & og linetype is not Aux
+                        if(temp.getColor() != LineColor.CYAN_3){
+                            lineSegments.set(i, s);
+                        }
                     }
                 }
             }
         }
+        replaceAux(to, reserveAux);
         return i_r;
     }
 
-    public boolean insideToDelete(Polygon b, int del){
+    public boolean insideToDeleteType(Polygon b, CustomLineTypes del){
         boolean i_r = false;
 
         FoldLineSave save = new FoldLineSave();
 
         for (int i = 1; i <= total; i++){
-            LineSegment s;
-            s = lineSegments.get(i);
+            LineSegment s = lineSegments.get(i);
 
-            // From "Any"
-            if(del == -1){
-                if(b.totu_boundary_inside(s)){
-                    i_r = true;
-                } else {
-                    save.addLineSegment(s.clone());
-                }
-            }
-            //From other line types
-            else {
-                if ((b.totu_boundary_inside(s)) && s.getColor().getNumber() == del) {
-                    i_r = true;
-                }//黒赤青線はmemo1に書かれない。つまり削除される。
-                else if ((!b.totu_boundary_inside(s)) || s.getColor().getNumber() != del) {
-                    save.addLineSegment(s.clone());
-                }
+            switch (del){
+                case ANY:
+                    if(b.totu_boundary_inside(s)){
+                        i_r = true;
+                    } else {
+                        save.addLineSegment(s.clone());
+                    }
+                    break;
+                case EGDE:
+                    if ((b.totu_boundary_inside(s)) && s.getColor() == LineColor.BLACK_0) {
+                        i_r = true;
+                    }//黒赤青線はmemo1に書かれない。つまり削除される。
+                    else if ((!b.totu_boundary_inside(s)) || s.getColor() != LineColor.BLACK_0) {
+                        save.addLineSegment(s.clone());
+                    }
+                    break;
+                case MANDV:
+                    if ((b.totu_boundary_inside(s)) && (s.getColor() == LineColor.RED_1 || s.getColor() == LineColor.BLUE_2)) {
+                        i_r = true;
+                    }//黒赤青線はmemo1に書かれない。つまり削除される。
+                    else if ((!b.totu_boundary_inside(s)) || !(s.getColor() == LineColor.RED_1 || s.getColor() == LineColor.BLUE_2)) {
+                        save.addLineSegment(s.clone());
+                    }
+                    break;
+                case MOUNTAIN:
+                case VALLEY:
+                case AUX:
+                    if ((b.totu_boundary_inside(s)) && s.getColor() == LineColor.fromNumber(del.getNumber() - 1)) {
+                        i_r = true;
+                    }//黒赤青線はmemo1に書かれない。つまり削除される。
+                    else if ((!b.totu_boundary_inside(s)) || s.getColor() != LineColor.fromNumber(del.getNumber() - 1)) {
+                        save.addLineSegment(s.clone());
+                    }
+                    break;
+                default:
+                    break;
             }
         }
         if(i_r){

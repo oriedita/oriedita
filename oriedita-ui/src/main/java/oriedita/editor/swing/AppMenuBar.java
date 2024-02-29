@@ -101,6 +101,9 @@ public class AppMenuBar {
     private JMenuItem cutButton;
     private JMenuItem pasteButton;
     private JMenuItem pasteOffsetButton;
+    private JMenuItem selectAllButton;
+    private JMenuItem unselectAllButton;
+    private JMenuItem invertMVButton;
     private AppMenuBarUI appMenuBarUI;
     private PreferenceDialog preferenceDialog;
     private final AnimationService animationService;
@@ -212,6 +215,9 @@ public class AppMenuBar {
         buttonService.registerButton(cutButton, "cutClipboardAction");
         buttonService.registerButton(pasteButton, "pasteClipboardAction");
         buttonService.registerButton(pasteOffsetButton, "pasteOffsetClipboardAction");
+        buttonService.registerButton(selectAllButton, "selectAllAction");
+        buttonService.registerButton(unselectAllButton, "unselectAllAction");
+        buttonService.registerButton(invertMVButton, "zen_yama_tani_henkanAction");
 
         newButton.addActionListener(e -> {
             if (!fileModel.isSaved()) {
@@ -252,9 +258,9 @@ public class AppMenuBar {
         });
         prefButton.addActionListener(e -> {
             if(preferenceDialog == null){
-                preferenceDialog = new PreferenceDialog(applicationModel, lookAndFeelService, frameProvider, foldedFigureModel, "Preferences", frameProvider.get());
+                preferenceDialog = new PreferenceDialog(applicationModel, lookAndFeelService, frameProvider, foldedFigureModel, "Preferences", frameProvider.get(), buttonService, fileSaveService);
             }
-            preferenceDialog.setSize(preferenceDialog.getRootPane().getMinimumSize());
+            preferenceDialog.setSize(preferenceDialog.getRootPane().getPreferredSize());
             preferenceDialog.setMinimumSize(preferenceDialog.getRootPane().getMinimumSize());
             preferenceDialog.setResizable(true);
             preferenceDialog.setData(applicationModel);
@@ -457,6 +463,15 @@ public class AppMenuBar {
 
         pasteOffsetButton = new JMenuItem("Paste (offset)");
         pasteMenu.add(pasteOffsetButton);
+
+        selectAllButton = new JMenuItem("Select All");
+        editMenu.add(selectAllButton);
+
+        unselectAllButton = new JMenuItem("Unselect all");
+        editMenu.add(unselectAllButton);
+
+        invertMVButton = new JMenuItem("Invert MV");
+        editMenu.add(invertMVButton);
 
         JMenu viewMenu = new JMenu("View");
         viewMenu.setMnemonic('V');

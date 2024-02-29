@@ -143,6 +143,16 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
 
     private CanvasUI canvasUI;
 
+    private static String userWarningMessage = null;
+
+    public static void setUserWarningMessage(String uwm){
+        Canvas.userWarningMessage = uwm;
+    }
+
+    public static void clearUserWarningMessage(){
+        Canvas.userWarningMessage = null;
+    }
+
     public CanvasUI getCanvasImpl() {
         return canvasUI;
     }
@@ -322,6 +332,11 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
 
                     bufferGraphics.drawString(foldingExecutor.getTaskName() + " Under Calculation. If you want to cancel calculation, uncheck [check A + MV]on right side and press the brake button (bicycle brake icon) on lower side.", 10, 69); //この表示内容はvoid kekka_syoriで決められる。
                     bufferGraphics.drawString("計算中。　なお、計算を取り消し通常状態に戻りたいなら、右辺の[check A+MV]のチェックをはずし、ブレーキボタン（下辺の、自転車のブレーキのアイコン）を押す。 ", 10, 83); //この表示内容はvoid kekka_syoriで決められる。
+                }
+
+                if (Canvas.userWarningMessage != null) {
+                    bufferGraphics.setColor(Colors.get(Color.yellow));
+                    bufferGraphics.drawString(Canvas.userWarningMessage, 10, 97);
                 }
 
                 bulletinBoard.draw(bufferGraphics);//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -531,17 +546,6 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
 
     //マウス操作(ボタンを押したとき)を行う関数----------------------------------------------------
     public void mousePressed(MouseEvent e) {
-        JPopupMenu foldPopUp = new JPopupMenu();
-
-        createMenuItem(foldPopUp, "foldedFigureFlipAction", "Flip");
-        createMenuItem(foldPopUp, "scaleAction", "Scale");
-        createMenuItem(foldPopUp, "foldedFigureTrashAction", "Delete");
-        createMenuItem(foldPopUp, "duplicateAction", "Duplicate");
-        createMenuItem(foldPopUp, "suitei_02Action", "Wireframe");
-        createMenuItem(foldPopUp, "suitei_03Action", "X-ray");
-
-        buttonService.addDefaultListener(foldPopUp, false);
-
         Point p = e2p(e);
         canvasUI.requestFocus();
         mouseDraggedValid = true;
@@ -617,6 +621,18 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
                     case FOLDED_BACK_2:
                     case TRANSPARENT_FRONT_3:
                     case TRANSPARENT_BACK_4:
+                        JPopupMenu foldPopUp = new JPopupMenu();
+
+                        createMenuItem(foldPopUp, "foldedFigureFlipAction", "Flip");
+                        createMenuItem(foldPopUp, "scaleAction", "Scale");
+                        createMenuItem(foldPopUp, "foldedFigureTrashAction", "Delete");
+                        createMenuItem(foldPopUp, "duplicateFoldedModelAction", "Duplicate");
+                        if(foldedFiguresList.getActiveItem().getFoldedFigure().estimationStep != FoldedFigure.EstimationStep.STEP_10){
+                            createMenuItem(foldPopUp, "suitei_02Action", "Wireframe");
+                            createMenuItem(foldPopUp, "suitei_03Action", "X-ray");
+                        }
+
+                        buttonService.addDefaultListener(foldPopUp, false);
                         foldPopUp.show(this.canvasUI, e.getX(), e.getY());
                         break;
                     default:

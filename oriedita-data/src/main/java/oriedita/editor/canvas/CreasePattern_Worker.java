@@ -6,6 +6,7 @@ import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.databinding.GridModel;
 import oriedita.editor.drawing.Grid;
 import oriedita.editor.drawing.tools.Camera;
+import origami.crease_pattern.CustomLineTypes;
 import oriedita.editor.save.Save;
 import origami.crease_pattern.FoldLineSet;
 import origami.crease_pattern.LineSegmentSet;
@@ -18,6 +19,7 @@ import origami.crease_pattern.element.Polygon;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.List;
 
 public interface CreasePattern_Worker {
@@ -120,6 +122,12 @@ public interface CreasePattern_Worker {
 
     int getCandidateSize();
 
+    void refreshIsSelectionEmpty();
+
+    void setIsSelectionEmpty(boolean isSelectionEmpty);
+
+    boolean getIsSelectionEmpty();
+
     void select_all();
 
     void unselect_all();
@@ -163,9 +171,9 @@ public interface CreasePattern_Worker {
 
     boolean insideToAux(Point p0a, Point p0b);
 
-    boolean insideToReplace(Point p0a, Point p0b, int from, int to);
+    boolean insideToReplaceType(Point p0a, Point p0b, CustomLineTypes from, CustomLineTypes to);
 
-    boolean insideToDelete(Point p0a, Point p0b, int del);
+    boolean insideToDeleteType(Point p0a, Point p0b, CustomLineTypes del);
 
     void setFoldLineDividingNumber(int i);
 
@@ -265,6 +273,10 @@ public interface CreasePattern_Worker {
     int getFoldLineDividingNumber();
 
     TextWorker getTextWorker();
+
+    public void addPropertyChangeListener(PropertyChangeListener listener);
+
+    public void removePropertyChangeListener(PropertyChangeListener listener);
 
     void setGridConfigurationData(GridModel gridModel);
 

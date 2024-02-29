@@ -232,10 +232,11 @@ public class GridModel implements Serializable {
     public void setGridAngle(final double gridAngle) {
         double oldAngle = this.gridAngle;
         double newAngle = gridAngle;
-        if (newAngle < Epsilon.UNKNOWN_01 || newAngle > 180.0 - Epsilon.UNKNOWN_01) {
-            newAngle = 90.0;
+        if (newAngle < Epsilon.GRID_ANGLE_THRESHOLD) 
+            newAngle = Epsilon.GRID_ANGLE_THRESHOLD;
+        else if(newAngle > 180.0 - Epsilon.GRID_ANGLE_THRESHOLD){
+            newAngle = 180.0 - Epsilon.GRID_ANGLE_THRESHOLD;
         }
-
         this.gridAngle = newAngle;
         this.pcs.firePropertyChange("gridAngle", oldAngle, newAngle);
     }

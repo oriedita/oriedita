@@ -31,10 +31,30 @@ public class MouseHandlerCircleDrawTangentLine extends BaseMouseHandler {
         p.set(d.getCamera().TV2object(p0));
         closest_circumference.set(d.getClosestCircleMidpoint(p));
 
-        if (d.getCircleStep().size() == 0 || d.getCircleStep().size() == 1) {
-            d.getLineStep().clear();
-            if (OritaCalc.distance_circumference(p, closest_circumference) > d.getSelectionDistance()) {
+        // Select a point
+        if(d.getLineStep().isEmpty()){
+            Point closestPoint = d.getClosestPoint(p);
+            if (p.distance(closestPoint) < d.getSelectionDistance()) {
+                d.lineStepAdd(new LineSegment(closestPoint, closestPoint, d.getLineColor()));
                 return;
+            }
+        }
+
+        // Select a circle if:
+        // - There's no circle
+        // - There's no circle and no Point
+        // - There's one circle and no Point
+        if((d.getCircleStep().isEmpty() && d.getLineStep().size() == 1) ||
+                (d.getCircleStep().isEmpty() && d.getLineStep().isEmpty()) ||
+                (d.getCircleStep().size() == 1 && d.getLineStep().isEmpty())){
+            if (OritaCalc.distance_circumference(p, closest_circumference) > d.getSelectionDistance()) { return; }
+
+            if(!d.getLineStep().isEmpty()){ // Assuming there's a point, check if that point is within the selected circle
+               if(closest_circumference.getR() > OritaCalc.distance(closest_circumference.determineCenter(), d.getLineStep().get(0).getA())){
+                   d.getLineStep().clear();
+                   d.getCircleStep().clear();
+                   return;
+               }
             }
 
             Circle stepCircle = new Circle();
@@ -42,17 +62,22 @@ public class MouseHandlerCircleDrawTangentLine extends BaseMouseHandler {
             stepCircle.setColor(LineColor.GREEN_6);
 
             d.getCircleStep().add(stepCircle);
-        } else if (d.getLineStep().size() > 1) {//			i_egaki_dankai=0;i_circle_drawing_stage=1;
+        }
+
+        if (d.getLineStep().size() > 1) {//			i_egaki_dankai=0;i_circle_drawing_stage=1;
             LineSegment closest_step_lineSegment = new LineSegment();
             closest_step_lineSegment.set(d.get_moyori_step_lineSegment(p, 1, d.getLineStep().size()));
 
-            if (OritaCalc.determineLineSegmentDistance(p, closest_step_lineSegment) > d.getSelectionDistance()) {
-                return;
-            }
+            if (OritaCalc.determineLineSegmentDistance(p, closest_step_lineSegment) > d.getSelectionDistance()) { return; }
 
+            closest_step_lineSegment.set(OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), closest_step_lineSegment));
+            closest_step_lineSegment.set(closest_step_lineSegment.getB(), closest_step_lineSegment.getA(), d.getLineColor());
+            closest_step_lineSegment.set(OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), closest_step_lineSegment));
+
+            d.addLineSegment(closest_step_lineSegment);
+            d.record();
             d.getLineStep().clear();
-
-            d.lineStepAdd(closest_step_lineSegment);
+            d.getCircleStep().clear();
         }
     }
 
@@ -62,7 +87,8 @@ public class MouseHandlerCircleDrawTangentLine extends BaseMouseHandler {
 
     //マウス操作(ボタンを離したとき)を行う関数
     public void mouseReleased(Point p0) {
-        if ((d.getLineStep().size() == 0) && (d.getCircleStep().size() == 2)) {
+        // 2-circle tangents
+        if(d.getCircleStep().size() == 2 & d.getLineStep().isEmpty()){
             Circle firstCircle = d.getCircleStep().get(0);
             Circle secondCircle = d.getCircleStep().get(1);
 
@@ -181,15 +207,19 @@ public class MouseHandlerCircleDrawTangentLine extends BaseMouseHandler {
             }
         }
 
-        if (d.getLineStep().size() == 1) {
-            d.getCircleStep().clear();
-
-            LineSegment s = d.getLineStep().get(0);
-            s.setColor(d.getLineColor());
-            d.addLineSegment(s);
-
-            d.getLineStep().clear();
-            d.record();
+        //point-circle tangent
+        if(d.getCircleStep().size() == 1 && d.getLineStep().size() == 1){
+            if(Math.abs(closest_circumference.getR() - OritaCalc.distance(closest_circumference.determineCenter(), d.getLineStep().get(0).getA())) < Epsilon.UNKNOWN_1EN7){
+                LineSegment projectionLine = new LineSegment(closest_circumference.determineCenter(), d.getLineStep().get(0).getA());
+                d.lineStepAdd(OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), new LineSegment(d.getLineStep().get(0).getA(), OritaCalc.findProjection(OritaCalc.moveParallel(projectionLine, 1), d.getLineStep().get(0).getA()), LineColor.PURPLE_8)));
+                d.lineStepAdd(OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), new LineSegment(d.getLineStep().get(0).getA(), OritaCalc.findProjection(OritaCalc.moveParallel(projectionLine, -1), d.getLineStep().get(0).getA()), LineColor.PURPLE_8)));
+                return;
+            }
+            LineSegment diameter = new LineSegment(d.getLineStep().get(0).getA(), d.getCircleStep().get(0).determineCenter());
+            Circle constructCir = new Circle(diameter, LineColor.GREEN_6);
+            LineSegment connectSegment = OritaCalc.circle_to_circle_no_intersection_wo_musubu_lineSegment(constructCir, d.getCircleStep().get(0));
+            d.lineStepAdd(new LineSegment(d.getLineStep().get(0).getA(), connectSegment.getA(), LineColor.PURPLE_8));
+            d.lineStepAdd(new LineSegment(d.getLineStep().get(0).getA(), connectSegment.getB(), LineColor.PURPLE_8));
         }
     }
 }

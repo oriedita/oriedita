@@ -16,6 +16,7 @@ public class SaveTypeDialog extends JDialog {
     private JPanel contentPane;
     private JButton creasePatternCpSavesButton;
     private JButton completeOriAlsoSavesButton;
+    private JButton completeFoldAlsoSavesButton;
 
     private String saveType = null;
 
@@ -29,6 +30,10 @@ public class SaveTypeDialog extends JDialog {
         });
         completeOriAlsoSavesButton.addActionListener(e -> {
             saveType = ".ori";
+            dispose();
+        });
+        completeFoldAlsoSavesButton.addActionListener(e -> {
+            saveType = ".fold";
             dispose();
         });
 
@@ -73,16 +78,22 @@ public class SaveTypeDialog extends JDialog {
         contentPane = new JPanel();
         contentPane.setLayout(new GridLayoutManager(1, 1, new Insets(10, 10, 10, 10), -1, -1));
         final JPanel panel1 = new JPanel();
-        panel1.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 0, 0), -1, -1));
+        panel1.setLayout(new GridLayoutManager(1, 3, new Insets(0, 0, 0, 0), -1, -1));
         contentPane.add(panel1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         creasePatternCpSavesButton = new JButton();
-        creasePatternCpSavesButton.setHorizontalAlignment(2);
-        creasePatternCpSavesButton.setText("<html><b>Crease Pattern (.cp)</b><br/>\nSaves only crease pattern <br/>lines.<br/><br/>\n\n<i>Use this format to share <br/>crease patterns with other <br/>people.</i>");
+        creasePatternCpSavesButton.setHorizontalAlignment(0);
+        creasePatternCpSavesButton.setText("<html><br/><b>.CP</b><br/><br/> Save only M/V/A/E lines.<br/><br/><i>Robust and compatible file<br/>format that is widely used to<br/>share crease patterns.</i><br/><br/><html/>");
+        creasePatternCpSavesButton.setVerticalAlignment(1);
         panel1.add(creasePatternCpSavesButton, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         completeOriAlsoSavesButton = new JButton();
-        completeOriAlsoSavesButton.setHorizontalAlignment(2);
-        completeOriAlsoSavesButton.setText("<html><b>Complete (.ori)</b><br/>\nAlso saves circles, yellow <br/>aux lines and the grid.<br/>\n<br/>\n<i>Use this format when <br/>saving to your local <br/>computer.</i>");
+        completeOriAlsoSavesButton.setHorizontalAlignment(0);
+        completeOriAlsoSavesButton.setText("<html><br/><b>.ORI</b><br/><br/>Save all lines, circles, text,<br/>and grid.<br/> <br/> <i>Oriedita exclusive file format.</i><br/>");
+        completeOriAlsoSavesButton.setVerticalAlignment(1);
         panel1.add(completeOriAlsoSavesButton, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        completeFoldAlsoSavesButton = new JButton();
+        completeFoldAlsoSavesButton.setText("<html><br/><b>.FOLD</b><br/><br/>Save all lines, circles, text,<br/>and grid.<br/> <br/> <i>Compatible with other origami<br/>related software. </i><br/>");
+        completeFoldAlsoSavesButton.setVerticalAlignment(1);
+        panel1.add(completeFoldAlsoSavesButton, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     }
 
     /**

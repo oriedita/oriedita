@@ -69,11 +69,11 @@ public class FoldedFigure_Drawer implements Foldable {
     }
 
     public void foldedFigure_camera_initialize() {
-        initializeCamera(foldedFigureCamera, 1.0);
-        initializeCamera(foldedFigureFrontCamera, 1.0);
-        initializeCamera(foldedFigureRearCamera, -1.0);
-        initializeCamera(transparentFrontCamera, 1.0);
-        initializeCamera(transparentRearCamera, -1.0);
+        initializeCamera(foldedFigureCamera, 1.0, new Point(20, 20));
+        initializeCamera(foldedFigureFrontCamera, 1.0, new Point(20, 20));
+        initializeCamera(foldedFigureRearCamera, -1.0, new Point(40, 20));
+        initializeCamera(transparentFrontCamera, 1.0, new Point(20, 0));
+        initializeCamera(transparentRearCamera, -1.0, new Point(40, 0));
     }
 
     public void setParentCamera(Camera cam) {
@@ -84,7 +84,7 @@ public class FoldedFigure_Drawer implements Foldable {
         transparentRearCamera.setParent(cam);
     }
 
-    private void initializeCamera(Camera cam, double mirror) {
+    private void initializeCamera(Camera cam, double mirror, Point p0) {
         cam.setCameraPositionX(0.0);
         cam.setCameraPositionY(0.0);
         cam.setCameraAngle(0.0);
@@ -93,6 +93,7 @@ public class FoldedFigure_Drawer implements Foldable {
         cam.setCameraZoomY(1.0);
         cam.setDisplayPositionX(0);
         cam.setDisplayPositionY(0);
+        cam.displayPositionMove(p0);
     }
 
     void folding_estimation_camera_configure(Camera creasePatternCamera) {
@@ -121,11 +122,11 @@ public class FoldedFigure_Drawer implements Foldable {
             transparentRearCamera.setCameraMirror(d_camera_mirror * -1.0);
         }
 
-        foldedFigureCamera.displayPositionMove(new Point(20, 20));
-        foldedFigureFrontCamera.displayPositionMove(new Point(20, 20));
-        foldedFigureRearCamera.displayPositionMove(new Point(40, 20));
-        transparentFrontCamera.displayPositionMove(new Point(20, 0));
-        transparentRearCamera.displayPositionMove(new Point(40, 0));
+//        foldedFigureCamera.displayPositionMove(new Point(20, 20));
+//        foldedFigureFrontCamera.displayPositionMove(new Point(20, 20));
+//        foldedFigureRearCamera.displayPositionMove(new Point(40, 20));
+//        transparentFrontCamera.displayPositionMove(new Point(20, 0));
+//        transparentRearCamera.displayPositionMove(new Point(40, 0));
     }
 
     public origami.crease_pattern.element.Polygon getBoundingBox() {

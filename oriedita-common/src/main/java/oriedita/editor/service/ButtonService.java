@@ -1,20 +1,23 @@
 package oriedita.editor.service;
 
 import javax.swing.AbstractButton;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.KeyStroke;
+import javax.swing.text.JTextComponent;
+
 import java.awt.Container;
+import java.beans.PropertyChangeListener;
 import java.util.Map;
 
 public interface ButtonService {
-    void setOwner(JFrame owner);
 
-    void registerLabel(JLabel label, String key);
+    void setIcon(JLabel label, String key);
 
     void registerButton(AbstractButton button, String key);
 
-    void registerButton(AbstractButton button, String key, boolean wantToReplace);
+    void registerButton(AbstractButton button, String key, boolean replaceUnderscoresInMenus);
+
+    void loadAllKeyStrokes();
 
     void Button_shared_operation(boolean resetLineStep);
 
@@ -24,7 +27,17 @@ public interface ButtonService {
 
     Map<KeyStroke, AbstractButton> getHelpInputMap();
 
+    String getActionFromKeystroke(KeyStroke stroke);
+
     void addDefaultListener(Container root);
 
-    void addDefaultListener(Container root, boolean wantToReplace);
+    void addDefaultListener(Container root, boolean replaceUnderscoresInMenus);
+
+    void setKeyStroke(KeyStroke keyStroke, String key);
+
+    void addKeystrokeChangeListener(PropertyChangeListener listener);
+
+    void removeKeystrokeChangeListener(PropertyChangeListener listener);
+
+    public void registerTextField(JTextComponent textField, String key);
 }

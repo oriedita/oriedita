@@ -1,14 +1,16 @@
 package oriedita.editor.swing.dialog;
 
+import oriedita.editor.service.ButtonService;
 import oriedita.editor.tools.KeyStrokeUtil;
+import oriedita.editor.tools.ResourceUtil;
 
-import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.border.TitledBorder;
@@ -21,11 +23,11 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.Map;
-import java.util.function.Function;
+import java.util.Objects;
 
 public class SelectKeyStrokeDialog extends JDialog {
-    private final Function<KeyStroke, Boolean> select;
+    private final String key;
+    private final ButtonService buttonService;
     private JPanel contentPane;
     private JButton buttonOK;
     private JButton buttonCancel;
@@ -35,12 +37,12 @@ public class SelectKeyStrokeDialog extends JDialog {
 
     private KeyStroke keyStroke;
 
-    public SelectKeyStrokeDialog(JFrame owner, AbstractButton button, Map<KeyStroke, AbstractButton> helpInputMap, KeyStroke keyStroke, Function<KeyStroke, Boolean> select) {
+    public SelectKeyStrokeDialog(JFrame owner, String key, ButtonService buttonService, KeyStroke keyStroke) {
         super(owner, "Set Key Stroke");
-        this.select = select;
+        this.key = key;
+        this.buttonService = buttonService;
         setContentPane(contentPane);
         setModal(true);
-        //getRootPane().setDefaultButton(buttonOK);
 
         setKeyStroke(keyStroke);
 
@@ -62,8 +64,9 @@ public class SelectKeyStrokeDialog extends JDialog {
                 }
 
                 KeyStroke keyStrokeForEvent = KeyStroke.getKeyStrokeForEvent(e);
-                if (keyStrokeForEvent != null && helpInputMap.containsKey(keyStrokeForEvent) && helpInputMap.get(
-                        keyStrokeForEvent) != button) {
+                if (keyStrokeForEvent != null
+                        && buttonService.getActionFromKeystroke(keyStrokeForEvent) != null
+                        && !Objects.equals(buttonService.getActionFromKeystroke(keyStrokeForEvent), key)) {
                     String conflictingButton = (String) owner.getRootPane()
                             .getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
                             .get(keyStrokeForEvent);
@@ -124,9 +127,17 @@ public class SelectKeyStrokeDialog extends JDialog {
     }
 
     private void onOK() {
-        if (select.apply(keyStroke)) {
-            dispose();
+        if (keyStroke != null
+                && buttonService.getActionFromKeystroke(keyStroke) != null
+                && !Objects.equals(buttonService.getActionFromKeystroke(keyStroke), key)) {
+            String conflictingButton = buttonService.getActionFromKeystroke(keyStroke);
+            JOptionPane.showMessageDialog(getOwner(), "Conflicting KeyStroke! Conflicting with " + conflictingButton);
+            return;
         }
+
+        ResourceUtil.updateBundleKey("hotkey", key, keyStroke == null ? "" : keyStroke.toString());
+        buttonService.setKeyStroke(keyStroke, key);
+        dispose();
     }
 
     private void onCancel() {
