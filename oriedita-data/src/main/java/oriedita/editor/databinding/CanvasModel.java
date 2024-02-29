@@ -138,6 +138,10 @@ public class CanvasModel implements Serializable {
         return toggleLineColor ? lineColor.changeMV() : lineColor;
     }
 
+    public LineColor calculateAuxColor(){
+        return toggleLineColor ? auxLiveLineColor.changeAuxColor() : auxLiveLineColor;
+    }
+
     public LineColor getLineColor() {
         return lineColor;
     }

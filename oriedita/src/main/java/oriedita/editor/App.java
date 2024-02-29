@@ -37,6 +37,7 @@ import oriedita.editor.swing.AppMenuBar;
 import oriedita.editor.swing.Editor;
 import oriedita.editor.swing.dialog.HelpDialog;
 import oriedita.editor.tools.ResourceUtil;
+import origami.crease_pattern.CustomLineTypes;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineColor;
 import origami.folding.FoldedFigure;
@@ -529,6 +530,12 @@ public class App {
             mainCreasePatternWorker.record();
             mainCreasePatternWorker.unselect_all(false);
         }));
+        actionService.registerAction(new LambdaAction(ActionType.switchReplaceAction, () -> {
+            CustomLineTypes temp = applicationModel.getCustomFromLineType();
+
+            applicationModel.setCustomFromLineType(applicationModel.getCustomToLineType());
+            applicationModel.setCustomToLineType(temp);
+        }));
 
         // - grid actions
         actionService.registerAction(new LambdaAction(ActionType.gridSizeIncreaseAction, () -> gridModel.setGridSize(gridModel.getGridSize() * 2)));
@@ -623,7 +630,7 @@ public class App {
         actionService.registerAction(new LambdaAction(ActionType.h_undoAction, mainCreasePatternWorker::auxUndo));
         actionService.registerAction(new LambdaAction(ActionType.h_redoAction, mainCreasePatternWorker::auxRedo));
         actionService.registerAction(actionFactory.setMouseModeLineTypeDeleteAction(ActionType.h_senbun_nyuryokuAction, MouseMode.DRAW_CREASE_FREE_1, FoldLineAdditionalInputMode.AUX_LINE_1));
-        actionService.registerAction(actionFactory.setMouseModeLineTypeDeleteAction(ActionType.h_senbun_nyuryokuAction, MouseMode.LINE_SEGMENT_DELETE_3, FoldLineAdditionalInputMode.AUX_LINE_1));
+        actionService.registerAction(actionFactory.setMouseModeLineTypeDeleteAction(ActionType.h_senbun_sakujyoButton, MouseMode.LINE_SEGMENT_DELETE_3, FoldLineAdditionalInputMode.AUX_LINE_1));
 
         // |---------------------------------------------------------------------------|
         // --- Bottom Panel ---

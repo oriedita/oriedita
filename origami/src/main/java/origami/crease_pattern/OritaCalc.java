@@ -618,6 +618,7 @@ public class OritaCalc {
 
     }
 
+    //---------------------------
     public static LineSegment extendToIntersectionPoint_2(FoldLineSet foldLineSet, LineSegment s0) {//Extend s0 from point b in the opposite direction of a to the point where it intersects another polygonal line. Returns a new line // Returns the same line if it does not intersect another polygonal line
         LineSegment add_sen = new LineSegment(s0);
 
@@ -675,10 +676,28 @@ public class OritaCalc {
         return add_sen;
     }
 
+    //Fully extend a line until it hits a line nearest to it
     public static LineSegment fullExtendUntilHit(FoldLineSet foldLineSet, LineSegment s0){
-        Point point = s0.getA();
-        LineSegment extended = extendToIntersectionPoint_2(foldLineSet, s0);
-        return new LineSegment(point, extended.determineFurthestEndpoint(point));
+        LineSegment temp = getSegmentWithLength(s0, 0.5);
+        Point point = temp.getA();
+        temp = extendToIntersectionPoint_2(foldLineSet, temp);
+        temp = new LineSegment(point, temp.determineFurthestEndpoint(point));
+        return temp;
+    }
+
+    /**
+     * Return a lineSegment with a certain length (assuming A is the starting point).
+     * @param s0 a LineSegment
+     * @param length a double value for desired length. Use negative value to flip the segment.
+     * @return a LineSegment with new endpoint to match the length
+     */
+    public static LineSegment getSegmentWithLength(LineSegment s0, double length){
+        double scaleFactor = length / s0.determineLength();
+
+        double newX = s0.determineAX() + (s0.determineBX() - s0.determineAX()) * scaleFactor;
+        double newY = s0.determineAY() + (s0.determineBY() - s0.determineAY()) * scaleFactor;
+
+        return new LineSegment(s0.getA(), new Point(newX, newY), s0.getColor());
     }
 
     //A function that determines whether two straight lines are parallel.
@@ -1100,6 +1119,34 @@ public class OritaCalc {
         double nexDy = dy / s.determineLength() * newLength;
         return new LineSegment(s.getA(), new Point(s.getA().getX() + newDx, s.getA().getY() + nexDy));
     }
+
+    /**
+     * Check if a Point is within the span of a LineSegment. The span is an imaginary line infinitely expanded from the LineSegment
+     * @param p0 a target Point
+     * @param s0 a LineSegment
+     * @return true if the target point is within the span, false if otherwise
+     */
+    public static boolean isPointWithinLineSpan(Point p0, LineSegment s0){ // Check if point p0 is within the span of segment s0
+        if(OritaCalc.distance(p0, s0.getA()) < Epsilon.UNKNOWN_1EN7 ||
+                OritaCalc.distance(p0, s0.getB()) < Epsilon.UNKNOWN_1EN7){
+            return true;
+        }
+        LineSegment temp = new LineSegment(p0, s0.determineClosestEndpoint(p0));
+        return OritaCalc.isLineSegmentParallel(temp, s0) == ParallelJudgement.PARALLEL_EQUAL;
+    }
+
+    /**
+     * Check if a Point is within the span of a LineSegment (formed by 2 Points). The span is an imaginary line infinitely expanded from the LineSegment
+     * @param p0 a target Point
+     * @param p1 an endpoint of the LineSegment
+     * @param p2 other endpoint of the LineSegment
+     * @return true if the target point is within the span, false if otherwise
+     */
+    public static boolean isPointWithinLineSpan(Point p0, Point p1, Point p2){
+        return isPointWithinLineSpan(p0, new LineSegment(p1, p2));
+    }
+
+    //--------------------------------------------------------
 
     public enum ParallelJudgement {
         NOT_PARALLEL,

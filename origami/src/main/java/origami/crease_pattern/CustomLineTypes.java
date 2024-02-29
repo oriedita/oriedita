@@ -17,7 +17,7 @@ public enum CustomLineTypes {
         return customType;
     }
 
-    public int getReplaceToTypeNumber(){
+    public int getNumberForLineColor(){
         if(this == CustomLineTypes.ANY){
             return EGDE.customType;
         }
