@@ -77,6 +77,7 @@ public class ApplicationModel implements Serializable {
     private boolean animations;
     private double animationSpeed;
     private double mouseRadius;
+    private long autoSaveInterval;
 
     /*
     Things to remember when adding a new property:
@@ -396,6 +397,8 @@ public class ApplicationModel implements Serializable {
         moveFoldedModelWithCp = true;
         mouseRadius = 10;
 
+        autoSaveInterval = 5;
+
         this.pcs.firePropertyChange(null, null, null);
     }
 
@@ -445,6 +448,8 @@ public class ApplicationModel implements Serializable {
         animations = true;
         animationSpeed = 1;
         mouseRadius = 10;
+
+        autoSaveInterval = 5;
 
         this.pcs.firePropertyChange(null, null, null);
     }
@@ -695,6 +700,16 @@ public class ApplicationModel implements Serializable {
         this.pcs.firePropertyChange("displayFoldingProgress", oldDisplayFoldingProgress, displayFoldingProgress);
     }
 
+    public long getAutoSaveInterval() {
+        return autoSaveInterval;
+    }
+
+    public void setAutoSaveInterval(long autoSaveInterval) {
+        long oldAutoSaveInterval = this.autoSaveInterval;
+        this.autoSaveInterval = autoSaveInterval;
+        this.pcs.firePropertyChange("autoSaveInterval", oldAutoSaveInterval, autoSaveInterval);
+    }
+
     public void decreasePointSize() {
         int pointSize = this.pointSize - 1;
         if (pointSize < 0) {
@@ -855,6 +870,8 @@ public class ApplicationModel implements Serializable {
         animations = applicationModel.getAnimations();
         zoomSpeed = applicationModel.getZoomSpeed();
         mouseRadius = applicationModel.getMouseRadius();
+
+        autoSaveInterval = applicationModel.getAutoSaveInterval();
 
         this.pcs.firePropertyChange(null, null, null);
     }
