@@ -61,9 +61,9 @@ public class MouseHandlerPerpendicularDraw extends BaseMouseHandlerInputRestrict
         if (d.getLineStep().size() == 4) {
             if (OritaCalc.determineLineSegmentDistance(p, d.getLineStep().get(2)) < d.getSelectionDistance() ||
                     OritaCalc.determineLineSegmentDistance(p, d.getLineStep().get(3)) < d.getSelectionDistance()) {
-                LineSegment s = d.get_moyori_step_lineSegment(p, 3, 4);
-                s.set(s.getB(), s.getA(), d.getLineColor());
-                s.set(OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), s));
+                LineSegment s = d.getClosestLineStepSegment(p, 3, 4);
+                s = new LineSegment(s.getB(), s.getA(), d.getLineColor());
+                s = OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), s);
 
                 d.addLineSegment(s);
                 d.record();

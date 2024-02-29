@@ -682,6 +682,7 @@ public class OritaCalc {
         Point point = temp.getA();
         temp = extendToIntersectionPoint_2(foldLineSet, temp);
         temp = new LineSegment(point, temp.determineFurthestEndpoint(point));
+        temp.setColor(s0.getColor());
         return temp;
     }
 

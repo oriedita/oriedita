@@ -95,7 +95,6 @@ public class MouseHandlerAxiom7 extends BaseMouseHandlerInputRestricted{
 
     @Override
     public void mouseReleased(Point p0) {
-        Point p = d.getCamera().TV2object(p0);
 
         // First 3 are clicked
         if(d.getLineStep().size() == 3){
@@ -130,7 +129,8 @@ public class MouseHandlerAxiom7 extends BaseMouseHandlerInputRestricted{
 
         LineSegment s1 = OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), new LineSegment(mid, OritaCalc.findProjection(OritaCalc.moveParallel(extendLine, 1), mid), LineColor.PURPLE_8));
         LineSegment s2 = OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), new LineSegment(mid, OritaCalc.findProjection(OritaCalc.moveParallel(extendLine, -1), mid), LineColor.PURPLE_8));
-
+        s1.setColor(LineColor.PURPLE_8);
+        s2.setColor(LineColor.PURPLE_8);
         d.lineStepAdd(s1);
         d.lineStepAdd(s2);
         return mid;

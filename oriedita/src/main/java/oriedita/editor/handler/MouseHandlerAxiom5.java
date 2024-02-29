@@ -141,7 +141,7 @@ public class MouseHandlerAxiom5 extends BaseMouseHandlerInputRestricted{
                 return;
             }
 
-            LineSegment s = new LineSegment();
+            LineSegment s;
 
             if(OritaCalc.isLineSegmentParallel(new LineSegment(pivot, target), projectionLine) == OritaCalc.ParallelJudgement.NOT_PARALLEL){
                 s = OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), new LineSegment(pivot, OritaCalc.center(pivot, target, projectionPoint), LineColor.PURPLE_8));
