@@ -7,8 +7,8 @@ import java.util.Objects;
 public class LineSegment implements Serializable, Cloneable {
     private static final Color DEFAULT_COLOR = new Color(100, 200, 200);
 
-    protected Point a; //Branch a point
-    protected Point b; //Branch b point
+    protected final Point a; //Branch a point
+    protected final Point b; //Branch b point
     protected ActiveState active;//0 is inactive. 1 is active in a. 2 is active in b. 3 is active in both a and b.
     protected LineColor color;//Color specification 　0=black,1=blue,2=red.
 
@@ -153,10 +153,6 @@ public class LineSegment implements Serializable, Cloneable {
 
     public Point getB() {
         return b;
-    }
-
-    public void setB(Point p) {
-        b = p;
     }
 
     public Point determineClosestEndpoint(Point p) {//Returns the endpoint closest to point P
