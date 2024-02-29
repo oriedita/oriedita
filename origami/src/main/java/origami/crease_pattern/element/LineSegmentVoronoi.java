@@ -35,14 +35,17 @@ public class LineSegmentVoronoi extends LineSegment {
     }
 
     public LineSegmentVoronoi withB(Point b) {
-        LineSegmentVoronoi v = new LineSegmentVoronoi(this);
-        v.b = b;
+        LineSegmentVoronoi v = new LineSegmentVoronoi(this.a, b, this.color);
+
+        v.voronoiA = getVoronoiA();
+        v.voronoiB = getVoronoiB();
         return v;
     }
 
     public LineSegmentVoronoi withA(Point a) {
-        LineSegmentVoronoi v = new LineSegmentVoronoi(this);
-        v.a = a;
+        LineSegmentVoronoi v = new LineSegmentVoronoi(a, this.b, this.color);
+        v.voronoiA = getVoronoiA();
+        v.voronoiB = getVoronoiB();
         return v;
     }
 
