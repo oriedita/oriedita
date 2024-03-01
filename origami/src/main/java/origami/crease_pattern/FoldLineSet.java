@@ -1359,8 +1359,7 @@ public class FoldLineSet {
         for (int i = imin; i <= imax; i++) {
             LineSegment si = lineSegments.get(i);
 
-            StraightLine ti = new StraightLine();
-            ti.set(OritaCalc.lineSegmentToStraightLine(si));
+            StraightLine ti = OritaCalc.lineSegmentToStraightLine(si);
             for (int j = jmin; j <= jmax; j++) {
 
                 Circle ej = new Circle();

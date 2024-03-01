@@ -12,9 +12,7 @@ import origami.crease_pattern.element.StraightLine;
 public class OritaCalc {
     //Find the position of the projection of the point p on the straight line t (the position on the straight line t closest to the point p).
     public static Point findProjection(StraightLine t, Point p) {
-        StraightLine t1 = new StraightLine();
-        t1.set(t);
-        t1.orthogonalize(p);//Find the straight line u1 that passes through the point p1 and is orthogonal to t.
+        StraightLine t1 = t.orthogonalize(p);//Find the straight line u1 that passes through the point p1 and is orthogonal to t.
         return findIntersection(t, t1);
     }
 
@@ -90,10 +88,8 @@ public class OritaCalc {
 
     //A function that returns 2 if the point pa is in a rectangle containing two line segments that is orthogonal to the line segment ending at the two points p1 and p2 at the points p1 and p2.
     public static int isInside(Point p1, Point pa, Point p2) {
-        StraightLine u1 = new StraightLine(p1, p2);
-        u1.orthogonalize(p1);//Find the straight line u1 that passes through the point p1 and is orthogonal to t.
-        StraightLine u2 = new StraightLine(p1, p2);
-        u2.orthogonalize(p2);//Find the straight line u2 that passes through the point p2 and is orthogonal to t.
+        StraightLine u1 = new StraightLine(p1, p2).orthogonalize(p1);//Find the straight line u1 that passes through the point p1 and is orthogonal to t.
+        StraightLine u2 = new StraightLine(p1, p2).orthogonalize(p2);//Find the straight line u2 that passes through the point p2 and is orthogonal to t.
 
         if (u1.assignmentCalculation(pa) * u2.assignmentCalculation(pa) == 0.0) {
             return 1;
@@ -109,10 +105,8 @@ public class OritaCalc {
     // Specifically, when determining whether there is a point inside the line segment, if the point is slightly outside the line segment, it is judged to be sweet if it is inside the line segment. When drawing a crease pattern with a drawing craftsman, if you do not use this sweet one, the intersection division of the T-shaped line segment will fail
     // But for some reason, using this sweeter one for folding estimation seems to result in an infinite loop, which doesn't work. This exact elucidation is unresolved 20161105
     public static int isInside_sweet(Point p1, Point pa, Point p2) {
-        StraightLine u1 = new StraightLine(p1, p2);
-        u1.orthogonalize(p1);//Find the straight line u1 that passes through the point p1 and is orthogonal to t.
-        StraightLine u2 = new StraightLine(p1, p2);
-        u2.orthogonalize(p2);//Find the straight line u2 that passes through the point p2 and is orthogonal to t.
+        StraightLine u1 = new StraightLine(p1, p2).orthogonalize(p1);//Find the straight line u1 that passes through the point p1 and is orthogonal to t.
+        StraightLine u2 = new StraightLine(p1, p2).orthogonalize(p2);//Find the straight line u2 that passes through the point p2 and is orthogonal to t.
 
         if (u1.calculateDistance(pa) < Epsilon.SWEET_DISTANCE || u2.calculateDistance(pa) < Epsilon.SWEET_DISTANCE) {
             return 1;
@@ -152,8 +146,7 @@ public class OritaCalc {
 
         //When p1 and p2 are different
         StraightLine t = new StraightLine(p1, p2);//p1,Find the straight line t passing through p2。
-        StraightLine u = new StraightLine(p1, p2);
-        u.orthogonalize(p0);//Find a straight line u that passes through the point p0 and is orthogonal to t.
+        StraightLine u = t.orthogonalize(p0);//Find a straight line u that passes through the point p0 and is orthogonal to t.
 
         if (isInside(p1, findIntersection(t, u), p2) >= 1) {
             return t.calculateDistance(p0);
@@ -797,12 +790,9 @@ public class OritaCalc {
 
     //A function that moves a line segment in parallel to the side (returns a new line segment without changing the original line segment)
     public static LineSegment moveParallel(LineSegment s, double d) {
-        StraightLine ta = new StraightLine(s.getA(), s.getB());
-        StraightLine tb = new StraightLine(s.getA(), s.getB());
-        ta.orthogonalize(s.getA());
-        tb.orthogonalize(s.getB());
-        StraightLine td = new StraightLine(s.getA(), s.getB());
-        td.translate(d);
+        StraightLine ta = new StraightLine(s.getA(), s.getB()).orthogonalize(s.getA());
+        StraightLine tb = new StraightLine(s.getA(), s.getB()).orthogonalize(s.getB());
+        StraightLine td = new StraightLine(s.getA(), s.getB()).translate(d);
 
         return new LineSegment(findIntersection_01(ta, td), findIntersection_01(tb, td));
     }
@@ -893,9 +883,8 @@ public class OritaCalc {
         Point p1;  // p1.set(s.geta());
 
         StraightLine s1 = new StraightLine(t1, t2);
-        StraightLine s2 = new StraightLine(t1, t2);
-
-        s2.orthogonalize(p);//Find the straight line s2 that passes through the point p and is orthogonal to s1.
+        //Find the straight line s2 that passes through the point p and is orthogonal to s1.
+        StraightLine s2 = s1.orthogonalize(p);
 
         p1 = findIntersection(s1, s2);
         return new Point(2.0 * p1.getX() - p.getX(), 2.0 * p1.getY() - p.getY());
@@ -1033,8 +1022,7 @@ public class OritaCalc {
 
     // -------------------------------
     public static LineSegment circle_to_circle_no_intersection_wo_musubu_lineSegment(Circle e1, Circle e2) {
-        StraightLine t0 = new StraightLine();
-        t0.set(circle_to_circle_no_intersection_wo_tooru_straightLine(e1, e2));
+        StraightLine t0 = circle_to_circle_no_intersection_wo_tooru_straightLine(e1, e2);
         StraightLine t1 = new StraightLine(e1.determineCenter(), e2.determineCenter());
         Point intersection_t0t1 = findIntersection(t0, t1);
         double length_a = t0.calculateDistance(e1.determineCenter());  //t0とt1の交点からe1の中心までの長さ

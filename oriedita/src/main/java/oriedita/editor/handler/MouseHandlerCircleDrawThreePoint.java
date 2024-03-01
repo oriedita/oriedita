@@ -80,10 +80,14 @@ public class MouseHandlerCircleDrawThreePoint extends BaseMouseHandler {
                 return;
             }
 
-            StraightLine t1 = new StraightLine(sen1);
-            t1.orthogonalize(OritaCalc.internalDivisionRatio(sen1.getA(), sen1.getB(), 1.0, 1.0));
-            StraightLine t2 = new StraightLine(sen2);
-            t2.orthogonalize(OritaCalc.internalDivisionRatio(sen2.getA(), sen2.getB(), 1.0, 1.0));
+            StraightLine t1 = new StraightLine(sen1)
+                    .orthogonalize(OritaCalc.internalDivisionRatio(
+                            sen1.getA(), sen1.getB(),
+                            1.0, 1.0));
+            StraightLine t2 = new StraightLine(sen2)
+                    .orthogonalize(OritaCalc.internalDivisionRatio(
+                            sen2.getA(), sen2.getB(),
+                            1.0, 1.0));
             d.addCircle(OritaCalc.findIntersection(t1, t2), OritaCalc.distance(d.getLineStep().get(0).getA(), OritaCalc.findIntersection(t1, t2)), LineColor.CYAN_3);
             d.record();
 
