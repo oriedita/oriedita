@@ -1,5 +1,8 @@
 #!/bin/bash
 
+set -e
+set -x
+
 platform="$1"
 
 version=$(mvn org.apache.maven.plugins:maven-help-plugin:3.4.0:evaluate \
@@ -15,7 +18,11 @@ jpackage \
   --main-jar oriedita-"$version".jar
 
 pushd ci-build/portable || return
-zip -r "../Oriedita Portable ($platform) $version.zip" .
+if ! type zip > /dev/null; then
+  7z a -tzip "../Oriedita Portable ($platform) $version.zip" .
+else
+  zip -r "../Oriedita Portable ($platform) $version.zip" .
+fi
 popd || return
 
 jpackage \

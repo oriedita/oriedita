@@ -25,12 +25,6 @@ jobs:
           key: ${{ runner.os }}-java11-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-java11-m2
 
-      - id: get_version
-        uses: battila7/get-version-action@v2
-
-      - name: Set the version
-        run: build/01_serversion.sh "${{ steps.get_version.outputs.version-without-v }}"
-
       - name: Build with Maven
         run: mvn -B package --file pom.xml
 
@@ -44,13 +38,16 @@ jobs:
       matrix:
         include:
           - os: windows-latest
-            name: windows
+            name: win
           - os: ubuntu-latest
             name: linux
           - os: macos-latest
             name: mac
 
     runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash
 
     name: Create Release ${{ matrix.name }}
 
@@ -71,17 +68,11 @@ jobs:
           key: ${{ runner.os }}-java17-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-java17-m2
 
-      - id: get_version
-        uses: battila7/get-version-action@v2
-
-      - name: Set the version
-        run: build/01_serversion.sh "${{ steps.get_version.outputs.version-without-v }}"
-
       - name: Build project and prepare JRE
-        run: build/02_prepare.sh
+        run: build/01_prepare.sh
 
       - name: Create release (${{ matrix.name }})
-        run: build/03_create_release.sh ${{ matrix.name }}
+        run: build/02_create_release.sh ${{ matrix.name }}
 
       - name: Release
         uses: softprops/action-gh-release@v1
