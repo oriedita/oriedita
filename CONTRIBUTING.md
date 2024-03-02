@@ -41,6 +41,23 @@ Code for folding and origami related actions,
 
 FOLD parser and write, to be extracted from this repo.
 
+## Creating a release
+
+Creating a release consists of the following steps:
+
+1. Make sure you have permission to push to master.
+2. Make sure you are on the latest commit on `master`
+3. Run `mvn release:prepare`
+4. Fill in the new version for your release 
+   - Make sure that every module has the same version. 
+   - Make sure that your release follows the following pattern: `0.0.0`, otherwise the release pipeline will not kick off.
+5. Verify the tag version
+6. Verify the snapshot version
+7. GitHub Actions will take over after the release plugin pushes your new release.
+8. Check out the [releases](https://github.com/oriedita/oriedita/releases) page to find your release.
+   - If something went wrong, run `mvn release:clean` to reset your progress. Double check if you have not pushed anything yet.
+9. Update [_data/version.yaml](https://github.com/oriedita/oriedita.github.io/blob/master/_data/version.yml) in the `oriedita/oriedita.github.io` repository to update the website. 
+
 ## (Technical) Changes made
 
 ### Translations
