@@ -42,7 +42,7 @@ public class MouseHandlerSquareBisector extends BaseMouseHandlerInputRestricted 
                 return;
             }
             if (!d.getLineStep().isEmpty()) {
-                line = d.getClosestLineSegment(p);
+                line = new LineSegment(d.getClosestLineSegment(p));
                 if(d.getLineStep().size() == 1 && OritaCalc.determineLineSegmentDistance(p, line) < d.getSelectionDistance() &&
                         (OritaCalc.distance(OritaCalc.findProjection(d.getLineStep().get(0), line.getA()), line.getA()) > Epsilon.UNKNOWN_1EN7 ||
                                 OritaCalc.distance(OritaCalc.findProjection(d.getLineStep().get(0), line.getB()), line.getB()) > Epsilon.UNKNOWN_1EN7)){
@@ -61,7 +61,7 @@ public class MouseHandlerSquareBisector extends BaseMouseHandlerInputRestricted 
                         LineSegment s = d.getClosestLineStepSegment(p, 3, 4);
                         s = new LineSegment(s.getB(), s.getA(), d.getLineColor());
                         s = OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), s);
-
+                        s.setColor(d.getLineColor());
                         d.addLineSegment(s);
                         d.record();
                         d.getLineStep().clear();
