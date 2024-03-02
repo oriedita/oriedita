@@ -74,7 +74,7 @@ public class MouseHandlerAxiom5 extends BaseMouseHandlerInputRestricted{
                 return;
             }
 
-            LineSegment closestLineSegment = d.getClosestLineSegment(p);
+            LineSegment closestLineSegment = new LineSegment(d.getClosestLineSegment(p));
 
             if (!(OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.getSelectionDistance())) {
                 return;
