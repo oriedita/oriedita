@@ -101,7 +101,7 @@
             <!-- org.jboss.jandex does not have jandex-maven-plugin yet -->
             <groupId>io.smallrye</groupId>
             <artifactId>jandex</artifactId>
-            <version>3.0.1</version>
+            <version>3.1.6</version>
         </dependency>
         <dependency>
             <groupId>org.jboss.weld</groupId>
@@ -116,7 +116,7 @@
             <plugin>
                 <groupId>io.smallrye</groupId>
                 <artifactId>jandex-maven-plugin</artifactId>
-                <version>3.0.1</version>
+                <version>3.1.6</version>
                 <executions>
                     <execution>
                         <id>make-index</id>
@@ -127,16 +127,10 @@
                             <!-- index beans from oriedita-ui and oriedita-data -->
                             <fileSets>
                                 <fileSet>
-                                    <dependency>
-                                        <groupId>oriedita</groupId>
-                                        <artifactId>oriedita-ui</artifactId>
-                                    </dependency>
+                                    <directory>${project.parent.basedir}/oriedita-ui/target/classes</directory>
                                 </fileSet>
                                 <fileSet>
-                                    <dependency>
-                                        <groupId>oriedita</groupId>
-                                        <artifactId>oriedita-data</artifactId>
-                                    </dependency>
+                                    <directory>${project.parent.basedir}/oriedita-data/target/classes</directory>
                                 </fileSet>
                             </fileSets>
                         </configuration>
@@ -146,7 +140,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
+                <version>3.12.1</version>
                 <configuration>
                     <annotationProcessorPaths>
                     </annotationProcessorPaths>
@@ -155,7 +149,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>2.4</version>
+                <version>3.3.0</version>
                 <configuration>
                     <archive>
                         <manifest>
