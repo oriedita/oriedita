@@ -19,12 +19,18 @@ import java.io.IOException;
 @ApplicationScoped
 public class OriExporter implements FileImporter, FileExporter {
     private final FrameProvider frame;
+    private boolean askOnUnknownFormat = true;
 
     @Inject
     public OriExporter(
             FrameProvider frame
     ) {
         this.frame = frame;
+    }
+
+    public OriExporter(FrameProvider frame, boolean askOnUnknownFormat) {
+        this(frame);
+        this.askOnUnknownFormat = askOnUnknownFormat;
     }
 
     @Override
@@ -55,10 +61,13 @@ public class OriExporter implements FileImporter, FileExporter {
         Save readSave = mapper.readValue(file, Save.class);
         FileVersionTester versionTester = mapper.readValue(file, FileVersionTester.class);
         if (readSave.getClass() == BaseSave.class && versionTester.getVersion() == null) { // happens when the version id is not recognized
-            int result = JOptionPane.showConfirmDialog(frame.get(), "This file was created using a newer version of oriedita.\n" +
-                            "Using it with this version of oriedita might remove parts of the file.\n" +
-                            "Do you want to open the file anyways?", "File created in newer version",
-                    JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+            int result = JOptionPane.NO_OPTION;
+            if (askOnUnknownFormat) {
+                result = JOptionPane.showConfirmDialog(frame.get(), "This file was created using a newer version of oriedita.\n" +
+                                "Using it with this version of oriedita might remove parts of the file.\n" +
+                                "Do you want to open the file anyways?", "File created in newer version",
+                        JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+            }
 
             switch (result) {
                 case JOptionPane.YES_OPTION:

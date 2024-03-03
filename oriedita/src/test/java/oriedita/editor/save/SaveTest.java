@@ -7,6 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import oriedita.editor.FrameProvider;
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.canvas.TextWorker;
 import oriedita.editor.canvas.impl.CreasePattern_Worker_Impl;
@@ -19,6 +20,8 @@ import oriedita.editor.databinding.GridModel;
 import oriedita.editor.databinding.SelectedTextModel;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.exception.FileReadingException;
+import oriedita.editor.export.CpExporter;
+import oriedita.editor.export.OriExporter;
 import oriedita.editor.service.FileSaveService;
 import oriedita.editor.service.ResetService;
 import oriedita.editor.service.impl.DequeHistoryState;
@@ -32,6 +35,7 @@ import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 
+import javax.swing.JFrame;
 import java.io.File;
 import java.lang.annotation.Annotation;
 import java.net.URISyntaxException;
@@ -99,7 +103,7 @@ public class SaveTest {
 
         @Override
         public Iterator<T> iterator() {
-            return Collections.emptyIterator();
+            return List.of(val).iterator();
         }
     }
 
@@ -130,7 +134,8 @@ public class SaveTest {
 
             }
         };
-        fileSaveService = new FileSaveServiceImpl(null, new MockInstance<>(null), new MockInstance<>(null), creasePatternCamera, mainCreasePatternWorker, fileModel, applicationModel, resetService, null, null);
+        FrameProvider frame = () -> null;
+        fileSaveService = new FileSaveServiceImpl(null, new MockInstance<>(new OriExporter(frame, false)), new MockInstance<>(new OriExporter(frame, false)), creasePatternCamera, mainCreasePatternWorker, fileModel, applicationModel, resetService, null, null);
     }
 
     @ParameterizedTest
