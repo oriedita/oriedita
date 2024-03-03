@@ -1,7 +1,8 @@
 package oriedita.editor.export;
 
-import org.tinylog.Logger;
+import jakarta.enterprise.context.ApplicationScoped;
 import oriedita.editor.save.Save;
+import oriedita.filesupport.api.FileExporter;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 
@@ -12,8 +13,11 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 
-public class Dxf {
-    public static void exportFile(Save cp, File file) {
+@ApplicationScoped
+public class DxfExporter implements FileExporter {
+
+    @Override
+    public void doExport(Save save, File file) throws IOException {
         double scale = 3.0;
         double center = 4.0;
         double x1, y1, x2, y2;
@@ -36,7 +40,7 @@ public class Dxf {
             pw.println("ENTITIES");
 
 
-            for (LineSegment lineSegment : cp.getLineSegments()) {
+            for (LineSegment lineSegment : save.getLineSegments()) {
                     pw.println("  0");
                     pw.println("LINE");
                     pw.println("  8");
@@ -89,12 +93,20 @@ public class Dxf {
             pw.println("ENDSEC");
             pw.println("  0");
             pw.println("EOF");
-        } catch (IOException e) {
-            Logger.error(e, "Error during Dxf export");
         }
     }
 
     private static double scale(double d, double scale, double center) {
         return d * scale + center;
+    }
+
+    @Override
+    public String getName() {
+        return "DXF";
+    }
+
+    @Override
+    public String getExtension() {
+        return ".dxf";
     }
 }
