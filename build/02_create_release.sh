@@ -5,8 +5,11 @@ set -x
 
 platform="$1"
 
-version=$(mvn org.apache.maven.plugins:maven-help-plugin:3.4.0:evaluate \
+jar_version=$(mvn org.apache.maven.plugins:maven-help-plugin:3.4.0:evaluate \
               -Dexpression=project.version -q -DforceStdout)
+
+# Strip off -SNAPSHOT as jpackage cannot handle it.
+version="${jar_version/"-SNAPSHOT"/}"
 
 jpackage \
   @build/jpackage-common.txt \
@@ -15,7 +18,7 @@ jpackage \
   --type app-image \
   --name "Oriedita" \
   --app-version "$version" \
-  --main-jar oriedita-"$version".jar
+  --main-jar oriedita-"$jar_version".jar
 
 pushd ci-build/portable || return
 if ! type zip > /dev/null; then
@@ -32,4 +35,4 @@ jpackage \
   @build/jpackage-installer-"$platform".txt \
   --name "Oriedita" \
   --app-version "$version" \
-  --main-jar oriedita-"$version".jar
+  --main-jar oriedita-"$jar_version".jar
