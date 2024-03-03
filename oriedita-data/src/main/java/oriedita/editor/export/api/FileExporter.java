@@ -1,4 +1,4 @@
-package oriedita.filesupport.api;
+package oriedita.editor.export.api;
 
 import oriedita.editor.save.Save;
 

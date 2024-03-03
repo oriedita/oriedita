@@ -10,8 +10,8 @@ import org.tinylog.Logger;
 import oriedita.editor.FrameProvider;
 import oriedita.editor.save.Save;
 import oriedita.editor.save.SaveProvider;
-import oriedita.filesupport.api.FileExporter;
-import oriedita.filesupport.api.FileImporter;
+import oriedita.editor.export.api.FileExporter;
+import oriedita.editor.export.api.FileImporter;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 

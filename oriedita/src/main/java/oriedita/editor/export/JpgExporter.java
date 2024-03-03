@@ -4,7 +4,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import oriedita.editor.Canvas;
 import oriedita.editor.save.Save;
-import oriedita.filesupport.api.FileExporter;
+import oriedita.editor.export.api.FileExporter;
 
 import java.io.File;
 import java.io.IOException;

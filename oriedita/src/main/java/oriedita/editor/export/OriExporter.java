@@ -9,8 +9,8 @@ import oriedita.editor.save.BaseSave;
 import oriedita.editor.save.FileVersionTester;
 import oriedita.editor.save.Save;
 import oriedita.editor.save.SaveConverter;
-import oriedita.filesupport.api.FileExporter;
-import oriedita.filesupport.api.FileImporter;
+import oriedita.editor.export.api.FileExporter;
+import oriedita.editor.export.api.FileImporter;
 
 import javax.swing.JOptionPane;
 import java.io.File;

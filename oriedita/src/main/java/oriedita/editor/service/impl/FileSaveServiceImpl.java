@@ -23,8 +23,8 @@ import oriedita.editor.swing.dialog.ExportDialog;
 import oriedita.editor.swing.dialog.FileDialogUtil;
 import oriedita.editor.swing.dialog.SaveTypeDialog;
 import oriedita.editor.tools.ResourceUtil;
-import oriedita.filesupport.api.FileExporter;
-import oriedita.filesupport.api.FileImporter;
+import oriedita.editor.export.api.FileExporter;
+import oriedita.editor.export.api.FileImporter;
 
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;

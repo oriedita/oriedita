@@ -11,7 +11,7 @@ import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.save.Save;
 import oriedita.editor.text.Text;
 import oriedita.editor.tools.StringOp;
-import oriedita.filesupport.api.FileExporter;
+import oriedita.editor.export.api.FileExporter;
 import origami.Epsilon;
 import origami.crease_pattern.FoldLineSet;
 import origami.crease_pattern.PointSet;

@@ -2,7 +2,7 @@ package oriedita.editor.export;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import oriedita.editor.save.Save;
-import oriedita.filesupport.api.FileExporter;
+import oriedita.editor.export.api.FileExporter;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 
