@@ -1,0 +1,382 @@
+package oriedita.editor;
+
+import jakarta.enterprise.context.Dependent;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import org.tinylog.Logger;
+import oriedita.editor.canvas.CreasePattern_Worker;
+import oriedita.editor.canvas.LineStyle;
+import oriedita.editor.canvas.MouseMode;
+import oriedita.editor.databinding.ApplicationModel;
+import oriedita.editor.databinding.BackgroundModel;
+import oriedita.editor.databinding.CanvasModel;
+import oriedita.editor.databinding.FoldedFigureModel;
+import oriedita.editor.databinding.FoldedFiguresList;
+import oriedita.editor.drawing.FoldedFigure_Drawer;
+import oriedita.editor.drawing.tools.Background_camera;
+import oriedita.editor.drawing.tools.Camera;
+import oriedita.editor.handler.DrawingSettings;
+import oriedita.editor.handler.MouseModeHandler;
+import oriedita.editor.service.AnimationService;
+import oriedita.editor.service.TaskExecutorService;
+import oriedita.editor.swing.component.BulletinBoard;
+import origami.crease_pattern.element.Point;
+import origami.folding.FoldedFigure;
+
+import javax.imageio.ImageIO;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.RenderingHints;
+import java.awt.geom.Ellipse2D;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+
+@Dependent // This bean is not proxyable (because JPanel)
+public class CanvasUI extends JPanel {
+    private final Camera creasePatternCamera;
+    private final TaskExecutorService foldingExecutor;
+    private final BackgroundModel backgroundModel;
+    private final CanvasModel canvasModel;
+    private final CreasePattern_Worker mainCreasePatternWorker;
+    private final AnimationService animationService;
+    private final ApplicationModel applicationModel;
+    private final BulletinBoard bulletinBoard;
+    private final FoldedFiguresList foldedFiguresList;
+    private final FoldedFigureModel foldedFigureModel;
+
+    private MouseModeHandler activeMouseHandler;
+
+    private final Point p_mouse_object_position = new Point();//マウスのオブジェクト座標上の位置
+    private final Point p_mouse_TV_position = new Point();//マウスのTV座標上の位置
+    private boolean hideOperationFrame = false;
+    private boolean antiAlias;
+
+    private boolean displayPointSpotlight;
+    private boolean displayPointOffset;
+    private boolean displayGridInputAssist;
+    private boolean displayComments;
+    private boolean displayCpLines;
+    private boolean displayAuxLines;
+    private boolean displayLiveAuxLines;
+    private boolean displayMarkings;
+    private boolean displayCreasePatternOnTop;
+    private Background_camera h_cam = new Background_camera();
+    // Canvas width and height
+    private Dimension dim;
+    private LineStyle lineStyle;
+    private float lineWidth;
+    private float auxLineWidth;
+
+    @Inject
+    public CanvasUI(
+            @Named("creasePatternCamera") Camera creasePatternCamera,
+            @Named("foldingExecutor") TaskExecutorService foldingExecutor,
+            BackgroundModel backgroundModel,
+            CanvasModel canvasModel,
+            @Named("mainCreasePattern_Worker") CreasePattern_Worker mainCreasePatternWorker,
+            AnimationService animationService,
+            ApplicationModel applicationModel,
+            BulletinBoard bulletinBoard,
+            FoldedFigureModel foldedFigureModel,
+            FoldedFiguresList foldedFiguresList
+    ) {
+        this.creasePatternCamera = creasePatternCamera;
+        this.foldingExecutor = foldingExecutor;
+        this.backgroundModel = backgroundModel;
+        this.canvasModel = canvasModel;
+        this.mainCreasePatternWorker = mainCreasePatternWorker;
+        this.animationService = animationService;
+        this.applicationModel = applicationModel;
+        this.bulletinBoard = bulletinBoard;
+        this.foldedFigureModel = foldedFigureModel;
+        this.foldedFiguresList = foldedFiguresList;
+    }
+
+    public void writeImageFile(File file) {
+
+        if (file != null) {
+            String fname = file.getName();
+
+            String formatName;
+
+            if (fname.endsWith("png")) {
+                formatName = "png";
+            } else if (fname.endsWith("jpg")) {
+                formatName = "jpg";
+            } else {
+                file = new File(fname + ".png");
+                formatName = "png";
+            }
+
+            //	ファイル保存
+
+            try {
+                BufferedImage myImage = getGraphicsConfiguration().createCompatibleImage(getSize().width, getSize().height);
+                Graphics g = myImage.getGraphics();
+
+                setHideOperationFrame(true);
+                paintComponent(g);
+                setHideOperationFrame(false);
+
+                if (canvasModel.getMouseMode() == MouseMode.OPERATION_FRAME_CREATE_61 && mainCreasePatternWorker.getDrawingStage() == 4) { //枠設定時の枠内のみ書き出し 20180524
+                    int xMin = (int) mainCreasePatternWorker.getOperationFrameBox().getXMin();
+                    int xMax = (int) mainCreasePatternWorker.getOperationFrameBox().getXMax();
+                    int yMin = (int) mainCreasePatternWorker.getOperationFrameBox().getYMin();
+                    int yMax = (int) mainCreasePatternWorker.getOperationFrameBox().getYMax();
+
+                    ImageIO.write(myImage.getSubimage(xMin, yMin, xMax - xMin + 1, yMax - yMin + 1), formatName, file);
+
+                } else {//Full export without frame
+                    Logger.info("2018-529_");
+
+                    ImageIO.write(myImage, formatName, file);
+                }
+            } catch (IOException e) {
+                Logger.error(e, "Writing image file failed");
+            }
+
+            Logger.info("終わりました");
+        }
+    }
+
+    public void paintComponent(Graphics bufferGraphics) {
+        //「f」を付けることでfloat型の数値として記述することができる
+        Graphics2D g2 = (Graphics2D) bufferGraphics;
+        animationService.update();
+
+        BasicStroke BStroke = new BasicStroke(lineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER);
+        g2.setStroke(BStroke);//線の太さや線の末端の形状
+
+        //アンチエイリアス　オフ
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, antiAlias ? RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF);//アンチエイリアス　オン
+
+        g2.setBackground(Colors.get(Color.WHITE));    //この行は、画像をファイルに書き出そうとしてBufferedImageクラスを使う場合、デフォルトで背景が黒になるので、それを避けるための意味　20170107
+        //画像をファイルに書き出さすことはやめて、、BufferedImageクラスを使わず、Imageクラスだけですむなら不要の行
+
+        //別の重なりさがし　のボタンの色の指定。
+
+
+        // バッファー画面のクリア
+        bufferGraphics.clearRect(0, 0, dim.width, dim.height);
+
+        bufferGraphics.setColor(Colors.get(Color.red));
+        //描画したい内容は以下に書くことVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
+
+        //カメラのセット
+        mainCreasePatternWorker.setCamera(creasePatternCamera);
+
+        for (FoldedFigure_Drawer d : foldedFiguresList.getItems()) {
+            d.setParentCamera(applicationModel.getMoveFoldedModelWithCp() ? creasePatternCamera : null);
+            d.setMoveWithCp(applicationModel.getMoveFoldedModelWithCp());
+        }
+
+
+        FoldedFigure_Drawer OZi;
+        for (int i_oz = 0; i_oz < foldedFiguresList.getSize(); i_oz++) {
+            OZi = foldedFiguresList.getElementAt(i_oz);
+            OZi.getWireFrame_worker_drawer1().setCamera(creasePatternCamera);
+        }
+
+        FoldedFigure_Drawer selectedFigure = foldedFiguresList.getActiveItem();
+
+        if (selectedFigure != null) {
+//VVVVVVVVVVVVVVV以下のts2へのカメラセットはOriagari_zuのoekakiで実施しているので以下の5行はなくてもいいはず　20180225
+            selectedFigure.getWireFrame_worker_drawer2().setCamera(selectedFigure.getFoldedFigureCamera());
+            selectedFigure.getWireFrame_worker_drawer2().setCam_front(selectedFigure.getFoldedFigureFrontCamera());
+            selectedFigure.getWireFrame_worker_drawer2().setCam_rear(selectedFigure.getFoldedFigureRearCamera());
+            selectedFigure.getWireFrame_worker_drawer2().setCam_transparent_front(selectedFigure.getTransparentFrontCamera());
+            selectedFigure.getWireFrame_worker_drawer2().setCam_transparent_rear(selectedFigure.getTransparentRearCamera());
+            selectedFigure.getData(foldedFigureModel);
+//AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        }
+        //Logger.info("paint　+++++++++++++++++++++　背景表示");
+        //背景表示
+        Image backgroundImage = backgroundModel.getBackgroundImage();
+        updateBackgroundCamera();
+        if ((backgroundImage != null) && backgroundModel.isDisplayBackground()) {
+            int iw = backgroundImage.getWidth(this);//イメージの幅を取得
+            int ih = backgroundImage.getHeight(this);//イメージの高さを取得
+
+            h_cam.setBackgroundWidth(iw);
+            h_cam.setBackgroundHeight(ih);
+
+            drawBackground(g2, backgroundImage);
+        }
+
+        //格子表示
+
+        //基準面の表示
+        if (displayMarkings && selectedFigure != null) {
+            if (selectedFigure.getFoldedFigure().displayStyle != FoldedFigure.DisplayStyle.NONE_0) {
+                selectedFigure.getWireFrame_worker_drawer1().drawStartingFaceWithCamera(bufferGraphics, selectedFigure.getStartingFaceId());//ts1が折り畳みを行う際の基準面を表示するのに使う。
+            }
+        }
+
+        double d_width = creasePatternCamera.getCameraZoomX() * mainCreasePatternWorker.getSelectionDistance();
+        //Flashlight (dot) search range
+        if (displayPointSpotlight) {
+            g2.setColor(Colors.get(new Color(255, 240, 0, 30)));
+            g2.setStroke(new BasicStroke(2.0f));
+            g2.setColor(Colors.get(new Color(255, 240, 0, 230)));
+            g2.draw(new Ellipse2D.Double(p_mouse_TV_position.getX() - d_width, p_mouse_TV_position.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
+        }
+
+        //Luminous flux of flashlight, etc.
+        if (displayPointSpotlight && displayPointOffset) {
+            g2.setStroke(new BasicStroke(2.0f));
+            g2.setColor(Colors.get(new Color(255, 240, 0, 170)));
+        }
+
+        //展開図表示
+        mainCreasePatternWorker.drawWithCamera(bufferGraphics, displayComments, displayCpLines, displayAuxLines, displayLiveAuxLines, lineWidth, lineStyle, auxLineWidth, dim.width, dim.height, displayMarkings, hideOperationFrame);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ,展開図動かし中心の十字の目印の表示
+        DrawingSettings settings = new DrawingSettings(lineWidth, lineStyle, dim.height, dim.width);
+        if (activeMouseHandler != null) {
+            activeMouseHandler.drawPreview(g2, creasePatternCamera, settings);
+        }
+        if (displayComments) {
+            //展開図情報の文字表示
+            bufferGraphics.setColor(Colors.get(Color.black));
+
+            bufferGraphics.drawString(String.format("mouse= ( %.2f, %.2f )", p_mouse_object_position.getX(), p_mouse_object_position.getY()), 10, 10); //この表示内容はvoid kekka_syoriで決められる。
+
+            bufferGraphics.drawString("L=" + mainCreasePatternWorker.getTotal(), 10, 25); //この表示内容はvoid kekka_syoriで決められる。
+
+            if (selectedFigure != null) {
+                //結果の文字表示
+                bufferGraphics.drawString(selectedFigure.getFoldedFigure().text_result, 10, 40); //この表示内容はvoid kekka_syoriで決められる。
+            }
+
+            if (displayGridInputAssist) {
+                Point gridIndex = new Point(mainCreasePatternWorker.getGridPosition(p_mouse_TV_position));//20201024高密度入力がオンならばrepaint（画面更新）のたびにここで最寄り点を求めているので、描き職人で別途最寄り点を求めていることと二度手間になっている。
+
+                double dx_ind = gridIndex.getX();
+                double dy_ind = gridIndex.getY();
+                int ix_ind = (int) Math.round(dx_ind);
+                int iy_ind = (int) Math.round(dy_ind);
+                bufferGraphics.drawString("(" + ix_ind + "," + iy_ind + ")", (int) p_mouse_TV_position.getX() + 25, (int) p_mouse_TV_position.getY() + 20); //この表示内容はvoid kekka_syoriで決められる。
+            }
+
+            if (foldingExecutor.isTaskRunning()) {
+                bufferGraphics.setColor(Colors.get(Color.red));
+
+                bufferGraphics.drawString(foldingExecutor.getTaskName() + " Under Calculation. If you want to cancel calculation, uncheck [check A + MV]on right side and press the brake button (bicycle brake icon) on lower side.", 10, 69); //この表示内容はvoid kekka_syoriで決められる。
+                bufferGraphics.drawString("計算中。　なお、計算を取り消し通常状態に戻りたいなら、右辺の[check A+MV]のチェックをはずし、ブレーキボタン（下辺の、自転車のブレーキのアイコン）を押す。 ", 10, 83); //この表示内容はvoid kekka_syoriで決められる。
+            }
+
+            if (Canvas.userWarningMessage != null) {
+                bufferGraphics.setColor(Colors.get(Color.yellow));
+                bufferGraphics.drawString(Canvas.userWarningMessage, 10, 97);
+            }
+
+            bulletinBoard.draw(bufferGraphics);//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+        }
+
+
+        //折り上がりの各種お絵かき
+        for (int i_oz = 0; i_oz < foldedFiguresList.getSize(); i_oz++) {
+            OZi = foldedFiguresList.getElementAt(i_oz);
+            OZi.foldUp_draw(bufferGraphics, displayMarkings, i_oz + 1, OZi == foldedFiguresList.getSelectedItem());
+        }
+
+        //展開図を折り上がり図の上に描くために、展開図を再表示する
+        if (displayCreasePatternOnTop) {
+            mainCreasePatternWorker.drawWithCamera(bufferGraphics, displayComments, displayCpLines, displayAuxLines, displayLiveAuxLines, lineWidth, lineStyle, auxLineWidth, dim.width, dim.height, displayMarkings, hideOperationFrame);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ
+        }
+
+        //アンチェイリアス
+        //アンチェイリアス　オフ
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, antiAlias ? RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF);//アンチェイリアス　オン
+
+        //Central indicator
+        if (displayPointOffset) {
+            g2.setStroke(new BasicStroke(1.0f));
+            g2.setColor(Colors.get(Color.black));
+            g2.drawLine((int) (p_mouse_TV_position.getX()), (int) (p_mouse_TV_position.getY()),
+                    (int) (p_mouse_TV_position.getX() + d_width), (int) (p_mouse_TV_position.getY() + d_width)); //直線
+        }
+        if (animationService.isAnimating()) {
+            SwingUtilities.invokeLater(canvasModel::markDirty);
+        }
+    }
+
+    public void setHideOperationFrame(boolean hideOperationFrame) {
+        this.hideOperationFrame = hideOperationFrame;
+    }
+
+    public void updateBackgroundCamera() {
+        if (backgroundModel.isLockBackground()) {
+            h_cam.setCamera(creasePatternCamera);
+            h_cam.h3_and_h4_calculation();
+            h_cam.parameter_calculation();
+        }
+    }
+
+    public void drawBackground(Graphics2D g2h, Image imgh) {//引数はカメラ設定、線幅、画面X幅、画面y高さ
+        //背景画を、画像の左上はしを、ウィンドウの(0,0)に合わせて回転や拡大なしで表示した場合を基準状態とする。
+        //背景画上の点h1を中心としてa倍拡大する。次に、h1を展開図上の点h3と重なるように背景画を平行移動する。
+        //この状態の展開図を、h3を中心にb度回転したよう見えるように座標を回転させて貼り付けて、その後、座標の回転を元に戻すという関数。
+        //引数は、Graphics2D g2h,Image imgh,Ten h1,Ten h2,Ten h3,Ten h4
+        //h2,とh4も重なるようにする
+        //
+
+        //最初に
+
+
+        g2h.rotate(h_cam.getAngle() * Math.PI / 180.0, h_cam.getRotationX(), h_cam.getRotationY());
+
+        g2h.drawImage(imgh, h_cam.getX0(), h_cam.getY0(), h_cam.getX1(), h_cam.getY1(), this);
+
+        g2h.rotate(-h_cam.getAngle() * Math.PI / 180.0, h_cam.getRotationX(), h_cam.getRotationY());
+
+
+    }
+
+    public void setData(ApplicationModel applicationModel) {
+        antiAlias = applicationModel.getAntiAlias();
+        lineWidth = applicationModel.determineCalculatedLineWidth();
+        auxLineWidth = applicationModel.determineCalculatedAuxLineWidth();
+        lineStyle = applicationModel.getLineStyle();
+        displayPointSpotlight = applicationModel.getDisplayPointSpotlight();
+        displayPointOffset = applicationModel.getDisplayPointOffset();
+        displayGridInputAssist = applicationModel.getDisplayGridInputAssist();
+        displayComments = applicationModel.getDisplayComments();
+        displayCpLines = applicationModel.getDisplayCpLines();
+        displayAuxLines = applicationModel.getDisplayAuxLines();
+        displayLiveAuxLines = applicationModel.getDisplayLiveAuxLines();
+    }
+
+    public void setActiveMouseHandler(MouseModeHandler activeMouseHandler) {
+        this.activeMouseHandler = activeMouseHandler;
+    }
+
+    public void setDisplayMarkings(boolean displayMarkings) {
+        this.displayMarkings = displayMarkings;
+    }
+
+    public void setDisplayCreasePatternOnTop(boolean displayCreasePatternOnTop) {
+        this.displayCreasePatternOnTop = displayCreasePatternOnTop;
+    }
+
+    public Background_camera getH_cam() {
+        return h_cam;
+    }
+
+    public void setH_cam(Background_camera hCam) {
+        this.h_cam = hCam;
+    }
+
+    public void setDim(Dimension dim) {
+        this.dim = dim;
+    }
+
+    public Dimension getDim() {
+        return dim;
+    }
+}

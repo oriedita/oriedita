@@ -6,7 +6,6 @@ import jakarta.inject.Named;
 import oriedita.editor.service.HistoryState;
 import oriedita.editor.service.impl.DequeHistoryState;
 
-@ApplicationScoped
 public class HistoryStateFactory {
     @Produces
     @ApplicationScoped

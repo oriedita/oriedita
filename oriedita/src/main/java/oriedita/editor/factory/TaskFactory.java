@@ -6,7 +6,6 @@ import jakarta.inject.Named;
 import oriedita.editor.service.TaskExecutorService;
 import oriedita.editor.service.impl.SingleTaskExecutorServiceImpl;
 
-@ApplicationScoped
 public class TaskFactory {
     @Named("camvExecutor")
     @Produces
