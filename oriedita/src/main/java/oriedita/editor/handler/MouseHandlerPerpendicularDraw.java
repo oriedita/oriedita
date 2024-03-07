@@ -107,8 +107,9 @@ public class MouseHandlerPerpendicularDraw extends BaseMouseHandlerInputRestrict
                     point.determineAX() + perpendicular.determineBX() - perpendicular.determineAX(),
                     point.determineAY() + perpendicular.determineBY() - perpendicular.determineAY()));
 
-            if (s_step_additional_intersection(4, point, destinationLine, d.getLineColor()) > 0) {
-                d.addLineSegment(destinationLine);
+            LineSegment newLine = s_step_additional_intersection(point, destinationLine, d.getLineColor());
+            if (newLine != null) {
+                d.addLineSegment(newLine);
                 d.record();
             }
 
@@ -116,12 +117,12 @@ public class MouseHandlerPerpendicularDraw extends BaseMouseHandlerInputRestrict
         }
     }
 
-    public int s_step_additional_intersection(int i_e_d, LineSegment s_o, LineSegment s_k, LineColor icolo) {
+    public LineSegment s_step_additional_intersection(LineSegment s_o, LineSegment s_k, LineColor icolo) {
 
         Point cross_point = new Point();
 
         if (OritaCalc.isLineSegmentParallel(s_o, s_k, Epsilon.UNKNOWN_1EN7) == OritaCalc.ParallelJudgement.PARALLEL_NOT_EQUAL) {//0=平行でない、1=平行で２直線が一致しない、2=平行で２直線が一致する
-            return -500;
+            return null;
         }
 
         if (OritaCalc.isLineSegmentParallel(s_o, s_k, Epsilon.UNKNOWN_1EN7) == OritaCalc.ParallelJudgement.PARALLEL_EQUAL) {//0=平行でない、1=平行で２直線が一致しない、2=平行で２直線が一致する
@@ -138,10 +139,9 @@ public class MouseHandlerPerpendicularDraw extends BaseMouseHandlerInputRestrict
         LineSegment add_sen = new LineSegment(cross_point, s_o.getA(), icolo);
 
         if (Epsilon.high.gt0(add_sen.determineLength())) {
-            d.getLineStep().set(i_e_d, add_sen);
-            return 1;
+            return add_sen;
         }
 
-        return -500;
+        return null;
     }
 }
