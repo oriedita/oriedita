@@ -24,7 +24,7 @@ public class CollapsiblePanel extends JPanel {
 
         clickLabel.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e) {
+            public void mousePressed(MouseEvent e) {
                 contentPanel.setEnabled(!contentPanel.isEnabled());
                 contentPanel.setVisible(!contentPanel.isVisible());
                 clickLabel.setText(contentPanel.isEnabled() ? clickLabel.getText().replace('▸', '▾') : clickLabel.getText().replace('▾', '▸'));
