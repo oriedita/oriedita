@@ -79,3 +79,4 @@ jobs:
         with:
           files: |
             ci-build/Oriedita*
+            ci-build/oriedita*
