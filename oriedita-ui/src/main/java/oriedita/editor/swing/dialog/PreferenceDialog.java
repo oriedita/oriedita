@@ -535,7 +535,7 @@ public class PreferenceDialog extends JDialog {
             listPanel.add(keystrokeButton, new GridConstraints(index, 2, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.ALIGN_RIGHT, GridConstraints.SIZEPOLICY_FIXED, 1, new Dimension(70, 21), null, null, 0, false));
 
             JButton restoreHotkeyButton = getRestoreHotkeyButton(key, keystrokeButton);
-            listPanel.add(restoreHotkeyButton, new GridConstraints(index, 3, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_VERTICAL, GridConstraints.SIZEPOLICY_FIXED, 1, new Dimension(18, 21), new Dimension(18, 21), null, 0, false));
+            listPanel.add(restoreHotkeyButton, new GridConstraints(index, 3, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_VERTICAL, GridConstraints.SIZEPOLICY_FIXED, 1, new Dimension(21, 21), new Dimension(21, 21), null, 0, false));
         }
 
         listPanel.add(spacer1, new GridConstraints(hotkeyCategoryMap.get(categoryHeader).size() - 1, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
