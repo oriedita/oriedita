@@ -4,14 +4,12 @@ package oriedita.editor.swing;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import oriedita.editor.Canvas;
+import oriedita.editor.CanvasUI;
 
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
-import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.TimeUnit;
 
 /**
  * BorderLayout for each different part.
@@ -20,7 +18,7 @@ import java.util.concurrent.TimeUnit;
 public class Editor {
     private final Canvas canvas1;
     private JPanel root;
-    private Canvas.CanvasUI canvas;
+    private CanvasUI canvas;
     private RightPanel rightPanel;
     private BottomPanel bottomPanel;
     private TopPanel topPanel;

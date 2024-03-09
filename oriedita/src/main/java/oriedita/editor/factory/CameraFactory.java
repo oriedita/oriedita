@@ -6,7 +6,6 @@ import jakarta.inject.Named;
 import oriedita.editor.databinding.CameraModel;
 import oriedita.editor.drawing.tools.Camera;
 
-@ApplicationScoped
 public class CameraFactory {
     @Produces
     @ApplicationScoped

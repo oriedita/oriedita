@@ -13,7 +13,7 @@
       <nested-form id="4d38c" form-file="oriedita/editor/swing/RightPanel.form" binding="rightPanel" custom-create="true">
         <constraints border-constraint="East"/>
       </nested-form>
-      <component id="cf2c7" class="oriedita.editor.Canvas$CanvasUI" binding="canvas" custom-create="true" default-binding="true">
+      <component id="cf2c7" class="oriedita.editor.CanvasUI" binding="canvas" custom-create="true" default-binding="true">
         <constraints border-constraint="Center"/>
       </component>
       <nested-form id="6ca88" form-file="oriedita/editor/swing/TopPanel.form" binding="topPanel" custom-create="true">
