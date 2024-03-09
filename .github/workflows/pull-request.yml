@@ -36,6 +36,7 @@ jobs:
         run: mvn -B package --file pom.xml
 
       - uses: actions/upload-artifact@v3
+        if: ${{ matrix.version == '21' }}
         with:
           name: oriedita-jar
           path: oriedita/target/oriedita-*.jar
