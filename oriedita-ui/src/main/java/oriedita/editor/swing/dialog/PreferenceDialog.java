@@ -49,6 +49,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -467,7 +468,9 @@ public class PreferenceDialog extends JDialog {
         label.setFocusable(false);
         label.setIconTextGap(4);
         String actionText = ResourceUtil.getBundleString("name", key);
-        if (actionText != null) { actionText = actionText.replaceAll("_", ""); }
+        if (actionText != null) {
+            actionText = actionText.replaceAll("_", "");
+        }
         label.setText(actionText);
 
         return label;
@@ -524,16 +527,16 @@ public class PreferenceDialog extends JDialog {
             int index = hotkeyCategoryMap.get(categoryHeader).indexOf(key);
 
             JLabel iconLabel = getIconLabel(buttonService, key);
-            listPanel.add(iconLabel, new GridConstraints(index, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.ALIGN_RIGHT, 1, 1, null, null, null, 0, false));
+            listPanel.add(iconLabel, new GridConstraints(index, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, 1, null, null, null, 0, false));
 
             JLabel nameLabel = getTextLabel(key);
-            listPanel.add(nameLabel, new GridConstraints(index, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+            listPanel.add(nameLabel, new GridConstraints(index, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
 
             JButton keystrokeButton = getKeyStrokeButton(frameProvider, key);
-            listPanel.add(keystrokeButton, new GridConstraints(index, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+            listPanel.add(keystrokeButton, new GridConstraints(index, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_FIXED, 1, new Dimension(70, 10), null, null, 0, false));
 
             JButton restoreHotkeyButton = getRestoreHotkeyButton(key, keystrokeButton);
-            listPanel.add(restoreHotkeyButton, new GridConstraints(index, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.ALIGN_RIGHT, GridConstraints.SIZEPOLICY_FIXED, 1, null, null, null, 0, false));
+            listPanel.add(restoreHotkeyButton, new GridConstraints(index, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, GridConstraints.SIZEPOLICY_FIXED, 1, null, null, null, 0, false));
         }
 
         listPanel.add(spacer1, new GridConstraints(hotkeyCategoryMap.get(categoryHeader).size() - 1, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
@@ -552,7 +555,9 @@ public class PreferenceDialog extends JDialog {
         for (int i = 1; i < allData.size(); i++) {
             String[] row = allData.get(i);
             for (int j = 0; j < row.length; j++) {
-                if (!row[j].isEmpty()) { hotkeyCategoryMap.get(categoryHeaderList.get(j)).add(row[j]); }
+                if (!row[j].isEmpty()) {
+                    hotkeyCategoryMap.get(categoryHeaderList.get(j)).add(row[j]);
+                }
             }
         }
     }
@@ -578,7 +583,9 @@ public class PreferenceDialog extends JDialog {
             extractHeaders(allData); // Extract headers
 
             extractData(allData); // Extract Data excluding headers
-        } catch (Exception e) { e.printStackTrace(); }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void setupHotKey(ButtonService buttonService, FrameProvider frameProvider) {
@@ -606,8 +613,8 @@ public class PreferenceDialog extends JDialog {
         contentPane = new JPanel();
         contentPane.setLayout(new GridBagLayout());
         contentPane.setFocusTraversalPolicyProvider(true);
-        contentPane.setMinimumSize(new Dimension(540, 610));
-        contentPane.setPreferredSize(new Dimension(540, 610));
+        contentPane.setMinimumSize(new Dimension(550, 610));
+        contentPane.setPreferredSize(new Dimension(550, 610));
         bottomPanel = new JPanel();
         bottomPanel.setLayout(new GridLayoutManager(2, 1, new Insets(0, 0, 10, 0), -1, -1));
         GridBagConstraints gbc;

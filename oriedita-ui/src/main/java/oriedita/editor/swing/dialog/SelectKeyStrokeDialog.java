@@ -15,6 +15,7 @@ import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.border.TitledBorder;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -70,7 +71,8 @@ public class SelectKeyStrokeDialog extends JDialog {
                     String conflictingButton = (String) owner.getRootPane()
                             .getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
                             .get(keyStrokeForEvent);
-                    setConflict("Conflicting with " + conflictingButton);
+
+                    setConflict("Conflicting with <br>" + ResourceUtil.getBundleString("name", conflictingButton));
                 } else {
                     setConflict(null);
                 }
@@ -161,12 +163,14 @@ public class SelectKeyStrokeDialog extends JDialog {
     private void $$$setupUI$$$() {
         contentPane = new JPanel();
         contentPane.setLayout(new GridBagLayout());
+        contentPane.setMinimumSize(new Dimension(220, 150));
+        contentPane.setPreferredSize(new Dimension(220, 150));
         final JPanel panel1 = new JPanel();
         panel1.setLayout(new GridBagLayout());
         GridBagConstraints gbc;
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
-        gbc.gridy = 6;
+        gbc.gridy = 5;
         gbc.weightx = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
         contentPane.add(panel1, gbc);
@@ -205,14 +209,14 @@ public class SelectKeyStrokeDialog extends JDialog {
         gbc = new GridBagConstraints();
         gbc.gridx = 2;
         gbc.gridy = 0;
-        gbc.gridheight = 8;
+        gbc.gridheight = 7;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         contentPane.add(spacer2, gbc);
         final JPanel spacer3 = new JPanel();
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
-        gbc.gridheight = 8;
+        gbc.gridheight = 7;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         contentPane.add(spacer3, gbc);
         final JPanel spacer4 = new JPanel();
@@ -224,7 +228,7 @@ public class SelectKeyStrokeDialog extends JDialog {
         final JPanel spacer5 = new JPanel();
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
-        gbc.gridy = 7;
+        gbc.gridy = 6;
         gbc.fill = GridBagConstraints.VERTICAL;
         contentPane.add(spacer5, gbc);
         final JPanel spacer6 = new JPanel();
