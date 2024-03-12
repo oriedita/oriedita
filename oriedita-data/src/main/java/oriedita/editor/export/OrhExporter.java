@@ -18,14 +18,15 @@ import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 
 import java.awt.Color;
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
+import java.nio.charset.CharacterCodingException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
@@ -49,14 +50,10 @@ public class OrhExporter implements FileImporter, FileExporter {
         // Loading the camera settings for the development view
         reading = false;
 
-        List<String> fileLines = new ArrayList<>();
+        List<String> fileLines = loadFile(file);
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-            String str;
-
-            while ((str = reader.readLine()) != null) {
-                fileLines.add(str);
-            }
+        if (fileLines == null) {
+            throw new IOException("Encoding not detected");
         }
 
         for (String str : fileLines) {
@@ -595,6 +592,32 @@ public class OrhExporter implements FileImporter, FileExporter {
         save.setTitle(r_title);
 
         return save;
+    }
+
+    private static List<String> loadFile(File file) throws IOException {
+        // Possible charsets
+        List<Charset> possibleCharsets = List.of(
+                StandardCharsets.UTF_8,
+                Charset.forName("EUC-JP"),
+                Charset.forName("Shift_JIS"),
+                Charset.forName("GBK")
+        );
+
+        for (Charset charset : possibleCharsets) {
+            try {
+                List<String> contents = Files.readAllLines(file.toPath(), charset);
+                if (contents.contains("<タイトル>") // <title> check if katakana are decoded
+                        && contents.contains("<線分集合>")) { // <set of line segments> check if kanji are decoded
+                    Logger.info("File is " + charset.displayName());
+                    return contents;
+                }
+            } catch (CharacterCodingException exception) {
+                Logger.info("File is not " + charset.displayName());
+                // ignored
+            }
+        }
+
+        return null;
     }
 
     @Override
