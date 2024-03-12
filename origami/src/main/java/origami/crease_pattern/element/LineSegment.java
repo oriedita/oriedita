@@ -452,7 +452,7 @@ public class LineSegment implements Serializable, Cloneable {
             return state >= 360;
         }
 
-        public boolean isParallel() {
+        public boolean isOverlapping() {
             return state >= 30;
         }
 

@@ -96,9 +96,8 @@ public abstract class BaseMouseHandlerPolygon extends BaseMouseHandler {
         if (polygonCompleted) {
             List<LineSegment> lineStep = d.getLineStep();
             Polygon polygon = new Polygon(lineStep.size());
-            int index = 1;
             for (LineSegment lineSegment : lineStep) {
-                polygon.set(index++, lineSegment.getA());
+                polygon.add(lineSegment.getA());
             }
 
             //各動作モードで独自に行う作業は以下に条件分けして記述する

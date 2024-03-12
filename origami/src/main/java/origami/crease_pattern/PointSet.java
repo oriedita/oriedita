@@ -169,8 +169,8 @@ public class PointSet implements Serializable {
     //Make Face polygonal
     private Polygon makePolygon(Face face) {
         Polygon polygon = new Polygon(face.getNumPoints());
-        for (int i = 0; i <= face.getNumPoints(); i++) {
-            polygon.set(i, points[face.getPointId(i)]);
+        for (int i = 0; i < face.getNumPoints(); i++) {
+            polygon.add(points[face.getPointId(i + 1)]);
         }
         return polygon;
     }

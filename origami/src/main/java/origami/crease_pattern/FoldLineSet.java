@@ -327,9 +327,9 @@ public class FoldLineSet {
 
     public void select(Point p1, Point p2, Point p3) {
         Polygon triangle = new Polygon(3);
-        triangle.set(1, p1);
-        triangle.set(2, p2);
-        triangle.set(3, p3);
+        triangle.add(p1);
+        triangle.add(p2);
+        triangle.add(p3);
 
         for (int i = 1; i <= total; i++) {
             LineSegment s;

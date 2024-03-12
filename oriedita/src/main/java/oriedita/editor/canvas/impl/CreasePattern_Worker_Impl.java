@@ -29,6 +29,7 @@ import origami.crease_pattern.FlatFoldabilityViolation;
 import origami.crease_pattern.FoldLineSet;
 import origami.crease_pattern.LineSegmentSet;
 import origami.crease_pattern.OritaCalc;
+import origami.crease_pattern.element.Box;
 import origami.crease_pattern.element.Circle;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
@@ -1106,7 +1107,7 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
         Point p_c = camera.TV2object(new Point(p0b.getX(), p0b.getY()));
         Point p_d = camera.TV2object(new Point(p0b.getX(), p0a.getY()));
 
-        return new Polygon(p_a, p_b, p_c, p_d);
+        return new Box(p_a, p_b, p_c, p_d);
     }
 
     @Override

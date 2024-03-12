@@ -2,6 +2,7 @@ package oriedita.editor.databinding;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import origami.crease_pattern.element.Box;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.Polygon;
 
@@ -45,7 +46,7 @@ public class BackgroundModel {
         displayBackground = false;
         lockBackground = false;
 
-        backgroundPosition = new Polygon(new Point(0.0, 0.0),
+        backgroundPosition = new Box(new Point(0.0, 0.0),
                 new Point(1.0, 1.0),
                 new Point(120.0, 120.0),
                 new Point(121.0, 121.0));

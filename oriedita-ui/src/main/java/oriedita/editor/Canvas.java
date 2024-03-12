@@ -29,6 +29,7 @@ import oriedita.editor.service.ButtonService;
 import oriedita.editor.service.FoldedFigureCanvasSelectService;
 import oriedita.editor.swing.component.BulletinBoard;
 import oriedita.editor.swing.component.TextEditingArea;
+import origami.crease_pattern.element.Box;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.Polygon;
 import origami.folding.FoldedFigure;
@@ -674,7 +675,7 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
         Logger.info("新背景カメラインスタンス化");
         canvasUI.setH_cam(new Background_camera());
 
-        backgroundModel.setBackgroundPosition(new Polygon(new Point(120.0, 120.0),
+        backgroundModel.setBackgroundPosition(new Box(new Point(120.0, 120.0),
                 new Point(120.0 + 10.0, 120.0),
                 new Point(0, 0),
                 new Point(10.0, 0)));
