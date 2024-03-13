@@ -69,12 +69,10 @@ public class MouseHandlerBackgroundChangePosition extends BaseMouseHandler {
 
             backgroundModel.setLockBackground(false);
 
-            Polygon polygon = new Box(d.getCamera().object2TV(s_1.getA()),
+            backgroundModel.setBackgroundPosition(new Box(d.getCamera().object2TV(s_1.getA()),
                     d.getCamera().object2TV(s_2.getA()),
                     d.getCamera().object2TV(s_3.getA()),
-                    d.getCamera().object2TV(s_4.getA()));
-
-            backgroundModel.setBackgroundPosition(polygon);
+                    d.getCamera().object2TV(s_4.getA())));
         }
     }
 }

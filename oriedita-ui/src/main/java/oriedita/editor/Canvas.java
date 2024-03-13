@@ -620,17 +620,13 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
     //Functions that perform mouse operations (move and button operations)------------------------------
     //----------------------------------------------------------------------
     // ------------------------------------------------------
-    public void background_set(Polygon position) {
-        if (position.size() != 4) {
-            throw new RuntimeException("Background position must be a square");
-        }
-
+    public void background_set(Box position) {
         var h_cam = canvasUI.getH_cam();
 
-        h_cam.set_h1(position.get(1));
-        h_cam.set_h2(position.get(2));
-        h_cam.set_h3(position.get(3));
-        h_cam.set_h4(position.get(4));
+        h_cam.set_h1(position.getP1());
+        h_cam.set_h2(position.getP2());
+        h_cam.set_h3(position.getP3());
+        h_cam.set_h4(position.getP4());
 
         h_cam.parameter_calculation();
     }

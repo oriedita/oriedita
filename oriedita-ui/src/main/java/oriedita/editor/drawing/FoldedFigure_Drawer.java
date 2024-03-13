@@ -8,6 +8,7 @@ import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.folded_figure.FoldedFigure_01;
 import origami.crease_pattern.FoldingException;
 import origami.crease_pattern.LineSegmentSet;
+import origami.crease_pattern.element.Box;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.worker.linesegmentset.GetBoundingBox;
 import origami.folding.FoldedFigure;
@@ -26,7 +27,7 @@ public class FoldedFigure_Drawer implements Foldable {
     private final Camera foldedFigureRearCamera = new Camera();
     private final Camera transparentFrontCamera = new Camera();
     private final Camera transparentRearCamera = new Camera();
-    private origami.crease_pattern.element.Polygon boundingBox;
+    private Box boundingBox;
     boolean moveWithCp;
     private Color foldedFigure_F_color = new Color(255, 255, 50);//Folded surface color
     private Color foldedFigure_B_color = new Color(233, 233, 233);//The color of the back side of the folded figure

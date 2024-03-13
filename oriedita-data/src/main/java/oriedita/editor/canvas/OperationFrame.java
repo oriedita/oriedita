@@ -1,14 +1,15 @@
 package oriedita.editor.canvas;
 
+import origami.crease_pattern.element.Box;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.Polygon;
 
 public class OperationFrame {
-    private final Polygon rect;
+    private final Box rect;
     private boolean active = false;
 
     public OperationFrame() {
-        rect = new Polygon(4);
+        rect = new Box();
     }
 
     public void setFramePoint(int index, Point p) {
@@ -24,19 +25,19 @@ public class OperationFrame {
     }
 
     public Point getP1() {
-        return rect.get(1);
+        return rect.getP1();
     }
 
     public Point getP2() {
-        return rect.get(2);
+        return rect.getP2();
     }
 
     public Point getP3() {
-        return rect.get(3);
+        return rect.getP3();
     }
 
     public Point getP4() {
-        return rect.get(4);
+        return rect.getP4();
     }
 
     public Polygon getPolygon() {

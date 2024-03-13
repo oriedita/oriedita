@@ -21,7 +21,7 @@ class PolygonTest {
         var pointB = new Point(1, 1);
         var pointC = new Point(1, 0);
 
-        var polygon = new Polygon(3);
+        var polygon = new Polygon();
         polygon.add(pointA);
         polygon.add(pointB);
         polygon.add(pointC);

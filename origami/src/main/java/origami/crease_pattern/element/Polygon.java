@@ -9,22 +9,22 @@ import java.util.List;
 import java.util.Optional;
 
 public class Polygon {
-    int vertexCount;             //How many vertices
-
     List<Point> vertices; //vertex
 
-    public Polygon(int _vertexCount) {
-        vertexCount = _vertexCount;
+    public Polygon() {
         vertices = new ArrayList<>();
-    }
-
-    //Set the i-th vertex of the polygon
-    public void set(int i, Point p) {
-        vertices.set(i, p);
     }
 
     public void add(Point p) {
         vertices.add(p);
+    }
+
+    public Point get(int i) {
+        return vertices.get(i);
+    }
+
+    public void set(int i, Point p) {
+        vertices.set(i, p);
     }
 
     /**
@@ -32,10 +32,10 @@ public class Polygon {
      */
     public List<LineSegment> getLineSegments() {
         List<LineSegment> lineSegments = new ArrayList<>();
-        for (int i = 0; i < vertexCount; i++) {
+        for (int i = 0; i < vertices.size(); i++) {
             LineSegment s;
-            if (i == vertexCount - 1) {
-                s = new LineSegment(vertices.get(vertexCount - 1), vertices.get(0)); //Line segment
+            if (i == vertices.size() - 1) {
+                s = new LineSegment(vertices.get(vertices.size() - 1), vertices.get(0)); //Line segment
             } else {
                 s = new LineSegment(vertices.get(i), vertices.get(i + 1));
             }
@@ -44,14 +44,6 @@ public class Polygon {
         }
 
         return lineSegments;
-    }
-
-    public int size() {
-        return vertexCount;
-    }
-
-    public Point get(int i) {
-        return vertices.get(i);
     }
 
     // 0, when all of the line segment s0 exists outside the convex polygon (the boundary line is not considered inside)
@@ -257,11 +249,11 @@ public class Polygon {
     public double calculateArea() {
         double area = 0.0;
 
-        area = area + (vertices.get(vertexCount - 1).getX() - vertices.get(1).getX()) * vertices.get(0).getY();
-        for (int i = 1; i < vertexCount - 1; i++) {
+        area = area + (vertices.get(vertices.size() - 1).getX() - vertices.get(1).getX()) * vertices.get(0).getY();
+        for (int i = 1; i < vertices.size() - 1; i++) {
             area = area + (vertices.get(i - 1).getX() - vertices.get(i + 1).getX()) * vertices.get(i).getY();
         }
-        area = area + (vertices.get(vertexCount - 2).getX() - vertices.get(0).getX()) * vertices.get(vertexCount - 1).getY();
+        area = area + (vertices.get(vertices.size() - 2).getX() - vertices.get(0).getX()) * vertices.get(vertices.size() - 1).getY();
         area = -area / 2;
 
         return area;
@@ -284,7 +276,7 @@ public class Polygon {
         Point tr = new Point();
         double distance = -10.0;
 
-        for (int i = 1; i < vertexCount - 1; i++) {
+        for (int i = 1; i < vertices.size() - 1; i++) {
             tn = OritaCalc.center(vertices.get(i - 1), vertices.get(i), vertices.get(i + 1));
             if ((distance < findDistance(tn)) && (inside(tn) == Intersection.INSIDE)) {
                 distance = findDistance(tn);
@@ -292,13 +284,13 @@ public class Polygon {
             }
         }
         //
-        tn = OritaCalc.center(vertices.get(vertexCount - 2), vertices.get(vertexCount - 1), vertices.get(0));
+        tn = OritaCalc.center(vertices.get(vertices.size() - 2), vertices.get(vertices.size() - 1), vertices.get(0));
         if ((distance < findDistance(tn)) && (inside(tn) == Intersection.INSIDE)) {
             distance = findDistance(tn);
             tr = tn;
         }
         //
-        tn = OritaCalc.center(vertices.get(vertexCount - 1), vertices.get(0), vertices.get(1));
+        tn = OritaCalc.center(vertices.get(vertices.size() - 1), vertices.get(0), vertices.get(1));
         if ((distance < findDistance(tn)) && (inside(tn) == Intersection.INSIDE)) {
             tr = tn;
         }

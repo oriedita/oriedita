@@ -16,7 +16,7 @@ public class BackgroundModel {
     private boolean displayBackground;
     private boolean lockBackground;
     private Image backgroundImage;
-    private Polygon backgroundPosition;
+    private Box backgroundPosition;
 
     @Inject
     public BackgroundModel() {
@@ -74,11 +74,11 @@ public class BackgroundModel {
         this.pcs.firePropertyChange("lockBackground", oldLockBackground, lockBackground);
     }
 
-    public Polygon getBackgroundPosition() {
+    public Box getBackgroundPosition() {
         return backgroundPosition;
     }
 
-    public void setBackgroundPosition(Polygon backgroundPosition) {
+    public void setBackgroundPosition(Box backgroundPosition) {
         Polygon oldBackgroundPosition = this.backgroundPosition;
         this.backgroundPosition = backgroundPosition;
         this.pcs.firePropertyChange("backgroundPosition", oldBackgroundPosition, backgroundPosition);

@@ -8,7 +8,7 @@ import origami.crease_pattern.element.Polygon;
 
 public class GetBoundingBox {
 
-    public static Polygon getBoundingBox(LineSegmentSet lineSegmentSet) {
+    public static Box getBoundingBox(LineSegmentSet lineSegmentSet) {
         double minX = Double.POSITIVE_INFINITY;
         double maxX = Double.NEGATIVE_INFINITY;
         double minY = Double.POSITIVE_INFINITY;
