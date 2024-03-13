@@ -8,11 +8,11 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class PolygonTest {
-    Box box;
+    Rectangle box;
 
     @BeforeEach
     public void setup() {
-        box = new Box(new Point(-1, -1), new Point(-1, 1), new Point(1, 1), new Point(1, -1));
+        box = new Rectangle(new Point(-1, -1), new Point(-1, 1), new Point(1, 1), new Point(1, -1));
     }
 
     @Test
@@ -21,10 +21,7 @@ class PolygonTest {
         var pointB = new Point(1, 1);
         var pointC = new Point(1, 0);
 
-        var polygon = new Polygon();
-        polygon.add(pointA);
-        polygon.add(pointB);
-        polygon.add(pointC);
+        var polygon = new Polygon(List.of(pointA, pointB, pointC));
 
         var lineSegments = polygon.getLineSegments();
 

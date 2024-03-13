@@ -7,6 +7,7 @@ import origami.folding.util.SortingBox;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class Polygon {
     List<Point> vertices; //vertex
@@ -15,7 +16,11 @@ public class Polygon {
         vertices = new ArrayList<>();
     }
 
-    public void add(Point p) {
+    public Polygon(List<Point> points) {
+        this.vertices = points.stream().map(Point::new).collect(Collectors.toList());
+    }
+
+    protected void add(Point p) {
         vertices.add(p);
     }
 

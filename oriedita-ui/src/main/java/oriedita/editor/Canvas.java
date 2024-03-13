@@ -29,9 +29,8 @@ import oriedita.editor.service.ButtonService;
 import oriedita.editor.service.FoldedFigureCanvasSelectService;
 import oriedita.editor.swing.component.BulletinBoard;
 import oriedita.editor.swing.component.TextEditingArea;
-import origami.crease_pattern.element.Box;
+import origami.crease_pattern.element.Rectangle;
 import origami.crease_pattern.element.Point;
-import origami.crease_pattern.element.Polygon;
 import origami.folding.FoldedFigure;
 
 import javax.swing.JMenuItem;
@@ -42,7 +41,6 @@ import java.awt.AWTException;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.Rectangle;
 import java.awt.Robot;
 import java.awt.Window;
 import java.awt.event.ComponentAdapter;
@@ -620,7 +618,7 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
     //Functions that perform mouse operations (move and button operations)------------------------------
     //----------------------------------------------------------------------
     // ------------------------------------------------------
-    public void background_set(Box position) {
+    public void background_set(Rectangle position) {
         var h_cam = canvasUI.getH_cam();
 
         h_cam.set_h1(position.getP1());
@@ -642,10 +640,10 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
         }
 
         // Capture by specifying a range
-        Rectangle canvasBounds = canvasUI.getBounds();
+        java.awt.Rectangle canvasBounds = canvasUI.getBounds();
 
         java.awt.Point canvasLocation = canvasUI.getLocationOnScreen();
-        Rectangle bounds = new Rectangle(canvasLocation.x, canvasLocation.y, canvasBounds.width, canvasBounds.height);
+        java.awt.Rectangle bounds = new java.awt.Rectangle(canvasLocation.x, canvasLocation.y, canvasBounds.width, canvasBounds.height);
 
         java.awt.Point currentLocation = frameProvider.get().getLocation();
         Dimension size = frameProvider.get().getSize();
@@ -671,7 +669,7 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
         Logger.info("新背景カメラインスタンス化");
         canvasUI.setH_cam(new Background_camera());
 
-        backgroundModel.setBackgroundPosition(new Box(new Point(120.0, 120.0),
+        backgroundModel.setBackgroundPosition(new Rectangle(new Point(120.0, 120.0),
                 new Point(120.0 + 10.0, 120.0),
                 new Point(0, 0),
                 new Point(10.0, 0)));

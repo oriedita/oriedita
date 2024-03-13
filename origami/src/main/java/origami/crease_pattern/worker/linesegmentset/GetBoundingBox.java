@@ -1,14 +1,13 @@
 package origami.crease_pattern.worker.linesegmentset;
 
 import origami.crease_pattern.LineSegmentSet;
-import origami.crease_pattern.element.Box;
+import origami.crease_pattern.element.Rectangle;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
-import origami.crease_pattern.element.Polygon;
 
 public class GetBoundingBox {
 
-    public static Box getBoundingBox(LineSegmentSet lineSegmentSet) {
+    public static Rectangle getBoundingBox(LineSegmentSet lineSegmentSet) {
         double minX = Double.POSITIVE_INFINITY;
         double maxX = Double.NEGATIVE_INFINITY;
         double minY = Double.POSITIVE_INFINITY;
@@ -35,6 +34,6 @@ public class GetBoundingBox {
         Point p_c = new Point(maxX, maxY);
         Point p_d = new Point(maxX, minY);
 
-        return new Box(p_a, p_b, p_c, p_d);
+        return new Rectangle(p_a, p_b, p_c, p_d);
     }
 }

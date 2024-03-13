@@ -1,18 +1,13 @@
 package origami.crease_pattern.element;
 
-public class Box extends Polygon {
-    private Point p1;
-    private Point p2;
-    private Point p3;
-    private Point p4;
+public class Rectangle extends Polygon {
+    private Point p1 = new Point();
+    private Point p2 = new Point();
+    private Point p3 = new Point();
+    private Point p4 = new Point();
 
-    public Box() {
+    public Rectangle() {
         super();
-
-        p1 = new Point();
-        p2 = new Point();
-        p3 = new Point();
-        p4 = new Point();
 
         add(p1);
         add(p2);
@@ -20,7 +15,7 @@ public class Box extends Polygon {
         add(p4);
     }
 
-    public Box(Point p1, Point p2, Point p3, Point p4) {
+    public Rectangle(Point p1, Point p2, Point p3, Point p4) {
         this.p1 = p1;
         this.p2 = p2;
         this.p3  =p3;

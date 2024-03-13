@@ -9,9 +9,8 @@ import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.databinding.BackgroundModel;
 import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.drawing.tools.Background_camera;
-import origami.crease_pattern.element.Box;
+import origami.crease_pattern.element.Rectangle;
 import origami.crease_pattern.element.Point;
-import origami.crease_pattern.element.Polygon;
 
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -65,7 +64,7 @@ public class BackgroundTrimAction extends AbstractOrieditaAction{
 
             canvas.setH_cam(new Background_camera());
 
-            backgroundModel.setBackgroundPosition(new Box(new Point(120.0, 120.0),
+            backgroundModel.setBackgroundPosition(new Rectangle(new Point(120.0, 120.0),
                     new Point(120.0 + 10.0, 120.0),
                     new Point(xmin, ymin),
                     new Point((double) xmin + 10.0, ymin)));
