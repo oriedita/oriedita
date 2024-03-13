@@ -599,18 +599,14 @@ public class OrhExporter implements FileImporter, FileExporter {
         List<Charset> possibleCharsets = List.of(
                 StandardCharsets.UTF_8,
                 Charset.forName("EUC-JP"),
+                Charset.forName("EUC-CN"),
                 Charset.forName("Shift_JIS"),
                 Charset.forName("GBK")
         );
 
         for (Charset charset : possibleCharsets) {
             try {
-                List<String> contents = Files.readAllLines(file.toPath(), charset);
-                if (contents.contains("<タイトル>") // <title> check if katakana are decoded
-                        && contents.contains("<線分集合>")) { // <set of line segments> check if kanji are decoded
-                    Logger.info("File is " + charset.displayName());
-                    return contents;
-                }
+                return Files.readAllLines(file.toPath(), charset);
             } catch (CharacterCodingException exception) {
                 Logger.info("File is not " + charset.displayName());
                 // ignored
