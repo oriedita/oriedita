@@ -81,7 +81,6 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
     private final AnimationService animationService;
     private MouseModeHandler activeMouseHandler;
 
-    private final Point p_mouse_object_position = new Point();//マウスのオブジェクト座標上の位置
     private final Point p_mouse_TV_position = new Point();//マウスのTV座標上の位置
 
 
@@ -263,7 +262,7 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
         //  final Point mouseLocation = MouseInfo.getPointerInfo().getLocation();//これは多分J2SE 5.0「Tiger」以降で作動するコード
 
         Point p = e2p(e);
-        mouse_object_position(p);
+        canvasUI.setMousePosition(p);
 
         mainCreasePatternWorker.setCamera(creasePatternCamera);
 
@@ -381,7 +380,7 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
     public void mouseDragged(MouseEvent e) {
         if (mouseDraggedValid) {
             Point p = e2p(e);
-            mouse_object_position(p);
+            canvasUI.setMousePosition(p);
 
 
             if (mouseModeHandlers.containsKey(mouseMode)) {
@@ -559,7 +558,7 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
                         AnimationDurations.ZOOM);
             }
 
-            mouse_object_position(p_mouse_TV_position);
+            canvasUI.setMousePosition(p);
             canvasUI.repaint();
         }
     }
@@ -598,9 +597,7 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
     //Method called when the mouse wheel rotates
     //=============================================================================
     public void mouse_object_position(Point p) {//この関数はmouseMoved等と違ってマウスイベントが起きても自動では認識されない
-        p_mouse_TV_position.set(p.getX(), p.getY());
-
-        p_mouse_object_position.set(creasePatternCamera.TV2object(p_mouse_TV_position));
+        canvasUI.setMousePosition(p);
     }
 
     public void setData(PropertyChangeEvent e, BackgroundModel backgroundModel) {

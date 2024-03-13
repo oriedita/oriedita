@@ -53,8 +53,14 @@ public class CanvasUI extends JPanel {
 
     private MouseModeHandler activeMouseHandler;
 
-    private final Point p_mouse_object_position = new Point();//マウスのオブジェクト座標上の位置
-    private final Point p_mouse_TV_position = new Point();//マウスのTV座標上の位置
+    /**
+     * Position of the cursor relative to the center of the crease pattern.
+     */
+    private final Point mousePosition = new Point();//マウスのオブジェクト座標上の位置
+    /**
+     * Position of the cursor on the canvas
+     */
+    private final Point mousePositionOnCanvas = new Point();//マウスのTV座標上の位置
     private boolean hideOperationFrame = false;
     private boolean antiAlias;
 
@@ -225,7 +231,7 @@ public class CanvasUI extends JPanel {
             g2.setColor(Colors.get(new Color(255, 240, 0, 30)));
             g2.setStroke(new BasicStroke(2.0f));
             g2.setColor(Colors.get(new Color(255, 240, 0, 230)));
-            g2.draw(new Ellipse2D.Double(p_mouse_TV_position.getX() - d_width, p_mouse_TV_position.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
+            g2.draw(new Ellipse2D.Double(mousePositionOnCanvas.getX() - d_width, mousePositionOnCanvas.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
         }
 
         //Luminous flux of flashlight, etc.
@@ -244,7 +250,7 @@ public class CanvasUI extends JPanel {
             //展開図情報の文字表示
             bufferGraphics.setColor(Colors.get(Color.black));
 
-            bufferGraphics.drawString(String.format("mouse= ( %.2f, %.2f )", p_mouse_object_position.getX(), p_mouse_object_position.getY()), 10, 10); //この表示内容はvoid kekka_syoriで決められる。
+            bufferGraphics.drawString(String.format("mouse= ( %.2f, %.2f )", mousePosition.getX(), mousePosition.getY()), 10, 10); //この表示内容はvoid kekka_syoriで決められる。
 
             bufferGraphics.drawString("L=" + mainCreasePatternWorker.getTotal(), 10, 25); //この表示内容はvoid kekka_syoriで決められる。
 
@@ -254,13 +260,13 @@ public class CanvasUI extends JPanel {
             }
 
             if (displayGridInputAssist) {
-                Point gridIndex = new Point(mainCreasePatternWorker.getGridPosition(p_mouse_TV_position));//20201024高密度入力がオンならばrepaint（画面更新）のたびにここで最寄り点を求めているので、描き職人で別途最寄り点を求めていることと二度手間になっている。
+                Point gridIndex = new Point(mainCreasePatternWorker.getGridPosition(mousePositionOnCanvas));//20201024高密度入力がオンならばrepaint（画面更新）のたびにここで最寄り点を求めているので、描き職人で別途最寄り点を求めていることと二度手間になっている。
 
                 double dx_ind = gridIndex.getX();
                 double dy_ind = gridIndex.getY();
                 int ix_ind = (int) Math.round(dx_ind);
                 int iy_ind = (int) Math.round(dy_ind);
-                bufferGraphics.drawString("(" + ix_ind + "," + iy_ind + ")", (int) p_mouse_TV_position.getX() + 25, (int) p_mouse_TV_position.getY() + 20); //この表示内容はvoid kekka_syoriで決められる。
+                bufferGraphics.drawString("(" + ix_ind + "," + iy_ind + ")", (int) mousePositionOnCanvas.getX() + 25, (int) mousePositionOnCanvas.getY() + 20); //この表示内容はvoid kekka_syoriで決められる。
             }
 
             if (foldingExecutor.isTaskRunning()) {
@@ -298,8 +304,8 @@ public class CanvasUI extends JPanel {
         if (displayPointOffset) {
             g2.setStroke(new BasicStroke(1.0f));
             g2.setColor(Colors.get(Color.black));
-            g2.drawLine((int) (p_mouse_TV_position.getX()), (int) (p_mouse_TV_position.getY()),
-                    (int) (p_mouse_TV_position.getX() + d_width), (int) (p_mouse_TV_position.getY() + d_width)); //直線
+            g2.drawLine((int) (mousePositionOnCanvas.getX()), (int) (mousePositionOnCanvas.getY()),
+                    (int) (mousePositionOnCanvas.getX() + d_width), (int) (mousePositionOnCanvas.getY() + d_width)); //直線
         }
         if (animationService.isAnimating()) {
             SwingUtilities.invokeLater(canvasModel::markDirty);
@@ -378,5 +384,10 @@ public class CanvasUI extends JPanel {
 
     public Dimension getDim() {
         return dim;
+    }
+
+    public void setMousePosition(Point point) {
+        mousePositionOnCanvas.set(point);
+        mousePosition.set(creasePatternCamera.TV2object(point));
     }
 }
