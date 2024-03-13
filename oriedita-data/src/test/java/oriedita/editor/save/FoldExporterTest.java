@@ -11,14 +11,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.skyscreamer.jsonassert.JSONAssert;
 import oriedita.editor.exception.FileReadingException;
-import oriedita.editor.export.Fold;
+import oriedita.editor.export.FoldExporter;
 import oriedita.editor.text.Text;
 import origami.crease_pattern.LineSegmentSet;
 import origami.crease_pattern.element.Circle;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -27,7 +26,7 @@ import java.util.List;
 import java.util.Objects;
 
 @ExtendWith({SnapshotExtension.class})
-public class FoldTest {
+public class FoldExporterTest {
     Expect expect;
 
     /**
@@ -63,7 +62,7 @@ public class FoldTest {
     public void testExportAndImport() throws IOException, JSONException, FileReadingException, InterruptedException {
         File saveFile = new File(Objects.requireNonNull(getClass().getClassLoader().getResource("fold/oriedita.fold")).getFile());
 
-        Fold f = new Fold();
+        FoldExporter f = new FoldExporter();
         Save foldSave = f.importFile(saveFile);
 
 
@@ -91,7 +90,7 @@ public class FoldTest {
 
         save.setCircles(circles);
 
-        Fold f = new Fold();
+        FoldExporter f = new FoldExporter();
 
         LineSegmentSet lineSegmentSet = new LineSegmentSet();
         lineSegmentSet.reset(1);
@@ -121,7 +120,7 @@ public class FoldTest {
 
         save.setCircles(circles);
 
-        Fold f = new Fold();
+        FoldExporter f = new FoldExporter();
 
         File tempFile = File.createTempFile("fold", "fold");
         f.exportFile(save, tempFile);
@@ -140,7 +139,7 @@ public class FoldTest {
 
         save.setTexts(texts);
 
-        Fold f = new Fold();
+        FoldExporter f = new FoldExporter();
 
         LineSegmentSet lineSegmentSet = new LineSegmentSet();
         lineSegmentSet.reset(1);
@@ -167,7 +166,7 @@ public class FoldTest {
 
         save.setTexts(texts);
 
-        Fold f = new Fold();
+        FoldExporter f = new FoldExporter();
 
         File tempFile = File.createTempFile("fold", "fold");
         f.exportFile(save, tempFile);

@@ -1,8 +1,8 @@
-oriedita.editor.save.FoldTest.testSaveCirclesFile=[
+oriedita.editor.save.FoldExporterTest.testSaveCirclesFile=[
   "{\"file_spec\":1.1,\"file_creator\":\"oriedita\",\"vertices_coords\":[[0.0,0.0]],\"edges_vertices\":[[0,0]],\"edges_assignment\":[\"B\"],\"edges_foldAngle\":[0.0],\"oriedita:version\":\"dev\",\"oriedita:circles_colors\":[\"0\"],\"oriedita:circles_coords\":[[1.0,2.0]],\"oriedita:circles_radii\":[10.0]}"
 ]
 
 
-oriedita.editor.save.FoldTest.testSaveTextsFile=[
+oriedita.editor.save.FoldExporterTest.testSaveTextsFile=[
   "{\"file_spec\":1.1,\"file_creator\":\"oriedita\",\"vertices_coords\":[[0.0,0.0]],\"edges_vertices\":[[0,0]],\"edges_assignment\":[\"B\"],\"edges_foldAngle\":[0.0],\"oriedita:version\":\"dev\",\"oriedita:texts_coords\":[[1.0,2.0]],\"oriedita:texts_text\":[\"TestText\"]}"
 ]

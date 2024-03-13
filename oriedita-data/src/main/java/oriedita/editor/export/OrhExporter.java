@@ -1,5 +1,6 @@
 package oriedita.editor.export;
 
+import jakarta.enterprise.context.ApplicationScoped;
 import org.tinylog.Logger;
 import oriedita.editor.canvas.LineStyle;
 import oriedita.editor.databinding.ApplicationModel;
@@ -10,19 +11,22 @@ import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.save.Save;
 import oriedita.editor.save.SaveProvider;
 import oriedita.editor.tools.StringOp;
+import oriedita.editor.export.api.FileExporter;
+import oriedita.editor.export.api.FileImporter;
 import origami.crease_pattern.element.Circle;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 
 import java.awt.Color;
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
+import java.nio.charset.CharacterCodingException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
@@ -31,11 +35,13 @@ import java.util.regex.Pattern;
 /**
  * Import and Export Orihime files.
  */
-public class Orh {
+@ApplicationScoped
+public class OrhExporter implements FileImporter, FileExporter {
     /**
      * Read an Orihime file
      */
-    public static Save importFile(File file) throws IOException {
+    @Override
+    public Save doImport(File file) throws IOException {
         Save save = SaveProvider.createInstance();
         Pattern p = Pattern.compile("<(.+)>(.+)</(.+)>");
 
@@ -44,14 +50,10 @@ public class Orh {
         // Loading the camera settings for the development view
         reading = false;
 
-        List<String> fileLines = new ArrayList<>();
+        List<String> fileLines = loadFile(file);
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-            String str;
-
-            while ((str = reader.readLine()) != null) {
-                fileLines.add(str);
-            }
+        if (fileLines == null) {
+            throw new IOException("Encoding not detected");
         }
 
         for (String str : fileLines) {
@@ -592,7 +594,30 @@ public class Orh {
         return save;
     }
 
-    public static void exportFile(Save save, File file) {
+    private static List<String> loadFile(File file) throws IOException {
+        // Possible charsets
+        List<Charset> possibleCharsets = List.of(
+                StandardCharsets.UTF_8,
+                Charset.forName("EUC-JP"),
+                Charset.forName("EUC-CN"),
+                Charset.forName("Shift_JIS"),
+                Charset.forName("GBK")
+        );
+
+        for (Charset charset : possibleCharsets) {
+            try {
+                return Files.readAllLines(file.toPath(), charset);
+            } catch (CharacterCodingException exception) {
+                Logger.info("File is not " + charset.displayName());
+                // ignored
+            }
+        }
+
+        return null;
+    }
+
+    @Override
+    public void doExport(Save save, File file) throws IOException {
         try (FileWriter fw = new FileWriter(file); BufferedWriter bw = new BufferedWriter(fw); PrintWriter pw = new PrintWriter(bw)) {
             pw.println("<タイトル>");
             pw.println("タイトル," + save.getTitle());
@@ -723,5 +748,20 @@ public class Orh {
         } catch (IOException e) {
             Logger.error(e, "Error during Orh export");
         }
+    }
+
+    @Override
+    public boolean supports(File filename) {
+        return filename.getName().endsWith(".orh");
+    }
+
+    @Override
+    public String getName() {
+        return "Orihime save";
+    }
+
+    @Override
+    public String getExtension() {
+        return ".orh";
     }
 }

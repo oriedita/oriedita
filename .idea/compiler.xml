@@ -13,8 +13,5 @@
         <module name="oriedita" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="fold" target="11" />
-    </bytecodeTargetLevel>
   </component>
 </project>

@@ -1,12 +1,17 @@
 package oriedita.editor.export;
 
-import org.tinylog.Logger;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.canvas.LineStyle;
 import oriedita.editor.databinding.FoldedFiguresList;
 import oriedita.editor.drawing.FoldedFigure_Drawer;
 import oriedita.editor.drawing.tools.Camera;
+import oriedita.editor.save.Save;
 import oriedita.editor.text.Text;
 import oriedita.editor.tools.StringOp;
+import oriedita.editor.export.api.FileExporter;
 import origami.Epsilon;
 import origami.crease_pattern.FoldLineSet;
 import origami.crease_pattern.PointSet;
@@ -31,9 +36,21 @@ import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Locale;
 
-public class Svg {
+@ApplicationScoped
+public class SvgExporter implements FileExporter {
+    private final CreasePattern_Worker mainCreasePatternWorker;
+    private final FoldedFiguresList foldedFiguresList;
 
-    public static void exportFile(FoldLineSet foldLineSet, List<Text> texts, boolean showText, Camera camera, boolean i_cp_display, float fCreasePatternLineWidth, int lineWidth, LineStyle lineStyle, int pointSize, FoldedFiguresList foldedFigures, File file) {
+    @Inject
+    public SvgExporter(
+            @Named("mainCreasePattern_Worker") CreasePattern_Worker mainCreasePatternWorker,
+            FoldedFiguresList foldedFiguresList
+    ) {
+        this.mainCreasePatternWorker = mainCreasePatternWorker;
+        this.foldedFiguresList = foldedFiguresList;
+    }
+
+    public static void exportFile(FoldLineSet foldLineSet, List<Text> texts, boolean showText, Camera camera, boolean i_cp_display, float fCreasePatternLineWidth, int lineWidth, LineStyle lineStyle, int pointSize, FoldedFiguresList foldedFigures, File file) throws IOException {
         try (FileWriter fw = new FileWriter(file); BufferedWriter bw = new BufferedWriter(fw); PrintWriter pw = new PrintWriter(bw)) {
             Locale.setDefault(Locale.ENGLISH);
             pw.println("<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">");
@@ -57,8 +74,6 @@ public class Svg {
             }
 
             pw.println("</svg>");
-        } catch (IOException e) {
-            Logger.error(e, "Error during svg export");
         }
     }
 
@@ -513,5 +528,33 @@ public class Svg {
                         " />");
             }
         }
+    }
+
+    @Override
+    public boolean supports(File file) {
+        return false;
+    }
+
+    @Override
+    public void doExport(Save save, File file) throws IOException {
+        var applicationModel = save.getApplicationModel();
+        boolean displayCpLines = applicationModel.getDisplayCpLines();
+        float lineWidth = applicationModel.determineCalculatedLineWidth();
+        int intLineWidth = applicationModel.getLineWidth();
+        LineStyle lineStyle = applicationModel.getLineStyle();
+        int pointSize = applicationModel.getPointSize();
+        boolean showText = applicationModel.getDisplayComments();
+
+        exportFile(mainCreasePatternWorker.getFoldLineSet(), save.getTexts(), showText, save.getCreasePatternCamera(), displayCpLines, lineWidth, intLineWidth, lineStyle, pointSize, foldedFiguresList, file);
+    }
+
+    @Override
+    public String getName() {
+        return "Scalable Vector Graphics";
+    }
+
+    @Override
+    public String getExtension() {
+        return ".svg";
     }
 }
