@@ -1,5 +1,6 @@
 package oriedita.editor.export;
 
+import jakarta.enterprise.context.ApplicationScoped;
 import org.tinylog.Logger;
 import oriedita.editor.canvas.LineStyle;
 import oriedita.editor.databinding.ApplicationModel;
@@ -10,6 +11,8 @@ import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.save.Save;
 import oriedita.editor.save.SaveProvider;
 import oriedita.editor.tools.StringOp;
+import oriedita.editor.export.api.FileExporter;
+import oriedita.editor.export.api.FileImporter;
 import origami.crease_pattern.element.Circle;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
@@ -31,11 +34,13 @@ import java.util.regex.Pattern;
 /**
  * Import and Export Orihime files.
  */
-public class Orh {
+@ApplicationScoped
+public class OrhExporter implements FileImporter, FileExporter {
     /**
      * Read an Orihime file
      */
-    public static Save importFile(File file) throws IOException {
+    @Override
+    public Save doImport(File file) throws IOException {
         Save save = SaveProvider.createInstance();
         Pattern p = Pattern.compile("<(.+)>(.+)</(.+)>");
 
@@ -592,7 +597,8 @@ public class Orh {
         return save;
     }
 
-    public static void exportFile(Save save, File file) {
+    @Override
+    public void doExport(Save save, File file) throws IOException {
         try (FileWriter fw = new FileWriter(file); BufferedWriter bw = new BufferedWriter(fw); PrintWriter pw = new PrintWriter(bw)) {
             pw.println("<タイトル>");
             pw.println("タイトル," + save.getTitle());
@@ -723,5 +729,20 @@ public class Orh {
         } catch (IOException e) {
             Logger.error(e, "Error during Orh export");
         }
+    }
+
+    @Override
+    public boolean supports(File filename) {
+        return filename.getName().endsWith(".orh");
+    }
+
+    @Override
+    public String getName() {
+        return "Orihime save";
+    }
+
+    @Override
+    public String getExtension() {
+        return ".orh";
     }
 }

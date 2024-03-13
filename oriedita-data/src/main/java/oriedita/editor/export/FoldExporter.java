@@ -14,6 +14,8 @@ import oriedita.editor.save.OrieditaFoldFile;
 import oriedita.editor.save.Save;
 import oriedita.editor.save.SaveProvider;
 import oriedita.editor.tools.ResourceUtil;
+import oriedita.editor.export.api.FileExporter;
+import oriedita.editor.export.api.FileImporter;
 import origami.crease_pattern.FoldLineSet;
 import origami.crease_pattern.LineSegmentSet;
 import origami.crease_pattern.PointSet;
@@ -31,9 +33,9 @@ import java.util.Arrays;
 import java.util.List;
 
 @ApplicationScoped
-public class Fold {
+public class FoldExporter implements FileImporter, FileExporter {
     @Inject
-    public Fold() {
+    public FoldExporter() {
     }
 
     public Save toSave(OrieditaFoldFile foldFile) {
@@ -124,26 +126,22 @@ public class Fold {
         }
     }
 
-    public Save importFile(File file) throws FileReadingException {
+    public Save importFile(File file) throws FileReadingException, IOException {
         try (FileInputStream fileInputStream = new FileInputStream(file)) {
             CustomFoldReader<OrieditaFoldFile> orieditaFoldFileCustomFoldReader = new CustomFoldReader<>(OrieditaFoldFile.class, fileInputStream);
             return toSave(orieditaFoldFileCustomFoldReader.read());
-        } catch (IOException e) {
-            throw new FileReadingException(e);
         }
     }
 
 
-    private void exportFile(Save save, LineSegmentSet lineSegmentSet, File file) throws InterruptedException, FileReadingException {
+    private void exportFile(Save save, LineSegmentSet lineSegmentSet, File file) throws InterruptedException, IOException {
         try (FileOutputStream fileOutputStream = new FileOutputStream(file)) {
             CustomFoldWriter<FoldFile> foldFileCustomFoldWriter = new CustomFoldWriter<>(fileOutputStream);
             foldFileCustomFoldWriter.write(toFoldSave(save, lineSegmentSet));
-        } catch (IOException e) {
-            throw new FileReadingException(e);
         }
     }
 
-    public void exportFile(Save save, File file) throws FileReadingException, InterruptedException {
+    public void exportFile(Save save, File file) throws IOException, InterruptedException {
         LineSegmentSet s = new LineSegmentSet();
         s.setSave(save);
         if (s.getNumLineSegments() == 0) {
@@ -207,5 +205,38 @@ public class Fold {
 
     private List<Double> toFoldPoint(Point p) {
         return Arrays.asList(p.getX(), p.getY());
+    }
+
+    @Override
+    public boolean supports(File filename) {
+        return filename.getName().endsWith(".fold");
+    }
+
+    @Override
+    public void doExport(Save save, File file) throws IOException {
+        try {
+            exportFile(save, file);
+        } catch (InterruptedException e) {
+            throw new IOException(e);
+        }
+    }
+
+    @Override
+    public String getName() {
+        return "FOLD";
+    }
+
+    @Override
+    public String getExtension() {
+        return ".fold";
+    }
+
+    @Override
+    public Save doImport(File file) throws IOException {
+        try {
+            return importFile(file);
+        } catch (FileReadingException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

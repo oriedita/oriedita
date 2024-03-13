@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.tinylog.Logger;
-import oriedita.editor.export.Cp;
+import oriedita.editor.export.CpExporter;
 import oriedita.editor.save.Save;
 import origami.crease_pattern.LineSegmentSet;
 import origami.folding.util.TestBulletinBoard;
@@ -20,7 +20,7 @@ public class TwoColoredCpTest {
 
     @Test
     public void testCreateTwoColoredCp() throws IOException {
-        Save save = Cp.importFile(getClass().getClassLoader().getResourceAsStream("birdbase.cp"));
+        Save save = CpExporter.importFile(getClass().getClassLoader().getResourceAsStream("birdbase.cp"));
 
         FoldedFigure foldedFigure = new FoldedFigure(new TestBulletinBoard());
 
