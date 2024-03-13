@@ -27,8 +27,7 @@ public class MouseHandlerCircleDrawTangentLine extends BaseMouseHandler {
 
     //マウス操作(ボタンを押したとき)時の作業
     public void mousePressed(Point p0) {
-        Point p = new Point();
-        p.set(d.getCamera().TV2object(p0));
+        Point p = d.getCamera().TV2object(p0);
         closest_circumference.set(d.getClosestCircleMidpoint(p));
 
         // Select a point
@@ -63,16 +62,15 @@ public class MouseHandlerCircleDrawTangentLine extends BaseMouseHandler {
 
             d.getCircleStep().add(stepCircle);
         }
-
         if (d.getLineStep().size() > 1) {//			i_egaki_dankai=0;i_circle_drawing_stage=1;
-            LineSegment closest_step_lineSegment = new LineSegment();
-            closest_step_lineSegment.set(d.get_moyori_step_lineSegment(p, 1, d.getLineStep().size()));
+            LineSegment closest_step_lineSegment = new LineSegment(
+                    d.getClosestLineStepSegment(p, 1, d.getLineStep().size()));
 
             if (OritaCalc.determineLineSegmentDistance(p, closest_step_lineSegment) > d.getSelectionDistance()) { return; }
 
-            closest_step_lineSegment.set(OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), closest_step_lineSegment));
-            closest_step_lineSegment.set(closest_step_lineSegment.getB(), closest_step_lineSegment.getA(), d.getLineColor());
-            closest_step_lineSegment.set(OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), closest_step_lineSegment));
+            closest_step_lineSegment = OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), closest_step_lineSegment);
+            closest_step_lineSegment = new LineSegment(closest_step_lineSegment.getB(), closest_step_lineSegment.getA(), d.getLineColor());
+            closest_step_lineSegment = OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), closest_step_lineSegment);
 
             d.addLineSegment(closest_step_lineSegment);
             d.record();
@@ -92,10 +90,8 @@ public class MouseHandlerCircleDrawTangentLine extends BaseMouseHandler {
             Circle firstCircle = d.getCircleStep().get(0);
             Circle secondCircle = d.getCircleStep().get(1);
 
-            Point c1 = new Point();
-            c1.set(firstCircle.determineCenter());
-            Point c2 = new Point();
-            c2.set(secondCircle.determineCenter());
+            Point c1 = firstCircle.determineCenter();
+            Point c2 = secondCircle.determineCenter();
 
             double x1 = firstCircle.getX();
             double y1 = firstCircle.getY();
@@ -118,10 +114,8 @@ public class MouseHandlerCircleDrawTangentLine extends BaseMouseHandler {
             }//接線0本の場合
 
             if (Math.abs((xp * xp + yp * yp) - (r1 - r2) * (r1 - r2)) < Epsilon.UNKNOWN_1EN7) {//外接線1本の場合
-                Point kouten = new Point();
-                kouten.set(OritaCalc.internalDivisionRatio(c1, c2, -r1, r2));
-                StraightLine ty = new StraightLine(c1, kouten);
-                ty.orthogonalize(kouten);
+                Point kouten = OritaCalc.internalDivisionRatio(c1, c2, -r1, r2);
+                StraightLine ty = new StraightLine(c1, kouten).orthogonalize(kouten);
 
                 d.lineStepAdd(OritaCalc.circle_to_straightLine_no_intersect_wo_connect_LineSegment(new Circle(kouten, (r1 + r2) / 2.0, LineColor.BLACK_0), ty));
             } else if (((r1 - r2) * (r1 - r2) < (xp * xp + yp * yp)) && ((xp * xp + yp * yp) < (r1 + r2) * (r1 + r2))) {//外接線2本の場合
@@ -135,10 +129,8 @@ public class MouseHandlerCircleDrawTangentLine extends BaseMouseHandler {
                 double xr2 = xq2 + x1;
                 double yr2 = yq2 + y1;
 
-                StraightLine t1 = new StraightLine(x1, y1, xr1, yr1);
-                t1.orthogonalize(new Point(xr1, yr1));
-                StraightLine t2 = new StraightLine(x1, y1, xr2, yr2);
-                t2.orthogonalize(new Point(xr2, yr2));
+                StraightLine t1 = new StraightLine(x1, y1, xr1, yr1).orthogonalize(new Point(xr1, yr1));
+                StraightLine t2 = new StraightLine(x1, y1, xr2, yr2).orthogonalize(new Point(xr2, yr2));
 
                 d.lineStepAdd(new LineSegment(new Point(xr1, yr1), OritaCalc.findProjection(t1, new Point(x2, y2)), LineColor.PURPLE_8));
                 d.lineStepAdd(new LineSegment(new Point(xr2, yr2), OritaCalc.findProjection(t2, new Point(x2, y2)), LineColor.PURPLE_8));
@@ -153,18 +145,14 @@ public class MouseHandlerCircleDrawTangentLine extends BaseMouseHandler {
                 double xr2 = xq2 + x1;
                 double yr2 = yq2 + y1;
 
-                StraightLine t1 = new StraightLine(x1, y1, xr1, yr1);
-                t1.orthogonalize(new Point(xr1, yr1));
-                StraightLine t2 = new StraightLine(x1, y1, xr2, yr2);
-                t2.orthogonalize(new Point(xr2, yr2));
+                StraightLine t1 = new StraightLine(x1, y1, xr1, yr1).orthogonalize(new Point(xr1, yr1));
+                StraightLine t2 = new StraightLine(x1, y1, xr2, yr2).orthogonalize(new Point(xr2, yr2));
 
                 d.lineStepAdd(new LineSegment(new Point(xr1, yr1), OritaCalc.findProjection(t1, new Point(x2, y2)), LineColor.PURPLE_8));
                 d.lineStepAdd(new LineSegment(new Point(xr2, yr2), OritaCalc.findProjection(t2, new Point(x2, y2)), LineColor.PURPLE_8));
 
-                Point kouten = new Point();
-                kouten.set(OritaCalc.internalDivisionRatio(c1, c2, r1, r2));
-                StraightLine ty = new StraightLine(c1, kouten);
-                ty.orthogonalize(kouten);
+                Point kouten = OritaCalc.internalDivisionRatio(c1, c2, r1, r2);
+                StraightLine ty = new StraightLine(c1, kouten).orthogonalize(kouten);
                 LineSegment s = OritaCalc.circle_to_straightLine_no_intersect_wo_connect_LineSegment(new Circle(kouten, (r1 + r2) / 2.0, LineColor.BLACK_0), ty);
                 s.setColor(LineColor.PURPLE_8);
                 d.lineStepAdd(s);
@@ -191,14 +179,10 @@ public class MouseHandlerCircleDrawTangentLine extends BaseMouseHandler {
                 double xr4 = xq4 + x1;
                 double yr4 = yq4 + y1;
 
-                StraightLine t1 = new StraightLine(x1, y1, xr1, yr1);
-                t1.orthogonalize(new Point(xr1, yr1));
-                StraightLine t2 = new StraightLine(x1, y1, xr2, yr2);
-                t2.orthogonalize(new Point(xr2, yr2));
-                StraightLine t3 = new StraightLine(x1, y1, xr3, yr3);
-                t3.orthogonalize(new Point(xr3, yr3));
-                StraightLine t4 = new StraightLine(x1, y1, xr4, yr4);
-                t4.orthogonalize(new Point(xr4, yr4));
+                StraightLine t1 = new StraightLine(x1, y1, xr1, yr1).orthogonalize(new Point(xr1, yr1));
+                StraightLine t2 = new StraightLine(x1, y1, xr2, yr2).orthogonalize(new Point(xr2, yr2));
+                StraightLine t3 = new StraightLine(x1, y1, xr3, yr3).orthogonalize(new Point(xr3, yr3));
+                StraightLine t4 = new StraightLine(x1, y1, xr4, yr4).orthogonalize(new Point(xr4, yr4));
 
                 d.lineStepAdd(new LineSegment(new Point(xr1, yr1), OritaCalc.findProjection(t1, new Point(x2, y2)), LineColor.PURPLE_8));
                 d.lineStepAdd(new LineSegment(new Point(xr2, yr2), OritaCalc.findProjection(t2, new Point(x2, y2)), LineColor.PURPLE_8));

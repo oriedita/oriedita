@@ -21,9 +21,6 @@ import java.util.stream.Collectors;
 @ApplicationScoped
 @Handles(MouseMode.VORONOI_CREATE_62)
 public class MouseHandlerVoronoiCreate extends BaseMouseHandler {
-    public List<LineSegmentVoronoi> getVoronoiLineSet() {
-        return voronoiLineSet;
-    }
 
     private List<LineSegmentVoronoi> voronoiLineSet = new ArrayList<>();
     List<LineSegmentVoronoi> lineSegment_voronoi_onePoint = new ArrayList<>(); //Line segment around one point in Voronoi diagram
@@ -40,18 +37,14 @@ public class MouseHandlerVoronoiCreate extends BaseMouseHandler {
     //Function to operate the mouse (mouseMode == 62 Voronoi when the mouse is moved)
     public void mouseMoved(Point p0) {
         if (d.getGridInputAssist()) {
-            LineSegment candidate = new LineSegment();
-            candidate.setActive(LineSegment.ActiveState.ACTIVE_BOTH_3);
 
-            Point p = new Point();
-            p.set(d.getCamera().TV2object(p0));
+            Point p = d.getCamera().TV2object(p0);
 
             Point closest_point = d.getClosestPoint(p);
             if (p.distance(closest_point) < d.getSelectionDistance()) {
-                candidate.set(closest_point, closest_point);
-            } else {
-                candidate.set(p, p);
+                p = closest_point;
             }
+            LineSegment candidate = new LineSegment(p, p, LineColor.BLACK_0, LineSegment.ActiveState.ACTIVE_BOTH_3);
 
             if (d.getI_foldLine_additional() == FoldLineAdditionalInputMode.POLY_LINE_0) {
                 candidate.setColor(d.getLineColor());
@@ -71,8 +64,7 @@ public class MouseHandlerVoronoiCreate extends BaseMouseHandler {
         if (d.getLineStep().isEmpty()) {
             reset();
         }
-        Point p = new Point();
-        p.set(d.getCamera().TV2object(p0));
+        Point p = d.getCamera().TV2object(p0);
 
         //Arranged i_line_step_size to be only the conventional Voronoi mother point (yet, we have not decided whether to add the point p as line_step to the Voronoi mother point)
         List<LineSegment> ls = s_step_no_1_top_continue_no_point_no_number();
@@ -80,15 +72,14 @@ public class MouseHandlerVoronoiCreate extends BaseMouseHandler {
         d.getLineStep().addAll(ls);
 
         //Find the point-like line segment s_temp consisting of the closest points of p newly added at both ends (if there is no nearest point, both ends of s_temp are p)
-        LineSegment s_temp = new LineSegment();
         Point closest_point = d.getClosestPoint(p);
+        Point p_tmp;
         if (p.distance(closest_point) < d.getSelectionDistance()) {
-            s_temp.set(closest_point, closest_point);
-            s_temp.setColor(LineColor.MAGENTA_5);
+            p_tmp = closest_point;
         } else {
-            s_temp.set(p, p);
-            s_temp.setColor(LineColor.MAGENTA_5);
+            p_tmp = p;
         }
+        LineSegment s_temp = new LineSegment(p_tmp, p_tmp, LineColor.MAGENTA_5);
 
 
         //Confirm that the newly added p does not overlap with the previously added Ten
@@ -117,10 +108,10 @@ public class MouseHandlerVoronoiCreate extends BaseMouseHandler {
         } else {//Removed Voronoi mother points with order i_mouse_modeA_62_point_overlapping
             //順番がi_mouse_modeA_62_ten_kasanariのボロノイ母点と順番が最後(=i_egaki_dankai)のボロノイ母点を入れ替える
             //line_step[i]の入れ替え
-            LineSegment S_replace = new LineSegment();
-            S_replace.set(d.getLineStep().get(i_mouse_modeA_62_point_overlapping));
-            d.getLineStep().get(i_mouse_modeA_62_point_overlapping).set(d.getLineStep().get(d.getLineStep().size() - 1));
-            d.getLineStep().get(d.getLineStep().size() - 1).set(S_replace);
+            LineSegment S_replace = new LineSegment(d.getLineStep().get(i_mouse_modeA_62_point_overlapping));
+            d.getLineStep().set(i_mouse_modeA_62_point_overlapping,
+                    new LineSegment(d.getLineStep().get(d.getLineStep().size() - 1)));
+            d.getLineStep().set(d.getLineStep().size() - 1, S_replace);
 
 
             for (LineSegmentVoronoi lsv : voronoiLineSet) {
@@ -230,8 +221,7 @@ public class MouseHandlerVoronoiCreate extends BaseMouseHandler {
         //ボロノイ図も表示するようにs_stepの後にボロノイ図の線を入れる
 
         for (LineSegmentVoronoi lsv : voronoiLineSet) {
-            LineSegment s = new LineSegment();
-            s.set(lsv);
+            LineSegment s = new LineSegment(lsv);
             s.setActive(LineSegment.ActiveState.INACTIVE_0);
             s.setColor(LineColor.MAGENTA_5);
             d.getLineStep().add(s);
@@ -268,14 +258,12 @@ public class MouseHandlerVoronoiCreate extends BaseMouseHandler {
         voronoiLineSet.forEach(s -> s.setSelected(0));
 
         //
-        LineSegmentVoronoi s_begin = new LineSegmentVoronoi();
-        LineSegmentVoronoi s_end = new LineSegmentVoronoi();
 
         for (int ia = 0; ia < lineSegment_voronoi_onePoint.size() - 1; ia++) {
             for (int ib = ia + 1; ib < lineSegment_voronoi_onePoint.size(); ib++) {
 
-                s_begin.set(lineSegment_voronoi_onePoint.get(ia));
-                s_end.set(lineSegment_voronoi_onePoint.get(ib));
+                LineSegmentVoronoi s_begin = new LineSegmentVoronoi(lineSegment_voronoi_onePoint.get(ia));
+                LineSegmentVoronoi s_end = new LineSegmentVoronoi(lineSegment_voronoi_onePoint.get(ib));
 
                 StraightLine t_begin = new StraightLine(s_begin);
 
@@ -292,7 +280,9 @@ public class MouseHandlerVoronoiCreate extends BaseMouseHandler {
                 // Before adding a new cell to voronoiLineSet, process so that there is no existing line segment of voronoiLineSet that is inside the new cell.
 
                 //20181109ここでori_v.の既存のボロノイ線分(iactive()が必ずicolorより小さくなっている)を探す
-                for (LineSegmentVoronoi s_kizon : voronoiLineSet) {
+                int finalI_begin = i_begin;
+                int finalI_end = i_end;
+                voronoiLineSet = voronoiLineSet.stream().map(s_kizon -> {
                     int i_kizon_syou = s_kizon.getVoronoiA();
                     int i_kizon_dai = s_kizon.getVoronoiB();
 
@@ -301,19 +291,16 @@ public class MouseHandlerVoronoiCreate extends BaseMouseHandler {
                         i_kizon_syou = s_kizon.getVoronoiB();
                     }
 
-                    if (i_kizon_syou == i_begin) {
-                        if (i_kizon_dai == i_end) {
-
-//20181110ここポイント
-//
-//	-1		0		1
-//-1 	何もせず	何もせず	交点まで縮小
-// 0	何もせず	有り得ない	削除
-// 1	交点まで縮小	削除		削除
-//
-
-                            Point kouten = new Point();
-                            kouten.set(OritaCalc.findIntersection(s_begin, s_kizon));
+                    if (i_kizon_syou == finalI_begin) {
+                        if (i_kizon_dai == finalI_end) {
+                            //20181110ここポイント
+                            //
+                            //	-1		0		1
+                            //-1 	何もせず	何もせず	交点まで縮小
+                            // 0	何もせず	有り得ない	削除
+                            // 1	交点まで縮小	削除		削除
+                            //
+                            Point kouten = OritaCalc.findIntersection(s_begin, s_kizon);
 
                             Point a = d.getLineStep().get(d.getLineStep().size() - 1).getA();
                             if ((t_begin.sameSide(a, s_kizon.getA()) >= 0) && (t_begin.sameSide(a, s_kizon.getB()) >= 0)) {
@@ -321,15 +308,16 @@ public class MouseHandlerVoronoiCreate extends BaseMouseHandler {
                             }
 
                             if ((t_begin.sameSide(a, s_kizon.getA()) == -1) && (t_begin.sameSide(a, s_kizon.getB()) == 1)) {
-                                s_kizon.setB(kouten);
+                                return s_kizon.withB(kouten);
                             }
 
                             if ((t_begin.sameSide(a, s_kizon.getA()) == 1) && (t_begin.sameSide(a, s_kizon.getB()) == -1)) {
-                                s_kizon.setA(kouten);
+                                return s_kizon.withA(kouten);
                             }
                         }
                     }
-                }
+                    return s_kizon;
+                }).collect(Collectors.toList());
             }
         }
 
@@ -349,9 +337,8 @@ public class MouseHandlerVoronoiCreate extends BaseMouseHandler {
         for (int i_e_d = 0; i_e_d < d.getLineStep().size(); i_e_d++) {
             if (i_e_d != center_point_count) {
                 //Find the line segment to add
-                LineSegmentVoronoi add_lineSegment = new LineSegmentVoronoi();
-
-                add_lineSegment.set(OritaCalc.bisection(d.getLineStep().get(i_e_d).getA(), d.getLineStep().get(center_point_count).getA(), 1000.0));
+                LineSegmentVoronoi add_lineSegment = new LineSegmentVoronoi(
+                        OritaCalc.bisection(d.getLineStep().get(i_e_d).getA(), d.getLineStep().get(center_point_count).getA(), 1000.0));
 
                 Logger.info("center_point_count= " + center_point_count + " ,i_e_d= " + i_e_d);
 
@@ -377,8 +364,7 @@ public class MouseHandlerVoronoiCreate extends BaseMouseHandler {
         int i_saisyo = lineSegment_voronoi_onePoint.size() - 1;
         for (int i = i_saisyo; i >= 0; i--) {
             //Organize existing line segments
-            LineSegmentVoronoi existing_lineSegment = new LineSegmentVoronoi();
-            existing_lineSegment.set(lineSegment_voronoi_onePoint.get(i));
+            LineSegmentVoronoi existing_lineSegment = new LineSegmentVoronoi(lineSegment_voronoi_onePoint.get(i));
             StraightLine existing_straightLine = new StraightLine(existing_lineSegment);
 
             //Fight the line segment to be added with the existing line segment
@@ -386,16 +372,25 @@ public class MouseHandlerVoronoiCreate extends BaseMouseHandler {
             OritaCalc.ParallelJudgement parallel = OritaCalc.isLineSegmentParallel(add_straightLine, existing_straightLine, Epsilon.UNKNOWN_1EN4);//0 = not parallel, 1 = parallel and 2 straight lines do not match, 2 = parallel and 2 straight lines match
 
             Point a = d.getLineStep().get(center_point_count).getA();
-            if (parallel == OritaCalc.ParallelJudgement.NOT_PARALLEL) {//When the line segment to be added and the existing line segment are non-parallel
-                Point intersection = new Point();
-                intersection.set(OritaCalc.findIntersection(add_straightLine, existing_straightLine));
+            if (parallel == OritaCalc.ParallelJudgement.PARALLEL_EQUAL) {
+                return;
+            }
+            if (parallel == OritaCalc.ParallelJudgement.PARALLEL_NOT_EQUAL) {//When the line segment to be added and the existing line segment are parallel and the two straight lines do not match
+                if (add_straightLine.sameSide(a, existing_lineSegment.getA()) == -1) {
+                    lineSegment_voronoi_onePoint.remove(i);
+                } else if (existing_straightLine.sameSide(a, add_lineSegment.getA()) == -1) {
+                    return;
+                }
+            } else if (parallel == OritaCalc.ParallelJudgement.NOT_PARALLEL) {//When the line segment to be added and the existing line segment are parallel and the two straight lines match
+                //When the line segment to be added and the existing line segment are non-parallel
+                Point intersection = OritaCalc.findIntersection(add_straightLine, existing_straightLine);
 
                 if ((add_straightLine.sameSide(a, existing_lineSegment.getA()) <= 0) &&
                         (add_straightLine.sameSide(a, existing_lineSegment.getB()) <= 0)) {
                     lineSegment_voronoi_onePoint.remove(i);
                 } else if ((add_straightLine.sameSide(a, existing_lineSegment.getA()) == 1) &&
                         (add_straightLine.sameSide(a, existing_lineSegment.getB()) == -1)) {
-                    existing_lineSegment.set(existing_lineSegment.getA(), intersection);
+                    existing_lineSegment = existing_lineSegment.withB(intersection);
                     if (existing_lineSegment.determineLength() < Epsilon.UNKNOWN_1EN7) {
                         lineSegment_voronoi_onePoint.remove(i);
                     } else {
@@ -403,7 +398,7 @@ public class MouseHandlerVoronoiCreate extends BaseMouseHandler {
                     }
                 } else if ((add_straightLine.sameSide(a, existing_lineSegment.getA()) == -1) &&
                         (add_straightLine.sameSide(a, existing_lineSegment.getB()) == 1)) {
-                    existing_lineSegment.set(intersection, existing_lineSegment.getB());
+                    existing_lineSegment = existing_lineSegment.withA(intersection);
                     if (existing_lineSegment.determineLength() < Epsilon.UNKNOWN_1EN7) {
                         lineSegment_voronoi_onePoint.remove(i);
                     } else {
@@ -416,27 +411,17 @@ public class MouseHandlerVoronoiCreate extends BaseMouseHandler {
                     return;
                 } else if ((existing_straightLine.sameSide(a, add_lineSegment.getA()) == 1) &&
                         (existing_straightLine.sameSide(a, add_lineSegment.getB()) == -1)) {
-                    add_lineSegment.set(add_lineSegment.getA(), intersection);
+                    add_lineSegment = add_lineSegment.withB(intersection);
                     if (add_lineSegment.determineLength() < Epsilon.UNKNOWN_1EN7) {
                         return;
                     }
                 } else if ((existing_straightLine.sameSide(a, add_lineSegment.getA()) == -1) &&
                         (existing_straightLine.sameSide(a, add_lineSegment.getB()) == 1)) {
-                    add_lineSegment.set(intersection, add_lineSegment.getB());
+                    add_lineSegment = add_lineSegment.withA(intersection);
                     if (add_lineSegment.determineLength() < Epsilon.UNKNOWN_1EN7) {
                         return;
                     }
                 }
-
-
-            } else if (parallel == OritaCalc.ParallelJudgement.PARALLEL_NOT_EQUAL) {//When the line segment to be added and the existing line segment are parallel and the two straight lines do not match
-                if (add_straightLine.sameSide(a, existing_lineSegment.getA()) == -1) {
-                    lineSegment_voronoi_onePoint.remove(i);
-                } else if (existing_straightLine.sameSide(a, add_lineSegment.getA()) == -1) {
-                    return;
-                }
-            } else if (parallel == OritaCalc.ParallelJudgement.PARALLEL_EQUAL) {//When the line segment to be added and the existing line segment are parallel and the two straight lines match
-                return;
             }
         }
 

@@ -16,11 +16,6 @@ public class MouseHandlerCreaseToggleMV extends BaseMouseHandlerBoxSelect {
     public MouseHandlerCreaseToggleMV() {
     }
 
-    @Override
-    public void mouseMoved(Point p0) {
-
-    }
-
     /**
      * マウス操作(mouseMode==58線_変換 でボタンを離したとき)を行う関数
      * <p>
@@ -37,8 +32,7 @@ public class MouseHandlerCreaseToggleMV extends BaseMouseHandlerBoxSelect {
         }
 
         if (selectionStart.distance(p0) <= Epsilon.UNKNOWN_1EN6) {//
-            Point p = new Point();
-            p.set(d.getCamera().TV2object(p0));
+            Point p = d.getCamera().TV2object(p0);
             if (d.getFoldLineSet().closestLineSegmentDistance(p) < d.getSelectionDistance()) {//点pに最も近い線分の番号での、その距離を返す	public double mottomo_tikai_senbun_kyori(Ten p)
                 LineSegment s = d.getFoldLineSet().closestLineSegmentSearch(p);
                 LineColor ic_temp = s.getColor();

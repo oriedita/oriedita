@@ -25,8 +25,7 @@ public class MouseHandlerCircleDrawConcentricSelect extends BaseMouseHandler {
 
     //マウス操作(mouseMode==49 同心円　同心円入力　でボタンを押したとき)時の作業----------------------------------------------------
     public void mousePressed(Point p0) {
-        Point p = new Point();
-        p.set(d.getCamera().TV2object(p0));
+        Point p = d.getCamera().TV2object(p0);
         closest_circumference.set(d.getClosestCircleMidpoint(p));
         // Point closest_point = d.getClosestPoint(p);
 

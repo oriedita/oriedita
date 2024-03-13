@@ -47,8 +47,7 @@ public class MouseHandlerFoldableLineDraw extends BaseMouseHandler {
     //マウス操作(ボタンを押したとき)時の作業
     public void mousePressed(Point p0) {
         operationModeChangeable = false;
-        Point p = new Point();
-        p.set(d.getCamera().TV2object(p0));
+        Point p = d.getCamera().TV2object(p0);
         double decision_distance = Epsilon.UNKNOWN_1EN6;
 
         if (p.distance(moyori_point_memo) <= d.getSelectionDistance()) {
@@ -58,10 +57,10 @@ public class MouseHandlerFoldableLineDraw extends BaseMouseHandler {
         if (d.getLineStep().size() == 0) {
             //任意の点が与えられたとき、端点もしくは格子点で最も近い点を得る
             closest_point = d.getClosestPoint(p);
-            moyori_point_memo.set(closest_point);
+            moyori_point_memo = closest_point;
 
             if (p.distance(closest_point) > d.getSelectionDistance()) {
-                closest_point.set(p);
+                closest_point = p;
             }
 
             //moyori_tenを端点とする折線をNarabebakoに入れる
@@ -104,13 +103,11 @@ public class MouseHandlerFoldableLineDraw extends BaseMouseHandler {
     //マウス操作(ドラッグしたとき)を行う関数20200
     public void mouseDragged(Point p0) {
         if ((operationMode == MouseMode.VERTEX_MAKE_ANGULARLY_FLAT_FOLDABLE_38) && operationModeChangeable) {
-            Point p = new Point();
-            p.set(d.getCamera().TV2object(p0));
-            moyori_point_memo.set(closest_point);
+            Point p = d.getCamera().TV2object(p0);
+            moyori_point_memo = closest_point;
             if (p.distance(moyori_point_memo) > d.getSelectionDistance()) {
                 operationMode = MouseMode.DRAW_CREASE_FREE_1;
-
-                d.getLineStep().get(0).a_b_swap();
+                d.getLineStep().set(0, d.getLineStep().get(0).withSwappedCoordinates());
                 d.getLineStep().get(0).setColor(d.getLineColor());
                 operationModeChangeable = false;
             }

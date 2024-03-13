@@ -18,7 +18,6 @@ public class Check3 {
         for (int i = 1; i <= foldLineSet.getTotal(); i++) {
             LineSegment si = foldLineSet.get(i);
             if (si.getColor() != LineColor.CYAN_3) {
-                Point p = new Point();
                 int tss;    //頂点の周りの折線の数。　tss%2==0 偶数、==1 奇数
                 int tss_red;    //Number of mountain fold lines around the vertex 。
                 int tss_blue;    //頂点の周りの谷折線の数。
@@ -26,7 +25,7 @@ public class Check3 {
                 int tss_hojyo_kassen;    //頂点の周りの補助活線の数。
 
                 //-----------------
-                p.set(si.getA());
+                Point p = si.getA();
                 tss = vertex_surrounding_lineCount(foldLineSet, p, r);
                 tss_red = vertex_surrounding_lineCount_red(foldLineSet, p, r);
                 tss_blue = vertex_surrounding_lineCount_blue(foldLineSet, p, r);
@@ -56,7 +55,7 @@ public class Check3 {
                 }
 
                 //-----------------
-                p.set(si.getB());
+                p = si.getB();
                 tss = vertex_surrounding_lineCount(foldLineSet, p, r);
                 tss_red = vertex_surrounding_lineCount_red(foldLineSet, p, r);
                 tss_blue = vertex_surrounding_lineCount_blue(foldLineSet, p, r);
@@ -90,17 +89,15 @@ public class Check3 {
 
     //If the end point of the line segment closest to the point p and the end point closer to the point p is the vertex, how many line segments are present (the number of line segments having an end point within the vertex and r).
     public static int vertex_surrounding_lineCount(FoldLineSet foldLineSet, Point p, double r) {
-        Point q = new Point();
-        q.set(foldLineSet.closestPoint(p));//qは点pに近い方の端点
-        Point p_temp = new Point();
+        Point q = foldLineSet.closestPoint(p);//qは点pに近い方の端点
 
         int i_return = 0;
 
         for (int i = 1; i <= foldLineSet.getTotal(); i++) {
             LineSegment si = foldLineSet.get(i);
-            p_temp.set(si.getA());
+            Point p_temp = si.getA();
             if (q.distanceSquared(si.getB()) < q.distanceSquared(si.getA())) {
-                p_temp.set(si.getB());
+                p_temp = si.getB();
             }
 
             if (q.distanceSquared(p_temp) < r * r) {
@@ -113,17 +110,15 @@ public class Check3 {
 
     //If the end point of the line segment closest to the point p and the end point closer to the point p is the vertex, how many red line segments appear (the number of line segments having an end point within the vertex and r).
     public static int vertex_surrounding_lineCount_red(FoldLineSet foldLineSet, Point p, double r) {
-        Point q = new Point();
-        q.set(foldLineSet.closestPoint(p));//q is the end point closer to the point p
-        Point p_temp = new Point();
+        Point q = foldLineSet.closestPoint(p);//q is the end point closer to the point p
 
         int i_return = 0;
 
         for (int i = 1; i <= foldLineSet.getTotal(); i++) {
             LineSegment si = foldLineSet.get(i);
-            p_temp.set(si.getA());
+            Point p_temp = si.getA();
             if (q.distanceSquared(si.getB()) < q.distanceSquared(si.getA())) {
-                p_temp.set(si.getB());
+                p_temp = si.getB();
             }
             if (q.distanceSquared(p_temp) < r * r) {
                 if (si.getColor() == LineColor.RED_1) {
@@ -138,17 +133,15 @@ public class Check3 {
     //--------------------------------------------
     //If the end point of the line segment closest to the point p and the end point closer to the point p is the vertex, how many blue line segments appear (the number of line segments having an end point within the vertex and r).
     public static int vertex_surrounding_lineCount_blue(FoldLineSet foldLineSet, Point p, double r) {
-        Point q = new Point();
-        q.set(foldLineSet.closestPoint(p));//qは点pに近い方の端点
-        Point p_temp = new Point();
+        Point q = foldLineSet.closestPoint(p);//qは点pに近い方の端点
 
         int i_return = 0;
 
         for (int i = 1; i <= foldLineSet.getTotal(); i++) {
             LineSegment si = foldLineSet.get(i);
-            p_temp.set(si.getA());
+            Point p_temp = si.getA();
             if (q.distanceSquared(si.getB()) < q.distanceSquared(si.getA())) {
-                p_temp.set(si.getB());
+                p_temp = si.getB();
             }
             if (q.distanceSquared(p_temp) < r * r) {
                 if (si.getColor() == LineColor.BLUE_2) {
@@ -164,17 +157,15 @@ public class Check3 {
     //--------------------------------------------
     //If the end point of the line segment closest to the point p and the end point closer to the point p is the vertex, how many black line segments appear (the number of line segments having an end point within the vertex and r).
     public static int vertex_surrounding_lineCount_black(FoldLineSet foldLineSet, Point p, double r) {
-        Point q = new Point();
-        q.set(foldLineSet.closestPoint(p));//qは点pに近い方の端点
-        Point p_temp = new Point();
+        Point q = foldLineSet.closestPoint(p);//qは点pに近い方の端点
 
         int i_return = 0;
 
         for (int i = 1; i <= foldLineSet.getTotal(); i++) {
             LineSegment si = foldLineSet.get(i);
-            p_temp.set(si.getA());
+            Point p_temp = si.getA();
             if (q.distanceSquared(si.getB()) < q.distanceSquared(si.getA())) {
-                p_temp.set(si.getB());
+                p_temp = si.getB();
             }
             if (q.distanceSquared(p_temp) < r * r) {
                 if (si.getColor() == LineColor.BLACK_0) {
@@ -189,18 +180,15 @@ public class Check3 {
     //--------------------------------------------
     //If the end point of the line segment closest to the point p and the end point closer to the point p is the vertex, how many auxiliary live lines are present (the number of line segments having an end point within the vertex and r).
     public static int vertex_surrounding_lineCount_auxiliary_live_line(FoldLineSet foldLineSet, Point p, double r) {
-        Point q = new Point();
-        q.set(foldLineSet.closestPoint(p));//qは点pに近い方の端点
-        Point p_temp = new Point();
-
+        Point q = foldLineSet.closestPoint(p);//qは点pに近い方の端点
 
         int i_return = 0;
 
         for (int i = 1; i <= foldLineSet.getTotal(); i++) {
             LineSegment si = foldLineSet.get(i);
-            p_temp.set(si.getA());
+            Point p_temp = si.getA();
             if (q.distanceSquared(si.getB()) < q.distanceSquared(si.getA())) {
-                p_temp.set(si.getB());
+                p_temp = si.getB();
             }
             if (q.distanceSquared(p_temp) < r * r) {
                 if (!si.getColor().isFoldingLine()) {
@@ -214,8 +202,7 @@ public class Check3 {
 
     //Determine if the endpoint inside the paper closest to Point p satisfies the extended Fushimi theorem
     public static boolean extended_fushimi_decide_inside(FoldLineSet foldLineSet, Point p) {//return　0=満たさない、　1=満たす。　
-        Point t1 = new Point();
-        t1.set(foldLineSet.closestPointOfFoldLine(p));//点pに最も近い、「線分の端点」を返すori_s.mottomo_tikai_Tenは近い点がないと p_return.set(100000.0,100000.0)と返してくる
+        Point t1 = foldLineSet.closestPointOfFoldLine(p);//点pに最も近い、「線分の端点」を返すori_s.mottomo_tikai_Tenは近い点がないと p_return.set(100000.0,100000.0)と返してくる
 
         //t1を端点とする折線をNarabebakoに入れる
         SortingBox<LineSegment> nbox = new SortingBox<>();
@@ -356,8 +343,7 @@ public class Check3 {
 
     //Point p に最も近い用紙辺部の端点が拡張伏見定理を満たすか判定
     public static boolean extended_fushimi_decide_sides(FoldLineSet foldLineSet, Point p) {//return　0=満たさない、　1=満たす。　
-        Point t1 = new Point();
-        t1.set(foldLineSet.closestPointOfFoldLine(p));//点pに最も近い、「線分の端点」を返すori_s.closestPointは近い点がないと p_return.set(100000.0,100000.0)と返してくる
+        Point t1 = foldLineSet.closestPointOfFoldLine(p);//点pに最も近い、「線分の端点」を返すori_s.closestPointは近い点がないと p_return.set(100000.0,100000.0)と返してくる
 
         //t1を端点とする折線をNarabebakoに入れる
         SortingBox<LineSegment> nbox = new SortingBox<>();

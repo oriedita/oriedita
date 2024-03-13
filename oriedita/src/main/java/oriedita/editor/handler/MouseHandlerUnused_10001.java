@@ -21,8 +21,7 @@ public class MouseHandlerUnused_10001 extends BaseMouseHandler {
 
     //Work when operating the mouse (when the button is pressed with mouseMode == 10001)
     public void mousePressed(Point p0) {
-        Point p = new Point();
-        p.set(d.getCamera().TV2object(p0));
+        Point p = d.getCamera().TV2object(p0);
         Point closestPoint = d.getClosestPoint(p);
         if (p.distance(closestPoint) < d.getSelectionDistance()) {
             d.lineStepAdd(new LineSegment(closestPoint, closestPoint, LineColor.fromNumber(d.getLineStep().size() + 1)));

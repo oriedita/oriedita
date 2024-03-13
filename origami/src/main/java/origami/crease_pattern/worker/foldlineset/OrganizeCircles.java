@@ -49,11 +49,7 @@ public class OrganizeCircles {
         Circle e_temp = new Circle();
         e_temp.set(foldLineSet.getCircles().get(i0));
         double er_0 = e_temp.getR();
-        Point ec_0 = new Point();
-        ec_0.set(e_temp.determineCenter());
-
-        double er_1;
-        Point ec_1 = new Point();
+        Point ec_0 = e_temp.determineCenter();
 
         int ir1 = 0;
         int ir2 = 0;
@@ -65,8 +61,8 @@ public class OrganizeCircles {
             for (int i = 0; i < foldLineSet.getCircles().size(); i++) {
                 if (i != i0) {
                     e_temp.set(foldLineSet.getCircles().get(i));
-                    er_1 = e_temp.getR();
-                    ec_1.set(e_temp.determineCenter());
+                    double er_1 = e_temp.getR();
+                    Point ec_1 = e_temp.determineCenter();
                     if (er_1 < Epsilon.UNKNOWN_1EN7) {//The radius of the other circle is 0
                         if (ec_0.distance(ec_1) < Epsilon.UNKNOWN_1EN7) {
                             ir1 = ir1 + 1;

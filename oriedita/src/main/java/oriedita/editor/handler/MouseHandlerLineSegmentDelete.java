@@ -17,19 +17,13 @@ public class MouseHandlerLineSegmentDelete extends BaseMouseHandlerBoxSelect {
     public MouseHandlerLineSegmentDelete() {
     }
 
-    @Override
-    public void mouseMoved(Point p0) {
-
-    }
-
     //マウス操作(mouseMode==3,23 でボタンを離したとき)を行う関数----------------------------------------------------
     @Override
     public void mouseReleased(Point p0) {//折線と補助活線と円
         int preDeleteTotalCPLines = d.getTotal();
 
         super.mouseReleased(p0);
-        Point p = new Point();
-        p.set(d.getCamera().TV2object(p0));
+        Point p = d.getCamera().TV2object(p0);
         d.getLineStep().clear();
 
         //最寄の一つを削除

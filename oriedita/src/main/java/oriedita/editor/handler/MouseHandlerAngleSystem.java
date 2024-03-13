@@ -15,7 +15,6 @@ import origami.crease_pattern.element.Point;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,11 +43,6 @@ public class MouseHandlerAngleSystem extends BaseMouseHandlerInputRestricted {
     @Inject
     public MouseHandlerAngleSystem(AngleSystemModel angleSystemModel) {
         this.angleSystemModel = angleSystemModel;
-    }
-
-    @Override
-    public EnumSet<Feature> getSubscribedFeatures() {
-        return EnumSet.of(Feature.BUTTON_1);
     }
 
     public void mouseMoved(Point p0) {
@@ -81,8 +75,7 @@ public class MouseHandlerAngleSystem extends BaseMouseHandlerInputRestricted {
 
     //マウス操作(ボタンを押したとき)時の作業
     public void mousePressed(Point p0) {
-        Point p = new Point();
-        p.set(d.getCamera().TV2object(p0));
+        Point p = d.getCamera().TV2object(p0);
 
         // Apply values from mouseMoved
         switch (currentStep) {
@@ -130,11 +123,9 @@ public class MouseHandlerAngleSystem extends BaseMouseHandlerInputRestricted {
     private LineSegment determineLineSegmentToAdd(Point p) {
         LineSegment closestLineSegment = d.getClosestLineSegment(p);
         if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.getSelectionDistance()) {
-            LineSegment s = new LineSegment();
-            s.set(closestLineSegment);
+            LineSegment s = new LineSegment(closestLineSegment);
             s.setColor(LineColor.GREEN_6);
-            Point startingPoint = new Point();
-            startingPoint.set(OritaCalc.findIntersection(s, direction));
+            Point startingPoint = OritaCalc.findIntersection(s, direction);
             return new LineSegment(startingPoint, pEnd, d.getLineColor());
         }
         return null;
@@ -146,8 +137,7 @@ public class MouseHandlerAngleSystem extends BaseMouseHandlerInputRestricted {
         if (closestLineSegmentO.isPresent()) {
             LineSegment closestLineSegment = closestLineSegmentO.get();
             if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.getSelectionDistance()) {
-                LineSegment s = new LineSegment();
-                s.set(closestLineSegment);
+                LineSegment s = new LineSegment(closestLineSegment);
                 s.setColor(LineColor.BLUE_2);
                 return s;
             }
@@ -189,8 +179,7 @@ public class MouseHandlerAngleSystem extends BaseMouseHandlerInputRestricted {
             double[] angles = angleSystemModel.getAngles();
 
             for (int i = 0; i < 6; i++) {
-                LineSegment s = new LineSegment();
-                s.set(OritaCalc.lineSegment_rotate(startingSegment, angles[i], 1.0));
+                LineSegment s = OritaCalc.lineSegment_rotate(startingSegment, angles[i], 1.0);
                 s.setActive(LineSegment.ActiveState.ACTIVE_BOTH_3);
                 candidates.add(s);
                 s.setColor(customAngleColors[i % 3]);

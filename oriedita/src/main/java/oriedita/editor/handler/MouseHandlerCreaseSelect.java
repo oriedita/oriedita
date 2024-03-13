@@ -45,19 +45,9 @@ public class MouseHandlerCreaseSelect extends BaseMouseHandlerBoxSelect {
     }
 
     @Override
-    public EnumSet<Feature> getSubscribedFeatures() {
-        return EnumSet.of(Feature.BUTTON_1);
-    }
-
-    @Override
     public void reset() {
         super.reset();
         tripleClick = false;
-    }
-
-    @Override
-    public void mouseMoved(Point p0) {
-
     }
 
     @Override
@@ -93,11 +83,6 @@ public class MouseHandlerCreaseSelect extends BaseMouseHandlerBoxSelect {
         Logger.info("19  select_");
         Logger.info("i_egaki_dankai=" + d.getLineStep().size());
 
-        Point p = new Point();
-
-        if (d.getLineStep().size() == 0) {//i_select_modeを決める
-            p.set(d.getCamera().TV2object(p0));
-        }
         if (!tripleClick) {
             super.mousePressed(p0);
             return;
@@ -191,8 +176,7 @@ public class MouseHandlerCreaseSelect extends BaseMouseHandlerBoxSelect {
 
         d.select(selectionStart, p0);
         if (selectionStart.distance(p0) <= Epsilon.UNKNOWN_1EN6) {
-            Point p = new Point();
-            p.set(d.getCamera().TV2object(p0));
+            Point p = d.getCamera().TV2object(p0);
             if (d.getFoldLineSet().closestLineSegmentDistance(p) < d.getSelectionDistance()) {//点pに最も近い線分の番号での、その距離を返す	public double mottomo_tikai_senbun_kyori(Ten p)
                 d.getFoldLineSet().closestLineSegmentSearch(p).setSelected(2);
                 d.setIsSelectionEmpty(false);

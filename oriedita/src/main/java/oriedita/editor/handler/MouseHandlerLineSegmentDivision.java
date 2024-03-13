@@ -16,8 +16,7 @@ public class MouseHandlerLineSegmentDivision extends BaseMouseHandlerInputRestri
 
     //マウス操作(mouseMode==27線分入力　でボタンを押したとき)時の作業----------------------------------------------------
     public void mousePressed(Point p0) {
-        Point p = new Point();
-        p.set(d.getCamera().TV2object(p0));
+        Point p = d.getCamera().TV2object(p0);
         Point closest_point = d.getClosestPoint(p);
         if (p.distance(closest_point) < d.getSelectionDistance()) {
             d.lineStepAdd(new LineSegment(p, closest_point, d.getLineColor()));
@@ -33,30 +32,28 @@ public class MouseHandlerLineSegmentDivision extends BaseMouseHandlerInputRestri
 
     //マウス操作(mouseMode==27線分入力　でドラッグしたとき)を行う関数----------------------------------------------------
     public void mouseDragged(Point p0) {
-        Point p = new Point();
-        p.set(d.getCamera().TV2object(p0));
-        d.getLineStep().get(0).setA(p);
+        Point p = d.getCamera().TV2object(p0);
+        d.getLineStep().set(0, d.getLineStep().get(0).withA(p));
         if (d.getGridInputAssist()) {
             d.getLineCandidate().clear();
             Point closestPoint = d.getClosestPoint(p);
             if (p.distance(closestPoint) < d.getSelectionDistance()) {
                 d.getLineCandidate().add(new LineSegment(closestPoint, closestPoint, d.getLineColor()));
-                d.getLineStep().get(0).setA(d.getLineStep().get(0).getA());
+                d.getLineStep().set(0, d.getLineStep().get(0).withA(d.getLineStep().get(0).getA()));
             }
         }
     }
 
     //マウス操作(mouseMode==27線分入力　でボタンを離したとき)を行う関数----------------------------------------------------
     public void mouseReleased(Point p0) {
-        Point p = new Point();
-        p.set(d.getCamera().TV2object(p0));
+        Point p = d.getCamera().TV2object(p0);
 
-        d.getLineStep().get(0).setA(p);
+        d.getLineStep().set(0, d.getLineStep().get(0).withA(p));
 
         Point closestPoint = d.getClosestPoint(p);
 
         if (p.distance(closestPoint) <= d.getSelectionDistance()) {
-            d.getLineStep().get(0).setA(closestPoint);
+            d.getLineStep().set(0, d.getLineStep().get(0).withA(closestPoint));
         }
         if (Epsilon.high.gt0(d.getLineStep().get(0).determineLength())) {
             for (int i = 0; i <= d.getFoldLineDividingNumber() - 1; i++) {

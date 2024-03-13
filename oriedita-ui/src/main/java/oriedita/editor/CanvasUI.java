@@ -56,11 +56,11 @@ public class CanvasUI extends JPanel {
     /**
      * Position of the cursor relative to the center of the crease pattern.
      */
-    private final Point mousePosition = new Point();//マウスのオブジェクト座標上の位置
+    private Point mousePosition = new Point();//マウスのオブジェクト座標上の位置
     /**
      * Position of the cursor on the canvas
      */
-    private final Point mousePositionOnCanvas = new Point();//マウスのTV座標上の位置
+    private Point mousePositionOnCanvas = new Point();//マウスのTV座標上の位置
     private boolean hideOperationFrame = false;
     private boolean antiAlias;
 
@@ -131,11 +131,11 @@ public class CanvasUI extends JPanel {
                 paintComponent(g);
                 setHideOperationFrame(false);
 
-                if (canvasModel.getMouseMode() == MouseMode.OPERATION_FRAME_CREATE_61 && mainCreasePatternWorker.getDrawingStage() == 4) { //枠設定時の枠内のみ書き出し 20180524
-                    int xMin = (int) mainCreasePatternWorker.getOperationFrameBox().getXMin();
-                    int xMax = (int) mainCreasePatternWorker.getOperationFrameBox().getXMax();
-                    int yMin = (int) mainCreasePatternWorker.getOperationFrameBox().getYMin();
-                    int yMax = (int) mainCreasePatternWorker.getOperationFrameBox().getYMax();
+                if (canvasModel.getMouseMode() == MouseMode.OPERATION_FRAME_CREATE_61 && mainCreasePatternWorker.getLineStep().size() == 4) { //枠設定時の枠内のみ書き出し 20180524
+                    int xMin = (int) mainCreasePatternWorker.getOperationFrame().getPolygon().getXMin();
+                    int xMax = (int) mainCreasePatternWorker.getOperationFrame().getPolygon().getXMax();
+                    int yMin = (int) mainCreasePatternWorker.getOperationFrame().getPolygon().getYMin();
+                    int yMax = (int) mainCreasePatternWorker.getOperationFrame().getPolygon().getYMax();
 
                     ImageIO.write(myImage.getSubimage(xMin, yMin, xMax - xMin + 1, yMax - yMin + 1), formatName, file);
 
@@ -387,7 +387,7 @@ public class CanvasUI extends JPanel {
     }
 
     public void setMousePosition(Point point) {
-        mousePositionOnCanvas.set(point);
-        mousePosition.set(creasePatternCamera.TV2object(point));
+        mousePositionOnCanvas = (point);
+        mousePosition = (creasePatternCamera.TV2object(point));
     }
 }

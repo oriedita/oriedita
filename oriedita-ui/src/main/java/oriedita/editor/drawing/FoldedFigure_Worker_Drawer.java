@@ -45,11 +45,12 @@ public class FoldedFigure_Worker_Drawer {
     }
 
     private static void drawLine(Graphics2D g2, Camera camera, PointSet subFace_figure, int ib) {
-        LineSegment s_ob = new LineSegment();
-        LineSegment s_tv = new LineSegment();
 
-        s_ob.set(subFace_figure.getBeginX(ib), subFace_figure.getBeginY(ib), subFace_figure.getEndX(ib), subFace_figure.getEndY(ib));
-        s_tv.set(camera.object2TV(s_ob));
+        LineSegment s_ob = new LineSegment(subFace_figure.getBeginX(ib),
+                subFace_figure.getBeginY(ib),
+                subFace_figure.getEndX(ib),
+                subFace_figure.getEndY(ib));
+        LineSegment s_tv = camera.object2TV(s_ob);
 
         Path2D.Double line = new Path2D.Double();
         line.moveTo(s_tv.determineAX(), s_tv.determineAY());
@@ -153,15 +154,14 @@ public class FoldedFigure_Worker_Drawer {
     }
 
     private void fillFace(Graphics2D g, Camera transform, PointSet faces, int id) {
-        Point t1 = new Point();
 
         Path2D.Double path = new Path2D.Double();
 
-        t1.set(transform.object2TV(faces.getPoint(faces.getPointId(id, 1))));
+        Point t1 = transform.object2TV(faces.getPoint(faces.getPointId(id, 1)));
         path.moveTo(t1.getX(), t1.getY());
 
         for (int i = 2; i <= faces.getPointsCount(id); i++) {
-            t1.set(transform.object2TV(faces.getPoint(faces.getPointId(id, i))));
+            t1 = transform.object2TV(faces.getPoint(faces.getPointId(id, i)));
             path.lineTo(t1.getX(), t1.getY());
         }
 
@@ -182,9 +182,6 @@ public class FoldedFigure_Worker_Drawer {
     public void draw_foldedFigure_with_camera(Graphics g, WireFrame_Worker orite, PointSet subFace_figure) {
         Graphics2D g2 = (Graphics2D) g;
         boolean flipped = camera.determineIsCameraMirrored();
-
-        Point t0 = new Point();
-        Point t1 = new Point();
 
         //面を描く-----------------------------------------------------------------------------------------------------
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);//アンチェイリアス　オフ
@@ -241,9 +238,8 @@ public class FoldedFigure_Worker_Drawer {
                     o_bmx = (subFace_figure.getBeginX(lineId) + subFace_figure.getEndX(lineId)) / 2.0;
                     o_bmy = (subFace_figure.getBeginY(lineId) + subFace_figure.getEndY(lineId)) / 2.0;
 
-                    t0.setX(o_bmx);
-                    t0.setY(o_bmy);
-                    t1.set(camera.object2TV(t0));
+                    Point t0 = new Point(o_bmx, o_bmy);
+                    Point t1 = camera.object2TV(t0);
                     t_bmx = t1.getX();
                     t_bmy = t1.getY();
 
@@ -256,9 +252,8 @@ public class FoldedFigure_Worker_Drawer {
                     o_bmty = o_bmy + o_bty;
 
                     if (subFace_figure.inside(new origami.crease_pattern.element.Point(o_bmx + Epsilon.UNKNOWN_001 * o_btx, o_bmy + Epsilon.UNKNOWN_001 * o_bty), im) != origami.crease_pattern.element.Polygon.Intersection.OUTSIDE) {//0=外部、　1=境界、　2=内部
-                        t0.setX(o_bmtx);
-                        t0.setY(o_bmty);
-                        t1.set(camera.object2TV(t0));
+                        t0 = new Point(o_bmtx, o_bmty);
+                        t1 = camera.object2TV(t0);
                         t_bmtx = t1.getX();
                         t_bmty = t1.getY();
 
@@ -266,30 +261,26 @@ public class FoldedFigure_Worker_Drawer {
                         //影の長方形
 
                         // ---------- [0] ----------------
-                        t0.setX(subFace_figure.getBeginX(lineId));
-                        t0.setY(subFace_figure.getBeginY(lineId));
-                        t1.set(camera.object2TV(t0));
+                        t0 = new Point(subFace_figure.getBeginX(lineId), subFace_figure.getBeginY(lineId));
+                        t1 = camera.object2TV(t0);
 
                         path.moveTo(t1.getX(), t1.getY());
 
                         // ---------- [1] ----------------
-                        t0.setX(subFace_figure.getBeginX(lineId) + o_btx);
-                        t0.setY(subFace_figure.getBeginY(lineId) + o_bty);
-                        t1.set(camera.object2TV(t0));
+                        t0 = new Point(subFace_figure.getBeginX(lineId) + o_btx, subFace_figure.getBeginY(lineId) + o_bty);
+                        t1 = camera.object2TV(t0);
 
                         path.lineTo(t1.getX(), t1.getY());
 
                         // ---------- [2] ----------------
-                        t0.setX(subFace_figure.getEndX(lineId) + o_btx);
-                        t0.setY(subFace_figure.getEndY(lineId) + o_bty);
-                        t1.set(camera.object2TV(t0));
+                        t0 = new Point(subFace_figure.getEndX(lineId) + o_btx, subFace_figure.getEndY(lineId) + o_bty);
+                        t1 = camera.object2TV(t0);
 
                         path.lineTo(t1.getX(), t1.getY());
 
                         // ---------- [3] ----------------
-                        t0.setX(subFace_figure.getEndX(lineId));
-                        t0.setY(subFace_figure.getEndY(lineId));
-                        t1.set(camera.object2TV(t0));
+                        t0 = new Point(subFace_figure.getEndX(lineId), subFace_figure.getEndY(lineId));
+                        t1 = camera.object2TV(t0);
 
                         path.lineTo(t1.getX(), t1.getY());
                         path.closePath();
@@ -303,44 +294,35 @@ public class FoldedFigure_Worker_Drawer {
 
                     //-----------------------------------------------
                     //棒の中点を通る直交線上の点
-                    o_bmtx = o_bmx + o_btx;
-                    o_bmty = o_bmy + o_bty;
 
-                    if (subFace_figure.inside(new origami.crease_pattern.element.Point(o_bmx + Epsilon.UNKNOWN_001 * o_btx, o_bmy + Epsilon.UNKNOWN_001 * o_bty), im) != origami.crease_pattern.element.Polygon.Intersection.OUTSIDE) {//0=外部、　1=境界、　2=内部
+                    if (subFace_figure.inside(new Point(o_bmx + Epsilon.UNKNOWN_001 * o_btx, o_bmy + Epsilon.UNKNOWN_001 * o_bty), im) != origami.crease_pattern.element.Polygon.Intersection.OUTSIDE) {//0=外部、　1=境界、　2=内部
                         Path2D.Double path = new Path2D.Double();
-                        t0.setX(o_bmtx);
-                        t0.setY(o_bmty);
-                        t1.set(camera.object2TV(t0));
                         //影の長方形
 
                         // ---------- [0] ----------------
-                        t0.setX(subFace_figure.getBeginX(lineId));
-                        t0.setY(subFace_figure.getBeginY(lineId));
-                        t1.set(camera.object2TV(t0));
+                        t0 = new Point(subFace_figure.getBeginX(lineId), subFace_figure.getBeginY(lineId));
+                        t1 = camera.object2TV(t0);
 
                         double xd0 = t1.getX();
                         double yd0 = t1.getY();
                         path.moveTo(t1.getX(), t1.getY());
 
                         // ---------- [1] ----------------
-                        t0.setX(subFace_figure.getBeginX(lineId) + o_btx);
-                        t0.setY(subFace_figure.getBeginY(lineId) + o_bty);
-                        t1.set(camera.object2TV(t0));
+                        t0 = new Point(subFace_figure.getBeginX(lineId) + o_btx, subFace_figure.getBeginY(lineId) + o_bty);
+                        t1 = camera.object2TV(t0);
                         double xd1 = t1.getX();
                         double yd1 = t1.getY();
                         path.lineTo(t1.getX(), t1.getY());
 
 
                         // ---------- [2] ----------------
-                        t0.setX(subFace_figure.getEndX(lineId) + o_btx);
-                        t0.setY(subFace_figure.getEndY(lineId) + o_bty);
-                        t1.set(camera.object2TV(t0));
+                        t0 = new Point(subFace_figure.getEndX(lineId) + o_btx, subFace_figure.getEndY(lineId) + o_bty);
+                        t1 = camera.object2TV(t0);
                         path.lineTo(t1.getX(), t1.getY());
 
                         // ---------- [3] ----------------
-                        t0.setX(subFace_figure.getEndX(lineId));
-                        t0.setY(subFace_figure.getEndY(lineId));
-                        t1.set(camera.object2TV(t0));
+                        t0 = new Point(subFace_figure.getEndX(lineId), subFace_figure.getEndY(lineId));
+                        t1 = camera.object2TV(t0);
                         path.lineTo(t1.getX(), t1.getY());
                         path.closePath();
 

@@ -22,8 +22,7 @@ public class MouseHandlerLineSegmentRatioSet extends BaseMouseHandlerInputRestri
     public void mousePressed(Point p0) {
         d.getLineStep().clear();
 
-        Point p = new Point();
-        p.set(d.getCamera().TV2object(p0));
+        Point p = d.getCamera().TV2object(p0);
 
         Point closestPoint = d.getClosestPoint(p);
         if (p.distance(closestPoint) < d.getSelectionDistance()) {
@@ -41,9 +40,8 @@ public class MouseHandlerLineSegmentRatioSet extends BaseMouseHandlerInputRestri
 
     //マウス操作(mouseMode==28線分入力 でドラッグしたとき)を行う関数----------------------------------------------------
     public void mouseDragged(Point p0) {
-        Point p = new Point();
-        p.set(d.getCamera().TV2object(p0));
-        d.getLineStep().get(0).setA(p);
+        Point p = d.getCamera().TV2object(p0);
+        d.getLineStep().set(0, d.getLineStep().get(0).withA(p));
 
         if (d.getGridInputAssist()) {
             d.getLineCandidate().clear();
@@ -53,41 +51,42 @@ public class MouseHandlerLineSegmentRatioSet extends BaseMouseHandlerInputRestri
             } else {
                 d.getLineCandidate().add(new LineSegment(p, p, d.getLineColor()));
             }
-            d.getLineStep().get(0).setA(d.getLineCandidate().get(0).getA());
+            d.getLineStep().set(0, d.getLineStep().get(0).withA(d.getLineCandidate().get(0).getA()));
         }
     }
 
     //マウス操作(mouseMode==28線分入力　でボタンを離したとき)を行う関数----------------------------------------------------
     public void mouseReleased(Point p0) {
-        Point p = new Point();
-        p.set(d.getCamera().TV2object(p0));
+        Point p = d.getCamera().TV2object(p0);
 
-        d.getLineStep().get(0).setA(p);
+        LineSegment l0 = d.getLineStep().get(0);
+        l0 = l0.withA(p);
         Point closestPoint = d.getClosestPoint(p);
 
         if (p.distance(closestPoint) <= d.getSelectionDistance()) {
-            d.getLineStep().get(0).setA(closestPoint);
+            l0 = l0.withA(closestPoint);
         }
-        if (Epsilon.high.gt0(d.getLineStep().get(0).determineLength())) {
+        d.getLineStep().set(0, l0);
+        if (Epsilon.high.gt0(l0.determineLength())) {
             double internalDivisionRatio_s = internalDivisionRatioModel.getInternalDivisionRatioS();
             double internalDivisionRatio_t = internalDivisionRatioModel.getInternalDivisionRatioT();
             if ((internalDivisionRatio_s == 0.0) && (internalDivisionRatio_t == 0.0)) {
             }
             if ((internalDivisionRatio_s == 0.0) && (internalDivisionRatio_t != 0.0)) {
-                d.addLineSegment(d.getLineStep().get(0));
+                d.addLineSegment(l0);
             }
             if ((internalDivisionRatio_s != 0.0) && (internalDivisionRatio_t == 0.0)) {
-                d.addLineSegment(d.getLineStep().get(0));
+                d.addLineSegment(l0);
             }
             if ((internalDivisionRatio_s != 0.0) && (internalDivisionRatio_t != 0.0)) {
                 LineSegment s_ad = new LineSegment();
                 s_ad.setColor(d.getLineColor());
-                double nx = (internalDivisionRatio_t * d.getLineStep().get(0).determineBX() + internalDivisionRatio_s * d.getLineStep().get(0).determineAX()) / (internalDivisionRatio_s + internalDivisionRatio_t);
-                double ny = (internalDivisionRatio_t * d.getLineStep().get(0).determineBY() + internalDivisionRatio_s * d.getLineStep().get(0).determineAY()) / (internalDivisionRatio_s + internalDivisionRatio_t);
-                s_ad.set(d.getLineStep().get(0).determineAX(), d.getLineStep().get(0).determineAY(), nx, ny);
-                d.addLineSegment(s_ad);
-                s_ad.set(d.getLineStep().get(0).determineBX(), d.getLineStep().get(0).determineBY(), nx, ny);
-                d.addLineSegment(s_ad);
+                double nx = (internalDivisionRatio_t * l0.determineBX() + internalDivisionRatio_s * l0.determineAX())
+                        / (internalDivisionRatio_s + internalDivisionRatio_t);
+                double ny = (internalDivisionRatio_t * l0.determineBY() + internalDivisionRatio_s * l0.determineAY())
+                        / (internalDivisionRatio_s + internalDivisionRatio_t);
+                d.addLineSegment(s_ad.withCoordinates(l0.determineAX(), l0.determineAY(), nx, ny));
+                d.addLineSegment(s_ad.withCoordinates(l0.determineBX(), l0.determineBY(), nx, ny));
             }
             d.record();
         }
