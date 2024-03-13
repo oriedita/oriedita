@@ -54,7 +54,7 @@ public class CameraModel {
 
     public void setScale(double scale) {
         double oldScale = this.scale;
-        this.scale = Math.max(scale, 0.0);
+        this.scale = Math.max(scale, 0.00001);
         this.pcs.firePropertyChange("scale", oldScale, scale);
     }
 
