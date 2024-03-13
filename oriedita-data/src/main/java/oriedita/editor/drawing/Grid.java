@@ -282,7 +282,7 @@ public class Grid {
     }
 
     //描画-----------------------------------------------------------------
-    public void draw(Graphics g, Camera camera, int p0x_max, int p0y_max, boolean colorChange) {    //colorChange=1なら一定数ごとに格子線の色を変える
+    public void draw(Graphics g, Camera camera, int p0x_max, int p0y_max, boolean colorChange, double minGridUnitSize) {    //colorChange=1なら一定数ごとに格子線の色を変える
         //入力規定が1か2（正方格子）の場合の格子線の描画
         Graphics2D g2 = (Graphics2D) g;
 
@@ -338,7 +338,7 @@ public class Grid {
                 d_grid_ax * 1,
                 d_grid_ay * 1);
         s_tv = camera.object2TV(s_ob);
-        while (s_tv.determineLength()*step < .5){
+        while (s_tv.determineLength()*step < minGridUnitSize){
             step *= 2;
         }
         int adjustedGridSize = gridSize*step;

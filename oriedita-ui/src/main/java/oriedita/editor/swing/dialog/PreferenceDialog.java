@@ -9,6 +9,7 @@ import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import com.opencsv.CSVReaderBuilder;
+import org.tinylog.Logger;
 import oriedita.editor.Colors;
 import oriedita.editor.FrameProvider;
 import oriedita.editor.action.ActionType;
@@ -135,6 +136,7 @@ public class PreferenceDialog extends JDialog {
     private JButton importButton;
     private JButton exportButton;
     private JScrollPane scrollPane1;
+    private JSlider gridUnitSizeSlider;
     private int tempTransparency;
     private final ApplicationModel applicationModel;
     private final ButtonService buttonService;
@@ -182,6 +184,7 @@ public class PreferenceDialog extends JDialog {
         checkBoxAnimation.setSelected(applicationModel.getAnimations());
         animationSpeedSlider.setValue((int) ((applicationModel.getAnimationSpeed()) * 8));
         mouseRangeSlider.setValue((int) applicationModel.getMouseRadius());
+        gridUnitSizeSlider.setValue((int) (applicationModel.getMinGridUnitSize() + 0.6));
     }
 
     public PreferenceDialog(
@@ -351,6 +354,8 @@ public class PreferenceDialog extends JDialog {
             applicationModel.setLineStyle(LineStyle.from(lineStyleDropBox.getSelectedIndex() + 1));
             lineStyleDropBox.setSelectedIndex(applicationModel.getLineStyle().getType() - 1);
         });
+        gridUnitSizeSlider.addChangeListener(e -> applicationModel.setMinGridUnitSize(gridUnitSizeSlider.getValue() - .5));
+
         topPanelCB.addActionListener(e -> applicationModel.setDisplayTopPanel(topPanelCB.isSelected()));
         bottomPanelCB.addActionListener(e -> applicationModel.setDisplayBottomPanel(bottomPanelCB.isSelected()));
         leftPanelCB.addActionListener(e -> applicationModel.setDisplayLeftPanel(leftPanelCB.isSelected()));
@@ -514,7 +519,9 @@ public class PreferenceDialog extends JDialog {
         for (int i = 1; i < allData.size(); i++) {
             String[] row = allData.get(i);
             for (int j = 0; j < row.length; j++) {
-                if (!row[j].isEmpty()) { hotkeyCategoryMap.get(categoryHeaderList.get(j)).add(row[j]); }
+                if (!row[j].isEmpty()) {
+                    hotkeyCategoryMap.get(categoryHeaderList.get(j)).add(row[j]);
+                }
             }
         }
     }
@@ -540,7 +547,9 @@ public class PreferenceDialog extends JDialog {
             extractHeaders(allData); // Extract headers
 
             extractData(allData); // Extract Data excluding headers
-        } catch (Exception e) { e.printStackTrace(); }
+        } catch (Exception e) {
+            Logger.error(e);
+        }
     }
 
     public void setupHotKey(ButtonService buttonService, FrameProvider frameProvider) {
@@ -1033,6 +1042,23 @@ public class PreferenceDialog extends JDialog {
         gridWidthPlus = new JButton();
         gridWidthPlus.setText("+");
         gridLinePanel.add(gridWidthPlus, BorderLayout.EAST);
+        final JLabel label10 = new JLabel();
+        label10.setHorizontalAlignment(4);
+        label10.setHorizontalTextPosition(4);
+        label10.setOpaque(true);
+        label10.setPreferredSize(new Dimension(121, 17));
+        label10.setText("Min Grid Unit Size: ");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 8;
+        gbc.anchor = GridBagConstraints.WEST;
+        appearance2Panel.add(label10, gbc);
+        gbc = new GridBagConstraints();
+        gbc.gridx = 1;
+        gbc.gridy = 8;
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        appearance2Panel.add(gridUnitSizeSlider, gbc);
         final JPanel panel4 = new JPanel();
         panel4.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 10));
         panel4.setMinimumSize(new Dimension(334, 226));
@@ -1131,6 +1157,16 @@ public class PreferenceDialog extends JDialog {
         tabbedPane1.addTab("HOTKEYS", scrollPane1);
         scrollPane1.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
         scrollPane1.setViewportView(hotkeyPanel);
+        final JPanel panel5 = new JPanel();
+        panel5.setLayout(new GridLayoutManager(2, 2, new Insets(0, 0, 0, 0), -1, -1));
+        tabbedPane1.addTab("Untitled", panel5);
+        final JLabel label11 = new JLabel();
+        label11.setText(" Sub grid color: ");
+        panel5.add(label11, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final Spacer spacer2 = new Spacer();
+        panel5.add(spacer2, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+        final Spacer spacer3 = new Spacer();
+        panel5.add(spacer3, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
     }
 
     /**
@@ -1158,6 +1194,14 @@ public class PreferenceDialog extends JDialog {
         labelsAnimSpeed.put(16, new JLabel("Slow"));
         labelsAnimSpeed.put(24, new JLabel("Slowest"));
         animationSpeedSlider.setLabelTable(labelsAnimSpeed);
+
+        Dictionary<Integer, JLabel> labelsGridSize = new Hashtable<>();
+        labelsGridSize.put(1, new JLabel("1"));
+        labelsGridSize.put(10, new JLabel("10"));
+        labelsGridSize.put(20, new JLabel("20 px"));
+        gridUnitSizeSlider = new JSlider(1, 20);
+        gridUnitSizeSlider.setLabelTable(labelsGridSize);
+        gridUnitSizeSlider.setPaintLabels(true);
 
         scrollPane1 = new JScrollPane();
         scrollPane1.getVerticalScrollBar().setUnitIncrement(16);
