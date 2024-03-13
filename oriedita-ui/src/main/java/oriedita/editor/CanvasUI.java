@@ -289,16 +289,9 @@ public class CanvasUI extends JPanel {
 
         //Flashlight (dot) search range
         if (displayPointSpotlight) {
-            g2.setColor(Colors.get(new Color(255, 240, 0, 30)));
             g2.setStroke(new BasicStroke(2.0f));
             g2.setColor(Colors.get(new Color(255, 240, 0, 230)));
             g2.draw(new Ellipse2D.Double(mousePositionOnCanvas.getX() - d_width, mousePositionOnCanvas.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
-        }
-
-        //Luminous flux of flashlight, etc.
-        if (displayPointSpotlight && displayPointOffset) {
-            g2.setStroke(new BasicStroke(2.0f));
-            g2.setColor(Colors.get(new Color(255, 240, 0, 170)));
         }
 
         //Central indicator
