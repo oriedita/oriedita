@@ -22,37 +22,41 @@ public class MouseHandlerCreaseAdvanceType extends BaseMouseHandler {
 
     }
 
-    public void mousePressed(Point p0) {    //マウス操作(mouseMode==4線_変換　でボタンを押したとき)時の作業
-        Point p = new Point();
-        p.set(d.getCamera().TV2object(p0));
+    @Override
+    public void reset() {
+        super.reset();
         lineSegment = null;
+    }
+
+    public void mousePressed(Point p0) {    //マウス操作(mouseMode==4線_変換　でボタンを押したとき)時の作業
+        Point p = d.getCamera().TV2object(p0);
+        reset();
         if (d.getFoldLineSet().closestLineSegmentDistance(p) < d.getSelectionDistance()) {//点pに最も近い線分の番号での、その距離を返す	public double mottomo_tikai_senbun_kyori(Ten p)
             lineSegment = d.getFoldLineSet().closestLineSegmentSearch(p);
-            LineSegment s01 = new LineSegment();
-            s01.set(OritaCalc.lineSegment_double(lineSegment, 0.01));
-            lineSegment.setB(s01.getB());
+            d.getFoldLineSet().deleteLine(lineSegment);
+
+            //LineSegment s01 = OritaCalc.changeLength(lineSegment, 0.01);
+            //lineSegment.setB(s01.getB());
         }
     }
 
     public void mouseDragged(Point p0) {//マウス操作(mouseMode==4線_変換　でドラッグしたとき)を行う関数
         if (lineSegment != null) {
-            LineSegment s01 = new LineSegment();
-            s01.set(OritaCalc.lineSegment_double(lineSegment, 100.0));
-            lineSegment.setB(s01.getB());
-            lineSegment = null;
+            //LineSegment s01 = OritaCalc.changeLength(lineSegment, 100.0);
+            //lineSegment.setB(s01.getB());
+            d.getFoldLineSet().addLine(lineSegment);
+            reset();
+            //lineSegment = null;
         }
 
     }
 
     //マウス操作(mouseMode==30 除け_線_変換　でボタンを離したとき)を行う関数（背景に展開図がある場合用）
     public void mouseReleased(Point p0) {
-        Point p = new Point();
-        p.set(d.getCamera().TV2object(p0));
 
         if (lineSegment != null) {
-            LineSegment s01 = new LineSegment();
-            s01.set(OritaCalc.lineSegment_double(lineSegment, 100.0));
-            lineSegment.setB(s01.getB());
+            //LineSegment s01 = OritaCalc.changeLength(lineSegment, 100.0);
+            //lineSegment.setB(s01.getB());
 
             LineColor ic_temp = lineSegment.getColor();
             int is_temp = lineSegment.getSelected();
@@ -67,7 +71,7 @@ public class MouseHandlerCreaseAdvanceType extends BaseMouseHandler {
             } else if ((ic_temp == LineColor.BLUE_2) && (is_temp == 0)) {
                 lineSegment.setColor(LineColor.BLACK_0);
             }
-
+            d.getFoldLineSet().addLine(lineSegment);
             d.record();
         }
     }

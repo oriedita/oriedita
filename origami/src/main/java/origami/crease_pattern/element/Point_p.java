@@ -5,6 +5,18 @@ package origami.crease_pattern.element;
  */
 public class Point_p extends Point {
 
+    public Point_p(Point p) {
+        super(p);
+    }
+
+    public Point_p(Point p, boolean state) {
+        this(p);
+        this.i_state = state;
+    }
+
+    public Point_p() {
+    }
+
     /**
      * Selected state
      */
@@ -16,10 +28,6 @@ public class Point_p extends Point {
 
     public void setPointStateFalse() {
         i_state = false;
-    }
-
-    public void changePointState() {
-        i_state = !i_state;
     }
 
     public boolean getPointState() {

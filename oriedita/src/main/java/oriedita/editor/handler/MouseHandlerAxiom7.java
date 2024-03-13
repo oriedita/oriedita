@@ -25,8 +25,7 @@ public class MouseHandlerAxiom7 extends BaseMouseHandlerInputRestricted{
 
     @Override
     public void mousePressed(Point p0) {
-        Point p = new Point();
-        p.set(d.getCamera().TV2object(p0));
+        Point p = d.getCamera().TV2object(p0);
 
         // 1. target point
         if(d.getLineStep().isEmpty()){
@@ -40,8 +39,7 @@ public class MouseHandlerAxiom7 extends BaseMouseHandlerInputRestricted{
         // 2. target segment
         // Don't allow segment that spans through the target point
         if(d.getLineStep().size() == 1){
-            LineSegment closestLineSegment = new LineSegment();
-            closestLineSegment.set(d.getClosestLineSegment(p));
+            LineSegment closestLineSegment = new LineSegment(d.getClosestLineSegment(p));
 
             if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.getSelectionDistance() &&
                     !OritaCalc.isPointWithinLineSpan(d.getLineStep().get(0).getA(), closestLineSegment)) {
@@ -53,8 +51,7 @@ public class MouseHandlerAxiom7 extends BaseMouseHandlerInputRestricted{
 
         // 3. reference segment
         if(d.getLineStep().size() == 2){
-            LineSegment closestLineSegment = new LineSegment();
-            closestLineSegment.set(d.getClosestLineSegment(p));
+            LineSegment closestLineSegment = new LineSegment(d.getClosestLineSegment(p));
 
             // Don't allow segment that is parallel to target segment
             if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.getSelectionDistance() &&
@@ -71,9 +68,9 @@ public class MouseHandlerAxiom7 extends BaseMouseHandlerInputRestricted{
         if(d.getLineStep().size() == 5){
             if (OritaCalc.determineLineSegmentDistance(p, d.getLineStep().get(3)) < d.getSelectionDistance() ||
                     OritaCalc.determineLineSegmentDistance(p, d.getLineStep().get(4)) < d.getSelectionDistance()) {
-                LineSegment s = d.get_moyori_step_lineSegment(p, 4, 5);
-                s.set(s.getB(), s.getA(), d.getLineColor());
-                s.set(OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), s));
+                LineSegment s = d.getClosestLineStepSegment(p, 4, 5);
+                s = new LineSegment(s.getB(), s.getA(), d.getLineColor());
+                s = (OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), s));
 
                 d.addLineSegment(s);
                 d.record();
@@ -81,8 +78,7 @@ public class MouseHandlerAxiom7 extends BaseMouseHandlerInputRestricted{
                 return;
             }
 
-            LineSegment closestLineSegment = new LineSegment();
-            closestLineSegment.set(d.getClosestLineSegment(p));
+            LineSegment closestLineSegment = d.getClosestLineSegment(p);
 
             if (!(OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.getSelectionDistance()) ||
                     OritaCalc.isLineSegmentParallel(closestLineSegment, d.getLineStep().get(3)) != OritaCalc.ParallelJudgement.NOT_PARALLEL) {
@@ -99,8 +95,6 @@ public class MouseHandlerAxiom7 extends BaseMouseHandlerInputRestricted{
 
     @Override
     public void mouseReleased(Point p0) {
-        Point p = new Point();
-        p.set(d.getCamera().TV2object(p0));
 
         // First 3 are clicked
         if(d.getLineStep().size() == 3){
@@ -109,8 +103,12 @@ public class MouseHandlerAxiom7 extends BaseMouseHandlerInputRestricted{
 
         // Case 2: Click on destination line to extend result line from midpoint
         if(d.getLineStep().size() == 6){
-            LineSegment midTemp = new LineSegment(midPoint, midPoint);
-            midTemp.setB(new Point(midTemp.determineAX() + d.getLineStep().get(3).determineBX() - d.getLineStep().get(3).determineAX(), midTemp.determineAY() + d.getLineStep().get(3).determineBY() - d.getLineStep().get(3).determineAY()));
+            LineSegment ls3 = d.getLineStep().get(3);
+            LineSegment midTemp = new LineSegment(
+                    midPoint,
+                    new Point(
+                            midPoint.getX() + ls3.determineBX() - ls3.determineAX(),
+                            midPoint.getY() + ls3.determineBY() - ls3.determineAY()));
             LineSegment result = getExtendedSegment(midTemp, d.getLineStep().get(5), d.getLineColor());
             d.addLineSegment(result);
             d.record();
@@ -119,8 +117,10 @@ public class MouseHandlerAxiom7 extends BaseMouseHandlerInputRestricted{
     }
 
     public Point drawAxiom7FoldIndicators(LineSegment target, LineSegment targetSegment, LineSegment refSegment){
-        LineSegment temp = new LineSegment(target);
-        temp.setB(new Point(temp.determineAX() + refSegment.determineBX() - refSegment.determineAX(), temp.determineAY() + refSegment.determineBY() - refSegment.determineAY()));
+        LineSegment temp = target.withB(
+                new Point(
+                        target.determineAX() + refSegment.determineBX() - refSegment.determineAX(),
+                        target.determineAY() + refSegment.determineBY() - refSegment.determineAY()));
         LineSegment extendLine = getExtendedSegment(temp, targetSegment, LineColor.PURPLE_8);
 
         if (extendLine == null) { return null; }
@@ -129,7 +129,8 @@ public class MouseHandlerAxiom7 extends BaseMouseHandlerInputRestricted{
 
         LineSegment s1 = OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), new LineSegment(mid, OritaCalc.findProjection(OritaCalc.moveParallel(extendLine, 1), mid), LineColor.PURPLE_8));
         LineSegment s2 = OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), new LineSegment(mid, OritaCalc.findProjection(OritaCalc.moveParallel(extendLine, -1), mid), LineColor.PURPLE_8));
-
+        s1.setColor(LineColor.PURPLE_8);
+        s2.setColor(LineColor.PURPLE_8);
         d.lineStepAdd(s1);
         d.lineStepAdd(s2);
         return mid;
@@ -143,14 +144,14 @@ public class MouseHandlerAxiom7 extends BaseMouseHandlerInputRestricted{
         }
 
         if (OritaCalc.isLineSegmentParallel(s_o, s_k, Epsilon.UNKNOWN_1EN7) == OritaCalc.ParallelJudgement.PARALLEL_EQUAL) {//0=平行でない、1=平行で２直線が一致しない、2=平行で２直線が一致する
-            cross_point.set(s_k.getA());
+            cross_point = s_k.getA();
             if (OritaCalc.distance(s_o.getA(), s_k.getA()) > OritaCalc.distance(s_o.getA(), s_k.getB())) {
-                cross_point.set(s_k.getB());
+                cross_point = s_k.getB();
             }
         }
 
         if (OritaCalc.isLineSegmentParallel(s_o, s_k, Epsilon.UNKNOWN_1EN7) == OritaCalc.ParallelJudgement.NOT_PARALLEL) {//0=平行でない、1=平行で２直線が一致しない、2=平行で２直線が一致する
-            cross_point.set(OritaCalc.findIntersection(s_o, s_k));
+            cross_point = OritaCalc.findIntersection(s_o, s_k);
         }
 
         LineSegment add_sen = new LineSegment(cross_point, s_o.getA(), icolo);

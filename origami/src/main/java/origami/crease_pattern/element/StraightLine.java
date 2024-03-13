@@ -5,105 +5,62 @@ import origami.Epsilon;
 public class StraightLine {
     //Note! If p1 = p2, the result will be strange, but it may be hard to notice because this function does not have a check mechanism.
     // a is 0 or more. If a = 0, make sure b is greater than or equal to 0. Otherwise, the sign of the distance to the straight line will be incorrect.
-    double a, b, c;//treat a * x + b * y + c = 0, a, b, c, x, y, as integers (20181115 Isn't this comment strange?)
+    private final double a, b, c;//treat a * x + b * y + c = 0, a, b, c, x, y, as integers (20181115 Isn't this comment strange?)
 
     public StraightLine() {  //コンストラクタ
-        double x1 = 0.0;
-        double y1 = 0.0;
-        double x2 = 1.0;
-        double y2 = 1.0;
-
-        a = y2 - y1;
-        b = x1 - x2;
-        c = y1 * x2 - x1 * y2;
-        coefficient();
+        this(0, 0, 1, 1);
     }
 
     public StraightLine(double a0, double b0, double c0) {
-        a = a0;
-        b = b0;
-        c = c0;
-        coefficient();
+        double tmpA = a0;
+        double tmpB = b0;
+        double tmpC = c0;
+
+        if ((tmpA < 0.0)) {
+            tmpA = -tmpA;
+            tmpB = -tmpB;
+            tmpC = -tmpC;
+        }
+        if ((-Epsilon.UNKNOWN_01 < tmpA) && (tmpA < Epsilon.UNKNOWN_01)) {
+            if (tmpB < 0.0) {
+                tmpA = -tmpA;
+                tmpB = -tmpB;
+                tmpC = -tmpC;
+            }
+        }
+        a = tmpA;
+        b = tmpB;
+        c = tmpC;
     }
 
     public StraightLine(Point p1, Point p2) {
-        //Find the straight line a, b, and c by specifying two points
-        double x1 = p1.getX(), y1 = p1.getY();
-        double x2 = p2.getX(), y2 = p2.getY();
-        a = y2 - y1;
-        b = x1 - x2;
-        c = y1 * x2 - x1 * y2;
-        coefficient();
+        this(p1.getX(), p1.getY(), p2.getX(), p2.getY());
     }
 
     public StraightLine(LineSegment s0) {
-        //Specify line segment to find straight line a, b, c
-        double x1 = s0.determineAX(), y1 = s0.determineAY();
-        double x2 = s0.determineBX(), y2 = s0.determineBY();
-        a = y2 - y1;
-        b = x1 - x2;
-        c = y1 * x2 - x1 * y2;
-        coefficient();
+        this(s0.determineAX(), s0.determineAY(), s0.determineBX(), s0.determineBY());
     }
 
     public StraightLine(double x1, double y1, double x2, double y2) {
         //Find the straight line a, b, and c by specifying two points
-
-        a = y2 - y1;
-        b = x1 - x2;
-        c = y1 * x2 - x1 * y2;
-        coefficient();
-    }
-
-    void coefficient() {
-        if ((a < 0.0)) {
-            a = -a;
-            b = -b;
-            c = -c;
-        }
-        if ((-Epsilon.UNKNOWN_01 < a) && (a < Epsilon.UNKNOWN_01)) {
-            if (b < 0.0) {
-                a = -a;
-                b = -b;
-                c = -c;
-            }
-        }
+        this(y2-y1, x1-x2, y1*x2 - x1*y2);
     }
 
     //translation
-    public void translate(double d) {
-        c = c + d * Math.sqrt(a * a + b * b);
-    }
-
-    public void set(StraightLine t) {
-        a = t.getA();
-        b = t.getB();
-        c = t.getC();
-        coefficient();
+    public StraightLine translate(double d) {
+        return new StraightLine(a, b, c + d * Math.sqrt(a * a + b * b));
     }
 
     public double getA() {
         return a;
     }
 
-    public void setA(double a0) {
-        a = a0;
-    }
-
     public double getB() {
         return b;
     }
 
-    public void setB(double b0) {
-        a = b0;
-    }
-
     public double getC() {
         return c;
-    }
-
-    public void setC(double c0) {
-        a = c0;
     }
 
     public double calculateDistance(Point p) {// Distance between straight line and point p
@@ -118,16 +75,15 @@ public class StraightLine {
         return (a * x + b * y + c) * (a * x + b * y + c) / (a * a + b * b);
     }
 
-    public void orthogonalize(Point p) { //Converted to a straight line (bx-ay + d = 0) that passes through the point (x, y) and is orthogonal to ax + by + c = 0
+    public StraightLine orthogonalize(Point p) {
         double e;
         double x = p.getX();
         double y = p.getY();
-        c = -b * x + a * y;
+        double c = -b * x + a * y;
         e = a;
-        a = b;
-        b = -e;
-
-        coefficient();
+        double a = b;
+        double b = -e;
+        return new StraightLine(a, b, c);
     }
 
     public int sameSide(Point p1, Point p2) {// Returns 1 if the two points are on the same side of the straight line, -1 if they are on the other side, 0 if there is a point on the straight line
@@ -182,8 +138,8 @@ public class StraightLine {
      * Find the position of the projection of the point p on the straight line (the position on the straight line closest to the point p). 20170312 added
      */
     public Point findProjection(Point p) {
-        StraightLine t1 = new StraightLine(a, b, c);
-        t1.orthogonalize(p);//Find a straight line that passes through the point p1 and is orthogonal to t.
+        //Find a straight line that passes through the point p1 and is orthogonal to t.
+        StraightLine t1 = new StraightLine(a, b, c).orthogonalize(p);
         return findIntersection(t1);
     }
 
@@ -198,7 +154,7 @@ public class StraightLine {
         INCLUDED_3(3),
         ;
 
-        int type;
+        final int type;
 
         Intersection(int type) {
             this.type = type;

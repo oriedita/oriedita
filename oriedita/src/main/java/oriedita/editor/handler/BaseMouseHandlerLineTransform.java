@@ -53,7 +53,7 @@ public abstract class BaseMouseHandlerLineTransform extends BaseMouseHandlerLine
     @Override
     public void mouseDragged(Point p0) {
         super.mouseDragged(p0);
-        delta.set(
+        delta = new Point(
                 -selectionLine.determineBX() + selectionLine.determineAX(),
                 -selectionLine.determineBY() + selectionLine.determineAY()
         );
@@ -63,7 +63,7 @@ public abstract class BaseMouseHandlerLineTransform extends BaseMouseHandlerLine
     public void mouseReleased(Point p0) {
         //  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
 
-        delta.set(
+        delta = new Point(
                 -selectionLine.determineBX() + selectionLine.determineAX(),
                 -selectionLine.determineBY() + selectionLine.determineAY()
         );
@@ -129,7 +129,7 @@ public abstract class BaseMouseHandlerLineTransform extends BaseMouseHandlerLine
         image = null;
         if (width * height < settings.getWidth() * settings.getHeight() * 1.5) {
             image = g2.getDeviceConfiguration().createCompatibleImage(width, height, BufferedImage.BITMASK);
-            bottomLeft.move(new Point(-1, -1));
+            bottomLeft = bottomLeft.move(new Point(-1, -1));
         }
     }
 
@@ -149,13 +149,9 @@ public abstract class BaseMouseHandlerLineTransform extends BaseMouseHandlerLine
             int regionA = DrawingUtil.cohenSutherlandRegion(minx, miny, maxx, maxy, a);
             int regionB = DrawingUtil.cohenSutherlandRegion(minx, miny, maxx, maxy, b);
             if ((regionA & regionB) == DrawingUtil.CENTER) {
-                Point pa = new Point(s.getA());
-                pa.move(delta);
-                Point pb = new Point(s.getB());
-                pb.move(delta);
-                LineSegment s2 = new LineSegment();
-                s2.set(s);
-                s2.set(pa, pb);
+                Point pa = s.getA().move(delta);
+                Point pb = s.getB().move(delta);
+                LineSegment s2 = new LineSegment(pa, pb);
                 DrawingUtil.drawCpLine(g2, s2, camera, settings.getLineStyle(), settings.getLineWidth(),
                         d.getPointSize(), settings.getWidth(), settings.getHeight());
             }

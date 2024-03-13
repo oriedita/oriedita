@@ -39,7 +39,7 @@ public class Grid {
     double d_grid_cy = d_grid_by - d_grid_ay;
 
     double okx0 = -200.0;//obiject系での格子のx座標の原点
-    double oky0 = +200.0;//obiject系での格子のy座標の原点
+    double oky0 = 200.0;//obiject系での格子のy座標の原点
 
     double diagonal_max = 1.0;//The longer diagonal of the unit cell
     double diagonal_min = 1.0;//The shorter diagonal of the unit cell
@@ -194,10 +194,10 @@ public class Grid {
     }
 
     private int get_a_index_min(Point p_a, Point p_b, Point p_c, Point p_d) {//obj座標系の4つの点を指定し、各点のaベクトルの指数より小さい整数の指数を得る。
-        Point p_a_index = new Point(getPosition(p_a));
-        Point p_b_index = new Point(getPosition(p_b));
-        Point p_c_index = new Point(getPosition(p_c));
-        Point p_d_index = new Point(getPosition(p_d));
+        Point p_a_index = getPosition(p_a);
+        Point p_b_index = getPosition(p_b);
+        Point p_c_index = getPosition(p_c);
+        Point p_d_index = getPosition(p_d);
 
         double a_index_min = p_a_index.getX();
         if (p_b_index.getX() < a_index_min) {
@@ -214,10 +214,10 @@ public class Grid {
     }
 
     private int get_a_index_max(Point p_a, Point p_b, Point p_c, Point p_d) {//obj座標系の4つの点を指定し、各点のaベクトルの指数より大きい整数の指数を得る。
-        Point p_a_index = new Point(getPosition(p_a));
-        Point p_b_index = new Point(getPosition(p_b));
-        Point p_c_index = new Point(getPosition(p_c));
-        Point p_d_index = new Point(getPosition(p_d));
+        Point p_a_index = getPosition(p_a);
+        Point p_b_index = getPosition(p_b);
+        Point p_c_index = getPosition(p_c);
+        Point p_d_index = getPosition(p_d);
 
         double a_index_max = p_a_index.getX();
         if (p_b_index.getX() > a_index_max) {
@@ -234,10 +234,10 @@ public class Grid {
     }
 
     private int get_b_index_min(Point p_a, Point p_b, Point p_c, Point p_d) {//obj座標系の4つの点を指定し、各点のbベクトルの指数より小さい整数の指数を得る。
-        Point p_a_index = new Point(getPosition(p_a));
-        Point p_b_index = new Point(getPosition(p_b));
-        Point p_c_index = new Point(getPosition(p_c));
-        Point p_d_index = new Point(getPosition(p_d));
+        Point p_a_index = getPosition(p_a);
+        Point p_b_index = getPosition(p_b);
+        Point p_c_index = getPosition(p_c);
+        Point p_d_index = getPosition(p_d);
 
         double b_index_min = p_a_index.getY();
         if (p_b_index.getY() < b_index_min) {
@@ -254,10 +254,10 @@ public class Grid {
     }
 
     private int get_b_index_max(Point p_a, Point p_b, Point p_c, Point p_d) {//Specify four points in the obj coordinate system and get an integer exponent greater than the exponent of the b vector at each point.
-        Point p_a_index = new Point(getPosition(p_a));
-        Point p_b_index = new Point(getPosition(p_b));
-        Point p_c_index = new Point(getPosition(p_c));
-        Point p_d_index = new Point(getPosition(p_d));
+        Point p_a_index = getPosition(p_a);
+        Point p_b_index = getPosition(p_b);
+        Point p_c_index = getPosition(p_c);
+        Point p_d_index = getPosition(p_d);
 
         double b_index_max = p_a_index.getY();
         if (p_b_index.getY() > b_index_max) {
@@ -273,16 +273,8 @@ public class Grid {
         return (int) Math.ceil(b_index_max);
     }
 
-    public Color getGridColor() {
-        return grid_color;
-    }
-
     public void setGridColor(Color color0) {
         grid_color = color0;
-    }
-
-    public Color getGridScaleColor() {
-        return gridScaleColor;
     }
 
     public void setGridScaleColor(Color color0) {
@@ -293,9 +285,6 @@ public class Grid {
     public void draw(Graphics g, Camera camera, int p0x_max, int p0y_max, boolean colorChange) {    //colorChange=1なら一定数ごとに格子線の色を変える
         //入力規定が1か2（正方格子）の場合の格子線の描画
         Graphics2D g2 = (Graphics2D) g;
-
-        LineSegment s_tv = new LineSegment();
-        LineSegment s_ob = new LineSegment();
 
         //格子線の描画
         g2.setStroke(new BasicStroke((float) gridLineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));//線の太さや線の末端の形状
@@ -309,10 +298,10 @@ public class Grid {
         Point p0_c = new Point(p0x_max, p0y_max);//TV system coordinates of corner at the bottom right of the screen
         Point p0_d = new Point(p0x_max, 0);//TV system coordinates of corner on the upper right of the screen
 
-        Point p_a = new Point(camera.TV2object(p0_a));//Obj system coordinates of the upper left corner of the screen
-        Point p_b = new Point(camera.TV2object(p0_b));//Obj system coordinates of the lower left corner of the screen
-        Point p_c = new Point(camera.TV2object(p0_c));//Obj system coordinates of the lower right corner of the screen
-        Point p_d = new Point(camera.TV2object(p0_d));//Obj system coordinates of the upper right corner of the screen
+        Point p_a = camera.TV2object(p0_a);//Obj system coordinates of the upper left corner of the screen
+        Point p_b = camera.TV2object(p0_b);//Obj system coordinates of the lower left corner of the screen
+        Point p_c = camera.TV2object(p0_c);//Obj system coordinates of the lower right corner of the screen
+        Point p_d = camera.TV2object(p0_d);//Obj system coordinates of the upper right corner of the screen
 
         int grid_screen_a_max = get_a_index_max(p_a, p_b, p_c, p_d);
         int grid_screen_a_min = get_a_index_min(p_a, p_b, p_c, p_d);
@@ -341,25 +330,27 @@ public class Grid {
         }
 
         g.setColor(grid_color);
+        LineSegment s_tv;
+        LineSegment s_ob;
         for (int i = grid_screen_a_min; i <= grid_screen_a_max; i++) {
             // draw vertical grid lines
-            s_ob.set(d_grid_ax * i + d_grid_bx * grid_screen_b_min + okx0,
+            s_ob = new LineSegment(d_grid_ax * i + d_grid_bx * grid_screen_b_min + okx0,
                     d_grid_ay * i + d_grid_by * grid_screen_b_min + oky0,
                     d_grid_ax * i + d_grid_bx * grid_screen_b_max + okx0,
                     d_grid_ay * i + d_grid_by * grid_screen_b_max + oky0);
 
-            s_tv.set(camera.object2TV(s_ob));
+            s_tv = camera.object2TV(s_ob);
             g.drawLine((int) s_tv.determineAX(), (int) s_tv.determineAY(), (int) s_tv.determineBX(), (int) s_tv.determineBY()); //直線
         }
 
         for (int i = grid_screen_b_min; i <= grid_screen_b_max; i++) {
             // draw horizontal gridlines
-            s_ob.set(d_grid_ax * grid_screen_a_min + d_grid_bx * i + okx0,
+            s_ob = new LineSegment(d_grid_ax * grid_screen_a_min + d_grid_bx * i + okx0,
                     d_grid_ay * grid_screen_a_min + d_grid_by * i + oky0,
                     d_grid_ax * grid_screen_a_max + d_grid_bx * i + okx0,
                     d_grid_ay * grid_screen_a_max + d_grid_by * i + oky0);
 
-            s_tv.set(camera.object2TV(s_ob));
+            s_tv = camera.object2TV(s_ob);
             g.drawLine((int) s_tv.determineAX(), (int) s_tv.determineAY(), (int) s_tv.determineBX(), (int) s_tv.determineBY()); //直線
         }
 
@@ -369,14 +360,14 @@ public class Grid {
             // \\.
             // \\\ <- (ax*i+bx*bmin, ay*i+by*bmin)
             for (int i = grid_screen_a_min; i <= grid_screen_a_max; i++) {
-                s_ob.set(
+                s_ob = new LineSegment(
                         i * d_grid_ax + grid_screen_b_min * d_grid_bx + okx0,
                         i * d_grid_ay + grid_screen_b_min * d_grid_by + oky0,
                         i * d_grid_ax + grid_screen_b_min * d_grid_bx + okx0 + (i - grid_screen_a_min) * d_grid_cx,
                         i * d_grid_ay + grid_screen_b_min * d_grid_by + oky0 + (i - grid_screen_a_min) * d_grid_cy
                 );
 
-                s_tv.set(camera.object2TV(s_ob));
+                s_tv = camera.object2TV(s_ob);
                 g.drawLine((int) s_tv.determineAX(), (int) s_tv.determineAY(), (int) s_tv.determineBX(), (int) s_tv.determineBY()); //直線
             }
             // then draw these lines:
@@ -384,14 +375,14 @@ public class Grid {
             // ..\
             // ...
             for (int i = grid_screen_b_min; i <= grid_screen_b_max; i++) {
-                s_ob.set(
+                s_ob = new LineSegment(
                         grid_screen_a_max * d_grid_ax + i * d_grid_bx + okx0,
                         grid_screen_a_max * d_grid_ay + i * d_grid_by + oky0,
                         grid_screen_a_max * d_grid_ax + i * d_grid_bx + okx0 + (grid_screen_b_max - i) * d_grid_cx,
                         grid_screen_a_max * d_grid_ay + i * d_grid_by + oky0 + (grid_screen_b_max - i) * d_grid_cy
                 );
 
-                s_tv.set(camera.object2TV(s_ob));
+                s_tv = camera.object2TV(s_ob);
                 g.drawLine((int) s_tv.determineAX(), (int) s_tv.determineAY(), (int) s_tv.determineBX(), (int) s_tv.determineBY()); //直線
             }
         }
@@ -408,11 +399,11 @@ public class Grid {
                     i_balance = i_balance + verticalScaleInterval;
                 }
                 if (i_balance == verticalScalePosition) {
-                    s_ob.set(d_grid_ax * i + d_grid_bx * grid_screen_b_min + okx0,
+                    s_ob = new LineSegment(d_grid_ax * i + d_grid_bx * grid_screen_b_min + okx0,
                             d_grid_ay * i + d_grid_by * grid_screen_b_min + oky0,
                             d_grid_ax * i + d_grid_bx * grid_screen_b_max + okx0,
                             d_grid_ay * i + d_grid_by * grid_screen_b_max + oky0);
-                    s_tv.set(camera.object2TV(s_ob));
+                    s_tv = camera.object2TV(s_ob);
                     g.drawLine((int) s_tv.determineAX(), (int) s_tv.determineAY(), (int) s_tv.determineBX(), (int) s_tv.determineBY()); //直線
                 }
             }
@@ -425,13 +416,13 @@ public class Grid {
 
                 if (i_balance == horizontalScalePosition) {
 
-                    s_ob.set(d_grid_ax * grid_screen_a_min + d_grid_bx * i + okx0,
+                    s_ob = new LineSegment(d_grid_ax * grid_screen_a_min + d_grid_bx * i + okx0,
                             d_grid_ay * grid_screen_a_min + d_grid_by * i + oky0,
                             d_grid_ax * grid_screen_a_max + d_grid_bx * i + okx0,
                             d_grid_ay * grid_screen_a_max + d_grid_by * i + oky0);
 
 
-                    s_tv.set(camera.object2TV(s_ob));
+                    s_tv = camera.object2TV(s_ob);
                     g.drawLine((int) s_tv.determineAX(), (int) s_tv.determineAY(), (int) s_tv.determineBX(), (int) s_tv.determineBY()); //直線
                 }
             }
@@ -449,14 +440,14 @@ public class Grid {
                     if ((i + grid_screen_b_min) % horizontalScaleInterval != 0) {
                         continue;
                     }
-                    s_ob.set(
+                    s_ob = new LineSegment(
                             i * d_grid_ax + grid_screen_b_min * d_grid_bx + okx0,
                             i * d_grid_ay + grid_screen_b_min * d_grid_by + oky0,
                             i * d_grid_ax + grid_screen_b_min * d_grid_bx + okx0 + (i - grid_screen_a_min) * d_grid_cx,
                             i * d_grid_ay + grid_screen_b_min * d_grid_by + oky0 + (i - grid_screen_a_min) * d_grid_cy
                     );
 
-                    s_tv.set(camera.object2TV(s_ob));
+                    s_tv = camera.object2TV(s_ob);
                     g.drawLine((int) s_tv.determineAX(), (int) s_tv.determineAY(), (int) s_tv.determineBX(), (int) s_tv.determineBY()); //直線
                 }
                 // then draw these lines:
@@ -467,14 +458,14 @@ public class Grid {
                     if ((i + grid_screen_a_max) % horizontalScaleInterval != 0) {
                         continue;
                     }
-                    s_ob.set(
+                    s_ob = new LineSegment(
                             grid_screen_a_max * d_grid_ax + i * d_grid_bx + okx0,
                             grid_screen_a_max * d_grid_ay + i * d_grid_by + oky0,
                             grid_screen_a_max * d_grid_ax + i * d_grid_bx + okx0 + (grid_screen_b_max - i) * d_grid_cx,
                             grid_screen_a_max * d_grid_ay + i * d_grid_by + oky0 + (grid_screen_b_max - i) * d_grid_cy
                     );
 
-                    s_tv.set(camera.object2TV(s_ob));
+                    s_tv = camera.object2TV(s_ob);
                     g.drawLine((int) s_tv.determineAX(), (int) s_tv.determineAY(), (int) s_tv.determineBX(), (int) s_tv.determineBY()); //直線
                 }
             }
@@ -511,7 +502,7 @@ public class Grid {
                 if (baseState == GridModel.State.FULL || (baseState == GridModel.State.WITHIN_PAPER && isWithinPaper(t_tmp))) {
                     if (t0.distance(t_tmp) <= distance_min) {
                         distance_min = t0.distance(t_tmp);
-                        t2.set(t_tmp);
+                        t2 = t_tmp;
                     }
                 }
             }

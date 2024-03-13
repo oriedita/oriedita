@@ -25,15 +25,13 @@ public class MouseHandlerCircleDrawInverted extends BaseMouseHandler {
 
     //マウス操作(ボタンを押したとき)時の作業
     public void mousePressed(Point p0) {
-        Point p = new Point();
-        p.set(d.getCamera().TV2object(p0));
+        Point p = d.getCamera().TV2object(p0);
 
         Circle closest_circumference = new Circle(100000.0, 100000.0, 10.0, LineColor.PURPLE_8); //Circle with the circumference closest to the mouse
         closest_circumference.set(d.getClosestCircleMidpoint(p));
 
         if (d.getLineStep().size() + d.getCircleStep().size() == 0) {
-            LineSegment closestLineSegment = new LineSegment();
-            closestLineSegment.set(d.getClosestLineSegment(p));
+            LineSegment closestLineSegment = new LineSegment(d.getClosestLineSegment(p));
 
             if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < OritaCalc.distance_circumference(p, closest_circumference)) {//線分の方が円周より近い
                 if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) > d.getSelectionDistance()) {
@@ -84,8 +82,7 @@ public class MouseHandlerCircleDrawInverted extends BaseMouseHandler {
     public void add_hanten(Circle e0, Circle eh) {
         //e0の円周が(x,y)を通るとき
         if (Math.abs(OritaCalc.distance(e0.determineCenter(), eh.determineCenter()) - e0.getR()) < Epsilon.UNKNOWN_1EN7) {
-            LineSegment s_add = new LineSegment();
-            s_add.set(eh.turnAround_CircleToLineSegment(e0));
+            LineSegment s_add = eh.turnAround_CircleToLineSegment(e0);
             //s_add.setcolor(3);
             d.addLineSegment(s_add);
             d.record();

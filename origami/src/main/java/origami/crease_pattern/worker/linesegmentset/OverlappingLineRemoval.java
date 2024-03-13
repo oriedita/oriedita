@@ -57,8 +57,7 @@ public class OverlappingLineRemoval {
         lineSegmentSet.reset(snew.size());
 
         for (int i = 0; i < snew.size(); i++) {
-            LineSegment lineSegment = snew.get(i);
-            lineSegmentSet.get(i).set(lineSegment);
+            lineSegmentSet.set(i, new LineSegment(snew.get(i)));
         }
     }
 }

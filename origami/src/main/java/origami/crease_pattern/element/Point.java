@@ -5,10 +5,12 @@ import java.util.Objects;
 
 public class Point implements Serializable {
     //Used to represent point coordinates, direction vectors, etc.
-    double x, y;
+    private final double x;
+    private final double y;
 
     public Point(Point p) {
-        set(p);
+        x = p.getX();
+        y = p.getY();
     }
 
     public Point() {
@@ -24,9 +26,9 @@ public class Point implements Serializable {
                 '}';
     }
 
-    public Point(double i, double j) {
-        x = i;
-        y = j;
+    public Point(double x, double y) {
+        this.x = x;
+        this.y = y;
     }
 
     public static Point mid(Point p, Point q) {
@@ -38,45 +40,20 @@ public class Point implements Serializable {
         y = a * p.getY() + b * q.getY();
     }
 
-    public void set(Point p) {
-        x = p.getX();
-        y = p.getY();
-    }
-
-    public void set(double i, double j) {
-        x = i;
-        y = j;
-    }
-
-    public void set(double a, Point p, double b, Point q) {
-        x = a * p.getX() + b * q.getX();
-        y = a * p.getY() + b * q.getY();
-    }
-
     public double getX() {
         return x;
     }
 
-    public void setX(double xx) {
-        x = xx;
+    public Point withX(double x) {
+        return new Point(x, this.y);
+    }
+
+    public Point withY(double y) {
+        return new Point(this.x, y);
     }
 
     public double getY() {
         return y;
-    }
-
-    public void setY(double yy) {
-        y = yy;
-    }
-
-    public void reset() {
-        x = 0.0;
-        y = 0.0;
-    }
-
-    public void parallel_move(double x1, double y1) {
-        x = x + x1;
-        y = y + y1;
     }
 
     /**
@@ -97,17 +74,21 @@ public class Point implements Serializable {
 
     /**
      * When looking at the own Point as a reference, the positions of other points are returned as Points.
+     * <p>
+     * example: <code>new Point(1, 2).delta(new Point(3,2)); // returns (2, 0)</code>
+     * </p>
      */
-    public Point other_Point_position(Point taPoint) {
-        Point rPoint = new Point();
-        rPoint.setX(taPoint.getX() - x);
-        rPoint.setY(taPoint.getY() - y);
-        return rPoint;
+    public Point delta(Point taPoint) {
+        return new Point(taPoint.getX() - x, taPoint.getY() - y);
     }
 
-    public void move(Point addPoint) {
-        x = x + addPoint.getX();
-        y = y + addPoint.getY();
+    /**
+     * Returns a new Point which is the old point, moved by addPoint
+     * @param addPoint amount to move
+     * @return moved point
+     */
+    public Point move(Point addPoint) {
+        return new Point(x + addPoint.getX(), y + addPoint.getY());
     }
 
     @Override
@@ -123,10 +104,4 @@ public class Point implements Serializable {
         return Objects.hash(x, y);
     }
 
-    /**
-     * @return new Point with the coordinates rounded to full numbers
-     */
-    public Point rounded() {
-        return new Point(Math.round(x), Math.round(y));
-    }
 }

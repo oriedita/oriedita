@@ -15,11 +15,6 @@ public class MouseHandlerCreaseMakeAux extends BaseMouseHandlerBoxSelect {
     public MouseHandlerCreaseMakeAux() {
     }
 
-    @Override
-    public void mouseMoved(Point p0) {
-
-    }
-
     //マウス操作(mouseMode==60 でボタンを離したとき)を行う関数----------------------------------------------------
     public void mouseReleased(Point p0) {
         super.mouseReleased(p0);
@@ -30,13 +25,11 @@ public class MouseHandlerCreaseMakeAux extends BaseMouseHandlerBoxSelect {
                 d.record();
             }//この関数は不完全なのでまだ未公開20171126
         } else {
-            Point p = new Point();
-            p.set(d.getCamera().TV2object(p0));
+            Point p = d.getCamera().TV2object(p0);
             if (d.getFoldLineSet().closestLineSegmentDistance(p) < d.getSelectionDistance()) {//点pに最も近い線分の番号での、その距離を返す	public double closestLineSegmentDistance(Ten p)
                 LineSegment closestLineSegment = d.getFoldLineSet().closestLineSegmentSearchReversedOrder(p);
                 if (closestLineSegment.getColor().getNumber() < 3) {
-                    LineSegment add_sen = new LineSegment();
-                    add_sen.set(closestLineSegment);
+                    LineSegment add_sen = new LineSegment(closestLineSegment);
                     add_sen.setColor(LineColor.CYAN_3);
 
                     d.getFoldLineSet().deleteLineSegment_vertex(closestLineSegment);

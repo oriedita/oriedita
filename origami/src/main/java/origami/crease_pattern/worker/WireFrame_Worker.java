@@ -49,10 +49,6 @@ public class WireFrame_Worker {
         associatedLineId = new int[numFaces + 1];         //The id of the bar between one surface and the next surface (reference surface side)
     }
 
-    public int getStartingFaceId() {
-        return startingFaceId;
-    }
-
     public int setStartingFaceId(int i) {
         startingFaceId = i;
 
@@ -66,16 +62,6 @@ public class WireFrame_Worker {
             }
         }
 
-        return startingFaceId;
-    }
-
-    /**
-     * This is the correspondence when the mouse is pressed in the reference plane specification mode 201503
-     */
-    public int setStartingFaceId(Point p0) {//Returns the datum id that is actually valid
-        if (pointSet.inside(p0) > 0) {
-            startingFaceId = pointSet.inside(p0);
-        }//If c.inside(p) = 0, it is not inside any surface, if it is negative, it is on the boundary line, and if it is a positive number, it is inside. If there are multiple applicable surface numbers, the one with the smaller number is returned.
         return startingFaceId;
     }
 
@@ -127,11 +113,10 @@ public class WireFrame_Worker {
     }
 
     private Point fold_movement(int it, int im) { //A function that finds the position of the destination when the point it is folded as a member of the surface im
-        Point p = new Point();
-        p.set(pointSet.getPoint(it));
+        Point p = pointSet.getPoint(it);
         int idestination_faceId = im;//The id number of the first face. From now on, we will follow the planes adjacent to the reference plane.
         while (idestination_faceId != startingFaceId) {
-            p.set(lineSymmetry_point_determine(associatedLineId[idestination_faceId], p));
+            p = lineSymmetry_point_determine(associatedLineId[idestination_faceId], p);
             idestination_faceId = nextFaceId[idestination_faceId];
         }
         return p;
@@ -268,7 +253,7 @@ public class WireFrame_Worker {
 
         // Euler's formula says F - E + V = 1 (for bounded faces)
         int supposedNumFaces = numLines - numPoints + 1;
-        /**
+        /*
          * However the numbers could be off due to rounding errors (see comments in
          * PointSet), so we add a bit more just in case that happens. The "max" thing
          * here is partly for compatibility with the old tests, but also for ensuring

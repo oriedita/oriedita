@@ -19,10 +19,8 @@ public class Check2 {
                     LineSegment sj = foldLineSet.get(j);//r_hitosiiとr_heikouhanteiは、hitosiiとheikou_hanteiのずれの許容程度
                     if (sj.getColor() != LineColor.CYAN_3) {
 
-                        LineSegment si1 = new LineSegment();
-                        si1.set(si);
-                        LineSegment sj1 = new LineSegment();
-                        sj1.set(sj);
+                        LineSegment si1 = new LineSegment(si);
+                        LineSegment sj1 = new LineSegment(sj);
 
                         //T-shaped intersection
                         LineSegment.Intersection intersection = OritaCalc.determineLineSegmentIntersectionSweet(si, sj, Epsilon.UNKNOWN_0001, Epsilon.PARALLEL);

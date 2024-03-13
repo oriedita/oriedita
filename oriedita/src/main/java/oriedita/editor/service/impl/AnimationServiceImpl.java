@@ -65,10 +65,10 @@ public class AnimationServiceImpl implements AnimationService {
         Point current = getter.get();
 
         if (animations.containsKey(key+"_x")) {
-            current.setX(animations.get(key+"_x").getTo());
+            current = current.withX(animations.get(key+"_x").getTo());
         }
         if (animations.containsKey(key+"_y")) {
-            current.setY(animations.get(key+"_y").getTo());
+            current = current.withY(animations.get(key+"_y").getTo());
         }
         Point to = calculateEndValue.apply(current);
 
@@ -77,15 +77,11 @@ public class AnimationServiceImpl implements AnimationService {
             return;
         }
         animate(key+"_x", x -> {
-            Point newP = new Point();
-            newP.set(getter.get());
-            newP.setX(x);
+            Point newP = getter.get().withX(x);
             setter.accept(newP);
         }, () -> getter.get().getX(), to.getX(), time, interpolation);
         animate(key+"_y", y -> {
-            Point newP = new Point();
-            newP.set(getter.get());
-            newP.setY(y);
+            Point newP = getter.get().withY(y);
             setter.accept(newP);
         }, () -> getter.get().getY(), to.getY(), time, interpolation);
     }

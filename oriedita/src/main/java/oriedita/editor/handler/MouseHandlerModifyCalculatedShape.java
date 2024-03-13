@@ -21,8 +21,8 @@ public class MouseHandlerModifyCalculatedShape implements MouseModeHandler {
     private final FoldingService foldingService;
     private final CanvasModel canvasModel;
     private final FoldedFiguresList foldedFiguresList;
-    private final Point p_m_left_on = new Point();//Coordinates when the left mouse button is pressed
-    private final Point move_previous_selection_point = new Point();//Coordinates of the selected point before moving
+    private Point p_m_left_on = new Point();//Coordinates when the left mouse button is pressed
+    private Point move_previous_selection_point = new Point();//Coordinates of the selected point before moving
     private int i_nanini_near = 0;//Point p is close to the point in the development view = 1, close to the point in the folded view = 2, not close to either = 0
     private int i_closestPointId;
     private PointSelection i_point_selection = PointSelection.NONE_0;//Both wireFrame_worker1 and wireFrame_worker2 are not selected (situation i_point_selection = 0), wireFrame_worker1 is selected and wireFrame_worker2 is not selected (situation i_point_selection = 1), and the vertex is wireFrame_worker2 selected (situation i_point_selection = 2).
@@ -127,8 +127,7 @@ public class MouseHandlerModifyCalculatedShape implements MouseModeHandler {
 
             selectedFigure.getFoldedFigure().wireFrame_worker1.setAllPointStateFalse();
             //折り上がり図でi_closestPointIdと同じ位置の点の番号を求め、cp_worker1でその番号の点を選択済みにする
-            Point ps = new Point();
-            ps.set(selectedFigure.getFoldedFigure().wireFrame_worker2.getPoint(i_closestPointId));
+            Point ps = selectedFigure.getFoldedFigure().wireFrame_worker2.getPoint(i_closestPointId);
             for (int i = 1; i <= selectedFigure.getFoldedFigure().wireFrame_worker2.getPointsTotal(); i++) {
                 if (ps.distance(selectedFigure.getFoldedFigure().wireFrame_worker2.getPoint(i)) < Epsilon.UNKNOWN_1EN7) {
                     selectedFigure.getFoldedFigure().wireFrame_worker1.setPointStateTrue(i);
@@ -167,8 +166,7 @@ public class MouseHandlerModifyCalculatedShape implements MouseModeHandler {
 
             selectedFigure.getFoldedFigure().wireFrame_worker1.setAllPointStateFalse();
             //折り上がり図でi_mottomo_tikai_Tenidと同じ位置の点の番号を求め、cp_worker1でその番号の点を選択済みにする
-            Point ps = new Point();
-            ps.set(selectedFigure.getFoldedFigure().wireFrame_worker2.getPoint(i_closestPointId));
+            Point ps = selectedFigure.getFoldedFigure().wireFrame_worker2.getPoint(i_closestPointId);
             for (int i = 1; i <= selectedFigure.getFoldedFigure().wireFrame_worker2.getPointsTotal(); i++) {
                 if (ps.distance(selectedFigure.getFoldedFigure().wireFrame_worker2.getPoint(i)) < Epsilon.UNKNOWN_1EN7) {
                     selectedFigure.getFoldedFigure().wireFrame_worker1.setPointStateTrue(i);
@@ -178,7 +176,7 @@ public class MouseHandlerModifyCalculatedShape implements MouseModeHandler {
     }
 
     private void foldedFigure_operation_mouse_on_1(Point p) {//Work when the left mouse button is pressed in the folding diagram operation Folding function
-        p_m_left_on.set(new Point(p.getX(), p.getY()));
+        p_m_left_on = new Point(p.getX(), p.getY());
 
         selectedFigure.getWireFrame_worker_drawer2().setCamera(selectedFigure.getFoldedFigureCamera());
         selectedFigure.getWireFrame_worker_drawer2().setCam_front(selectedFigure.getFoldedFigureFrontCamera());
@@ -197,7 +195,7 @@ public class MouseHandlerModifyCalculatedShape implements MouseModeHandler {
             }
         }//Store the number of the point closest to p in i_closestPointId
 
-        move_previous_selection_point.set(selectedFigure.getFoldedFigure().wireFrame_worker2.getPoint(i_closestPointId));
+        move_previous_selection_point = selectedFigure.getFoldedFigure().wireFrame_worker2.getPoint(i_closestPointId);
 
         Logger.info("i_nanini_tikai = " + i_nanini_near);
 
@@ -216,8 +214,7 @@ public class MouseHandlerModifyCalculatedShape implements MouseModeHandler {
             switch (i_point_selection) {//Find the number of the point at the same position as i_closestPointId in the fold-up diagram, and mark the point with that number as selected with wireFrame_worker1.
                 case NONE_0:
                     selectedFigure.getFoldedFigure().setAllPointStateFalse();
-                    Point ps = new Point();
-                    ps.set(selectedFigure.getFoldedFigure().wireFrame_worker2.getPoint(i_closestPointId));
+                    Point ps = selectedFigure.getFoldedFigure().wireFrame_worker2.getPoint(i_closestPointId);
                     for (int i = 1; i <= selectedFigure.getFoldedFigure().wireFrame_worker2.getPointsTotal(); i++) {
                         if (ps.distance(selectedFigure.getFoldedFigure().wireFrame_worker2.getPoint(i)) < Epsilon.UNKNOWN_1EN7) {
                             selectedFigure.getFoldedFigure().wireFrame_worker1.setPointStateTrue(i);
@@ -247,8 +244,7 @@ public class MouseHandlerModifyCalculatedShape implements MouseModeHandler {
             switch (i_point_selection) {//Find the number of the point at the same position as i_closestPointId in the fold-up diagram, and mark the point with that number as selected with wireFrame_worker1.
                 case NONE_0:
                     selectedFigure.getFoldedFigure().setAllPointStateFalse();
-                    Point ps = new Point();
-                    ps.set(selectedFigure.getFoldedFigure().wireFrame_worker2.getPoint(i_closestPointId));
+                    Point ps = selectedFigure.getFoldedFigure().wireFrame_worker2.getPoint(i_closestPointId);
                     for (int i = 1; i <= selectedFigure.getFoldedFigure().wireFrame_worker2.getPointsTotal(); i++) {
                         if (ps.distance(selectedFigure.getFoldedFigure().wireFrame_worker2.getPoint(i)) < Epsilon.UNKNOWN_1EN7) {
                             selectedFigure.getFoldedFigure().wireFrame_worker1.setPointStateTrue(i);
@@ -301,7 +297,7 @@ public class MouseHandlerModifyCalculatedShape implements MouseModeHandler {
     //  ==========Deformation operation with the folded figure===========================================================================================================
     //-----------------------------------------------------------------------------------------------------uuuuuuu--
     private void foldedFigure_operation_mouse_on_2(Point p) {//Work when the left mouse button is pressed in the fold-up diagram operation
-        p_m_left_on.set(p);
+        p_m_left_on = p;
 
         selectedFigure.getWireFrame_worker_drawer2().setCamera(selectedFigure.getFoldedFigureCamera());
         selectedFigure.getWireFrame_worker_drawer2().setCam_front(selectedFigure.getFoldedFigureFrontCamera());
@@ -320,7 +316,7 @@ public class MouseHandlerModifyCalculatedShape implements MouseModeHandler {
             }
         }//i_mottomo_tikai_Tenidにpに最も近い点の番号を格納 ここまで
 
-        move_previous_selection_point.set(selectedFigure.getFoldedFigure().wireFrame_worker2.getPoint(i_closestPointId));
+        move_previous_selection_point = selectedFigure.getFoldedFigure().wireFrame_worker2.getPoint(i_closestPointId);
 
         Logger.info("i_nanini_tikai = " + i_nanini_near);
 
@@ -339,8 +335,7 @@ public class MouseHandlerModifyCalculatedShape implements MouseModeHandler {
             switch (i_point_selection) {//折り上がり図でi_mottomo_tikai_Tenidと同じ位置の点の番号を求め、cp_worker1でその番号の点を選択済みにする
                 case NONE_0:
                     selectedFigure.getFoldedFigure().setAllPointStateFalse();
-                    Point ps = new Point();
-                    ps.set(selectedFigure.getFoldedFigure().wireFrame_worker2.getPoint(i_closestPointId));
+                    Point ps = selectedFigure.getFoldedFigure().wireFrame_worker2.getPoint(i_closestPointId);
                     for (int i = 1; i <= selectedFigure.getFoldedFigure().wireFrame_worker2.getPointsTotal(); i++) {
                         if (ps.distance(selectedFigure.getFoldedFigure().wireFrame_worker2.getPoint(i)) < Epsilon.UNKNOWN_1EN7) {
                             selectedFigure.getFoldedFigure().wireFrame_worker1.setPointStateTrue(i);
@@ -370,8 +365,7 @@ public class MouseHandlerModifyCalculatedShape implements MouseModeHandler {
             switch (i_point_selection) {//折り上がり図でi_mottomo_tikai_Tenidと同じ位置の点の番号を求め、cp_worker1でその番号の点を選択済みにする
                 case NONE_0:
                     selectedFigure.getFoldedFigure().setAllPointStateFalse();
-                    Point ps = new Point();
-                    ps.set(selectedFigure.getFoldedFigure().wireFrame_worker2.getPoint(i_closestPointId));
+                    Point ps = selectedFigure.getFoldedFigure().wireFrame_worker2.getPoint(i_closestPointId);
                     for (int i = 1; i <= selectedFigure.getFoldedFigure().wireFrame_worker2.getPointsTotal(); i++) {
                         if (ps.distance(selectedFigure.getFoldedFigure().wireFrame_worker2.getPoint(i)) < Epsilon.UNKNOWN_1EN7) {
                             selectedFigure.getFoldedFigure().wireFrame_worker1.setPointStateTrue(i);

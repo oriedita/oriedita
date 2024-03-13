@@ -38,6 +38,15 @@ public interface AnimationService {
 
     Interpolation getDefaultInterpolation();
 
+    /**
+     *
+     * @param key unique string identifying the animation. animations with the same key will overwrite each other
+     * @param setter method to set the animated value
+     * @param getter method to get the animated value
+     * @param calculateEndPoint method to calculate the value that should be animated to, based on the current value (before the animation)
+     * @param time time to animate
+     * @param interpolation interpolation curve to use for the animation
+     */
     void animatePoint(String key, Consumer<Point> setter, Supplier<Point> getter, UnaryOperator<Point> calculateEndPoint, double time, Interpolation interpolation);
 
     default void animatePoint(String key, Consumer<Point> setter, Supplier<Point> getter, UnaryOperator<Point> calculateEndPoint, double time) {

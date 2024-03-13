@@ -114,7 +114,7 @@ public class PointSet implements Serializable {
         numLines = ts.getNumLines();
         numFaces = ts.getNumFaces();
         for (int i = 0; i <= numPoints; i++) {
-            points[i].set(ts.getPoint(i));                                                         //  <<<-------
+            points[i] = new Point_p(ts.getPoint(i), points[i].getPointState());                                                         //  <<<-------
             for (int j = 1; j <= ts.getPointLinking(i, 0); j++) {
                 setPointLinking(i, j, ts.getPointLinking(i, j));
             }
@@ -130,7 +130,7 @@ public class PointSet implements Serializable {
     }
 
     public void set(int i, Point tn) {
-        points[i].set(tn);
+        points[i] = new Point_p(tn, points[i].getPointState());
     }                                               //  <<<-------
 
     private int get_lineInFaceBorder_min(int i) {
@@ -185,11 +185,6 @@ public class PointSet implements Serializable {
         Polygon tk;//=new Takakukei();
         tk = makePolygon(mn);
         return tk.convex_inside(s0);
-    }
-
-    public boolean convex_inside(double d, int ib, int im) {
-        LineSegment sn = new LineSegment(points[lines[ib].getBegin()], points[lines[ib].getEnd()]);
-        return convex_inside(OritaCalc.moveParallel(sn, d), faces[im]);
     }
 
     //Make a line a line segment
@@ -300,12 +295,12 @@ public class PointSet implements Serializable {
     }
 
     public void setPoint(int i, Point tn) {
-        points[i].set(tn);
+        points[i] = new Point_p(tn, points[i].getPointState());
     }
 
     public void addPoint(Point p) {
         numPoints = numPoints + 1;
-        points[numPoints].set(p);
+        points[numPoints] = new Point_p(p);
     }   //点を加える
 
     public void addLine(int i, int j, LineColor icol) {
@@ -633,10 +628,6 @@ public class PointSet implements Serializable {
         points[i].setPointStateTrue();
     }
 
-    public void setPointStateFalse(int i) {
-        points[i].setPointStateFalse();
-    }
-
     public void setAllPointStateFalse() {
         for (int i = 1; i <= numPoints; i++) {
             points[i].setPointStateFalse();
@@ -667,15 +658,13 @@ public class PointSet implements Serializable {
 
     public void getSave(PointSave save) {
         for (int i = 1; i <= numPoints; i++) {
-            Point p = new Point();
-            p.set(points[i]);
-            save.addPoint(p);
+            save.addPoint(points[i]);
         }
     }
 
     public void setSave(PointSave save) {
         for (int i = 0; i < save.getPoints().size(); i++) {
-            points[i + 1].set(save.getPoints().get(i));
+            points[i + 1] = new Point_p(save.getPoints().get(i), points[i+1].getPointState());
         }
     }
 }

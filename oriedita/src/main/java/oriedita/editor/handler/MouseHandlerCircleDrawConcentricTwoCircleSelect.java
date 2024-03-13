@@ -22,8 +22,7 @@ public class MouseHandlerCircleDrawConcentricTwoCircleSelect extends BaseMouseHa
     }
 
     public void mousePressed(Point p0) {
-        Point p = new Point();
-        p.set(d.getCamera().TV2object(p0));
+        Point p = d.getCamera().TV2object(p0);
 
         Circle closest_circumference = new Circle(); //Circle with the circumference closest to the mouse
         closest_circumference.set(d.getClosestCircleMidpoint(p));

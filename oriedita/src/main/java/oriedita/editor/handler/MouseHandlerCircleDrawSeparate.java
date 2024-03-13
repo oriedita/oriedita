@@ -23,8 +23,7 @@ public class MouseHandlerCircleDrawSeparate extends BaseMouseHandler {
 
     //マウス操作(mouseMode==44 円 分離入力　でボタンを押したとき)時の作業----------------------------------------------------
     public void mousePressed(Point p0) {
-        Point p = new Point();
-        p.set(d.getCamera().TV2object(p0));
+        Point p = d.getCamera().TV2object(p0);
         Point closest_point = d.getClosestPoint(p);
 
         if (d.getLineStep().size() == 0) {
@@ -48,10 +47,9 @@ public class MouseHandlerCircleDrawSeparate extends BaseMouseHandler {
 
     //マウス操作(mouseMode==44 円 分離入力　でドラッグしたとき)を行う関数----------------------------------------------------
     public void mouseDragged(Point p0) {
-        Point p = new Point();
-        p.set(d.getCamera().TV2object(p0));
+        Point p = d.getCamera().TV2object(p0);
         if (d.getLineStep().size() == 2) {
-            d.getLineStep().get(1).setA(p);
+            d.getLineStep().set(1, d.getLineStep().get(1).withA(p));
             d.getCircleStep().get(0).setR(d.getLineStep().get(0).determineLength());
         }
     }
@@ -61,10 +59,9 @@ public class MouseHandlerCircleDrawSeparate extends BaseMouseHandler {
         if (d.getLineStep().size() == 2) {
             d.getCircleStep().clear();
 
-            Point p = new Point();
-            p.set(d.getCamera().TV2object(p0));
+            Point p = d.getCamera().TV2object(p0);
             Point closest_point = d.getClosestPoint(p);
-            d.getLineStep().get(1).setA(closest_point);
+            d.getLineStep().set(1, d.getLineStep().get(1).withA(closest_point));
             if (p.distance(closest_point) <= d.getSelectionDistance()) {
                 if (Epsilon.high.gt0(d.getLineStep().get(1).determineLength())) {
                     d.addLineSegment(d.getLineStep().get(1));

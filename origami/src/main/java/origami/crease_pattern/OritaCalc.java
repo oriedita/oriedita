@@ -12,9 +12,7 @@ import origami.crease_pattern.element.StraightLine;
 public class OritaCalc {
     //Find the position of the projection of the point p on the straight line t (the position on the straight line t closest to the point p).
     public static Point findProjection(StraightLine t, Point p) {
-        StraightLine t1 = new StraightLine();
-        t1.set(t);
-        t1.orthogonalize(p);//Find the straight line u1 that passes through the point p1 and is orthogonal to t.
+        StraightLine t1 = t.orthogonalize(p);//Find the straight line u1 that passes through the point p1 and is orthogonal to t.
         return findIntersection(t, t1);
     }
 
@@ -88,22 +86,10 @@ public class OritaCalc {
         return angle(s.getA(), s.getB());
     }
 
-    //A function that specifies the line segment and finds the angle between the vector ab and the x-axis. Returns -10000.0 if a = b----------------------------------------------------
-    public static double angle_difference(LineSegment s, double a) {
-        double b;//Residual when the actual angle is divided by a
-        b = angle(s) % a;
-        if (a - b < b) {
-            b = a - b;
-        }
-        return b;
-    }
-
     //A function that returns 2 if the point pa is in a rectangle containing two line segments that is orthogonal to the line segment ending at the two points p1 and p2 at the points p1 and p2.
     public static int isInside(Point p1, Point pa, Point p2) {
-        StraightLine u1 = new StraightLine(p1, p2);
-        u1.orthogonalize(p1);//Find the straight line u1 that passes through the point p1 and is orthogonal to t.
-        StraightLine u2 = new StraightLine(p1, p2);
-        u2.orthogonalize(p2);//Find the straight line u2 that passes through the point p2 and is orthogonal to t.
+        StraightLine u1 = new StraightLine(p1, p2).orthogonalize(p1);//Find the straight line u1 that passes through the point p1 and is orthogonal to t.
+        StraightLine u2 = new StraightLine(p1, p2).orthogonalize(p2);//Find the straight line u2 that passes through the point p2 and is orthogonal to t.
 
         if (u1.assignmentCalculation(pa) * u2.assignmentCalculation(pa) == 0.0) {
             return 1;
@@ -119,10 +105,8 @@ public class OritaCalc {
     // Specifically, when determining whether there is a point inside the line segment, if the point is slightly outside the line segment, it is judged to be sweet if it is inside the line segment. When drawing a crease pattern with a drawing craftsman, if you do not use this sweet one, the intersection division of the T-shaped line segment will fail
     // But for some reason, using this sweeter one for folding estimation seems to result in an infinite loop, which doesn't work. This exact elucidation is unresolved 20161105
     public static int isInside_sweet(Point p1, Point pa, Point p2) {
-        StraightLine u1 = new StraightLine(p1, p2);
-        u1.orthogonalize(p1);//Find the straight line u1 that passes through the point p1 and is orthogonal to t.
-        StraightLine u2 = new StraightLine(p1, p2);
-        u2.orthogonalize(p2);//Find the straight line u2 that passes through the point p2 and is orthogonal to t.
+        StraightLine u1 = new StraightLine(p1, p2).orthogonalize(p1);//Find the straight line u1 that passes through the point p1 and is orthogonal to t.
+        StraightLine u2 = new StraightLine(p1, p2).orthogonalize(p2);//Find the straight line u2 that passes through the point p2 and is orthogonal to t.
 
         if (u1.calculateDistance(pa) < Epsilon.SWEET_DISTANCE || u2.calculateDistance(pa) < Epsilon.SWEET_DISTANCE) {
             return 1;
@@ -162,8 +146,7 @@ public class OritaCalc {
 
         //When p1 and p2 are different
         StraightLine t = new StraightLine(p1, p2);//p1,Find the straight line t passing through p2。
-        StraightLine u = new StraightLine(p1, p2);
-        u.orthogonalize(p0);//Find a straight line u that passes through the point p0 and is orthogonal to t.
+        StraightLine u = t.orthogonalize(p0);//Find a straight line u that passes through the point p0 and is orthogonal to t.
 
         if (isInside(p1, findIntersection(t, u), p2) >= 1) {
             return t.calculateDistance(p0);
@@ -173,10 +156,8 @@ public class OritaCalc {
 
     //A function that finds the distance between the point p0 and the line segment s ----------------------------------- -----------------
     public static double determineLineSegmentDistance(Point p0, LineSegment s) {
-        Point p1 = new Point();
-        p1.set(s.getA());
-        Point p2 = new Point();
-        p2.set(s.getB());
+        Point p1 = s.getA();
+        Point p2 = s.getB();
         return determineLineSegmentDistance(p0, p1, p2);
     }
 
@@ -249,14 +230,10 @@ public class OritaCalc {
             return LineSegment.Intersection.NO_INTERSECTION_0;
         }
 
-        Point p1 = new Point();
-        p1.set(s1.getA());
-        Point p2 = new Point();
-        p2.set(s1.getB());
-        Point p3 = new Point();
-        p3.set(s2.getA());
-        Point p4 = new Point();
-        p4.set(s2.getB());
+        Point p1 = s1.getA();
+        Point p2 = s1.getB();
+        Point p3 = s2.getA();
+        Point p4 = s2.getB();
 
         StraightLine t1 = new StraightLine(p1, p2);
         StraightLine t2 = new StraightLine(p3, p4);
@@ -288,8 +265,7 @@ public class OritaCalc {
         }
 
         if (isLineSegmentParallel(t1, t2, rhei) == ParallelJudgement.NOT_PARALLEL) {    //Two straight lines are not parallel
-            Point pk = new Point();
-            pk.set(findIntersection(t1, t2));    //<<<<<<<<<<<<<<<<<<<<<<<
+            Point pk = findIntersection(t1, t2);    //<<<<<<<<<<<<<<<<<<<<<<<
             if ((isInside(p1, pk, p2) >= 1) && (isInside(p3, pk, p4) >= 1)) {
                 if (equal(p1, p3, rhit)) {
                     return LineSegment.Intersection.INTERSECTS_LSHAPE_S1_START_S2_START_21;
@@ -472,14 +448,10 @@ public class OritaCalc {
             return LineSegment.Intersection.NO_INTERSECTION_0;
         }
 
-        Point p1 = new Point();
-        p1.set(s1.getA());
-        Point p2 = new Point();
-        p2.set(s1.getB());
-        Point p3 = new Point();
-        p3.set(s2.getA());
-        Point p4 = new Point();
-        p4.set(s2.getB());
+        Point p1 = s1.getA();
+        Point p2 = s1.getB();
+        Point p3 = s2.getA();
+        Point p4 = s2.getB();
 
         StraightLine t1 = new StraightLine(p1, p2);
         StraightLine t2 = new StraightLine(p3, p4);
@@ -511,8 +483,7 @@ public class OritaCalc {
         }
 
         if (isLineSegmentParallel(t1, t2, rhei) == ParallelJudgement.NOT_PARALLEL) {    //２つの直線が平行でない
-            Point pk = new Point();
-            pk.set(findIntersection(t1, t2));    //<<<<<<<<<<<<<<<<<<<<<<<
+            Point pk = findIntersection(t1, t2);    //<<<<<<<<<<<<<<<<<<<<<<<
             if ((isInside_sweet(p1, pk, p2) >= 1)
                     && (isInside_sweet(p3, pk, p4) >= 1)) {
                 if (equal(p1, p3, rhit)) {
@@ -642,8 +613,7 @@ public class OritaCalc {
 
     //---------------------------
     public static LineSegment extendToIntersectionPoint_2(FoldLineSet foldLineSet, LineSegment s0) {//Extend s0 from point b in the opposite direction of a to the point where it intersects another polygonal line. Returns a new line // Returns the same line if it does not intersect another polygonal line
-        LineSegment add_sen = new LineSegment();
-        add_sen.set(s0);
+        LineSegment add_sen = new LineSegment(s0);
 
         Point kousa_point = new Point(1000000.0, 1000000.0); //この方法だと、エラーの原因になりうる。本当なら全線分のx_max、y_max以上の点を取ればいい。今後修正予定20161120
         double kousa_point_distance = kousa_point.distance(add_sen.getA());
@@ -657,13 +627,13 @@ public class OritaCalc {
             i_lineSegment_intersection_flg = OritaCalc.determineLineSegmentIntersectionSweet(s0, foldLineSet.get(i), Epsilon.UNKNOWN_1EN5, Epsilon.UNKNOWN_1EN5);//20180408なぜかこの行の様にs0のままだと、i_senbun_kousa_flgがおかしくならない。
 
             if (i_intersection_flg.isIntersecting() && !i_lineSegment_intersection_flg.isEndpointIntersection()) {
-                kousa_point.set(OritaCalc.findIntersection(tyoku1, foldLineSet.get(i)));
+                kousa_point = OritaCalc.findIntersection(tyoku1, foldLineSet.get(i));
                 if (kousa_point.distance(add_sen.getA()) > Epsilon.UNKNOWN_1EN5) {
                     if (kousa_point.distance(add_sen.getA()) < kousa_point_distance) {
                         double d_kakudo = OritaCalc.angle(add_sen.getA(), add_sen.getB(), add_sen.getA(), kousa_point);
                         if (d_kakudo < 1.0 || d_kakudo > 359.0) {
                             kousa_point_distance = kousa_point.distance(add_sen.getA());
-                            add_sen.set(add_sen.getA(), kousa_point);
+                            add_sen = add_sen.withB(kousa_point);
                         }
                     }
                 }
@@ -671,31 +641,31 @@ public class OritaCalc {
             }
 
             if (i_intersection_flg == StraightLine.Intersection.INCLUDED_3 && i_lineSegment_intersection_flg != LineSegment.Intersection.PARALLEL_EQUAL_31) {
-                kousa_point.set(foldLineSet.get(i).getA());
+                kousa_point = foldLineSet.get(i).getA();
                 if (kousa_point.distance(add_sen.getA()) > Epsilon.UNKNOWN_1EN5) {
                     if (kousa_point.distance(add_sen.getA()) < kousa_point_distance) {
                         double d_kakudo = OritaCalc.angle(add_sen.getA(), add_sen.getB(), add_sen.getA(), kousa_point);
                         if (d_kakudo < 1.0 || d_kakudo > 359.0) {
                             kousa_point_distance = kousa_point.distance(add_sen.getA());
-                            add_sen.set(add_sen.getA(), kousa_point);
+                            add_sen = add_sen.withB(kousa_point);
                         }
                     }
                 }
 
-                kousa_point.set(foldLineSet.get(i).getB());
+                kousa_point = foldLineSet.get(i).getB();
                 if (kousa_point.distance(add_sen.getA()) > Epsilon.UNKNOWN_1EN5) {
                     if (kousa_point.distance(add_sen.getA()) < kousa_point_distance) {
                         double d_kakudo = OritaCalc.angle(add_sen.getA(), add_sen.getB(), add_sen.getA(), kousa_point);
                         if (d_kakudo < 1.0 || d_kakudo > 359.0) {
                             kousa_point_distance = kousa_point.distance(add_sen.getA());
-                            add_sen.set(add_sen.getA(), kousa_point);
+                            add_sen = add_sen.withB(kousa_point);
                         }
                     }
                 }
             }
         }
 
-        add_sen.set(s0.getB(), add_sen.getB());
+        add_sen = add_sen.withA(s0.getB());
         return add_sen;
     }
 
@@ -703,8 +673,9 @@ public class OritaCalc {
     public static LineSegment fullExtendUntilHit(FoldLineSet foldLineSet, LineSegment s0){
         LineSegment temp = getSegmentWithLength(s0, 0.5);
         Point point = temp.getA();
-        temp.set(extendToIntersectionPoint_2(foldLineSet, temp));
-        temp.set(point, temp.determineFurthestEndpoint(point));
+        temp = extendToIntersectionPoint_2(foldLineSet, temp);
+        temp = new LineSegment(point, temp.determineFurthestEndpoint(point));
+        temp.setColor(s0.getColor());
         return temp;
     }
 
@@ -819,12 +790,9 @@ public class OritaCalc {
 
     //A function that moves a line segment in parallel to the side (returns a new line segment without changing the original line segment)
     public static LineSegment moveParallel(LineSegment s, double d) {
-        StraightLine ta = new StraightLine(s.getA(), s.getB());
-        StraightLine tb = new StraightLine(s.getA(), s.getB());
-        ta.orthogonalize(s.getA());
-        tb.orthogonalize(s.getB());
-        StraightLine td = new StraightLine(s.getA(), s.getB());
-        td.translate(d);
+        StraightLine ta = new StraightLine(s.getA(), s.getB()).orthogonalize(s.getA());
+        StraightLine tb = new StraightLine(s.getA(), s.getB()).orthogonalize(s.getB());
+        StraightLine td = new StraightLine(s.getA(), s.getB()).translate(d);
 
         return new LineSegment(findIntersection_01(ta, td), findIntersection_01(tb, td));
     }
@@ -850,15 +818,6 @@ public class OritaCalc {
 
         double bx1 = r * (Mcd * (b.getX() - a.getX()) - Msd * (b.getY() - a.getY())) + a.getX();
         double by1 = r * (Msd * (b.getX() - a.getX()) + Mcd * (b.getY() - a.getY())) + a.getY();
-
-        return new Point(bx1, by1);
-    }
-
-    //------------------------------------
-    //A function that returns a point centered on point a and based on point b with a distance of ab times r (returns a new point without changing the original point) 20161224 Unverified
-    public static Point point_double(Point a, Point b, double r) {
-        double bx1 = r * (b.getX() - a.getX()) + a.getX();
-        double by1 = r * (b.getY() - a.getY()) + a.getY();
 
         return new Point(bx1, by1);
     }
@@ -891,11 +850,15 @@ public class OritaCalc {
         return new LineSegment(ax1, ay1, bx1, by1);
     }
 
-    //A function that returns a line segment obtained by multiplying the line segment ab by r with a as the center (returns a new line segment without changing the original line segment)
-    public static LineSegment lineSegment_double(LineSegment s0, double r) {
+    /**
+     * A function that returns a line segment obtained by multiplying the line segment ab by lengthMultiplier with a as the center
+     * (returns a new line segment without changing the original line segment)
+     */
 
-        double bx1 = r * (s0.determineBX() - s0.determineAX()) + s0.determineAX();
-        double by1 = r * (s0.determineBY() - s0.determineAY()) + s0.determineAY();
+    public static LineSegment changeLength(LineSegment s0, double lengthMultiplier) {
+
+        double bx1 = lengthMultiplier * (s0.determineBX() - s0.determineAX()) + s0.determineAX();
+        double by1 = lengthMultiplier * (s0.determineBY() - s0.determineAY()) + s0.determineAY();
 
         double ax1 = s0.determineAX();
         double ay1 = s0.determineAY();
@@ -904,35 +867,27 @@ public class OritaCalc {
     }
 
     //A function to find the line segment B at the control position of the line segment A with the line segment J as the axis.
-    public static LineSegment findLineSymmetryLineSegment(LineSegment s0, LineSegment jiku) {
-        Point p_a = new Point();
-        p_a.set(s0.getA());
-        Point p_b = new Point();
-        p_b.set(s0.getB());
-        Point jiku_a = new Point();
-        jiku_a.set(jiku.getA());
-        Point jiku_b = new Point();
-        jiku_b.set(jiku.getB());
+    public static LineSegment findLineSymmetryLineSegment(LineSegment s0, LineSegment axis) {
+        Point p_a = s0.getA();
+        Point p_b = s0.getB();
+        Point axisA = axis.getA();
+        Point axisB = axis.getB();
 
-        LineSegment s1 = new LineSegment();
-        s1.set(findLineSymmetryPoint(jiku_a, jiku_b, p_a), findLineSymmetryPoint(jiku_a, jiku_b, p_b));
-
-        return s1;
+        return new LineSegment(
+                findLineSymmetryPoint(axisA, axisB, p_a),
+                findLineSymmetryPoint(axisA, axisB, p_b));
     }
 
     //A function that finds a point at the control position of point p with respect to a straight line passing through two points t1 and t2.
     public static Point findLineSymmetryPoint(Point t1, Point t2, Point p) {
         Point p1;  // p1.set(s.geta());
-        Point p2 = new Point();  // p2.set(s.getb());
 
         StraightLine s1 = new StraightLine(t1, t2);
-        StraightLine s2 = new StraightLine(t1, t2);
-
-        s2.orthogonalize(p);//Find the straight line s2 that passes through the point p and is orthogonal to s1.
+        //Find the straight line s2 that passes through the point p and is orthogonal to s1.
+        StraightLine s2 = s1.orthogonalize(p);
 
         p1 = findIntersection(s1, s2);
-        p2.set(2.0 * p1.getX() - p.getX(), 2.0 * p1.getY() - p.getY());
-        return p2;
+        return new Point(2.0 * p1.getX() - p.getX(), 2.0 * p1.getY() - p.getY());
     }
 
     //A function that keeps the angle greater than -180.0 degrees and less than 180.0 degrees
@@ -970,14 +925,10 @@ public class OritaCalc {
 
     //The angle between the line segments s1 and s2
     public static double angle(LineSegment s1, LineSegment s2) {
-        Point a = new Point();
-        a.set(s1.getA());
-        Point b = new Point();
-        b.set(s1.getB());
-        Point c = new Point();
-        c.set(s2.getA());
-        Point d = new Point();
-        d.set(s2.getB());
+        Point a = s1.getA();
+        Point b = s1.getB();
+        Point c = s2.getA();
+        Point d = s2.getB();
 
         return angle_between_0_360(angle(c, d) - angle(a, b));
     }
@@ -992,7 +943,6 @@ public class OritaCalc {
      */
     public static Point center(Point ta, Point tb, Point tc) {
         double A, B, C, XA, XB, XC, YA, YB, YC, XD, YD, XE, YE, G, H, K, L, P, Q, XN, YN;
-        Point tn = new Point();
         XA = ta.getX();
         YA = ta.getY();
         XB = tb.getX();
@@ -1016,9 +966,7 @@ public class OritaCalc {
         XN = (G * Q - K * P) / (H * K - G * L);
         YN = (L * P - H * Q) / (G * L - H * K);
 
-        tn.set(XN, YN);
-
-        return tn;
+        return new Point(XN, YN);
     }
 
     // -------------------------------
@@ -1042,8 +990,7 @@ public class OritaCalc {
                 LineSegment s_ab = new LineSegment(a, b);
                 double nx = (d_internalDivisionRatio_t * s_ab.determineAX() + d_internalDivisionRatio_s * s_ab.determineBX()) / (d_internalDivisionRatio_s + d_internalDivisionRatio_t);
                 double ny = (d_internalDivisionRatio_t * s_ab.determineAY() + d_internalDivisionRatio_s * s_ab.determineBY()) / (d_internalDivisionRatio_s + d_internalDivisionRatio_t);
-                r_point.set(nx, ny);
-                return r_point;
+                return new Point(nx, ny);
             }
         }
     }
@@ -1075,11 +1022,9 @@ public class OritaCalc {
 
     // -------------------------------
     public static LineSegment circle_to_circle_no_intersection_wo_musubu_lineSegment(Circle e1, Circle e2) {
-        StraightLine t0 = new StraightLine();
-        t0.set(circle_to_circle_no_intersection_wo_tooru_straightLine(e1, e2));
+        StraightLine t0 = circle_to_circle_no_intersection_wo_tooru_straightLine(e1, e2);
         StraightLine t1 = new StraightLine(e1.determineCenter(), e2.determineCenter());
-        Point intersection_t0t1 = new Point();
-        intersection_t0t1.set(findIntersection(t0, t1));
+        Point intersection_t0t1 = findIntersection(t0, t1);
         double length_a = t0.calculateDistance(e1.determineCenter());  //t0とt1の交点からe1の中心までの長さ
 
 //double length_a=kyori(intersection_t0t1,e1.get_tyuusin());  //t0とt1の交点からe1の中心までの長さ
@@ -1098,8 +1043,7 @@ public class OritaCalc {
     // --------qqqqqqqqqqqqqqq-----------------------
     public static LineSegment circle_to_straightLine_no_intersect_wo_connect_LineSegment(Circle e1, StraightLine t0) {
 
-        Point kouten_t0t1 = new Point();
-        kouten_t0t1.set(findProjection(t0, e1.determineCenter()));
+        Point kouten_t0t1 = findProjection(t0, e1.determineCenter());
         double length_a = t0.calculateDistance(e1.determineCenter());  //t0とt1の交点からe1の中心までの長さ
 
         double length_b = Math.sqrt(e1.getR() * e1.getR() - length_a * length_a); //t0とt1の交点からe1とe2の交点までの長さ
@@ -1139,10 +1083,8 @@ public class OritaCalc {
 
         double bai = d0 / distance(t1, t2);
 
-        LineSegment s1 = new LineSegment();
-        s1.set(lineSegment_rotate(new LineSegment(tm, t1), 90.0, bai));
-        LineSegment s2 = new LineSegment();
-        s2.set(lineSegment_rotate(new LineSegment(tm, t2), 90.0, bai));
+        LineSegment s1 = lineSegment_rotate(new LineSegment(tm, t1), 90.0, bai);
+        LineSegment s2 = lineSegment_rotate(new LineSegment(tm, t2), 90.0, bai);
 
         return new LineSegment(s1.getB(), s2.getB());
     }

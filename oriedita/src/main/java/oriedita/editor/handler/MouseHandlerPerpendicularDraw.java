@@ -27,8 +27,7 @@ public class MouseHandlerPerpendicularDraw extends BaseMouseHandlerInputRestrict
 
     //マウス操作(ボタンを押したとき)時の作業
     public void mousePressed(Point p0) {
-        Point p = new Point();
-        p.set(d.getCamera().TV2object(p0));
+        Point p = d.getCamera().TV2object(p0);
 
         //Step 1: Click a point
         if (d.getLineStep().isEmpty()) {
@@ -42,8 +41,7 @@ public class MouseHandlerPerpendicularDraw extends BaseMouseHandlerInputRestrict
         //Step 2: Click a destination line / base line
         if (d.getLineStep().size() == 1) {
 
-            LineSegment closestLineSegment = new LineSegment();
-            closestLineSegment.set(d.getClosestLineSegment(p));
+            LineSegment closestLineSegment = new LineSegment(d.getClosestLineSegment(p));
 
             if (!(OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.getSelectionDistance())) {
                 return;
@@ -63,9 +61,9 @@ public class MouseHandlerPerpendicularDraw extends BaseMouseHandlerInputRestrict
         if (d.getLineStep().size() == 4) {
             if (OritaCalc.determineLineSegmentDistance(p, d.getLineStep().get(2)) < d.getSelectionDistance() ||
                     OritaCalc.determineLineSegmentDistance(p, d.getLineStep().get(3)) < d.getSelectionDistance()) {
-                LineSegment s = d.get_moyori_step_lineSegment(p, 3, 4);
-                s.set(s.getB(), s.getA(), d.getLineColor());
-                s.set(OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), s));
+                LineSegment s = d.getClosestLineStepSegment(p, 3, 4);
+                s = new LineSegment(s.getB(), s.getA(), d.getLineColor());
+                s = OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), s);
 
                 d.addLineSegment(s);
                 d.record();
@@ -73,8 +71,7 @@ public class MouseHandlerPerpendicularDraw extends BaseMouseHandlerInputRestrict
                 return;
             }
 
-            LineSegment closestLineSegment = new LineSegment();
-            closestLineSegment.set(d.getClosestLineSegment(p));
+            LineSegment closestLineSegment = new LineSegment(d.getClosestLineSegment(p));
 
             if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.getSelectionDistance()) {
                 closestLineSegment.setColor(LineColor.GREEN_6);
@@ -106,10 +103,13 @@ public class MouseHandlerPerpendicularDraw extends BaseMouseHandlerInputRestrict
             LineSegment perpendicular = d.getLineStep().get(2); //One of the two purple indicators
             LineSegment destinationLine = d.getLineStep().get(4); //Third line
 
-            point.setB(new Point(point.determineAX() + perpendicular.determineBX() - perpendicular.determineAX(), point.determineAY() + perpendicular.determineBY() - perpendicular.determineAY()));
+            point = point.withB(new Point(
+                    point.determineAX() + perpendicular.determineBX() - perpendicular.determineAX(),
+                    point.determineAY() + perpendicular.determineBY() - perpendicular.determineAY()));
 
-            if (s_step_additional_intersection(4, point, destinationLine, d.getLineColor()) > 0) {
-                d.addLineSegment(destinationLine);
+            LineSegment newLine = s_step_additional_intersection(point, destinationLine, d.getLineColor());
+            if (newLine != null) {
+                d.addLineSegment(newLine);
                 d.record();
             }
 
@@ -117,32 +117,31 @@ public class MouseHandlerPerpendicularDraw extends BaseMouseHandlerInputRestrict
         }
     }
 
-    public int s_step_additional_intersection(int i_e_d, LineSegment s_o, LineSegment s_k, LineColor icolo) {
+    public LineSegment s_step_additional_intersection(LineSegment s_o, LineSegment s_k, LineColor icolo) {
 
         Point cross_point = new Point();
 
         if (OritaCalc.isLineSegmentParallel(s_o, s_k, Epsilon.UNKNOWN_1EN7) == OritaCalc.ParallelJudgement.PARALLEL_NOT_EQUAL) {//0=平行でない、1=平行で２直線が一致しない、2=平行で２直線が一致する
-            return -500;
+            return null;
         }
 
         if (OritaCalc.isLineSegmentParallel(s_o, s_k, Epsilon.UNKNOWN_1EN7) == OritaCalc.ParallelJudgement.PARALLEL_EQUAL) {//0=平行でない、1=平行で２直線が一致しない、2=平行で２直線が一致する
-            cross_point.set(s_k.getA());
+            cross_point = s_k.getA();
             if (OritaCalc.distance(s_o.getA(), s_k.getA()) > OritaCalc.distance(s_o.getA(), s_k.getB())) {
-                cross_point.set(s_k.getB());
+                cross_point = s_k.getB();
             }
         }
 
         if (OritaCalc.isLineSegmentParallel(s_o, s_k, Epsilon.UNKNOWN_1EN7) == OritaCalc.ParallelJudgement.NOT_PARALLEL) {//0=平行でない、1=平行で２直線が一致しない、2=平行で２直線が一致する
-            cross_point.set(OritaCalc.findIntersection(s_o, s_k));
+            cross_point = OritaCalc.findIntersection(s_o, s_k);
         }
 
         LineSegment add_sen = new LineSegment(cross_point, s_o.getA(), icolo);
 
         if (Epsilon.high.gt0(add_sen.determineLength())) {
-            d.getLineStep().get(i_e_d).set(add_sen);
-            return 1;
+            return add_sen;
         }
 
-        return -500;
+        return null;
     }
 }

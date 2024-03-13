@@ -31,9 +31,7 @@ public class AverageCoordinates {
     }
 
     public Point getAveragePoint() {
-        Point tn = new Point();
-        tn.set(getAverageX(), getAverageY());
-        return tn;
+        return new Point(getAverageX(), getAverageY());
     }
 
     public double getAverageX() {
