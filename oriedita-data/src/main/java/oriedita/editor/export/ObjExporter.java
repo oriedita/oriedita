@@ -1,7 +1,9 @@
 package oriedita.editor.export;
 
+import jakarta.enterprise.context.ApplicationScoped;
 import oriedita.editor.save.Save;
 import oriedita.editor.save.SaveProvider;
+import oriedita.editor.export.api.FileImporter;
 import origami.crease_pattern.element.Line;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
@@ -14,8 +16,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
-public class Obj {
-    public static Save importFile(File file) throws IOException {
+@ApplicationScoped
+public class ObjExporter implements FileImporter {
+    @Override
+    public Save doImport(File file) throws IOException {
         int jtok;
 
         Save save = SaveProvider.createInstance();
@@ -141,5 +145,10 @@ public class Obj {
         }
 
         return save;
+    }
+
+    @Override
+    public boolean supports(File filename) {
+        return filename.getName().endsWith(".obj");
     }
 }

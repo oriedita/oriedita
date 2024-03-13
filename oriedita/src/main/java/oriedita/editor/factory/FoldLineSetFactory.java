@@ -6,9 +6,8 @@ import jakarta.inject.Named;
 import origami.crease_pattern.FoldLineSet;
 
 /**
- * Provides specific fold line sets
+ * Provides specific named fold line sets
  */
-@ApplicationScoped
 public class FoldLineSetFactory {
     @Named("auxlines")
     @Produces

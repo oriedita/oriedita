@@ -9,3 +9,4 @@ lib/
 pom.xml.next
 pom.xml.tag
 release.properties
+.DS_Store

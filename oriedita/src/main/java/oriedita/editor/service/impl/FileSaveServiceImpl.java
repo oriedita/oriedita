@@ -1,31 +1,19 @@
 package oriedita.editor.service.impl;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Any;
+import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import org.tinylog.Logger;
-import oriedita.editor.Canvas;
 import oriedita.editor.FrameProvider;
 import oriedita.editor.canvas.CreasePattern_Worker;
-import oriedita.editor.canvas.LineStyle;
 import oriedita.editor.databinding.ApplicationModel;
 import oriedita.editor.databinding.BackgroundModel;
 import oriedita.editor.databinding.FileModel;
-import oriedita.editor.databinding.FoldedFiguresList;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.exception.FileReadingException;
-import oriedita.editor.export.Cp;
-import oriedita.editor.export.Dxf;
-import oriedita.editor.export.Fold;
-import oriedita.editor.export.Obj;
-import oriedita.editor.export.Orh;
-import oriedita.editor.export.Svg;
-import oriedita.editor.json.DefaultObjectMapper;
-import oriedita.editor.save.BaseSave;
-import oriedita.editor.save.FileVersionTester;
 import oriedita.editor.save.Save;
-import oriedita.editor.save.SaveConverter;
 import oriedita.editor.save.SaveProvider;
 import oriedita.editor.service.ApplicationModelPersistenceService;
 import oriedita.editor.service.ButtonService;
@@ -35,6 +23,8 @@ import oriedita.editor.swing.dialog.ExportDialog;
 import oriedita.editor.swing.dialog.FileDialogUtil;
 import oriedita.editor.swing.dialog.SaveTypeDialog;
 import oriedita.editor.tools.ResourceUtil;
+import oriedita.editor.export.api.FileExporter;
+import oriedita.editor.export.api.FileImporter;
 
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
@@ -49,11 +39,11 @@ import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.concurrent.ScheduledFuture;
 import java.util.List;
 import java.util.Objects;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.zip.ZipEntry;
@@ -68,16 +58,15 @@ public class FileSaveServiceImpl implements FileSaveService {
     private final FrameProvider frame;
     private final Camera creasePatternCamera;
     private final CreasePattern_Worker mainCreasePatternWorker;
-    private final Fold fold;
-    private final Canvas canvas;
     private final FileModel fileModel;
     private final ApplicationModel applicationModel;
-    private final FoldedFiguresList foldedFiguresList;
     private final ResetService resetService;
     private final ButtonService buttonService;
     private final BackgroundModel backgroundModel;
     private final SimpleDateFormat df = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss");
     private Path autoSavePath;
+    private final Iterable<FileImporter> importers;
+    private final Iterable<FileExporter> exporters;
 
     private ScheduledThreadPoolExecutor schedulePool;
     private ScheduledFuture<?> autoSaveFuture;
@@ -89,24 +78,22 @@ public class FileSaveServiceImpl implements FileSaveService {
     @Inject
     public FileSaveServiceImpl(
             FrameProvider frame,
+            @Any Instance<FileImporter> importers,
+            @Any Instance<FileExporter> exporters,
             @Named("creasePatternCamera") Camera creasePatternCamera,
             @Named("mainCreasePattern_Worker") CreasePattern_Worker mainCreasePatternWorker,
-            Fold fold,
-            Canvas canvas,
             FileModel fileModel,
             ApplicationModel applicationModel,
-            FoldedFiguresList foldedFiguresList,
             ResetService resetService,
             BackgroundModel backgroundModel,
             ButtonService buttonService) {
         this.frame = frame;
+        this.importers = importers;
+        this.exporters = exporters;
         this.creasePatternCamera = creasePatternCamera;
         this.mainCreasePatternWorker = mainCreasePatternWorker;
-        this.fold = fold;
-        this.canvas = canvas;
         this.fileModel = fileModel;
         this.applicationModel = applicationModel;
-        this.foldedFiguresList = foldedFiguresList;
         this.resetService = resetService;
         this.buttonService = buttonService;
         this.backgroundModel = backgroundModel;
@@ -281,29 +268,16 @@ public class FileSaveServiceImpl implements FileSaveService {
             return;
         }
 
-        if (exportFile.getName().endsWith(".svg")) {
-            boolean displayCpLines = applicationModel.getDisplayCpLines();
-            float lineWidth = applicationModel.determineCalculatedLineWidth();
-            int intLineWidth = applicationModel.getLineWidth();
-            LineStyle lineStyle = applicationModel.getLineStyle();
-            int pointSize = applicationModel.getPointSize();
-            boolean showText = applicationModel.getDisplayComments();
-
-            Svg.exportFile(mainCreasePatternWorker.getFoldLineSet(), mainCreasePatternWorker.getTextWorker().getTexts(), showText, mainCreasePatternWorker.getCamera(), displayCpLines, lineWidth, intLineWidth, lineStyle, pointSize, foldedFiguresList, exportFile);
-        } else if (exportFile.getName().endsWith(".png") || exportFile.getName().endsWith(".jpg") || exportFile.getName().endsWith(".jpeg")) {
-            canvas.writeImageFile(exportFile);
-        } else if (exportFile.getName().endsWith(".cp")) {
-            Cp.exportFile(mainCreasePatternWorker.getSave_for_export(), exportFile);
-        } else if (exportFile.getName().endsWith(".orh")) {
-            Orh.exportFile(mainCreasePatternWorker.getSave_for_export_with_applicationModel(), exportFile);
-        } else if (exportFile.getName().endsWith(".fold")) {
-            try {
-                fold.exportFile(mainCreasePatternWorker.getSave_for_export(), exportFile);
-            } catch (InterruptedException | FileReadingException e) {
-                e.printStackTrace();
+        try {
+            for (var exporter : exporters) {
+                if (exporter.supports(exportFile)) {
+                    exporter.doExport(mainCreasePatternWorker.getSave_for_export_with_applicationModel(), exportFile);
+                }
             }
-        } else if (exportFile.getName().endsWith(".dxf")) {
-            Dxf.exportFile(mainCreasePatternWorker.getSave_for_export(), exportFile);
+        } catch (IOException ex) {
+            Logger.error(ex, "Failed to save");
+
+            JOptionPane.showMessageDialog(frame.get(), "Failed to save, please check the logs.", "Failed to save", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -378,7 +352,7 @@ public class FileSaveServiceImpl implements FileSaveService {
 
     @Override
     public File selectExportFile() {
-        String exportType = ExportDialog.showExportDialog(frame.get());
+        String exportType = ExportDialog.showExportDialog(frame.get(), exporters);
 
         if (exportType == null) {
             return null;
@@ -419,50 +393,14 @@ public class FileSaveServiceImpl implements FileSaveService {
         Save save = null;
 
         try {
-            if (file.getName().endsWith(".ori")) {
-                try {
-                    ObjectMapper mapper = new DefaultObjectMapper();
-                    Save readSave = mapper.readValue(file, Save.class);
-                    FileVersionTester versionTester = mapper.readValue(file, FileVersionTester.class);
-                    if (readSave.getClass() == BaseSave.class && versionTester.getVersion() == null) { // happens when the version id is not recognized
-                        int result = JOptionPane.NO_OPTION;
-                        if (askOnUnknownFormat) {
-                            result = JOptionPane.showConfirmDialog(frame.get(), "This file was created using a newer version of oriedita.\n" +
-                                            "Using it with this version of oriedita might remove parts of the file.\n" +
-                                            "Do you want to open the file anyways?", "File created in newer version",
-                                    JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-                        }
-
-                        switch (result) {
-                            case JOptionPane.YES_OPTION:
-                                return SaveConverter.convertToNewestSave(readSave);
-                            case JOptionPane.NO_OPTION:
-                                return null;
-                        }
-                    }
-                    return SaveConverter.convertToNewestSave(readSave);
-                } catch (IOException e) {
-                    throw new FileReadingException(e);
+            for (var importer : this.importers) {
+                if (importer.supports(file)) {
+                    return importer.doImport(file);
                 }
             }
 
-            if (file.getName().endsWith(".obj")) {
-                save = Obj.importFile(file);
-            }
-
-            if (file.getName().endsWith(".fold")) {
-                save = fold.importFile(file);
-            }
-
-            if (file.getName().endsWith(".cp")) {
-                save = Cp.importFile(file);
-            }
-
-            if (file.getName().endsWith(".orh")) {
-                save = Orh.importFile(file);
-            }
-
-        } catch (IOException | FileReadingException e) {
+            Logger.error("No importers!");
+        } catch (IOException e) {
             Logger.error(e, "Opening file failed");
 
             JOptionPane.showMessageDialog(frame.get(), "Opening of the saved file failed", "Opening failed", JOptionPane.ERROR_MESSAGE);
@@ -508,29 +446,19 @@ public class FileSaveServiceImpl implements FileSaveService {
     }
 
     public void saveAndName2File(Save save, File fname) {
-        if (fname.getName().endsWith(".ori")) {
-            try {
-                ObjectMapper mapper = new DefaultObjectMapper();
-
-                mapper.writeValue(fname, save);
-            } catch (IOException e) {
-                Logger.error(e, "Writing .ori failed");
-            }
-        } else if (fname.getName().endsWith(".cp")) {
-            if (!save.canSaveAsCp()) {
-                JOptionPane.showMessageDialog(frame.get(), "The saved .cp file does not contain circles, text and yellow aux lines. Save as a .ori file to also save these lines.", "Warning", JOptionPane.WARNING_MESSAGE);
+        try {
+            for (var exporter : exporters) {
+                if (exporter.supports(fname)) {
+                    exporter.doExport(save, fname);
+                    return;
+                }
             }
 
-            Cp.exportFile(save, fname);
-        } else if (fname.getName().endsWith((".fold"))){
-            try {
-                fold.exportFile(mainCreasePatternWorker.getSave_for_export(), fname);
-            } catch (InterruptedException | FileReadingException e) {
-                e.printStackTrace();
-            }
-        }
-        else {
             JOptionPane.showMessageDialog(frame.get(), "Unknown file type, cannot save", "Error", JOptionPane.ERROR_MESSAGE);
+        } catch (IOException e) {
+            Logger.error(e, "Failed to save");
+
+            JOptionPane.showMessageDialog(frame.get(), "Failed to save, please check the logs.", "Failed to save", JOptionPane.ERROR_MESSAGE);
         }
     }
 

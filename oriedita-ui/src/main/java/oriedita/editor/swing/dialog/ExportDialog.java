@@ -3,6 +3,7 @@ package oriedita.editor.swing.dialog;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
+import oriedita.editor.export.api.FileExporter;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
@@ -27,6 +28,8 @@ import java.awt.Insets;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Locale;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 public class ExportDialog extends JDialog {
     private JPanel contentPane;
@@ -77,7 +80,7 @@ public class ExportDialog extends JDialog {
         }
     }
 
-    public ExportDialog(Frame owner) {
+    public ExportDialog(Frame owner, Iterable<FileExporter> exporters) {
         super(owner, "Export options", ModalityType.APPLICATION_MODAL);
         setContentPane(contentPane);
         setModal(true);
@@ -86,13 +89,9 @@ public class ExportDialog extends JDialog {
         CardLayout cardLayout = (CardLayout) optionsCard.getLayout();
 
         DefaultListModel<ExportOption> listModel = new DefaultListModel<>();
-        listModel.add(0, new ExportOption(".svg", "Scalable Vector Graphics (.svg)"));
-        listModel.add(1, new ExportOption(".png", "Portable Network Graphics (.png)"));
-        listModel.add(2, new ExportOption(".jpg", "JPEG (.jpg)"));
-        listModel.add(3, new ExportOption(".orh", "Orihime save (.orh)"));
-        listModel.add(4, new ExportOption(".cp", "Crease pattern (.cp)"));
-        listModel.add(5, new ExportOption(".fold", "FOLD (.fold)"));
-        listModel.add(6, new ExportOption(".dxf", "DXF (.dxf)"));
+        for (var exporter : StreamSupport.stream(exporters.spliterator(), false).sorted().collect(Collectors.toList())) {
+            listModel.addElement(new ExportOption(exporter.getExtension(), exporter.getName() + " (" + exporter.getExtension() + ")"));
+        }
 
         list1.setModel(listModel);
 
@@ -123,8 +122,8 @@ public class ExportDialog extends JDialog {
         setLocationRelativeTo(owner);
     }
 
-    public static String showExportDialog(Frame owner) {
-        ExportDialog exportDialog = new ExportDialog(owner);
+    public static String showExportDialog(Frame owner, Iterable<FileExporter> exporters) {
+        ExportDialog exportDialog = new ExportDialog(owner, exporters);
 
         exportDialog.setVisible(true);
 
