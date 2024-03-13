@@ -64,99 +64,34 @@ public class Polygon {
     public Intersection inside_outside_check(LineSegment s0) {
         SortingBox<Point> nbox = new SortingBox<>();
 
-        int i_intersection = 0;
-
         List<Point> intersections = new ArrayList<>();
-        Point[] intersection = new Point[vertexCount * 2 + 3];
-        for (int i = 0; i <= vertexCount * 2 + 2; i++) {
-            intersection[i] = new Point();
-        }
 
-        i_intersection++;
-        intersection[i_intersection] = s0.getA();
-
-        i_intersection++;
-        intersection[i_intersection] = s0.getB();
+        intersections.add(s0.getA());
+        intersections.add(s0.getB());
 
         for (LineSegment s : getLineSegments()) {
             LineSegment.Intersection kh = OritaCalc.determineLineSegmentIntersection(s0, s);
 
             switch (kh) {
-                case INTERSECTS_1:
-                    i_intersection++;
-                    intersection[i_intersection].set(OritaCalc.findIntersection(s0, s));
+                case INTERSECTS_1, INTERSECTS_TSHAPE_S2_VERTICAL_BAR_27, INTERSECTS_TSHAPE_S2_VERTICAL_BAR_28:
                     intersections.add(OritaCalc.findIntersection(s0, s));
                     break;
-                case INTERSECTS_TSHAPE_S2_VERTICAL_BAR_27:
-                    i_intersection++;
-                    intersection[i_intersection].set(OritaCalc.findIntersection(s0, s));
-                    intersections.add(OritaCalc.findIntersection(s0, s));
-                    break;
-                case INTERSECTS_TSHAPE_S2_VERTICAL_BAR_28:
-                    i_intersection++;
-                    intersection[i_intersection].set(OritaCalc.findIntersection(s0, s));
-                    intersections.add(OritaCalc.findIntersection(s0, s));
-                    break;
-                case PARALLEL_START_OF_S1_CONTAINS_START_OF_S2_321:
-                    i_intersection++;
-                    intersection[i_intersection].set(s.getB());
+                case PARALLEL_START_OF_S1_CONTAINS_START_OF_S2_321, PARALLEL_END_OF_S1_CONTAINS_START_OF_S2_341, PARALLEL_S1_START_OVERLAPS_S2_END_373:
                     intersections.add(new Point(s.getB()));
                     break;
-                case PARALLEL_START_OF_S1_CONTAINS_END_OF_S2_331:
-                    i_intersection++;
-                    intersection[i_intersection].set(s.getA());
+                case PARALLEL_START_OF_S1_CONTAINS_END_OF_S2_331, PARALLEL_END_OF_S1_CONTAINS_END_OF_S2_351, PARALLEL_S1_START_OVERLAPS_S2_START_374:
                     intersections.add(new Point(s.getA()));
                     break;
-                case PARALLEL_END_OF_S1_CONTAINS_START_OF_S2_341:
-                    i_intersection++;
-                    intersection[i_intersection].set(s.getB());
+                case PARALLEL_S1_INCLUDES_S2_361, PARALLEL_S1_INCLUDES_S2_362, PARALLEL_S1_END_OVERLAPS_S2_START_371:
+                    intersections.add(new Point(s.getA()));
                     intersections.add(new Point(s.getB()));
-                    break;
-                case PARALLEL_END_OF_S1_CONTAINS_END_OF_S2_351:
-                    i_intersection++;
-                    intersection[i_intersection].set(s.getA());
-                    intersections.add(new Point(s.getA()));
-                    break;
-                case PARALLEL_S1_INCLUDES_S2_361:
-                    i_intersection++;
-                    intersection[i_intersection].set(s.getA());
-                    intersections.add(new Point(s.getA()));
-                    i_intersection++;
-                    intersection[i_intersection].set(s.getB());
-                    intersections.add(new Point(s.getB()));
-                    break;
-                case PARALLEL_S1_INCLUDES_S2_362:
-                    i_intersection++;
-                    intersection[i_intersection].set(s.getA());
-                    intersections.add(new Point(s.getA()));
-                    i_intersection++;
-                    intersection[i_intersection].set(s.getB());
-                    intersections.add(new Point(s.getA()));
-                    break;
-                case PARALLEL_S1_END_OVERLAPS_S2_START_371:
-                    i_intersection++;
-                    intersection[i_intersection].set(s.getA());
-                    intersections.add(new Point(s.getA()));
-                    i_intersection++;
-                    intersection[i_intersection].set(s.getB());
-                    intersections.add(new Point(s.getB()));
-                    break;
-                case PARALLEL_S1_START_OVERLAPS_S2_END_373:
-                    i_intersection++;
-                    intersection[i_intersection].set(s.getB());
-                    intersections.add(new Point(s.getB()));
-                    break;
-                case PARALLEL_S1_START_OVERLAPS_S2_START_374:
-                    i_intersection++;
-                    intersection[i_intersection].set(s.getA());
-                    intersections.add(new Point(s.getA()));
                     break;
             }
 
         }
 
-        for (int i = 1; i <= i_intersection; i++) {
-            nbox.addByWeight(intersection[i], intersection[i].distance(s0.getA()));
+        for (var intersection : intersections) {
+            nbox.addByWeight(intersection, intersection.distance(s0.getA()));
         }
 
         // 0, when all of the line segment s0 exists outside the convex polygon (the boundary line is not considered inside)
@@ -172,31 +107,18 @@ public class Polygon {
         boolean border = false;
         boolean inside = false;
 
-        Intersection i_nai;
-
         for (int i = 1; i <= nbox.getTotal(); i++) {
-
-            i_nai = inside(nbox.getValue(i));
-            if (i_nai == Intersection.OUTSIDE) {
-                outside = true;
-            }
-            if (i_nai == Intersection.BORDER) {
-                border = true;
-            }
-            if (i_nai == Intersection.BORDER) {
-                inside = true;
+            switch (inside(nbox.getValue(i))) {
+                case OUTSIDE -> outside = true;
+                case BORDER -> border = true;
+                case INSIDE -> inside = true;
             }
 
             if (i != nbox.getTotal()) {
-                i_nai = inside(OritaCalc.midPoint(nbox.getValue(i), nbox.getValue(i + 1)));
-                if (i_nai == Intersection.OUTSIDE) {
-                    outside = true;
-                }
-                if (i_nai == Intersection.BORDER) {
-                    border = true;
-                }
-                if (i_nai == Intersection.INSIDE) {
-                    inside = true;
+                switch (inside(OritaCalc.midPoint(nbox.getValue(i), nbox.getValue(i + 1)))) {
+                    case OUTSIDE -> outside = true;
+                    case BORDER -> border = true;
+                    case INSIDE -> inside = true;
                 }
             }
         }
