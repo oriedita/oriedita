@@ -1,5 +1,6 @@
 package oriedita.editor.drawing;
 
+import org.tinylog.Logger;
 import oriedita.editor.databinding.ApplicationModel;
 import oriedita.editor.databinding.GridModel;
 import oriedita.editor.drawing.tools.Camera;
@@ -341,6 +342,7 @@ public class Grid {
         while (s_tv.determineLength()*step < minGridUnitSize){
             step *= 2;
         }
+        int halfStep = Math.max(1, step/2);
         int adjustedGridSize = gridSize*step;
         int offsetX = grid_screen_a_min % adjustedGridSize;
         int offsetY = grid_screen_b_min % adjustedGridSize;
@@ -350,8 +352,10 @@ public class Grid {
         if (offsetY < 0) {
             offsetY += adjustedGridSize;
         }
-
-        for (int i = grid_screen_a_min - offsetX; i <= grid_screen_a_max; i+= step) {
+        int alpha = Math.min(255, (int) ( (1-minGridUnitSize/(s_tv.determineLength()*step)) * 255 * 2));
+        Logger.info(alpha);
+        Color c = new Color(grid_color.getRed(), grid_color.getGreen(), grid_color.getRed(), alpha);
+        for (int i = grid_screen_a_min - offsetX; i <= grid_screen_a_max; i+= halfStep) {
             // draw vertical grid lines
             s_ob = new LineSegment(d_grid_ax * i + d_grid_bx * grid_screen_b_min + okx0,
                     d_grid_ay * i + d_grid_by * grid_screen_b_min + oky0,
@@ -359,10 +363,16 @@ public class Grid {
                     d_grid_ay * i + d_grid_by * grid_screen_b_max + oky0);
 
             s_tv = camera.object2TV(s_ob);
+            if (step != halfStep && i/halfStep % 2 != 0) {
+                g.setColor(c);
+            } else {
+                g.setColor(grid_color);
+            }
             g.drawLine((int) s_tv.determineAX(), (int) s_tv.determineAY(), (int) s_tv.determineBX(), (int) s_tv.determineBY()); //直線
-        }
 
-        for (int i = grid_screen_b_min - offsetY; i <= grid_screen_b_max; i+=step) {
+        }
+        g.setColor(grid_color);
+        for (int i = grid_screen_b_min - offsetY; i <= grid_screen_b_max; i+=halfStep) {
             // draw horizontal gridlines
             s_ob = new LineSegment(d_grid_ax * grid_screen_a_min + d_grid_bx * i + okx0,
                     d_grid_ay * grid_screen_a_min + d_grid_by * i + oky0,
@@ -370,6 +380,12 @@ public class Grid {
                     d_grid_ay * grid_screen_a_max + d_grid_by * i + oky0);
 
             s_tv = camera.object2TV(s_ob);
+            if (step != halfStep && i/halfStep % 2 != 0) {
+                g.setColor(c);
+            } else {
+                g.setColor(grid_color);
+            }
+
             g.drawLine((int) s_tv.determineAX(), (int) s_tv.determineAY(), (int) s_tv.determineBX(), (int) s_tv.determineBY()); //直線
         }
 
@@ -386,6 +402,13 @@ public class Grid {
                         i * d_grid_ay + grid_screen_b_min * d_grid_by + oky0 + (i - grid_screen_a_min) * d_grid_cy
                 );
 
+
+                if (step != halfStep && i/halfStep % 2 != 0) {
+                    g.setColor(c);
+                } else {
+                    g.setColor(grid_color);
+                }
+
                 s_tv = camera.object2TV(s_ob);
                 g.drawLine((int) s_tv.determineAX(), (int) s_tv.determineAY(), (int) s_tv.determineBX(), (int) s_tv.determineBY()); //直線
             }
@@ -401,6 +424,12 @@ public class Grid {
                         grid_screen_a_max * d_grid_ay + i * d_grid_by + oky0 + (grid_screen_b_max - i) * d_grid_cy
                 );
 
+                if (step != halfStep && i/halfStep % 2 != 0) {
+                    g.setColor(c);
+                } else {
+                    g.setColor(grid_color);
+                }
+
                 s_tv = camera.object2TV(s_ob);
                 g.drawLine((int) s_tv.determineAX(), (int) s_tv.determineAY(), (int) s_tv.determineBX(), (int) s_tv.determineBY()); //直線
             }
@@ -409,10 +438,11 @@ public class Grid {
         //Change the color of the grid line for each constant -----------------------------------------------
         if (colorChange) {
             g.setColor(gridScaleColor);
+            Color gsc= new Color(gridScaleColor.getRed(), gridScaleColor.getGreen(), gridScaleColor.getBlue(), alpha);
 
             int i_balance;//剰余
 
-            for (int i = grid_screen_a_min - offsetX; i <= grid_screen_a_max; i+= step) {
+            for (int i = grid_screen_a_min - offsetX; i <= grid_screen_a_max; i+= halfStep) {
                 i_balance = i % verticalScaleInterval;
                 if (i_balance < 0) {
                     i_balance = i_balance + verticalScaleInterval;
@@ -422,12 +452,17 @@ public class Grid {
                             d_grid_ay * i + d_grid_by * grid_screen_b_min + oky0,
                             d_grid_ax * i + d_grid_bx * grid_screen_b_max + okx0,
                             d_grid_ay * i + d_grid_by * grid_screen_b_max + oky0);
+                    if (step != halfStep && i/halfStep % 2 != 0) {
+                        g.setColor(gsc);
+                    } else {
+                        g.setColor(gridScaleColor);
+                    }
                     s_tv = camera.object2TV(s_ob);
                     g.drawLine((int) s_tv.determineAX(), (int) s_tv.determineAY(), (int) s_tv.determineBX(), (int) s_tv.determineBY()); //直線
                 }
             }
 
-            for (int i = grid_screen_b_min - offsetY; i <= grid_screen_b_max; i+= step) {
+            for (int i = grid_screen_b_min - offsetY; i <= grid_screen_b_max; i+= halfStep) {
                 i_balance = i % horizontalScaleInterval;
                 if (i_balance < 0) {
                     i_balance = i_balance + horizontalScaleInterval;
@@ -440,6 +475,11 @@ public class Grid {
                             d_grid_ax * grid_screen_a_max + d_grid_bx * i + okx0,
                             d_grid_ay * grid_screen_a_max + d_grid_by * i + oky0);
 
+                    if (step != halfStep && i/halfStep % 2 != 0) {
+                        g.setColor(gsc);
+                    } else {
+                        g.setColor(gridScaleColor);
+                    }
 
                     s_tv = camera.object2TV(s_ob);
                     g.drawLine((int) s_tv.determineAX(), (int) s_tv.determineAY(), (int) s_tv.determineBX(), (int) s_tv.determineBY()); //直線
@@ -455,17 +495,22 @@ public class Grid {
                 // ... <- ((ax+cx)*i
                 // \..
                 // .\. <- (ax*i+bx*bmin, ay*i+by*bmin)
-                for (int i = grid_screen_a_min; i <= grid_screen_a_max; i++) {
+                for (int i = grid_screen_a_min- (offsetX+offsetY); i <= grid_screen_a_max; i+= step) {
                     if ((i + grid_screen_b_min) % horizontalScaleInterval != 0) {
                         continue;
                     }
+                    if (step != halfStep && i/halfStep % 2 != 0) {
+                        g.setColor(gsc);
+                    } else {
+                        g.setColor(gridScaleColor);
+                    }
+
                     s_ob = new LineSegment(
                             i * d_grid_ax + grid_screen_b_min * d_grid_bx + okx0,
                             i * d_grid_ay + grid_screen_b_min * d_grid_by + oky0,
                             i * d_grid_ax + grid_screen_b_min * d_grid_bx + okx0 + (i - grid_screen_a_min) * d_grid_cx,
                             i * d_grid_ay + grid_screen_b_min * d_grid_by + oky0 + (i - grid_screen_a_min) * d_grid_cy
                     );
-
                     s_tv = camera.object2TV(s_ob);
                     g.drawLine((int) s_tv.determineAX(), (int) s_tv.determineAY(), (int) s_tv.determineBX(), (int) s_tv.determineBY()); //直線
                 }
@@ -473,9 +518,14 @@ public class Grid {
                 // .\.
                 // ..\
                 // ...
-                for (int i = grid_screen_b_min; i <= grid_screen_b_max; i++) {
+                for (int i = grid_screen_b_min-(offsetX+offsetY); i <= grid_screen_b_max; i+= halfStep) {
                     if ((i + grid_screen_a_max) % horizontalScaleInterval != 0) {
                         continue;
+                    }
+                    if (step != halfStep && i/halfStep % 2 != 0) {
+                        g.setColor(gsc);
+                    } else {
+                        g.setColor(gridScaleColor);
                     }
                     s_ob = new LineSegment(
                             grid_screen_a_max * d_grid_ax + i * d_grid_bx + okx0,
