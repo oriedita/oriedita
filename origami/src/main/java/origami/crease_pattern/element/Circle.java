@@ -204,14 +204,9 @@ public class Circle implements Serializable {//Used to represent point coordinat
     //A function that inverts another circle passing through (x, y) into a line segment----------------------------------------------------
     public LineSegment turnAround_CircleToLineSegment(Circle e0) {//For when the circumference of e0 passes through (x, y) // If the circumference of e0 does not pass through (x, y), the result will be strange.
         double x1 = e0.getX() - x, y1 = e0.getY() - y;
-        Point th = new Point();
-        th.set(turnAround(new Point(x1 * 2.0 + x, y1 * 2.0 + y)));
-        Point t1 = new Point();
-        t1.set(th.getX() - x, th.getY() - y);
-        Point tha = new Point();
-        tha.set(th.getX() + 3.0 * y1, th.getY() - 3.0 * x1);
-        Point thb = new Point();
-        thb.set(th.getX() - 3.0 * y1, th.getY() + 3.0 * x1);
+        Point th = turnAround(new Point(x1 * 2.0 + x, y1 * 2.0 + y));
+        Point tha = new Point(th.getX() + 3.0 * y1, th.getY() - 3.0 * x1);
+        Point thb = new Point(th.getX() - 3.0 * y1, th.getY() + 3.0 * x1);
         return new LineSegment(tha, thb, LineColor.CYAN_3);
     }
 
@@ -219,8 +214,12 @@ public class Circle implements Serializable {//Used to represent point coordinat
     //A function that inverts a line segment that does not pass through (x, y) to another circle----------------------------------------------------
     public Circle turnAround_LineSegmentToCircle(LineSegment s0) {//Weird results when s0 passes through (x, y).
         StraightLine ty = new StraightLine(s0);
-        Point t0 = new Point();
-        t0.set(ty.findProjection(determineCenter()));
+        Point t0 = ty.findProjection(determineCenter());
         return new Circle(new LineSegment(turnAround(t0), determineCenter()), LineColor.MAGENTA_5);
+    }
+
+    public void setCenter(Point point) {
+        setX(point.getX());
+        setY(point.getY());
     }
 }

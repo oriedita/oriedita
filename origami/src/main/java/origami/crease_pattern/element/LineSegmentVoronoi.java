@@ -4,8 +4,8 @@ public class LineSegmentVoronoi extends LineSegment {
     int voronoiA;
     int voronoiB;
 
-    public LineSegmentVoronoi() {
-        super();
+    public LineSegmentVoronoi(LineSegment ls) {
+        super(ls);
         voronoiA = 0;
         voronoiB = 0;
     }
@@ -28,23 +28,25 @@ public class LineSegmentVoronoi extends LineSegment {
         voronoiB = 0;
     }
 
-    public void set(LineSegmentVoronoi s) {
-        super.set(s);
+    public LineSegmentVoronoi(LineSegmentVoronoi s) {
+        super(s);
         voronoiA = s.getVoronoiA();
         voronoiB = s.getVoronoiB();
     }
 
-    @Override
-    public void reset() {
-        super.reset();
-        voronoiA = 0;
-        voronoiB = 0;
+    public LineSegmentVoronoi withB(Point b) {
+        LineSegmentVoronoi v = new LineSegmentVoronoi(this.a, b, this.color);
+
+        v.voronoiA = getVoronoiA();
+        v.voronoiB = getVoronoiB();
+        return v;
     }
 
-    public void set(Point p, Point q, LineColor ic, ActiveState ia, int v_a, int v_b) {
-        set(p, q, ic, ia);
-        voronoiA = v_a;
-        voronoiB = v_b;
+    public LineSegmentVoronoi withA(Point a) {
+        LineSegmentVoronoi v = new LineSegmentVoronoi(a, this.b, this.color);
+        v.voronoiA = getVoronoiA();
+        v.voronoiB = getVoronoiB();
+        return v;
     }
 
     public int getVoronoiA() {

@@ -23,14 +23,12 @@ public class MouseHandlerParallelDrawWidth extends BaseMouseHandler {
 
     //マウス操作(mouseMode==51 平行線　幅指定入力モード　でボタンを押したとき)時の作業----------------------------------------------------
     public void mousePressed(Point p0) {
-        Point p = new Point();
-        p.set(d.getCamera().TV2object(p0));
+        Point p = d.getCamera().TV2object(p0);
 
         Point closest_point = d.getClosestPoint(p);
 
         if ((d.getLineStep().size() == 0) && (d.getCircleStep().size() == 0)) {
-            LineSegment closestLineSegment = new LineSegment();
-            closestLineSegment.set(d.getClosestLineSegment(p));
+            LineSegment closestLineSegment = new LineSegment(d.getClosestLineSegment(p));
             if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.getSelectionDistance()) {
                 closestLineSegment.setColor(LineColor.GREEN_6);
                 d.lineStepAdd(closestLineSegment);
@@ -44,12 +42,10 @@ public class MouseHandlerParallelDrawWidth extends BaseMouseHandler {
             }
 
             d.lineStepAdd(new LineSegment(p, closest_point, LineColor.CYAN_3));
-            LineSegment segment2 = new LineSegment();
-            segment2.set(d.getLineStep().get(0));
+            LineSegment segment2 = new LineSegment(d.getLineStep().get(0));
             segment2.setColor(LineColor.PURPLE_8);
             d.lineStepAdd(segment2);
-            LineSegment segment3 = new LineSegment();
-            segment3.set(d.getLineStep().get(0));
+            LineSegment segment3 = new LineSegment(d.getLineStep().get(0));
             segment3.setColor(LineColor.PURPLE_8);
             d.lineStepAdd(segment3);
 
@@ -58,30 +54,28 @@ public class MouseHandlerParallelDrawWidth extends BaseMouseHandler {
 
 
         if ((d.getLineStep().size() == 4) && (d.getCircleStep().size() == 0)) {
-            LineSegment closest_step_lineSegment = d.get_moyori_step_lineSegment(p, 3, 4);
+            LineSegment closest_step_lineSegment = new LineSegment(d.getClosestLineStepSegment(p, 3, 4));
             d.getLineStep().remove(3);
 
-            d.getLineStep().get(2).set(closest_step_lineSegment);
+            d.getLineStep().set(2, closest_step_lineSegment);
         }
     }
 
     //マウス操作(mouseMode==51 平行線　幅指定入力モード　でドラッグしたとき)を行う関数----------------------------------------------------
     public void mouseDragged(Point p0) {
-        Point p = new Point();
-        p.set(d.getCamera().TV2object(p0));
+        Point p = d.getCamera().TV2object(p0);
         if ((d.getLineStep().size() == 4) && (d.getCircleStep().size() == 0)) {
-            d.getLineStep().get(1).setA(p);
-            d.getLineStep().get(2).set(OritaCalc.moveParallel(d.getLineStep().get(0), d.getLineStep().get(1).determineLength()));
+            d.getLineStep().set(1, d.getLineStep().get(1).withA(p));
+            d.getLineStep().set(2, OritaCalc.moveParallel(d.getLineStep().get(0), d.getLineStep().get(1).determineLength()));
             d.getLineStep().get(2).setColor(LineColor.PURPLE_8);
-            d.getLineStep().get(3).set(OritaCalc.moveParallel(d.getLineStep().get(0), -d.getLineStep().get(1).determineLength()));
+            d.getLineStep().set(3, OritaCalc.moveParallel(d.getLineStep().get(0), -d.getLineStep().get(1).determineLength()));
             d.getLineStep().get(3).setColor(LineColor.PURPLE_8);
         }
     }
 
     //マウス操作(mouseMode==51 平行線　幅指定入力モード　でボタンを離したとき)を行う関数----------------------------------------------------
     public void mouseReleased(Point p0) {
-        Point p = new Point();
-        p.set(d.getCamera().TV2object(p0));
+        Point p = d.getCamera().TV2object(p0);
         Point closest_point = d.getClosestPoint(p);
 
         if ((d.getLineStep().size() == 4) && (d.getCircleStep().size() == 0)) {
@@ -92,7 +86,7 @@ public class MouseHandlerParallelDrawWidth extends BaseMouseHandler {
                 return;
             }
 
-            d.getLineStep().get(1).setA(closest_point);
+            d.getLineStep().set(1, d.getLineStep().get(1).withA(closest_point));
 
             if (Epsilon.high.le0(d.getLineStep().get(1).determineLength())) {
                 d.getLineStep().remove(3);
@@ -100,9 +94,9 @@ public class MouseHandlerParallelDrawWidth extends BaseMouseHandler {
                 d.getLineStep().remove(1);
                 return;
             }
-            d.getLineStep().get(2).set(OritaCalc.moveParallel(d.getLineStep().get(0), d.getLineStep().get(1).determineLength()));
+            d.getLineStep().set(2, OritaCalc.moveParallel(d.getLineStep().get(0), d.getLineStep().get(1).determineLength()));
             d.getLineStep().get(2).setColor(LineColor.PURPLE_8);
-            d.getLineStep().get(3).set(OritaCalc.moveParallel(d.getLineStep().get(0), -d.getLineStep().get(1).determineLength()));
+            d.getLineStep().set(3, OritaCalc.moveParallel(d.getLineStep().get(0), -d.getLineStep().get(1).determineLength()));
             d.getLineStep().get(3).setColor(LineColor.PURPLE_8);
         }
 

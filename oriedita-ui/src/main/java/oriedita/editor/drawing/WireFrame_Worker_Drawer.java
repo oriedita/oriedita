@@ -66,16 +66,14 @@ public class WireFrame_Worker_Drawer {
     }
 
     public void drawing_pointId_with_camera(Graphics g, int i) {    //Draw a dot
-        origami.crease_pattern.element.Point tn = new origami.crease_pattern.element.Point();
-        tn.set(camera.object2TV(pointSet.getPoint(i)));
+        Point tn = camera.object2TV(pointSet.getPoint(i));
         int radius = 7;//radius
         g.setColor(Colors.get(new Color(0, 255, 255, 100)));//light blue
         g.fillOval(gx(tn.getX()) - radius, gy(tn.getY()) - radius, 2 * radius, 2 * radius); //円
     }
 
     public void drawing_pointId_with_camera_green(Graphics g, int i) {    //Draw a dot
-        origami.crease_pattern.element.Point tn = new origami.crease_pattern.element.Point();
-        tn.set(camera.object2TV(pointSet.getPoint(i)));
+        Point tn = camera.object2TV(pointSet.getPoint(i));
         int radius = 15;//半径
         g.setColor(Colors.get(new Color(0, 255, 0, 100)));//green
         g.fillOval(gx(tn.getX()) - radius, gy(tn.getY()) - radius, 2 * radius, 2 * radius); //円
@@ -83,28 +81,27 @@ public class WireFrame_Worker_Drawer {
 
     public void drawing_pointId_with_camera(Graphics g, int i, FoldedFigure.State ip4) {
         //Draw a dot
-        origami.crease_pattern.element.Point point = new origami.crease_pattern.element.Point();
-        point.set(camera.object2TV(pointSet.getPoint(i)));
         int radius = 10;//半径
         g.setColor(Colors.get(new Color(0, 255, 0, 50)));//緑色
 
+        Point point;
         switch (ip4) {
             case FRONT_0:
-                point.set(cam_front.object2TV(pointSet.getPoint(i)));
+                point = cam_front.object2TV(pointSet.getPoint(i));
                 g.fillOval(gx(point.getX()) - radius, gy(point.getY()) - radius, 2 * radius, 2 * radius); //円
 
                 break;
             case BACK_1:
-                point.set(cam_rear.object2TV(pointSet.getPoint(i)));
+                point = cam_rear.object2TV(pointSet.getPoint(i));
                 g.fillOval(gx(point.getX()) - radius, gy(point.getY()) - radius, 2 * radius, 2 * radius); //円
 
                 break;
             case BOTH_2:
             case TRANSPARENT_3:
-                point.set(cam_front.object2TV(pointSet.getPoint(i)));
+                point = cam_front.object2TV(pointSet.getPoint(i));
                 g.fillOval(gx(point.getX()) - radius, gy(point.getY()) - radius, 2 * radius, 2 * radius); //円
 
-                point.set(cam_rear.object2TV(pointSet.getPoint(i)));
+                point = cam_rear.object2TV(pointSet.getPoint(i));
                 g.fillOval(gx(point.getX()) - radius, gy(point.getY()) - radius, 2 * radius, 2 * radius); //円
 
                 break;
@@ -112,7 +109,6 @@ public class WireFrame_Worker_Drawer {
     }
 
     public void drawing_with_camera(Graphics g, FoldedFigure.State ip4) {
-        LineSegment s_tv = new LineSegment();
         g.setColor(Colors.get(Color.black));
         for (int i = 1; i <= pointSet.getNumLines(); i++) {
             if (pointSet.getColor(i) == LineColor.BLACK_0) {
@@ -125,23 +121,24 @@ public class WireFrame_Worker_Drawer {
                 g.setColor(Colors.get(Color.blue));
             }
 
+            LineSegment s_tv;
             switch (ip4) {
                 case FRONT_0:
-                    s_tv.set(cam_front.object2TV(pointSet.getLineSegmentFromLineId(i)));
+                    s_tv = cam_front.object2TV(pointSet.getLineSegmentFromLineId(i));
                     g.drawLine(gx(s_tv.determineAX()), gy(s_tv.determineAY()), gx(s_tv.determineBX()), gy(s_tv.determineBY())); //Straight line
 
                     break;
                 case BACK_1:
-                    s_tv.set(cam_rear.object2TV(pointSet.getLineSegmentFromLineId(i)));
+                    s_tv = cam_rear.object2TV(pointSet.getLineSegmentFromLineId(i));
                     g.drawLine(gx(s_tv.determineAX()), gy(s_tv.determineAY()), gx(s_tv.determineBX()), gy(s_tv.determineBY())); //Straight line
 
                     break;
                 case BOTH_2:
                 case TRANSPARENT_3:
-                    s_tv.set(cam_front.object2TV(pointSet.getLineSegmentFromLineId(i)));
+                    s_tv = cam_front.object2TV(pointSet.getLineSegmentFromLineId(i));
                     g.drawLine(gx(s_tv.determineAX()), gy(s_tv.determineAY()), gx(s_tv.determineBX()), gy(s_tv.determineBY())); //Straight line
 
-                    s_tv.set(cam_rear.object2TV(pointSet.getLineSegmentFromLineId(i)));
+                    s_tv = cam_rear.object2TV(pointSet.getLineSegmentFromLineId(i));
                     g.drawLine(gx(s_tv.determineAX()), gy(s_tv.determineAY()), gx(s_tv.determineBX()), gy(s_tv.determineBY())); //Straight line
 
                     break;
@@ -168,8 +165,7 @@ public class WireFrame_Worker_Drawer {
      * Returns the number of the closest point that is closer than a certain distance to the given coordinates. If there is no Point within a certain distance, 0 is returned.
      */
     public int closestPointId_with_camera(Point p0) {//For development view
-        Point p = new Point();
-        p.set(camera.TV2object(p0));
+        Point p = camera.TV2object(p0);
 
         return pointSet.closestPointId(p, d_h_k / camera.getCameraZoomX());
     }
@@ -178,13 +174,12 @@ public class WireFrame_Worker_Drawer {
      * Returns the number of the closest point that is closer than a certain distance to the given coordinates. If there is no Point within a certain distance, 0 is returned.
      */
     public int closestPointId_with_camera(Point p0, FoldedFigure.State ip4) {//折り上がり図用
-        Point p = new Point();
         if (ip4 == FoldedFigure.State.FRONT_0) {
-            p.set(cam_front.TV2object(p0));
+            Point p = cam_front.TV2object(p0);
             return pointSet.closestPointId(p, d_h_k / cam_front.getCameraZoomX());
         }
         if (ip4 == FoldedFigure.State.BACK_1) {
-            p.set(cam_rear.TV2object(p0));
+            Point p = cam_rear.TV2object(p0);
             return pointSet.closestPointId(p, d_h_k / cam_rear.getCameraZoomX());
         }
         return 0;
@@ -194,8 +189,7 @@ public class WireFrame_Worker_Drawer {
      * Returns the distance of the closest point that is closer than a certain distance to the given coordinates. If there is no Point within a certain distance, 1000000.0 is returned.
      */
     public double closest_point_distance_with_camera(Point p0) {//p0 is the TV coordinate. It is the distance at ob that is returned
-        Point p = new Point();
-        p.set(camera.TV2object(p0));
+        Point p = camera.TV2object(p0);
         return pointSet.closest_Point_distance(p, d_h_k / camera.getCameraZoomX());
     }
 
@@ -203,13 +197,12 @@ public class WireFrame_Worker_Drawer {
      * Returns the distance of the closest point that is closer than a certain distance to the given coordinates. If there is no Point within a certain distance, 1000000.0 is returned.
      */
     public double closest_point_distance_with_camera(Point p0, FoldedFigure.State ip4) {//p0 is the TV coordinate. It is the distance at ob that is returned
-        Point p = new Point();
         if (ip4 == FoldedFigure.State.FRONT_0) {
-            p.set(cam_front.TV2object(p0));
+            Point p = cam_front.TV2object(p0);
             return pointSet.closest_Point_distance(p, d_h_k / cam_front.getCameraZoomX());
         }
         if (ip4 == FoldedFigure.State.BACK_1) {
-            p.set(cam_rear.TV2object(p0));
+            Point p = cam_rear.TV2object(p0);
             return pointSet.closest_Point_distance(p, d_h_k / cam_rear.getCameraZoomX());
         }
         return 1000000.0;
@@ -218,24 +211,21 @@ public class WireFrame_Worker_Drawer {
     public void mDragged_selectedPoint_move_with_camera(Point ugokasu_maeno_sentaku_point, Point p0, Point p1, FoldedFigure.State ip4) {   //Move the selected point
         Point pa = new Point();
         if (ip4 == FoldedFigure.State.FRONT_0) {
-            pa.set(cam_front.TV2object(p0));
+            pa = cam_front.TV2object(p0);
         }
         if (ip4 == FoldedFigure.State.BACK_1) {
-            pa.set(cam_rear.TV2object(p0));
+            pa = cam_rear.TV2object(p0);
         }
 
         Point pb = new Point();
         if (ip4 == FoldedFigure.State.FRONT_0) {
-            pb.set(cam_front.TV2object(p1));
+            pb = cam_front.TV2object(p1);
         }
         if (ip4 == FoldedFigure.State.BACK_1) {
-            pb.set(cam_rear.TV2object(p1));
+            pb = cam_rear.TV2object(p1);
         }
 
-        Point p_u = new Point();
-        p_u.set(ugokasu_maeno_sentaku_point.getX(), ugokasu_maeno_sentaku_point.getY());
-        p_u.move(pa.other_Point_position(pb));
-
+        Point p_u = ugokasu_maeno_sentaku_point.move(pa.delta(pb));
         pointSet.statePointMove(p_u);
     }
 
@@ -244,24 +234,22 @@ public class WireFrame_Worker_Drawer {
     public void mReleased_selectedPoint_move_with_camera(Point ugokasu_maeno_sentaku_point, Point p0, Point p1, FoldedFigure.State ip4) {   // Move the selected point
         Point pa = new Point();
         if (ip4 == FoldedFigure.State.FRONT_0) {
-            pa.set(cam_front.TV2object(p0));
+            pa = cam_front.TV2object(p0);
         }
         if (ip4 == FoldedFigure.State.BACK_1) {
-            pa.set(cam_rear.TV2object(p0));
+            pa = cam_rear.TV2object(p0);
         }
 
         Point pb = new Point();
         if (ip4 == FoldedFigure.State.FRONT_0) {
-            pb.set(cam_front.TV2object(p1));
+            pb = cam_front.TV2object(p1);
         }
         if (ip4 == FoldedFigure.State.BACK_1) {
-            pb.set(cam_rear.TV2object(p1));
+            pb = cam_rear.TV2object(p1);
         }
 
 
-        Point p_u = new Point();
-        p_u.set(ugokasu_maeno_sentaku_point.getX(), ugokasu_maeno_sentaku_point.getY());
-        p_u.move(pa.other_Point_position(pb));
+        Point p_u = ugokasu_maeno_sentaku_point.move(pa.delta(pb));
 
         pointSet.statePointMove(p_u);
     }
@@ -302,8 +290,7 @@ public class WireFrame_Worker_Drawer {
      * Determine if Point p0 is inside the fold-up diagram (table)
      */
     public int isInsideFront(Point p0) {//Returns the face id where p0 is actually
-        Point p = new Point();
-        p.set(cam_front.TV2object(p0));
+        Point p = cam_front.TV2object(p0);
         return pointSet.inside(p);//If PointSet c.inside (p) = 0, it is not inside any surface, if it is negative, it is on the boundary line, if it is positive, it is inside. If there are multiple applicable surface numbers, the one with the smaller number is returned.
     }
 
@@ -311,8 +298,7 @@ public class WireFrame_Worker_Drawer {
      * Determine if Point p0 is inside the folded view (back)
      */
     public int isInsideRear(Point p0) {//Returns the face id where p0 is actually
-        Point p = new Point();
-        p.set(cam_rear.TV2object(p0));
+        Point p = cam_rear.TV2object(p0);
         return pointSet.inside(p);//If PointSet c.inside (p) = 0, it is not inside any surface, if it is negative, it is on the boundary line, if it is positive, it is inside. If there are multiple applicable surface numbers, the one with the smaller number is returned.
     }
 
@@ -320,15 +306,13 @@ public class WireFrame_Worker_Drawer {
      * Determine if Point p0 is inside the transparent view (table) that is attached to the folded view
      */
     public int isInsideTransparentFront(Point p0) {//実際にp0がある面idを返す
-        Point p = new Point();
-        p.set(cam_transparent_front.TV2object(p0));
+        Point p = cam_transparent_front.TV2object(p0);
         return pointSet.inside(p);// PointSet c.naibu(p)=0ならどの面の内部にもない、マイナスなら境界線上、正の数なら内部。該当する面番号が複数ある場合は番号の小さいほうが返される。
     }
 
     // Determine if Point p0 is inside the transparent view (back) that is attached to the folded view
     public int isInsideTransparentRear(Point p0) {//Returns the face id where p0 is actually
-        Point p = new Point();
-        p.set(cam_transparent_rear.TV2object(p0));
+        Point p = cam_transparent_rear.TV2object(p0);
         return pointSet.inside(p);//If PointSet c.inside (p) = 0, it is not inside any surface, if it is negative, it is on the boundary line, if it is positive, it is inside. If there are multiple applicable surface numbers, the one with the smaller number is returned.
     }
 

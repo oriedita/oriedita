@@ -35,13 +35,11 @@ public class MouseHandlerFlatFoldableCheck extends BaseMouseHandler {
         if (d.getLineStep().size() == 0) {
             i_O_F_C = false;
 
-            Point p = new Point();
-            p.set(d.getCamera().TV2object(p0));
+            Point p = d.getCamera().TV2object(p0);
             d.lineStepAdd(new LineSegment(p, p, LineColor.YELLOW_7));
         } else {
             if (!i_O_F_C) {
-                Point p = new Point();
-                p.set(d.getCamera().TV2object(p0));
+                Point p = d.getCamera().TV2object(p0);
                 d.lineStepAdd(new LineSegment(d.getLineStep().get(d.getLineStep().size() - 1).getB(), p, LineColor.YELLOW_7));
             }
         }
@@ -53,9 +51,8 @@ public class MouseHandlerFlatFoldableCheck extends BaseMouseHandler {
 
     public void mouseDragged(Point p0) {
         if (!i_O_F_C) {
-            Point p = new Point();
-            p.set(d.getCamera().TV2object(p0));
-            d.getLineStep().get(d.getLineStep().size() - 1).setB(p);
+            Point p = d.getCamera().TV2object(p0);
+            d.getLineStep().set(d.getLineStep().size() - 1, d.getLineStep().get(d.getLineStep().size() - 1).withB(p));
         }
     }
 
@@ -64,13 +61,13 @@ public class MouseHandlerFlatFoldableCheck extends BaseMouseHandler {
 
 
         if (!i_O_F_C) {
-            Point p = new Point();
-            p.set(d.getCamera().TV2object(p0));
-            d.getLineStep().get(d.getLineStep().size() - 1).setB(p);
+            Point p = d.getCamera().TV2object(p0);
+            d.getLineStep().set(d.getLineStep().size() - 1, d.getLineStep().get(d.getLineStep().size() - 1).withB(p));
 
 
             if (p.distance(d.getLineStep().get(0).getA()) <= d.getSelectionDistance()) {
-                d.getLineStep().get(d.getLineStep().size() - 1).setB(d.getLineStep().get(0).getA());
+                d.getLineStep().set(d.getLineStep().size() - 1,
+                        d.getLineStep().get(d.getLineStep().size() - 1).withB(d.getLineStep().get(0).getA()));
                 i_O_F_C = true;
             }
 
@@ -127,11 +124,10 @@ public class MouseHandlerFlatFoldableCheck extends BaseMouseHandler {
                 } else if (goukei_nbox.getTotal() == 0) {//外周部として選択した折線の数が0
                     i_hantai_color = LineColor.CYAN_3;
                 } else {//外周部として選択した折線の数が偶数
-                    LineSegment s_idou = new LineSegment();
-                    s_idou.set(goukei_nbox.getValue(1));
+                    LineSegment s_idou = new LineSegment(goukei_nbox.getValue(1));
 
                     for (int i = 2; i <= goukei_nbox.getTotal(); i++) {
-                        s_idou.set(OritaCalc.findLineSymmetryLineSegment(s_idou, goukei_nbox.getValue(i)));
+                        s_idou = OritaCalc.findLineSymmetryLineSegment(s_idou, goukei_nbox.getValue(i));
                     }
                     i_hantai_color = LineColor.MAGENTA_5;
                     if (OritaCalc.equal(goukei_nbox.getValue(1).getA(), s_idou.getA(), Epsilon.UNKNOWN_1EN4)) {

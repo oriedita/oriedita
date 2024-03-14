@@ -44,8 +44,7 @@ public class MouseHandlerChangeStandardFace extends BaseMouseHandler {
         FoldedFigure_Drawer selectedFigure = foldedFiguresList.getActiveItem();
 
         if (selectedFigure != null) {
-            Point p = new Point();
-            p.set(d.getCamera().TV2object(p0));
+            Point p = d.getCamera().TV2object(p0);
             int oldStartingFaceId = selectedFigure.getStartingFaceId();
 
             int newStartingFaceId = selectedFigure.getFoldedFigure().wireFrame_worker1.get().inside(p);

@@ -39,8 +39,7 @@ public class MouseHandlerDrawCreaseAngleRestricted2 extends BaseMouseHandlerInpu
 
         int i_jyunnbi_step_suu = 2;//動作の準備として人間が選択するステップ数
 
-        Point p = new Point();
-        p.set(d.getCamera().TV2object(p0));
+        Point p = d.getCamera().TV2object(p0);
 
         if (d.getLineStep().size() == 0) {    //第1段階として、点を選択
             Point closest_point = d.getClosestPoint(p);
@@ -53,7 +52,7 @@ public class MouseHandlerDrawCreaseAngleRestricted2 extends BaseMouseHandlerInpu
                 d.getLineStep().clear();
             } else if (p.distance(closest_point) < d.getSelectionDistance()) {
                 d.lineStepAdd(new LineSegment(closest_point, closest_point, LineColor.fromNumber(d.getLineStep().size() + 1)));
-                d.getLineStep().get(0).setB(d.getLineStep().get(1).getB());
+                d.getLineStep().set(0, d.getLineStep().get(0).withB(d.getLineStep().get(1).getB()));
             }
         } else if (d.getLineStep().size() == i_jyunnbi_step_suu) {    //if(i_egaki_dankai==1){        //動作の準備として人間が選択するステップ数が終わった状態で実行
             boolean i_jyun;//i_jyunは線を描くとき順番に色を変えたいとき使う
@@ -73,22 +72,20 @@ public class MouseHandlerDrawCreaseAngleRestricted2 extends BaseMouseHandlerInpu
                 for (int i = 1; i <= honsuu; i++) {
                     i_jyun = !i_jyun;
 
-                    LineSegment s = new LineSegment();
                     angle = angle + d_angle_system;
-                    s.set(OritaCalc.lineSegment_rotate(s_kiso, angle, 10.0));
+                    LineSegment s = OritaCalc.lineSegment_rotate(s_kiso, angle, 10.0);
                     s.setColor(i_jyun ? LineColor.ORANGE_4 : LineColor.GREEN_6);
                     d.lineStepAdd(s);
                 }
 
-                s_kiso.set(d.getLineStep().get(0).getB(), d.getLineStep().get(0).getA());
+                s_kiso = new LineSegment(d.getLineStep().get(0).getB(), d.getLineStep().get(0).getA());
                 angle = 0.0;
                 i_jyun = false;
                 for (int i = 1; i <= honsuu; i++) {
                     i_jyun = !i_jyun;
 
-                    LineSegment s = new LineSegment();
+                    LineSegment s = OritaCalc.lineSegment_rotate(s_kiso, angle, 10.0);
                     angle = angle + d_angle_system;
-                    s.set(OritaCalc.lineSegment_rotate(s_kiso, angle, 10.0));
                     s.setColor(i_jyun ? LineColor.ORANGE_4 : LineColor.GREEN_6);
                     d.lineStepAdd(s);
                 }
@@ -97,11 +94,10 @@ public class MouseHandlerDrawCreaseAngleRestricted2 extends BaseMouseHandlerInpu
                 double[] jk = angleSystemModel.getAngles();
 
                 LineSegment s_kiso = new LineSegment(d.getLineStep().get(0).getA(), d.getLineStep().get(0).getB());
-                double angle = 0.0;
+                double angle;
                 for (int i = 0; i < 6; i++) {
                     angle = jk[i];
-                    LineSegment s = new LineSegment();
-                    s.set(OritaCalc.lineSegment_rotate(s_kiso, angle, 10.0));
+                    LineSegment s = OritaCalc.lineSegment_rotate(s_kiso, angle, 10.0);
                     if (i == 0) {
                         s.setColor(LineColor.GREEN_6);
                     }
@@ -123,12 +119,10 @@ public class MouseHandlerDrawCreaseAngleRestricted2 extends BaseMouseHandlerInpu
                     d.lineStepAdd(s);
                 }
 
-                s_kiso.set(d.getLineStep().get(0).getB(), d.getLineStep().get(0).getA());
+                s_kiso = new LineSegment(d.getLineStep().get(0).getB(), d.getLineStep().get(0).getA());
                 for (int i = 0; i < 6; i++) {
                     angle = jk[i];
-                    LineSegment s = new LineSegment();
-
-                    s.set(OritaCalc.lineSegment_rotate(s_kiso, angle, 10.0));
+                    LineSegment s = OritaCalc.lineSegment_rotate(s_kiso, angle, 10.0);
 
                     if (i == 0) {
                         s.setColor(LineColor.GREEN_6);
@@ -156,16 +150,15 @@ public class MouseHandlerDrawCreaseAngleRestricted2 extends BaseMouseHandlerInpu
 
             int i_tikai_s_step_suu = 0;
 
-            LineSegment closestLineSegment = new LineSegment();
             //line_step[2から10]までとs_step[11から19]まで
-            closestLineSegment.set(d.get_moyori_step_lineSegment(p, 3, 2 + (honsuu)));
+            LineSegment closestLineSegment = new LineSegment(d.getClosestLineStepSegment(p, 3, 2 + (honsuu)));
             if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.getSelectionDistance()) {
                 i_tikai_s_step_suu = i_tikai_s_step_suu + 1;
                 d.lineStepAdd(closestLineSegment);
             }
 
             //line_step[2から10]までとs_step[11から19]まで
-            closestLineSegment.set(d.get_moyori_step_lineSegment(p, 2 + (honsuu) + 1, 2 + (honsuu) + (honsuu)));
+            closestLineSegment = new LineSegment(d.getClosestLineStepSegment(p, 2 + (honsuu) + 1, 2 + (honsuu) + (honsuu)));
             if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.getSelectionDistance()) {
                 i_tikai_s_step_suu = i_tikai_s_step_suu + 1;
                 d.lineStepAdd(closestLineSegment);
@@ -184,8 +177,7 @@ public class MouseHandlerDrawCreaseAngleRestricted2 extends BaseMouseHandlerInpu
 
 
                 //line_step[20]とs_step[21]の交点はoc.kouten_motome(Senbun s1,Senbun s2)で求める//２つの線分を直線とみなして交点を求める関数。線分としては交差しなくても、直線として交差している場合の交点を返す
-                Point kousa_point = new Point();
-                kousa_point.set(OritaCalc.findIntersection(d.getLineStep().get(2 + (honsuu) + (honsuu)), d.getLineStep().get(2 + (honsuu) + (honsuu) + 1)));
+                Point kousa_point = OritaCalc.findIntersection(d.getLineStep().get(2 + honsuu + honsuu), d.getLineStep().get(2 + honsuu + honsuu + 1));
 
                 LineSegment add_sen = new LineSegment(kousa_point, d.getLineStep().get(2 + (honsuu) + (honsuu)).getA());
                 add_sen.setColor(d.getLineColor());

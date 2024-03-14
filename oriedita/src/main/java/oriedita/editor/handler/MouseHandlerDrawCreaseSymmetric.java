@@ -26,8 +26,7 @@ public class MouseHandlerDrawCreaseSymmetric extends BaseMouseHandlerInputRestri
 
     //マウス操作(mouseMode==12鏡映モード　でボタンを押したとき)時の作業----------------------------------------------------
     public void mousePressed(Point p0) {
-        Point p = new Point();
-        p.set(d.getCamera().TV2object(p0));
+        Point p = d.getCamera().TV2object(p0);
 
         if (d.getLineStep().size() == 0) {    //第1段階として、点を選択
             Point closest_point = d.getClosestPoint(p);
@@ -38,8 +37,7 @@ public class MouseHandlerDrawCreaseSymmetric extends BaseMouseHandlerInputRestri
             Point closest_point = d.getClosestPoint(p);
             if (p.distance(closest_point) < d.getSelectionDistance()) {
                 d.lineStepAdd(new LineSegment(closest_point, closest_point, LineColor.fromNumber(d.getLineStep().size() + 1)));
-
-                d.getLineStep().get(0).setB(d.getLineStep().get(1).getB());
+                d.getLineStep().set(0, d.getLineStep().get(0).withB(d.getLineStep().get(1).getB()));
             } else {
                 d.getLineStep().clear();
                 canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.NORMAL_0);//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
@@ -59,7 +57,6 @@ public class MouseHandlerDrawCreaseSymmetric extends BaseMouseHandlerInputRestri
 
     //マウス操作(mouseMode==12鏡映モード　でボタンを離したとき)を行う関数----------------------------------------------------
     public void mouseReleased(Point p0) {
-        LineSegment adds = new LineSegment();
         if (d.getLineStep().size() == 2) {
             canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.NORMAL_0);//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
             int old_sousuu = d.getFoldLineSet().getTotal();
@@ -67,7 +64,7 @@ public class MouseHandlerDrawCreaseSymmetric extends BaseMouseHandlerInputRestri
             for (int i = 1; i <= d.getFoldLineSet().getTotal(); i++) {
                 LineSegment s = d.getFoldLineSet().get(i);
                 if (s.getSelected() == 2) {
-                    adds.set(OritaCalc.findLineSymmetryLineSegment(s, d.getLineStep().get(0)));
+                    LineSegment adds = OritaCalc.findLineSymmetryLineSegment(s, d.getLineStep().get(0));
                     adds.setColor(s.getColor());
 
                     d.getFoldLineSet().addLine(adds);

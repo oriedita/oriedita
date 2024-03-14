@@ -13,13 +13,13 @@ import origami.crease_pattern.element.Point;
  */
 public class Background_camera {
 
-    private final Point h1 = new Point();
-    private final Point h2 = new Point();
-    private final Point h3 = new Point();
-    private final Point h4 = new Point();
+    private Point h1 = new Point();
+    private Point h2 = new Point();
+    private Point h3 = new Point();
+    private Point h4 = new Point();
 
-    private final Point h3_obj = new Point();
-    private final Point h4_obj = new Point();
+    private Point h3_obj = new Point();
+    private Point h4_obj = new Point();
 
     private double background_width;
     private double background_height;
@@ -32,8 +32,6 @@ public class Background_camera {
     private double p_rotation_angle = 0.0;
     private double p_rotation_x = 0.0;
     private double p_rotation_y = 0.0;
-
-    private boolean locked = false;
 
     public Background_camera() {//コンストラクタ
         reset();
@@ -53,31 +51,27 @@ public class Background_camera {
     }
 
     public Point getStandardStatePosition(Point pt) {
-        Point pt1 = new Point();
-        Point pt2 = new Point();
-        Point pt3 = new Point();
 
-        pt1.set(OritaCalc.point_rotate(new Point(p_rotation_x, p_rotation_y), pt, -getAngle()));
-        pt2.set(pt1.getX() - p_idou_x, pt1.getY() - p_idou_y);
-        pt3.set(pt2.getX() / magnification, pt2.getY() / magnification);
+        Point pt1 = OritaCalc.point_rotate(new Point(p_rotation_x, p_rotation_y), pt, -getAngle());
+        Point pt2 = new Point(pt1.getX() - p_idou_x, pt1.getY() - p_idou_y);
 
-        return pt3;
+        return new Point(pt2.getX() / magnification, pt2.getY() / magnification);
     }
 
     public void set_h1(Point ht) {
-        h1.set(getStandardStatePosition(ht));
+        h1 = getStandardStatePosition(ht);
     }
 
     public void set_h2(Point ht) {
-        h2.set(getStandardStatePosition(ht));
+        h2 = getStandardStatePosition(ht);
     }
 
     public void set_h3(Point ht) {
-        h3.set(ht);
+        h3 = ht;
     }
 
     public void set_h4(Point ht) {
-        h4.set(ht);
+        h4 = ht;
     }
 
     public void parameter_calculation() {
@@ -132,17 +126,16 @@ public class Background_camera {
     }
 
     public void setLocked(boolean i_L) {
-        locked = i_L;
     }
 
     public void h3_obj_and_h4_obj_calculation() {
-        h3_obj.set(camera.TV2object(h3));
-        h4_obj.set(camera.TV2object(h4));
+        h3_obj = camera.TV2object(h3);
+        h4_obj = camera.TV2object(h4);
     }
 
     public void h3_and_h4_calculation() {
-        h3.set(camera.object2TV(h3_obj));
-        h4.set(camera.object2TV(h4_obj));
+        h3 = camera.object2TV(h3_obj);
+        h4 = camera.object2TV(h4_obj);
     }
 
     public Camera getCamera() {

@@ -139,8 +139,7 @@ public class ObjExporter implements FileImporter {
                 line.setColor(icol);
             }
 
-            LineSegment s = new LineSegment();
-            s.set(tL.get(line.getBegin()), tL.get(line.getEnd()), line.getColor());
+            LineSegment s = new LineSegment(tL.get(line.getBegin()), tL.get(line.getEnd()), line.getColor());
 
             save.addLineSegment(s.clone());
         }

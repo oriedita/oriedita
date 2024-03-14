@@ -51,7 +51,8 @@ public class PointLineMap {
             }
         }
         if (pt == null) {
-            points.add(pt = new Point(p));
+            points.add(p);
+            pt = p;
             qt.grow(1);
         }
         map.computeIfAbsent(pt, k -> new ArrayList<>()).add(l);
@@ -62,7 +63,10 @@ public class PointLineMap {
     }
 
     public List<LineSegment> getLines(Point p) {
-        return Collections.unmodifiableList(map.get(p));
+        if (map.containsKey(p)){
+            return Collections.unmodifiableList(map.get(p));
+        }
+        return Collections.emptyList();
     }
 
     public void replaceLine(LineSegment oldLine, LineSegment newLine) {

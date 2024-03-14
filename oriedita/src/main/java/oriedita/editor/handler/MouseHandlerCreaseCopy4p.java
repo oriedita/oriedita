@@ -28,8 +28,7 @@ public class MouseHandlerCreaseCopy4p extends BaseMouseHandlerInputRestricted {
 
     //マウス操作(mouseMode==32copy2p2p2p2p　でボタンを押したとき)時の作業----------------------------------------------------
     public void mousePressed(Point p0) {
-        Point p = new Point();
-        p.set(d.getCamera().TV2object(p0));
+        Point p = d.getCamera().TV2object(p0);
 
         if (d.getLineStep().size() == 0) {    //第1段階として、点を選択
             Point closestPoint = d.getClosestPoint(p);
@@ -61,8 +60,6 @@ public class MouseHandlerCreaseCopy4p extends BaseMouseHandlerInputRestricted {
 
         if (d.getLineStep().size() == 2) {    //第3段階として、点を選択
             Point closestPoint = d.getClosestPoint(p);
-
-            closestPoint.set(d.getClosestPoint(p));
             if (p.distance(closestPoint) >= d.getSelectionDistance()) {
                 d.getLineStep().clear();
                 canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.NORMAL_0);//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
@@ -76,7 +73,6 @@ public class MouseHandlerCreaseCopy4p extends BaseMouseHandlerInputRestricted {
 
         if (d.getLineStep().size() == 3) {    //第4段階として、点を選択
             Point closestPoint = d.getClosestPoint(p);
-            closestPoint.set(d.getClosestPoint(p));
             if (p.distance(closestPoint) >= d.getSelectionDistance()) {
                 d.getLineStep().clear();
                 canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.NORMAL_0);//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。

@@ -16,7 +16,7 @@ import java.util.EnumSet;
 @ApplicationScoped
 @Handles(MouseMode.MOVE_CALCULATED_SHAPE_102)
 public class MouseHandlerMoveCalculatedShape implements MouseModeHandler {
-    private final Point mouse_temp0 = new Point();//マウスの動作対応時に、一時的に使うTen
+    private Point mouse_temp0 = new Point();//マウスの動作対応時に、一時的に使うTen
 
     private final FoldedFiguresList foldedFiguresList;
     private final Camera creasePatternCamera;
@@ -68,7 +68,7 @@ public class MouseHandlerMoveCalculatedShape implements MouseModeHandler {
                 break;
         }
 
-        mouse_temp0.set(p0);
+        mouse_temp0 = p0;
     }
 
     @Override
@@ -77,23 +77,23 @@ public class MouseHandlerMoveCalculatedShape implements MouseModeHandler {
 
         switch (canvasModel.getMouseInCpOrFoldedFigure()) {
             case CREASE_PATTERN_0:
-                creasePatternCamera.displayPositionMove(mouse_temp0.other_Point_position(p0));
+                creasePatternCamera.displayPositionMove(mouse_temp0.delta(p0));
                 break;
             case FOLDED_FRONT_1:
-                selectedFigure.getFoldedFigureFrontCamera().displayPositionMove(mouse_temp0.other_Point_position(p0));
+                selectedFigure.getFoldedFigureFrontCamera().displayPositionMove(mouse_temp0.delta(p0));
                 break;
             case FOLDED_BACK_2:
-                selectedFigure.getFoldedFigureRearCamera().displayPositionMove(mouse_temp0.other_Point_position(p0));
+                selectedFigure.getFoldedFigureRearCamera().displayPositionMove(mouse_temp0.delta(p0));
                 break;
             case TRANSPARENT_FRONT_3:
-                selectedFigure.getTransparentFrontCamera().displayPositionMove(mouse_temp0.other_Point_position(p0));
+                selectedFigure.getTransparentFrontCamera().displayPositionMove(mouse_temp0.delta(p0));
                 break;
             case TRANSPARENT_BACK_4:
-                selectedFigure.getTransparentRearCamera().displayPositionMove(mouse_temp0.other_Point_position(p0));
+                selectedFigure.getTransparentRearCamera().displayPositionMove(mouse_temp0.delta(p0));
                 break;
         }
 
-        mouse_temp0.set(p0);//mouse_temp0は一時的に使うTen、mouse_temp0.tano_Ten_iti(p)はmouse_temp0から見たpの位置
+        mouse_temp0 = p0;//mouse_temp0は一時的に使うTen、mouse_temp0.tano_Ten_iti(p)はmouse_temp0から見たpの位置
     }
 
     @Override

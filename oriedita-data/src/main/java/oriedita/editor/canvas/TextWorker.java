@@ -74,13 +74,13 @@ public class TextWorker {
         // Selection box are rectangles whose sides are parallel to the x/y axes
         if (pa.getX() > pb.getX()) {
             double tmp = pa.getX();
-            pa.setX(pb.getX());
-            pb.setX(tmp);
+            pa = pa.withX(pb.getX());
+            pb = pb.withX(tmp);
         }
         if (pa.getY() > pb.getY()) {
             double tmp = pa.getY();
-            pa.setY(pb.getY());
-            pb.setY(tmp);
+            pa = pa.withY(pb.getY());
+            pb = pb.withY(tmp);
         }
         List<Text> toRemove = new ArrayList<>();
 

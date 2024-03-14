@@ -67,18 +67,10 @@ public class DrawingUtil {
 
     //Draw a cross around the designated Point
     public static void cross(Graphics g, Point t, double length, double width, LineColor icolor) {
-        Point tx0 = new Point();
-        Point tx1 = new Point();
-        Point ty0 = new Point();
-        Point ty1 = new Point();
-        tx0.setX(t.getX() - length);
-        tx0.setY(t.getY());
-        tx1.setX(t.getX() + length);
-        tx1.setY(t.getY());
-        ty0.setX(t.getX());
-        ty0.setY(t.getY() - length);
-        ty1.setX(t.getX());
-        ty1.setY(t.getY() + length);
+        Point tx0 = new Point(t.getX() - length, t.getY());
+        Point tx1 = new Point(t.getX() + length, t.getY());
+        Point ty0 = new Point(t.getX(), t.getY() - length);
+        Point ty1 = new Point(t.getX(), t.getY() + length);
         widthLine(g, tx0, tx1, width, icolor);
         widthLine(g, ty0, ty1, width, icolor);
     }
@@ -107,13 +99,6 @@ public class DrawingUtil {
     //Draw a pointing diagram around the specified Point
     public static void pointingAt3(Graphics g, LineSegment s_tv) {
         g.setColor(Colors.get(new Color(255, 200, 0, 50)));
-        g.drawLine((int) s_tv.determineAX(), (int) s_tv.determineAY(), (int) s_tv.determineBX(), (int) s_tv.determineBY()); //直線
-    }
-
-    //Draw a pointing diagram around the specified Point
-    public static void pointingAt4(Graphics g, LineSegment s_tv, int color_transparency) {
-        g.setColor(Colors.get(new Color(255, 0, 147, color_transparency)));
-
         g.drawLine((int) s_tv.determineAX(), (int) s_tv.determineAY(), (int) s_tv.determineBX(), (int) s_tv.determineBY()); //直線
     }
 
@@ -157,13 +142,12 @@ public class DrawingUtil {
     public static void drawSelectLine(Graphics g, LineSegment s, Camera camera) {
         g.setColor(Colors.get(Color.green));
 
-        LineSegment s_tv = new LineSegment();
-        s_tv.set(camera.object2TV(s));
+        LineSegment s_tv = camera.object2TV(s);
 
-        Point a = new Point();
-        Point b = new Point();
-        a.set(s_tv.determineAX() + Epsilon.UNKNOWN_1EN6, s_tv.determineAY() + Epsilon.UNKNOWN_1EN6);
-        b.set(s_tv.determineBX() + Epsilon.UNKNOWN_1EN6, s_tv.determineBY() + Epsilon.UNKNOWN_1EN6);//なぜEpsilon.UNKNOWN_0000001を足すかというと,ディスプレイに描画するとき元の折線が新しい折線に影響されて動いてしまうのを防ぐため
+        //なぜEpsilon.UNKNOWN_0000001を足すかというと,ディスプレイに描画するとき元の折線が新しい折線に影響されて動いてしまうのを防ぐため
+        // TODO: check if adding 1e-6 is really necessary
+        Point a = new Point(s_tv.determineAX() + Epsilon.UNKNOWN_1EN6, s_tv.determineAY() + Epsilon.UNKNOWN_1EN6);
+        Point b = new Point(s_tv.determineBX() + Epsilon.UNKNOWN_1EN6, s_tv.determineBY() + Epsilon.UNKNOWN_1EN6);
 
         g.drawLine((int) a.getX(), (int) a.getY(), (int) b.getX(), (int) b.getY()); //直線
     }
@@ -173,12 +157,9 @@ public class DrawingUtil {
 
         Graphics2D g2 = (Graphics2D) g;
 
-        LineSegment s_tv = new LineSegment();
-        s_tv.set(camera.object2TV(as));
-        Point a = new Point();
-        Point b = new Point();
-        a.set(s_tv.determineAX() + Epsilon.UNKNOWN_1EN6, s_tv.determineAY() + Epsilon.UNKNOWN_1EN6);
-        b.set(s_tv.determineBX() + Epsilon.UNKNOWN_1EN6, s_tv.determineBY() + Epsilon.UNKNOWN_1EN6);//なぜEpsilon.UNKNOWN_0000001を足すかというと,ディスプレイに描画するとき元の折線が新しい折線に影響されて動いてしまうのを防ぐため
+        LineSegment s_tv = camera.object2TV(as);
+        Point a = new Point(s_tv.determineAX() + Epsilon.UNKNOWN_1EN6, s_tv.determineAY() + Epsilon.UNKNOWN_1EN6);
+        Point b = new Point(s_tv.determineBX() + Epsilon.UNKNOWN_1EN6, s_tv.determineBY() + Epsilon.UNKNOWN_1EN6);//なぜEpsilon.UNKNOWN_0000001を足すかというと,ディスプレイに描画するとき元の折線が新しい折線に影響されて動いてしまうのを防ぐため
 
         g.drawLine((int) a.getX(), (int) a.getY(), (int) b.getX(), (int) b.getY()); //直線
 
@@ -217,8 +198,7 @@ public class DrawingUtil {
     }
 
     public static void drawCircle(Graphics g, Circle circle, Camera camera, float lineWidth, int pointSize) {
-        Point a = new Point();
-        a.set(camera.object2TV(circle.determineCenter()));//この場合のaは描画座標系での円の中心の位置
+        Point a = camera.object2TV(circle.determineCenter());//この場合のaは描画座標系での円の中心の位置
 
         Graphics2D g2 = (Graphics2D) g;
         g2.setStroke(new BasicStroke(lineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));//基本指定A　　線の太さや線の末端の形状
@@ -233,7 +213,7 @@ public class DrawingUtil {
         double d_width = circle.getR() * camera.getCameraZoomX();//d_habaは描画時の円の半径。なお、camera.get_camera_bairitsu_x()＝camera.get_camera_bairitsu_y()を前提としている。
         g2.draw(new Ellipse2D.Double(a.getX() - d_width, a.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
 
-        a.set(camera.object2TV(circle.determineCenter()));//この場合のaは描画座標系での円の中心の位置
+        a = camera.object2TV(circle.determineCenter());//この場合のaは描画座標系での円の中心の位置
 
         g2.setStroke(new BasicStroke(lineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));//基本指定A　　線の太さや線の末端の形状
         g.setColor(Colors.get(new Color(0, 255, 255, 255)));
@@ -269,12 +249,9 @@ public class DrawingUtil {
             g.setColor(s.getCustomizedColor());
         }
 
-        LineSegment s_tv = new LineSegment();
-        s_tv.set(camera.object2TV(s));
-        Point a = new Point();
-        Point b = new Point();
-        a.set(s_tv.determineAX() + Epsilon.UNKNOWN_1EN6, s_tv.determineAY() + Epsilon.UNKNOWN_1EN6);
-        b.set(s_tv.determineBX() + Epsilon.UNKNOWN_1EN6, s_tv.determineBY() + Epsilon.UNKNOWN_1EN6);//なぜEpsilon.UNKNOWN_0000001を足すかというと,ディスプレイに描画するとき元の折線が新しい折線に影響されて動いてしまうのを防ぐため
+        LineSegment s_tv = camera.object2TV(s);
+        Point a = new Point(s_tv.determineAX() + Epsilon.UNKNOWN_1EN6, s_tv.determineAY() + Epsilon.UNKNOWN_1EN6);
+        Point b = new Point(s_tv.determineBX() + Epsilon.UNKNOWN_1EN6, s_tv.determineBY() + Epsilon.UNKNOWN_1EN6);//なぜEpsilon.UNKNOWN_0000001を足すかというと,ディスプレイに描画するとき元の折線が新しい折線に影響されて動いてしまうのを防ぐため
 
         g.drawLine((int) a.getX(), (int) a.getY(), (int) b.getX(), (int) b.getY()); //直線
 
@@ -309,12 +286,9 @@ public class DrawingUtil {
         setColor(g, s.getColor());
         g2.setStroke(new BasicStroke(lineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));//基本指定A　　線の太さや線の末端の形状
 
-        LineSegment s_tv = new LineSegment();
-        s_tv.set(camera.object2TV(s));
-        Point a = new Point();
-        Point b = new Point();
-        a.set(s_tv.determineAX() + Epsilon.UNKNOWN_1EN6, s_tv.determineAY() + Epsilon.UNKNOWN_1EN6);
-        b.set(s_tv.determineBX() + Epsilon.UNKNOWN_1EN6, s_tv.determineBY() + Epsilon.UNKNOWN_1EN6);//The reason for adding Epsilon.UNKNOWN_0000001 is to prevent the original fold line from being affected by the new fold line when drawing on the display.
+        LineSegment s_tv = camera.object2TV(s);
+        Point a = new Point(s_tv.determineAX() + Epsilon.UNKNOWN_1EN6, s_tv.determineAY() + Epsilon.UNKNOWN_1EN6);
+        Point b = new Point(s_tv.determineBX() + Epsilon.UNKNOWN_1EN6, s_tv.determineBY() + Epsilon.UNKNOWN_1EN6);//The reason for adding Epsilon.UNKNOWN_0000001 is to prevent the original fold line from being affected by the new fold line when drawing on the display.
 
 
         g.drawLine((int) a.getX(), (int) a.getY(), (int) b.getX(), (int) b.getY()); //直線
@@ -354,12 +328,9 @@ public class DrawingUtil {
     public static void drawLineCandidate(Graphics g, LineSegment s, Camera camera, int pointSize) {
         setColor(g, s.getColor());
 
-        LineSegment s_tv = new LineSegment();
-        s_tv.set(camera.object2TV(s));
-        Point a = new Point();
-        Point b = new Point();
-        a.set(s_tv.determineAX() + Epsilon.UNKNOWN_1EN6, s_tv.determineAY() + Epsilon.UNKNOWN_1EN6);
-        b.set(s_tv.determineBX() + Epsilon.UNKNOWN_1EN6, s_tv.determineBY() + Epsilon.UNKNOWN_1EN6);//なぜEpsilon.UNKNOWN_0000001を足すかというと,ディスプレイに描画するとき元の折線が新しい折線に影響されて動いてしまうのを防ぐため
+        LineSegment s_tv = camera.object2TV(s);
+        Point a = new Point(s_tv.determineAX() + Epsilon.UNKNOWN_1EN6, s_tv.determineAY() + Epsilon.UNKNOWN_1EN6);
+        Point b = new Point(s_tv.determineBX() + Epsilon.UNKNOWN_1EN6, s_tv.determineBY() + Epsilon.UNKNOWN_1EN6);//なぜEpsilon.UNKNOWN_0000001を足すかというと,ディスプレイに描画するとき元の折線が新しい折線に影響されて動いてしまうのを防ぐため
 
         g.drawLine((int) a.getX(), (int) a.getY(), (int) b.getX(), (int) b.getY()); //直線
         int i_width = pointSize + 5;
@@ -388,10 +359,8 @@ public class DrawingUtil {
     public static void drawCircleStep(Graphics g, Circle c, Camera camera) {
         Graphics2D g2 = (Graphics2D) g;
         setColor(g, c.getColor());
-        Point a = new Point();
-
-        a.set(camera.object2TV(c.determineCenter()));//この場合のs_tvは描画座標系での円の中心の位置
-        a.set(a.getX() + Epsilon.UNKNOWN_1EN6, a.getY() + Epsilon.UNKNOWN_1EN6);//なぜEpsilon.UNKNOWN_0000001を足すかというと,ディスプレイに描画するとき元の折線が新しい折線に影響されて動いてしまうのを防ぐため
+        Point a = camera.object2TV(c.determineCenter());//この場合のs_tvは描画座標系での円の中心の位置
+        a = new Point(a.getX() + Epsilon.UNKNOWN_1EN6, a.getY() + Epsilon.UNKNOWN_1EN6);//なぜEpsilon.UNKNOWN_0000001を足すかというと,ディスプレイに描画するとき元の折線が新しい折線に影響されて動いてしまうのを防ぐため
 
         double d_width = c.getR() * camera.getCameraZoomX();//d_habaは描画時の円の半径。なお、camera.get_camera_bairitsu_x()＝camera.get_camera_bairitsu_y()を前提としている。
 
@@ -406,10 +375,8 @@ public class DrawingUtil {
 
     public static void drawCpLine(Graphics g, LineSegment s, Camera camera, LineStyle lineStyle, float lineWidth, int pointSize, int clipX, int clipY) {
 
-        Point a = camera.object2TV(s.getA());
-        a.move(defaultMove);
-        Point b = camera.object2TV(s.getB());
-        b.move(defaultMove);
+        Point a = camera.object2TV(s.getA()).move(defaultMove);
+        Point b = camera.object2TV(s.getB()).move(defaultMove);
 
         int aflag = cohenSutherlandRegion(clipX, clipY, a);
         if (aflag != CENTER) {

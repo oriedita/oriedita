@@ -23,8 +23,7 @@ public class MouseHandlerDisplayLengthBetweenPoints2 extends BaseMouseHandlerInp
 
     //マウス操作(ボタンを押したとき)時の作業
     public void mousePressed(Point p0) {
-        Point p = new Point();
-        p.set(d.getCamera().TV2object(p0));
+        Point p = d.getCamera().TV2object(p0);
         Point closest_point = d.getClosestPoint(p);
         if (p.distance(closest_point) < d.getSelectionDistance()) {
             d.lineStepAdd(new LineSegment(closest_point, closest_point, d.getLineColor()));

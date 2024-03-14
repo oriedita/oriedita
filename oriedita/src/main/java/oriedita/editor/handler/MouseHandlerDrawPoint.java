@@ -21,16 +21,14 @@ public class MouseHandlerDrawPoint extends BaseMouseHandler {
 
     //マウス操作(ボタンを押したとき)時の作業
     public void mousePressed(Point p0) {
-        Point p = new Point();
-        p.set(d.getCamera().TV2object(p0));
+        Point p = d.getCamera().TV2object(p0);
         LineSegment mtsLineSegment = d.getFoldLineSet().closestLineSegmentSearch(p);
         LineSegment mts = new LineSegment(mtsLineSegment.getA(), mtsLineSegment.getB());//mtsは点pに最も近い線分
 
         if (OritaCalc.determineLineSegmentDistance(p, mts) < d.getSelectionDistance()) {
             //直線t上の点pの影の位置（点pと最も近い直線t上の位置）を求める。public Ten oc.kage_motome(Tyokusen t,Ten p){}
             //線分を含む直線を得る public Tyokusen oc.Senbun2Tyokusen(Senbun s){}
-            Point pk = new Point();
-            pk.set(OritaCalc.findProjection(OritaCalc.lineSegmentToStraightLine(mts), p));//pkは点pの（線分を含む直線上の）影
+            Point pk = OritaCalc.findProjection(OritaCalc.lineSegmentToStraightLine(mts), p);//pkは点pの（線分を含む直線上の）影
 
             //点paが、二点p1,p2を端点とする線分に点p1と点p2で直行する、2つの線分を含む長方形内にある場合は2を返す関数	public int oc.hakononaka(Ten p1,Ten pa,Ten p2){}
 
