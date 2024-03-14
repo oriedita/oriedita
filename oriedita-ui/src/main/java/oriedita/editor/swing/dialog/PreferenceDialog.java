@@ -428,35 +428,32 @@ public class PreferenceDialog extends JDialog {
         Action restoreHotkeyAction = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                boolean isConflict = false;
-
                 // Get default keystroke string
                 String defaultKeyStrokeString = ResourceUtil.getDefaultHotkeyBundleString(key);
                 KeyStroke keyStroke = KeyStroke.getKeyStroke(defaultKeyStrokeString);
 
-                assert defaultKeyStrokeString != null;
                 // If string matches the current string of an action and not empty
                 // send error message
+                assert defaultKeyStrokeString != null;
                 String conflictingAction = buttonService.getActionFromKeystroke(keyStroke);
                 if (keyStroke != null
                         && buttonService.getActionFromKeystroke(keyStroke) != null
                         && !Objects.equals(buttonService.getActionFromKeystroke(keyStroke), key)) {
                     JOptionPane.showMessageDialog(null, "Default has conflict with ".concat(conflictingAction), "Conflict", JOptionPane.ERROR_MESSAGE);
-                    isConflict = true;
+                    return;
                 }
 
                 // else update the action to default
-                if (!isConflict) {
-                    ResourceUtil.updateBundleKey("hotkey", key, defaultKeyStrokeString.isEmpty() ? "" : defaultKeyStrokeString);
-                    String ksString = KeyStrokeUtil.toString(keyStroke);
-                    keystrokeButton.setText(ksString.isEmpty() ? " " : ksString);
-                    buttonService.setKeyStroke(keyStroke, key);
-                }
+                ResourceUtil.updateBundleKey("hotkey", key, defaultKeyStrokeString.isEmpty() ? "" : defaultKeyStrokeString);
+                String ksString = KeyStrokeUtil.toString(keyStroke);
+                keystrokeButton.setText(ksString.isEmpty() ? " " : ksString);
+                buttonService.setKeyStroke(keyStroke, key);
             }
         };
 
         JButton button = new JButton(restoreHotkeyAction);
-        button.setIcon(new GlyphIcon("\ue02e", button.getForeground()));
+        String restoreIcon = "\ue02e";
+        button.setIcon(new GlyphIcon(restoreIcon, button.getForeground()));
 
         return button;
     }

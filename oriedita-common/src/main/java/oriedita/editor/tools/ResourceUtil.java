@@ -145,7 +145,7 @@ public class ResourceUtil {
 
             properties.store(Files.newOutputStream(bundleLocation), null);
         } catch (IOException e) {
-            Logger.error(e, "Writing bundle key failed");
+            Logger.error(e, "Clearing bundle failed");
         }
     }
 }
