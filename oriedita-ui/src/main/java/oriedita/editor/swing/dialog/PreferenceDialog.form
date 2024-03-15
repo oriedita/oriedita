@@ -2,12 +2,12 @@
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="oriedita.editor.swing.dialog.PreferenceDialog">
   <grid id="cbd77" binding="contentPane" layout-manager="GridBagLayout">
     <constraints>
-      <xy x="13" y="12" width="540" height="610"/>
+      <xy x="13" y="12" width="550" height="700"/>
     </constraints>
     <properties>
       <focusTraversalPolicyProvider value="true"/>
-      <minimumSize width="540" height="610"/>
-      <preferredSize width="540" height="610"/>
+      <minimumSize width="550" height="610"/>
+      <preferredSize width="550" height="610"/>
     </properties>
     <border type="none"/>
     <children>

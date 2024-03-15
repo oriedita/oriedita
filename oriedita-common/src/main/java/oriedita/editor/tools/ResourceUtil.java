@@ -100,6 +100,17 @@ public class ResourceUtil {
         return null;
     }
 
+    public static String getDefaultHotkeyBundleString(String key){
+        ResourceBundle jarBundle = null;
+        try { jarBundle = ResourceBundle.getBundle("hotkey"); }
+        catch (MissingResourceException ignored) {}
+
+        if (jarBundle != null && jarBundle.containsKey(key)) { return jarBundle.getString(key); }
+
+        Logger.debug(key + " does not exist (DEFAULT)");
+        return null;
+    }
+
     public static void updateBundleKey(String bundleName, String key, String value) {
         try {
             Path bundleLocation = getAppDir().resolve(bundleName + ".properties");
@@ -118,6 +129,23 @@ public class ResourceUtil {
             properties.store(Files.newOutputStream(bundleLocation), null);
         } catch (IOException e) {
             Logger.error(e, "Writing bundle key failed");
+        }
+    }
+
+    public static void clearBundle(String bundleName){
+        try {
+            Path bundleLocation = getAppDir().resolve(bundleName + ".properties");
+            if (!bundleLocation.toFile().exists() && !bundleLocation.toFile().createNewFile()) {
+                throw new IOException("Could not create file");
+            }
+            Properties properties = new Properties();
+            properties.load(Files.newInputStream(bundleLocation));
+
+            properties.clear();
+
+            properties.store(Files.newOutputStream(bundleLocation), null);
+        } catch (IOException e) {
+            Logger.error(e, "Clearing bundle failed");
         }
     }
 }

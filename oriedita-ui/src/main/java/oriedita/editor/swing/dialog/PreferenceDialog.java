@@ -20,6 +20,7 @@ import oriedita.editor.service.FileSaveService;
 import oriedita.editor.service.LookAndFeelService;
 import oriedita.editor.swing.CollapsiblePanel;
 import oriedita.editor.swing.component.ColorIcon;
+import oriedita.editor.swing.component.GlyphIcon;
 import oriedita.editor.tools.KeyStrokeUtil;
 import oriedita.editor.tools.ResourceUtil;
 
@@ -398,7 +399,8 @@ public class PreferenceDialog extends JDialog {
         if (result == JOptionPane.YES_OPTION) {
             applicationModel.restorePrefDefaults();
             foldedFigureModel.restorePrefDefaults();
-            dispose();
+            ResourceUtil.clearBundle("hotkey");
+            buttonService.loadAllKeyStrokes();
         }
     }
 
@@ -420,6 +422,40 @@ public class PreferenceDialog extends JDialog {
         buttonService.setIcon(icon, key);
 
         return icon;
+    }
+
+    private JButton getRestoreHotkeyButton(String key, JButton keystrokeButton) {
+        Action restoreHotkeyAction = new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Get default keystroke string
+                String defaultKeyStrokeString = ResourceUtil.getDefaultHotkeyBundleString(key);
+                KeyStroke keyStroke = KeyStroke.getKeyStroke(defaultKeyStrokeString);
+
+                // If string matches the current string of an action and not empty
+                // send error message
+                assert defaultKeyStrokeString != null;
+                String conflictingAction = buttonService.getActionFromKeystroke(keyStroke);
+                if (keyStroke != null
+                        && buttonService.getActionFromKeystroke(keyStroke) != null
+                        && !Objects.equals(buttonService.getActionFromKeystroke(keyStroke), key)) {
+                    JOptionPane.showMessageDialog(null, "Default has conflict with ".concat(conflictingAction), "Conflict", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                // else update the action to default
+                ResourceUtil.updateBundleKey("hotkey", key, defaultKeyStrokeString.isEmpty() ? "" : defaultKeyStrokeString);
+                String ksString = KeyStrokeUtil.toString(keyStroke);
+                keystrokeButton.setText(ksString.isEmpty() ? " " : ksString);
+                buttonService.setKeyStroke(keyStroke, key);
+            }
+        };
+
+        JButton button = new JButton(restoreHotkeyAction);
+        String restoreIcon = "\ue02e";
+        button.setIcon(new GlyphIcon(restoreIcon, button.getForeground()));
+
+        return button;
     }
 
     private JLabel getTextLabel(String key) {
@@ -444,23 +480,22 @@ public class PreferenceDialog extends JDialog {
             public void actionPerformed(ActionEvent e) {
                 KeyStroke tempKeyStroke = getKeyBind(frameProvider, key);
                 new SelectKeyStrokeDialog(frameProvider.get(), key, buttonService, tempKeyStroke);
-
             }
         };
+
+        JButton keyStrokeButton = new JButton(hotkeyAction);
+        String ksString = KeyStrokeUtil.toString(currentKeyStroke);
+
         PropertyChangeListener listener = e -> {
             if (Objects.equals(e.getPropertyName(), key)) {
                 KeyStroke ks = (KeyStroke) e.getNewValue();
-                if (ks != null) {
-                    hotkeyAction.putValue(Action.NAME, KeyStrokeUtil.toString(ks));
-                } else {
-                    hotkeyAction.putValue(Action.NAME, " ");
-                }
+                hotkeyAction.putValue(Action.NAME, ks == null ? " " : KeyStrokeUtil.toString(ks));
+                keyStrokeButton.setText(!KeyStrokeUtil.toString(ks).isEmpty() ? KeyStrokeUtil.toString(ks) : " ");
             }
         };
+
         activeListeners.add(listener);
         buttonService.addKeystrokeChangeListener(listener);
-        JButton keyStrokeButton = new JButton(hotkeyAction);
-        String ksString = KeyStrokeUtil.toString(currentKeyStroke);
         keyStrokeButton.setText(!ksString.isEmpty() ? ksString : " ");
 
         return keyStrokeButton;
@@ -476,7 +511,7 @@ public class PreferenceDialog extends JDialog {
     }
 
     private void setupCategoryPanel(JPanel listPanel, String categoryHeader) {
-        CollapsiblePanel categoryPanel = new CollapsiblePanel(categoryHeader.toUpperCase(), listPanel);
+        CollapsiblePanel categoryPanel = new CollapsiblePanel(categoryHeader.toUpperCase(), listPanel, new Insets(0, 0, 5, 0));
         hotkeyPanel.add(categoryPanel, new GridConstraints(categoryHeaderList.indexOf(categoryHeader), 0, 1, 1, GridConstraints.ANCHOR_NORTHWEST, GridConstraints.FILL_HORIZONTAL, 1, 1, null, null, null, 0, false));
     }
 
@@ -488,16 +523,18 @@ public class PreferenceDialog extends JDialog {
             int index = hotkeyCategoryMap.get(categoryHeader).indexOf(key);
 
             JLabel iconLabel = getIconLabel(buttonService, key);
-            listPanel.add(iconLabel, new GridConstraints(index, 0, 1, 1, GridConstraints.ANCHOR_NORTH, GridConstraints.FILL_NONE, 1, 1, null, null, null, 0, false));
+            listPanel.add(iconLabel, new GridConstraints(index, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, 1, null, null, null, 0, false));
 
             JLabel nameLabel = getTextLabel(key);
-            listPanel.add(nameLabel, new GridConstraints(index, 1, 1, 1, GridConstraints.ANCHOR_NORTH, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+            listPanel.add(nameLabel, new GridConstraints(index, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
 
             JButton keystrokeButton = getKeyStrokeButton(frameProvider, key);
-            listPanel.add(keystrokeButton, new GridConstraints(index, 3, 1, 1, GridConstraints.ANCHOR_NORTH, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+            listPanel.add(keystrokeButton, new GridConstraints(index, 2, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.ALIGN_RIGHT, GridConstraints.SIZEPOLICY_FIXED, 1, new Dimension(70, 21), null, null, 0, false));
 
-            //TODO: a restore default button for hotkeys specifically
+            JButton restoreHotkeyButton = getRestoreHotkeyButton(key, keystrokeButton);
+            listPanel.add(restoreHotkeyButton, new GridConstraints(index, 3, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_VERTICAL, GridConstraints.SIZEPOLICY_FIXED, 1, new Dimension(21, 21), new Dimension(21, 21), null, 0, false));
         }
+
         listPanel.add(spacer1, new GridConstraints(hotkeyCategoryMap.get(categoryHeader).size() - 1, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         listPanel.add(spacer2, new GridConstraints(0, 2, hotkeyCategoryMap.get(categoryHeader).size(), 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
     }
@@ -514,7 +551,9 @@ public class PreferenceDialog extends JDialog {
         for (int i = 1; i < allData.size(); i++) {
             String[] row = allData.get(i);
             for (int j = 0; j < row.length; j++) {
-                if (!row[j].isEmpty()) { hotkeyCategoryMap.get(categoryHeaderList.get(j)).add(row[j]); }
+                if (!row[j].isEmpty()) {
+                    hotkeyCategoryMap.get(categoryHeaderList.get(j)).add(row[j]);
+                }
             }
         }
     }
@@ -540,14 +579,16 @@ public class PreferenceDialog extends JDialog {
             extractHeaders(allData); // Extract headers
 
             extractData(allData); // Extract Data excluding headers
-        } catch (Exception e) { e.printStackTrace(); }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void setupHotKey(ButtonService buttonService, FrameProvider frameProvider) {
         hotkeyPanel.removeAll();
         for (String categoryHeader : categoryHeaderList) {
             JPanel listPanel = new JPanel();
-            listPanel.setLayout(new GridLayoutManager(ActionType.values().length + 1, 4, new Insets(0, 15, 0, 0), -1, -1));
+            listPanel.setLayout(new GridLayoutManager(ActionType.values().length + 1, 4, new Insets(0, 5, 0, 0), -1, -1));
 
             setupCategoryPanel(listPanel, categoryHeader);
             addIconTextHotkey(buttonService, frameProvider, listPanel, categoryHeader);
@@ -568,8 +609,8 @@ public class PreferenceDialog extends JDialog {
         contentPane = new JPanel();
         contentPane.setLayout(new GridBagLayout());
         contentPane.setFocusTraversalPolicyProvider(true);
-        contentPane.setMinimumSize(new Dimension(540, 610));
-        contentPane.setPreferredSize(new Dimension(540, 610));
+        contentPane.setMinimumSize(new Dimension(550, 610));
+        contentPane.setPreferredSize(new Dimension(550, 610));
         bottomPanel = new JPanel();
         bottomPanel.setLayout(new GridLayoutManager(2, 1, new Insets(0, 0, 10, 0), -1, -1));
         GridBagConstraints gbc;
