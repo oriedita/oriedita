@@ -54,9 +54,12 @@ import javax.swing.JToolTip;
 import javax.swing.KeyStroke;
 import javax.swing.Popup;
 import javax.swing.PopupFactory;
+import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
 import javax.swing.WindowConstants;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.awt.Frame;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
@@ -68,6 +71,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayDeque;
 import java.util.HashMap;
 import java.util.Map;
@@ -159,17 +163,20 @@ public class App {
         return false;
     }
 
-    public void start() throws InterruptedException {
-        ExecutorService initService = Executors.newWorkStealingPool();
+    public void start() throws InterruptedException, InvocationTargetException {
+        ExecutorService initExecutor = Executors.newWorkStealingPool();
         actionRegistrationService.registerActionsInitial();
-        canvas.init();
-        editor.init(initService);
+        initExecutor.submit(canvas::init);
+        editor.init(initExecutor);
+        initExecutor.submit(appMenuBar::init);
 
-        initService.shutdown();
+        initExecutor.shutdown();
 
-        if (!initService.awaitTermination(10L, TimeUnit.SECONDS)) {
+        if (!initExecutor.awaitTermination(10L, TimeUnit.SECONDS)) {
             throw new RuntimeException("Could not start");
         }
+
+        ExecutorService setupExecutor = Executors.newWorkStealingPool();
 
         // ---
         // Bind model to ui
@@ -217,7 +224,6 @@ public class App {
         frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         frame.setFocusable(true);
         frame.setFocusTraversalKeysEnabled(true);
-
 
         foldedFiguresList.removeAllElements();
 
@@ -287,7 +293,6 @@ public class App {
             }
         });
 
-        appMenuBar.init();
         frame.setJMenuBar(appMenuBar.getAppMenuBarUI());
 
         applicationModel.addPropertyChangeListener(e -> {
@@ -306,37 +311,44 @@ public class App {
         canvasModel.addPropertyChangeListener(e -> mainCreasePatternWorker.setData(canvasModel));
         fileModel.addPropertyChangeListener(e -> mainCreasePatternWorker.setTitle(fileModel.determineFrameTitle()));
 
-        applicationModel.reload();
+        setupExecutor.submit(() -> {
+            applicationModel.reload();
 
-        foldedFigureModel.addPropertyChangeListener(e -> {
-            FoldedFigure_Drawer selectedFigure = foldedFiguresList.getActiveItem();
+            foldedFigureModel.addPropertyChangeListener(e -> {
+                FoldedFigure_Drawer selectedFigure = foldedFiguresList.getActiveItem();
 
-            if (selectedFigure != null) {
-                selectedFigure.setData(foldedFigureModel);
-            }
+                if (selectedFigure != null) {
+                    selectedFigure.setData(foldedFigureModel);
+                }
+            });
+
+            canvasModel.addPropertyChangeListener(e -> {
+                if (e.getPropertyName() == null || e.getPropertyName().equals("mouseMode")) {
+                    Logger.info("mouseMode = " + canvasModel.getMouseMode().toReadableString());
+                }
+            });
+
+            fileModel.addPropertyChangeListener(e -> frame.setTitle(fileModel.determineFrameTitle()));
+
+            fileModel.reset();
+
+            mainCreasePatternWorker.setCamera(canvas.getCreasePatternCamera());
+
+            mainCreasePatternWorker.record();
+            mainCreasePatternWorker.auxRecord();
         });
-
-        canvasModel.addPropertyChangeListener(e -> {
-            if (e.getPropertyName() == null || e.getPropertyName().equals("mouseMode")) {
-                Logger.info("mouseMode = " + canvasModel.getMouseMode().toReadableString());
-            }
+        setupExecutor.submit(resetService::developmentView_initialization);
+        setupExecutor.submit(() -> {
+            buttonService.Button_shared_operation();
+            buttonService.loadAllKeyStrokes();
         });
+        setupExecutor.submit(lookAndFeelService::updateButtonIcons);
 
-        fileModel.addPropertyChangeListener(e -> frame.setTitle(fileModel.determineFrameTitle()));
+        setupExecutor.shutdown();
 
-        fileModel.reset();
-        resetService.developmentView_initialization();
-
-        buttonService.Button_shared_operation();
-        buttonService.loadAllKeyStrokes();
-
-        mainCreasePatternWorker.setCamera(canvas.getCreasePatternCamera());
-
-        mainCreasePatternWorker.record();
-        mainCreasePatternWorker.auxRecord();
-
-        lookAndFeelService.updateButtonIcons();
-
+        if (!setupExecutor.awaitTermination(10L, TimeUnit.SECONDS)) {
+            throw new RuntimeException("Could not start");
+        }
 
         if (applicationModel.getWindowPosition() != null && isPointInScreen(applicationModel.getWindowPosition())) {
             frame.setLocation(applicationModel.getWindowPosition());
@@ -350,9 +362,11 @@ public class App {
         if (applicationModel.getWindowSize() != null) {
             frame.setSize(applicationModel.getWindowSize());
         }
+    }
 
+    public void afterStart() {
+        JFrame frame = frameProvider.get();
         frame.setVisible(true);
-
         explanation.start(canvas.getCanvasImpl().getLocationOnScreen(), canvas.getCanvasImpl().getSize());
 
         explanation.setVisible(applicationModel.getHelpVisible());

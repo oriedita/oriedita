@@ -44,7 +44,6 @@ public class LoadingDialog extends JDialog {
             pack();
             setLocationRelativeTo(null);
             setVisible(true);
-
         } catch (ImageReadException | IOException e) {
             e.printStackTrace();
         }
