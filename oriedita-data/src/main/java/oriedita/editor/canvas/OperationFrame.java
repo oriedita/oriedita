@@ -1,15 +1,15 @@
 package oriedita.editor.canvas;
 
-import origami.crease_pattern.element.Box;
+import origami.crease_pattern.element.Rectangle;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.Polygon;
 
 public class OperationFrame {
-    private final Box rect;
+    private final Rectangle rect;
     private boolean active = false;
 
     public OperationFrame() {
-        rect = new Box();
+        rect = new Rectangle();
     }
 
     public void setFramePoint(int index, Point p) {

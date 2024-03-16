@@ -10,7 +10,6 @@ import origami.crease_pattern.CustomLineTypes;
 import oriedita.editor.save.Save;
 import origami.crease_pattern.FoldLineSet;
 import origami.crease_pattern.LineSegmentSet;
-import origami.crease_pattern.element.Rectangle;
 import origami.crease_pattern.element.Circle;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
