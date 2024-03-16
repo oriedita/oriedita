@@ -10,16 +10,13 @@ import java.awt.event.ActionEvent;
 public class SetMouseModeWithUnselectAction extends AbstractOrieditaAction implements OrieditaAction{
     private final CanvasModel canvasModel;
     private final CreasePattern_Worker mainCreasePatternWorker;
-    private final ActionType actionType;
     private final MouseMode mouseMode;
 
     public SetMouseModeWithUnselectAction(CanvasModel canvasModel,
                                           @Named("mainCreasePattern_Worker") CreasePattern_Worker mainCreasePatternWorker,
-                                          ActionType actionType,
                                           MouseMode mouseMode){
         this.canvasModel = canvasModel;
         this.mainCreasePatternWorker = mainCreasePatternWorker;
-        this.actionType = actionType;
         this.mouseMode = mouseMode;
     }
 
@@ -27,10 +24,5 @@ public class SetMouseModeWithUnselectAction extends AbstractOrieditaAction imple
     public void actionPerformed(ActionEvent e) {
         canvasModel.setMouseMode(mouseMode);
         mainCreasePatternWorker.unselect_all();
-    }
-
-    @Override
-    public ActionType getActionType(){
-        return actionType;
     }
 }

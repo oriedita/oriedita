@@ -240,12 +240,15 @@ public class ButtonServiceImpl implements ButtonService {
 
         if (type != null && actionService != null) {
             String text = button.getText();
-            actionService.getAllRegisteredActions().stream()
-                    .filter(a -> a.getActionType().equals(type))
-                    .findFirst()
-                    .ifPresentOrElse(
-                            button::setAction,
-                            () -> Logger.debug("No handler for {}", key));
+
+            Action action = actionService.getAllRegisteredActions().get(type);
+
+            if (action != null) {
+                button.setAction(action);
+            } else {
+                Logger.debug("No handler for {}", key);
+            }
+
             button.setText(text); // setAction replaces the text with the action name, this is to keep the original text
         }  else {
             Logger.debug("No action found for {}", key);
@@ -385,9 +388,7 @@ public class ButtonServiceImpl implements ButtonService {
             Logger.warn("running in headless mode or testing, skipping ButtonServiceImpl.addUIKeystroke");
             return;
         }
-        Action action = actionService.getAllRegisteredActions().stream()
-                .filter(a -> Objects.equals(a.getActionType().action(), key))
-                .findFirst().orElse(null);
+        Action action = actionService.getAllRegisteredActions().get(ActionType.fromAction(key));
         if (action == null) {
             action = new AbstractAction() {
                 @Override

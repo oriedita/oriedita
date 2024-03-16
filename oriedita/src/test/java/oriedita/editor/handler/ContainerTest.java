@@ -2,6 +2,7 @@ package oriedita.editor.handler;
 
 import jakarta.enterprise.inject.Any;
 import jakarta.enterprise.inject.Instance;
+import jakarta.enterprise.inject.spi.Bean;
 import org.jboss.weld.environment.se.Weld;
 import org.jboss.weld.junit5.WeldInitiator;
 import org.jboss.weld.junit5.WeldJunit5Extension;
@@ -9,13 +10,17 @@ import org.jboss.weld.junit5.WeldSetup;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import oriedita.editor.action.ActionHandler;
 import oriedita.editor.action.ActionType;
 import oriedita.editor.action.OrieditaAction;
 import oriedita.editor.canvas.MouseMode;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.Spliterators;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -62,16 +67,23 @@ public class ContainerTest {
         Instance<OrieditaAction> instances = weld.select(OrieditaAction.class, new Any.Literal());
 
         try {
-            Set<ActionType> implementedHandlers = instances.stream()
-                    .map(OrieditaAction::getActionType)
-                    .collect(Collectors.toSet());
+            List<ActionType> implementedHandlers = new ArrayList<>();
 
-            assertUniqueByField(instances.stream().collect(Collectors.toList()), OrieditaAction::getActionType);
+            instances.handles()
+                    .forEach(handle -> implementedHandlers.add(getActionHandlerQualifier(handle.getBean()).value()));
 
-            assertSetEquality(Set.of(ActionType.values()), implementedHandlers);
+            assertUniqueByField(implementedHandlers, a -> a);
+
+            assertSetEquality(Set.of(ActionType.values()), new HashSet<>(implementedHandlers));
         } catch (Exception e) {
             Assertions.fail(e);
         }
+    }
+
+    private ActionHandler getActionHandlerQualifier(Bean<OrieditaAction> bean) {
+        return bean.getQualifiers().stream().<ActionHandler>mapMulti((q, consumer) -> {
+            if (q instanceof ActionHandler ah) consumer.accept(ah);
+        }).findFirst().orElseThrow();
     }
 
     /**

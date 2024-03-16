@@ -3,30 +3,48 @@ package oriedita.editor.service.impl;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Any;
 import jakarta.enterprise.inject.Instance;
+import jakarta.enterprise.inject.spi.Bean;
 import jakarta.inject.Inject;
+import oriedita.editor.action.ActionHandler;
+import oriedita.editor.action.ActionType;
 import oriedita.editor.action.OrieditaAction;
 import oriedita.editor.action.ActionService;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.lang.annotation.Annotation;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 @ApplicationScoped
 public class ActionServiceImpl implements ActionService {
-    private final List<OrieditaAction> registeredActions;
-    private final Instance<OrieditaAction> actions;
+    private final Map<ActionType, OrieditaAction> registeredActions;
 
     @Inject
-    public ActionServiceImpl(@Any Instance<OrieditaAction> actions){
-        this.actions = actions;
-        registeredActions = new ArrayList<>();
-        extractActionInstances(actions);
+    public ActionServiceImpl(@Any Instance<OrieditaAction> actions) {
+        registeredActions = new HashMap<>();
+        actions.handles().forEach(this::registerAction);
     }
 
     @Override
-    public synchronized void registerAction(OrieditaAction orieditaAction) { registeredActions.add(orieditaAction); }
+    public void registerAction(ActionType actionType, OrieditaAction orieditaAction) {
+        registeredActions.put(actionType, orieditaAction);
+    }
+
+    public void registerAction(Instance.Handle<OrieditaAction> handle) {
+        ActionHandler annotation = getActionHandlerQualifier(handle.getBean());
+
+        registeredActions.put(annotation.value(), handle.get());
+    }
+
+    private ActionHandler getActionHandlerQualifier(Bean<OrieditaAction> bean) {
+        return bean.getQualifiers().stream().<ActionHandler>mapMulti((q, consumer) -> {
+            if (q instanceof ActionHandler ah) consumer.accept(ah);
+        }).findFirst().orElseThrow();
+    }
 
     @Override
-    public List<OrieditaAction> getAllRegisteredActions() { return registeredActions; }
+    public Map<ActionType, OrieditaAction> getAllRegisteredActions() {
+        return registeredActions;
+    }
 
-    private void extractActionInstances(Instance<OrieditaAction> actions){ actions.stream().forEach(this::registerAction); }
 }

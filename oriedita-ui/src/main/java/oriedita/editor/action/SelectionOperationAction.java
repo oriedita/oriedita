@@ -7,12 +7,10 @@ import java.awt.event.ActionEvent;
 
 public class SelectionOperationAction extends AbstractOrieditaAction implements OrieditaAction{
     private final CanvasModel canvasModel;
-    private final ActionType actionType;
     private final CanvasModel.SelectionOperationMode selectionOperationMode;
     private final MouseMode mouseMode;
 
-    public SelectionOperationAction(CanvasModel canvasModel, ActionType actionType, CanvasModel.SelectionOperationMode selectionOperationMode, MouseMode mouseMode){
-        this.actionType = actionType;
+    public SelectionOperationAction(CanvasModel canvasModel, CanvasModel.SelectionOperationMode selectionOperationMode, MouseMode mouseMode){
         this.selectionOperationMode = selectionOperationMode;
         this.mouseMode = mouseMode;
         this.canvasModel = canvasModel;
@@ -22,10 +20,5 @@ public class SelectionOperationAction extends AbstractOrieditaAction implements 
     public void actionPerformed(ActionEvent e) {
         canvasModel.setSelectionOperationMode(selectionOperationMode);
         canvasModel.setMouseMode(mouseMode);
-    }
-
-    @Override
-    public ActionType getActionType(){
-        return actionType;
     }
 }
