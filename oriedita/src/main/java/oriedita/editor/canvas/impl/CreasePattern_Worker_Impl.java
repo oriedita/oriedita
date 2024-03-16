@@ -1002,6 +1002,7 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
         if (check4ColorTransparency < 50) {
             check4ColorTransparency = check4ColorTransparency + check4ColorTransparencyIncrement;
         }
+        applicationModel.setCheck4ColorTransparency(check4ColorTransparency);
     }
 
     @Override
@@ -1010,6 +1011,7 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
         if (check4ColorTransparency > 250) {
             check4ColorTransparency = check4ColorTransparency - check4ColorTransparencyIncrement;
         }
+        applicationModel.setCheck4ColorTransparency(check4ColorTransparency);
     }
 
     @Override
