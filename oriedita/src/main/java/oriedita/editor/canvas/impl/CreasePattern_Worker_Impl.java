@@ -18,22 +18,22 @@ import oriedita.editor.databinding.SelectedTextModel;
 import oriedita.editor.drawing.Grid;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
-import origami.crease_pattern.CustomLineTypes;
 import oriedita.editor.save.Save;
 import oriedita.editor.save.SaveProvider;
 import oriedita.editor.service.HistoryState;
 import oriedita.editor.service.TaskExecutorService;
 import oriedita.editor.task.CheckCAMVTask;
 import origami.Epsilon;
+import origami.crease_pattern.CustomLineTypes;
 import origami.crease_pattern.FlatFoldabilityViolation;
 import origami.crease_pattern.FoldLineSet;
 import origami.crease_pattern.LineSegmentSet;
 import origami.crease_pattern.OritaCalc;
+import origami.crease_pattern.element.Rectangle;
 import origami.crease_pattern.element.Circle;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
-import origami.crease_pattern.element.Polygon;
 import origami.crease_pattern.element.StraightLine;
 import origami.crease_pattern.worker.foldlineset.BranchTrim;
 import origami.crease_pattern.worker.foldlineset.Check1;
@@ -1106,7 +1106,7 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
         Point p_c = camera.TV2object(new Point(p0b.getX(), p0b.getY()));
         Point p_d = camera.TV2object(new Point(p0b.getX(), p0a.getY()));
 
-        return new Polygon(p_a, p_b, p_c, p_d);
+        return new Rectangle(p_a, p_b, p_c, p_d);
     }
 
     @Override

@@ -6,8 +6,6 @@ import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.Polygon;
 
-import java.util.List;
-
 public abstract class BaseMouseHandlerPolygon extends BaseMouseHandler {
     boolean polygonCompleted = false;
 
@@ -94,12 +92,7 @@ public abstract class BaseMouseHandlerPolygon extends BaseMouseHandler {
         }
 
         if (polygonCompleted) {
-            List<LineSegment> lineStep = d.getLineStep();
-            Polygon polygon = new Polygon(lineStep.size());
-            int index = 1;
-            for (LineSegment lineSegment : lineStep) {
-                polygon.set(index++, lineSegment.getA());
-            }
+            Polygon polygon = new Polygon(d.getLineStep().stream().map(LineSegment::getA).toList());
 
             //各動作モードで独自に行う作業は以下に条件分けして記述する
             if (getMouseMode() == MouseMode.SELECT_POLYGON_66) {

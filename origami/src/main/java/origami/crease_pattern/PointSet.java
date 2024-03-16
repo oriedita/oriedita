@@ -168,11 +168,11 @@ public class PointSet implements Serializable {
 
     //Make Face polygonal
     private Polygon makePolygon(Face face) {
-        Polygon polygon = new Polygon(face.getNumPoints());
-        for (int i = 0; i <= face.getNumPoints(); i++) {
-            polygon.set(i, points[face.getPointId(i)]);
+        List<Point> vertices = new ArrayList<>();
+        for (int i = 0; i < face.getNumPoints(); i++) {
+            vertices.add(points[face.getPointId(i + 1)]);
         }
-        return polygon;
+        return new Polygon(vertices);
     }
 
     // Even a part of the line segment s0 is inside the surface of the convex polygon (the boundary line is not regarded as the inside)
