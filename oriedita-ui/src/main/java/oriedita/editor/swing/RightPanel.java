@@ -44,11 +44,9 @@ public class RightPanel {
     private final FrameProvider frameProvider;
     private final AngleSystemModel angleSystemModel;
     private final MeasuresModel measuresModel;
-    private final CreasePattern_Worker mainCreasePatternWorker;
     private final ButtonService buttonService;
     private final CanvasModel canvasModel;
     private final ApplicationModel applicationModel;
-    private OpenFrame openFrame;
     private JCheckBox cAMVCheckBox;
     private JButton ck4_colorIncreaseButton;
     private JCheckBox ckTCheckBox;
@@ -119,13 +117,11 @@ public class RightPanel {
                       AngleSystemModel angleSystemModel,
                       ButtonService buttonService,
                       MeasuresModel measuresModel,
-                      @Named("mainCreasePattern_Worker") CreasePattern_Worker mainCreasePatternWorker,
                       CanvasModel canvasModel,
                       ApplicationModel applicationModel) {
         this.frameProvider = frameProvider;
         this.angleSystemModel = angleSystemModel;
         this.measuresModel = measuresModel;
-        this.mainCreasePatternWorker = mainCreasePatternWorker;
         this.buttonService = buttonService;
         this.canvasModel = canvasModel;
         this.applicationModel = applicationModel;
@@ -178,6 +174,7 @@ public class RightPanel {
         buttonService.registerButton(h_senhaba_ageButton, "h_senhaba_ageAction");
         buttonService.registerButton(h_senbun_nyuryokuButton, "h_senbun_nyuryokuAction");
         buttonService.registerButton(h_senbun_sakujyoButton, "h_senbun_sakujyoAction");
+        buttonService.registerButton(restrictedAngleABCSetButton, "restrictedAngleSetABCAction");
         buttonService.registerButton(restrictedAngleSetDEFButton, "restrictedAngleSetDEFAction");
         buttonService.registerButton(colOrangeButton, "colOrangeAction");
         buttonService.registerButton(colYellowButton, "colYellowAction");
@@ -190,25 +187,6 @@ public class RightPanel {
         buttonService.registerButton(cAMVCheckBox, "cAMVAction");
         buttonService.registerButton(textBtn, "textAction");
 
-        ckOCheckBox.addActionListener(e -> {
-            if (ckOCheckBox.isSelected()) {
-                mainCreasePatternWorker.check1();//r_hitosiiとr_heikouhanteiは、hitosiiとheikou_hanteiのずれの許容程度
-                mainCreasePatternWorker.set_i_check1(true);
-            } else {
-                mainCreasePatternWorker.set_i_check1(false);
-            }
-        });
-        ckTCheckBox.addActionListener(e -> {
-            if (ckTCheckBox.isSelected()) {
-                mainCreasePatternWorker.check2();//r_hitosiiとr_heikouhanteiは、hitosiiとheikou_hanteiのずれの許容程度
-                mainCreasePatternWorker.setCheck2(true);
-            } else {
-                mainCreasePatternWorker.setCheck2(false);
-            }
-        });
-        cAMVCheckBox.addActionListener(e -> {
-            applicationModel.setCheck4Enabled(cAMVCheckBox.isSelected());
-        });
         restrictedAngleABCSetButton.addActionListener(e -> {
             getData(angleSystemModel);
 
@@ -230,7 +208,7 @@ public class RightPanel {
         c_colButton.addActionListener(e -> {
             //以下にやりたいことを書く
 
-            Color color = JColorChooser.showDialog(openFrame, "color", new Color(100, 200, 200));
+            Color color = JColorChooser.showDialog(frameProvider.get(), "color", new Color(100, 200, 200));
             if (color != null) {
                 applicationModel.setCircleCustomizedColor(color);
             }
@@ -657,8 +635,6 @@ public class RightPanel {
     }
 
     public void setData(PropertyChangeEvent e, CanvasModel data) {
-        if (openFrame != null) openFrame.setData(e, data);
-
         if (e.getPropertyName() == null || e.getPropertyName().equals("mouseMode") || e.getPropertyName().equals("foldLineAdditionalInputMode")) {
             MouseMode m = data.getMouseMode();
             FoldLineAdditionalInputMode f = data.getFoldLineAdditionalInputMode();

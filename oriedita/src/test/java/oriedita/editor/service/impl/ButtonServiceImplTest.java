@@ -7,6 +7,7 @@ import oriedita.editor.action.OrieditaAction;
 import oriedita.editor.service.ButtonService;
 import oriedita.editor.service.ButtonServiceTest;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class ButtonServiceImplTest extends ButtonServiceTest {
@@ -33,7 +34,7 @@ public class ButtonServiceImplTest extends ButtonServiceTest {
 
         @Override
         public Map<ActionType, OrieditaAction> getAllRegisteredActions() {
-            return Map.of();
+            return new HashMap<>();
         }
     }
 }
