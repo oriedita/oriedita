@@ -3,5 +3,6 @@
 --dest ci-build
 --java-options "'-Dfile.encoding=UTF-8'"
 --java-options "-Xmx8g"
+--java-options "-Dtinylog.configuration=$APPDIR/tinylog.release.properties"
 --runtime-image ci-build/runtime
 

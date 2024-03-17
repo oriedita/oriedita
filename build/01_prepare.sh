@@ -20,6 +20,7 @@ version=$(mvn org.apache.maven.plugins:maven-help-plugin:3.4.0:evaluate \
               -Dexpression=project.version -q -DforceStdout)
 
 # create release
+cp build/tinylog.release.properties lib/
 cp oriedita/target/oriedita-"$version".jar lib/
 dependencies=$(jdeps --print-module-deps --ignore-missing-deps lib/oriedita-"$version".jar)
 
