@@ -149,10 +149,10 @@ public class App {
     }
 
     public void start() throws InterruptedException, InvocationTargetException {
+        loadFont();
         MultiStagedExecutor executor = new MultiStagedExecutor();
         executor.execute(actionRegistrationService::registerActionsInitial);
         executor.execute(canvas::init);
-        executor.execute(App::loadFont);
         editor.init(executor);
         executor.execute(appMenuBar::init);
 
@@ -292,7 +292,7 @@ public class App {
         angleSystemModel.addPropertyChangeListener(e -> mainCreasePatternWorker.setData(angleSystemModel));
         canvasModel.addPropertyChangeListener(e -> mainCreasePatternWorker.setData(canvasModel));
         fileModel.addPropertyChangeListener(e -> mainCreasePatternWorker.setTitle(fileModel.determineFrameTitle()));
-        
+
         foldedFigureModel.addPropertyChangeListener(e -> {
             FoldedFigure_Drawer selectedFigure = foldedFiguresList.getActiveItem();
 
