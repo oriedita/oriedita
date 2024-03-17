@@ -292,23 +292,24 @@ public class App {
         angleSystemModel.addPropertyChangeListener(e -> mainCreasePatternWorker.setData(angleSystemModel));
         canvasModel.addPropertyChangeListener(e -> mainCreasePatternWorker.setData(canvasModel));
         fileModel.addPropertyChangeListener(e -> mainCreasePatternWorker.setTitle(fileModel.determineFrameTitle()));
+        
+        foldedFigureModel.addPropertyChangeListener(e -> {
+            FoldedFigure_Drawer selectedFigure = foldedFiguresList.getActiveItem();
+
+            if (selectedFigure != null) {
+                selectedFigure.setData(foldedFigureModel);
+            }
+        });
+
+        canvasModel.addPropertyChangeListener(e -> {
+            if (e.getPropertyName() == null || e.getPropertyName().equals("mouseMode")) {
+                Logger.info("mouseMode = " + canvasModel.getMouseMode().toReadableString());
+            }
+        });
+
 
         executor.execute(() -> {
             applicationModel.reload();
-
-            foldedFigureModel.addPropertyChangeListener(e -> {
-                FoldedFigure_Drawer selectedFigure = foldedFiguresList.getActiveItem();
-
-                if (selectedFigure != null) {
-                    selectedFigure.setData(foldedFigureModel);
-                }
-            });
-
-            canvasModel.addPropertyChangeListener(e -> {
-                if (e.getPropertyName() == null || e.getPropertyName().equals("mouseMode")) {
-                    Logger.info("mouseMode = " + canvasModel.getMouseMode().toReadableString());
-                }
-            });
 
             fileModel.addPropertyChangeListener(e -> frame.setTitle(fileModel.determineFrameTitle()));
 
