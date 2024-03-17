@@ -26,16 +26,14 @@ public class MouseHandlerSymmetricDraw extends BaseMouseHandlerInputRestricted {
             if (d.getLineStep().isEmpty() && d.getClosestPoint(p).distance(p) > d.getSelectionDistance()) {
                 line = d.getClosestLineSegment(p);
                 if (OritaCalc.determineLineSegmentDistance(p, line) < d.getSelectionDistance()) {
-                    line.setColor(LineColor.GREEN_6);
-                    d.lineStepAdd(line);
+                    d.lineStepAdd(line.withColor(LineColor.GREEN_6));
                 }
                 return;
             }
             if(!d.getLineStep().isEmpty()){
                 line = d.getClosestLineSegment(p);
                 if (OritaCalc.determineLineSegmentDistance(p, line) < d.getSelectionDistance() && OritaCalc.isLineSegmentParallel(d.getLineStep().get(0), line) == OritaCalc.ParallelJudgement.NOT_PARALLEL) {
-                    line.setColor(LineColor.GREEN_6);
-                    d.lineStepAdd(line);
+                    d.lineStepAdd(line.withColor(LineColor.GREEN_6));
                 }
                 return;
             }
