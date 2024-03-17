@@ -41,6 +41,7 @@ public class ApplicationModel implements Serializable {
     private boolean displayLeftPanel;
     private boolean displayRightPanel;
     private boolean preciseZoom;
+    private boolean roundedEnds;
     private int lineWidth;
     private int auxLineWidth;
     private int pointSize;
@@ -383,6 +384,8 @@ public class ApplicationModel implements Serializable {
         gridScaleColor = Colors.GRID_SCALE;
         gridLineWidth = 1;
 
+        roundedEnds = false;
+
         showInvisibleTextWarning = true;
 
         laf = "com.formdev.flatlaf.FlatLightLaf";
@@ -423,6 +426,7 @@ public class ApplicationModel implements Serializable {
         displaySelfIntersection = true;
         foldWarning = false;
         helpVisible = true;
+        roundedEnds = false;
 
         preciseZoom = true;
         mouseWheelMovesCreasePattern = true;
@@ -835,6 +839,7 @@ public class ApplicationModel implements Serializable {
         mouseWheelMovesCreasePattern = applicationModel.getMouseWheelMovesCreasePattern();
         helpVisible = applicationModel.getHelpVisible();
         preciseZoom = applicationModel.isPreciseZoom();
+        roundedEnds = applicationModel.useRoundedEnds();
 
         circleCustomizedColor = applicationModel.getCircleCustomizedColor();
         selectPersistent = applicationModel.getSelectPersistent();
@@ -940,5 +945,15 @@ public class ApplicationModel implements Serializable {
 
     public void toggleUseAdvancedCheck4Display() {
         setAdvancedCheck4Display(!advancedCheck4Display);
+    }
+
+    public boolean useRoundedEnds() {
+        return roundedEnds;
+    }
+
+    public void setRoundedEnds(boolean roundedEnds) {
+        boolean oldRoundedEnds = this.roundedEnds;
+        this.roundedEnds = roundedEnds;
+        this.pcs.firePropertyChange("roundedEnds", oldRoundedEnds, roundedEnds);
     }
 }

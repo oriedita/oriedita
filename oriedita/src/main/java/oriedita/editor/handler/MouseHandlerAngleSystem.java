@@ -212,7 +212,8 @@ public class MouseHandlerAngleSystem extends BaseMouseHandlerInputRestricted {
             DrawingUtil.drawStepVertex(g2, pEnd, LineColor.BLUE_2, camera, d.getGridInputAssist());
         }
         if (previewLine != null) {
-            DrawingUtil.drawCpLine(g2, previewLine, camera, settings.getLineStyle(), settings.getLineWidth(), d.getPointSize(), settings.getWidth(), settings.getHeight());
+            DrawingUtil.drawCpLine(g2, previewLine, camera, settings.getLineStyle(),
+                    settings.getLineWidth(), d.getPointSize(), settings.getWidth(), settings.getHeight(), settings.useRoundedEnds());
         }
     }
 

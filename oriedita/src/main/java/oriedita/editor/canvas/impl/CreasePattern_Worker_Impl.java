@@ -538,7 +538,7 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
                 LineSegment s = foldLineSet.get(i);
                 if (s.getColor() == LineColor.CYAN_3) {
 
-                    DrawingUtil.drawAuxLine(g, s, camera, lineWidth, pointSize);
+                    DrawingUtil.drawAuxLine(g, s, camera, lineWidth, pointSize, applicationModel.useRoundedEnds());
                 }
             }
         }
@@ -548,20 +548,20 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
             g.setColor(Colors.get(Color.black));
             for (int i = 1; i <= foldLineSet.getTotal(); i++) {
                 LineSegment s = foldLineSet.get(i);
-                if (s.getColor() != LineColor.CYAN_3 && s.getColor() != LineColor.RED_1 && s.getColor() != LineColor.BLACK_0) {
-                    DrawingUtil.drawCpLine(g, s, camera, lineStyle, lineWidth, pointSize, p0x_max, p0y_max);
+                if (s.getColor() != LineColor.CYAN_3) {
+                    DrawingUtil.drawCpLine(g, s, camera, lineStyle, lineWidth, pointSize, p0x_max, p0y_max, applicationModel.useRoundedEnds());
                 }
             }
             for (int i = 1; i <= foldLineSet.getTotal(); i++) {
                 LineSegment s = foldLineSet.get(i);
                 if (s.getColor() == LineColor.RED_1) {
-                    DrawingUtil.drawCpLine(g, s, camera, lineStyle, lineWidth, pointSize, p0x_max, p0y_max);
+                    DrawingUtil.drawCpLine(g, s, camera, lineStyle, lineWidth, pointSize, p0x_max, p0y_max, applicationModel.useRoundedEnds());
                 }
             }
             for (int i = 1; i <= foldLineSet.getTotal(); i++) {
                 LineSegment s = foldLineSet.get(i);
                 if (s.getColor() == LineColor.BLACK_0) {
-                    DrawingUtil.drawCpLine(g, s, camera, lineStyle, lineWidth, pointSize, p0x_max, p0y_max);
+                    DrawingUtil.drawCpLine(g, s, camera, lineStyle, lineWidth, pointSize, p0x_max, p0y_max, applicationModel.useRoundedEnds());
                 }
             }
         }
