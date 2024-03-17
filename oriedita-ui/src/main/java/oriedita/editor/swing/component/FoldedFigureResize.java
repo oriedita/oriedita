@@ -23,19 +23,28 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 
 public class FoldedFigureResize extends JPanel {
+    private final ButtonService buttonService;
+    private final FoldedFigureModel foldedFigureModel;
+    private final MeasuresModel measuresModel;
+    private final AnimationService animationService;
     private JButton foldedFigureSizeDecreaseButton;
     private JPanel panel1;
     private JTextField foldedFigureSizeTextField;
     private JButton foldedFigureSizeSetButton;
     private JButton foldedFigureSizeIncreaseButton;
 
-    public FoldedFigureResize(ApplicationModel applicationModel,
-                              ButtonService buttonService,
+    public FoldedFigureResize(ButtonService buttonService,
                               FoldedFigureModel foldedFigureModel,
                               MeasuresModel measuresModel,
                               AnimationService animationService) {
+        this.buttonService = buttonService;
+        this.foldedFigureModel = foldedFigureModel;
+        this.measuresModel = measuresModel;
+        this.animationService = animationService;
         add($$$getRootComponent$$$());
+    }
 
+    public void init() {
         buttonService.registerButton(foldedFigureSizeSetButton, "foldedFigureSizeSetAction");
         buttonService.registerButton(foldedFigureSizeDecreaseButton, "foldedFigureSizeDecreaseAction");
         buttonService.registerButton(foldedFigureSizeIncreaseButton, "foldedFigureSizeIncreaseAction");

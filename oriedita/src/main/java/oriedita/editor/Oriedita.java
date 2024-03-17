@@ -53,7 +53,7 @@ public class Oriedita {
 
         System.setProperty("apple.laf.useScreenMenuBar", "true");
 
-        loadFont();
+//        loadFont();
 
         // Initialize look and feel service, this will bind to the applicationModel update the look and feel (must be done early).
         lookAndFeelService.init();
@@ -66,6 +66,7 @@ public class Oriedita {
 
         try {
             app.start();
+            Logger.trace("App.start finished");
         } catch (InterruptedException | InvocationTargetException e) {
             throw new RuntimeException(e);
         }

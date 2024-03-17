@@ -1,19 +1,13 @@
 package oriedita.editor;
 
-import com.formdev.flatlaf.FlatLaf;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jico.Ico;
 import jico.ImageReadException;
 import org.tinylog.Logger;
-import oriedita.editor.action.AbstractOrieditaAction;
-import oriedita.editor.action.ActionService;
-import oriedita.editor.action.ActionType;
-import oriedita.editor.action.LambdaAction;
+import oriedita.common.task.MultiStagedExecutor;
 import oriedita.editor.canvas.CreasePattern_Worker;
-import oriedita.editor.canvas.FoldLineAdditionalInputMode;
-import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.databinding.AngleSystemModel;
 import oriedita.editor.databinding.ApplicationModel;
 import oriedita.editor.databinding.BackgroundModel;
@@ -23,43 +17,29 @@ import oriedita.editor.databinding.FileModel;
 import oriedita.editor.databinding.FoldedFigureModel;
 import oriedita.editor.databinding.FoldedFiguresList;
 import oriedita.editor.databinding.GridModel;
-import oriedita.editor.databinding.MeasuresModel;
 import oriedita.editor.drawing.FoldedFigure_Drawer;
 import oriedita.editor.drawing.FoldedFigure_Worker_Drawer;
-import oriedita.editor.factory.ActionFactory;
-import oriedita.editor.handler.FoldedFigureOperationMode;
 import oriedita.editor.service.ActionRegistrationService;
-import oriedita.editor.service.AnimationService;
 import oriedita.editor.service.ButtonService;
-import oriedita.editor.service.FileSaveService;
-import oriedita.editor.service.FoldingService;
 import oriedita.editor.service.LookAndFeelService;
 import oriedita.editor.service.ResetService;
 import oriedita.editor.swing.AppMenuBar;
 import oriedita.editor.swing.Editor;
 import oriedita.editor.swing.dialog.HelpDialog;
 import oriedita.editor.tools.ResourceUtil;
-import origami.crease_pattern.CustomLineTypes;
-import origami.crease_pattern.OritaCalc;
-import origami.crease_pattern.element.LineColor;
-import origami.folding.FoldedFigure;
 
 import javax.swing.AbstractAction;
 import javax.swing.AbstractButton;
-import javax.swing.JCheckBox;
-import javax.swing.JColorChooser;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JToolTip;
 import javax.swing.KeyStroke;
 import javax.swing.Popup;
 import javax.swing.PopupFactory;
-import javax.swing.SwingUtilities;
-import javax.swing.SwingWorker;
 import javax.swing.WindowConstants;
-import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.EventQueue;
+import java.awt.Font;
+import java.awt.FontFormatException;
 import java.awt.Frame;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
@@ -73,13 +53,9 @@ import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayDeque;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Queue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 @ApplicationScoped
 public class App {
@@ -163,20 +139,26 @@ public class App {
         return false;
     }
 
-    public void start() throws InterruptedException, InvocationTargetException {
-        ExecutorService initExecutor = Executors.newWorkStealingPool();
-        actionRegistrationService.registerActionsInitial();
-        initExecutor.submit(canvas::init);
-        editor.init(initExecutor);
-        initExecutor.submit(appMenuBar::init);
-
-        initExecutor.shutdown();
-
-        if (!initExecutor.awaitTermination(10L, TimeUnit.SECONDS)) {
-            throw new RuntimeException("Could not start");
+    private static void loadFont() {
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        try {
+            ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, Objects.requireNonNull(App.class.getClassLoader().getResourceAsStream("Icons2.ttf"))));
+        } catch (IOException | FontFormatException e) {
+            e.printStackTrace();
         }
+    }
 
-        ExecutorService setupExecutor = Executors.newWorkStealingPool();
+    public void start() throws InterruptedException, InvocationTargetException {
+        MultiStagedExecutor executor = new MultiStagedExecutor();
+        executor.execute(actionRegistrationService::registerActionsInitial);
+        executor.execute(canvas::init);
+        executor.execute(App::loadFont);
+        editor.init(executor);
+        executor.execute(appMenuBar::init);
+
+        executor.nextStage();
+
+        Logger.trace("Init stage finished");
 
         // ---
         // Bind model to ui
@@ -311,7 +293,7 @@ public class App {
         canvasModel.addPropertyChangeListener(e -> mainCreasePatternWorker.setData(canvasModel));
         fileModel.addPropertyChangeListener(e -> mainCreasePatternWorker.setTitle(fileModel.determineFrameTitle()));
 
-        setupExecutor.submit(() -> {
+        executor.execute(() -> {
             applicationModel.reload();
 
             foldedFigureModel.addPropertyChangeListener(e -> {
@@ -337,18 +319,17 @@ public class App {
             mainCreasePatternWorker.record();
             mainCreasePatternWorker.auxRecord();
         });
-        setupExecutor.submit(resetService::developmentView_initialization);
-        setupExecutor.submit(() -> {
+        executor.execute(resetService::developmentView_initialization);
+        executor.execute(() -> {
             buttonService.Button_shared_operation();
             buttonService.loadAllKeyStrokes();
         });
-        setupExecutor.submit(lookAndFeelService::updateButtonIcons);
+        executor.execute(lookAndFeelService::updateButtonIcons);
 
-        setupExecutor.shutdown();
+        executor.stopStage();
 
-        if (!setupExecutor.awaitTermination(10L, TimeUnit.SECONDS)) {
-            throw new RuntimeException("Could not start");
-        }
+
+        Logger.trace("SetupExecutor finished");
 
         if (applicationModel.getWindowPosition() != null && isPointInScreen(applicationModel.getWindowPosition())) {
             frame.setLocation(applicationModel.getWindowPosition());
@@ -357,6 +338,7 @@ public class App {
         }
 
         frame.setExtendedState(applicationModel.getWindowState());
+        Logger.trace("Main Frame packed");
         frame.pack();
 
         if (applicationModel.getWindowSize() != null) {

@@ -9,6 +9,7 @@ import oriedita.editor.CanvasUI;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
+import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 
 /**
@@ -35,11 +36,11 @@ public class Editor {
         $$$setupUI$$$();
     }
 
-    public void init(ExecutorService service) throws InterruptedException {
-        service.submit(leftPanel::init);
-        service.submit(topPanel::init);
-        service.submit(rightPanel::init);
-        service.submit(bottomPanel::init);
+    public void init(Executor service) throws InterruptedException {
+        service.execute(leftPanel::init);
+        service.execute(topPanel::init);
+        service.execute(rightPanel::init);
+        service.execute(bottomPanel::init);
     }
 
     private void createUIComponents() {
