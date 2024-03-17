@@ -1,5 +1,6 @@
 package oriedita.editor.canvas.impl;
 
+import org.jboss.weld.proxy.WeldClientProxy;
 import org.tinylog.Logger;
 import oriedita.editor.Colors;
 import oriedita.editor.canvas.CreasePattern_Worker;
@@ -523,22 +524,34 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
             }
         }
 
+        // proxy foldLineSet slows down get(), so we get
+        // the underlying actual FoldLineSet for rendering faster
+        FoldLineSet rawFoldLineSet = foldLineSet;
+        if (foldLineSet instanceof WeldClientProxy proxy) {
+            Object instance = proxy.getMetadata().getContextualInstance();
+            if (instance instanceof FoldLineSet) {
+                rawFoldLineSet = (FoldLineSet) instance;
+            }
+        }
+        int total = rawFoldLineSet.getTotal();
+
         //selectの描画
         g2.setStroke(new BasicStroke(lineWidth * 2.0f + 2.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));//基本指定A　　線の太さや線の末端の形状
-        for (int i = 1; i <= foldLineSet.getTotal(); i++) {
-            LineSegment s = foldLineSet.get(i);
+        for (int i = 1; i <= total; i++) {
+            LineSegment s = rawFoldLineSet.get(i);
             if (s.getSelected() == 2) {
                 DrawingUtil.drawSelectLine(g, s, camera);
             }
         }
 
+        boolean useRounded = applicationModel.useRoundedEnds();
         //展開図の描画 補助活線のみ
         if (displayAuxLines) {
-            for (int i = 1; i <= foldLineSet.getTotal(); i++) {
-                LineSegment s = foldLineSet.get(i);
+            for (int i = 1; i <= total; i++) {
+                LineSegment s = rawFoldLineSet.get(i);
                 if (s.getColor() == LineColor.CYAN_3) {
 
-                    DrawingUtil.drawAuxLine(g, s, camera, lineWidth, pointSize, applicationModel.useRoundedEnds());
+                    DrawingUtil.drawAuxLine(g, s, camera, lineWidth, pointSize, useRounded);
                 }
             }
         }
@@ -546,22 +559,22 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
         //展開図の描画  補助活線以外の折線
         if (displayCpLines) {
             g.setColor(Colors.get(Color.black));
-            for (int i = 1; i <= foldLineSet.getTotal(); i++) {
-                LineSegment s = foldLineSet.get(i);
-                if (s.getColor() != LineColor.CYAN_3) {
-                    DrawingUtil.drawCpLine(g, s, camera, lineStyle, lineWidth, pointSize, p0x_max, p0y_max, applicationModel.useRoundedEnds());
+            for (int i = 1; i <= total; i++) {
+                LineSegment s = rawFoldLineSet.get(i);
+                if (s.getColor() != LineColor.CYAN_3 && s.getColor() != LineColor.RED_1 && s.getColor() != LineColor.BLACK_0) {
+                    DrawingUtil.drawCpLine(g, s, camera, lineStyle, lineWidth, pointSize, p0x_max, p0y_max, useRounded);
                 }
             }
-            for (int i = 1; i <= foldLineSet.getTotal(); i++) {
-                LineSegment s = foldLineSet.get(i);
+            for (int i = 1; i <= total; i++) {
+                LineSegment s = rawFoldLineSet.get(i);
                 if (s.getColor() == LineColor.RED_1) {
-                    DrawingUtil.drawCpLine(g, s, camera, lineStyle, lineWidth, pointSize, p0x_max, p0y_max, applicationModel.useRoundedEnds());
+                    DrawingUtil.drawCpLine(g, s, camera, lineStyle, lineWidth, pointSize, p0x_max, p0y_max, useRounded);
                 }
             }
-            for (int i = 1; i <= foldLineSet.getTotal(); i++) {
-                LineSegment s = foldLineSet.get(i);
+            for (int i = 1; i <= total; i++) {
+                LineSegment s = rawFoldLineSet.get(i);
                 if (s.getColor() == LineColor.BLACK_0) {
-                    DrawingUtil.drawCpLine(g, s, camera, lineStyle, lineWidth, pointSize, p0x_max, p0y_max, applicationModel.useRoundedEnds());
+                    DrawingUtil.drawCpLine(g, s, camera, lineStyle, lineWidth, pointSize, p0x_max, p0y_max, useRounded);
                 }
             }
         }
