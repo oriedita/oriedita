@@ -255,6 +255,9 @@ public class DrawingUtil {
 
         g.drawLine((int) a.getX(), (int) a.getY(), (int) b.getX(), (int) b.getY()); //直線
 
+        if (Epsilon.high.eq0(lineWidth) || pointSize == 0) {
+            return;
+        }
         if (lineWidth < 2.0f) {//頂点の黒い正方形を描く
             drawVertex(g2, a, pointSize);
             drawVertex(g2, b, pointSize);
@@ -262,22 +265,20 @@ public class DrawingUtil {
 
         if (lineWidth >= 2.0f) {//  太線
             g2.setStroke(new BasicStroke(1.0f + lineWidth % 1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));//線の太さや線の末端の形状、ここでは折線の端点の線の形状の指定
-            if (pointSize != 0) {
-                double d_width = (double) lineWidth / 2.0 + (double) pointSize;
+            double d_width = (double) lineWidth / 2.0 + (double) pointSize;
 
-                g.setColor(Colors.get(Color.white));
-                g2.fill(new Ellipse2D.Double(a.getX() - d_width, a.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
+            g.setColor(Colors.get(Color.white));
+            g2.fill(new Ellipse2D.Double(a.getX() - d_width, a.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
 
 
-                g.setColor(Colors.get(Color.gray));
-                g2.draw(new Ellipse2D.Double(a.getX() - d_width, a.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
+            g.setColor(Colors.get(Color.gray));
+            g2.draw(new Ellipse2D.Double(a.getX() - d_width, a.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
 
-                g.setColor(Colors.get(Color.white));
-                g2.fill(new Ellipse2D.Double(b.getX() - d_width, b.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
+            g.setColor(Colors.get(Color.white));
+            g2.fill(new Ellipse2D.Double(b.getX() - d_width, b.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
 
-                g.setColor(Colors.get(Color.gray));
-                g2.draw(new Ellipse2D.Double(b.getX() - d_width, b.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
-            }
+            g.setColor(Colors.get(Color.gray));
+            g2.draw(new Ellipse2D.Double(b.getX() - d_width, b.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
         }
     }
 
@@ -444,30 +445,29 @@ public class DrawingUtil {
 
         g2.drawLine((int) a.getX(), (int) a.getY(), (int) b.getX(), (int) b.getY());
 
-        if (Epsilon.high.eq0(lineWidth)) {
-
-        } else if (lineWidth < 2.0f) {//頂点の黒い正方形を描く
+        if (Epsilon.high.eq0(lineWidth) || pointSize == 0) {
+            return;
+        }
+        if (lineWidth < 2.0f) {//頂点の黒い正方形を描く
             drawVertex(g2, a, pointSize);
             if (a.distance(b) > 1) {
                 drawVertex(g2, b, pointSize);
             }
         } else if (lineWidth >= 2.0f) {//  太線
             g2.setStroke(new BasicStroke(1.0f + lineWidth % 1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));//線の太さや線の末端の形状、ここでは折線の端点の線の形状の指定
-            if (pointSize != 0) {
-                double d_width = (double) lineWidth / 2.0 + (double) pointSize;
+            double d_width = (double) lineWidth / 2.0 + (double) pointSize;
 
-                g.setColor(Colors.get(Color.gray));
-                g2.fill(new Ellipse2D.Double(a.getX() - d_width, a.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
+            g.setColor(Colors.get(Color.gray));
+            g2.fill(new Ellipse2D.Double(a.getX() - d_width, a.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
 
-                g.setColor(Colors.get(Color.black));
-                g2.draw(new Ellipse2D.Double(a.getX() - d_width, a.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
+            g.setColor(Colors.get(Color.black));
+            g2.draw(new Ellipse2D.Double(a.getX() - d_width, a.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
 
-                g.setColor(Colors.get(Color.gray));
-                g2.fill(new Ellipse2D.Double(b.getX() - d_width, b.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
+            g.setColor(Colors.get(Color.gray));
+            g2.fill(new Ellipse2D.Double(b.getX() - d_width, b.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
 
-                g.setColor(Colors.get(Color.black));
-                g2.draw(new Ellipse2D.Double(b.getX() - d_width, b.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
-            }
+            g.setColor(Colors.get(Color.black));
+            g2.draw(new Ellipse2D.Double(b.getX() - d_width, b.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
         }
     }
 
