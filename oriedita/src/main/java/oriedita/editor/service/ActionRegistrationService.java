@@ -343,10 +343,9 @@ public class ActionRegistrationService {
         actionService.registerAction(ActionType.angleSystemBAction, new LambdaAction(() -> angleSystemModel.setCurrentAngleSystemDivider(angleSystemModel.getAngleSystemBDivider())));
         actionService.registerAction(ActionType.angleSystemBIncreaseAction, new LambdaAction(angleSystemModel::increaseAngleSystemB));
         actionService.registerAction(ActionType.deg1Action, actionFactory.degAction(MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13, AngleSystemModel.AngleSystemInputType.DEG_1));
-        actionService.registerAction(ActionType.deg2Action, actionFactory.degAction(MouseMode.ANGLE_SYSTEM_16, AngleSystemModel.AngleSystemInputType.DEG_2));
-        actionService.registerAction(ActionType.deg3Action, actionFactory.degAction(MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_2_17, AngleSystemModel.AngleSystemInputType.DEG_3));
+        actionService.registerAction(ActionType.deg2Action, actionFactory.degAction(MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_5_37, AngleSystemModel.AngleSystemInputType.DEG_5));
+        actionService.registerAction(ActionType.deg3Action, actionFactory.degAction(MouseMode.ANGLE_SYSTEM_16, AngleSystemModel.AngleSystemInputType.DEG_2));
         actionService.registerAction(ActionType.deg4Action, actionFactory.degAction(MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18, AngleSystemModel.AngleSystemInputType.DEG_4));
-        actionService.registerAction(ActionType.angleRestrictedAction, actionFactory.degAction(MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_5_37, AngleSystemModel.AngleSystemInputType.DEG_5));
 
         // - other aux actions
         actionService.registerAction(ActionType.colOrangeAction, new LambdaAction(() -> canvasModel.setAuxLiveLineColor(LineColor.ORANGE_4)));
