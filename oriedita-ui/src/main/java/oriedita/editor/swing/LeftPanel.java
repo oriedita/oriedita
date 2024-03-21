@@ -47,6 +47,8 @@ import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseWheelEvent;
 import java.beans.PropertyChangeEvent;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -325,6 +327,19 @@ public class LeftPanel {
         });
         senbun_b_nyuryokuButton.addActionListener(e -> getData(applicationModel));
         delTypeDropBox.addActionListener(e -> applicationModel.setDelLineType(CustomLineTypes.from(delTypeDropBox.getSelectedIndex() - 1)));
+        delTypeDropBox.addMouseWheelListener(new MouseAdapter() {
+            @Override
+            public void mouseWheelMoved(MouseWheelEvent e) {
+                int index = delTypeDropBox.getSelectedIndex();
+                if (e.getWheelRotation() < 0 && index < delTypeDropBox.getItemCount() - 1) {
+                    applicationModel.setDelLineType(CustomLineTypes.from(index));
+                    del_l_typeButton.doClick();
+                } else if (e.getWheelRotation() > 0 && index > 0) {
+                    applicationModel.setDelLineType(CustomLineTypes.from(index - 2));
+                    del_l_typeButton.doClick();
+                }
+            }
+        });
         delTypeDropBox.addPopupMenuListener(new PopupMenuAdapter() {
             @Override
             public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
@@ -338,6 +353,19 @@ public class LeftPanel {
             switchReplaceButton.setEnabled(applicationModel.getCustomFromLineType() != CustomLineTypes.ANY &&
                     applicationModel.getCustomFromLineType() != CustomLineTypes.MANDV);
         });
+        fromLineDropBox.addMouseWheelListener(new MouseAdapter() {
+            @Override
+            public void mouseWheelMoved(MouseWheelEvent e) {
+                int index = fromLineDropBox.getSelectedIndex();
+                if (e.getWheelRotation() < 0 && index < fromLineDropBox.getItemCount() - 1) {
+                    applicationModel.setCustomFromLineType(CustomLineTypes.from(index));
+                    replace_lineButton.doClick();
+                } else if (e.getWheelRotation() > 0 && index > 0) {
+                    applicationModel.setCustomFromLineType(CustomLineTypes.from(index - 2));
+                    replace_lineButton.doClick();
+                }
+            }
+        });
         fromLineDropBox.addPopupMenuListener(new PopupMenuAdapter() {
             @Override
             public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
@@ -345,10 +373,34 @@ public class LeftPanel {
             }
         });
         toLineDropBox.addActionListener(e -> {
-            if (toLineDropBox.getSelectedIndex() == CustomLineTypes.EGDE.getNumber()) {
-                applicationModel.setCustomToLineType(CustomLineTypes.from(toLineDropBox.getSelectedIndex()));
+            int index = toLineDropBox.getSelectedIndex();
+            if (index == CustomLineTypes.EGDE.getNumber()) {
+                applicationModel.setCustomToLineType(CustomLineTypes.from(index));
             } else {
-                applicationModel.setCustomToLineType(CustomLineTypes.from(toLineDropBox.getSelectedIndex() + 1));
+                applicationModel.setCustomToLineType(CustomLineTypes.from(index + 1));
+            }
+        });
+        toLineDropBox.addMouseWheelListener(new MouseAdapter() {
+            @Override
+            public void mouseWheelMoved(MouseWheelEvent e) {
+                int index = toLineDropBox.getSelectedIndex();
+                if (e.getWheelRotation() < 0 && index < toLineDropBox.getItemCount() - 1) {
+                    if (index == CustomLineTypes.EGDE.getNumber()) {
+                        applicationModel.setCustomToLineType(CustomLineTypes.from(index + 2));
+                    } else {
+                        index++;
+                        applicationModel.setCustomToLineType(CustomLineTypes.from(index + 1));
+                    }
+                    replace_lineButton.doClick();
+                } else if (e.getWheelRotation() > 0 && index > 0) {
+                    if (index + 1 == CustomLineTypes.MOUNTAIN.getNumber()) {
+                        applicationModel.setCustomToLineType(CustomLineTypes.from(index - 2));
+                    } else {
+                        index++;
+                        applicationModel.setCustomToLineType(CustomLineTypes.from(index - 1));
+                    }
+                    replace_lineButton.doClick();
+                }
             }
         });
         toLineDropBox.addPopupMenuListener(new PopupMenuAdapter() {
