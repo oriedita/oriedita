@@ -331,10 +331,10 @@ public class LeftPanel {
             @Override
             public void mouseWheelMoved(MouseWheelEvent e) {
                 int index = delTypeDropBox.getSelectedIndex();
-                if (e.getWheelRotation() < 0 && index < delTypeDropBox.getItemCount() - 1) {
+                if (e.getWheelRotation() > 0 && index < delTypeDropBox.getItemCount() - 1) {
                     applicationModel.setDelLineType(CustomLineTypes.from(index));
                     del_l_typeButton.doClick();
-                } else if (e.getWheelRotation() > 0 && index > 0) {
+                } else if (e.getWheelRotation() < 0 && index > 0) {
                     applicationModel.setDelLineType(CustomLineTypes.from(index - 2));
                     del_l_typeButton.doClick();
                 }
@@ -357,10 +357,10 @@ public class LeftPanel {
             @Override
             public void mouseWheelMoved(MouseWheelEvent e) {
                 int index = fromLineDropBox.getSelectedIndex();
-                if (e.getWheelRotation() < 0 && index < fromLineDropBox.getItemCount() - 1) {
+                if (e.getWheelRotation() > 0 && index < fromLineDropBox.getItemCount() - 1) {
                     applicationModel.setCustomFromLineType(CustomLineTypes.from(index));
                     replace_lineButton.doClick();
-                } else if (e.getWheelRotation() > 0 && index > 0) {
+                } else if (e.getWheelRotation() < 0 && index > 0) {
                     applicationModel.setCustomFromLineType(CustomLineTypes.from(index - 2));
                     replace_lineButton.doClick();
                 }
@@ -384,7 +384,7 @@ public class LeftPanel {
             @Override
             public void mouseWheelMoved(MouseWheelEvent e) {
                 int index = toLineDropBox.getSelectedIndex();
-                if (e.getWheelRotation() < 0 && index < toLineDropBox.getItemCount() - 1) {
+                if (e.getWheelRotation() > 0 && index < toLineDropBox.getItemCount() - 1) {
                     if (index == CustomLineTypes.EGDE.getNumber()) {
                         applicationModel.setCustomToLineType(CustomLineTypes.from(index + 2));
                     } else {
@@ -392,7 +392,7 @@ public class LeftPanel {
                         applicationModel.setCustomToLineType(CustomLineTypes.from(index + 1));
                     }
                     replace_lineButton.doClick();
-                } else if (e.getWheelRotation() > 0 && index > 0) {
+                } else if (e.getWheelRotation() < 0 && index > 0) {
                     if (index + 1 == CustomLineTypes.MOUNTAIN.getNumber()) {
                         applicationModel.setCustomToLineType(CustomLineTypes.from(index - 2));
                     } else {
