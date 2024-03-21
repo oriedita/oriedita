@@ -9,6 +9,7 @@ import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import com.opencsv.CSVReaderBuilder;
+import org.tinylog.Logger;
 import oriedita.editor.Colors;
 import oriedita.editor.FrameProvider;
 import oriedita.editor.action.ActionType;
@@ -136,6 +137,7 @@ public class PreferenceDialog extends JDialog {
     private JButton importButton;
     private JButton exportButton;
     private JScrollPane scrollPane1;
+    private JSlider gridDensitySlider;
     private JCheckBox roundedEndsCheckbox;
     private int tempTransparency;
     private final ApplicationModel applicationModel;
@@ -185,6 +187,7 @@ public class PreferenceDialog extends JDialog {
         animationSpeedSlider.setValue((int) ((applicationModel.getAnimationSpeed()) * 8));
         mouseRangeSlider.setValue((int) applicationModel.getMouseRadius());
         roundedEndsCheckbox.setSelected(applicationModel.useRoundedEnds());
+        gridDensitySlider.setValue((int) (gridDensitySlider.getMaximum() - applicationModel.getMinGridUnitSize() + 0.6));
     }
 
     public PreferenceDialog(
@@ -355,6 +358,9 @@ public class PreferenceDialog extends JDialog {
             applicationModel.setLineStyle(LineStyle.from(lineStyleDropBox.getSelectedIndex() + 1));
             lineStyleDropBox.setSelectedIndex(applicationModel.getLineStyle().getType() - 1);
         });
+        gridDensitySlider.addChangeListener(e -> applicationModel.setMinGridUnitSize(
+                gridDensitySlider.getMaximum() - gridDensitySlider.getValue() + .5));
+
         topPanelCB.addActionListener(e -> applicationModel.setDisplayTopPanel(topPanelCB.isSelected()));
         bottomPanelCB.addActionListener(e -> applicationModel.setDisplayBottomPanel(bottomPanelCB.isSelected()));
         leftPanelCB.addActionListener(e -> applicationModel.setDisplayLeftPanel(leftPanelCB.isSelected()));
@@ -583,7 +589,7 @@ public class PreferenceDialog extends JDialog {
 
             extractData(allData); // Extract Data excluding headers
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.error(e);
         }
     }
 
@@ -1086,6 +1092,23 @@ public class PreferenceDialog extends JDialog {
         gbc.anchor = GridBagConstraints.WEST;
         gbc.insets = new Insets(0, 10, 0, 0);
         appearance2Panel.add(roundedEndsCheckbox, gbc);
+        final JLabel label10 = new JLabel();
+        label10.setHorizontalAlignment(4);
+        label10.setHorizontalTextPosition(4);
+        label10.setOpaque(true);
+        label10.setPreferredSize(new Dimension(121, 17));
+        label10.setText("Max Grid Density:");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 8;
+        gbc.anchor = GridBagConstraints.WEST;
+        appearance2Panel.add(label10, gbc);
+        gbc = new GridBagConstraints();
+        gbc.gridx = 1;
+        gbc.gridy = 8;
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        appearance2Panel.add(gridDensitySlider, gbc);
         final JPanel panel4 = new JPanel();
         panel4.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 10));
         panel4.setMinimumSize(new Dimension(334, 226));
@@ -1211,6 +1234,8 @@ public class PreferenceDialog extends JDialog {
         labelsAnimSpeed.put(16, new JLabel("Slow"));
         labelsAnimSpeed.put(24, new JLabel("Slowest"));
         animationSpeedSlider.setLabelTable(labelsAnimSpeed);
+
+        gridDensitySlider = new JSlider(0, 20);
 
         scrollPane1 = new JScrollPane();
         scrollPane1.getVerticalScrollBar().setUnitIncrement(16);

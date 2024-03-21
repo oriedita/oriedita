@@ -444,7 +444,7 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
         Graphics2D g2 = (Graphics2D) g;
 
         //Drawing grid lines
-        grid.draw(g, camera, p0x_max, p0y_max, gridInputAssist);
+        grid.draw(g, camera, p0x_max, p0y_max, gridInputAssist, applicationModel.getMinGridUnitSize());
 
         BasicStroke BStroke = new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER);
         g2.setStroke(BStroke);//Line thickness and shape of the end of the line

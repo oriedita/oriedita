@@ -2,7 +2,7 @@
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="oriedita.editor.swing.dialog.PreferenceDialog">
   <grid id="cbd77" binding="contentPane" layout-manager="GridBagLayout">
     <constraints>
-      <xy x="13" y="12" width="550" height="700"/>
+      <xy x="13" y="12" width="591" height="700"/>
     </constraints>
     <properties>
       <focusTraversalPolicyProvider value="true"/>
@@ -608,6 +608,26 @@
                           <selected value="false"/>
                           <text value="Round Line-ends"/>
                         </properties>
+                      </component>
+                      <component id="a3ff6" class="javax.swing.JLabel">
+                        <constraints>
+                          <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                          <gridbag weightx="0.0" weighty="0.0"/>
+                        </constraints>
+                        <properties>
+                          <horizontalAlignment value="4"/>
+                          <horizontalTextPosition value="4"/>
+                          <opaque value="true"/>
+                          <preferredSize width="121" height="17"/>
+                          <text value="Max Grid Density:"/>
+                        </properties>
+                      </component>
+                      <component id="82c26" class="javax.swing.JSlider" binding="gridDensitySlider" custom-create="true">
+                        <constraints>
+                          <grid row="8" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+                          <gridbag weightx="0.0" weighty="0.0"/>
+                        </constraints>
+                        <properties/>
                       </component>
                     </children>
                   </grid>

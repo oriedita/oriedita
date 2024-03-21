@@ -16,7 +16,6 @@ import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -62,6 +61,8 @@ public class ApplicationModel implements Serializable {
     private Dimension windowSize;
     private List<File> recentFileList;
 
+    private double minGridUnitSize;
+
     private boolean showInvisibleTextWarning;
 
     private Color gridColor;
@@ -85,7 +86,7 @@ public class ApplicationModel implements Serializable {
         - getter, setter (with pcs event)
         - add the default value to reset
         - add the property to set
-        - if included in preference window: add property to isSame and restorePrefDefaults
+        - if included in preference window: add property to restorePrefDefaults
      */
 
     @Inject
@@ -399,6 +400,7 @@ public class ApplicationModel implements Serializable {
         animationSpeed = 1;
         moveFoldedModelWithCp = true;
         mouseRadius = 10;
+        minGridUnitSize = 5;
 
         autoSaveInterval = 5;
 
@@ -452,48 +454,12 @@ public class ApplicationModel implements Serializable {
         animations = true;
         animationSpeed = 1;
         mouseRadius = 10;
+        minGridUnitSize = 5;
 
         autoSaveInterval = 5;
 
         this.pcs.firePropertyChange(null, null, null);
     }
-
-    public boolean isSame(ApplicationModel applicationModel) {
-        return(displayPointSpotlight == applicationModel.getDisplayPointSpotlight()
-                && displayPointOffset == applicationModel.getDisplayPointOffset()
-                && displayGridInputAssist == applicationModel.getDisplayGridInputAssist()
-                && displayComments == applicationModel.getDisplayComments()
-                && displayCpLines == applicationModel.getDisplayCpLines()
-                && displayAuxLines == applicationModel.getDisplayAuxLines()
-                && displayLiveAuxLines == applicationModel.getDisplayLiveAuxLines()
-                && displayMarkings == applicationModel.getDisplayMarkings()
-                && displayCreasePatternOnTop == applicationModel.getDisplayCreasePatternOnTop()
-                && displayFoldingProgress == applicationModel.getDisplayFoldingProgress()
-                && displaySelfIntersection == applicationModel.getDisplaySelfIntersection()
-                && check4ColorTransparency == applicationModel.getCheck4ColorTransparency()
-                && lineWidth == applicationModel.getLineWidth()
-                && auxLineWidth == applicationModel.getAuxLineWidth()
-                && pointSize == applicationModel.getPointSize()
-                && lineStyle == applicationModel.getLineStyle()
-                && antiAlias == applicationModel.getAntiAlias()
-                && mouseWheelMovesCreasePattern == applicationModel.getMouseWheelMovesCreasePattern()
-                && helpVisible == applicationModel.getHelpVisible()
-                && preciseZoom == applicationModel.isPreciseZoom()
-                && foldWarning == applicationModel.getFoldWarning()
-                && gridColor == applicationModel.getGridColor()
-                && gridScaleColor == applicationModel.getGridScaleColor()
-                && gridLineWidth == applicationModel.getGridLineWidth()
-                && displayTopPanel == applicationModel.getDisplayTopPanel()
-                && displayBottomPanel == applicationModel.getDisplayBottomPanel()
-                && displayRightPanel == applicationModel.getDisplayRightPanel()
-                && displayLeftPanel == applicationModel.getDisplayLeftPanel()
-                && Objects.equals(laf, applicationModel.getLaf())
-                && zoomSpeed == applicationModel.getZoomSpeed()
-                && animations == applicationModel.getAnimations()
-                && animationSpeed == applicationModel.getAnimationSpeed()
-                && mouseRadius == applicationModel.getMouseRadius());
-    }
-
 
     public int getAuxLineWidth() {
         return auxLineWidth;
@@ -877,6 +843,7 @@ public class ApplicationModel implements Serializable {
         mouseRadius = applicationModel.getMouseRadius();
 
         autoSaveInterval = applicationModel.getAutoSaveInterval();
+        minGridUnitSize = applicationModel.getMinGridUnitSize();
 
         this.pcs.firePropertyChange(null, null, null);
     }
@@ -945,6 +912,16 @@ public class ApplicationModel implements Serializable {
 
     public void toggleUseAdvancedCheck4Display() {
         setAdvancedCheck4Display(!advancedCheck4Display);
+    }
+
+    public double getMinGridUnitSize() {
+        return minGridUnitSize;
+    }
+
+    public void setMinGridUnitSize(double minGridUnitSize) {
+        double oldSize = this.minGridUnitSize;
+        this.minGridUnitSize = minGridUnitSize;
+        this.pcs.firePropertyChange("minGridUnitSize", oldSize, minGridUnitSize);
     }
 
     public boolean useRoundedEnds() {
