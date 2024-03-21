@@ -2,11 +2,13 @@ package oriedita.editor.service.impl;
 
 import oriedita.editor.FrameProviderImpl;
 import oriedita.editor.action.ActionService;
+import oriedita.editor.action.ActionType;
 import oriedita.editor.action.OrieditaAction;
 import oriedita.editor.service.ButtonService;
 import oriedita.editor.service.ButtonServiceTest;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ButtonServiceImplTest extends ButtonServiceTest {
 
@@ -26,13 +28,13 @@ public class ButtonServiceImplTest extends ButtonServiceTest {
      */
     private static class TestActionService implements ActionService {
         @Override
-        public void registerAction(OrieditaAction orieditaAction) {
+        public void registerAction(ActionType actionType, OrieditaAction orieditaAction) {
 
         }
 
         @Override
-        public List<OrieditaAction> getAllRegisteredActions() {
-            return List.of();
+        public Map<ActionType, OrieditaAction> getAllRegisteredActions() {
+            return new HashMap<>();
         }
     }
 }

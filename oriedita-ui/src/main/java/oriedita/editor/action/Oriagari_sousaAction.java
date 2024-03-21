@@ -12,11 +12,9 @@ import java.awt.event.ActionEvent;
 public class Oriagari_sousaAction extends AbstractOrieditaAction implements OrieditaAction {
     private final FoldedFiguresList foldedFiguresList;
     private final CanvasModel canvasModel;
-    private final ActionType actionType;
     private final FoldedFigureOperationMode foldedFigureOperationMode;
 
-    public Oriagari_sousaAction(CanvasModel canvasModel, FoldedFiguresList foldedFiguresList, ActionType actionType, FoldedFigureOperationMode foldedFigureOperationMode) {
-        this.actionType = actionType;
+    public Oriagari_sousaAction(CanvasModel canvasModel, FoldedFiguresList foldedFiguresList, FoldedFigureOperationMode foldedFigureOperationMode) {
         this.foldedFigureOperationMode = foldedFigureOperationMode;
         this.canvasModel = canvasModel;
         this.foldedFiguresList = foldedFiguresList;
@@ -33,10 +31,5 @@ public class Oriagari_sousaAction extends AbstractOrieditaAction implements Orie
         }
 
         canvasModel.setMouseMode(MouseMode.MODIFY_CALCULATED_SHAPE_101);
-    }
-
-    @Override
-    public ActionType getActionType(){
-        return actionType;
     }
 }

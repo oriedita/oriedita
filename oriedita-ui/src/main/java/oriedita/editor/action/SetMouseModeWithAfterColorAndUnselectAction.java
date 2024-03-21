@@ -12,18 +12,15 @@ public class SetMouseModeWithAfterColorAndUnselectAction extends AbstractOriedit
     private final CanvasModel canvasModel;
     private final CreasePattern_Worker mainCreasePatternWorker;
     private final ButtonService buttonService;
-    private final ActionType actionType;
     private final MouseMode mouseMode;
 
     public SetMouseModeWithAfterColorAndUnselectAction(CanvasModel canvasModel,
                                                        @Named("mainCreasePattern_Worker") CreasePattern_Worker mainCreasePatternWorker,
                                                        ButtonService buttonService,
-                                                       ActionType actionType,
                                                        MouseMode mouseMode){
         this.canvasModel = canvasModel;
         this.mainCreasePatternWorker = mainCreasePatternWorker;
         this.buttonService = buttonService;
-        this.actionType = actionType;
         this.mouseMode = mouseMode;
     }
 
@@ -33,10 +30,5 @@ public class SetMouseModeWithAfterColorAndUnselectAction extends AbstractOriedit
         canvasModel.setMouseModeAfterColorSelection(mouseMode);
         mainCreasePatternWorker.unselect_all();
         buttonService.Button_shared_operation();
-    }
-
-    @Override
-    public ActionType getActionType(){
-        return actionType;
     }
 }

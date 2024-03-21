@@ -192,7 +192,7 @@ public class DrawingUtil {
                 g2.draw(new Ellipse2D.Double(b.getX() - d_width, b.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
             }
 
-            g2.setStroke(new BasicStroke(f_h_WireframeLineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));//線の太さや線の末端の形状
+            g2.setStroke(new BasicStroke(f_h_WireframeLineWidth, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER));//線の太さや線の末端の形状
 
         }
     }
@@ -201,7 +201,7 @@ public class DrawingUtil {
         Point a = camera.object2TV(circle.determineCenter());//この場合のaは描画座標系での円の中心の位置
 
         Graphics2D g2 = (Graphics2D) g;
-        g2.setStroke(new BasicStroke(lineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));//基本指定A　　線の太さや線の末端の形状
+        g2.setStroke(new BasicStroke(lineWidth, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER));//基本指定A　　線の太さや線の末端の形状
 
         if (circle.getCustomized() == 0) {
             setColor(g, circle.getColor());
@@ -239,9 +239,9 @@ public class DrawingUtil {
         }
     }
 
-    public static void drawAuxLine(Graphics g, LineSegment s, Camera camera, float lineWidth, int pointSize) {
+    public static void drawAuxLine(Graphics g, LineSegment s, Camera camera, float lineWidth, int pointSize, boolean useRoundedEnds) {
         Graphics2D g2 = (Graphics2D) g;
-        g2.setStroke(new BasicStroke(lineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));//基本指定A　　線の太さや線の末端の形状
+        g2.setStroke(new BasicStroke(lineWidth, useRoundedEnds? BasicStroke.CAP_ROUND : BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));//基本指定A　　線の太さや線の末端の形状
 
         if (s.getCustomized() == 0) {
             setColor(g, s.getColor());
@@ -255,6 +255,9 @@ public class DrawingUtil {
 
         g.drawLine((int) a.getX(), (int) a.getY(), (int) b.getX(), (int) b.getY()); //直線
 
+        if (Epsilon.high.eq0(lineWidth) || pointSize == 0) {
+            return;
+        }
         if (lineWidth < 2.0f) {//頂点の黒い正方形を描く
             drawVertex(g2, a, pointSize);
             drawVertex(g2, b, pointSize);
@@ -262,22 +265,20 @@ public class DrawingUtil {
 
         if (lineWidth >= 2.0f) {//  太線
             g2.setStroke(new BasicStroke(1.0f + lineWidth % 1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));//線の太さや線の末端の形状、ここでは折線の端点の線の形状の指定
-            if (pointSize != 0) {
-                double d_width = (double) lineWidth / 2.0 + (double) pointSize;
+            double d_width = (double) lineWidth / 2.0 + (double) pointSize;
 
-                g.setColor(Colors.get(Color.white));
-                g2.fill(new Ellipse2D.Double(a.getX() - d_width, a.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
+            g.setColor(Colors.get(Color.white));
+            g2.fill(new Ellipse2D.Double(a.getX() - d_width, a.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
 
 
-                g.setColor(Colors.get(Color.gray));
-                g2.draw(new Ellipse2D.Double(a.getX() - d_width, a.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
+            g.setColor(Colors.get(Color.gray));
+            g2.draw(new Ellipse2D.Double(a.getX() - d_width, a.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
 
-                g.setColor(Colors.get(Color.white));
-                g2.fill(new Ellipse2D.Double(b.getX() - d_width, b.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
+            g.setColor(Colors.get(Color.white));
+            g2.fill(new Ellipse2D.Double(b.getX() - d_width, b.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
 
-                g.setColor(Colors.get(Color.gray));
-                g2.draw(new Ellipse2D.Double(b.getX() - d_width, b.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
-            }
+            g.setColor(Colors.get(Color.gray));
+            g2.draw(new Ellipse2D.Double(b.getX() - d_width, b.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
         }
     }
 
@@ -373,7 +374,7 @@ public class DrawingUtil {
 
     private static final Point defaultMove = new Point(Epsilon.UNKNOWN_1EN6, Epsilon.UNKNOWN_1EN6);
 
-    public static void drawCpLine(Graphics g, LineSegment s, Camera camera, LineStyle lineStyle, float lineWidth, int pointSize, int clipX, int clipY) {
+    public static void drawCpLine(Graphics g, LineSegment s, Camera camera, LineStyle lineStyle, float lineWidth, int pointSize, int clipX, int clipY, boolean useRoundedEnds) {
 
         Point a = camera.object2TV(s.getA()).move(defaultMove);
         Point b = camera.object2TV(s.getB()).move(defaultMove);
@@ -385,90 +386,88 @@ public class DrawingUtil {
                 return;
             }
         }
-
+        int cap = useRoundedEnds? BasicStroke.CAP_ROUND : BasicStroke.CAP_BUTT;
         Graphics2D g2 = (Graphics2D) g;
         switch (lineStyle) {
             case COLOR:
                 setColor(g, s.getColor());
-                g2.setStroke(new BasicStroke(lineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));//基本指定A　　線の太さや線の末端の形状
+                g2.setStroke(new BasicStroke(lineWidth, cap, BasicStroke.JOIN_MITER));//基本指定A　　線の太さや線の末端の形状
                 break;
             case BLACK_WHITE:
                 setColor(g, s.getColor());
                 if (s.getColor() == LineColor.BLACK_0) {
-                    g2.setStroke(new BasicStroke(lineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
+                    g2.setStroke(new BasicStroke(lineWidth, cap, BasicStroke.JOIN_MITER));
                 }
                 if (s.getColor() == LineColor.RED_1) {
                     setColor(g, LineColor.BLACK_0);
-                    g2.setStroke(new BasicStroke(lineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
+                    g2.setStroke(new BasicStroke(lineWidth, cap, BasicStroke.JOIN_MITER));
                 }
                 if (s.getColor() == LineColor.BLUE_2) {
                     setColor(g, LineColor.GREY_10);
-                    g2.setStroke(new BasicStroke(lineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
+                    g2.setStroke(new BasicStroke(lineWidth, cap, BasicStroke.JOIN_MITER));
                 }
                 break;
             case COLOR_AND_SHAPE:
                 setColor(g, s.getColor());
                 if (s.getColor() == LineColor.BLACK_0) {
-                    g2.setStroke(new BasicStroke(lineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
+                    g2.setStroke(new BasicStroke(lineWidth, cap, BasicStroke.JOIN_MITER));
                 }//基本指定A　　線の太さや線の末端の形状
                 if (s.getColor() == LineColor.RED_1) {
-                    g2.setStroke(new BasicStroke(lineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, dash_M1, 0.0f));
+                    g2.setStroke(new BasicStroke(lineWidth, cap, BasicStroke.JOIN_MITER, 10.0f, dash_M1, 0.0f));
                 }//一点鎖線//線の太さや線の末端の形状
                 if (s.getColor() == LineColor.BLUE_2) {
-                    g2.setStroke(new BasicStroke(lineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, dash_V, 0.0f));
+                    g2.setStroke(new BasicStroke(lineWidth, cap, BasicStroke.JOIN_MITER, 10.0f, dash_V, 0.0f));
                 }//破線//線の太さや線の末端の形状
                 break;
             case BLACK_ONE_DOT:
                 if (s.getColor() == LineColor.BLACK_0) {
-                    g2.setStroke(new BasicStroke(lineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
+                    g2.setStroke(new BasicStroke(lineWidth, cap, BasicStroke.JOIN_MITER));
                 }//基本指定A　　線の太さや線の末端の形状
                 if (s.getColor() == LineColor.RED_1) {
-                    g2.setStroke(new BasicStroke(lineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, dash_M1, 0.0f));
+                    g2.setStroke(new BasicStroke(lineWidth, cap, BasicStroke.JOIN_MITER, 10.0f, dash_M1, 0.0f));
                 }//一点鎖線//線の太さや線の末端の形状
                 if (s.getColor() == LineColor.BLUE_2) {
-                    g2.setStroke(new BasicStroke(lineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, dash_V, 0.0f));
+                    g2.setStroke(new BasicStroke(lineWidth, cap, BasicStroke.JOIN_MITER, 10.0f, dash_V, 0.0f));
                 }//破線//線の太さや線の末端の形状
                 break;
             case BLACK_TWO_DOT:
                 if (s.getColor() == LineColor.BLACK_0) {
-                    g2.setStroke(new BasicStroke(lineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
+                    g2.setStroke(new BasicStroke(lineWidth, cap, BasicStroke.JOIN_MITER));
                 }//基本指定A　　線の太さや線の末端の形状
                 if (s.getColor() == LineColor.RED_1) {
-                    g2.setStroke(new BasicStroke(lineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, dash_M2, 0.0f));
+                    g2.setStroke(new BasicStroke(lineWidth, cap, BasicStroke.JOIN_MITER, 10.0f, dash_M2, 0.0f));
                 }//二点鎖線//線の太さや線の末端の形状
                 if (s.getColor() == LineColor.BLUE_2) {
-                    g2.setStroke(new BasicStroke(lineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, dash_V, 0.0f));
+                    g2.setStroke(new BasicStroke(lineWidth, cap, BasicStroke.JOIN_MITER, 10.0f, dash_V, 0.0f));
                 }//破線//線の太さや線の末端の形状
                 break;
         }
 
-
         g2.drawLine((int) a.getX(), (int) a.getY(), (int) b.getX(), (int) b.getY());
 
-        if (Epsilon.high.eq0(lineWidth)) {
-
-        } else if (lineWidth < 2.0f) {//頂点の黒い正方形を描く
+        if (Epsilon.high.eq0(lineWidth) || pointSize == 0) {
+            return;
+        }
+        if (lineWidth < 2.0f) {//頂点の黒い正方形を描く
             drawVertex(g2, a, pointSize);
             if (a.distance(b) > 1) {
                 drawVertex(g2, b, pointSize);
             }
         } else if (lineWidth >= 2.0f) {//  太線
             g2.setStroke(new BasicStroke(1.0f + lineWidth % 1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));//線の太さや線の末端の形状、ここでは折線の端点の線の形状の指定
-            if (pointSize != 0) {
-                double d_width = (double) lineWidth / 2.0 + (double) pointSize;
+            double d_width = (double) lineWidth / 2.0 + (double) pointSize;
 
-                g.setColor(Colors.get(Color.gray));
-                g2.fill(new Ellipse2D.Double(a.getX() - d_width, a.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
+            g.setColor(Colors.get(Color.gray));
+            g2.fill(new Ellipse2D.Double(a.getX() - d_width, a.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
 
-                g.setColor(Colors.get(Color.black));
-                g2.draw(new Ellipse2D.Double(a.getX() - d_width, a.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
+            g.setColor(Colors.get(Color.black));
+            g2.draw(new Ellipse2D.Double(a.getX() - d_width, a.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
 
-                g.setColor(Colors.get(Color.gray));
-                g2.fill(new Ellipse2D.Double(b.getX() - d_width, b.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
+            g.setColor(Colors.get(Color.gray));
+            g2.fill(new Ellipse2D.Double(b.getX() - d_width, b.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
 
-                g.setColor(Colors.get(Color.black));
-                g2.draw(new Ellipse2D.Double(b.getX() - d_width, b.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
-            }
+            g.setColor(Colors.get(Color.black));
+            g2.draw(new Ellipse2D.Double(b.getX() - d_width, b.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
         }
     }
 

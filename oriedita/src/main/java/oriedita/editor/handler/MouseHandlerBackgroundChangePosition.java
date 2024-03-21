@@ -5,10 +5,10 @@ import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.databinding.BackgroundModel;
 import oriedita.editor.service.ResetService;
+import origami.crease_pattern.element.Rectangle;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
-import origami.crease_pattern.element.Polygon;
 
 
 @ApplicationScoped
@@ -68,12 +68,10 @@ public class MouseHandlerBackgroundChangePosition extends BaseMouseHandler {
 
             backgroundModel.setLockBackground(false);
 
-            Polygon polygon = new Polygon(d.getCamera().object2TV(s_1.getA()),
+            backgroundModel.setBackgroundPosition(new Rectangle(d.getCamera().object2TV(s_1.getA()),
                     d.getCamera().object2TV(s_2.getA()),
                     d.getCamera().object2TV(s_3.getA()),
-                    d.getCamera().object2TV(s_4.getA()));
-
-            backgroundModel.setBackgroundPosition(polygon);
+                    d.getCamera().object2TV(s_4.getA())));
         }
     }
 }

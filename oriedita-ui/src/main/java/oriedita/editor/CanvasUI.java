@@ -226,23 +226,10 @@ public class CanvasUI extends JPanel {
         }
 
         double d_width = creasePatternCamera.getCameraZoomX() * mainCreasePatternWorker.getSelectionDistance();
-        //Flashlight (dot) search range
-        if (displayPointSpotlight) {
-            g2.setColor(Colors.get(new Color(255, 240, 0, 30)));
-            g2.setStroke(new BasicStroke(2.0f));
-            g2.setColor(Colors.get(new Color(255, 240, 0, 230)));
-            g2.draw(new Ellipse2D.Double(mousePositionOnCanvas.getX() - d_width, mousePositionOnCanvas.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
-        }
-
-        //Luminous flux of flashlight, etc.
-        if (displayPointSpotlight && displayPointOffset) {
-            g2.setStroke(new BasicStroke(2.0f));
-            g2.setColor(Colors.get(new Color(255, 240, 0, 170)));
-        }
 
         //展開図表示
         mainCreasePatternWorker.drawWithCamera(bufferGraphics, displayComments, displayCpLines, displayAuxLines, displayLiveAuxLines, lineWidth, lineStyle, auxLineWidth, dim.width, dim.height, displayMarkings, hideOperationFrame);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ,展開図動かし中心の十字の目印の表示
-        DrawingSettings settings = new DrawingSettings(lineWidth, lineStyle, dim.height, dim.width);
+        DrawingSettings settings = new DrawingSettings(lineWidth, lineStyle, dim.height, dim.width, applicationModel.useRoundedEnds());
         if (activeMouseHandler != null) {
             activeMouseHandler.drawPreview(g2, creasePatternCamera, settings);
         }
@@ -300,6 +287,13 @@ public class CanvasUI extends JPanel {
         //アンチェイリアス　オフ
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, antiAlias ? RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF);//アンチェイリアス　オン
 
+        //Flashlight (dot) search range
+        if (displayPointSpotlight) {
+            g2.setStroke(new BasicStroke(2.0f));
+            g2.setColor(Colors.get(new Color(255, 240, 0, 230)));
+            g2.draw(new Ellipse2D.Double(mousePositionOnCanvas.getX() - d_width, mousePositionOnCanvas.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
+        }
+
         //Central indicator
         if (displayPointOffset) {
             g2.setStroke(new BasicStroke(1.0f));
@@ -307,6 +301,7 @@ public class CanvasUI extends JPanel {
             g2.drawLine((int) (mousePositionOnCanvas.getX()), (int) (mousePositionOnCanvas.getY()),
                     (int) (mousePositionOnCanvas.getX() + d_width), (int) (mousePositionOnCanvas.getY() + d_width)); //直線
         }
+
         if (animationService.isAnimating()) {
             SwingUtilities.invokeLater(canvasModel::markDirty);
         }

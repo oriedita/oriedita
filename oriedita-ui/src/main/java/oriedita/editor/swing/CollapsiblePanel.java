@@ -12,8 +12,8 @@ import java.awt.event.MouseEvent;
 @ApplicationScoped
 public class CollapsiblePanel extends JPanel {
 
-    public CollapsiblePanel(String labelName, JPanel contentPanel) {
-        this.setLayout(new GridLayoutManager(2, 1, new Insets(0, 0, 5, 0), -1, -1));
+    public CollapsiblePanel(String labelName, JPanel contentPanel, Insets inset) {
+        this.setLayout(new GridLayoutManager(2, 1, inset, -1, -1));
 
         JLabel clickLabel = new JLabel("▾ ".concat(labelName));
         this.add(clickLabel, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_NORTHWEST, GridConstraints.FILL_HORIZONTAL, 1, 1, null, null, null, 0, false));

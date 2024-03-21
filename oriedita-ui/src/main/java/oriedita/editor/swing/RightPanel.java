@@ -7,7 +7,6 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import oriedita.editor.FrameProvider;
-import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.canvas.FoldLineAdditionalInputMode;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.databinding.AngleSystemModel;
@@ -17,7 +16,6 @@ import oriedita.editor.databinding.MeasuresModel;
 import oriedita.editor.service.ButtonService;
 import oriedita.editor.service.HistoryState;
 import oriedita.editor.swing.component.ColorIcon;
-import oriedita.editor.swing.dialog.OpenFrame;
 import oriedita.editor.tools.LookAndFeelUtil;
 import oriedita.editor.tools.StringOp;
 
@@ -44,11 +42,9 @@ public class RightPanel {
     private final FrameProvider frameProvider;
     private final AngleSystemModel angleSystemModel;
     private final MeasuresModel measuresModel;
-    private final CreasePattern_Worker mainCreasePatternWorker;
     private final ButtonService buttonService;
     private final CanvasModel canvasModel;
     private final ApplicationModel applicationModel;
-    private OpenFrame openFrame;
     private JCheckBox cAMVCheckBox;
     private JButton ck4_colorIncreaseButton;
     private JCheckBox ckTCheckBox;
@@ -73,7 +69,6 @@ public class RightPanel {
     private JButton ad_fncButton;
     private JButton degButton;
     private JButton deg3Button;
-    private JButton angleRestrictedButton;
     private JButton deg2Button;
     private JButton deg4Button;
     private JButton polygonSizeSetButton;
@@ -119,13 +114,11 @@ public class RightPanel {
                       AngleSystemModel angleSystemModel,
                       ButtonService buttonService,
                       MeasuresModel measuresModel,
-                      @Named("mainCreasePattern_Worker") CreasePattern_Worker mainCreasePatternWorker,
                       CanvasModel canvasModel,
                       ApplicationModel applicationModel) {
         this.frameProvider = frameProvider;
         this.angleSystemModel = angleSystemModel;
         this.measuresModel = measuresModel;
-        this.mainCreasePatternWorker = mainCreasePatternWorker;
         this.buttonService = buttonService;
         this.canvasModel = canvasModel;
         this.applicationModel = applicationModel;
@@ -156,9 +149,8 @@ public class RightPanel {
         buttonService.registerButton(l1Button, "l1Action");
         buttonService.registerButton(ad_fncButton, "ad_fncAction");
         buttonService.registerButton(degButton, "deg1Action");
-        buttonService.registerButton(deg3Button, "deg3Action");
-        buttonService.registerButton(angleRestrictedButton, "angleRestrictedAction");
         buttonService.registerButton(deg2Button, "deg2Action");
+        buttonService.registerButton(deg3Button, "deg3Action");
         buttonService.registerButton(deg4Button, "deg4Action");
         buttonService.registerButton(polygonSizeSetButton, "polygonSizeSetAction");
         buttonService.registerButton(regularPolygonButton, "regularPolygonAction");
@@ -178,6 +170,7 @@ public class RightPanel {
         buttonService.registerButton(h_senhaba_ageButton, "h_senhaba_ageAction");
         buttonService.registerButton(h_senbun_nyuryokuButton, "h_senbun_nyuryokuAction");
         buttonService.registerButton(h_senbun_sakujyoButton, "h_senbun_sakujyoAction");
+        buttonService.registerButton(restrictedAngleABCSetButton, "restrictedAngleSetABCAction");
         buttonService.registerButton(restrictedAngleSetDEFButton, "restrictedAngleSetDEFAction");
         buttonService.registerButton(colOrangeButton, "colOrangeAction");
         buttonService.registerButton(colYellowButton, "colYellowAction");
@@ -190,25 +183,6 @@ public class RightPanel {
         buttonService.registerButton(cAMVCheckBox, "cAMVAction");
         buttonService.registerButton(textBtn, "textAction");
 
-        ckOCheckBox.addActionListener(e -> {
-            if (ckOCheckBox.isSelected()) {
-                mainCreasePatternWorker.check1();//r_hitosiiとr_heikouhanteiは、hitosiiとheikou_hanteiのずれの許容程度
-                mainCreasePatternWorker.set_i_check1(true);
-            } else {
-                mainCreasePatternWorker.set_i_check1(false);
-            }
-        });
-        ckTCheckBox.addActionListener(e -> {
-            if (ckTCheckBox.isSelected()) {
-                mainCreasePatternWorker.check2();//r_hitosiiとr_heikouhanteiは、hitosiiとheikou_hanteiのずれの許容程度
-                mainCreasePatternWorker.setCheck2(true);
-            } else {
-                mainCreasePatternWorker.setCheck2(false);
-            }
-        });
-        cAMVCheckBox.addActionListener(e -> {
-            applicationModel.setCheck4Enabled(cAMVCheckBox.isSelected());
-        });
         restrictedAngleABCSetButton.addActionListener(e -> {
             getData(angleSystemModel);
 
@@ -230,7 +204,7 @@ public class RightPanel {
         c_colButton.addActionListener(e -> {
             //以下にやりたいことを書く
 
-            Color color = JColorChooser.showDialog(openFrame, "color", new Color(100, 200, 200));
+            Color color = JColorChooser.showDialog(frameProvider.get(), "color", new Color(100, 200, 200));
             if (color != null) {
                 applicationModel.setCircleCustomizedColor(color);
             }
@@ -427,26 +401,23 @@ public class RightPanel {
         final Spacer spacer3 = new Spacer();
         panel1.add(spacer3, new GridConstraints(5, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, new Dimension(-1, 5), new Dimension(-1, 5), null, 0, false));
         final JPanel panel5 = new JPanel();
-        panel5.setLayout(new GridLayoutManager(1, 3, new Insets(0, 0, 0, 0), 1, 1));
+        panel5.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 0, 0), 1, 1));
         panel1.add(panel5, new GridConstraints(6, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         degButton = new JButton();
         degButton.setIcon(new ImageIcon(getClass().getResource("/ppp/deg.png")));
         panel5.add(degButton, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        deg3Button = new JButton();
-        deg3Button.setIcon(new ImageIcon(getClass().getResource("/ppp/deg3.png")));
-        panel5.add(deg3Button, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        angleRestrictedButton = new JButton();
-        angleRestrictedButton.setIcon(new ImageIcon(getClass().getResource("/ppp/senbun_nyuryoku37.png")));
-        panel5.add(angleRestrictedButton, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        deg2Button = new JButton();
+        deg2Button.setIcon(new ImageIcon(getClass().getResource("/ppp/deg2.png")));
+        panel5.add(deg2Button, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JPanel panel6 = new JPanel();
         panel6.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 0, 0), 1, 1));
         panel1.add(panel6, new GridConstraints(7, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-        deg2Button = new JButton();
-        deg2Button.setIcon(new ImageIcon(getClass().getResource("/ppp/deg2.png")));
-        panel6.add(deg2Button, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         deg4Button = new JButton();
         deg4Button.setIcon(new ImageIcon(getClass().getResource("/ppp/deg4.png")));
         panel6.add(deg4Button, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        deg3Button = new JButton();
+        deg3Button.setIcon(new ImageIcon(getClass().getResource("/ppp/senbun_nyuryoku37.png")));
+        panel6.add(deg3Button, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JPanel panel7 = new JPanel();
         panel7.setLayout(new GridLayoutManager(1, 3, new Insets(0, 0, 0, 0), 1, 1));
         panel1.add(panel7, new GridConstraints(8, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
@@ -657,8 +628,6 @@ public class RightPanel {
     }
 
     public void setData(PropertyChangeEvent e, CanvasModel data) {
-        if (openFrame != null) openFrame.setData(e, data);
-
         if (e.getPropertyName() == null || e.getPropertyName().equals("mouseMode") || e.getPropertyName().equals("foldLineAdditionalInputMode")) {
             MouseMode m = data.getMouseMode();
             FoldLineAdditionalInputMode f = data.getFoldLineAdditionalInputMode();
@@ -683,9 +652,8 @@ public class RightPanel {
             a3Button.setSelected(m == MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_3_57);
             degButton.setSelected(m == MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13);
             deg2Button.setSelected(m == MouseMode.ANGLE_SYSTEM_16);
-            deg3Button.setSelected(m == MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_2_17);
             deg4Button.setSelected(m == MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18);
-            angleRestrictedButton.setSelected(m == MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_5_37);
+            deg3Button.setSelected(m == MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_5_37);
         }
 
         if (data.getMouseMode() == MouseMode.DRAW_CREASE_FREE_1 && data.getFoldLineAdditionalInputMode() == FoldLineAdditionalInputMode.AUX_LINE_1) {

@@ -11,17 +11,15 @@ import java.awt.event.ActionEvent;
 public class SetMouseModeLineTypeDeleteAction extends AbstractOrieditaAction implements OrieditaAction{
     private final CanvasModel canvasModel;
     private final CreasePattern_Worker mainCreasePatternWorker;
-    private final ActionType actionType;
     private final MouseMode mouseMode;
     private final FoldLineAdditionalInputMode foldLineAdditionalInputMode;
 
     public SetMouseModeLineTypeDeleteAction(CanvasModel canvasModel,
                                             @Named("mainCreasePattern_Worker") CreasePattern_Worker mainCreasePatternWorker,
-                                            ActionType actionType, MouseMode mouseMode,
+                                            MouseMode mouseMode,
                                             FoldLineAdditionalInputMode foldLineAdditionalInputMode){
         this.canvasModel = canvasModel;
         this.mainCreasePatternWorker = mainCreasePatternWorker;
-        this.actionType = actionType;
         this.mouseMode = mouseMode;
         this.foldLineAdditionalInputMode = foldLineAdditionalInputMode;
     }
@@ -31,10 +29,5 @@ public class SetMouseModeLineTypeDeleteAction extends AbstractOrieditaAction imp
         canvasModel.setMouseMode(mouseMode);
         canvasModel.setFoldLineAdditionalInputMode(foldLineAdditionalInputMode);
         mainCreasePatternWorker.unselect_all();
-    }
-
-    @Override
-    public ActionType getActionType(){
-        return actionType;
     }
 }

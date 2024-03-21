@@ -1,5 +1,6 @@
 package oriedita.editor.canvas.impl;
 
+import org.jboss.weld.proxy.WeldClientProxy;
 import org.tinylog.Logger;
 import oriedita.editor.Colors;
 import oriedita.editor.canvas.CreasePattern_Worker;
@@ -18,22 +19,22 @@ import oriedita.editor.databinding.SelectedTextModel;
 import oriedita.editor.drawing.Grid;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
-import origami.crease_pattern.CustomLineTypes;
 import oriedita.editor.save.Save;
 import oriedita.editor.save.SaveProvider;
 import oriedita.editor.service.HistoryState;
 import oriedita.editor.service.TaskExecutorService;
 import oriedita.editor.task.CheckCAMVTask;
 import origami.Epsilon;
+import origami.crease_pattern.CustomLineTypes;
 import origami.crease_pattern.FlatFoldabilityViolation;
 import origami.crease_pattern.FoldLineSet;
 import origami.crease_pattern.LineSegmentSet;
 import origami.crease_pattern.OritaCalc;
+import origami.crease_pattern.element.Rectangle;
 import origami.crease_pattern.element.Circle;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
-import origami.crease_pattern.element.Polygon;
 import origami.crease_pattern.element.StraightLine;
 import origami.crease_pattern.worker.foldlineset.BranchTrim;
 import origami.crease_pattern.worker.foldlineset.Check1;
@@ -523,22 +524,35 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
             }
         }
 
+        // proxy foldLineSet slows down get(), so we get
+        // the underlying actual FoldLineSet for rendering faster
+        // TODO: retest and possibly remove this when #389 (foldLineSet iterators) is merged
+        FoldLineSet rawFoldLineSet = foldLineSet;
+        if (foldLineSet instanceof WeldClientProxy proxy) {
+            Object instance = proxy.getMetadata().getContextualInstance();
+            if (instance instanceof FoldLineSet) {
+                rawFoldLineSet = (FoldLineSet) instance;
+            }
+        }
+        int total = rawFoldLineSet.getTotal();
+
         //selectの描画
         g2.setStroke(new BasicStroke(lineWidth * 2.0f + 2.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));//基本指定A　　線の太さや線の末端の形状
-        for (int i = 1; i <= foldLineSet.getTotal(); i++) {
-            LineSegment s = foldLineSet.get(i);
+        for (int i = 1; i <= total; i++) {
+            LineSegment s = rawFoldLineSet.get(i);
             if (s.getSelected() == 2) {
                 DrawingUtil.drawSelectLine(g, s, camera);
             }
         }
 
+        boolean useRounded = applicationModel.useRoundedEnds();
         //展開図の描画 補助活線のみ
         if (displayAuxLines) {
-            for (int i = 1; i <= foldLineSet.getTotal(); i++) {
-                LineSegment s = foldLineSet.get(i);
+            for (int i = 1; i <= total; i++) {
+                LineSegment s = rawFoldLineSet.get(i);
                 if (s.getColor() == LineColor.CYAN_3) {
 
-                    DrawingUtil.drawAuxLine(g, s, camera, lineWidth, pointSize);
+                    DrawingUtil.drawAuxLine(g, s, camera, lineWidth, pointSize, useRounded);
                 }
             }
         }
@@ -546,10 +560,22 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
         //展開図の描画  補助活線以外の折線
         if (displayCpLines) {
             g.setColor(Colors.get(Color.black));
-            for (int i = 1; i <= foldLineSet.getTotal(); i++) {
-                LineSegment s = foldLineSet.get(i);
-                if (s.getColor() != LineColor.CYAN_3) {
-                    DrawingUtil.drawCpLine(g, s, camera, lineStyle, lineWidth, pointSize, p0x_max, p0y_max);
+            for (int i = 1; i <= total; i++) {
+                LineSegment s = rawFoldLineSet.get(i);
+                if (s.getColor() != LineColor.CYAN_3 && s.getColor() != LineColor.RED_1 && s.getColor() != LineColor.BLACK_0) {
+                    DrawingUtil.drawCpLine(g, s, camera, lineStyle, lineWidth, pointSize, p0x_max, p0y_max, useRounded);
+                }
+            }
+            for (int i = 1; i <= total; i++) {
+                LineSegment s = rawFoldLineSet.get(i);
+                if (s.getColor() == LineColor.RED_1) {
+                    DrawingUtil.drawCpLine(g, s, camera, lineStyle, lineWidth, pointSize, p0x_max, p0y_max, useRounded);
+                }
+            }
+            for (int i = 1; i <= total; i++) {
+                LineSegment s = rawFoldLineSet.get(i);
+                if (s.getColor() == LineColor.BLACK_0) {
+                    DrawingUtil.drawCpLine(g, s, camera, lineStyle, lineWidth, pointSize, p0x_max, p0y_max, useRounded);
                 }
             }
         }
@@ -1106,7 +1132,7 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
         Point p_c = camera.TV2object(new Point(p0b.getX(), p0b.getY()));
         Point p_d = camera.TV2object(new Point(p0b.getX(), p0a.getY()));
 
-        return new Polygon(p_a, p_b, p_c, p_d);
+        return new Rectangle(p_a, p_b, p_c, p_d);
     }
 
     @Override

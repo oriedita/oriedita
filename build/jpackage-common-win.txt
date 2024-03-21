@@ -1,1 +1,2 @@
 --icon oriedita/src/main/resources/oriedita.ico
+--java-options "-Dtinylog.writer.file=${APPDATA}/oriedita/oriedita.log"

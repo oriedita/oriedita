@@ -325,21 +325,6 @@ public class FoldLineSet {
         s.setSelected(2);
     }
 
-    public void select(Point p1, Point p2, Point p3) {
-        Polygon triangle = new Polygon(3);
-        triangle.set(1, p1);
-        triangle.set(2, p2);
-        triangle.set(3, p3);
-
-        for (int i = 1; i <= total; i++) {
-            LineSegment s;
-            s = lineSegments.get(i);
-            if (triangle.totu_boundary_inside(s)) {
-                s.setSelected(2);
-            }
-        }
-    }
-
     public boolean select(Polygon p) {
         boolean anyLinesSelected = false;
 

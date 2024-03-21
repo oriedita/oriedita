@@ -28,6 +28,44 @@ public class MouseHandlerDrawCreaseAngleRestricted extends BaseMouseHandler {
 
     //マウス操作(ボタンを押したとき)時の作業
     public void mousePressed(Point p0) {
+        Point p = d.getCamera().TV2object(p0);
+
+        // select a line
+        if(d.getLineStep().isEmpty() && d.getClosestPoint(p).distance(p) > d.getSelectionDistance()){
+            LineSegment closestLineSegment = new LineSegment(d.getClosestLineSegment(p));
+            if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.getSelectionDistance()) {
+                closestLineSegment.setColor(LineColor.MAGENTA_5);
+                d.lineStepAdd(closestLineSegment);
+            }
+            return;
+        }
+
+        //select 2 points
+        if(d.getLineStep().isEmpty() || d.getLineStep().get(0).determineLength() <= 0.0){
+            Point closestPoint = d.getClosestPoint(p);
+            if (p.distance(closestPoint) < d.getSelectionDistance()) {
+                d.lineStepAdd(new LineSegment(closestPoint, closestPoint, d.getLineColor()));
+            }
+
+            if(d.getLineStep().size() == 2){
+                Point p1 = new Point(d.getLineStep().get(0).getA());
+                Point p2 = new Point(d.getLineStep().get(1).getA());
+                LineSegment selectedSegment = new LineSegment(p1, p2);
+                selectedSegment.setColor(LineColor.MAGENTA_5);
+
+                d.getLineStep().clear();
+                d.lineStepAdd(selectedSegment);
+            }
+        }
+    }
+
+    //マウス操作(ドラッグしたとき)を行う関数
+    public void mouseDragged(Point p0) {
+    }
+
+    //マウス操作(ボタンを離したとき)を行う関数
+    public void mouseReleased(Point p0) {
+        Point p = d.getCamera().TV2object(p0);
 
         int honsuu;//1つの端点周りに描く線の本数
         if (angleSystemModel.getCurrentAngleSystemDivider() != 0) {
@@ -36,19 +74,7 @@ public class MouseHandlerDrawCreaseAngleRestricted extends BaseMouseHandler {
             honsuu = 6;
         }
 
-        int i_jyunnbi_step_suu = 1;//動作の準備として人間が選択するステップ数
-
-        Point p = d.getCamera().TV2object(p0);
-
-        if (d.getLineStep().size() == 0) {    //第１段階として、線分を選択
-            LineSegment closestLineSegment = new LineSegment(d.getClosestLineSegment(p));
-            if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.getSelectionDistance()) {
-                closestLineSegment.setColor(LineColor.MAGENTA_5);
-                d.lineStepAdd(closestLineSegment);
-            }
-        }
-
-        if (d.getLineStep().size() == i_jyunnbi_step_suu) {    //if(i_egaki_dankai==1){        //動作の準備として人間が選択するステップ数が終わった状態で実行
+        if (d.getLineStep().size() == 1 && d.getLineStep().get(0).determineLength() > 0.0) {    //if(i_egaki_dankai==1){        //動作の準備として人間が選択するステップ数が終わった状態で実行
             boolean i_jyun;//i_jyunは線を描くとき順番に色を変えたいとき使う
             //線分abをaを中心にd度回転した線分を返す関数（元の線分は変えずに新しい線分を返す）public oc.Senbun_kaiten(Senbun s0,double d) //    double d_angle_system;double angle;
 
@@ -144,8 +170,7 @@ public class MouseHandlerDrawCreaseAngleRestricted extends BaseMouseHandler {
                     d.lineStepAdd(s);
                 }
             }
-
-        } else if (d.getLineStep().size() == i_jyunnbi_step_suu + (honsuu) + (honsuu)) {//19     //動作の準備としてソフトが返答するステップ数が終わった状態で実行
+        } else if (d.getLineStep().size() == 1 + (honsuu) + (honsuu)) {//19     //動作の準備としてソフトが返答するステップ数が終わった状態で実行
             int i_tikai_s_step_suu = 0;
 
             //line_step[2から10]までとs_step[11から19]まで
@@ -193,13 +218,5 @@ public class MouseHandlerDrawCreaseAngleRestricted extends BaseMouseHandler {
 
             d.getLineStep().clear();
         }
-    }
-
-    //マウス操作(ドラッグしたとき)を行う関数
-    public void mouseDragged(Point p0) {
-    }
-
-    //マウス操作(ボタンを離したとき)を行う関数
-    public void mouseReleased(Point p0) {
     }
 }

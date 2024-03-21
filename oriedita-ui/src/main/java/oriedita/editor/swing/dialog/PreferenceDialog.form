@@ -2,12 +2,12 @@
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="oriedita.editor.swing.dialog.PreferenceDialog">
   <grid id="cbd77" binding="contentPane" layout-manager="GridBagLayout">
     <constraints>
-      <xy x="13" y="12" width="588" height="610"/>
+      <xy x="13" y="12" width="588" height="700"/>
     </constraints>
     <properties>
       <focusTraversalPolicyProvider value="true"/>
-      <minimumSize width="540" height="610"/>
-      <preferredSize width="540" height="610"/>
+      <minimumSize width="550" height="610"/>
+      <preferredSize width="550" height="610"/>
     </properties>
     <border type="none"/>
     <children>
@@ -599,6 +599,16 @@
                           </component>
                         </children>
                       </grid>
+                      <component id="f9181" class="javax.swing.JCheckBox" binding="roundedEndsCheckbox">
+                        <constraints>
+                          <grid row="4" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                          <gridbag top="0" left="10" bottom="0" right="0" weightx="0.0" weighty="0.0"/>
+                        </constraints>
+                        <properties>
+                          <selected value="false"/>
+                          <text value="Round Line-ends"/>
+                        </properties>
+                      </component>
                       <component id="a3ff6" class="javax.swing.JLabel">
                         <constraints>
                           <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>

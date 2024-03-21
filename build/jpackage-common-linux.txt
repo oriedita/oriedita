@@ -1,1 +1,2 @@
 --icon build/Oriedita.png
+--java-options "-Dtinylog.writer.file=${HOME}/.config/oriedita/oriedita.log"
