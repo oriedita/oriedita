@@ -1194,7 +1194,6 @@ public class LeftPanel {
             case DRAW_CREASE_RESTRICTED_11:
             case DRAW_CREASE_ANGLE_RESTRICTED_13:
             case ANGLE_SYSTEM_16:
-            case DRAW_CREASE_ANGLE_RESTRICTED_2_17:
             case DRAW_CREASE_ANGLE_RESTRICTED_3_18:
             case LINE_SEGMENT_DIVISION_27:
             case LINE_SEGMENT_RATIO_SET_28:

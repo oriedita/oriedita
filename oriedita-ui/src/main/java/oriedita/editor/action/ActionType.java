@@ -127,7 +127,6 @@ public enum ActionType {
     angleSystemBDecreaseAction("angleSystemBDecreaseAction"),
     angleSystemBAction("angleSystemBAction"),
     angleSystemBIncreaseAction("angleSystemBIncreaseAction"),
-    angleRestrictedAction("angleRestrictedAction"),
     cAMVAction("cAMVAction"),
     circleDrawFreeAction("circleDrawFreeAction"),
     circleDrawAction("circleDrawAction"),
