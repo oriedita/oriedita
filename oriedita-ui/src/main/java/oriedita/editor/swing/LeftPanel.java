@@ -332,10 +332,11 @@ public class LeftPanel {
             public void mouseWheelMoved(MouseWheelEvent e) {
 
                 int index = delTypeDropBox.getSelectedIndex();
-                if (e.getWheelRotation() > 0 && index < delTypeDropBox.getItemCount() - 1) {
-                    applicationModel.setDelLineType(CustomLineTypes.from(index));
-                } else if (e.getWheelRotation() < 0 && index > 0) {
-                    applicationModel.setDelLineType(CustomLineTypes.from(index - 2));
+                int itemCount = delTypeDropBox.getItemCount();
+                if (e.getWheelRotation() > 0) {
+                    delTypeDropBox.setSelectedIndex((index + 1) % itemCount);
+                } else if (e.getWheelRotation() < 0) {
+                    delTypeDropBox.setSelectedIndex(index != 0 ? (index - 1) % itemCount : itemCount - 1);
                 }
 
                 e.consume();
@@ -359,10 +360,11 @@ public class LeftPanel {
             @Override
             public void mouseWheelMoved(MouseWheelEvent e) {
                 int index = fromLineDropBox.getSelectedIndex();
-                if (e.getWheelRotation() > 0 && index < fromLineDropBox.getItemCount() - 1) {
-                    applicationModel.setCustomFromLineType(CustomLineTypes.from(index));
-                } else if (e.getWheelRotation() < 0 && index > 0) {
-                    applicationModel.setCustomFromLineType(CustomLineTypes.from(index - 2));
+                int itemCount = fromLineDropBox.getItemCount();
+                if (e.getWheelRotation() > 0) {
+                    fromLineDropBox.setSelectedIndex((index + 1) % itemCount);
+                } else if (e.getWheelRotation() < 0) {
+                    fromLineDropBox.setSelectedIndex(index != 0 ? (index - 1) % itemCount : itemCount - 1);
                 }
 
                 e.consume();
@@ -387,20 +389,11 @@ public class LeftPanel {
             @Override
             public void mouseWheelMoved(MouseWheelEvent e) {
                 int index = toLineDropBox.getSelectedIndex();
-                if (e.getWheelRotation() > 0 && index < toLineDropBox.getItemCount() - 1) {
-                    if (index == CustomLineTypes.EGDE.getNumber()) {
-                        applicationModel.setCustomToLineType(CustomLineTypes.from(index + 2));
-                    } else {
-                        index++;
-                        applicationModel.setCustomToLineType(CustomLineTypes.from(index + 1));
-                    }
-                } else if (e.getWheelRotation() < 0 && index > 0) {
-                    if (index + 1 == CustomLineTypes.MOUNTAIN.getNumber()) {
-                        applicationModel.setCustomToLineType(CustomLineTypes.from(index - 2));
-                    } else {
-                        index++;
-                        applicationModel.setCustomToLineType(CustomLineTypes.from(index - 1));
-                    }
+                int itemCount = toLineDropBox.getItemCount();
+                if (e.getWheelRotation() > 0) {
+                    toLineDropBox.setSelectedIndex((index + 1) % itemCount);
+                } else if (e.getWheelRotation() < 0) {
+                    toLineDropBox.setSelectedIndex(index != 0 ? (index - 1) % itemCount : itemCount - 1);
                 }
 
                 e.consume();
