@@ -1,6 +1,5 @@
 package oriedita.editor.drawing;
 
-import org.tinylog.Logger;
 import oriedita.editor.databinding.ApplicationModel;
 import oriedita.editor.databinding.GridModel;
 import oriedita.editor.drawing.tools.Camera;
@@ -353,7 +352,6 @@ public class Grid {
             offsetY += adjustedGridSize;
         }
         int alpha = Math.min(255, (int) ( (1-minGridUnitSize/(s_tv.determineLength()*step)) * 255 * 2));
-        Logger.info(alpha);
         Color c = new Color(grid_color.getRed(), grid_color.getGreen(), grid_color.getRed(), alpha);
         for (int i = grid_screen_a_min - offsetX; i <= grid_screen_a_max; i+= halfStep) {
             // draw vertical grid lines

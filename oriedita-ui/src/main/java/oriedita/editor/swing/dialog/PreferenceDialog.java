@@ -137,7 +137,7 @@ public class PreferenceDialog extends JDialog {
     private JButton importButton;
     private JButton exportButton;
     private JScrollPane scrollPane1;
-    private JSlider gridUnitSizeSlider;
+    private JSlider gridDensitySlider;
     private JCheckBox roundedEndsCheckbox;
     private int tempTransparency;
     private final ApplicationModel applicationModel;
@@ -187,7 +187,7 @@ public class PreferenceDialog extends JDialog {
         animationSpeedSlider.setValue((int) ((applicationModel.getAnimationSpeed()) * 8));
         mouseRangeSlider.setValue((int) applicationModel.getMouseRadius());
         roundedEndsCheckbox.setSelected(applicationModel.useRoundedEnds());
-        gridUnitSizeSlider.setValue((int) (applicationModel.getMinGridUnitSize() + 0.6));
+        gridDensitySlider.setValue((int) (gridDensitySlider.getMaximum() - applicationModel.getMinGridUnitSize() + 0.6));
     }
 
     public PreferenceDialog(
@@ -358,7 +358,8 @@ public class PreferenceDialog extends JDialog {
             applicationModel.setLineStyle(LineStyle.from(lineStyleDropBox.getSelectedIndex() + 1));
             lineStyleDropBox.setSelectedIndex(applicationModel.getLineStyle().getType() - 1);
         });
-        gridUnitSizeSlider.addChangeListener(e -> applicationModel.setMinGridUnitSize(gridUnitSizeSlider.getValue() - .5));
+        gridDensitySlider.addChangeListener(e -> applicationModel.setMinGridUnitSize(
+                gridDensitySlider.getMaximum() - gridDensitySlider.getValue() + .5));
 
         topPanelCB.addActionListener(e -> applicationModel.setDisplayTopPanel(topPanelCB.isSelected()));
         bottomPanelCB.addActionListener(e -> applicationModel.setDisplayBottomPanel(bottomPanelCB.isSelected()));
@@ -1096,7 +1097,7 @@ public class PreferenceDialog extends JDialog {
         label10.setHorizontalTextPosition(4);
         label10.setOpaque(true);
         label10.setPreferredSize(new Dimension(121, 17));
-        label10.setText("Min Grid Unit Size: ");
+        label10.setText("Max Grid Density:");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 8;
@@ -1107,7 +1108,7 @@ public class PreferenceDialog extends JDialog {
         gbc.gridy = 8;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        appearance2Panel.add(gridUnitSizeSlider, gbc);
+        appearance2Panel.add(gridDensitySlider, gbc);
         final JPanel panel4 = new JPanel();
         panel4.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 10));
         panel4.setMinimumSize(new Dimension(334, 226));
@@ -1234,13 +1235,7 @@ public class PreferenceDialog extends JDialog {
         labelsAnimSpeed.put(24, new JLabel("Slowest"));
         animationSpeedSlider.setLabelTable(labelsAnimSpeed);
 
-        Dictionary<Integer, JLabel> labelsGridSize = new Hashtable<>();
-        labelsGridSize.put(1, new JLabel("1"));
-        labelsGridSize.put(10, new JLabel("10"));
-        labelsGridSize.put(20, new JLabel("20 px"));
-        gridUnitSizeSlider = new JSlider(1, 20);
-        gridUnitSizeSlider.setLabelTable(labelsGridSize);
-        gridUnitSizeSlider.setPaintLabels(true);
+        gridDensitySlider = new JSlider(0, 20);
 
         scrollPane1 = new JScrollPane();
         scrollPane1.getVerticalScrollBar().setUnitIncrement(16);
