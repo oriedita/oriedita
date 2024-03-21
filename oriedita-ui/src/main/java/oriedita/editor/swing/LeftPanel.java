@@ -1035,7 +1035,7 @@ public class LeftPanel {
             case AUX:
                 toLineDropBox.setSelectedIndex(applicationModel.getCustomToLineType().getNumber() - 1);
                 break;
-            case ANY:
+            case ANY: // Impossible in general case (redundancy)
                 applicationModel.setCustomToLineType(CustomLineTypes.EGDE);
                 toLineDropBox.setSelectedIndex(CustomLineTypes.EGDE.getNumber());
                 break;
