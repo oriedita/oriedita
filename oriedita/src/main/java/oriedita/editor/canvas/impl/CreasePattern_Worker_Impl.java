@@ -526,6 +526,7 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
 
         // proxy foldLineSet slows down get(), so we get
         // the underlying actual FoldLineSet for rendering faster
+        // TODO: retest and possibly remove this when #389 (foldLineSet iterators) is merged
         FoldLineSet rawFoldLineSet = foldLineSet;
         if (foldLineSet instanceof WeldClientProxy proxy) {
             Object instance = proxy.getMetadata().getContextualInstance();
