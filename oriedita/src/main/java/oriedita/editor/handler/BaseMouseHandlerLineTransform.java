@@ -153,7 +153,7 @@ public abstract class BaseMouseHandlerLineTransform extends BaseMouseHandlerLine
                 Point pb = s.getB().move(delta);
                 LineSegment s2 = new LineSegment(pa, pb);
                 DrawingUtil.drawCpLine(g2, s2, camera, settings.getLineStyle(), settings.getLineWidth(),
-                        d.getPointSize(), settings.getWidth(), settings.getHeight());
+                        d.getPointSize(), settings.getWidth(), settings.getHeight(), settings.useRoundedEnds());
             }
         }
     }
@@ -168,7 +168,7 @@ public abstract class BaseMouseHandlerLineTransform extends BaseMouseHandlerLine
         g.setBackground(new Color(0f, 0, 0, 0));
         for (int i = 1; i <= ori_s_temp.getTotal(); i++) {
             DrawingUtil.drawCpLine(g, ori_s_temp.get(i), camera, settings.getLineStyle(),
-                    settings.getLineWidth(), d.getPointSize(), image.getWidth(), image.getHeight());
+                    settings.getLineWidth(), d.getPointSize(), image.getWidth(), image.getHeight(), settings.useRoundedEnds());
         }
     }
 

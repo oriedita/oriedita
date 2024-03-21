@@ -136,6 +136,7 @@ public class PreferenceDialog extends JDialog {
     private JButton importButton;
     private JButton exportButton;
     private JScrollPane scrollPane1;
+    private JCheckBox roundedEndsCheckbox;
     private int tempTransparency;
     private final ApplicationModel applicationModel;
     private final ButtonService buttonService;
@@ -183,6 +184,7 @@ public class PreferenceDialog extends JDialog {
         checkBoxAnimation.setSelected(applicationModel.getAnimations());
         animationSpeedSlider.setValue((int) ((applicationModel.getAnimationSpeed()) * 8));
         mouseRangeSlider.setValue((int) applicationModel.getMouseRadius());
+        roundedEndsCheckbox.setSelected(applicationModel.useRoundedEnds());
     }
 
     public PreferenceDialog(
@@ -263,6 +265,7 @@ public class PreferenceDialog extends JDialog {
         antiAliasCB.addActionListener(e -> applicationModel.setAntiAlias(antiAliasCB.isSelected()));
         foldAntiAliasCheckBox.addActionListener(e -> foldedFigureModel.setAntiAlias(foldAntiAliasCheckBox.isSelected()));
         displayNumbersCB.addActionListener(e -> applicationModel.setDisplayNumbers(displayNumbersCB.isSelected()));
+        roundedEndsCheckbox.addActionListener(e -> applicationModel.setRoundedEnds(roundedEndsCheckbox.isSelected()));
         ck4Plus.addActionListener(e -> {
             tempTransparency = (applicationModel.getCheck4ColorTransparency() / 5) * 2;
             if (tempTransparency <= 100) {
@@ -1074,6 +1077,15 @@ public class PreferenceDialog extends JDialog {
         gridWidthPlus = new JButton();
         gridWidthPlus.setText("+");
         gridLinePanel.add(gridWidthPlus, BorderLayout.EAST);
+        roundedEndsCheckbox = new JCheckBox();
+        roundedEndsCheckbox.setSelected(false);
+        roundedEndsCheckbox.setText("Round Line-ends");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 2;
+        gbc.gridy = 4;
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.insets = new Insets(0, 10, 0, 0);
+        appearance2Panel.add(roundedEndsCheckbox, gbc);
         final JPanel panel4 = new JPanel();
         panel4.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 10));
         panel4.setMinimumSize(new Dimension(334, 226));
