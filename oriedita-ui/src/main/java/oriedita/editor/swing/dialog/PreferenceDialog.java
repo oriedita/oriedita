@@ -1,13 +1,13 @@
 package oriedita.editor.swing.dialog;
 
-import com.opencsv.CSVParser;
-import com.opencsv.CSVParserBuilder;
-import com.opencsv.CSVReader;
 import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatLaf;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
+import com.opencsv.CSVParser;
+import com.opencsv.CSVParserBuilder;
+import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
 import org.tinylog.Logger;
 import oriedita.editor.Colors;
@@ -59,9 +59,9 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Dictionary;
 import java.util.Hashtable;
@@ -186,7 +186,7 @@ public class PreferenceDialog extends JDialog {
         checkBoxAnimation.setSelected(applicationModel.getAnimations());
         animationSpeedSlider.setValue((int) ((applicationModel.getAnimationSpeed()) * 8));
         mouseRangeSlider.setValue((int) applicationModel.getMouseRadius());
-        roundedEndsCheckbox.setSelected(applicationModel.useRoundedEnds());
+        roundedEndsCheckbox.setSelected(applicationModel.getRoundedEnds());
         gridDensitySlider.setValue((int) (gridDensitySlider.getMaximum() - applicationModel.getMinGridUnitSize() + 0.6));
     }
 

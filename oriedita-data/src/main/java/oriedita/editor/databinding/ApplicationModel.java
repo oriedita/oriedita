@@ -147,7 +147,7 @@ public class ApplicationModel implements Serializable {
     public void setCheck4ColorTransparency(int check4ColorTransparency){
         int oldCheck4ColorTransparency = this.check4ColorTransparency;
         this.check4ColorTransparency = check4ColorTransparency;
-        this.pcs.firePropertyChange("check4ColorTransparerncy", oldCheck4ColorTransparency, check4ColorTransparency);
+        this.pcs.firePropertyChange("check4ColorTransparency", oldCheck4ColorTransparency, check4ColorTransparency);
     }
 
     public int getCheck4ColorTransparency(){
@@ -355,6 +355,10 @@ public class ApplicationModel implements Serializable {
         lineStyle = LineStyle.COLOR;
         antiAlias = false;
         auxLineWidth = 3;
+        displayGridInputAssist = false;
+        displayNumbers = false;
+        displayPointOffset = false;
+        displayPointSpotlight = false;
 
         preciseZoom = true;
 
@@ -400,7 +404,7 @@ public class ApplicationModel implements Serializable {
         animationSpeed = 1;
         moveFoldedModelWithCp = true;
         mouseRadius = 10;
-        minGridUnitSize = 5;
+        minGridUnitSize = 0.5;
 
         autoSaveInterval = 5;
 
@@ -454,7 +458,7 @@ public class ApplicationModel implements Serializable {
         animations = true;
         animationSpeed = 1;
         mouseRadius = 10;
-        minGridUnitSize = 5;
+        minGridUnitSize = 0.5;
 
         autoSaveInterval = 5;
 
@@ -805,7 +809,8 @@ public class ApplicationModel implements Serializable {
         mouseWheelMovesCreasePattern = applicationModel.getMouseWheelMovesCreasePattern();
         helpVisible = applicationModel.getHelpVisible();
         preciseZoom = applicationModel.isPreciseZoom();
-        roundedEnds = applicationModel.useRoundedEnds();
+        roundedEnds = applicationModel.getRoundedEnds();
+        displayNumbers = applicationModel.getDisplayNumbers();
 
         circleCustomizedColor = applicationModel.getCircleCustomizedColor();
         selectPersistent = applicationModel.getSelectPersistent();
@@ -924,7 +929,7 @@ public class ApplicationModel implements Serializable {
         this.pcs.firePropertyChange("minGridUnitSize", oldSize, minGridUnitSize);
     }
 
-    public boolean useRoundedEnds() {
+    public boolean getRoundedEnds() {
         return roundedEnds;
     }
 
