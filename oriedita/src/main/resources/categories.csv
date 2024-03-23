@@ -1,33 +1,4 @@
-<<<<<<< Updated upstream
-﻿File;Appearance;Canvas;Grid;Draw;Edit;Select & Transform;Auxillary;References;Fold;Edit Fold;Validate;Display & Settings;Legacy & Experimental
-newAction;lineWidthDecreaseAction;backgroundToggleAction;gridSizeIncreaseAction;colRedAction;undoAction;selectAllAction;textAction;angleSystemAAction;foldAction;foldedFigureMoveAction;ckOAction;showPointRangeAction;ad_fncAction
-openAction;lineWidthIncreaseAction;backgroundSetPositionAction;gridSizeDecreaseAction;colBlueAction;redoAction;unselectAllAction;circleDrawFreeAction;angleSystemADecreaseAction;foldedFigureTrashAction;foldedFigureFlipAction;ckTAction;pointOffsetAction;foldableLinePlusGridInputAction
-saveAction;pointSizeIncreaseAction;backgroundLockAction;gridSizeSetAction;colBlackAction;setUndoCountAction;selectAction;circleDrawAction;angleSystemAIncreaseAction;haltAction;duplicateFoldedModelAction;fxOAction;gridInputAssistAction;foldableLineDrawAction
-saveAsAction;pointSizeDecreaseAction;backgroundTrimAction;drawDiagonalGridlinesAction;colCyanAction;del_l_typeAction;unselectAction;circleDrawSeparateAction;angleSystemBAction;anotherSolutionAction;scaleAction;fxTAction;displayCommentsAction;lengthenCrease2Action
-importAction;lineStyleChangeAction;readBackgroundAction;changeGridStateAction;drawCreaseFreeAction;del_lAction;select_polygonAction;circleDrawConcentricAction;angleSystemBDecreaseAction;goToFoldedFigureAction;foldedFigureSizeIncreaseAction;cAMVAction;displayCpLinesAction;setParallelDrawWidthAction
-exportAction;antiAliasToggleAction;transparentAction;gridColorAction;drawCreaseRestrictedAction;del_l_XAction;unselect_polygonAction;circleDrawConcentricSelectAction;angleSystemBIncreaseAction;As100Action;foldedFigureSizeDecreaseAction;ck4_colorDecreaseAction;displayAuxLinesAction;deg3Action
-inputDataAction;h_senhaba_sageAction;moveCreasePatternAction;gridLineWidthDecreaseAction;deg2Action;replace_lineAction;select_lXAction;circleDrawTwoConcentricAction;restrictedAngleABCSetAction;koteimen_siteiAction;foldedFigureSizeSetAction;ck4_colorIncreaseAction;displayLiveAuxLinesAction;deg4Action
-resetAction;h_senhaba_ageAction;creasePatternZoomInAction;gridLineWidthIncreaseAction;makeFlatFoldableAction;senbun_henkan2Action;unselect_lXAction;circleDrawTangentLineAction;restrictedAngleSetDEFAction;suitei_01Action;foldedFigureRotateClockwiseAction;o_F_checkAction;displayStandardFaceMarksAction;lineSegmentDeleteAction
-exitAction;foldedFigureToggleAntiAliasAction;creasePatternZoomOutAction;moveIntervalGridVerticalAction;angleBisectorAction;in_L_col_changeAction;moveAction;circleDrawThreePointAction;l1Action;suitei_02Action;foldedFigureRotateAntiClockwiseAction;;cpOnTopAction;edgeLineSegmentDeleteAction
-;foldedFigureToggleShadowAction;scaleFactorSetAction;moveIntervalGridHorizontalAction;symmetricDrawAction;on_L_col_changeAction;move2p2pAction;circleDrawInvertedAction;l2Action;suitei_03Action;foldedFigureRotateSetAction;;toggleHelpAction;auxLiveLineSegmentDeleteAction
-;;rotateClockwiseAction;setIntervalGridSizeAction;perpendicularDrawAction;senbun_henkanAction;copyAction;sen_tokutyuu_color_henkouAction;a1Action;coloredXRayAction;oriagari_sousaAction;;correctCpBeforeFoldingAction;toMountainAction
-;;rotateAnticlockwiseAction;intervalGridColorAction;rabbitEarAction;zen_yama_tani_henkanAction;copy2p2pAction;c_colAction;a2Action;coloredXRayDecreaseAction;oriagari_sousa_2Action;;selectPersistentAction;toValleyAction
-;;rotationSetAction;setGridParametersAction;voronoiAction;vertexAddAction;reflectAction;colOrangeAction;a3Action;coloredXRayIncreaseAction;foldedFigureUndoAction;;mouseSettingsAction;toEdgeAction
-;;operationFrameSelectAction;gridConfigureResetAction;lengthenCreaseAction;vertexDeleteAction;deleteSelectedLineSegmentAction;colYellowAction;;;foldedFigureRedoAction;;;toAuxAction
-;;drawTwoColoredCpAction;;parallelDrawAction;v_del_ccAction;;h_senbun_nyuryokuAction;;;foldedFigureUndoCountAction;;;senbun_yoke_henkanAction
-;;;;deg1Action;v_del_allAction;;h_senbun_sakujyoAction;;;frontColorAction;;;selectAnd3ClickAction
-;;;;fishBoneDrawAction;v_del_all_ccAction;;h_undoAction;;;backColorAction;;;
-;;;;doubleSymmetricDrawAction;trimBranchesAction;;h_redoAction;;;lineColorAction;;;
-;;;;continuousSymmetricDrawAction;;;h_undoTotalSetAction;;;;;;
-;;;;senbun_b_nyuryokuAction;;;;;;;;;
-;;;;lineSegmentDivisionSetAction;;;;;;;;;
-;;;;lineSegmentInternalDivisionRatioSetAction;;;;;;;;;
-;;;;drawLineSegmentInternalDivisionRatioAction;;;;;;;;;
-;;;;polygonSizeSetAction;;;;;;;;;
-;;;;regularPolygonAction;;;;;;;;;
-;;;;all_s_step_to_orisenAction;;;;;;;;;
-=======
-File;Canvas;Grid;Draw;Edit;Select & Transform;Auxillary;References;Fold;Edit Fold;Validate;Appearance;Display & Settings;Legacy & Experimental
+﻿File;Canvas;Grid;Draw;Edit;Select & Transform;Auxillary;References;Fold;Edit Fold;Validate;Appearance;Display & Settings;Legacy & Experimental
 newAction;moveCreasePatternAction;changeGridStateAction;colRedAction;undoAction;selectAllAction;textAction;angleSystemAAction;foldAction;foldedFigureMoveAction;cAMVAction;lineWidthIncreaseAction;mouseSettingsAction;ad_fncAction
 openAction;creasePatternZoomInAction;drawDiagonalGridlinesAction;colBlueAction;redoAction;unselectAllAction;circleDrawFreeAction;angleSystemADecreaseAction;foldedFigureTrashAction;foldedFigureFlipAction;o_F_checkAction;lineWidthDecreaseAction;showPointRangeAction;foldableLinePlusGridInputAction
 saveAction;creasePatternZoomOutAction;gridSizeIncreaseAction;colBlackAction;setUndoCountAction;selectAction;circleDrawAction;angleSystemAIncreaseAction;haltAction;duplicateFoldedModelAction;ckOAction;gridLineWidthIncreaseAction;pointOffsetAction;foldableLineDrawAction
@@ -55,4 +26,3 @@ exitAction;drawTwoColoredCpAction;setGridParametersAction;angleBisectorAction;in
 ;;;regularPolygonAction;;;;;;;;;;
 ;;;polygonSizeSetAction;;;;;;;;;;
 ;;;all_s_step_to_orisenAction;;;;;;;;;;
->>>>>>> Stashed changes
