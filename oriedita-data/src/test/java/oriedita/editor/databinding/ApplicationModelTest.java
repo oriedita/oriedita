@@ -60,6 +60,11 @@ class ApplicationModelTest {
         });
     }
 
+    /**
+     * Checks that all properties of the applicationModel correctly trigger PropertyChangeEvents when set.
+     * This includes the propertyName set in the event, as well as the old and new value. It also checks that
+     * Methods with the proper names (get{Property} and set{Property}) exist.
+     */
     @Test
     void testSetTriggersPropertyChangeEvent() throws InvocationTargetException, IllegalAccessException {
         for (PropertyDescriptor property : beanInfo.getPropertyDescriptors()) {
@@ -93,6 +98,9 @@ class ApplicationModelTest {
         }
     }
 
+    /**
+     * Checks that reset() actually resets all properties in the model
+     */
     @Test
     void testReset() throws InvocationTargetException, IllegalAccessException {
         applicationModel.reset();
@@ -108,6 +116,9 @@ class ApplicationModelTest {
         }
     }
 
+    /**
+     * checks that the values which are set in restorePrefDefaults() do not differ from the values set in reset()
+     */
     @Test
     void testRestorePrefDefault() throws InvocationTargetException, IllegalAccessException {
         for (PropertyDescriptor property : beanInfo.getPropertyDescriptors()) {
@@ -121,6 +132,10 @@ class ApplicationModelTest {
         }
     }
 
+    /**
+     * checks that the all properties of the model are copied inside set(). Some properties may be ignored due to not
+     * being able to reliably check equality, eg. Lists. Those will have to be manually checked.
+     */
     @Test
     void testSet() throws InvocationTargetException, IllegalAccessException {
         ApplicationModel secondModel = new ApplicationModel();
@@ -132,12 +147,13 @@ class ApplicationModelTest {
             Object testVal = testValues[0].equals(resetValue)? testValues[1] : testValues[0];
             property.getWriteMethod().invoke(applicationModel, testVal);
             secondModel.set(applicationModel);
-            if (!property.getPropertyType().equals(List.class)){
-                assertEquals(testVal, property.getReadMethod().invoke(secondModel),
-                        "Property should be copied in set(). Property: " + property);
-            } else {
+            if (property.getPropertyType().equals(List.class)){
+                // cannot check equality of lists because Lists are compared by reference, which does not work when value is copied
                 System.out.println("Ignored Property " + property
                         + " in testSet because equality could not be checked. \n Please manually verify it is correctly copied in set()");
+            } else {
+                assertEquals(testVal, property.getReadMethod().invoke(secondModel),
+                        "Property should be copied in set(). Property: " + property);
             }
         }
     }
