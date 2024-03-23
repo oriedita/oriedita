@@ -68,8 +68,8 @@ public class RightPanel {
     private JTextField measuredLength2TextField;
     private JButton ad_fncButton;
     private JButton degButton;
-    private JButton deg3Button;
     private JButton deg2Button;
+    private JButton deg3Button;
     private JButton deg4Button;
     private JButton polygonSizeSetButton;
     private JTextField polygonSizeTextField;
@@ -407,7 +407,7 @@ public class RightPanel {
         degButton.setIcon(new ImageIcon(getClass().getResource("/ppp/deg.png")));
         panel5.add(degButton, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         deg2Button = new JButton();
-        deg2Button.setIcon(new ImageIcon(getClass().getResource("/ppp/deg2.png")));
+        deg2Button.setIcon(new ImageIcon(getClass().getResource("/ppp/senbun_nyuryoku37.png")));
         panel5.add(deg2Button, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JPanel panel6 = new JPanel();
         panel6.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 0, 0), 1, 1));
@@ -416,7 +416,7 @@ public class RightPanel {
         deg4Button.setIcon(new ImageIcon(getClass().getResource("/ppp/deg4.png")));
         panel6.add(deg4Button, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         deg3Button = new JButton();
-        deg3Button.setIcon(new ImageIcon(getClass().getResource("/ppp/senbun_nyuryoku37.png")));
+        deg3Button.setIcon(new ImageIcon(getClass().getResource("/ppp/deg2.png")));
         panel6.add(deg3Button, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JPanel panel7 = new JPanel();
         panel7.setLayout(new GridLayoutManager(1, 3, new Insets(0, 0, 0, 0), 1, 1));
@@ -651,9 +651,9 @@ public class RightPanel {
             a2Button.setSelected(m == MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_2_56);
             a3Button.setSelected(m == MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_3_57);
             degButton.setSelected(m == MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13);
-            deg2Button.setSelected(m == MouseMode.ANGLE_SYSTEM_16);
+            deg3Button.setSelected(m == MouseMode.ANGLE_SYSTEM_16);
             deg4Button.setSelected(m == MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18);
-            deg3Button.setSelected(m == MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_5_37);
+            deg2Button.setSelected(m == MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_5_37);
         }
 
         if (data.getMouseMode() == MouseMode.DRAW_CREASE_FREE_1 && data.getFoldLineAdditionalInputMode() == FoldLineAdditionalInputMode.AUX_LINE_1) {
