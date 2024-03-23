@@ -29,8 +29,8 @@ import oriedita.editor.service.ButtonService;
 import oriedita.editor.service.FoldedFigureCanvasSelectService;
 import oriedita.editor.swing.component.BulletinBoard;
 import oriedita.editor.swing.component.TextEditingArea;
-import origami.crease_pattern.element.Rectangle;
 import origami.crease_pattern.element.Point;
+import origami.crease_pattern.element.Rectangle;
 import origami.folding.FoldedFigure;
 
 import javax.swing.JMenuItem;
@@ -53,9 +53,11 @@ import java.awt.event.MouseWheelListener;
 import java.beans.PropertyChangeEvent;
 import java.io.File;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * Panel in the center of the main view.
@@ -85,7 +87,7 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
 
     private TextEditingArea cpTextEditingArea;
 
-    private int btn = 0;//Stores which button in the center of the left and right is pressed. 1 =
+    private final Set<Integer> pressedButtons = new HashSet<>(); // keeps track of which mouse buttons are pressed.
     private Point mouse_temp0 = new Point();//マウスの動作対応時に、一時的に使うTen
 
     private MouseMode mouseMode;
@@ -96,10 +98,6 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
 
     private final Map<MouseMode, MouseModeHandler> mouseModeHandlers = new HashMap<>();
 
-    private boolean mouseDraggedValid = false;
-    //ウィンドウ透明化用のパラメータ
-    private boolean mouseReleasedValid = false;//0 ignores mouse operation. 1 is valid for mouse operation. When an unexpected mouseDragged or mouseReleased occurs due to on-off of the file box, set it to 0 so that it will not be picked up. These are set to 1 valid when the mouse is clicked.
-
     private final FrameProvider frameProvider;
 
     private final ButtonService buttonService;
@@ -108,11 +106,11 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
 
     public static String userWarningMessage = null;
 
-    public static void setUserWarningMessage(String uwm){
+    public static void setUserWarningMessage(String uwm) {
         Canvas.userWarningMessage = uwm;
     }
 
-    public static void clearUserWarningMessage(){
+    public static void clearUserWarningMessage() {
         Canvas.userWarningMessage = null;
     }
 
@@ -248,7 +246,7 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
         canvasUI.drawBackground(g2h, imgh);
     }
 
-    public void createMenuItem(JPopupMenu popupMenu, String action, String text){
+    public void createMenuItem(JPopupMenu popupMenu, String action, String text) {
         JMenuItem item = new JMenuItem();
         item.setActionCommand(action);
         popupMenu.add(item);
@@ -276,18 +274,16 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
     public void mousePressed(MouseEvent e) {
         Point p = e2p(e);
         canvasUI.requestFocus();
-        mouseDraggedValid = true;
-        mouseReleasedValid = true;
-
-        btn = e.getButton();
 
         if (e.isMetaDown()) {
-            btn = MouseEvent.BUTTON2;
+            pressedButtons.add(MouseEvent.BUTTON2);
+        } else {
+            pressedButtons.add(e.getButton());
         }
 
         if (mouseModeHandlers.containsKey(mouseMode)) {
             MouseModeHandler handler = mouseModeHandlers.get(mouseMode);
-            if (handler.accepts(e, btn)) {
+            if (handler.accepts(e, e.getButton())) {
                 handler.mousePressed(p, e);
                 setActiveMouseHandler(handler);
                 mainCreasePatternWorker.setCamera(creasePatternCamera);
@@ -297,7 +293,7 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
         }
 
         //---------ボタンの種類による動作変更-----------------------------------------
-        switch (btn) {
+        switch (e.getButton()) {
             case MouseEvent.BUTTON2:
                 Logger.info("中ボタンクリック");
 
@@ -355,7 +351,7 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
                         createMenuItem(foldPopUp, "scaleAction", "Scale");
                         createMenuItem(foldPopUp, "foldedFigureTrashAction", "Delete");
                         createMenuItem(foldPopUp, "duplicateFoldedModelAction", "Duplicate");
-                        if(foldedFiguresList.getActiveItem().getFoldedFigure().estimationStep != FoldedFigure.EstimationStep.STEP_10){
+                        if (foldedFiguresList.getActiveItem().getFoldedFigure().estimationStep != FoldedFigure.EstimationStep.STEP_10) {
                             createMenuItem(foldPopUp, "suitei_02Action", "Wireframe");
                             createMenuItem(foldPopUp, "suitei_03Action", "X-ray");
                         }
@@ -367,7 +363,7 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
                         break;
                 }
                 canvasUI.repaint();
-                return;
+
         }
 
         mainCreasePatternWorker.setCamera(creasePatternCamera);
@@ -377,20 +373,22 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
 
     //マウス操作(ドラッグしたとき)を行う関数---------- Logger.info("A");------------------------------------------
     public void mouseDragged(MouseEvent e) {
-        if (mouseDraggedValid) {
-            Point p = e2p(e);
-            canvasUI.setMousePosition(p);
+        Point p = e2p(e);
+        canvasUI.setMousePosition(p);
 
-
-            if (mouseModeHandlers.containsKey(mouseMode)) {
-                MouseModeHandler handler = mouseModeHandlers.get(mouseMode);
+        Set<Integer> unhandledButtons = new HashSet<>(pressedButtons);
+        if (mouseModeHandlers.containsKey(mouseMode)) {
+            MouseModeHandler handler = mouseModeHandlers.get(mouseMode);
+            for (int btn : pressedButtons) {
                 if (handler.accepts(e, btn)) {
                     handler.mouseDragged(p, e);
                     setActiveMouseHandler(handler);
                     canvasUI.repaint();
-                    return;
+                    unhandledButtons.remove(btn);
                 }
             }
+        }
+        for (int btn : unhandledButtons) {
 
             switch (btn) {
                 case MouseEvent.BUTTON1:
@@ -424,7 +422,7 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
 
                     mouse_temp0 = p;
                     canvasUI.repaint();
-                    return;
+                    continue;
 
                 case MouseEvent.BUTTON3:
                     mainCreasePatternWorker.setCamera(creasePatternCamera);
@@ -458,81 +456,73 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
 
     //マウス操作(ボタンを離したとき)を行う関数----------------------------------------------------
     public void mouseReleased(MouseEvent e) {
-        if (mouseReleasedValid) {
-            Point p = e2p(e);
+        Point p = e2p(e);
 
-            mainCreasePatternWorker.setCamera(creasePatternCamera);
-            if (mouseModeHandlers.containsKey(mouseMode)) {
-                MouseModeHandler handler = mouseModeHandlers.get(mouseMode);
-                if (handler.accepts(e, btn)) {
-                    handler.mouseReleased(p, e);
-                    setActiveMouseHandler(handler);
-                    canvasUI.repaint();
-                    return;
-                }
+        pressedButtons.remove(e.getButton());
+        mainCreasePatternWorker.setCamera(creasePatternCamera);
+        if (mouseModeHandlers.containsKey(mouseMode)) {
+            MouseModeHandler handler = mouseModeHandlers.get(mouseMode);
+            if (handler.accepts(e, e.getButton())) {
+                handler.mouseReleased(p, e);
+                setActiveMouseHandler(handler);
+                canvasUI.repaint();
+                return;
             }
-
-
-            //---------ボタンの種類による動作変更-----------------------------------------
-            switch (btn) {
-                case MouseEvent.BUTTON1:
-                    //
-                    break;
-                case MouseEvent.BUTTON2:
-                    FoldedFigure_Drawer selectedFigure = foldedFiguresList.getActiveItem();
-                    switch (canvasModel.getMouseInCpOrFoldedFigure()) {
-                        case CREASE_PATTERN_0:
-                            creasePatternCamera.displayPositionMove(mouse_temp0.delta(p));
-                            mainCreasePatternWorker.setCamera(creasePatternCamera);
-                            // Move all other objects along.
-                            break;
-                        case FOLDED_FRONT_1:
-                            if (selectedFigure != null)
-                                selectedFigure.getFoldedFigureFrontCamera().displayPositionMove(mouse_temp0.delta(p));
-                            break;
-                        case FOLDED_BACK_2:
-                            if (selectedFigure != null)
-                                selectedFigure.getFoldedFigureRearCamera().displayPositionMove(mouse_temp0.delta(p));
-                            break;
-                        case TRANSPARENT_FRONT_3:
-                            if (selectedFigure != null)
-                                selectedFigure.getTransparentFrontCamera().displayPositionMove(mouse_temp0.delta(p));
-                            break;
-                        case TRANSPARENT_BACK_4:
-                            if (selectedFigure != null)
-                                selectedFigure.getTransparentRearCamera().displayPositionMove(mouse_temp0.delta(p));
-                            break;
-                    }
-
-                    mouse_temp0 = p;
-                    canvasUI.repaint();
-                    mouseDraggedValid = false;
-                    mouseReleasedValid = false;
-                    return;//
-                case MouseEvent.BUTTON3:
-                    mainCreasePatternWorker.setCamera(creasePatternCamera);
-                    if (canvasModel.getMouseInCpOrFoldedFigure() == MouseWheelTarget.CREASE_PATTERN_0) {
-                        //if(i_mouse_undo_redo_mode==1){i_mouse_undo_redo_mode=0;mainDrawingWorker.unselect_all();Button_kyoutuu_sagyou();mainDrawingWorker.modosi_i_orisen_hojyosen();return;}
-                        mouseModeHandlers.get(MouseMode.LINE_SEGMENT_DELETE_3).mouseReleased(p, e);
-                        setActiveMouseHandler(mouseModeHandlers.get(MouseMode.LINE_SEGMENT_DELETE_3));
-                        canvasModel.restoreFoldLineAdditionalInputMode();
-                        //線分削除モード。
-                    }
-                    canvasUI.repaint();//なんでここにrepaintがあるか検討した方がよいかも。20181208
-                    mouseDraggedValid = false;
-                    mouseReleasedValid = false;
-
-                    return;
-            }
-            //----------------------------Logger.info("a");-----------------------
-            //}  //20201010　コメントアウト
-
-            canvasUI.repaint();
 
         }
 
-        mouseDraggedValid = false;
-        mouseReleasedValid = false;
+        //---------ボタンの種類による動作変更-----------------------------------------
+        switch (e.getButton()) {
+            case MouseEvent.BUTTON1:
+                //
+                break;
+            case MouseEvent.BUTTON2:
+                FoldedFigure_Drawer selectedFigure = foldedFiguresList.getActiveItem();
+                switch (canvasModel.getMouseInCpOrFoldedFigure()) {
+                    case CREASE_PATTERN_0:
+                        creasePatternCamera.displayPositionMove(mouse_temp0.delta(p));
+                        mainCreasePatternWorker.setCamera(creasePatternCamera);
+                        // Move all other objects along.
+                        break;
+                    case FOLDED_FRONT_1:
+                        if (selectedFigure != null)
+                            selectedFigure.getFoldedFigureFrontCamera().displayPositionMove(mouse_temp0.delta(p));
+                        break;
+                    case FOLDED_BACK_2:
+                        if (selectedFigure != null)
+                            selectedFigure.getFoldedFigureRearCamera().displayPositionMove(mouse_temp0.delta(p));
+                        break;
+                    case TRANSPARENT_FRONT_3:
+                        if (selectedFigure != null)
+                            selectedFigure.getTransparentFrontCamera().displayPositionMove(mouse_temp0.delta(p));
+                        break;
+                    case TRANSPARENT_BACK_4:
+                        if (selectedFigure != null)
+                            selectedFigure.getTransparentRearCamera().displayPositionMove(mouse_temp0.delta(p));
+                        break;
+                }
+
+                mouse_temp0 = p;
+                canvasUI.repaint();
+                return;//
+            case MouseEvent.BUTTON3:
+                mainCreasePatternWorker.setCamera(creasePatternCamera);
+                if (canvasModel.getMouseInCpOrFoldedFigure() == MouseWheelTarget.CREASE_PATTERN_0) {
+                    //if(i_mouse_undo_redo_mode==1){i_mouse_undo_redo_mode=0;mainDrawingWorker.unselect_all();Button_kyoutuu_sagyou();mainDrawingWorker.modosi_i_orisen_hojyosen();return;}
+                    mouseModeHandlers.get(MouseMode.LINE_SEGMENT_DELETE_3).mouseReleased(p, e);
+                    setActiveMouseHandler(mouseModeHandlers.get(MouseMode.LINE_SEGMENT_DELETE_3));
+                    canvasModel.restoreFoldLineAdditionalInputMode();
+                    //線分削除モード。
+                }
+                canvasUI.repaint();//なんでここにrepaintがあるか検討した方がよいかも。20181208
+
+
+                //----------------------------Logger.info("a");-----------------------
+                //}  //20201010　コメントアウト
+
+
+        }
+        canvasUI.repaint();
     }
 
     public void mouseWheelMoved(MouseWheelEvent e) {
@@ -583,11 +573,6 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
         mouseMode = canvasModel.getMouseMode();
         if (mouseModeHandlers.containsKey(mouseMode)) {
             setActiveMouseHandler(mouseModeHandlers.get(mouseMode));
-        }
-
-        if (e.getPropertyName() == null || e.getPropertyName().equals("dirty")) {
-            mouseReleasedValid = false;
-            mouseDraggedValid = false;
         }
 
         canvasUI.repaint();
