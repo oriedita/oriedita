@@ -22,6 +22,7 @@ import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.exception.FileReadingException;
 import oriedita.editor.export.CpExporter;
 import oriedita.editor.export.OriExporter;
+import oriedita.editor.export.OriImporter;
 import oriedita.editor.service.FileSaveService;
 import oriedita.editor.service.ResetService;
 import oriedita.editor.service.impl.DequeHistoryState;
@@ -135,7 +136,7 @@ public class SaveTest {
             }
         };
         FrameProvider frame = () -> null;
-        fileSaveService = new FileSaveServiceImpl(null, new MockInstance<>(new OriExporter(frame, false)), new MockInstance<>(new OriExporter(frame, false)), creasePatternCamera, mainCreasePatternWorker, fileModel, applicationModel, resetService, null, null);
+        fileSaveService = new FileSaveServiceImpl(null, new MockInstance<>(new OriImporter(frame, false)), new MockInstance<>(new OriExporter()), creasePatternCamera, mainCreasePatternWorker, fileModel, applicationModel, resetService, null, null);
     }
 
     @ParameterizedTest

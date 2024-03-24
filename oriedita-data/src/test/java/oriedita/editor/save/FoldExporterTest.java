@@ -12,6 +12,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.skyscreamer.jsonassert.JSONAssert;
 import oriedita.editor.exception.FileReadingException;
 import oriedita.editor.export.FoldExporter;
+import oriedita.editor.export.FoldImporter;
 import oriedita.editor.text.Text;
 import origami.crease_pattern.LineSegmentSet;
 import origami.crease_pattern.element.Circle;
@@ -62,13 +63,14 @@ public class FoldExporterTest {
     public void testExportAndImport() throws IOException, JSONException, FileReadingException, InterruptedException {
         File saveFile = new File(Objects.requireNonNull(getClass().getClassLoader().getResource("fold/oriedita.fold")).getFile());
 
-        FoldExporter f = new FoldExporter();
-        Save foldSave = f.importFile(saveFile);
+        FoldImporter importer = new FoldImporter();
+        FoldExporter exporter = new FoldExporter();
+        Save foldSave = importer.importFile(saveFile);
 
 
         File exportFile = File.createTempFile("export", ".fold");
 
-        f.exportFile(foldSave, exportFile);
+        exporter.doExport(foldSave, exportFile);
 
         String expected = Files.readString(saveFile.toPath());
         String actual = Files.readString(exportFile.toPath());
@@ -123,7 +125,7 @@ public class FoldExporterTest {
         FoldExporter f = new FoldExporter();
 
         File tempFile = File.createTempFile("fold", "fold");
-        f.exportFile(save, tempFile);
+        f.doExport(save, tempFile);
 
         expect.serializer("json").toMatchSnapshot(Files.readString(tempFile.toPath()));
     }
@@ -169,7 +171,7 @@ public class FoldExporterTest {
         FoldExporter f = new FoldExporter();
 
         File tempFile = File.createTempFile("fold", "fold");
-        f.exportFile(save, tempFile);
+        f.doExport(save, tempFile);
 
         expect.serializer("json").toMatchSnapshot(Files.readString(tempFile.toPath()));
     }

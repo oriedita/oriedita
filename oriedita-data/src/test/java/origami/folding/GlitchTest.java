@@ -3,7 +3,7 @@ package origami.folding;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.tinylog.Logger;
-import oriedita.editor.export.CpExporter;
+import oriedita.editor.export.CpImporter;
 import oriedita.editor.save.Save;
 import origami.crease_pattern.FoldingException;
 import origami.crease_pattern.LineSegmentSet;
@@ -14,7 +14,7 @@ import java.io.IOException;
 public class GlitchTest {
     @Test
     public void testFoldGlitch() throws IOException {
-        Save save = CpExporter.importFile(getClass().getClassLoader().getResourceAsStream("glitch.cp"));
+        Save save = new CpImporter().doImport(getClass().getClassLoader().getResourceAsStream("glitch.cp"));
 
         FoldedFigure foldedFigure = new FoldedFigure(new TestBulletinBoard());
 
