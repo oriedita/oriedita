@@ -18,6 +18,7 @@ import origami.folding.util.SortingBox;
 
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Queue;
@@ -120,6 +121,10 @@ public class FoldLineSet {
      */
     public Iterable<LineSegment> getLineSegmentsIterable() {
         return () -> lineSegments.stream().skip(1).limit(getTotal()).iterator();
+    }
+
+    public Collection<LineSegment> getLineSegmentsCollection() {
+        return lineSegments.stream().skip(1).limit(getTotal()).toList();
     }
 
     //Get a line segment
