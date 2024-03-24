@@ -840,6 +840,7 @@ public class ApplicationModel implements Serializable {
         selectPersistent = applicationModel.getSelectPersistent();
         check4Enabled = applicationModel.getCheck4Enabled();
         ckOEnabled = applicationModel.getCkOEnabled();
+        ckTEnabled = applicationModel.getCkTEnabled();
         numPolygonCorners = applicationModel.getNumPolygonCorners();
         foldLineDividingNumber = applicationModel.getFoldLineDividingNumber();
         defaultDirectory = applicationModel.getDefaultDirectory();
