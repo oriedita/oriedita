@@ -3,7 +3,7 @@ package oriedita.editor.export;
 import fold.io.CreasePatternReader;
 import fold.model.Edge;
 import fold.model.FoldFile;
-import jakarta.inject.Inject;
+import jakarta.enterprise.context.ApplicationScoped;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import oriedita.editor.save.Save;
@@ -11,21 +11,19 @@ import oriedita.editor.save.SaveProvider;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 
+import javax.swing.JFrame;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
 
+@ApplicationScoped
 class CpTest {
-    @Inject
-    CpExporter exporter;
-
     @Test
     void testLoadAndSaveCpFile() throws IOException {
         URL birdbase = getClass().getClassLoader().getResource("square.cp"); // very simple file so rounding doesnt make the test fail
         assert birdbase != null;
-        var importer = new CpImporter();
         InputStream is = birdbase.openStream();
         Save save1 = SaveProvider.createInstance();
 
@@ -40,7 +38,7 @@ class CpTest {
         Save save = save1;
 
         File saveFile = File.createTempFile("export", ".cp");
-        exporter.doExport(save, saveFile);
+        new CpExporter(JFrame::new).doExport(save, saveFile);
 
         String expected = Files.readString(saveFile.toPath()).replace("\r","");
 
