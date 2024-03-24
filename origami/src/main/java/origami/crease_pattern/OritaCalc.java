@@ -622,12 +622,12 @@ public class OritaCalc {
         StraightLine.Intersection i_intersection_flg;//元の線分を直線としたものと、他の線分の交差状態
         LineSegment.Intersection i_lineSegment_intersection_flg;//元の線分と、他の線分の交差状態
 
-        for (int i = 1; i <= foldLineSet.getTotal(); i++) {
-            i_intersection_flg = tyoku1.lineSegment_intersect_reverse_detail(foldLineSet.get(i));//0=この直線は与えられた線分と交差しない、1=X型で交差する、2=T型で交差する、3=線分は直線に含まれる。
-            i_lineSegment_intersection_flg = OritaCalc.determineLineSegmentIntersectionSweet(s0, foldLineSet.get(i), Epsilon.UNKNOWN_1EN5, Epsilon.UNKNOWN_1EN5);//20180408なぜかこの行の様にs0のままだと、i_senbun_kousa_flgがおかしくならない。
+        for (var s : foldLineSet.getLineSegmentsIterator()) {
+            i_intersection_flg = tyoku1.lineSegment_intersect_reverse_detail(s);//0=この直線は与えられた線分と交差しない、1=X型で交差する、2=T型で交差する、3=線分は直線に含まれる。
+            i_lineSegment_intersection_flg = OritaCalc.determineLineSegmentIntersectionSweet(s0, s, Epsilon.UNKNOWN_1EN5, Epsilon.UNKNOWN_1EN5);//20180408なぜかこの行の様にs0のままだと、i_senbun_kousa_flgがおかしくならない。
 
             if (i_intersection_flg.isIntersecting() && !i_lineSegment_intersection_flg.isEndpointIntersection()) {
-                kousa_point = OritaCalc.findIntersection(tyoku1, foldLineSet.get(i));
+                kousa_point = OritaCalc.findIntersection(tyoku1, s);
                 if (kousa_point.distance(add_sen.getA()) > Epsilon.UNKNOWN_1EN5) {
                     if (kousa_point.distance(add_sen.getA()) < kousa_point_distance) {
                         double d_kakudo = OritaCalc.angle(add_sen.getA(), add_sen.getB(), add_sen.getA(), kousa_point);
@@ -641,7 +641,7 @@ public class OritaCalc {
             }
 
             if (i_intersection_flg == StraightLine.Intersection.INCLUDED_3 && i_lineSegment_intersection_flg != LineSegment.Intersection.PARALLEL_EQUAL_31) {
-                kousa_point = foldLineSet.get(i).getA();
+                kousa_point = s.getA();
                 if (kousa_point.distance(add_sen.getA()) > Epsilon.UNKNOWN_1EN5) {
                     if (kousa_point.distance(add_sen.getA()) < kousa_point_distance) {
                         double d_kakudo = OritaCalc.angle(add_sen.getA(), add_sen.getB(), add_sen.getA(), kousa_point);
@@ -652,7 +652,7 @@ public class OritaCalc {
                     }
                 }
 
-                kousa_point = foldLineSet.get(i).getB();
+                kousa_point = s.getB();
                 if (kousa_point.distance(add_sen.getA()) > Epsilon.UNKNOWN_1EN5) {
                     if (kousa_point.distance(add_sen.getA()) < kousa_point_distance) {
                         double d_kakudo = OritaCalc.angle(add_sen.getA(), add_sen.getB(), add_sen.getA(), kousa_point);
