@@ -31,7 +31,6 @@ import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineColor;
 import origami.folding.FoldedFigure;
 
-import javax.swing.JCheckBox;
 import javax.swing.JColorChooser;
 import java.awt.Color;
 import java.util.HashMap;
@@ -289,11 +288,10 @@ public class ActionRegistrationService {
         actionService.registerAction(ActionType.ck4_colorDecreaseAction, new LambdaAction(mainCreasePatternWorker::lightenCheck4Color));
         actionService.registerAction(ActionType.ck4_colorIncreaseAction, new LambdaAction(mainCreasePatternWorker::darkenCheck4Color));
         actionService.registerAction(ActionType.ckTAction, e -> {
-            if (!(e.getSource() instanceof JCheckBox ckTCheckBox)) {
-                throw new IllegalArgumentException("ckTAction has to be triggered from a JCheckBox");
-            }
+            boolean isEnabled = applicationModel.getCkTEnabled();
+            applicationModel.setCkTEnabled(!isEnabled);
 
-            if (ckTCheckBox.isSelected()) {
+            if (isEnabled) {
                 mainCreasePatternWorker.check2();//r_hitosiiとr_heikouhanteiは、hitosiiとheikou_hanteiのずれの許容程度
                 mainCreasePatternWorker.setCheck2(true);
             } else {
@@ -302,7 +300,6 @@ public class ActionRegistrationService {
 
             mainCreasePatternWorker.unselect_all();
         });
-        actionService.registerAction(ActionType.ckOAction, new LambdaAction(mainCreasePatternWorker::unselect_all));
         actionService.registerAction(ActionType.fxOAction, new LambdaAction(() -> {
             mainCreasePatternWorker.unselect_all();
             mainCreasePatternWorker.fix1();
@@ -314,20 +311,16 @@ public class ActionRegistrationService {
             mainCreasePatternWorker.check2();
         }));
         actionService.registerAction(ActionType.cAMVAction, e -> {
-            if (!(e.getSource() instanceof JCheckBox checkbox)) {
-                throw new IllegalArgumentException("cAMVAction has to be triggered by a checkbox");
-            }
-
-            applicationModel.setCheck4Enabled(checkbox.isSelected());
+            applicationModel.setCheck4Enabled(!applicationModel.getCheck4Enabled());
             mainCreasePatternWorker.unselect_all();
             buttonService.Button_shared_operation();
         });
         actionService.registerAction(ActionType.ckOAction, e -> {
-            if (!(e.getSource() instanceof JCheckBox checkBox)) {
-                throw new IllegalArgumentException("ckOAction has to be triggered by a checkbox");
-            }
+            mainCreasePatternWorker.unselect_all();
+            boolean isEnabled = applicationModel.getCkOEnabled();
+            applicationModel.setCkOEnabled(!isEnabled);
 
-            if (checkBox.isSelected()) {
+            if (isEnabled) {
                 mainCreasePatternWorker.check1();//r_hitosiiとr_heikouhanteiは、hitosiiとheikou_hanteiのずれの許容程度
                 mainCreasePatternWorker.set_i_check1(true);
             } else {
