@@ -41,10 +41,10 @@ jobs:
             platform: win
             name: win
           - os: ubuntu-latest
-            platform: win
+            platform: linux
             name: linux
           - os: macos-latest
-            platform: win
+            platform: mac
             name: mac
           - os: macos-14
             platform: mac
