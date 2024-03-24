@@ -526,7 +526,7 @@ public class ApplicationModel implements Serializable {
     public void setCkTEnabled(boolean ckTEnabled) {
         boolean oldCkTEnabled = this.ckTEnabled;
         this.ckTEnabled = ckTEnabled;
-        this.pcs.firePropertyChange("ckOEnabled", oldCkTEnabled, ckTEnabled);
+        this.pcs.firePropertyChange("ckTEnabled", oldCkTEnabled, ckTEnabled);
     }
 
     public boolean getAdvancedCheck4Display() {
