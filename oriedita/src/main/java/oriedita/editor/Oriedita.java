@@ -16,11 +16,13 @@ import oriedita.editor.swing.dialog.LoadingDialogUtil;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
+import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Objects;
 
@@ -41,17 +43,17 @@ public class Oriedita {
     @Parameters
     List<String> argv;
 
-    public void start(@Observes ContainerInitialized event) {
+    public void start(@Observes ContainerInitialized event) throws InterruptedException, InvocationTargetException {
         long startTime = System.currentTimeMillis();
 
-        if (! event.getContainerId().equals(RegistrySingletonProvider.STATIC_INSTANCE)) {
+        if (!event.getContainerId().equals(RegistrySingletonProvider.STATIC_INSTANCE)) {
             Logger.warn("Not starting Oriedita outside of normal mode");
             return;
         }
 
         System.setProperty("apple.laf.useScreenMenuBar", "true");
 
-        loadFont();
+//        loadFont();
 
         // Initialize look and feel service, this will bind to the applicationModel update the look and feel (must be done early).
         lookAndFeelService.init();
@@ -60,30 +62,32 @@ public class Oriedita {
 
         Logger.info("Setup in {} ms.", System.currentTimeMillis() - startTime);
 
-        SwingUtilities.invokeLater(() -> {
-            lookAndFeelService.registerFlatLafSource();
+        lookAndFeelService.registerFlatLafSource();
 
+        try {
+            app.start();
+            Logger.trace("App.start finished");
+        } catch (InterruptedException | InvocationTargetException e) {
+            throw new RuntimeException(e);
+        }
+
+        LoadingDialogUtil.hide();
+
+        app.afterStart();
+
+
+        if (argv.size() == 1) {
+            // We got a file
             try {
-                app.start();
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+                fileSaveService.openFile(new File(argv.get(0)));
+            } catch (FileReadingException e) {
+                Logger.error(e, "Error reading file");
+                JOptionPane.showMessageDialog(null, "An error occurred when reading this file", "Read Error", JOptionPane.ERROR_MESSAGE);
             }
+        }
 
-            LoadingDialogUtil.hide();
-
-            if (argv.size() == 1) {
-                // We got a file
-                try {
-                    fileSaveService.openFile(new File(argv.get(0)));
-                } catch (FileReadingException e) {
-                    Logger.error(e, "Error reading file");
-                    JOptionPane.showMessageDialog(null, "An error occurred when reading this file", "Read Error", JOptionPane.ERROR_MESSAGE);
-                }
-            }
-
-            fileSaveService.initAutoSave();
-            Logger.info("Startup in {} ms.", System.currentTimeMillis() - startTime);
-        });
+        fileSaveService.initAutoSave();
+        Logger.info("Startup in {} ms.", System.currentTimeMillis() - startTime);
     }
 
     private static void loadFont() {

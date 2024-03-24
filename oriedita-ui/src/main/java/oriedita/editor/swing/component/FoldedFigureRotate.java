@@ -21,6 +21,9 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 
 public class FoldedFigureRotate extends JPanel {
+    private final ButtonService buttonService;
+    private final FoldedFigureModel foldedFigureModel;
+    private final MeasuresModel measuresModel;
     private JButton foldedFigureRotateAntiClockwiseButton;
     private JPanel panel1;
     private JTextField foldedFigureRotateTextField;
@@ -28,8 +31,14 @@ public class FoldedFigureRotate extends JPanel {
     private JButton foldedFigureRotateSetButton;
 
     public FoldedFigureRotate(ButtonService buttonService, FoldedFigureModel foldedFigureModel, MeasuresModel measuresModel) {
-        add($$$getRootComponent$$$());
+        this.buttonService = buttonService;
+        this.foldedFigureModel = foldedFigureModel;
+        this.measuresModel = measuresModel;
 
+        add($$$getRootComponent$$$());
+    }
+
+    public void init() {
         buttonService.registerButton(foldedFigureRotateAntiClockwiseButton, "foldedFigureRotateAntiClockwiseAction");
         buttonService.registerButton(foldedFigureRotateSetButton, "foldedFigureRotateSetAction");
         buttonService.registerButton(foldedFigureRotateClockwiseButton, "foldedFigureRotateClockwiseAction");

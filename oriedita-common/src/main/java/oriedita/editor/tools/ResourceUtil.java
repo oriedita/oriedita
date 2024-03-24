@@ -8,11 +8,14 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ListResourceBundle;
+import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
@@ -58,6 +61,17 @@ public class ResourceUtil {
         return "dev";
     }
 
+    private static ResourceBundle emptyResourceBundle = new ListResourceBundle() {
+        @Override
+        protected Object[][] getContents() {
+            return new Object[0][];
+        }
+    };
+    private static Map<String, ResourceBundle> userBundleCache = new ConcurrentHashMap<>();
+    private static Map<String, ResourceBundle> localBundleCache = new ConcurrentHashMap<>();
+    private static Map<String, ResourceBundle> jarBundleCache = new ConcurrentHashMap<>();
+
+
     /**
      * Reads a string from one of three locations:
      * 1. Try to find a properties file with the key in the same directory as where the jar is executed
@@ -68,31 +82,37 @@ public class ResourceUtil {
      * @param key    Key to read in properties file
      */
     public static String getBundleString(String bundle, String key) {
-        ResourceBundle userBundle = null;
-        ResourceBundle localBundle = null;
-        ResourceBundle jarBundle = null;
+        ResourceBundle localBundle = localBundleCache.computeIfAbsent(bundle, (b) -> {
+            try {
+                return new PropertyResourceBundle(Files.newInputStream(Paths.get(bundle + ".properties")));
+            } catch (IOException e) {
+                return emptyResourceBundle;
+            }
+        });
 
-        try {
-            userBundle = new PropertyResourceBundle(Files.newInputStream(getAppDir().resolve(bundle + ".properties")));
-        } catch (IOException ignored) {
-        }
-
-        try {
-            localBundle = new PropertyResourceBundle(Files.newInputStream(Paths.get(bundle + ".properties")));
-        } catch (IOException ignored) {
-        }
-
-        try {
-            jarBundle = ResourceBundle.getBundle(bundle);
-        } catch (MissingResourceException ignored) {
-        }
-
-        if (localBundle != null && localBundle.containsKey(key)) {
+        if (localBundle.containsKey(key)) {
             return localBundle.getString(key);
-        } else if (userBundle != null && userBundle.containsKey(key)) {
+        }
+
+        ResourceBundle userBundle = userBundleCache.computeIfAbsent(bundle, (b) -> {
+            try {
+                return new PropertyResourceBundle(Files.newInputStream(getAppDir().resolve(b + ".properties")));
+            } catch (IOException e) {
+                return emptyResourceBundle;
+            }
+        });
+
+        if (userBundle.containsKey(key)) {
             return userBundle.getString(key);
-        } else if (jarBundle != null && jarBundle.containsKey(key)) {
-            return jarBundle.getString(key);
+        }
+
+        try {
+            ResourceBundle jarBundle = ResourceBundle.getBundle(bundle);
+
+            if (jarBundle.containsKey(key)) {
+                return jarBundle.getString(key);
+            }
+        } catch (MissingResourceException ignored) {
         }
 
         Logger.debug(bundle + "." + key + " does not exist");
@@ -100,12 +120,16 @@ public class ResourceUtil {
         return null;
     }
 
-    public static String getDefaultHotkeyBundleString(String key){
+    public static String getDefaultHotkeyBundleString(String key) {
         ResourceBundle jarBundle = null;
-        try { jarBundle = ResourceBundle.getBundle("hotkey"); }
-        catch (MissingResourceException ignored) {}
+        try {
+            jarBundle = ResourceBundle.getBundle("hotkey");
+        } catch (MissingResourceException ignored) {
+        }
 
-        if (jarBundle != null && jarBundle.containsKey(key)) { return jarBundle.getString(key); }
+        if (jarBundle != null && jarBundle.containsKey(key)) {
+            return jarBundle.getString(key);
+        }
 
         Logger.debug(key + " does not exist (DEFAULT)");
         return null;
@@ -113,6 +137,10 @@ public class ResourceUtil {
 
     public static void updateBundleKey(String bundleName, String key, String value) {
         try {
+            localBundleCache.remove(bundleName);
+            userBundleCache.remove(bundleName);
+            ResourceBundle.clearCache();
+
             Path bundleLocation = getAppDir().resolve(bundleName + ".properties");
             if (!bundleLocation.toFile().exists() && !bundleLocation.toFile().createNewFile()) {
                 throw new IOException("Could not create file");
@@ -132,8 +160,12 @@ public class ResourceUtil {
         }
     }
 
-    public static void clearBundle(String bundleName){
+    public static void clearBundle(String bundleName) {
         try {
+            localBundleCache.remove(bundleName);
+            userBundleCache.remove(bundleName);
+            ResourceBundle.clearCache();
+
             Path bundleLocation = getAppDir().resolve(bundleName + ".properties");
             if (!bundleLocation.toFile().exists() && !bundleLocation.toFile().createNewFile()) {
                 throw new IOException("Could not create file");

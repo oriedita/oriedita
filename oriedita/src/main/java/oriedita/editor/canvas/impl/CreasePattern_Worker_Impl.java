@@ -154,8 +154,6 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
 
         text_cp_setumei = "1/";
         s_title = "no title";
-
-        reset();
     }
 
     @Override

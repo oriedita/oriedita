@@ -101,6 +101,9 @@ public class BottomPanel {
     }
 
     public void init() {
+        foldedFigureResize.init();
+        foldedFigureRotate.init();
+
         buttonService.addDefaultListener($$$getRootComponent$$$());
 
         buttonService.registerButton(foldedFigureAntiAliasButton, "foldedFigureToggleAntiAliasAction");
@@ -295,7 +298,7 @@ public class BottomPanel {
 
     private void createUIComponents() {
         panel1 = new JPanel();
-        foldedFigureResize = new FoldedFigureResize(applicationModel, buttonService, foldedFigureModel, measuresModel, animationService);
+        foldedFigureResize = new FoldedFigureResize(buttonService, foldedFigureModel, measuresModel, animationService);
         foldedFigureRotate = new FoldedFigureRotate(buttonService, foldedFigureModel, measuresModel);
         foldedFigureBox = new JComboBox<>();
     }
