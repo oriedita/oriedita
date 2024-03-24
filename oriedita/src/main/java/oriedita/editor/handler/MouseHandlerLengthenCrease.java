@@ -105,7 +105,7 @@ public class MouseHandlerLengthenCrease extends BaseMouseHandler {
         if (currentStep == Step.DRAW_SELECTION_LINE) {
             selectionLine = selectionLine.withB(p);
 
-            for (var s : lineSet.getLineSegmentsIterator()) {
+            for (var s : lineSet.getLineSegmentsIterable()) {
                 LineSegment.Intersection i_lineSegment_intersection_decision =
                         OritaCalc.determineLineSegmentIntersection(s, selectionLine, Epsilon.UNKNOWN_1EN4);
                 boolean lineIntersectsSelectionLine =

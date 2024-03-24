@@ -361,7 +361,7 @@ public class SvgExporter implements FileExporter {
         //Drawing of crease pattern Polygonal lines other than auxiliary live lines
         String str_stroke;
         String str_strokewidth = Integer.toString(lineWidth);
-        for (var s : foldLineSet.getLineSegmentsIterator()) {
+        for (var s : foldLineSet.getLineSegmentsIterable()) {
             LineColor color = s.getColor();
             str_stroke = getStrokeColor(color);
             if (str_stroke == null) continue;

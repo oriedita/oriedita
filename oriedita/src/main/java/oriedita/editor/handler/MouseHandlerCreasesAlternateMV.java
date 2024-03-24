@@ -50,7 +50,7 @@ public class MouseHandlerCreasesAlternateMV extends BaseMouseHandlerInputRestric
             }
             d.getLineStep().set(0, d.getLineStep().get(0).withA(closestPoint));
             if (Epsilon.high.gt0(d.getLineStep().get(0).determineLength())) {
-                for (var s : d.getFoldLineSet().getLineSegmentsIterator()) {
+                for (var s : d.getFoldLineSet().getLineSegmentsIterable()) {
                     LineSegment.Intersection i_senbun_kousa_hantei = OritaCalc.determineLineSegmentIntersection(s, d.getLineStep().get(0), Epsilon.UNKNOWN_1EN4);
                     int i_jikkou = 0;
                     if (i_senbun_kousa_hantei == LineSegment.Intersection.INTERSECTS_1) {

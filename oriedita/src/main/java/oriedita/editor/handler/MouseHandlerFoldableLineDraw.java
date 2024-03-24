@@ -65,7 +65,7 @@ public class MouseHandlerFoldableLineDraw extends BaseMouseHandler {
 
             //moyori_tenを端点とする折線をNarabebakoに入れる
             SortingBox<LineSegment> nbox = new SortingBox<>();
-            for (var s : d.getFoldLineSet().getLineSegmentsIterator()) {
+            for (var s : d.getFoldLineSet().getLineSegmentsIterable()) {
                 if (s.getColor().isFoldingLine()) {
                     if (closest_point.distance(s.getA()) < decision_distance) {
                         nbox.addByWeight(s, OritaCalc.angle(s.getA(), s.getB()));

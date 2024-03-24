@@ -61,7 +61,7 @@ public class MouseHandlerDrawCreaseSymmetric extends BaseMouseHandlerInputRestri
             canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.NORMAL_0);//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
             int old_sousuu = d.getFoldLineSet().getTotal();
 
-            for (var s : d.getFoldLineSet().getLineSegmentsIterator()) {
+            for (var s : d.getFoldLineSet().getLineSegmentsIterable()) {
                 if (s.getSelected() == 2) {
                     LineSegment adds = OritaCalc.findLineSymmetryLineSegment(s, d.getLineStep().get(0));
                     adds.setColor(s.getColor());

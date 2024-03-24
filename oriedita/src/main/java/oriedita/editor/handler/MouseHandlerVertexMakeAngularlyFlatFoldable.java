@@ -86,7 +86,7 @@ public class MouseHandlerVertexMakeAngularlyFlatFoldable extends BaseMouseHandle
                 if (p.distance(t1) < d.getSelectionDistance()) {
                     //t1を端点とする折線をNarabebakoに入れる
                     SortingBox<LineSegment> nbox = new SortingBox<>();
-                    for (var s : d.getFoldLineSet().getLineSegmentsIterator()) {
+                    for (var s : d.getFoldLineSet().getLineSegmentsIterable()) {
                         if (s.getColor().isFoldingLine()) {
                             if (t1.distance(s.getA()) < decision_distance) {
                                 nbox.addByWeight(s, OritaCalc.angle(s.getA(), s.getB()));

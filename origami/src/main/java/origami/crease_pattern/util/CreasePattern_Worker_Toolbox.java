@@ -28,7 +28,7 @@ public class CreasePattern_Worker_Toolbox {
         StraightLine.Intersection i_kousa_flg;
 
         lengthenUntilIntersection_flg = StraightLine.Intersection.NONE_0;
-        for (var ls : ori_s.getLineSegmentsIterator()) {
+        for (var ls : ori_s.getLineSegmentsIterable()) {
             if (ls.getColor().isFoldingLine()) {
 // 0 = This straight line does not intersect the given line segment,
 // 1 = X type intersects,

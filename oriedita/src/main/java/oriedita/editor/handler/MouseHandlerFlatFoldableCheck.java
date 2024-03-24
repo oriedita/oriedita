@@ -85,7 +85,7 @@ public class MouseHandlerFlatFoldableCheck extends BaseMouseHandler {
             SortingBox<LineSegment> nbox = new SortingBox<>();
             for (LineSegment s2 : d.getLineStep()) {
                 nbox.reset();
-                for (var s : d.getFoldLineSet().getLineSegmentsIterator()) {
+                for (var s : d.getFoldLineSet().getLineSegmentsIterable()) {
                     LineSegment.Intersection i_senbun_kousa_hantei = OritaCalc.determineLineSegmentIntersection(s, s2, Epsilon.UNKNOWN_1EN4);
                     int i_jikkou = 0;
 

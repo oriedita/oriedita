@@ -142,7 +142,7 @@ public abstract class BaseMouseHandlerLineTransform extends BaseMouseHandlerLine
         int maxy = miny + settings.getHeight();
 
         // do cohen-sutherland clipping
-        for (var s : lines.getLineSegmentsIterator()) {
+        for (var s : lines.getLineSegmentsIterable()) {
             Point a = camera.object2TV(s.getA());
             Point b = camera.object2TV(s.getB());
             int regionA = DrawingUtil.cohenSutherlandRegion(minx, miny, maxx, maxy, a);
@@ -165,7 +165,7 @@ public abstract class BaseMouseHandlerLineTransform extends BaseMouseHandlerLine
         ori_s_temp.move(zero.getX() - boObject.getX(), zero.getY() - boObject.getY());
         Graphics2D g = image.createGraphics();
         g.setBackground(new Color(0f, 0, 0, 0));
-        for (var ls : ori_s_temp.getLineSegmentsIterator()) {
+        for (var ls : ori_s_temp.getLineSegmentsIterable()) {
             DrawingUtil.drawCpLine(g, ls, camera, settings.getLineStyle(),
                     settings.getLineWidth(), d.getPointSize(), image.getWidth(), image.getHeight(), settings.useRoundedEnds());
         }

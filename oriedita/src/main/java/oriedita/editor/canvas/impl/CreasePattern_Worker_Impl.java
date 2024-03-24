@@ -2,8 +2,19 @@ package oriedita.editor.canvas.impl;
 
 import org.tinylog.Logger;
 import oriedita.editor.Colors;
-import oriedita.editor.canvas.*;
-import oriedita.editor.databinding.*;
+import oriedita.editor.canvas.CreasePattern_Worker;
+import oriedita.editor.canvas.FoldLineAdditionalInputMode;
+import oriedita.editor.canvas.LineStyle;
+import oriedita.editor.canvas.MouseMode;
+import oriedita.editor.canvas.OperationFrame;
+import oriedita.editor.canvas.TextWorker;
+import oriedita.editor.databinding.AngleSystemModel;
+import oriedita.editor.databinding.ApplicationModel;
+import oriedita.editor.databinding.CanvasModel;
+import oriedita.editor.databinding.FileModel;
+import oriedita.editor.databinding.FoldedFigureModel;
+import oriedita.editor.databinding.GridModel;
+import oriedita.editor.databinding.SelectedTextModel;
 import oriedita.editor.drawing.Grid;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
@@ -13,13 +24,30 @@ import oriedita.editor.service.HistoryState;
 import oriedita.editor.service.TaskExecutorService;
 import oriedita.editor.task.CheckCAMVTask;
 import origami.Epsilon;
-import origami.crease_pattern.*;
+import origami.crease_pattern.CustomLineTypes;
+import origami.crease_pattern.FlatFoldabilityViolation;
+import origami.crease_pattern.FoldLineSet;
+import origami.crease_pattern.LineSegmentSet;
+import origami.crease_pattern.OritaCalc;
+import origami.crease_pattern.element.Circle;
+import origami.crease_pattern.element.LineColor;
+import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.Rectangle;
-import origami.crease_pattern.element.*;
-import origami.crease_pattern.worker.foldlineset.*;
+import origami.crease_pattern.element.StraightLine;
+import origami.crease_pattern.worker.foldlineset.BranchTrim;
+import origami.crease_pattern.worker.foldlineset.Check1;
+import origami.crease_pattern.worker.foldlineset.Check2;
+import origami.crease_pattern.worker.foldlineset.Check3;
+import origami.crease_pattern.worker.foldlineset.Fix1;
+import origami.crease_pattern.worker.foldlineset.Fix2;
+import origami.crease_pattern.worker.foldlineset.InsideToAux;
+import origami.crease_pattern.worker.foldlineset.OrganizeCircles;
 
-import java.awt.*;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -421,7 +449,7 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
         //Drawing auxiliary strokes (non-interfering with polygonal lines)
         if (displayAuxLiveLines) {
             g2.setStroke(new BasicStroke(f_h_WireframeLineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));//Line thickness and shape of the end of the line
-            for (var as : auxLines.getLineSegmentsIterator()) {
+            for (var as : auxLines.getLineSegmentsIterable()) {
                 DrawingUtil.drawAuxLiveLine(g, as, camera, lineWidth, pointSize, f_h_WireframeLineWidth);
             }
         }
@@ -494,8 +522,7 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
 
         //selectの描画
         g2.setStroke(new BasicStroke(lineWidth * 2.0f + 2.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));//基本指定A　　線の太さや線の末端の形状
-        var lines = foldLineSet.getLineSegmentsIterator();
-        for (var s : lines) {
+        for (var s : foldLineSet.getLineSegmentsIterable()) {
             if (s.getSelected() == 2) {
                 DrawingUtil.drawSelectLine(g, s, camera);
             }
@@ -504,7 +531,7 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
         boolean useRounded = applicationModel.getRoundedEnds();
         //展開図の描画 補助活線のみ
         if (displayAuxLines) {
-            for (var s : lines) {
+            for (var s : foldLineSet.getLineSegmentsIterable()) {
                 if (s.getColor() == LineColor.CYAN_3) {
                     DrawingUtil.drawAuxLine(g, s, camera, lineWidth, pointSize, useRounded);
                 }
@@ -514,17 +541,17 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
         //展開図の描画  補助活線以外の折線
         if (displayCpLines) {
             g.setColor(Colors.get(Color.black));
-            for (var s : lines) {
+            for (var s : foldLineSet.getLineSegmentsIterable()) {
                 if (s.getColor() != LineColor.CYAN_3 && s.getColor() != LineColor.RED_1 && s.getColor() != LineColor.BLACK_0) {
                     DrawingUtil.drawCpLine(g, s, camera, lineStyle, lineWidth, pointSize, p0x_max, p0y_max, useRounded);
                 }
             }
-            for (var s : lines) {
+            for (var s : foldLineSet.getLineSegmentsIterable()) {
                 if (s.getColor() == LineColor.RED_1) {
                     DrawingUtil.drawCpLine(g, s, camera, lineStyle, lineWidth, pointSize, p0x_max, p0y_max, useRounded);
                 }
             }
-            for (var s : lines) {
+            for (var s : foldLineSet.getLineSegmentsIterable()) {
                 if (s.getColor() == LineColor.BLACK_0) {
                     DrawingUtil.drawCpLine(g, s, camera, lineStyle, lineWidth, pointSize, p0x_max, p0y_max, useRounded);
                 }
@@ -827,7 +854,7 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
 
         StraightLine tyoku1 = new StraightLine(add_sen.getA(), add_sen.getB());
         StraightLine.Intersection i_kousa_flg;
-        for (var s : foldLineSet.getLineSegmentsIterator()) {
+        for (var s : foldLineSet.getLineSegmentsIterable()) {
             i_kousa_flg = tyoku1.lineSegment_intersect_reverse_detail(s);//0=この直線は与えられた線分と交差しない、1=X型で交差する、2=T型で交差する、3=線分は直線に含まれる。
 
             if (i_kousa_flg.isIntersecting()) {

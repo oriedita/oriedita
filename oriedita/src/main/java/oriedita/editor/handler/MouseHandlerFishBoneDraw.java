@@ -4,7 +4,6 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
 import origami.Epsilon;
-import origami.crease_pattern.FoldLineSet;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
@@ -106,7 +105,7 @@ public class MouseHandlerFishBoneDraw extends BaseMouseHandlerInputRestricted {
         LineSegment add_line = new LineSegment(s0);
         StraightLine tyoku1 = new StraightLine(add_line.getA(), add_line.getB());
         StraightLine.Intersection i_intersection_flg;
-        for (var ls : d.getFoldLineSet().getLineSegmentsIterator()) {
+        for (var ls : d.getFoldLineSet().getLineSegmentsIterable()) {
             i_intersection_flg = tyoku1.lineSegment_intersect_reverse_detail(ls);//0 = This straight line does not intersect a given line segment, 1 = X type intersects, 2 = T type intersects, 3 = Line segment is included in the straight line.
 
             if (i_intersection_flg.isIntersecting()) {

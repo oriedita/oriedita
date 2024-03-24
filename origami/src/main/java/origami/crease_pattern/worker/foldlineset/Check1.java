@@ -10,8 +10,8 @@ public class Check1 {
     public static void apply(FoldLineSet foldLineSet) {
         foldLineSet.getCheck1LineSegment().clear();
         foldLineSet.unselect_all();
-        for (var si : foldLineSet.getLineSegmentsIterator()) {
-            for (var sj : foldLineSet.getLineSegmentsIterator()) {
+        for (var si : foldLineSet.getLineSegmentsIterable()) {
+            for (var sj : foldLineSet.getLineSegmentsIterable()) {
                 if (si == sj) break;
 
                 if (si.getColor() == LineColor.CYAN_3) continue;
