@@ -369,10 +369,11 @@ public class PointSet implements Serializable {
         tempFace.align();
         return tempFace;
     }
-    //--------------------------------
 
-    //-------------------------------------
-    public void FaceOccurrence() throws InterruptedException {
+    /**
+     * Calculates faces in this point set, before calling this method the pointset will not have any faces defined.
+     */
+    public void calculateFaces() throws InterruptedException {
         Logger.info("線分集合->点集合：点集合内で面を発生　開始");
         boolean addNewFace;
         Face tempFace;
