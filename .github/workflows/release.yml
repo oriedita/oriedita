@@ -46,7 +46,7 @@ jobs:
           - os: macos-latest
             platform: win
             name: mac
-          - os: macos-latest
+          - os: macos-14
             platform: mac
             name: mac-m1
             architecture: aarch64
