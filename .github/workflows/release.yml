@@ -39,16 +39,16 @@ jobs:
         include:
           - os: windows-latest
             platform: win
-            name: Win
+            name: Windows
           - os: ubuntu-latest
             platform: linux
             name: Linux
           - os: macos-latest
             platform: mac
-            name: OSX
+            name: Mac
           - os: macos-14
             platform: mac
-            name: OSX M1
+            name: Mac M1
             suffix: _m1
 
 
