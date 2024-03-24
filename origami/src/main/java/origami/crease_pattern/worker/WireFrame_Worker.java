@@ -210,7 +210,7 @@ public class WireFrame_Worker {
         defineLines(lineSegmentSet);
 
         //Then generate a surface within PointSet.
-        pointSet.FaceOccurrence();
+        pointSet.calculateFaces();
     }
 
     private void definePointSet(LineSegmentSet lineSegmentSet) throws InterruptedException {

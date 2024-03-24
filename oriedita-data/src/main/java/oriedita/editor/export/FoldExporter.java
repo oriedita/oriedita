@@ -3,6 +3,7 @@ package oriedita.editor.export;
 import fold.io.CustomFoldReader;
 import fold.io.CustomFoldWriter;
 import fold.model.Edge;
+import fold.model.Face;
 import fold.model.FoldEdgeAssignment;
 import fold.model.FoldFile;
 import fold.model.FoldFrame;
@@ -160,6 +161,7 @@ public class FoldExporter implements FileImporter, FileExporter {
         WireFrame_Worker wireFrame_worker = new WireFrame_Worker(3.0);
         wireFrame_worker.setLineSegmentSetWithoutFaceOccurence(lineSegmentSet);
         PointSet pointSet = wireFrame_worker.get();
+        pointSet.calculateFaces();
 
         OrieditaFoldFile foldFile = new OrieditaFoldFile();
         foldFile.setCreator("oriedita");
@@ -183,6 +185,28 @@ public class FoldExporter implements FileImporter, FileExporter {
             edge.setEnd(endVertex);
 
             rootFrame.getEdges().add(edge);
+        }
+
+        for (int i = 1; i <= pointSet.getNumFaces(); i++) {
+            var pface = pointSet.getFace(i);
+            var face = new Face();
+
+            var faceVertices = new ArrayList<Vertex>();
+            var faceEdges = new ArrayList<Edge>();
+            var vertexFirst = rootFrame.getVertices().get(pface.getPointId(1) - 1);
+            var vertexLast = rootFrame.getVertices().get(pface.getPointId(pface.getNumPoints()) - 1);
+            faceVertices.add(vertexFirst);
+            faceEdges.add(rootFrame.getEdges().stream().filter(e -> (e.getStart() == vertexFirst && e.getEnd() == vertexLast) || e.getStart() == vertexLast && e.getEnd() == vertexFirst).findFirst().get());
+            for (var j = 2; j <= pface.getNumPoints(); j++) {
+                var currentVertex = rootFrame.getVertices().get(pface.getPointId(j) - 1);
+                var previousVertex = rootFrame.getVertices().get(pface.getPointId(j - 1) - 1);
+                faceVertices.add(currentVertex);
+                faceEdges.add(rootFrame.getEdges().stream().filter(e -> (e.getStart() == previousVertex && e.getEnd() == currentVertex) || e.getStart() == currentVertex && e.getEnd() == previousVertex).findFirst().get());
+            }
+            face.setVertices(faceVertices);
+            face.setEdges(faceEdges);
+
+            rootFrame.getFaces().add(face);
         }
 
         foldFile.setCircles(save.getCircles());
