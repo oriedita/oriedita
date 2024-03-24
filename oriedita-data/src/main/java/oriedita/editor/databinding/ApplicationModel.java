@@ -50,6 +50,8 @@ public class ApplicationModel implements Serializable {
     private Color circleCustomizedColor;
     private boolean selectPersistent;
     private boolean check4Enabled;
+    private boolean ckOEnabled;
+    private boolean ckTEnabled;
     private boolean advancedCheck4Display;
     private boolean helpVisible;
     private int foldLineDividingNumber;
@@ -365,6 +367,8 @@ public class ApplicationModel implements Serializable {
         helpVisible = true;
 
         check4Enabled = false;
+        ckOEnabled = false;
+        ckTEnabled = false;
         advancedCheck4Display = true;
 
         displayTopPanel = true;
@@ -503,6 +507,26 @@ public class ApplicationModel implements Serializable {
         boolean oldCheck4Enabled = this.check4Enabled;
         this.check4Enabled = check4Enabled;
         this.pcs.firePropertyChange("check4Enabled", oldCheck4Enabled, check4Enabled);
+    }
+
+    public boolean getCkOEnabled() {
+        return ckOEnabled;
+    }
+
+    public void setCkOEnabled(boolean ckOEnabled) {
+        boolean oldCkOEnabled = this.ckOEnabled;
+        this.ckOEnabled = ckOEnabled;
+        this.pcs.firePropertyChange("ckOEnabled", oldCkOEnabled, ckOEnabled);
+    }
+
+    public boolean getCkTEnabled() {
+        return ckTEnabled;
+    }
+
+    public void setCkTEnabled(boolean ckTEnabled) {
+        boolean oldCkTEnabled = this.ckTEnabled;
+        this.ckTEnabled = ckTEnabled;
+        this.pcs.firePropertyChange("ckTEnabled", oldCkTEnabled, ckTEnabled);
     }
 
     public boolean getAdvancedCheck4Display() {
@@ -815,6 +839,8 @@ public class ApplicationModel implements Serializable {
         circleCustomizedColor = applicationModel.getCircleCustomizedColor();
         selectPersistent = applicationModel.getSelectPersistent();
         check4Enabled = applicationModel.getCheck4Enabled();
+        ckOEnabled = applicationModel.getCkOEnabled();
+        ckTEnabled = applicationModel.getCkTEnabled();
         numPolygonCorners = applicationModel.getNumPolygonCorners();
         foldLineDividingNumber = applicationModel.getFoldLineDividingNumber();
         defaultDirectory = applicationModel.getDefaultDirectory();
