@@ -452,8 +452,7 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
         //Drawing auxiliary strokes (non-interfering with polygonal lines)
         if (displayAuxLiveLines) {
             g2.setStroke(new BasicStroke(f_h_WireframeLineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));//Line thickness and shape of the end of the line
-            for (int i = 1; i <= auxLines.getTotal(); i++) {
-                LineSegment as = auxLines.get(i);
+            for (var as : auxLines.getLineSegmentsIterator()) {
                 DrawingUtil.drawAuxLiveLine(g, as, camera, lineWidth, pointSize, f_h_WireframeLineWidth);
             }
         }
@@ -524,22 +523,9 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
             }
         }
 
-        // proxy foldLineSet slows down get(), so we get
-        // the underlying actual FoldLineSet for rendering faster
-        // TODO: retest and possibly remove this when #389 (foldLineSet iterators) is merged
-        FoldLineSet rawFoldLineSet = foldLineSet;
-        if (foldLineSet instanceof WeldClientProxy proxy) {
-            Object instance = proxy.getMetadata().getContextualInstance();
-            if (instance instanceof FoldLineSet) {
-                rawFoldLineSet = (FoldLineSet) instance;
-            }
-        }
-        int total = rawFoldLineSet.getTotal();
-
         //selectの描画
         g2.setStroke(new BasicStroke(lineWidth * 2.0f + 2.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));//基本指定A　　線の太さや線の末端の形状
-        for (int i = 1; i <= total; i++) {
-            LineSegment s = rawFoldLineSet.get(i);
+        for (var s : foldLineSet.getLineSegmentsIterator()) {
             if (s.getSelected() == 2) {
                 DrawingUtil.drawSelectLine(g, s, camera);
             }
@@ -548,10 +534,8 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
         boolean useRounded = applicationModel.getRoundedEnds();
         //展開図の描画 補助活線のみ
         if (displayAuxLines) {
-            for (int i = 1; i <= total; i++) {
-                LineSegment s = rawFoldLineSet.get(i);
+            for (var s : foldLineSet.getLineSegmentsIterator()) {
                 if (s.getColor() == LineColor.CYAN_3) {
-
                     DrawingUtil.drawAuxLine(g, s, camera, lineWidth, pointSize, useRounded);
                 }
             }
@@ -560,20 +544,17 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
         //展開図の描画  補助活線以外の折線
         if (displayCpLines) {
             g.setColor(Colors.get(Color.black));
-            for (int i = 1; i <= total; i++) {
-                LineSegment s = rawFoldLineSet.get(i);
+            for (var s : foldLineSet.getLineSegmentsIterator()) {
                 if (s.getColor() != LineColor.CYAN_3 && s.getColor() != LineColor.RED_1 && s.getColor() != LineColor.BLACK_0) {
                     DrawingUtil.drawCpLine(g, s, camera, lineStyle, lineWidth, pointSize, p0x_max, p0y_max, useRounded);
                 }
             }
-            for (int i = 1; i <= total; i++) {
-                LineSegment s = rawFoldLineSet.get(i);
+            for (var s : foldLineSet.getLineSegmentsIterator()) {
                 if (s.getColor() == LineColor.RED_1) {
                     DrawingUtil.drawCpLine(g, s, camera, lineStyle, lineWidth, pointSize, p0x_max, p0y_max, useRounded);
                 }
             }
-            for (int i = 1; i <= total; i++) {
-                LineSegment s = rawFoldLineSet.get(i);
+            for (var s : foldLineSet.getLineSegmentsIterator()) {
                 if (s.getColor() == LineColor.BLACK_0) {
                     DrawingUtil.drawCpLine(g, s, camera, lineStyle, lineWidth, pointSize, p0x_max, p0y_max, useRounded);
                 }
@@ -876,11 +857,11 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
 
         StraightLine tyoku1 = new StraightLine(add_sen.getA(), add_sen.getB());
         StraightLine.Intersection i_kousa_flg;
-        for (int i = 1; i <= foldLineSet.getTotal(); i++) {
-            i_kousa_flg = tyoku1.lineSegment_intersect_reverse_detail(foldLineSet.get(i));//0=この直線は与えられた線分と交差しない、1=X型で交差する、2=T型で交差する、3=線分は直線に含まれる。
+        for (var s : foldLineSet.getLineSegmentsIterator()) {
+            i_kousa_flg = tyoku1.lineSegment_intersect_reverse_detail(s);//0=この直線は与えられた線分と交差しない、1=X型で交差する、2=T型で交差する、3=線分は直線に含まれる。
 
             if (i_kousa_flg.isIntersecting()) {
-                kousa_point = OritaCalc.findIntersection(tyoku1, foldLineSet.get(i));
+                kousa_point = OritaCalc.findIntersection(tyoku1, s);
                 if (kousa_point.distance(add_sen.getA()) > Epsilon.UNKNOWN_1EN5) {
                     if (kousa_point.distance(add_sen.getA()) < kousa_ten_kyori) {
                         double d_kakudo = OritaCalc.angle(add_sen.getA(), add_sen.getB(), add_sen.getA(), kousa_point);
