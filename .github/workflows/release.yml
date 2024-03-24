@@ -49,6 +49,7 @@ jobs:
           - os: macos-14
             platform: mac
             name: mac-m1
+            suffix: _m1
 
 
     runs-on: ${{ matrix.os }}
@@ -79,7 +80,7 @@ jobs:
         run: build/01_prepare.sh
 
       - name: Create release (${{ matrix.name }})
-        run: build/02_create_release.sh ${{ matrix.platform }} ${{ matrix.name }}
+        run: build/02_create_release.sh ${{ matrix.platform }} ${{ matrix.name }} ${{ matrix.suffix }}
 
       - name: Release
         uses: softprops/action-gh-release@v1

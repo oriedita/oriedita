@@ -5,7 +5,7 @@ set -x
 
 platform="$1"
 name="$2"
-architecture=$(arch)
+suffix="$3"
 
 jar_version=$(mvn org.apache.maven.plugins:maven-help-plugin:3.4.0:evaluate \
               -Dexpression=project.version -q -DforceStdout)
@@ -35,6 +35,6 @@ jpackage \
   @build/jpackage-common-"$platform".txt \
   @build/jpackage-installer.txt \
   @build/jpackage-installer-"$platform".txt \
-  --name "Oriedita_$architecture" \
+  --name "Oriedita$suffix" \
   --app-version "$version" \
   --main-jar oriedita-"$jar_version".jar
