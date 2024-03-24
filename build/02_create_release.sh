@@ -5,7 +5,7 @@ set -x
 
 platform="$1"
 name="$2"
-architecture="$3"
+architecture=$(arch)
 
 jar_version=$(mvn org.apache.maven.plugins:maven-help-plugin:3.4.0:evaluate \
               -Dexpression=project.version -q -DforceStdout)

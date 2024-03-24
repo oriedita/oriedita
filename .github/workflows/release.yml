@@ -40,19 +40,15 @@ jobs:
           - os: windows-latest
             platform: win
             name: win
-            architecture: x64
           - os: ubuntu-latest
             platform: linux
             name: linux
-            architecture: x64
           - os: macos-latest
             platform: mac
             name: mac
-            architecture: x64
           - os: macos-14
             platform: mac
             name: mac-m1
-            architecture: aarch64
 
 
     runs-on: ${{ matrix.os }}
@@ -71,7 +67,6 @@ jobs:
           java-version: '21'
           distribution: 'adopt'
           cache: maven
-          architecture: ${{ matrix.architecture }}
 
       - name: Cache Maven packages
         uses: actions/cache@v3
@@ -84,7 +79,7 @@ jobs:
         run: build/01_prepare.sh
 
       - name: Create release (${{ matrix.name }})
-        run: build/02_create_release.sh ${{ matrix.platform }} ${{ matrix.name }} ${{ matrix.architecture }}
+        run: build/02_create_release.sh ${{ matrix.platform }} ${{ matrix.name }}
 
       - name: Release
         uses: softprops/action-gh-release@v1
