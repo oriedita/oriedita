@@ -47,9 +47,7 @@ public class MouseHandlerDoubleSymmetricDraw extends BaseMouseHandlerInputRestri
             d.getLineStep().set(0, d.getLineStep().get(0).withA(closestPoint));
             if (p.distance(closestPoint) <= d.getSelectionDistance()) {
                 if (Epsilon.high.gt0(d.getLineStep().get(0).determineLength())) {
-                    int imax = d.getFoldLineSet().getTotal();
-                    for (int i = 1; i <= imax; i++) {
-                        LineSegment s = d.getFoldLineSet().get(i);
+                    for (var s : d.getFoldLineSet().getLineSegmentsIterator()) {
                         LineSegment.Intersection i_lineSegment_intersection_decision = OritaCalc.determineLineSegmentIntersectionSweet(s, d.getLineStep().get(0), Epsilon.UNKNOWN_001, Epsilon.UNKNOWN_001);
                         boolean i_jikkou = i_lineSegment_intersection_decision == LineSegment.Intersection.INTERSECTS_TSHAPE_S1_VERTICAL_BAR_25;
                         //T字型 s1が縦棒

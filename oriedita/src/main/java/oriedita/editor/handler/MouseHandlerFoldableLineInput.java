@@ -123,8 +123,7 @@ public class MouseHandlerFoldableLineInput extends BaseMouseHandlerInputRestrict
                 if (p.distance(closest_point) < d.getSelectionDistance()) {
                     //moyori_tenを端点とする折線をNarabebakoに入れる
                     SortingBox<LineSegment> nbox = new SortingBox<>();
-                    for (int i = 1; i <= d.getFoldLineSet().getTotal(); i++) {
-                        LineSegment s = d.getFoldLineSet().get(i);
+                    for (var s : d.getFoldLineSet().getLineSegmentsIterator()) {
                         if (s.getColor().isFoldingLine()) {
                             if (closest_point.distance(s.getA()) < decision_distance) {
                                 nbox.addByWeight(s, OritaCalc.angle(s.getA(), s.getB()));
