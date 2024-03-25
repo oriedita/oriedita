@@ -28,18 +28,18 @@ public class CreasePattern_Worker_Toolbox {
         StraightLine.Intersection i_kousa_flg;
 
         lengthenUntilIntersection_flg = StraightLine.Intersection.NONE_0;
-        for (int i = 1; i <= ori_s.getTotal(); i++) {
-            if (ori_s.get(i).getColor().isFoldingLine()) {
+        for (var ls : ori_s.getLineSegmentsIterable()) {
+            if (ls.getColor().isFoldingLine()) {
 // 0 = This straight line does not intersect the given line segment,
 // 1 = X type intersects,
 // 21 = T-shaped intersection at point a of the line segment,
 // 22 = T-shaped intersection at point b of the line segment,
 // 3 = Line segments are included in the straight line.
-                i_kousa_flg = straightLine.lineSegment_intersect_reverse_detail(ori_s.get(i));//0=この直線は与えられた線分と交差しない、1=X型で交差する、2=T型で交差する、3=線分は直線に含まれる。
+                i_kousa_flg = straightLine.lineSegment_intersect_reverse_detail(ls);//0=この直線は与えられた線分と交差しない、1=X型で交差する、2=T型で交差する、3=線分は直線に含まれる。
                 //if(i_kousa_flg==3){lengthenUntilIntersectionFoldLineIncluded_flg=3;}
                 if ((i_kousa_flg == StraightLine.Intersection.INTERSECT_X_1 || i_kousa_flg == StraightLine.Intersection.INTERSECT_T_A_21) || i_kousa_flg == StraightLine.Intersection.INTERSECT_T_B_22) {
 
-                    kousa_point = OritaCalc.findIntersection(straightLine, ori_s.get(i));//線分を直線とみなして他の直線との交点を求める関数。線分としては交差しなくても、直線として交差している場合の交点を返す
+                    kousa_point = OritaCalc.findIntersection(straightLine, ls);//線分を直線とみなして他の直線との交点を求める関数。線分としては交差しなくても、直線として交差している場合の交点を返す
 
                     if (kousa_point.distance(addLine.getA()) > Epsilon.UNKNOWN_1EN5) {
 
@@ -51,7 +51,7 @@ public class CreasePattern_Worker_Toolbox {
                                 addLine = new LineSegment(addLine.getA(), kousa_point);
 
                                 lengthenUntilIntersection_flg = i_kousa_flg;
-                                lengthenUntilIntersectionFirstLineSegment = new LineSegment(ori_s.get(i));
+                                lengthenUntilIntersectionFirstLineSegment = new LineSegment(ls);
                             }
                         }
                     }

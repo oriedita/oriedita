@@ -105,11 +105,11 @@ public class MouseHandlerFishBoneDraw extends BaseMouseHandlerInputRestricted {
         LineSegment add_line = new LineSegment(s0);
         StraightLine tyoku1 = new StraightLine(add_line.getA(), add_line.getB());
         StraightLine.Intersection i_intersection_flg;
-        for (int i = 1; i <= d.getFoldLineSet().getTotal(); i++) {
-            i_intersection_flg = tyoku1.lineSegment_intersect_reverse_detail(d.getFoldLineSet().get(i));//0 = This straight line does not intersect a given line segment, 1 = X type intersects, 2 = T type intersects, 3 = Line segment is included in the straight line.
+        for (var ls : d.getFoldLineSet().getLineSegmentsIterable()) {
+            i_intersection_flg = tyoku1.lineSegment_intersect_reverse_detail(ls);//0 = This straight line does not intersect a given line segment, 1 = X type intersects, 2 = T type intersects, 3 = Line segment is included in the straight line.
 
             if (i_intersection_flg.isIntersecting()) {
-                Point intersection_point = OritaCalc.findIntersection(tyoku1, d.getFoldLineSet().get(i));
+                Point intersection_point = OritaCalc.findIntersection(tyoku1, ls);
                 if (intersection_point.distance(add_line.getA()) > Epsilon.UNKNOWN_1EN5) {
                     double d_kakudo = OritaCalc.angle(add_line.getA(), add_line.getB(), add_line.getA(), intersection_point);
                     if (d_kakudo < 1.0 || d_kakudo > 359.0) {

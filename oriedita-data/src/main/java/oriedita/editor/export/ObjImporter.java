@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.StringTokenizer;
 
 @ApplicationScoped
-public class ObjExporter implements FileImporter {
+public class ObjImporter implements FileImporter {
     @Override
     public Save doImport(File file) throws IOException {
         int jtok;

@@ -622,7 +622,7 @@ public class OritaCalc {
         StraightLine.Intersection i_intersection_flg;//元の線分を直線としたものと、他の線分の交差状態
         LineSegment.Intersection i_lineSegment_intersection_flg;//元の線分と、他の線分の交差状態
 
-        for (var s : foldLineSet.getLineSegmentsIterator()) {
+        for (var s : foldLineSet.getLineSegmentsIterable()) {
             i_intersection_flg = tyoku1.lineSegment_intersect_reverse_detail(s);//0=この直線は与えられた線分と交差しない、1=X型で交差する、2=T型で交差する、3=線分は直線に含まれる。
             i_lineSegment_intersection_flg = OritaCalc.determineLineSegmentIntersectionSweet(s0, s, Epsilon.UNKNOWN_1EN5, Epsilon.UNKNOWN_1EN5);//20180408なぜかこの行の様にs0のままだと、i_senbun_kousa_flgがおかしくならない。
 

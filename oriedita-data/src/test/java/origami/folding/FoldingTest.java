@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.tinylog.Logger;
-import oriedita.editor.export.CpExporter;
+import oriedita.editor.export.CpImporter;
 import oriedita.editor.save.Save;
 import origami.crease_pattern.FoldingException;
 import origami.crease_pattern.LineSegmentSet;
@@ -20,7 +20,7 @@ public class FoldingTest {
 
     @Test
     public void testFoldBirdbase() throws IOException {
-        Save save = CpExporter.importFile(getClass().getClassLoader().getResourceAsStream("birdbase.cp"));
+        Save save = new CpImporter().doImport(getClass().getClassLoader().getResourceAsStream("birdbase.cp"));
 
         FoldedFigure foldedFigure = new FoldedFigure(new TestBulletinBoard());
 

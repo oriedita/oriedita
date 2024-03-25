@@ -1,153 +1,51 @@
 package oriedita.editor.export;
 
-import fold.io.CustomFoldReader;
 import fold.io.CustomFoldWriter;
 import fold.model.Edge;
+import fold.model.Face;
 import fold.model.FoldEdgeAssignment;
 import fold.model.FoldFile;
 import fold.model.FoldFrame;
 import fold.model.Vertex;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import oriedita.editor.exception.FileReadingException;
+import oriedita.editor.export.api.FileExporter;
 import oriedita.editor.save.OrieditaFoldFile;
 import oriedita.editor.save.Save;
-import oriedita.editor.save.SaveProvider;
 import oriedita.editor.tools.ResourceUtil;
-import oriedita.editor.export.api.FileExporter;
-import oriedita.editor.export.api.FileImporter;
-import origami.crease_pattern.FoldLineSet;
 import origami.crease_pattern.LineSegmentSet;
 import origami.crease_pattern.PointSet;
 import origami.crease_pattern.element.LineColor;
-import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.worker.WireFrame_Worker;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @ApplicationScoped
-public class FoldExporter implements FileImporter, FileExporter {
+public class FoldExporter implements FileExporter {
     @Inject
     public FoldExporter() {
     }
 
-    public Save toSave(OrieditaFoldFile foldFile) {
-        Save save = SaveProvider.createInstance();
-
-        double minX = Double.MAX_VALUE;
-        double maxX = Double.MIN_VALUE;
-        double minY = Double.MAX_VALUE;
-        double maxY = Double.MIN_VALUE;
-
-        FoldFrame rootFrame = foldFile.getRootFrame();
-
-        for (int i = 0; i < rootFrame.getEdges().size(); i++) {
-            Edge edge = rootFrame.getEdges().get(i);
-
-            double ax = edge.getStart().getX();
-            double ay = edge.getStart().getY();
-            double bx = edge.getEnd().getX();
-            double by = edge.getEnd().getY();
-            LineSegment ls = new LineSegment(
-                    new Point(ax, ay),
-                    new Point(bx, by),
-                    getColor(edge.getAssignment()));
-
-            minX = Math.min(Math.min(minX, ax), bx);
-            minY = Math.min(Math.min(minY, ay), by);
-            maxX = Math.max(Math.max(maxX, ax), bx);
-            maxY = Math.max(Math.max(maxY, ay), by);
-
-            save.addLineSegment(ls);
-        }
-
-        save.setCircles(new ArrayList<>(foldFile.getCircles()));
-
-        FoldLineSet ori_s_temp = new FoldLineSet();    //セレクトされた折線だけ取り出すために使う
-        ori_s_temp.setSave(save);//セレクトされた折線だけ取り出してori_s_tempを作る
-        ori_s_temp.move(
-                new Point(minX, minY),
-                new Point(minX, maxY),
-                new Point(-200, -200),
-                new Point(-200, 200)
-        );
-
-        Save save1 = SaveProvider.createInstance();
-        ori_s_temp.getSave(save1);
-
-        save1.setTexts(new ArrayList<>(foldFile.getTexts()));
-
-        return save1;
-    }
-
-    public static LineColor getColor(FoldEdgeAssignment edgeAssignment) {
-        switch (edgeAssignment) {
-            case BORDER:
-                return LineColor.BLACK_0;
-            case MOUNTAIN_FOLD:
-                return LineColor.RED_1;
-            case VALLEY_FOLD:
-                return LineColor.BLUE_2;
-            case FLAT_FOLD:
-                return LineColor.CYAN_3;
-            case UNASSIGNED:
-            default:
-                return LineColor.BLACK_0;
-        }
-    }
-
     private FoldEdgeAssignment getAssignment(LineColor lineColor) {
-        switch (lineColor) {
-            case ANGLE:
-            case NONE:
-            default:
-                return FoldEdgeAssignment.UNASSIGNED;
-            case BLACK_0:
-                return FoldEdgeAssignment.BORDER;
-            case RED_1:
-                return FoldEdgeAssignment.MOUNTAIN_FOLD;
-            case BLUE_2:
-                return FoldEdgeAssignment.VALLEY_FOLD;
-            case CYAN_3:
-            case ORANGE_4:
-            case MAGENTA_5:
-            case GREEN_6:
-            case YELLOW_7:
-            case PURPLE_8:
-            case OTHER_9:
-                return FoldEdgeAssignment.FLAT_FOLD;
-        }
+        return switch (lineColor) {
+            default -> FoldEdgeAssignment.UNASSIGNED;
+            case BLACK_0 -> FoldEdgeAssignment.BORDER;
+            case RED_1 -> FoldEdgeAssignment.MOUNTAIN_FOLD;
+            case BLUE_2 -> FoldEdgeAssignment.VALLEY_FOLD;
+            case CYAN_3, ORANGE_4, MAGENTA_5, GREEN_6, YELLOW_7, PURPLE_8, OTHER_9 -> FoldEdgeAssignment.FLAT_FOLD;
+        };
     }
-
-    public Save importFile(File file) throws FileReadingException, IOException {
-        try (FileInputStream fileInputStream = new FileInputStream(file)) {
-            CustomFoldReader<OrieditaFoldFile> orieditaFoldFileCustomFoldReader = new CustomFoldReader<>(OrieditaFoldFile.class, fileInputStream);
-            return toSave(orieditaFoldFileCustomFoldReader.read());
-        }
-    }
-
 
     private void exportFile(Save save, LineSegmentSet lineSegmentSet, File file) throws InterruptedException, IOException {
         try (FileOutputStream fileOutputStream = new FileOutputStream(file)) {
             CustomFoldWriter<FoldFile> foldFileCustomFoldWriter = new CustomFoldWriter<>(fileOutputStream);
             foldFileCustomFoldWriter.write(toFoldSave(save, lineSegmentSet));
         }
-    }
-
-    public void exportFile(Save save, File file) throws IOException, InterruptedException {
-        LineSegmentSet s = new LineSegmentSet();
-        s.setSave(save);
-        if (s.getNumLineSegments() == 0) {
-            s.addLine(new Point(0,0), new Point(0,0), LineColor.BLACK_0);
-        }
-        exportFile(save, s, file);
     }
 
     public OrieditaFoldFile toFoldSave(Save save) throws InterruptedException {
@@ -160,6 +58,7 @@ public class FoldExporter implements FileImporter, FileExporter {
         WireFrame_Worker wireFrame_worker = new WireFrame_Worker(3.0);
         wireFrame_worker.setLineSegmentSetWithoutFaceOccurence(lineSegmentSet);
         PointSet pointSet = wireFrame_worker.get();
+        pointSet.calculateFaces();
 
         OrieditaFoldFile foldFile = new OrieditaFoldFile();
         foldFile.setCreator("oriedita");
@@ -185,6 +84,28 @@ public class FoldExporter implements FileImporter, FileExporter {
             rootFrame.getEdges().add(edge);
         }
 
+        for (int i = 1; i <= pointSet.getNumFaces(); i++) {
+            var pface = pointSet.getFace(i);
+            var face = new Face();
+
+            var faceVertices = new ArrayList<Vertex>();
+            var faceEdges = new ArrayList<Edge>();
+            var vertexFirst = rootFrame.getVertices().get(pface.getPointId(1) - 1);
+            var vertexLast = rootFrame.getVertices().get(pface.getPointId(pface.getNumPoints()) - 1);
+            faceVertices.add(vertexFirst);
+            faceEdges.add(findEdge(vertexFirst, vertexLast, rootFrame.getEdges()));
+            for (var j = 2; j <= pface.getNumPoints(); j++) {
+                var currentVertex = rootFrame.getVertices().get(pface.getPointId(j) - 1);
+                var previousVertex = rootFrame.getVertices().get(pface.getPointId(j - 1) - 1);
+                faceVertices.add(currentVertex);
+                faceEdges.add(findEdge(currentVertex, previousVertex, rootFrame.getEdges()));
+            }
+            face.setVertices(faceVertices);
+            face.setEdges(faceEdges);
+
+            rootFrame.getFaces().add(face);
+        }
+
         foldFile.setCircles(save.getCircles());
         foldFile.setTexts(save.getTexts());
         foldFile.setVersion(ResourceUtil.getVersionFromManifest());
@@ -192,19 +113,22 @@ public class FoldExporter implements FileImporter, FileExporter {
         return foldFile;
     }
 
-    private double getFoldAngle(LineColor color) {
-        switch (color) {
-            case BLUE_2:
-                return 180;
-            case RED_1:
-                return -180;
-            default:
-                return 0;
+    private Edge findEdge(Vertex v1, Vertex v2, List<Edge> edges) {
+        var foundEdge = edges.stream().filter(e -> (e.getStart() == v1 && e.getEnd() == v2) || e.getStart() == v2 && e.getEnd() == v1).findFirst();
+
+        if (foundEdge.isPresent()) {
+            return foundEdge.get();
         }
+
+        throw new IllegalStateException("Edge in face not found");
     }
 
-    private List<Double> toFoldPoint(Point p) {
-        return Arrays.asList(p.getX(), p.getY());
+    private double getFoldAngle(LineColor color) {
+        return switch (color) {
+            case BLUE_2 -> 180;
+            case RED_1 -> -180;
+            default -> 0;
+        };
     }
 
     @Override
@@ -215,7 +139,12 @@ public class FoldExporter implements FileImporter, FileExporter {
     @Override
     public void doExport(Save save, File file) throws IOException {
         try {
-            exportFile(save, file);
+            LineSegmentSet s = new LineSegmentSet();
+            s.setSave(save);
+            if (s.getNumLineSegments() == 0) {
+                s.addLine(new Point(0,0), new Point(0,0), LineColor.BLACK_0);
+            }
+            exportFile(save, s, file);
         } catch (InterruptedException e) {
             throw new IOException(e);
         }
@@ -229,14 +158,5 @@ public class FoldExporter implements FileImporter, FileExporter {
     @Override
     public String getExtension() {
         return ".fold";
-    }
-
-    @Override
-    public Save doImport(File file) throws IOException {
-        try {
-            return importFile(file);
-        } catch (FileReadingException e) {
-            throw new RuntimeException(e);
-        }
     }
 }

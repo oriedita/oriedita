@@ -614,7 +614,8 @@ public class RightPanel {
     public void setData(ApplicationModel data) {
         c_colButton.setIcon(new ColorIcon(data.getCircleCustomizedColor()));
         cAMVCheckBox.setSelected(data.getCheck4Enabled());
-
+        ckOCheckBox.setSelected(data.getCkOEnabled());
+        ckTCheckBox.setSelected(data.getCkTEnabled());
 
         darkMode = LookAndFeelUtil.determineLafDark(data.getLaf());
 

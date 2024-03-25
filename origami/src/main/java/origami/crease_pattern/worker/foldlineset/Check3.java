@@ -15,7 +15,7 @@ public class Check3 {
         double r = Epsilon.UNKNOWN_1EN4;
         foldLineSet.getCheck3LineSegment().clear();
         foldLineSet.unselect_all();
-        for (var si : foldLineSet.getLineSegmentsIterator()) {
+        for (var si : foldLineSet.getLineSegmentsIterable()) {
             if (si.getColor() != LineColor.CYAN_3) {
                 int tss;    //頂点の周りの折線の数。　tss%2==0 偶数、==1 奇数
                 int tss_red;    //Number of mountain fold lines around the vertex 。
@@ -92,7 +92,7 @@ public class Check3 {
 
         int i_return = 0;
 
-        for (var si : foldLineSet.getLineSegmentsIterator()) {
+        for (var si : foldLineSet.getLineSegmentsIterable()) {
             Point p_temp = si.getA();
             if (q.distanceSquared(si.getB()) < q.distanceSquared(si.getA())) {
                 p_temp = si.getB();
@@ -112,7 +112,7 @@ public class Check3 {
 
         int i_return = 0;
 
-        for (var si : foldLineSet.getLineSegmentsIterator()) {
+        for (var si : foldLineSet.getLineSegmentsIterable()) {
             Point p_temp = si.getA();
             if (q.distanceSquared(si.getB()) < q.distanceSquared(si.getA())) {
                 p_temp = si.getB();
@@ -134,7 +134,7 @@ public class Check3 {
 
         int i_return = 0;
 
-        for (var si : foldLineSet.getLineSegmentsIterator()) {
+        for (var si : foldLineSet.getLineSegmentsIterable()) {
             Point p_temp = si.getA();
             if (q.distanceSquared(si.getB()) < q.distanceSquared(si.getA())) {
                 p_temp = si.getB();
@@ -157,7 +157,7 @@ public class Check3 {
 
         int i_return = 0;
 
-        for (var si : foldLineSet.getLineSegmentsIterator()) {
+        for (var si : foldLineSet.getLineSegmentsIterable()) {
             Point p_temp = si.getA();
             if (q.distanceSquared(si.getB()) < q.distanceSquared(si.getA())) {
                 p_temp = si.getB();
@@ -179,7 +179,7 @@ public class Check3 {
 
         int i_return = 0;
 
-        for (var si : foldLineSet.getLineSegmentsIterator()) {
+        for (var si : foldLineSet.getLineSegmentsIterable()) {
             Point p_temp = si.getA();
             if (q.distanceSquared(si.getB()) < q.distanceSquared(si.getA())) {
                 p_temp = si.getB();
@@ -200,7 +200,7 @@ public class Check3 {
 
         //t1を端点とする折線をNarabebakoに入れる
         SortingBox<LineSegment> nbox = new SortingBox<>();
-        for (var si : foldLineSet.getLineSegmentsIterator()) {
+        for (var si : foldLineSet.getLineSegmentsIterable()) {
             if (si.getColor().isFoldingLine()) { //この段階で補助活線は除く
                 if (t1.distance(si.getA()) < Epsilon.FLAT) {
                     nbox.addByWeight(si, OritaCalc.angle(si.getA(), si.getB()));
@@ -340,7 +340,7 @@ public class Check3 {
 
         //t1を端点とする折線をNarabebakoに入れる
         SortingBox<LineSegment> nbox = new SortingBox<>();
-        for (var s : foldLineSet.getLineSegmentsIterator()) {
+        for (var s : foldLineSet.getLineSegmentsIterable()) {
             if (s.getColor().isFoldingLine()) { //この段階で補助活線は除く
                 if (t1.distance(s.getA()) < Epsilon.FLAT) {
                     nbox.addByWeight(s, OritaCalc.angle(s.getA(), s.getB()));

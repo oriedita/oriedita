@@ -116,7 +116,14 @@ public class FoldLineSet {
         return lineSegments;
     }
 
-    public Collection<LineSegment> getLineSegmentsIterator() {
+    /**
+     * Do not use the result of this method twice.
+     */
+    public Iterable<LineSegment> getLineSegmentsIterable() {
+        return () -> lineSegments.stream().skip(1).limit(getTotal()).iterator();
+    }
+
+    public Collection<LineSegment> getLineSegmentsCollection() {
         return lineSegments.stream().skip(1).limit(getTotal()).toList();
     }
 
