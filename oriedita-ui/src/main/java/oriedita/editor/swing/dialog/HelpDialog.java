@@ -32,7 +32,6 @@ import java.util.regex.Pattern;
 
 @ApplicationScoped
 public class HelpDialog {
-    private final Point point = new Point();
     private final FrameProvider frameProvider;
     private final ApplicationModel applicationModel;
     private JPanel contentPane;
@@ -100,6 +99,7 @@ public class HelpDialog {
 
         String helpStartupString = ResourceBundle.getBundle("help").getString("a__hajimeni");
         helpLabel.setText(helpStartupString);
+        helpScrollPanel.setBorder(new EmptyBorder(0, 1, 0, 0));
     }
 
     public void setExplanation(String key) {
