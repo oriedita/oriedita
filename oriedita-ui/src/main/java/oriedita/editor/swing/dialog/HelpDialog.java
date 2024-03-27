@@ -71,9 +71,7 @@ public class HelpDialog {
 
             setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
 
-            // call onCancel() when cross is clicked
-            setDefaultCloseOperation(HIDE_ON_CLOSE);
-
+            setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         }
     }
 
@@ -92,9 +90,7 @@ public class HelpDialog {
         contentPane.registerKeyboardAction(e -> applicationModel.setHelpVisible(false), KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
         helpLabel.setBorder(new EmptyBorder(10, 10, 10, 10));
-
         helpDialogUI.pack();
-
         helpDialogUI.setLocation(canvasLocation.x + canvasSize.width - helpDialogUI.getSize().width - 10, canvasLocation.y + 10);
 
         String helpStartupString = ResourceBundle.getBundle("help").getString("a__hajimeni");
