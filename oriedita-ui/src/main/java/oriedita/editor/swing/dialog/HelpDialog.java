@@ -86,7 +86,6 @@ public class HelpDialog {
         $$$setupUI$$$();
         helpDialogUI = new HelpDialogUI(frameProvider.get(), contentPane, applicationModel);
         helpDialogUI.setPreferredSize(new Dimension(360, 250));
-        helpDialogUI.setResizable(true);
 
         // call onCancel() on ESCAPE
         contentPane.registerKeyboardAction(e -> applicationModel.setHelpVisible(false), KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
