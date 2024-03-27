@@ -109,7 +109,7 @@ public class HelpDialog {
 
         if (gif != null && !gif.isEmpty()) {
             gifPanel.setVisible(true);
-            gifLabel.setText(processPaths("<html><center><img src=\"" + gif + "\" width=\"128\"><center></html>"));
+            gifLabel.setText(processPaths("<html><center><img src=\"help-gif/" + gif + "\" width=\"128\"><center></html>"));
         } else {
             gifPanel.setVisible(false);
         }
