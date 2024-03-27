@@ -2,30 +2,38 @@
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="oriedita.editor.swing.dialog.HelpDialog">
   <grid id="cbd77" binding="contentPane" layout-manager="GridBagLayout">
     <constraints>
-      <xy x="683" y="203" width="300" height="400"/>
+      <xy x="45" y="30" width="220" height="250"/>
     </constraints>
     <properties>
       <autoscrolls value="false"/>
+      <minimumSize width="200" height="250"/>
+      <preferredSize width="200" height="220"/>
     </properties>
     <border type="none">
       <size top="10" left="10" bottom="10" right="10"/>
     </border>
     <children>
-      <scrollpane id="59790">
+      <scrollpane id="59790" binding="helpScrollPanel">
         <constraints>
-          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
+            <minimum-size width="200" height="220"/>
+            <preferred-size width="200" height="220"/>
+          </grid>
           <gridbag weightx="1.0" weighty="1.0"/>
         </constraints>
         <properties>
           <horizontalScrollBarPolicy value="31"/>
-          <minimumSize width="300" height="400"/>
-          <preferredSize width="300" height="400"/>
+          <minimumSize width="200" height="220"/>
+          <opaque value="true"/>
+          <preferredSize width="200" height="220"/>
+          <verticalScrollBarPolicy value="20"/>
         </properties>
         <border type="none"/>
         <children>
           <component id="d1cec" class="javax.swing.JTextPane" binding="helpLabel">
             <constraints/>
             <properties>
+              <autoscrolls value="false"/>
               <contentType value="text/html"/>
               <focusable value="false"/>
               <opaque value="true"/>
@@ -33,6 +41,41 @@
           </component>
         </children>
       </scrollpane>
+      <grid id="a2398" binding="gifPanel" layout-manager="GridBagLayout">
+        <constraints>
+          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
+            <minimum-size width="148" height="220"/>
+            <preferred-size width="148" height="220"/>
+          </grid>
+          <gridbag weightx="1.0" weighty="1.0"/>
+        </constraints>
+        <properties>
+          <autoscrolls value="true"/>
+          <inheritsPopupMenu value="false"/>
+          <minimumSize width="1" height="1"/>
+          <opaque value="true"/>
+          <preferredSize width="148" height="220"/>
+          <visible value="false"/>
+        </properties>
+        <border type="none"/>
+        <children>
+          <component id="9f305" class="javax.swing.JTextPane" binding="gifLabel">
+            <constraints>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false">
+                <preferred-size width="128" height="128"/>
+              </grid>
+              <gridbag weightx="1.0" weighty="1.0"/>
+            </constraints>
+            <properties>
+              <background color="-1"/>
+              <contentType value="text/html"/>
+              <editable value="false"/>
+              <margin top="46" left="0" bottom="0" right="0"/>
+              <opaque value="true"/>
+            </properties>
+          </component>
+        </children>
+      </grid>
     </children>
   </grid>
 </form>
