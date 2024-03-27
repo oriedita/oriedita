@@ -64,12 +64,14 @@ public class Oriedita {
 
         lookAndFeelService.registerFlatLafSource();
 
-        try {
-            app.start();
-            Logger.trace("App.start finished");
-        } catch (InterruptedException | InvocationTargetException e) {
-            throw new RuntimeException(e);
-        }
+        SwingUtilities.invokeAndWait(() -> {
+            try {
+                app.start();
+                Logger.trace("App.start finished");
+            } catch (InterruptedException | InvocationTargetException e) {
+                throw new RuntimeException(e);
+            }
+        });
 
         LoadingDialogUtil.hide();
 
