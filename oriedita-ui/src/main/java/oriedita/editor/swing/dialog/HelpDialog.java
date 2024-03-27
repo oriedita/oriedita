@@ -73,6 +73,7 @@ public class HelpDialog {
 
             // call onCancel() when cross is clicked
             setDefaultCloseOperation(HIDE_ON_CLOSE);
+
         }
     }
 
@@ -105,7 +106,6 @@ public class HelpDialog {
         String gif = ResourceUtil.getBundleString("gif", key);
         String name = ResourceUtil.getBundleString("name", key);
         String description = ResourceUtil.getBundleString("help", key);
-        Logger.info(name);
 
         if (gif != null && !gif.isEmpty()) {
             gifPanel.setVisible(true);
