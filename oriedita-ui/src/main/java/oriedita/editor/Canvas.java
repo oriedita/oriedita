@@ -160,6 +160,7 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
     }
 
     public void init() {
+        canvasUI.init();
         canvasUI.setLayout(null);
         cpTextEditingArea = new TextEditingArea(textModel, textWorker, mainCreasePatternWorker,
                 canvasModel, creasePatternCameraModel);
@@ -196,8 +197,6 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
             }
         });
 
-        onResize();
-
         canvasUI.addMouseListener(this);
         canvasUI.addMouseMotionListener(this);
         canvasUI.addMouseWheelListener(this);
@@ -206,13 +205,6 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
 
         Logger.info(" dim 001 :" + dim.width + " , " + dim.height);//多分削除可能
 
-        canvasUI.addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentResized(ComponentEvent e) {
-                onResize();
-            }
-        });
-
         for (MouseModeHandler handler : handlerList) {
             mouseModeHandlers.put(handler.getMouseMode(), handler);
         }
@@ -220,17 +212,6 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
 
     public void writeImageFile(File file) {
         canvasUI.writeImageFile(file);
-    }
-
-    public void onResize() {
-        var dim = canvasUI.getSize();
-        if (dim.width <= 0 || dim.height <= 0) {
-            // Set a default size if the canvas is not yet loaded.
-            dim = new Dimension(2000, 1000);
-        }
-
-        canvasUI.setDim(dim);
-        canvasUI.repaint();
     }
 
     public void updateBackgroundCamera() {
