@@ -109,8 +109,11 @@ public class HelpDialog {
         } else {
             gifPanel.setVisible(false);
         }
-        helpDialogUI.setTitle(name);
-        helpLabel.setText(processPaths(description));
+        if (description != null) {
+            helpDialogUI.setTitle(name);
+            helpLabel.setText(processPaths(description));
+        }
+        helpLabel.setCaretPosition(0);
     }
 
     private String processPaths(String helpText) {
