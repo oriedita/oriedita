@@ -68,10 +68,10 @@ public class MouseHandlerText extends BaseMouseHandlerBoxSelect {
     }
 
     @Override
-    public void mousePressed(Point p0, MouseEvent e) {
+    public void mousePressed(Point p0, MouseEvent e, int pressedButton) {
         super.mousePressed(p0);  // initializes box for dragging
-        mouseButton = e.getButton();  // so we know which button it was in mouseReleased
-        if (e.getButton() == MouseEvent.BUTTON1) {
+        mouseButton = pressedButton;  // so we know which button it was in mouseReleased
+        if (pressedButton == MouseEvent.BUTTON1) {
             mousePressed(p0);
         }
     }
