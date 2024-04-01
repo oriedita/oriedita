@@ -4,13 +4,13 @@ Visit the [Oriedita website](https://oriedita.github.io) for more information.
 
 _This a fork of Orihime オリヒメ and not affiliated with the original version._
 
-Oriedita is a computer program used for drawing origami crease patterns. It comes with a wide range of tools to help you
+Oriedita is a software used for drawing origami crease patterns. It comes with a wide range of tools to help you
 draw crease patterns.
 
-Oriedita can simulate folding a crease pattern and show if a crease pattern is flat-foldable, and if it is, show a
-folded version of the crease pattern.
+Oriedita can simulate folding a crease pattern and show if a crease pattern is flat-foldable, and show a
+folded version of the crease pattern if it is.
 
-The software is based on Orihime, it adds performance, stability and usage improvements. Notable improvements are:
+The software is based on Orihime with added performance, stability and usage improvements. Notable improvements are:
 
 - [Making it possible to fold very complex crease patterns](https://origami.abstreamace.com/2021/10/13/fold-a-full-ryujin-3-5-with-orihime-algorithm/)
   that would be impossible to fold in Orihime.
@@ -31,10 +31,10 @@ least version 17).
 
 You should be presented with the main interface of Oriedita.
 
-![](https://i.imgur.com/JxoL28Z.png)
+![](https://imgur.com/dUT8JK6.png)
 
 Use the mouse to draw lines on the crease pattern, using the ![MVEA](https://i.imgur.com/4vm5CND.png) buttons to change
-the direction of the fold line, and use the ![Fold](https://i.imgur.com/IDUV2Ss.png) button to try and fold the crease
+the type of the fold line, and use the ![Fold](https://i.imgur.com/IDUV2Ss.png) button to try and fold the crease
 pattern.
 
 Clicking on buttons will update the help box with a help text for that button.
@@ -43,18 +43,20 @@ Clicking on buttons will update the help box with a help text for that button.
 
 <dl>
 <dt>.ori</dt>
-<dd>You can save files using the Oriedita file format .ori, this saves the creasepattern, customized colors and the camera position. This format is recommended when developing a new crease pattern as loading it brings you back to the same state as you left it.</dd>
+<dd>Oriedita file format .ori saves the crease pattern, customized colors and the camera position. Recommended when developing a new crease pattern as loading it brings you back to the same state as you left it.</dd>
 <dt>.cp</dt>
-<dd>You can also use the .cp format to save files, this file format only saves creases (so no circles or state). But this format is more lightweight and portable and should be used to share a crease pattern with someone else. This format can also be opened in other origami crease pattern software.</dd>
+<dd>The .cp file format only saves creases (no circles or state). More lightweight and portable and should be used when sharing with someone else. It can also be opened in other origami crease pattern softwares.</dd>
+<dt>.fold</dt>
+<dd>The .fold file format is more advanced format that can save more features like .ori and can be used across different origami softwares.</dd>
 </dl>
 
 ## Advanced usage
 
-This section describes advanced usage, such as custom configuration files. This should not be needed for normal usage.
+This section describes advanced topics such as custom configuration files. Not necessary for normal usage.
 
 ## Configuration
 
-Configuration is saved to the following directory, called the _configuration directory_:
+Configuration is saved to the following _configuration directories_:
 
 - `%APPDATA%\oriedita` on Windows
 - `~/Library/Application Support/oriedita` on Mac
@@ -64,10 +66,15 @@ It should not be needed to access files in this directory yourself.
 
 ### Button configuration (hotkeys, names, help, tooltip)
 
-Button configuration is found in properties files [`hotkey.properties`](oriedita/src/main/resources/hotkey.properties)
-, [`name.properties`](oriedita/src/main/resources/name.properties), [`help.properties`](oriedita/src/main/resources/help.properties)
-, [`tooltip.properties`](oriedita/src/main/resources/tooltip.properties), [`icons.properties`](oriedita/src/main/resources/icons.properties), [`gif.properties`](oriedita/src/main/resources/gif.properties). Placing these files in the configuration directory or
-in the same directory as the jar will override the values, allowing customization of hotkeys or translations.
+Button configuration is found in these properties files: 
+- [`hotkey.properties`](oriedita/src/main/resources/hotkey.properties)
+- [`name.properties`](oriedita/src/main/resources/name.properties)
+- [`help.properties`](oriedita/src/main/resources/help.properties)
+- [`tooltip.properties`](oriedita/src/main/resources/tooltip.properties)
+- [`icons.properties`](oriedita/src/main/resources/icons.properties)
+- [`gif.properties`](oriedita/src/main/resources/gif.properties) 
+
+Placing these files in the configuration directory or in the same directory as the jar will override the values, allowing customization of hotkeys or translations.
 
 Read the JavaDoc
 on [`javax.swing.KeyStroke.getKeyStroke(String)`](https://docs.oracle.com/en/java/javase/11/docs/api/java.desktop/javax/swing/KeyStroke.html#getKeyStroke(java.lang.String))
@@ -82,7 +89,7 @@ application and is restored when the application starts.
 
 ### How do I reset Oriedita?
 
-To reset all options in Oriedita to the default state remove all files in the _configuration directory_, see
+To reset all options in Oriedita to the default state, remove all files in the _configuration directory_, see
 the [Configuration](#Configuration) section to find this directory on your operating system.
 
 ### Oriedita does not fit on my screen
