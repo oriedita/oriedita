@@ -33,6 +33,8 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.RenderingHints;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -103,6 +105,17 @@ public class CanvasUI extends JPanel {
         this.bulletinBoard = bulletinBoard;
         this.foldedFigureModel = foldedFigureModel;
         this.foldedFiguresList = foldedFiguresList;
+    }
+
+    public void init() {
+        onResize();
+
+        addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                onResize();
+            }
+        });
     }
 
     public void writeImageFile(File file) {
@@ -384,5 +397,15 @@ public class CanvasUI extends JPanel {
     public void setMousePosition(Point point) {
         mousePositionOnCanvas = (point);
         mousePosition = (creasePatternCamera.TV2object(point));
+    }
+
+    public void onResize() {
+        dim = getSize();
+        if (dim.width <= 0 || dim.height <= 0) {
+            // Set a default size if the canvas is not yet loaded.
+            dim = new Dimension(2000, 1000);
+        }
+
+        repaint();
     }
 }
