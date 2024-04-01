@@ -286,7 +286,6 @@ public class AppMenuBar {
         showLiveAuxLinesCheckBox.addActionListener(e -> getData(applicationModel));
         showStandardFaceMarksCheckBox.addActionListener(e -> getData(applicationModel));
         cpOnTopCheckBox.addActionListener(e -> getData(applicationModel));
-        toggleHelpMenuItem.addActionListener(e -> applicationModel.toggleHelpVisible());
         moveFoldedModelWithCp.addActionListener(e -> getData(applicationModel));
         showAutosaveFolderMenuItem.addActionListener(e -> {
             try {

@@ -5,41 +5,42 @@ import jakarta.inject.Inject;
 import org.tinylog.Logger;
 import oriedita.editor.FrameProvider;
 import oriedita.editor.databinding.ApplicationModel;
+import oriedita.editor.tools.ResourceUtil;
 
 import javax.swing.JComponent;
 import javax.swing.JDialog;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.KeyStroke;
 import javax.swing.border.EmptyBorder;
+import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.Point;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionAdapter;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.net.URL;
+import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @ApplicationScoped
 public class HelpDialog {
-    private ResourceBundle helpBundle;
-    private final Point point = new Point();
     private final FrameProvider frameProvider;
     private final ApplicationModel applicationModel;
     private JPanel contentPane;
     private JTextPane helpLabel;
+    private JPanel gifPanel;
+    private JTextPane gifLabel;
+    private JScrollPane helpScrollPanel;
     private HelpDialogUI helpDialogUI;
 
     public void setVisible(boolean helpVisible) {
@@ -68,11 +69,17 @@ public class HelpDialog {
                 owner.requestFocus();
             });
 
-            setUndecorated(true);
+            addWindowFocusListener(new WindowAdapter() {
+                @Override
+                public void windowGainedFocus(WindowEvent e) {
+                    owner.requestFocus();
+                }
+            });
+
+            setUndecorated(false);
 
             setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
 
-            // call onCancel() when cross is clicked
             setDefaultCloseOperation(HIDE_ON_CLOSE);
         }
     }
@@ -86,60 +93,36 @@ public class HelpDialog {
     public void start(Point canvasLocation, Dimension canvasSize) {
         $$$setupUI$$$();
         helpDialogUI = new HelpDialogUI(frameProvider.get(), contentPane, applicationModel);
-
-        JPopupMenu popup = new JPopupMenu();
-        JMenuItem dismissMenuItem = new JMenuItem("Dismiss");
-        dismissMenuItem.addActionListener(e -> applicationModel.setHelpVisible(false));
-
-        popup.add(dismissMenuItem);
-
-        // Code to move the dialog by dragging the label.
-        helpLabel.addMouseListener(new MouseAdapter() {
-            public void mousePressed(MouseEvent e) {
-                point.x = e.getX();
-                point.y = e.getY();
-
-                maybeShowPopup(e);
-
-                frameProvider.get().requestFocus();
-            }
-
-            public void mouseReleased(MouseEvent e) {
-                maybeShowPopup(e);
-            }
-
-            private void maybeShowPopup(MouseEvent e) {
-                if (e.isPopupTrigger()) {
-                    popup.show(e.getComponent(),
-                            e.getX(), e.getY());
-                }
-            }
-        });
-        helpLabel.addMouseMotionListener(new MouseMotionAdapter() {
-            public void mouseDragged(MouseEvent e) {
-                Point p = helpDialogUI.getLocation();
-                helpDialogUI.setLocation(p.x + e.getX() - point.x,
-                        p.y + e.getY() - point.y);
-            }
-        });
-
+        helpDialogUI.setPreferredSize(new Dimension(360, 250));
 
         // call onCancel() on ESCAPE
         contentPane.registerKeyboardAction(e -> applicationModel.setHelpVisible(false), KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
-        helpBundle = ResourceBundle.getBundle("help");
-
         helpLabel.setBorder(new EmptyBorder(10, 10, 10, 10));
-
         helpDialogUI.pack();
-
         helpDialogUI.setLocation(canvasLocation.x + canvasSize.width - helpDialogUI.getSize().width - 10, canvasLocation.y + 10);
 
-        helpLabel.setText(helpBundle.getString("a__hajimeni"));
+        String helpStartupString = ResourceBundle.getBundle("help").getString("a__hajimeni");
+        helpLabel.setText(helpStartupString);
+        helpScrollPanel.setBorder(new EmptyBorder(0, 1, 0, 0));
     }
 
     public void setExplanation(String key) {
-        helpLabel.setText(processPaths(helpBundle.getString(key)));
+        String gif = ResourceUtil.getBundleString("gif", key);
+        String name = ResourceUtil.getBundleString("name", key);
+        String description = ResourceUtil.getBundleString("help", key);
+
+        if (gif != null && !gif.isEmpty()) {
+            gifPanel.setVisible(true);
+            gifLabel.setText(processPaths("<html><center><img src=\"help-gif/" + gif + "\" width=\"128\"><center></html>"));
+        } else {
+            gifPanel.setVisible(false);
+        }
+        if (description != null) {
+            helpDialogUI.setTitle(name);
+            helpLabel.setText(processPaths(description));
+        }
+        helpLabel.setCaretPosition(0);
     }
 
     private String processPaths(String helpText) {
@@ -174,23 +157,56 @@ public class HelpDialog {
         contentPane = new JPanel();
         contentPane.setLayout(new GridBagLayout());
         contentPane.setAutoscrolls(false);
-        final JScrollPane scrollPane1 = new JScrollPane();
-        scrollPane1.setHorizontalScrollBarPolicy(31);
-        scrollPane1.setMinimumSize(new Dimension(300, 400));
-        scrollPane1.setPreferredSize(new Dimension(300, 400));
+        contentPane.setMinimumSize(new Dimension(200, 250));
+        contentPane.setPreferredSize(new Dimension(200, 220));
+        helpScrollPanel = new JScrollPane();
+        helpScrollPanel.setHorizontalScrollBarPolicy(31);
+        helpScrollPanel.setMinimumSize(new Dimension(200, 220));
+        helpScrollPanel.setOpaque(true);
+        helpScrollPanel.setPreferredSize(new Dimension(200, 220));
+        helpScrollPanel.setVerticalScrollBarPolicy(20);
         GridBagConstraints gbc;
+        gbc = new GridBagConstraints();
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        gbc.fill = GridBagConstraints.BOTH;
+        contentPane.add(helpScrollPanel, gbc);
+        helpLabel = new JTextPane();
+        helpLabel.setAutoscrolls(false);
+        helpLabel.setContentType("text/html");
+        helpLabel.setFocusable(false);
+        helpLabel.setOpaque(true);
+        helpScrollPanel.setViewportView(helpLabel);
+        gifPanel = new JPanel();
+        gifPanel.setLayout(new GridBagLayout());
+        gifPanel.setAutoscrolls(true);
+        gifPanel.setInheritsPopupMenu(false);
+        gifPanel.setMinimumSize(new Dimension(1, 1));
+        gifPanel.setOpaque(true);
+        gifPanel.setPreferredSize(new Dimension(148, 220));
+        gifPanel.setVisible(false);
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
-        contentPane.add(scrollPane1, gbc);
-        helpLabel = new JTextPane();
-        helpLabel.setContentType("text/html");
-        helpLabel.setFocusable(false);
-        helpLabel.setOpaque(true);
-        scrollPane1.setViewportView(helpLabel);
+        contentPane.add(gifPanel, gbc);
+        gifLabel = new JTextPane();
+        gifLabel.setBackground(new Color(-1));
+        gifLabel.setContentType("text/html");
+        gifLabel.setEditable(false);
+        gifLabel.setMargin(new Insets(46, 0, 0, 0));
+        gifLabel.setOpaque(true);
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        gbc.fill = GridBagConstraints.BOTH;
+        gifPanel.add(gifLabel, gbc);
     }
 
     /**
