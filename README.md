@@ -27,7 +27,7 @@ The software is based on Orihime, it adds performance, stability and usage impro
 [Download the latest development version.](https://nightly.link/oriedita/oriedita/workflows/maven/master/oriedita-jar.zip)
 
 After downloading the latest version you can use the installer to install the software or run the jar using Java (at
-least version 11).
+least version 17).
 
 You should be presented with the main interface of Oriedita.
 
@@ -64,9 +64,9 @@ It should not be needed to access files in this directory yourself.
 
 ### Button configuration (hotkeys, names, help, tooltip)
 
-Button configuration is found in properties files [`hotkey.properties`](./src/main/resources/hotkey.properties)
-, [`name.properties`](./src/main/resources/name.properties), [`help.properties`](./src/main/resources/help.properties)
-, [`tooltip.properties`](./src/main/resources/tooltip.properties). Placing these files in the configuration directory or
+Button configuration is found in properties files [`hotkey.properties`](oriedita/src/main/resources/hotkey.properties)
+, [`name.properties`](oriedita/src/main/resources/name.properties), [`help.properties`](oriedita/src/main/resources/help.properties)
+, [`tooltip.properties`](oriedita/src/main/resources/tooltip.properties), [`icons.properties`](oriedita/src/main/resources/icons.properties), [`gif.properties`](oriedita/src/main/resources/gif.properties). Placing these files in the configuration directory or
 in the same directory as the jar will override the values, allowing customization of hotkeys or translations.
 
 Read the JavaDoc
