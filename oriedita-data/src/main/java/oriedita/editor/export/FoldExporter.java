@@ -58,7 +58,13 @@ public class FoldExporter implements FileExporter {
         WireFrame_Worker wireFrame_worker = new WireFrame_Worker(3.0);
         wireFrame_worker.setLineSegmentSetWithoutFaceOccurence(lineSegmentSet);
         PointSet pointSet = wireFrame_worker.get();
-        pointSet.calculateFaces();
+        boolean includeFaces = true;
+        try {
+            pointSet.calculateFaces();
+        } catch (RuntimeException e) {
+            // ignore
+            includeFaces = false;
+        }
 
         OrieditaFoldFile foldFile = new OrieditaFoldFile();
         foldFile.setCreator("oriedita");
@@ -85,26 +91,28 @@ public class FoldExporter implements FileExporter {
         }
 
         try {
-            for (int i = 1; i <= pointSet.getNumFaces(); i++) {
-                var pface = pointSet.getFace(i);
-                var face = new Face();
+            if (includeFaces) {
+                for (int i = 1; i <= pointSet.getNumFaces(); i++) {
+                    var pface = pointSet.getFace(i);
+                    var face = new Face();
 
-                var faceVertices = new ArrayList<Vertex>();
-                var faceEdges = new ArrayList<Edge>();
-                var vertexFirst = rootFrame.getVertices().get(pface.getPointId(1) - 1);
-                var vertexLast = rootFrame.getVertices().get(pface.getPointId(pface.getNumPoints()) - 1);
-                faceVertices.add(vertexFirst);
-                faceEdges.add(findEdge(vertexFirst, vertexLast, rootFrame.getEdges()));
-                for (var j = 2; j <= pface.getNumPoints(); j++) {
-                    var currentVertex = rootFrame.getVertices().get(pface.getPointId(j) - 1);
-                    var previousVertex = rootFrame.getVertices().get(pface.getPointId(j - 1) - 1);
-                    faceVertices.add(currentVertex);
-                    faceEdges.add(findEdge(currentVertex, previousVertex, rootFrame.getEdges()));
+                    var faceVertices = new ArrayList<Vertex>();
+                    var faceEdges = new ArrayList<Edge>();
+                    var vertexFirst = rootFrame.getVertices().get(pface.getPointId(1) - 1);
+                    var vertexLast = rootFrame.getVertices().get(pface.getPointId(pface.getNumPoints()) - 1);
+                    faceVertices.add(vertexFirst);
+                    faceEdges.add(findEdge(vertexFirst, vertexLast, rootFrame.getEdges()));
+                    for (var j = 2; j <= pface.getNumPoints(); j++) {
+                        var currentVertex = rootFrame.getVertices().get(pface.getPointId(j) - 1);
+                        var previousVertex = rootFrame.getVertices().get(pface.getPointId(j - 1) - 1);
+                        faceVertices.add(currentVertex);
+                        faceEdges.add(findEdge(currentVertex, previousVertex, rootFrame.getEdges()));
+                    }
+                    face.setVertices(faceVertices);
+                    face.setEdges(faceEdges);
+
+                    rootFrame.getFaces().add(face);
                 }
-                face.setVertices(faceVertices);
-                face.setEdges(faceEdges);
-
-                rootFrame.getFaces().add(face);
             }
         } catch (RuntimeException e) {
             // Ignore
