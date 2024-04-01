@@ -22,12 +22,10 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Point;
-import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.net.URL;
-import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -114,7 +112,7 @@ public class HelpDialog {
 
         if (gif != null && !gif.isEmpty()) {
             gifPanel.setVisible(true);
-            gifLabel.setText(processPaths("<html><center><img src=\"help-gif/" + gif + "\" width=\"128\"><center></html>"));
+            gifLabel.setText(processPaths("<html><center><img src=\"help-gif/" + gif + ".gif\" width=\"128\"><center></html>"));
         } else {
             gifPanel.setVisible(false);
         }
