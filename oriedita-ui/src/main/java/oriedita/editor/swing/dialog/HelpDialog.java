@@ -22,10 +22,12 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Point;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.net.URL;
+import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -67,11 +69,18 @@ public class HelpDialog {
                 owner.requestFocus();
             });
 
+            addWindowFocusListener(new WindowAdapter() {
+                @Override
+                public void windowGainedFocus(WindowEvent e) {
+                    owner.requestFocus();
+                }
+            });
+
             setUndecorated(false);
 
             setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
 
-            setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+            setDefaultCloseOperation(HIDE_ON_CLOSE);
         }
     }
 
