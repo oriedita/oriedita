@@ -92,15 +92,6 @@ public class Oriedita {
         Logger.info("Startup in {} ms.", System.currentTimeMillis() - startTime);
     }
 
-    private static void loadFont() {
-        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        try {
-            ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, Objects.requireNonNull(Oriedita.class.getClassLoader().getResourceAsStream("Icons2.ttf"))));
-        } catch (IOException | FontFormatException e) {
-            e.printStackTrace();
-        }
-    }
-
     public static void main(String[] argv) {
         LoadingDialogUtil.show();
         StartMain.main(argv);
