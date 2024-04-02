@@ -781,6 +781,7 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
         if (!applicationModel.getSelectPersistent() || ignorePersistent) {
             foldLineSet.unselect_all();
             setIsSelectionEmpty(true);
+            canvasModel.markDirty();
         }
     }
 
