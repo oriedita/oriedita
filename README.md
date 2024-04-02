@@ -47,7 +47,7 @@ Clicking on buttons will update the help box with a help text for that button.
 <dt>.cp</dt>
 <dd>The .cp file format only saves creases (no circles or state). More lightweight and portable and should be used when sharing with someone else. It can also be opened in other origami crease pattern softwares.</dd>
 <dt>.fold</dt>
-<dd>The .fold file format is more advanced format that can save more features like .ori and can be used across different origami softwares.</dd>
+<dd>The .fold file format is more advanced format like .ori and can be used across different origami softwares.</dd>
 </dl>
 
 ## Advanced usage
