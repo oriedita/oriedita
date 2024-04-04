@@ -594,12 +594,14 @@ public class PreferenceDialog extends JDialog {
             for (int j = 0; j < row.length; j++) {
                 String action = row[j];
                 String actionName = ResourceUtil.getBundleString("name", action);
-                if (actionName != null) { actionName = actionName.toLowerCase(); }
+                if (actionName != null) {
+                    actionName = actionName.toLowerCase();
+                }
                 String finalActionName = actionName == null ? "" : actionName;
                 assert finalActionName != null;
                 if (!action.isEmpty()
                         && (searchPhrases.stream().allMatch(phrase -> finalActionName.contains(phrase.toLowerCase()))
-                            || searchPhrases.isEmpty())) {
+                        || searchPhrases.isEmpty())) {
                     hotkeyCategoryMap.get(categoryHeaderList.get(j)).add(action);
                 }
             }
@@ -1309,11 +1311,15 @@ public class PreferenceDialog extends JDialog {
         scrollPane1.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
         scrollPane1.setViewportView(hotkeyPanel);
         final JPanel panel11 = new JPanel();
-        panel11.setLayout(new GridLayoutManager(1, 1, new Insets(10, 10, 0, 10), -1, -1));
+        panel11.setLayout(new GridLayoutManager(1, 2, new Insets(10, 10, 0, 10), -1, -1));
         panel10.add(panel11, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_NORTH, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         searchBarTF = new JTextField();
         searchBarTF.setMargin(new Insets(2, 6, 2, 6));
-        panel11.add(searchBarTF, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_NORTHWEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        panel11.add(searchBarTF, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        final JLabel label16 = new JLabel();
+        label16.setOpaque(true);
+        label16.setText("Search:");
+        panel11.add(label16, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     }
 
     /**
