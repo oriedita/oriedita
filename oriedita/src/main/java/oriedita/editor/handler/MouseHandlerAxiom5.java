@@ -158,15 +158,13 @@ public class MouseHandlerAxiom5 extends BaseMouseHandlerInputRestricted{
         } else {  // Intersect at two points
             LineSegment l = new LineSegment(target, pivot);
             Point projectPoint = OritaCalc.findProjection(targetSegment, pivot);
-            LineSegment projectLine = new LineSegment(pivot, projectPoint);
 
             // Length of the last segment of a right triangle (circle center, projection point, and the ultimate guiding point for indicators)
             double length_b = Math.sqrt((radius * radius) - (length_a * length_a));
-            LineSegment l1 = new LineSegment(projectPoint, OritaCalc.findProjection(OritaCalc.moveParallel(projectLine, length_b), projectPoint));
-            l1 = new LineSegment(pivot, l1.getB());
-            LineSegment l2 = new LineSegment(projectPoint, OritaCalc.findProjection(OritaCalc.moveParallel(projectLine, -length_b), projectPoint));
-            l2 = new LineSegment(pivot, l2.getB());
+            LineSegment l1 = processProjectedLineOfIndicator(pivot, projectPoint, length_b);
+            LineSegment l2 = processProjectedLineOfIndicator(pivot, projectPoint, -length_b);
 
+            // Handle edge cases by updating l1 and l2 in necessary
             Pair<LineSegment, LineSegment> ls = processPivotWithinSegmentSpan(l1, l2, targetSegment, pivot);
             l1 = ls.getLeft();
             l2 = ls.getRight();
@@ -175,8 +173,15 @@ public class MouseHandlerAxiom5 extends BaseMouseHandlerInputRestricted{
             Point center1 = processCenter(pivot, l, l1);
             Point center2 = processCenter(pivot, l, l2);
 
+            // Decide the indicators on different cases
             determineIndicators(l, l1, l2, pivot, center1, center2, target, targetSegment, pivot);
         }
+    }
+
+    private LineSegment processProjectedLineOfIndicator(Point pivot, Point projectPoint, double length){
+        LineSegment projectLine = new LineSegment(pivot, projectPoint);
+        LineSegment line = new LineSegment(projectPoint, OritaCalc.findProjection(OritaCalc.moveParallel(projectLine, length), projectPoint));
+        return new LineSegment(pivot, line.getB());
     }
 
     private Point processCenter(Point pivot, LineSegment l1, LineSegment l2){
