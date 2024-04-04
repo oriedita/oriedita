@@ -631,7 +631,7 @@ public class PreferenceDialog extends JDialog {
         for (String categoryHeader : categoryHeaderList) {
             if (!hotkeyCategoryMap.get(categoryHeader).isEmpty()) {
                 JPanel listPanel = new JPanel();
-                listPanel.setLayout(new GridLayoutManager(ActionType.values().length + 1, 4, new Insets(0, 5, 0, 0), -1, -1));
+                listPanel.setLayout(new GridLayoutManager(ActionType.values().length + 1, 4, new Insets(0, 5, 10, 0), -1, -1));
 
                 setupCategoryPanel(listPanel, categoryHeader);
                 addIconTextHotkey(buttonService, frameProvider, listPanel, categoryHeader);
