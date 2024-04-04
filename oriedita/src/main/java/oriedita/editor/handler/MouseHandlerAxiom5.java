@@ -172,20 +172,25 @@ public class MouseHandlerAxiom5 extends BaseMouseHandlerInputRestricted{
             l2 = ls.getRight();
 
             // Center points for placeholders to draw bisecting indicators on
-            Point center1 = OritaCalc.center(pivot, l1.determineFurthestEndpoint(pivot), l.determineFurthestEndpoint(pivot));
-            Point center2 = OritaCalc.center(pivot, l2.determineFurthestEndpoint(pivot), l.determineFurthestEndpoint(pivot));
-
-            // If l and l1/l2 are aligned
-            if(OritaCalc.isLineSegmentParallel(new StraightLine(l.determineFurthestEndpoint(pivot), pivot), new StraightLine(pivot, l1.determineFurthestEndpoint(pivot))) == OritaCalc.ParallelJudgement.PARALLEL_EQUAL){
-                LineSegment seg = new LineSegment(pivot, OritaCalc.findProjection(OritaCalc.moveParallel(l, 1), pivot));
-                center1 = OritaCalc.center(l.determineFurthestEndpoint(pivot), l1.determineFurthestEndpoint(pivot), seg.determineFurthestEndpoint(pivot));
-            }
-            if(OritaCalc.isLineSegmentParallel(new StraightLine(l.determineFurthestEndpoint(pivot), pivot), new StraightLine(pivot, l2.determineFurthestEndpoint(pivot))) == OritaCalc.ParallelJudgement.PARALLEL_EQUAL){
-                LineSegment seg = new LineSegment(pivot, OritaCalc.findProjection(OritaCalc.moveParallel(l, 1), pivot));
-                center2 = OritaCalc.center(l.determineFurthestEndpoint(pivot), l2.determineFurthestEndpoint(pivot), seg.determineFurthestEndpoint(pivot));
-            }
+            Point center1 = processCenter(pivot, l, l1);
+            Point center2 = processCenter(pivot, l, l2);
 
             determineIndicators(l, l1, l2, pivot, center1, center2, target, targetSegment, pivot);
+        }
+    }
+
+    private Point processCenter(Point pivot, LineSegment l1, LineSegment l2){
+        // l1 and l2 are 2 lines forming a triangle with a common point
+        // If l1 and l2 are aligned/parallel
+        //       l1 ⤵              l2 ⤵
+        // ------------------O-------------------
+        //     common point ⤴
+        if(OritaCalc.isLineSegmentParallel(new StraightLine(l1.determineFurthestEndpoint(pivot), pivot), new StraightLine(pivot, l2.determineFurthestEndpoint(pivot))) == OritaCalc.ParallelJudgement.PARALLEL_EQUAL){
+            LineSegment seg = new LineSegment(pivot, OritaCalc.findProjection(OritaCalc.moveParallel(l1, 1), pivot));
+            // return the center using a different point on a shifted line parallel to l2
+            return OritaCalc.center(l1.determineFurthestEndpoint(pivot), l2.determineFurthestEndpoint(pivot), seg.determineFurthestEndpoint(pivot));
+        } else { // return the default center
+            return OritaCalc.center(pivot, l2.determineFurthestEndpoint(pivot), l1.determineFurthestEndpoint(pivot));
         }
     }
 
