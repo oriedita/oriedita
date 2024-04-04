@@ -45,6 +45,8 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -143,7 +145,6 @@ public class PreferenceDialog extends JDialog {
     private JPanel display1Panel;
     private JPanel display3Panel;
     private JTextField searchBarTF;
-    private JButton searchButton;
     private int tempTransparency;
     private final ApplicationModel applicationModel;
     private final ButtonService buttonService;
@@ -377,19 +378,29 @@ public class PreferenceDialog extends JDialog {
         });
         mouseRangeSlider.addChangeListener(e -> applicationModel.setMouseRadius(mouseRangeSlider.getValue()));
 
-        searchButton.addActionListener(e -> {
-            searchPhrases = parseSearchPhrases();
-            hotkeyCategoryMap = new LinkedHashMap<>();
-            categoryHeaderList = new ArrayList<>();
-            readCSV();
-            setupHotKey(buttonService, frameProvider);
-            contentPane.repaint();
-        });
-
-        searchBarTF.addActionListener(new AbstractAction() {
+        searchBarTF.getDocument().addDocumentListener(new DocumentListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                searchButton.doClick();
+            public void insertUpdate(DocumentEvent e) {
+                update();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                update();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                update();
+            }
+
+            public void update() {
+                searchPhrases = parseSearchPhrases();
+                hotkeyCategoryMap = new LinkedHashMap<>();
+                categoryHeaderList = new ArrayList<>();
+                readCSV();
+                setupHotKey(buttonService, frameProvider);
+                contentPane.repaint();
             }
         });
 
@@ -583,18 +594,12 @@ public class PreferenceDialog extends JDialog {
             for (int j = 0; j < row.length; j++) {
                 String action = row[j];
                 String actionName = ResourceUtil.getBundleString("name", action);
-                if (actionName != null) {
-                    actionName = actionName.toLowerCase();
-                    actionName = actionName.replaceAll("_", "");
-                }
+                if (actionName != null) { actionName = actionName.toLowerCase(); }
                 String finalActionName = actionName;
+                assert finalActionName != null;
                 if (!action.isEmpty()
-                        && (searchPhrases.stream().anyMatch(phrase -> {
-                    assert finalActionName != null;
-                    return finalActionName.contains(phrase.toLowerCase());
-                })
-                        || searchPhrases.isEmpty())
-                        || searchPhrases == null) {
+                        && (searchPhrases.stream().allMatch(phrase -> finalActionName.contains(phrase.toLowerCase()))
+                            || searchPhrases.isEmpty())) {
                     hotkeyCategoryMap.get(categoryHeaderList.get(j)).add(action);
                 }
             }
@@ -1304,14 +1309,11 @@ public class PreferenceDialog extends JDialog {
         scrollPane1.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
         scrollPane1.setViewportView(hotkeyPanel);
         final JPanel panel11 = new JPanel();
-        panel11.setLayout(new GridLayoutManager(1, 2, new Insets(10, 10, 0, 10), -1, -1));
+        panel11.setLayout(new GridLayoutManager(1, 1, new Insets(10, 10, 0, 10), -1, -1));
         panel10.add(panel11, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_NORTH, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         searchBarTF = new JTextField();
         searchBarTF.setMargin(new Insets(2, 6, 2, 6));
         panel11.add(searchBarTF, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_NORTHWEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
-        searchButton = new JButton();
-        searchButton.setText("Search");
-        panel11.add(searchButton, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_NORTH, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     }
 
     /**
