@@ -595,7 +595,7 @@ public class PreferenceDialog extends JDialog {
                 String action = row[j];
                 String actionName = ResourceUtil.getBundleString("name", action);
                 if (actionName != null) { actionName = actionName.toLowerCase(); }
-                String finalActionName = actionName;
+                String finalActionName = actionName == null ? "" : actionName;
                 assert finalActionName != null;
                 if (!action.isEmpty()
                         && (searchPhrases.stream().allMatch(phrase -> finalActionName.contains(phrase.toLowerCase()))
