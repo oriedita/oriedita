@@ -78,7 +78,7 @@ public class MouseHandlerAxiom7 extends BaseMouseHandlerInputRestricted{
                 return;
             }
 
-            LineSegment closestLineSegment = d.getClosestLineSegment(p);
+            LineSegment closestLineSegment = new LineSegment(d.getClosestLineSegment(p));
 
             if (!(OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.getSelectionDistance()) ||
                     OritaCalc.isLineSegmentParallel(closestLineSegment, d.getLineStep().get(3)) != OritaCalc.ParallelJudgement.NOT_PARALLEL) {
@@ -128,9 +128,7 @@ public class MouseHandlerAxiom7 extends BaseMouseHandlerInputRestricted{
         Point mid = OritaCalc.midPoint(target.getA(), OritaCalc.findIntersection(extendLine, targetSegment));
 
         LineSegment s1 = OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), new LineSegment(mid, OritaCalc.findProjection(OritaCalc.moveParallel(extendLine, 1), mid), LineColor.PURPLE_8));
-        LineSegment s2 = OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), new LineSegment(mid, OritaCalc.findProjection(OritaCalc.moveParallel(extendLine, -1), mid), LineColor.PURPLE_8));
-        s1.setColor(LineColor.PURPLE_8);
-        s2.setColor(LineColor.PURPLE_8);
+        LineSegment s2 = OritaCalc.fullExtendUntilHit(d .getFoldLineSet(), new LineSegment(mid, OritaCalc.findProjection(OritaCalc.moveParallel(extendLine, -1), mid), LineColor.PURPLE_8));
         d.lineStepAdd(s1);
         d.lineStepAdd(s2);
         return mid;
