@@ -164,7 +164,7 @@ public class MouseHandlerAxiom5 extends BaseMouseHandlerInputRestricted{
             LineSegment l1 = processProjectedLineOfIndicator(pivot, projectPoint, length_b);
             LineSegment l2 = processProjectedLineOfIndicator(pivot, projectPoint, -length_b);
 
-            // Handle edge cases by updating l1 and l2 in necessary
+            // Recalibrate l1 and l2 for later calculations
             Pair<LineSegment, LineSegment> ls = processPivotWithinSegmentSpan(l1, l2, targetSegment, pivot);
             l1 = ls.getLeft();
             l2 = ls.getRight();
