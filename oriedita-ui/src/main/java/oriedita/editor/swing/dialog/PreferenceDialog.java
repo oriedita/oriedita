@@ -601,8 +601,8 @@ public class PreferenceDialog extends JDialog {
 
                     String actionName = ResourceUtil.getBundleString("name", action);
                     String finalActionName = actionName.replaceAll("_", "").toLowerCase();
-                    if (searchPhrases.stream().allMatch(phrase -> finalActionName.contains(phrase.toLowerCase()))
-                            || searchPhrases.isEmpty()) {
+                    if (searchPhrases.isEmpty() ||
+                            searchPhrases.stream().allMatch(phrase -> finalActionName.contains(phrase.toLowerCase()))) {
                         hotkeyCategoryMap.get(categoryHeaderList.get(j)).add(action);
                     }
                 }
