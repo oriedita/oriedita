@@ -586,17 +586,13 @@ public class PreferenceDialog extends JDialog {
             String[] row = allData.get(i);
             for (int j = 0; j < row.length; j++) {
                 String action = row[j];
-                String actionName = ResourceUtil.getBundleString("name", action);
-                if (actionName != null) {
-                    actionName = actionName.replaceAll("_", "");
-                    actionName = actionName.toLowerCase();
-                }
-                String finalActionName = actionName == null ? "" : actionName;
-                assert finalActionName != null;
-                if (!action.isEmpty()
-                        && (searchPhrases.stream().allMatch(phrase -> finalActionName.contains(phrase.toLowerCase()))
-                        || searchPhrases.isEmpty())) {
-                    hotkeyCategoryMap.get(categoryHeaderList.get(j)).add(action);
+                if (!action.isEmpty()) {
+                    String actionName = ResourceUtil.getBundleString("name", action);
+                    String finalActionName = actionName.replaceAll("_", "").toLowerCase();
+                    if (searchPhrases.stream().allMatch(phrase -> finalActionName.contains(phrase.toLowerCase()))
+                            || searchPhrases.isEmpty()) {
+                        hotkeyCategoryMap.get(categoryHeaderList.get(j)).add(action);
+                    }
                 }
             }
         }
