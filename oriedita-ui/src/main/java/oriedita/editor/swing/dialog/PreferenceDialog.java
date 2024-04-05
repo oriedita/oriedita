@@ -154,6 +154,7 @@ public class PreferenceDialog extends JDialog {
     private Map<String, List<String>> hotkeyCategoryMap;
     private List<String> categoryHeaderList;
     private List<String> searchPhrases;
+    private List<String[]> allData;
 
     private final List<PropertyChangeListener> activeListeners = new ArrayList<>();
 
@@ -390,10 +391,12 @@ public class PreferenceDialog extends JDialog {
 
             public void update() {
                 searchPhrases = parseSearchPhrases();
-                hotkeyCategoryMap = new LinkedHashMap<>();
-                categoryHeaderList = new ArrayList<>();
-                readCSV();
+                // Effectively reset hotkeyCategoryMap and retain headers
+                categoryHeaderList.forEach(header -> hotkeyCategoryMap.put(header, new ArrayList<>()));
+
+                extractData(allData); // Only update the list in each header
                 setupHotKey(buttonService, frameProvider);
+
                 contentPane.repaint();
             }
         });
@@ -603,7 +606,7 @@ public class PreferenceDialog extends JDialog {
         }
     }
 
-    private void readCSV() {
+    private void readCSV() { // Only run once
         try {
             // Create an object of input stream reader class with CSV file as a parameter.
             InputStream is = this.getClass().getResourceAsStream("/categories.csv");
@@ -616,7 +619,6 @@ public class PreferenceDialog extends JDialog {
 
             // create csvReader object with parameter
             // file-reader and parser
-            List<String[]> allData;
             try (CSVReader csvReader = new CSVReaderBuilder(inputStreamReader).withCSVParser(parser).build()) {
                 allData = csvReader.readAll(); // Read all data at once
             }
@@ -1354,6 +1356,7 @@ public class PreferenceDialog extends JDialog {
         hotkeyCategoryMap = new LinkedHashMap<>();
         categoryHeaderList = new ArrayList<>();
         searchPhrases = new ArrayList<>();
+        allData = new ArrayList<>();
         readCSV();
 
         hotkeyPanel = new JPanel();
