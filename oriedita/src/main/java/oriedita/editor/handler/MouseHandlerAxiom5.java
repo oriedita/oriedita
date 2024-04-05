@@ -53,7 +53,9 @@ public class MouseHandlerAxiom5 extends BaseMouseHandlerInputRestricted{
         // 3. pivot point
         if(d.getLineStep().size() == 2){
             Point closestPoint = d.getClosestPoint(p);
-            if (p.distance(closestPoint) < d.getSelectionDistance() && OritaCalc.determineLineSegmentDistance(closestPoint, d.getLineStep().get(0)) > Epsilon.UNKNOWN_1EN7) {
+            if (p.distance(closestPoint) < d.getSelectionDistance()
+                    && OritaCalc.determineLineSegmentDistance(closestPoint, d.getLineStep().get(0)) > Epsilon.UNKNOWN_1EN7
+                    && !(OritaCalc.isPointWithinLineSpan(closestPoint, d.getLineStep().get(1)) && OritaCalc.isPointWithinLineSpan(d.getLineStep().get(0).getA(), d.getLineStep().get(1)))) {
                 d.lineStepAdd(new LineSegment(closestPoint, closestPoint, d.getLineColor()));
                 return;
             }
@@ -156,34 +158,44 @@ public class MouseHandlerAxiom5 extends BaseMouseHandlerInputRestricted{
         } else {  // Intersect at two points
             LineSegment l = new LineSegment(target, pivot);
             Point projectPoint = OritaCalc.findProjection(targetSegment, pivot);
-            LineSegment projectLine = new LineSegment(pivot, projectPoint);
 
             // Length of the last segment of a right triangle (circle center, projection point, and the ultimate guiding point for indicators)
             double length_b = Math.sqrt((radius * radius) - (length_a * length_a));
-            LineSegment l1 = new LineSegment(projectPoint, OritaCalc.findProjection(OritaCalc.moveParallel(projectLine, length_b), projectPoint));
-            l1 = new LineSegment(pivot, l1.getB());
-            LineSegment l2 = new LineSegment(projectPoint, OritaCalc.findProjection(OritaCalc.moveParallel(projectLine, -length_b), projectPoint));
-            l2 = new LineSegment(pivot, l2.getB());
+            LineSegment l1 = processProjectedLineOfIndicator(pivot, projectPoint, length_b);
+            LineSegment l2 = processProjectedLineOfIndicator(pivot, projectPoint, -length_b);
 
+            // Recalibrate l1 and l2 for later calculations
             Pair<LineSegment, LineSegment> ls = processPivotWithinSegmentSpan(l1, l2, targetSegment, pivot);
             l1 = ls.getLeft();
             l2 = ls.getRight();
 
             // Center points for placeholders to draw bisecting indicators on
-            Point center1 = OritaCalc.center(pivot, l1.determineFurthestEndpoint(pivot), l.determineFurthestEndpoint(pivot));
-            Point center2 = OritaCalc.center(pivot, l2.determineFurthestEndpoint(pivot), l.determineFurthestEndpoint(pivot));
+            Point center1 = processCenter(pivot, l, l1);
+            Point center2 = processCenter(pivot, l, l2);
 
-            // If l and l1/l2 are aligned
-            if(OritaCalc.isLineSegmentParallel(new StraightLine(l.determineFurthestEndpoint(pivot), pivot), new StraightLine(pivot, l1.determineFurthestEndpoint(pivot))) == OritaCalc.ParallelJudgement.PARALLEL_EQUAL){
-                LineSegment seg = new LineSegment(pivot, OritaCalc.findProjection(OritaCalc.moveParallel(l, 1), pivot));
-                center1 = OritaCalc.center(l.determineFurthestEndpoint(pivot), l1.determineFurthestEndpoint(pivot), seg.determineFurthestEndpoint(pivot));
-            }
-            if(OritaCalc.isLineSegmentParallel(new StraightLine(l.determineFurthestEndpoint(pivot), pivot), new StraightLine(pivot, l2.determineFurthestEndpoint(pivot))) == OritaCalc.ParallelJudgement.PARALLEL_EQUAL){
-                LineSegment seg = new LineSegment(pivot, OritaCalc.findProjection(OritaCalc.moveParallel(l, 1), pivot));
-                center2 = OritaCalc.center(l.determineFurthestEndpoint(pivot), l2.determineFurthestEndpoint(pivot), seg.determineFurthestEndpoint(pivot));
-            }
-
+            // Decide the indicators on different cases
             determineIndicators(l, l1, l2, pivot, center1, center2, target, targetSegment, pivot);
+        }
+    }
+
+    private LineSegment processProjectedLineOfIndicator(Point pivot, Point projectPoint, double length){
+        LineSegment projectLine = new LineSegment(pivot, projectPoint);
+        LineSegment line = new LineSegment(projectPoint, OritaCalc.findProjection(OritaCalc.moveParallel(projectLine, length), projectPoint));
+        return new LineSegment(pivot, line.getB());
+    }
+
+    private Point processCenter(Point pivot, LineSegment l1, LineSegment l2){
+        // l1 and l2 are 2 lines forming a triangle with a common point
+        // If l1 and l2 are aligned/parallel
+        //       l1 ⤵              l2 ⤵
+        // ------------------O-------------------
+        //     common point ⤴
+        if(OritaCalc.isLineSegmentParallel(new StraightLine(l1.determineFurthestEndpoint(pivot), pivot), new StraightLine(pivot, l2.determineFurthestEndpoint(pivot))) == OritaCalc.ParallelJudgement.PARALLEL_EQUAL){
+            LineSegment seg = new LineSegment(pivot, OritaCalc.findProjection(OritaCalc.moveParallel(l1, 1), pivot));
+            // return the center using a different point on a shifted line parallel to l2
+            return OritaCalc.center(l1.determineFurthestEndpoint(pivot), l2.determineFurthestEndpoint(pivot), seg.determineFurthestEndpoint(pivot));
+        } else { // return the default center
+            return OritaCalc.center(pivot, l2.determineFurthestEndpoint(pivot), l1.determineFurthestEndpoint(pivot));
         }
     }
 
