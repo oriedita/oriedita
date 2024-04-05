@@ -24,14 +24,14 @@ public class MouseHandlerSymmetricDraw extends BaseMouseHandlerInputRestricted {
 
         if (d.getLineStep().isEmpty() || d.getLineStep().get(0).determineLength() > 0) {
             if (d.getLineStep().isEmpty() && d.getClosestPoint(p).distance(p) > d.getSelectionDistance()) {
-                line = d.getClosestLineSegment(p);
+                line = new LineSegment(d.getClosestLineSegment(p));
                 if (OritaCalc.determineLineSegmentDistance(p, line) < d.getSelectionDistance()) {
                     d.lineStepAdd(line.withColor(LineColor.GREEN_6));
                 }
                 return;
             }
             if(!d.getLineStep().isEmpty()){
-                line = d.getClosestLineSegment(p);
+                line = new LineSegment(d.getClosestLineSegment(p));
                 if (OritaCalc.determineLineSegmentDistance(p, line) < d.getSelectionDistance() && OritaCalc.isLineSegmentParallel(d.getLineStep().get(0), line) == OritaCalc.ParallelJudgement.NOT_PARALLEL) {
                     d.lineStepAdd(line.withColor(LineColor.GREEN_6));
                 }
@@ -44,7 +44,6 @@ public class MouseHandlerSymmetricDraw extends BaseMouseHandlerInputRestricted {
             if (p.distance(closestPoint) < d.getSelectionDistance()) {
                 d.lineStepAdd(new LineSegment(closestPoint, closestPoint, d.getLineColor()));
             }
-
         }
     }
 
@@ -63,8 +62,9 @@ public class MouseHandlerSymmetricDraw extends BaseMouseHandlerInputRestricted {
         if(d.getLineStep().size() == 2 && d.getLineStep().get(0).determineLength() > 0){
             Point cross = OritaCalc.findIntersection(d.getLineStep().get(0), d.getLineStep().get(1));
             Point t_taisyou = OritaCalc.findLineSymmetryPoint(cross, d.getLineStep().get(1).determineFurthestEndpoint(cross), d.getLineStep().get(0).determineFurthestEndpoint(cross));
-            LineSegment add_sen = new LineSegment(cross, t_taisyou, d.getLineColor());
+            LineSegment add_sen = new LineSegment(cross, t_taisyou);
             add_sen = d.extendToIntersectionPoint(add_sen);
+            add_sen.setColor(d.getLineColor());
 
             if (Epsilon.high.gt0(add_sen.determineLength())) {
                 d.addLineSegment(add_sen);

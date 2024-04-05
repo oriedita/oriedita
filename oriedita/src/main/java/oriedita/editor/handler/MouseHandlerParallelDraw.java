@@ -18,7 +18,7 @@ public class MouseHandlerParallelDraw extends BaseMouseHandlerInputRestricted {
 
     //マウス操作(マウスを動かしたとき)を行う関数
     public void mouseMoved(Point p0) {
-        if (d.getLineStep().size() == 0) {
+        if (d.getLineStep().isEmpty()) {
             super.mouseMoved(p0);
         }
     }
@@ -29,7 +29,7 @@ public class MouseHandlerParallelDraw extends BaseMouseHandlerInputRestricted {
     //マウス操作(ボタンを押したとき)時の作業
     public void mousePressed(Point p0) {
         Point p = d.getCamera().TV2object(p0);
-        if (d.getLineStep().size() == 0) {
+        if (d.getLineStep().isEmpty()) {
             Point closestPoint = d.getClosestPoint(p);
 
             if (p.distance(closestPoint) < d.getSelectionDistance()) {
@@ -59,14 +59,13 @@ public class MouseHandlerParallelDraw extends BaseMouseHandlerInputRestricted {
         if (d.getLineStep().size() == 3) {
             LineSegment s0 = d.getLineStep().get(0);
             LineSegment s1 = d.getLineStep().get(1);
-            LineSegment s2 = d.getLineStep().get(2);
 
             s0 = s0.withB(new Point(
                     s0.determineAX() + s1.determineBX() - s1.determineAX(),
                     s0.determineAY() + s1.determineBY() - s1.determineAY()));
 
-            if (s_step_additional_intersection(2, s0, s2, d.getLineColor()) > 0) {
-                d.addLineSegment(s2);
+            if (s_step_additional_intersection(2, s0, d.getLineStep().get(2), d.getLineColor()) > 0) {
+                d.addLineSegment(d.getLineStep().get(2));
                 d.record();
             }
 
