@@ -45,6 +45,8 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -63,6 +65,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.LinkedHashMap;
@@ -141,6 +144,7 @@ public class PreferenceDialog extends JDialog {
     private JCheckBox roundedEndsCheckbox;
     private JPanel display1Panel;
     private JPanel display3Panel;
+    private JTextField searchBarTF;
     private int tempTransparency;
     private final ApplicationModel applicationModel;
     private final ButtonService buttonService;
@@ -149,6 +153,8 @@ public class PreferenceDialog extends JDialog {
     private final FoldedFigureModel tempfoldedModel;
     private Map<String, List<String>> hotkeyCategoryMap;
     private List<String> categoryHeaderList;
+    private List<String> searchPhrases;
+    private List<String[]> allData;
 
     private final List<PropertyChangeListener> activeListeners = new ArrayList<>();
 
@@ -373,6 +379,27 @@ public class PreferenceDialog extends JDialog {
         });
         mouseRangeSlider.addChangeListener(e -> applicationModel.setMouseRadius(mouseRangeSlider.getValue()));
 
+        searchBarTF.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) { update(); }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) { update(); }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) { update(); }
+
+            public void update() {
+                searchPhrases = parseSearchPhrases();
+                // Reset hotkeyCategoryMap keeping headers
+                categoryHeaderList.forEach(header -> hotkeyCategoryMap.put(header, new ArrayList<>()));
+                extractData(allData); // Only update the list in each header
+                setupHotKey(buttonService, frameProvider);
+
+                contentPane.repaint();
+            }
+        });
+
         buttonOK.addActionListener(e -> onOK());
         buttonCancel.addActionListener(e -> onCancel());
         restoreDefaultsButton.addActionListener(e -> onReset());
@@ -413,6 +440,11 @@ public class PreferenceDialog extends JDialog {
             ResourceUtil.clearBundle("hotkey");
             buttonService.loadAllKeyStrokes();
         }
+    }
+
+    private List<String> parseSearchPhrases() {
+        String phrase = searchBarTF.getText();
+        return phrase.isEmpty() ? Collections.emptyList() : Arrays.asList(phrase.split("\\s+"));
     }
 
     public void updateTempModel(ApplicationModel applicationModel) {
@@ -527,9 +559,6 @@ public class PreferenceDialog extends JDialog {
     }
 
     private void addIconTextHotkey(ButtonService buttonService, FrameProvider frameProvider, JPanel listPanel, String categoryHeader) {
-        final Spacer spacer1 = new Spacer();
-        final Spacer spacer2 = new Spacer();
-
         for (String key : hotkeyCategoryMap.get(categoryHeader)) {
             int index = hotkeyCategoryMap.get(categoryHeader).indexOf(key);
 
@@ -545,31 +574,31 @@ public class PreferenceDialog extends JDialog {
             JButton restoreHotkeyButton = getRestoreHotkeyButton(key, keystrokeButton);
             listPanel.add(restoreHotkeyButton, new GridConstraints(index, 3, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_VERTICAL, GridConstraints.SIZEPOLICY_FIXED, 1, new Dimension(21, 21), new Dimension(21, 21), null, 0, false));
         }
-
-        listPanel.add(spacer1, new GridConstraints(hotkeyCategoryMap.get(categoryHeader).size() - 1, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
-        listPanel.add(spacer2, new GridConstraints(0, 2, hotkeyCategoryMap.get(categoryHeader).size(), 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
     }
 
     private void extractHeaders(List<String[]> allData) {
-        String[] headers = allData.get(0);
-        categoryHeaderList.addAll(Arrays.asList(headers));
-        for (String header : headers) {
-            hotkeyCategoryMap.put(header, new ArrayList<>());
-        }
+        categoryHeaderList.addAll(Arrays.asList(allData.get(0)));
+        categoryHeaderList.forEach(header -> hotkeyCategoryMap.put(header, new ArrayList<>()));
     }
 
     private void extractData(List<String[]> allData) {
         for (int i = 1; i < allData.size(); i++) {
             String[] row = allData.get(i);
             for (int j = 0; j < row.length; j++) {
-                if (!row[j].isEmpty()) {
-                    hotkeyCategoryMap.get(categoryHeaderList.get(j)).add(row[j]);
+                String action = row[j];
+                if (!action.isEmpty()) {
+                    String actionName = ResourceUtil.getBundleString("name", action);
+                    String finalActionName = actionName.replaceAll("_", "").toLowerCase();
+                    if (searchPhrases.stream().allMatch(phrase -> finalActionName.contains(phrase.toLowerCase()))
+                            || searchPhrases.isEmpty()) {
+                        hotkeyCategoryMap.get(categoryHeaderList.get(j)).add(action);
+                    }
                 }
             }
         }
     }
 
-    private void readCSV() {
+    private void readCSV() { // Only run once
         try {
             // Create an object of input stream reader class with CSV file as a parameter.
             InputStream is = this.getClass().getResourceAsStream("/categories.csv");
@@ -582,13 +611,11 @@ public class PreferenceDialog extends JDialog {
 
             // create csvReader object with parameter
             // file-reader and parser
-            List<String[]> allData;
             try (CSVReader csvReader = new CSVReaderBuilder(inputStreamReader).withCSVParser(parser).build()) {
                 allData = csvReader.readAll(); // Read all data at once
             }
 
             extractHeaders(allData); // Extract headers
-
             extractData(allData); // Extract Data excluding headers
         } catch (Exception e) {
             Logger.error(e);
@@ -598,11 +625,13 @@ public class PreferenceDialog extends JDialog {
     public void setupHotKey(ButtonService buttonService, FrameProvider frameProvider) {
         hotkeyPanel.removeAll();
         for (String categoryHeader : categoryHeaderList) {
-            JPanel listPanel = new JPanel();
-            listPanel.setLayout(new GridLayoutManager(ActionType.values().length + 1, 4, new Insets(0, 5, 0, 0), -1, -1));
+            if (!hotkeyCategoryMap.get(categoryHeader).isEmpty()) {
+                JPanel listPanel = new JPanel();
+                listPanel.setLayout(new GridLayoutManager(ActionType.values().length + 1, 4, new Insets(0, 5, 10, 0), -1, -1));
 
-            setupCategoryPanel(listPanel, categoryHeader);
-            addIconTextHotkey(buttonService, frameProvider, listPanel, categoryHeader);
+                setupCategoryPanel(listPanel, categoryHeader);
+                addIconTextHotkey(buttonService, frameProvider, listPanel, categoryHeader);
+            }
         }
         final Spacer hotkeyPanelSpacer = new Spacer();
         hotkeyPanel.add(hotkeyPanelSpacer, new GridConstraints(hotkeyCategoryMap.size(), 0, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
@@ -1262,11 +1291,27 @@ public class PreferenceDialog extends JDialog {
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         behavior2Panel.add(offsetCB, gbc);
+        final JPanel panel10 = new JPanel();
+        panel10.setLayout(new GridLayoutManager(2, 1, new Insets(0, 0, 0, 0), -1, -1));
+        tabbedPane1.addTab("HOTKEYS", panel10);
+        final JPanel panel11 = new JPanel();
+        panel11.setLayout(new GridLayoutManager(2, 1, new Insets(0, 0, 0, 0), -1, -1));
+        panel10.add(panel11, new GridConstraints(0, 0, 2, 1, GridConstraints.ANCHOR_NORTH, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         scrollPane1.setAutoscrolls(false);
         scrollPane1.setVerticalScrollBarPolicy(20);
-        tabbedPane1.addTab("HOTKEYS", scrollPane1);
+        panel11.add(scrollPane1, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_NORTH, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         scrollPane1.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
         scrollPane1.setViewportView(hotkeyPanel);
+        final JPanel panel12 = new JPanel();
+        panel12.setLayout(new GridLayoutManager(1, 2, new Insets(10, 10, 0, 10), -1, -1));
+        panel11.add(panel12, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_NORTH, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        searchBarTF = new JTextField();
+        searchBarTF.setMargin(new Insets(2, 6, 2, 6));
+        panel12.add(searchBarTF, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        final JLabel label16 = new JLabel();
+        label16.setOpaque(true);
+        label16.setText("Search:");
+        panel12.add(label16, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     }
 
     /**
@@ -1302,6 +1347,8 @@ public class PreferenceDialog extends JDialog {
 
         hotkeyCategoryMap = new LinkedHashMap<>();
         categoryHeaderList = new ArrayList<>();
+        searchPhrases = new ArrayList<>();
+        allData = new ArrayList<>();
         readCSV();
 
         hotkeyPanel = new JPanel();
