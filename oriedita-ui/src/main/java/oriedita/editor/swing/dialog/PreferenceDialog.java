@@ -595,12 +595,9 @@ public class PreferenceDialog extends JDialog {
             for (int j = 0; j < row.length; j++) {
                 String action = row[j];
                 if (!action.isEmpty()) {
-                    String hotkey;
-                    try {
-                        hotkey = Objects.requireNonNull(ResourceUtil.getBundleString("hotkey", action));
-                    } catch (Exception e) { continue; }
+                    String hotkey = ResourceUtil.getBundleString("hotkey", action);
 
-                    if ((hotkey.isEmpty()) && hasHotkeyCB.isSelected()) { continue; }
+                    if ((hotkey == null || hotkey.isEmpty()) && hasHotkeyCB.isSelected()) { continue; }
 
                     String actionName = ResourceUtil.getBundleString("name", action);
                     String finalActionName = actionName.replaceAll("_", "").toLowerCase();
