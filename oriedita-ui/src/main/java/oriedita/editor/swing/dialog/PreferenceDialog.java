@@ -380,19 +380,13 @@ public class PreferenceDialog extends JDialog {
 
         searchBarTF.getDocument().addDocumentListener(new DocumentListener() {
             @Override
-            public void insertUpdate(DocumentEvent e) {
-                update();
-            }
+            public void insertUpdate(DocumentEvent e) { update(); }
 
             @Override
-            public void removeUpdate(DocumentEvent e) {
-                update();
-            }
+            public void removeUpdate(DocumentEvent e) { update(); }
 
             @Override
-            public void changedUpdate(DocumentEvent e) {
-                update();
-            }
+            public void changedUpdate(DocumentEvent e) { update(); }
 
             public void update() {
                 searchPhrases = parseSearchPhrases();
