@@ -391,9 +391,8 @@ public class PreferenceDialog extends JDialog {
 
             public void update() {
                 searchPhrases = parseSearchPhrases();
-                // Effectively reset hotkeyCategoryMap and retain headers
+                // Reset hotkeyCategoryMap keeping headers
                 categoryHeaderList.forEach(header -> hotkeyCategoryMap.put(header, new ArrayList<>()));
-
                 extractData(allData); // Only update the list in each header
                 setupHotKey(buttonService, frameProvider);
 
@@ -578,11 +577,8 @@ public class PreferenceDialog extends JDialog {
     }
 
     private void extractHeaders(List<String[]> allData) {
-        String[] headers = allData.get(0);
-        categoryHeaderList.addAll(Arrays.asList(headers));
-        for (String header : headers) {
-            hotkeyCategoryMap.put(header, new ArrayList<>());
-        }
+        categoryHeaderList.addAll(Arrays.asList(allData.get(0)));
+        categoryHeaderList.forEach(header -> hotkeyCategoryMap.put(header, new ArrayList<>()));
     }
 
     private void extractData(List<String[]> allData) {
