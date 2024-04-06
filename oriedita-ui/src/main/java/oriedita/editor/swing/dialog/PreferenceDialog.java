@@ -221,7 +221,7 @@ public class PreferenceDialog extends JDialog {
         setData(applicationModel);
         setContentPane($$$getRootComponent$$$());
         setDefaultCloseOperation(HIDE_ON_CLOSE);
-        getRootPane().setDefaultButton(buttonOK);
+        getRootPane().setDefaultButton(null);
 
         setupHotKey(buttonService, frameProvider);
 
