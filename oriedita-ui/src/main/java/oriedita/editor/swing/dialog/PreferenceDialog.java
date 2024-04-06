@@ -450,7 +450,7 @@ public class PreferenceDialog extends JDialog {
         searchPhrases = parseSearchPhrases();
         // Reset hotkeyCategoryMap keeping headers
         categoryHeaderList.forEach(header -> hotkeyCategoryMap.put(header, new ArrayList<>()));
-        updateList(allData); // Extract Data excluding headers
+        updateList(allData); // Update the action list in each header
         setupHotKey(buttonService, frameProvider);
         contentPane.repaint();
     }
