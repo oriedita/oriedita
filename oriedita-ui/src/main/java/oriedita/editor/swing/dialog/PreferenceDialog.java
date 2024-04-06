@@ -450,7 +450,7 @@ public class PreferenceDialog extends JDialog {
         searchPhrases = parseSearchPhrases();
         // Reset hotkeyCategoryMap keeping headers
         categoryHeaderList.forEach(header -> hotkeyCategoryMap.put(header, new ArrayList<>()));
-        extractData(allData); // Only update the list in each header
+        updateList(allData); // Extract Data excluding headers
         setupHotKey(buttonService, frameProvider);
         contentPane.repaint();
     }
@@ -584,12 +584,12 @@ public class PreferenceDialog extends JDialog {
         }
     }
 
-    private void extractHeaders(List<String[]> allData) {
+    private void loadHeaders(List<String[]> allData) {
         categoryHeaderList.addAll(Arrays.asList(allData.get(0)));
         categoryHeaderList.forEach(header -> hotkeyCategoryMap.put(header, new ArrayList<>()));
     }
 
-    private void extractData(List<String[]> allData) {
+    private void updateList(List<String[]> allData) {
         for (int i = 1; i < allData.size(); i++) {
             String[] row = allData.get(i);
             for (int j = 0; j < row.length; j++) {
@@ -626,9 +626,6 @@ public class PreferenceDialog extends JDialog {
             try (CSVReader csvReader = new CSVReaderBuilder(inputStreamReader).withCSVParser(parser).build()) {
                 allData = csvReader.readAll(); // Read all data at once
             }
-
-            extractHeaders(allData); // Extract headers
-            extractData(allData); // Extract Data excluding headers
         } catch (Exception e) {
             Logger.error(e);
         }
@@ -1365,6 +1362,8 @@ public class PreferenceDialog extends JDialog {
         hasHotkeyCB = new JCheckBox();
         allData = new ArrayList<>();
         readCSV();
+        loadHeaders(allData); // Extract headers
+        updateList(allData); // Extract Data excluding headers
 
         hotkeyPanel = new JPanel();
         hotkeyPanel.setLayout(new GridLayoutManager(hotkeyCategoryMap.size() + 1, 2, new Insets(10, 10, 0, 10), -1, -1));
