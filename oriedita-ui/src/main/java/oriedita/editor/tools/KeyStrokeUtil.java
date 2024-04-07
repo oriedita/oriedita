@@ -26,4 +26,13 @@ public class KeyStrokeUtil {
         button.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
                 .put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "none");
     }
+
+    public static String toStringWithMetaIcon(String str) {
+        String osName = System.getProperty("os.name").toLowerCase();
+        if (osName.contains("mac")) {
+            return str.replaceFirst("meta", "⌘");
+        } else {
+            return str.replaceFirst("meta", "❖");
+        }
+    }
 }

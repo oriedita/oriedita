@@ -496,7 +496,7 @@ public class PreferenceDialog extends JDialog {
 
                 // else update the action to default
                 ResourceUtil.updateBundleKey("hotkey", key, defaultKeyStrokeString.isEmpty() ? "" : defaultKeyStrokeString);
-                String ksString = KeyStrokeUtil.toString(keyStroke);
+                String ksString = KeyStrokeUtil.toStringWithMetaIcon(KeyStrokeUtil.toString(keyStroke));
                 keystrokeButton.setText(ksString.isEmpty() ? " " : ksString);
                 buttonService.setKeyStroke(keyStroke, key);
             }
@@ -535,13 +535,14 @@ public class PreferenceDialog extends JDialog {
         };
 
         JButton keyStrokeButton = new JButton(hotkeyAction);
-        String ksString = KeyStrokeUtil.toString(currentKeyStroke);
+        String ksString = KeyStrokeUtil.toStringWithMetaIcon(KeyStrokeUtil.toString(currentKeyStroke));
 
         PropertyChangeListener listener = e -> {
             if (Objects.equals(e.getPropertyName(), key)) {
                 KeyStroke ks = (KeyStroke) e.getNewValue();
+                String temp = KeyStrokeUtil.toStringWithMetaIcon(KeyStrokeUtil.toString(ks));
                 hotkeyAction.putValue(Action.NAME, ks == null ? " " : KeyStrokeUtil.toString(ks));
-                keyStrokeButton.setText(!KeyStrokeUtil.toString(ks).isEmpty() ? KeyStrokeUtil.toString(ks) : " ");
+                keyStrokeButton.setText(!temp.isEmpty() ? temp : " ");
             }
         };
 
@@ -597,7 +598,9 @@ public class PreferenceDialog extends JDialog {
                 if (!action.isEmpty()) {
                     String hotkey = ResourceUtil.getBundleString("hotkey", action);
 
-                    if ((hotkey == null || hotkey.isEmpty()) && hasHotkeyCB.isSelected()) { continue; }
+                    if ((hotkey == null || hotkey.isEmpty()) && hasHotkeyCB.isSelected()) {
+                        continue;
+                    }
 
                     String actionName = ResourceUtil.getBundleString("name", action);
                     String finalActionName = actionName.replaceAll("_", "").toLowerCase();
