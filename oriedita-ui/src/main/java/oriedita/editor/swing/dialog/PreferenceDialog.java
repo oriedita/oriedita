@@ -488,8 +488,8 @@ public class PreferenceDialog extends JDialog {
                 assert defaultKeyStrokeString != null;
                 String conflictingAction = buttonService.getActionFromKeystroke(keyStroke);
                 if (keyStroke != null
-                        && buttonService.getActionFromKeystroke(keyStroke) != null
-                        && !Objects.equals(buttonService.getActionFromKeystroke(keyStroke), key)) {
+                        && conflictingAction != null
+                        && !Objects.equals(conflictingAction, key)) {
                     JOptionPane.showMessageDialog(null, "Default has conflict with ".concat(conflictingAction), "Conflict", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
