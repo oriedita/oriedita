@@ -5,6 +5,11 @@ import java.util.Map;
 
 public enum ActionType {
     lineWidthDecreaseAction("lineWidthDecreaseAction"),
+    newAction("newAction"),
+    openAction("openAction"),
+    saveAction("saveAction"),
+    saveAsAction("saveAsAction"),
+    exitAction("exitAction"),
     IMPORT("importAction"),
     IMPORT_ADD("inputDataAction"),
     drawCreaseFreeAction("drawCreaseFreeAction"),
