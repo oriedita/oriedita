@@ -80,6 +80,7 @@ public class FoldedFigure {
         }
 
         if (estimationStep == EstimationStep.STEP_0 && order.isAtLeast(EstimationOrder.ORDER_1)) {
+            if(lineSegmentSet.getNumLineSegments() == 0){ return; }
             estimated_initialize(); // estimated_initialize
             folding_estimated_01(lineSegmentSet, startingFaceId);
             estimationStep = EstimationStep.STEP_1;
