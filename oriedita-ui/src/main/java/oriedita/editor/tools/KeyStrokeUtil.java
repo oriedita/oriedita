@@ -32,7 +32,7 @@ public class KeyStrokeUtil {
         if (osName.contains("mac")) {
             return str.replaceFirst("meta", "⌘");
         } else {
-            return str.replaceFirst("meta", "❖");
+            return str.replaceFirst("windows|WINDOWS", "❖");
         }
     }
 }
