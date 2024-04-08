@@ -438,7 +438,9 @@ public class PreferenceDialog extends JDialog {
             applicationModel.restorePrefDefaults();
             foldedFigureModel.restorePrefDefaults();
             ResourceUtil.clearBundle("hotkey");
+            buttonService.removeAllKeyBinds();
             buttonService.loadAllKeyStrokes();
+            contentPane.repaint();
         }
     }
 

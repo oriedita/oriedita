@@ -179,10 +179,12 @@ public class FileSaveServiceImpl implements FileSaveService {
     private void readImportHotkey(ZipInputStream zis, ZipEntry ze, ButtonService buttonService){
         try {
             ResourceBundle userBundle = new PropertyResourceBundle(zis);
+            String bundleName = ze.getName().split("\\.")[0];
+            ResourceUtil.clearBundle(bundleName);
+            buttonService.removeAllKeyBinds();
 
             for(String action : userBundle.keySet()){
                 String importKeyStroke = userBundle.getString(action);
-                String bundleName = ze.getName().split("\\.")[0];
                 buttonService.setKeyStroke(KeyStroke.getKeyStroke(importKeyStroke), action);
                 ResourceUtil.updateBundleKey(bundleName, action, importKeyStroke);
             }

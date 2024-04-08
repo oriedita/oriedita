@@ -144,6 +144,14 @@ public class ButtonServiceImpl implements ButtonService {
             }
         });
     }
+
+    @Override
+    public void removeAllKeyBinds() {
+        for (ActionType value : ActionType.values()) {
+           removeKeyStroke(value.action());
+        }
+    }
+
     @Override
     public void loadAllKeyStrokes() {
         for (ActionType value : ActionType.values()) {
