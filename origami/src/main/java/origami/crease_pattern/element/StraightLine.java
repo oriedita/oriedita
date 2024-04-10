@@ -46,6 +46,10 @@ public class StraightLine {
         this(y2-y1, x1-x2, y1*x2 - x1*y2);
     }
 
+    public StraightLine(Point p, double distance){
+        this(p.getX(), p.getY(), distance);
+    }
+
     //translation
     public StraightLine translate(double d) {
         return new StraightLine(a, b, c + d * Math.sqrt(a * a + b * b));
@@ -61,6 +65,14 @@ public class StraightLine {
 
     public double getC() {
         return c;
+    }
+
+    public Point getNormal(){ return new Point(a, b); }
+
+    public Point getOppositeNormal(){ return new Point(-a, -b); }
+
+    public StraightLine clone(){
+        return new StraightLine(a, b, c);
     }
 
     public double calculateDistance(Point p) {// Distance between straight line and point p

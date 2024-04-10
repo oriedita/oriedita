@@ -58,6 +58,10 @@ public class LineSegment implements Serializable, Cloneable {
         this(new Point(i1, i2), new Point(i3, i4));
     }
 
+    public LineSegment(double i1, double i2, double i3, double i4, LineColor color) {
+        this(new Point(i1, i2), new Point(i3, i4), color);
+    }
+
     public LineSegment(LineSegment s0){
         this(
                 s0.getA(), s0.getB(),

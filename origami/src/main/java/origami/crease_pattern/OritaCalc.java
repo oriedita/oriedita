@@ -833,7 +833,7 @@ public class OritaCalc {
         double ax1 = s0.determineAX();
         double ay1 = s0.determineAY();
 
-        return new LineSegment(ax1, ay1, bx1, by1);
+        return new LineSegment(ax1, ay1, bx1, by1, s0.getColor());
     }
 
     //線分abをaを中心にr倍してd度回転した線分を返す関数（元の線分は変えずに新しい線分を返す）
