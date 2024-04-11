@@ -175,24 +175,24 @@ public class MouseHandlerAxiom6 extends BaseMouseHandlerInputRestricted {
         return map3.toArray();
     }
 
-    private double dotProduct(Point p1, Point p2) {
-        return p1.getX() * p2.getX() + p1.getY() * p2.getY();
+    private double dotProduct(Point vec1, Point vec2) {
+        return vec1.getX() * vec2.getX() + vec1.getY() * vec2.getY();
     }
 
-    private Point subtract2(Point p1, Point p2){
-        return new Point(p1.getX() - p2.getX(), p1.getY() - p2.getY());
+    private Point subtract2(Point vec1, Point vec2){
+        return new Point(vec1.getX() - vec2.getX(), vec1.getY() - vec2.getY());
     }
 
-    private Point add2(Point p1, Point p2){
-        return new Point(p1.getX() + p2.getX(), p1.getY() + p2.getY());
+    private Point add2(Point vec1, Point vec2){
+        return new Point(vec1.getX() + vec2.getX(), vec1.getY() + vec2.getY());
     }
 
     private Point scale2(Point vec, double scale){
         return new Point(vec.getX() * scale, vec.getY() * scale);
     }
 
-    private Point midPoint(Point p1, Point p2){
-        return scale2(add2(p1, p2), 0.5);
+    private Point midPoint(Point vec1, Point vec2){
+        return scale2(add2(vec1, vec2), 0.5);
     }
 
     private Point normalize2(Point vec){
