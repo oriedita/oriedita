@@ -167,12 +167,11 @@ public class MouseHandlerAxiom6 extends BaseMouseHandlerInputRestricted {
         if (Math.abs(b) > Epsilon.UNKNOWN_1EN6) { polynomial_degree = 2; }
         if (Math.abs(a) > Epsilon.UNKNOWN_1EN6) { polynomial_degree = 3; }
 
-        Stream<Point> map1 = Arrays.stream(getPolynomial(polynomial_degree, a, b, c, d))
-                .mapToObj(n -> add2(scale2(s1Normal, s1.getC()), scale2(line_vec, n)));
-        Stream<Obj1> map2 = map1.map(p -> new Obj1(p, normalize2(subtract2(p, p1))));
-        Stream<StraightLine> map3 = map2.map(el -> new StraightLine(el.getNormal(), dotProduct(el.getNormal(), midPoint(el.getVector(), p1))));
+        Stream<StraightLine> map = Arrays.stream(getPolynomial(polynomial_degree, a, b, c, d))
+                .mapToObj(n -> add2(scale2(s1Normal, s1.getC()), scale2(line_vec, n)))
+                .map(p -> new StraightLine(normalize2(subtract2(p, p1)), dotProduct(normalize2(subtract2(p, p1)), midPoint(p, p1))));
 
-        return map3.toArray();
+        return map.toArray();
     }
 
     private double dotProduct(Point vec1, Point vec2) {
@@ -203,19 +202,5 @@ public class MouseHandlerAxiom6 extends BaseMouseHandlerInputRestricted {
 
     private Point rotate90(Point vec){
         return new Point(-vec.getY(), vec.getX());
-    }
-
-    private class Obj1{
-        Point vector;
-        Point normal;
-
-        public Obj1(Point vector, Point normal){
-            this.vector = new Point(vector);
-            this.normal = new Point(normal);
-        }
-
-        public Point getVector(){ return vector; }
-
-        public Point getNormal(){ return normal; }
     }
 }
