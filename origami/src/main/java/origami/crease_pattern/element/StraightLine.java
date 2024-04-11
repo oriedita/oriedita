@@ -37,6 +37,10 @@ public class StraightLine {
         this(p1.getX(), p1.getY(), p2.getX(), p2.getY());
     }
 
+    public StraightLine(Vector p1, Vector p2) {
+        this(p1.getX(), p1.getY(), p2.getX(), p2.getY());
+    }
+
     public StraightLine(LineSegment s0) {
         this(s0.determineAX(), s0.determineAY(), s0.determineBX(), s0.determineBY());
     }
@@ -46,7 +50,7 @@ public class StraightLine {
         this(y2-y1, x1-x2, y1*x2 - x1*y2);
     }
 
-    public StraightLine(Point p, double distance){
+    public StraightLine(Vector p, double distance){
         this(p.getX(), p.getY(), distance);
     }
 
