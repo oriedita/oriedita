@@ -9,6 +9,7 @@ import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.StraightLine;
+import origami.crease_pattern.element.Vector;
 
 import java.util.Arrays;
 import java.util.stream.Stream;
@@ -135,21 +136,21 @@ public class MouseHandlerAxiom6 extends BaseMouseHandlerInputRestricted {
     }
 
     private Object[] normalAxiom6(Point p1, Point p2, StraightLine s1, StraightLine s2) {
-        Point s1Normal = s1.getNormal();
-        Point s2Normal = s2.getNormal();
+        Vector p1Vec = new Vector(p1);
+        Vector p2Vec = new Vector(p2);
+        Vector s1Normal = new Vector(s1.getNormal());
+        Vector s2Normal = new Vector(s2.getNormal());
 
-        if (Math.abs(1.0 - (dotProduct(s1Normal, p1) / s1.getC())) < 0.02) {
-            return null;
-        }
+        if (Math.abs(1.0 - (dotProduct(s1Normal, p1Vec) / s1.getC())) < 0.02) { return null; }
 
-        Point line_vec = rotate90(s1Normal);
-        Point vec1 = subtract2(
-                add2(p1, scale2(s1Normal, s1.getC())),
-                scale2(p2, 2.0));
-        Point vec2 = subtract2(
+        Vector line_vec = rotate90(s1Normal);
+        Vector vec1 = subtract2(
+                add2(p1Vec, scale2(s1Normal, s1.getC())),
+                scale2(p2Vec, 2.0));
+        Vector vec2 = subtract2(
                 scale2(s1Normal, s1.getC()),
-                p1);
-        double c1 = dotProduct(p2, s2Normal) - s2.getC();
+                p1Vec);
+        double c1 = dotProduct(p2Vec, s2Normal) - s2.getC();
         double c2 = 2.0 * dotProduct(vec2, line_vec);
         double c3 = dotProduct(vec2, vec2);
         double c4 = dotProduct(add2(vec1, vec2), line_vec);
@@ -169,38 +170,38 @@ public class MouseHandlerAxiom6 extends BaseMouseHandlerInputRestricted {
 
         Stream<StraightLine> map = Arrays.stream(getPolynomial(polynomial_degree, a, b, c, d))
                 .mapToObj(n -> add2(scale2(s1Normal, s1.getC()), scale2(line_vec, n)))
-                .map(p -> new StraightLine(normalize2(subtract2(p, p1)), dotProduct(normalize2(subtract2(p, p1)), midPoint(p, p1))));
+                .map(p -> new StraightLine(normalize2(subtract2(p, p1Vec)), dotProduct(normalize2(subtract2(p, p1Vec)), midPoint(p, p1Vec))));
 
         return map.toArray();
     }
 
-    private double dotProduct(Point vec1, Point vec2) {
+    private double dotProduct(Vector vec1, Vector vec2) {
         return vec1.getX() * vec2.getX() + vec1.getY() * vec2.getY();
     }
 
-    private Point subtract2(Point vec1, Point vec2){
-        return new Point(vec1.getX() - vec2.getX(), vec1.getY() - vec2.getY());
+    private Vector subtract2(Vector vec1, Vector vec2){
+        return new Vector(vec1.getX() - vec2.getX(), vec1.getY() - vec2.getY());
     }
 
-    private Point add2(Point vec1, Point vec2){
-        return new Point(vec1.getX() + vec2.getX(), vec1.getY() + vec2.getY());
+    private Vector add2(Vector vec1, Vector vec2){
+        return new Vector(vec1.getX() + vec2.getX(), vec1.getY() + vec2.getY());
     }
 
-    private Point scale2(Point vec, double scale){
-        return new Point(vec.getX() * scale, vec.getY() * scale);
+    private Vector scale2(Vector vec, double scale){
+        return new Vector(vec.getX() * scale, vec.getY() * scale);
     }
 
-    private Point midPoint(Point vec1, Point vec2){
+    private Vector midPoint(Vector vec1, Vector vec2){
         return scale2(add2(vec1, vec2), 0.5);
     }
 
-    private Point normalize2(Point vec){
+    private Vector normalize2(Vector vec){
         double magnitude = vec.distance(new Point());
 
-        return Math.abs(magnitude) < 0.00001 ? vec : new Point(vec.getX() / magnitude, vec.getY() / magnitude);
+        return Math.abs(magnitude) < 0.00001 ? vec : new Vector(vec.getX() / magnitude, vec.getY() / magnitude);
     }
 
-    private Point rotate90(Point vec){
-        return new Point(-vec.getY(), vec.getX());
+    private Vector rotate90(Vector vec){
+        return new Vector(-vec.getY(), vec.getX());
     }
 }
