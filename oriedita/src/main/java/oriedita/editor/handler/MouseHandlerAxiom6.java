@@ -58,12 +58,10 @@ public class MouseHandlerAxiom6 extends BaseMouseHandlerInputRestricted {
                     if(tangent instanceof StraightLine){
                         StraightLine o = ((StraightLine) tangent).clone();
 
-                        LineSegment result = new LineSegment(o.getNormal(), o.getOppositeNormal(), LineColor.MAGENTA_5);
+                        Point projectPoint1 = o.findProjection(p1);
+                        Point projectPoint2 = o.findProjection(p2);
 
-                        Point projectPoint1 = OritaCalc.findProjection(result, p1);
-                        Point projectPoint2 = OritaCalc.findProjection(result, p2);
-
-                        result = result.withAB(projectPoint1, projectPoint2);
+                        LineSegment result = new LineSegment(projectPoint1, projectPoint2);
                         result = OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), result);
                         result = result.withAB(result.getB(), result.getA());
                         result = OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), result);
