@@ -8,9 +8,7 @@ public class Vector extends Point{
         super(x, y);
     }
 
-    public Vector(Point p){
-        super(p);
-    }
+    public Vector(Point p){ super(p); }
 
     public Vector(){
         super();

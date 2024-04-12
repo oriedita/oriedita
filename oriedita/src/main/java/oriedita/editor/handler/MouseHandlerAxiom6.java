@@ -61,7 +61,7 @@ public class MouseHandlerAxiom6 extends BaseMouseHandlerInputRestricted {
                         Point projectPoint1 = o.findProjection(p1);
                         Point projectPoint2 = o.findProjection(p2);
 
-                        LineSegment result = new LineSegment(projectPoint1, projectPoint2);
+                        LineSegment result = new LineSegment(projectPoint1, projectPoint2, d.getLineColor());
                         result = OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), result);
                         result = result.withAB(result.getB(), result.getA());
                         result = OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), result);
@@ -197,9 +197,13 @@ public class MouseHandlerAxiom6 extends BaseMouseHandlerInputRestricted {
     }
 
     private Vector normalize2(Vector vec){
-        double magnitude = vec.distance(new Point());
+        double magnitude = magnitude2(vec);
 
-        return Math.abs(magnitude) < 0.00001 ? vec : new Vector(vec.getX() / magnitude, vec.getY() / magnitude);
+        return Math.abs(magnitude) < 0.0001 ? vec : new Vector(vec.getX() / magnitude, vec.getY() / magnitude);
+    }
+
+    private double magnitude2(Vector vec){
+        return Math.sqrt(vec.getX() * vec.getX() + vec.getY() * vec.getY());
     }
 
     private Vector rotate90(Vector vec){
