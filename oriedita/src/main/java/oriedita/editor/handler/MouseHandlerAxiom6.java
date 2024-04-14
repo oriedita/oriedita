@@ -143,28 +143,33 @@ public class MouseHandlerAxiom6 extends BaseMouseHandlerInputRestricted {
 
         double s1Magnitude = s1.getMagnitude();
         double s2Magnitude = s2.getMagnitude();
-        StraightLine s1Normalized = new StraightLine(s1.getA() / s1Magnitude, s1.getB() / s1Magnitude, s1.getC() / s1Magnitude);
-        StraightLine s2Normalized = new StraightLine(s2.getA() / s2Magnitude, s2.getB() / s2Magnitude, s2.getC() / s2Magnitude);
+        StraightLine s1Normalized = new StraightLine(s1.getA() / s1Magnitude,
+                s1.getB() / s1Magnitude,
+                s1.getC() / s1Magnitude);
+        StraightLine s2Normalized = new StraightLine(s2.getA() / s2Magnitude,
+                s2.getB() / s2Magnitude,
+                s2.getC() / s2Magnitude);
 
         Vector s1Normal = new Vector(s1Normalized.getNormal());
         Vector s2Normal = new Vector(s2Normalized.getNormal());
 
-        if (Math.abs(1.0 - (dotProduct(s1Normal, p1Vec) / s1Normalized.getC())) < 0.02) { return null; }
+        if (Math.abs(1.0 - (Vector.dotProduct(s1Normal, p1Vec) / s1Normalized.getC())) < 0.02) { return null; }
 
-        Vector line_vec = rotate90(s1Normal);
-        Vector vec1 = subtract2(
-                add2(p1Vec, scale2(s1Normal, s1Normalized.getC())),
-                scale2(p2Vec, 2.0));
-        Vector vec2 = subtract2(
-                scale2(s1Normal, s1Normalized.getC()),
+        Vector line_vec = Vector.rotate90(s1Normal);
+        Vector vec1 = Vector.subtract(
+                Vector.add(p1Vec, Vector.scale(s1Normal, s1Normalized.getC())),
+                Vector.scale(p2Vec, 2.0));
+        Vector vec2 = Vector.subtract(
+                Vector.scale(s1Normal, s1Normalized.getC()),
                 p1Vec);
-        double c1 = dotProduct(p2Vec, s2Normal) - s2Normalized.getC();
-        double c2 = 2.0 * dotProduct(vec2, line_vec);
-        double c3 = dotProduct(vec2, vec2);
-        double c4 = dotProduct(add2(vec1, vec2), line_vec);
-        double c5 = dotProduct(vec1, vec2);
-        double c6 = dotProduct(line_vec, s2Normal);
-        double c7 = dotProduct(vec2, s2Normal);
+
+        double c1 = Vector.dotProduct(p2Vec, s2Normal) - s2Normalized.getC();
+        double c2 = Vector.dotProduct(vec2, line_vec) * 2.0;
+        double c3 = Vector.dotProduct(vec2, vec2);
+        double c4 = Vector.dotProduct(Vector.add(vec1, vec2), line_vec);
+        double c5 = Vector.dotProduct(vec1, vec2);
+        double c6 = Vector.dotProduct(line_vec, s2Normal);
+        double c7 = Vector.dotProduct(vec2, s2Normal);
 
         double a = c6;
         double b = c1 + c4 * c6 + c7;
@@ -177,43 +182,11 @@ public class MouseHandlerAxiom6 extends BaseMouseHandlerInputRestricted {
         if (Math.abs(a) > Epsilon.UNKNOWN_1EN6) { polynomial_degree = 3; }
 
         Stream<StraightLine> map = Arrays.stream(getPolynomial(polynomial_degree, a, b, c, d))
-                .mapToObj(n -> add2(scale2(s1Normal, s1Normalized.getC()), scale2(line_vec, n)))
-                .map(p -> new StraightLine(normalize2(subtract2(p, p1Vec)), dotProduct(normalize2(subtract2(p, p1Vec)), midPoint(p, p1Vec))));
+                .mapToObj(n -> Vector.add(Vector.scale(s1Normal, s1Normalized.getC()),
+                        Vector.scale(line_vec, n)))
+                .map(p -> new StraightLine(Vector.normalize(Vector.subtract(p, p1Vec)),
+                        Vector.dotProduct(Vector.normalize(Vector.subtract(p, p1Vec)), Vector.midPoint(p, p1Vec))));
 
         return map.toList();
-    }
-
-    private double dotProduct(Vector vec1, Vector vec2) {
-        return vec1.getX() * vec2.getX() + vec1.getY() * vec2.getY();
-    }
-
-    private Vector subtract2(Vector vec1, Vector vec2){
-        return new Vector(vec1.getX() - vec2.getX(), vec1.getY() - vec2.getY());
-    }
-
-    private Vector add2(Vector vec1, Vector vec2){
-        return new Vector(vec1.getX() + vec2.getX(), vec1.getY() + vec2.getY());
-    }
-
-    private Vector scale2(Vector vec, double scale){
-        return new Vector(vec.getX() * scale, vec.getY() * scale);
-    }
-
-    private Vector midPoint(Vector vec1, Vector vec2){
-        return scale2(add2(vec1, vec2), 0.5);
-    }
-
-    private Vector normalize2(Vector vec){
-        double magnitude = magnitude2(vec);
-
-        return Math.abs(magnitude) < 0.0001 ? vec : new Vector(vec.getX() / magnitude, vec.getY() / magnitude);
-    }
-
-    private double magnitude2(Vector vec){
-        return Math.sqrt(vec.getX() * vec.getX() + vec.getY() * vec.getY());
-    }
-
-    private Vector rotate90(Vector vec){
-        return new Vector(-vec.getY(), vec.getX());
     }
 }
