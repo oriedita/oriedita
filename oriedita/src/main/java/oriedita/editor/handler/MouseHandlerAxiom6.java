@@ -33,10 +33,12 @@ public class MouseHandlerAxiom6 extends BaseMouseHandlerInputRestricted {
             }
         }
 
-        LineSegment closestLineSegment = new LineSegment(d.getClosestLineSegment(p));
-        if (!(OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.getSelectionDistance())) { return; }
-        closestLineSegment.setColor(LineColor.GREEN_6);
-        d.lineStepAdd(closestLineSegment);
+        if(d.getLineStep().size() < 4){
+            LineSegment closestLineSegment = new LineSegment(d.getClosestLineSegment(p));
+            if (!(OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.getSelectionDistance())) { return; }
+            closestLineSegment.setColor(LineColor.GREEN_6);
+            d.lineStepAdd(closestLineSegment);
+        }
     }
 
     @Override
@@ -69,8 +71,8 @@ public class MouseHandlerAxiom6 extends BaseMouseHandlerInputRestricted {
                         d.lineStepAdd(result);
                     }
                 }
+                d.getLineStep().clear();
             }
-//            d.getLineStep().clear();
         }
     }
 
@@ -139,8 +141,14 @@ public class MouseHandlerAxiom6 extends BaseMouseHandlerInputRestricted {
     private Object[] normalAxiom6(Point p1, Point p2, StraightLine s1, StraightLine s2) {
         Vector p1Vec = new Vector(p1);
         Vector p2Vec = new Vector(p2);
-        Vector s1Normal = new Vector(s1.getNormal());
-        Vector s2Normal = new Vector(s2.getNormal());
+
+        double s1Magnitude = s1.getMagnitude();
+        double s2Magnitude = s2.getMagnitude();
+        StraightLine s1Normalized = new StraightLine(s1.getA() / s1Magnitude, s1.getB() / s1Magnitude, s1.getC() / s1Magnitude);
+        StraightLine s2Normalized = new StraightLine(s2.getA() / s2Magnitude, s2.getB() / s2Magnitude, s2.getC() / s2Magnitude);
+
+        Vector s1Normal = new Vector(s1Normalized.getNormal());
+        Vector s2Normal = new Vector(s2Normalized.getNormal());
 
         if (Math.abs(1.0 - (dotProduct(s1Normal, p1Vec) / s1.getC())) < 0.02) { return null; }
 

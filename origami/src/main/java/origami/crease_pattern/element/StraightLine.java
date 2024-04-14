@@ -91,6 +91,10 @@ public class StraightLine {
         return (a * x + b * y + c) * (a * x + b * y + c) / (a * a + b * b);
     }
 
+    public double getMagnitude(){
+        return Math.abs(Math.sqrt(a * a + b * b));
+    }
+
     public StraightLine orthogonalize(Point p) {
         double e;
         double x = p.getX();
