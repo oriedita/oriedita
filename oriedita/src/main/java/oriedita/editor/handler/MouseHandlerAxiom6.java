@@ -12,6 +12,7 @@ import origami.crease_pattern.element.StraightLine;
 import origami.crease_pattern.element.Vector;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Stream;
 
 @ApplicationScoped
@@ -53,23 +54,21 @@ public class MouseHandlerAxiom6 extends BaseMouseHandlerInputRestricted {
             StraightLine s2 = new StraightLine(d.getLineStep().get(3));
 
             //TODO: results not showing what I want to see
-            Object[] commonTangents = normalAxiom6(p1, p2, s1, s2);
+            List<StraightLine> commonTangents = normalAxiom6(p1, p2, s1, s2);
 
             if(commonTangents != null){
-                for(Object tangent : commonTangents){
-                    if(tangent instanceof StraightLine){
-                        StraightLine o = ((StraightLine) tangent).clone();
+                for(StraightLine tangent : commonTangents){
 
-                        Point projectPoint1 = o.findProjection(p1);
-                        Point projectPoint2 = o.findProjection(p2);
+                    Point projectPoint1 = tangent.findProjection(p1);
+                    Point projectPoint2 = tangent.findProjection(p2);
 
-                        LineSegment result = new LineSegment(projectPoint1, projectPoint2, d.getLineColor());
-                        result = OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), result);
-                        result = result.withAB(result.getB(), result.getA());
-                        result = OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), result);
+                    LineSegment result = new LineSegment(projectPoint1, projectPoint2, d.getLineColor());
+                    result = OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), result);
+                    result = result.withAB(result.getB(), result.getA());
+                    result = OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), result);
 
-                        d.lineStepAdd(result);
-                    }
+                    d.addLineSegment(result);
+
                 }
                 d.getLineStep().clear();
             }
@@ -138,7 +137,7 @@ public class MouseHandlerAxiom6 extends BaseMouseHandlerInputRestricted {
         return n < 0 ? -Math.pow(-n, 1.0 / 3.0) : Math.pow(n, 1.0 / 3.0);
     }
 
-    private Object[] normalAxiom6(Point p1, Point p2, StraightLine s1, StraightLine s2) {
+    private List<StraightLine> normalAxiom6(Point p1, Point p2, StraightLine s1, StraightLine s2) {
         Vector p1Vec = new Vector(p1);
         Vector p2Vec = new Vector(p2);
 
@@ -150,16 +149,16 @@ public class MouseHandlerAxiom6 extends BaseMouseHandlerInputRestricted {
         Vector s1Normal = new Vector(s1Normalized.getNormal());
         Vector s2Normal = new Vector(s2Normalized.getNormal());
 
-        if (Math.abs(1.0 - (dotProduct(s1Normal, p1Vec) / s1.getC())) < 0.02) { return null; }
+        if (Math.abs(1.0 - (dotProduct(s1Normal, p1Vec) / s1Normalized.getC())) < 0.02) { return null; }
 
         Vector line_vec = rotate90(s1Normal);
         Vector vec1 = subtract2(
-                add2(p1Vec, scale2(s1Normal, s1.getC())),
+                add2(p1Vec, scale2(s1Normal, s1Normalized.getC())),
                 scale2(p2Vec, 2.0));
         Vector vec2 = subtract2(
-                scale2(s1Normal, s1.getC()),
+                scale2(s1Normal, s1Normalized.getC()),
                 p1Vec);
-        double c1 = dotProduct(p2Vec, s2Normal) - s2.getC();
+        double c1 = dotProduct(p2Vec, s2Normal) - s2Normalized.getC();
         double c2 = 2.0 * dotProduct(vec2, line_vec);
         double c3 = dotProduct(vec2, vec2);
         double c4 = dotProduct(add2(vec1, vec2), line_vec);
@@ -178,10 +177,10 @@ public class MouseHandlerAxiom6 extends BaseMouseHandlerInputRestricted {
         if (Math.abs(a) > Epsilon.UNKNOWN_1EN6) { polynomial_degree = 3; }
 
         Stream<StraightLine> map = Arrays.stream(getPolynomial(polynomial_degree, a, b, c, d))
-                .mapToObj(n -> add2(scale2(s1Normal, s1.getC()), scale2(line_vec, n)))
+                .mapToObj(n -> add2(scale2(s1Normal, s1Normalized.getC()), scale2(line_vec, n)))
                 .map(p -> new StraightLine(normalize2(subtract2(p, p1Vec)), dotProduct(normalize2(subtract2(p, p1Vec)), midPoint(p, p1Vec))));
 
-        return map.toArray();
+        return map.toList();
     }
 
     private double dotProduct(Vector vec1, Vector vec2) {
