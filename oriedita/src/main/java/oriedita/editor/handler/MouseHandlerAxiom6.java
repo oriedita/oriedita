@@ -68,7 +68,7 @@ public class MouseHandlerAxiom6 extends BaseMouseHandlerInputRestricted {
                     result = OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), result);
 
                     d.addLineSegment(result);
-
+                    d.record();
                 }
                 d.getLineStep().clear();
             }
@@ -82,12 +82,12 @@ public class MouseHandlerAxiom6 extends BaseMouseHandlerInputRestricted {
             case 2:
                 double discriminant = Math.pow(c, 2.0) - (4.0 * b * d); // quadratic
                 // 0 solution
-                if (discriminant < -Epsilon.UNKNOWN_1EN6) {
+                if (discriminant < -Epsilon.AXIOM_THRESHOLD) {
                     return new double[]{};
                 }
                 // 1 solution
                 double q1 = -c / (2.0 * b);
-                if (discriminant < Epsilon.UNKNOWN_1EN6) {
+                if (discriminant < Epsilon.AXIOM_THRESHOLD) {
                     return new double[]{q1};
                 }
                 // 2 solutions
@@ -112,7 +112,7 @@ public class MouseHandlerAxiom6 extends BaseMouseHandlerInputRestricted {
                     return new double[]{u + s + t};
                 }
                 // 2 solutions
-                if (Math.abs(d0) < Epsilon.UNKNOWN_1EN6) {
+                if (Math.abs(d0) < Epsilon.AXIOM_THRESHOLD) {
                     double s = Math.pow(r, 1.0 / 3.0);
                     if (r < 0.0) {
                         return new double[]{};
@@ -177,9 +177,9 @@ public class MouseHandlerAxiom6 extends BaseMouseHandlerInputRestricted {
         double d = c1 * c3 + c5 * c7;
 
         int polynomial_degree = 0;
-        if (Math.abs(c) > Epsilon.UNKNOWN_1EN6) { polynomial_degree = 1; }
-        if (Math.abs(b) > Epsilon.UNKNOWN_1EN6) { polynomial_degree = 2; }
-        if (Math.abs(a) > Epsilon.UNKNOWN_1EN6) { polynomial_degree = 3; }
+        if (Math.abs(c) > Epsilon.AXIOM_THRESHOLD) { polynomial_degree = 1; }
+        if (Math.abs(b) > Epsilon.AXIOM_THRESHOLD) { polynomial_degree = 2; }
+        if (Math.abs(a) > Epsilon.AXIOM_THRESHOLD) { polynomial_degree = 3; }
 
         Stream<StraightLine> map = Arrays.stream(getPolynomial(polynomial_degree, a, b, c, d))
                 .mapToObj(n -> Vector.add(Vector.scale(s1Normal, s1Normalized.getC()),

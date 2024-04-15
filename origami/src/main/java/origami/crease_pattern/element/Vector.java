@@ -1,5 +1,7 @@
 package origami.crease_pattern.element;
 
+import origami.Epsilon;
+
 public class Vector extends Point{
     /* Vector subclass
         contains wrapper constructors and pretty much all Point's methods
@@ -39,7 +41,7 @@ public class Vector extends Point{
     public static Vector normalize(Vector vec){
         double magnitude = magnitude(vec);
 
-        return Math.abs(magnitude) < 0.0001 ? vec : new Vector(vec.getX() / magnitude, vec.getY() / magnitude);
+        return Math.abs(magnitude) < Epsilon.VECTOR_NORMALIZE_THRESHOLD ? vec : new Vector(vec.getX() / magnitude, vec.getY() / magnitude);
     }
 
     public static double magnitude(Vector vec){
