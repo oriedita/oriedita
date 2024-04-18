@@ -162,9 +162,7 @@ public class ButtonServiceImpl implements ButtonService {
     public void loadKeyStroke(String key) {
         String keyStrokeString = ResourceUtil.getBundleString("hotkey", key);
         KeyStroke keyStroke = KeyStroke.getKeyStroke(keyStrokeString);
-        if (keyStroke != null) {
-            setKeyStroke(keyStroke, key);
-        }
+        setKeyStroke(keyStroke, key);
     }
 
     private void registerAbstractButton(AbstractButton button, String key) {
