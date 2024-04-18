@@ -56,7 +56,7 @@ public interface MouseModeHandler {
 
     void mouseMoved(Point p0);
 
-    default void mousePressed(Point p0, MouseEvent e) {
+    default void mousePressed(Point p0, MouseEvent e, int pressedButton) {
         mousePressed(p0);
     }
 

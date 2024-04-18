@@ -11,7 +11,6 @@ import origami.Epsilon;
 import origami.crease_pattern.element.Point;
 
 import java.awt.event.MouseEvent;
-import java.util.EnumSet;
 
 @ApplicationScoped
 @Handles(MouseMode.CREASE_SELECT_19)
@@ -51,7 +50,7 @@ public class MouseHandlerCreaseSelect extends BaseMouseHandlerBoxSelect {
     }
 
     @Override
-    public void mousePressed(Point p0, MouseEvent e) {
+    public void mousePressed(Point p0, MouseEvent e, int pressedButton) {
         if (e.getClickCount() == 3 && canvasModel.isCkbox_add_frame_SelectAnd3click_isSelected()) {
             System.out.println("3_Click");//("トリプルクリック"
             tripleClick = true;
