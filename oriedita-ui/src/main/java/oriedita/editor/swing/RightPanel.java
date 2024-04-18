@@ -200,6 +200,7 @@ public class RightPanel {
         });
         regularPolygonButton.addActionListener(e -> {
             applicationModel.setNumPolygonCorners(StringOp.String2int(polygonSizeTextField.getText(), applicationModel.getNumPolygonCorners()));
+            setData(applicationModel);
         });
         c_colButton.addActionListener(e -> {
             //以下にやりたいことを書く
@@ -616,6 +617,8 @@ public class RightPanel {
         cAMVCheckBox.setSelected(data.getCheck4Enabled());
         ckOCheckBox.setSelected(data.getCkOEnabled());
         ckTCheckBox.setSelected(data.getCkTEnabled());
+
+        polygonSizeTextField.setText(Integer.toString(applicationModel.getNumPolygonCorners()));
 
         darkMode = LookAndFeelUtil.determineLafDark(data.getLaf());
 
