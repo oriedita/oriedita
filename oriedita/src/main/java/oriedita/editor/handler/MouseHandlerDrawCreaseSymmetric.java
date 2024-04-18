@@ -28,7 +28,7 @@ public class MouseHandlerDrawCreaseSymmetric extends BaseMouseHandlerInputRestri
     public void mousePressed(Point p0) {
         Point p = d.getCamera().TV2object(p0);
 
-        if (d.getLineStep().size() == 0) {    //第1段階として、点を選択
+        if (d.getLineStep().isEmpty()) {    //第1段階として、点を選択
             Point closest_point = d.getClosestPoint(p);
             if (p.distance(closest_point) < d.getSelectionDistance()) {
                 d.lineStepAdd(new LineSegment(closest_point, closest_point, LineColor.MAGENTA_5));
@@ -61,7 +61,7 @@ public class MouseHandlerDrawCreaseSymmetric extends BaseMouseHandlerInputRestri
             canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.NORMAL_0);//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
             int old_sousuu = d.getFoldLineSet().getTotal();
 
-            for (var s : d.getFoldLineSet().getLineSegmentsIterable()) {
+            for (var s : d.getFoldLineSet().getLineSegmentsCollection()) {
                 if (s.getSelected() == 2) {
                     LineSegment adds = OritaCalc.findLineSymmetryLineSegment(s, d.getLineStep().get(0));
                     adds.setColor(s.getColor());
