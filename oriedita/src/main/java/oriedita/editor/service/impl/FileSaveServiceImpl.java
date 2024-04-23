@@ -67,6 +67,7 @@ public class FileSaveServiceImpl implements FileSaveService {
     private Path autoSavePath;
     private final Iterable<FileImporter> importers;
     private final Iterable<FileExporter> exporters;
+    private final String extension = ".oriconfig";
 
     private ScheduledThreadPoolExecutor schedulePool;
     private ScheduledFuture<?> autoSaveFuture;
@@ -147,27 +148,31 @@ public class FileSaveServiceImpl implements FileSaveService {
 
     @Override
     public void importPref() {
-        Path importPath = Path.of(FileDialogUtil.openFileDialog(
+        // Grab file
+        String importPathStr = FileDialogUtil.openFileDialog(
                 frame.get(),
                 "Import...",
                 applicationModel.getDefaultDirectory(),
                 new String[]{"*.oriconfig"},
-                null));
+                null);
+        if(importPathStr == null){ return; }
+        Path importPath = Path.of(importPathStr);
         File zipFile = importPath.toFile();
-        String extension = ".oriconfig";
 
+        // Double check
         if(!zipFile.getName().endsWith(extension)){
             JOptionPane.showMessageDialog(frame.get(), String.format("The file must have %s as the extension", extension),"Wrong import file format", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
+        // Go through each file
         ZipEntry ze;
         try(ZipInputStream zis = new ZipInputStream(new FileInputStream(zipFile))){
             while ((ze = zis.getNextEntry()) != null){
                 if (ze.getName().equals("config.json")){
                     applicationModelPersistenceService.importApplicationModel(zis);
-                } else if (ze.getName().equals("hotkey.properties")){
-                    readImportHotkey(zis, ze, buttonService);
+                } else if (ze.getName().endsWith(".properties")){
+                    readPropertiesFiles(zis, ze, buttonService);
                 }
             }
         } catch (IOException e) {
@@ -176,17 +181,26 @@ public class FileSaveServiceImpl implements FileSaveService {
         }
     }
 
-    private void readImportHotkey(ZipInputStream zis, ZipEntry ze, ButtonService buttonService){
+    private void readPropertiesFiles(ZipInputStream zis, ZipEntry ze, ButtonService buttonService){
+        // TODO: figure out how to replace current .properties files
         try {
             ResourceBundle userBundle = new PropertyResourceBundle(zis);
             String bundleName = ze.getName().split("\\.")[0];
-            ResourceUtil.clearBundle(bundleName);
-            buttonService.removeAllKeyBinds();
 
-            for(String action : userBundle.keySet()){
-                String importKeyStroke = userBundle.getString(action);
-                buttonService.setKeyStroke(KeyStroke.getKeyStroke(importKeyStroke), action);
-                ResourceUtil.updateBundleKey(bundleName, action, importKeyStroke);
+            switch(bundleName){
+                case "hotkey":
+                    ResourceUtil.clearBundle(bundleName);
+                    buttonService.removeAllKeyBinds();
+
+                    for(String action : userBundle.keySet()){
+                        String importKeyStroke = userBundle.getString(action);
+                        buttonService.setKeyStroke(KeyStroke.getKeyStroke(importKeyStroke), action);
+                        ResourceUtil.updateBundleKey(bundleName, action, importKeyStroke);
+                    }
+
+                    break;
+                default:
+                    break;
             }
         } catch (IOException ignored) {
         }
@@ -194,18 +208,32 @@ public class FileSaveServiceImpl implements FileSaveService {
 
     @Override
     public void exportPref(){
-        File configDir = new File(ResourceUtil.getAppDir().toUri());
-        List<String> fileNames = new ArrayList<>();
+        // Select exporting directory + choose file name
+        String exportPathStr = FileDialogUtil.saveFileDialog(frame.get(),
+                "Export...",
+                applicationModel.getDefaultDirectory(),
+                new String[]{"*" + extension},
+                null);
+        if(exportPathStr == null){ return; }
 
-        for (File file : Objects.requireNonNull(configDir.listFiles())){
+        // Add extension if needed
+        if(!exportPathStr.endsWith(extension)){
+            exportPathStr += extension;
+        }
+        Path exportPath = Path.of(exportPathStr);
+
+        // Grab config & hotkey.properties file
+        // TODO: figure out how to grab all .properties files
+        Path configDir = ResourceUtil.getAppDir();
+        List<String> fileNames = new ArrayList<>();
+        for (File file : Objects.requireNonNull(new File(configDir.toUri()).listFiles())){
             fileNames.add(file.getName());
         }
 
-        Path exportPath = Path.of(FileDialogUtil.saveFileDialog(frame.get(), "Export...", applicationModel.getDefaultDirectory(), new String[]{"*.oriconfig"}, null));
-
+        // Write files
         try (ZipOutputStream zout = new ZipOutputStream(new FileOutputStream(exportPath.toFile()))) {
             fileNames.forEach(fileName -> {
-                Path filePath = ResourceUtil.getAppDir().resolve(fileName);
+                Path filePath = configDir.resolve(fileName);
                 try (InputStream fis = new FileInputStream(filePath.toFile())) {
                     zout.putNextEntry(new ZipEntry(fileName));
                     fis.transferTo(zout);
