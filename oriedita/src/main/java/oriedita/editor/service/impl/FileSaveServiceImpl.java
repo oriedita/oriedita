@@ -153,7 +153,7 @@ public class FileSaveServiceImpl implements FileSaveService {
                 frame.get(),
                 "Import...",
                 applicationModel.getDefaultDirectory(),
-                new String[]{"*.oriconfig"},
+                new String[]{"*" + extension},
                 null);
         if(importPathStr == null){ return; }
         Path importPath = Path.of(importPathStr);
