@@ -7,11 +7,10 @@ import oriedita.editor.databinding.FoldedFigureModel;
 import oriedita.editor.swing.CustomColorChooserPanel;
 
 import javax.swing.JColorChooser;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
+import javax.swing.JDialog;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 @ApplicationScoped
 @ActionHandler(ActionType.frontColorAction)
@@ -27,21 +26,29 @@ public class FrontColorAction extends AbstractOrieditaAction{
     @Override
     public void actionPerformed(ActionEvent e) {
         //以下にやりたいことを書く
+        Color frontColor = showCustomColorDialog(frameProvider, "F_col", foldedFigureModel.getFrontColor());
 
-//        Color frontColor = JColorChooser.showDialog(frameProvider.get(), "F_col", Color.white);
-//
-//        if (frontColor != null) {
-//            foldedFigureModel.setFrontColor(frontColor);
-//        }
+        if (frontColor != null) {
+            foldedFigureModel.setFrontColor(frontColor);
+        }
+    }
 
-        JFrame frame = new JFrame();
-        frame.setMinimumSize(new Dimension(700, 250));
-        frame.setPreferredSize(new Dimension(700, 250));
-        frame.setLocationRelativeTo(null);
+    private Color showCustomColorDialog(FrameProvider frameProvider, String title, Color initialColor){
+        JColorChooser colorChooser = new JColorChooser();
+        colorChooser.addChooserPanel(new CustomColorChooserPanel());
 
-        JPanel colorChooserPanel = new CustomColorChooserPanel(foldedFigureModel, foldedFigureModel.getFrontColor());
-        frame.add(colorChooserPanel);
+        final boolean[] isOK = new boolean[1];
 
-        frame.setVisible(true);
+        if(initialColor != null){
+            colorChooser.setColor(initialColor);
+        }
+        ActionListener okListener = e -> isOK[0] = true;
+
+        ActionListener cancelListener = e -> isOK[0] = false;
+
+        JDialog dialog = JColorChooser.createDialog(frameProvider.get(), title, true, colorChooser, okListener, cancelListener);
+        dialog.setVisible(true);
+
+        return isOK[0] ? colorChooser.getColor() : initialColor;
     }
 }
