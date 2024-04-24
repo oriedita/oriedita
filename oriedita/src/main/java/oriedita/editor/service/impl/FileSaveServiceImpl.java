@@ -182,7 +182,6 @@ public class FileSaveServiceImpl implements FileSaveService {
     }
 
     private void readPropertiesFiles(ZipInputStream zis, ZipEntry ze, ButtonService buttonService){
-        // TODO: figure out how to replace current .properties files
         try {
             ResourceBundle userBundle = new PropertyResourceBundle(zis);
             String bundleName = ze.getName().split("\\.")[0];
@@ -223,7 +222,6 @@ public class FileSaveServiceImpl implements FileSaveService {
         Path exportPath = Path.of(exportPathStr);
 
         // Grab config & hotkey.properties file
-        // TODO: figure out how to grab all .properties files
         Path configDir = ResourceUtil.getAppDir();
         List<String> fileNames = new ArrayList<>();
         for (File file : Objects.requireNonNull(new File(configDir.toUri()).listFiles())){
