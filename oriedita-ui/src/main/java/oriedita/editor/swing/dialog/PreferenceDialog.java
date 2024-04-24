@@ -145,6 +145,7 @@ public class PreferenceDialog extends JDialog {
     private JPanel display1Panel;
     private JPanel display3Panel;
     private JTextField searchBarTF;
+    private JCheckBox hasHotkeyCB;
     private int tempTransparency;
     private final ApplicationModel applicationModel;
     private final ButtonService buttonService;
@@ -220,7 +221,7 @@ public class PreferenceDialog extends JDialog {
         setData(applicationModel);
         setContentPane($$$getRootComponent$$$());
         setDefaultCloseOperation(HIDE_ON_CLOSE);
-        getRootPane().setDefaultButton(buttonOK);
+        getRootPane().setDefaultButton(null);
 
         setupHotKey(buttonService, frameProvider);
 
@@ -381,24 +382,22 @@ public class PreferenceDialog extends JDialog {
 
         searchBarTF.getDocument().addDocumentListener(new DocumentListener() {
             @Override
-            public void insertUpdate(DocumentEvent e) { update(); }
+            public void insertUpdate(DocumentEvent e) {
+                refreshHotkeyPanel(frameProvider);
+            }
 
             @Override
-            public void removeUpdate(DocumentEvent e) { update(); }
+            public void removeUpdate(DocumentEvent e) {
+                refreshHotkeyPanel(frameProvider);
+            }
 
             @Override
-            public void changedUpdate(DocumentEvent e) { update(); }
-
-            public void update() {
-                searchPhrases = parseSearchPhrases();
-                // Reset hotkeyCategoryMap keeping headers
-                categoryHeaderList.forEach(header -> hotkeyCategoryMap.put(header, new ArrayList<>()));
-                extractData(allData); // Only update the list in each header
-                setupHotKey(buttonService, frameProvider);
-
-                contentPane.repaint();
+            public void changedUpdate(DocumentEvent e) {
+                refreshHotkeyPanel(frameProvider);
             }
         });
+
+        hasHotkeyCB.addActionListener(e -> refreshHotkeyPanel(frameProvider));
 
         buttonOK.addActionListener(e -> onOK());
         buttonCancel.addActionListener(e -> onCancel());
@@ -447,6 +446,15 @@ public class PreferenceDialog extends JDialog {
         return phrase.isEmpty() ? Collections.emptyList() : Arrays.asList(phrase.split("\\s+"));
     }
 
+    private void refreshHotkeyPanel(FrameProvider frameProvider) {
+        searchPhrases = parseSearchPhrases();
+        // Reset hotkeyCategoryMap keeping headers
+        categoryHeaderList.forEach(header -> hotkeyCategoryMap.put(header, new ArrayList<>()));
+        updateList(allData); // Update the action list in each header
+        setupHotKey(buttonService, frameProvider);
+        contentPane.repaint();
+    }
+
     public void updateTempModel(ApplicationModel applicationModel) {
         tempModel.set(applicationModel);
     }
@@ -480,15 +488,15 @@ public class PreferenceDialog extends JDialog {
                 assert defaultKeyStrokeString != null;
                 String conflictingAction = buttonService.getActionFromKeystroke(keyStroke);
                 if (keyStroke != null
-                        && buttonService.getActionFromKeystroke(keyStroke) != null
-                        && !Objects.equals(buttonService.getActionFromKeystroke(keyStroke), key)) {
+                        && conflictingAction != null
+                        && !Objects.equals(conflictingAction, key)) {
                     JOptionPane.showMessageDialog(null, "Default has conflict with ".concat(conflictingAction), "Conflict", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
 
                 // else update the action to default
                 ResourceUtil.updateBundleKey("hotkey", key, defaultKeyStrokeString.isEmpty() ? "" : defaultKeyStrokeString);
-                String ksString = KeyStrokeUtil.toString(keyStroke);
+                String ksString = KeyStrokeUtil.toStringWithMetaIcon(KeyStrokeUtil.toString(keyStroke));
                 keystrokeButton.setText(ksString.isEmpty() ? " " : ksString);
                 buttonService.setKeyStroke(keyStroke, key);
             }
@@ -527,13 +535,14 @@ public class PreferenceDialog extends JDialog {
         };
 
         JButton keyStrokeButton = new JButton(hotkeyAction);
-        String ksString = KeyStrokeUtil.toString(currentKeyStroke);
+        String ksString = KeyStrokeUtil.toStringWithMetaIcon(KeyStrokeUtil.toString(currentKeyStroke));
 
         PropertyChangeListener listener = e -> {
             if (Objects.equals(e.getPropertyName(), key)) {
                 KeyStroke ks = (KeyStroke) e.getNewValue();
+                String temp = KeyStrokeUtil.toStringWithMetaIcon(KeyStrokeUtil.toString(ks));
                 hotkeyAction.putValue(Action.NAME, ks == null ? " " : KeyStrokeUtil.toString(ks));
-                keyStrokeButton.setText(!KeyStrokeUtil.toString(ks).isEmpty() ? KeyStrokeUtil.toString(ks) : " ");
+                keyStrokeButton.setText(!temp.isEmpty() ? temp : " ");
             }
         };
 
@@ -576,21 +585,27 @@ public class PreferenceDialog extends JDialog {
         }
     }
 
-    private void extractHeaders(List<String[]> allData) {
+    private void loadHeaders(List<String[]> allData) {
         categoryHeaderList.addAll(Arrays.asList(allData.get(0)));
         categoryHeaderList.forEach(header -> hotkeyCategoryMap.put(header, new ArrayList<>()));
     }
 
-    private void extractData(List<String[]> allData) {
+    private void updateList(List<String[]> allData) {
         for (int i = 1; i < allData.size(); i++) {
             String[] row = allData.get(i);
             for (int j = 0; j < row.length; j++) {
                 String action = row[j];
                 if (!action.isEmpty()) {
+                    String hotkey = ResourceUtil.getBundleString("hotkey", action);
+
+                    if ((hotkey == null || hotkey.isEmpty()) && hasHotkeyCB.isSelected()) {
+                        continue;
+                    }
+
                     String actionName = ResourceUtil.getBundleString("name", action);
                     String finalActionName = actionName.replaceAll("_", "").toLowerCase();
-                    if (searchPhrases.stream().allMatch(phrase -> finalActionName.contains(phrase.toLowerCase()))
-                            || searchPhrases.isEmpty()) {
+                    if (searchPhrases.isEmpty() ||
+                            searchPhrases.stream().allMatch(phrase -> finalActionName.contains(phrase.toLowerCase()))) {
                         hotkeyCategoryMap.get(categoryHeaderList.get(j)).add(action);
                     }
                 }
@@ -614,9 +629,6 @@ public class PreferenceDialog extends JDialog {
             try (CSVReader csvReader = new CSVReaderBuilder(inputStreamReader).withCSVParser(parser).build()) {
                 allData = csvReader.readAll(); // Read all data at once
             }
-
-            extractHeaders(allData); // Extract headers
-            extractData(allData); // Extract Data excluding headers
         } catch (Exception e) {
             Logger.error(e);
         }
@@ -1292,18 +1304,18 @@ public class PreferenceDialog extends JDialog {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         behavior2Panel.add(offsetCB, gbc);
         final JPanel panel10 = new JPanel();
-        panel10.setLayout(new GridLayoutManager(2, 1, new Insets(0, 0, 0, 0), -1, -1));
+        panel10.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
         tabbedPane1.addTab("HOTKEYS", panel10);
         final JPanel panel11 = new JPanel();
         panel11.setLayout(new GridLayoutManager(2, 1, new Insets(0, 0, 0, 0), -1, -1));
-        panel10.add(panel11, new GridConstraints(0, 0, 2, 1, GridConstraints.ANCHOR_NORTH, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        panel10.add(panel11, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_NORTH, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         scrollPane1.setAutoscrolls(false);
         scrollPane1.setVerticalScrollBarPolicy(20);
         panel11.add(scrollPane1, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_NORTH, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         scrollPane1.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
         scrollPane1.setViewportView(hotkeyPanel);
         final JPanel panel12 = new JPanel();
-        panel12.setLayout(new GridLayoutManager(1, 2, new Insets(10, 10, 0, 10), -1, -1));
+        panel12.setLayout(new GridLayoutManager(1, 3, new Insets(10, 10, 0, 10), -1, -1));
         panel11.add(panel12, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_NORTH, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         searchBarTF = new JTextField();
         searchBarTF.setMargin(new Insets(2, 6, 2, 6));
@@ -1312,6 +1324,8 @@ public class PreferenceDialog extends JDialog {
         label16.setOpaque(true);
         label16.setText("Search:");
         panel12.add(label16, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        hasHotkeyCB.setText("Has hotkey");
+        panel12.add(hasHotkeyCB, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     }
 
     /**
@@ -1348,8 +1362,11 @@ public class PreferenceDialog extends JDialog {
         hotkeyCategoryMap = new LinkedHashMap<>();
         categoryHeaderList = new ArrayList<>();
         searchPhrases = new ArrayList<>();
+        hasHotkeyCB = new JCheckBox();
         allData = new ArrayList<>();
         readCSV();
+        loadHeaders(allData); // Extract headers
+        updateList(allData); // Extract Data excluding headers
 
         hotkeyPanel = new JPanel();
         hotkeyPanel.setLayout(new GridLayoutManager(hotkeyCategoryMap.size() + 1, 2, new Insets(10, 10, 0, 10), -1, -1));
