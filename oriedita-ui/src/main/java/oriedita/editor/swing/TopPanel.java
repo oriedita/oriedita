@@ -18,6 +18,7 @@ import oriedita.editor.databinding.CameraModel;
 import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.databinding.InternalDivisionRatioModel;
 import oriedita.editor.databinding.MeasuresModel;
+import oriedita.editor.factory.RegexHighlightFactory;
 import oriedita.editor.service.AnimationService;
 import oriedita.editor.service.ButtonService;
 
@@ -135,7 +136,7 @@ public class TopPanel implements PropertyChangeListener {
 
         mouseSettingsCheckBox.addActionListener(e -> applicationModel.setMouseWheelMovesCreasePattern(mouseSettingsCheckBox.isSelected()));
 
-        ratioATextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(ratioATextField));
+        ratioATextField.getDocument().addDocumentListener(RegexHighlightFactory.onlyDoubleAdapter(ratioATextField));
         ratioATextField.addKeyListener(new InputEnterKeyAdapter(ratioATextField));
         ratioATextField.addFocusListener(new FocusAdapter() {
             @Override
@@ -143,7 +144,7 @@ public class TopPanel implements PropertyChangeListener {
                 internalDivisionRatioModel.setInternalDivisionRatioA(measuresModel.string2double(internalDivisionRatioModel.getDisplayInternalDivisionRatioA(), internalDivisionRatioModel.getInternalDivisionRatioA()));
             }
         });
-        ratioBTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(ratioBTextField));
+        ratioBTextField.getDocument().addDocumentListener(RegexHighlightFactory.onlyDoubleAdapter(ratioBTextField));
         ratioBTextField.addKeyListener(new InputEnterKeyAdapter(ratioBTextField));
         ratioBTextField.addFocusListener(new FocusAdapter() {
             @Override
@@ -151,7 +152,7 @@ public class TopPanel implements PropertyChangeListener {
                 internalDivisionRatioModel.setInternalDivisionRatioB(measuresModel.string2double(internalDivisionRatioModel.getDisplayInternalDivisionRatioB(), internalDivisionRatioModel.getInternalDivisionRatioB()));
             }
         });
-        ratioCTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(ratioCTextField));
+        ratioCTextField.getDocument().addDocumentListener(RegexHighlightFactory.onlyDoubleAdapter(ratioCTextField));
         ratioCTextField.addKeyListener(new InputEnterKeyAdapter(ratioCTextField));
         ratioCTextField.addFocusListener(new FocusAdapter() {
             @Override
@@ -159,7 +160,7 @@ public class TopPanel implements PropertyChangeListener {
                 internalDivisionRatioModel.setInternalDivisionRatioC(measuresModel.string2double(internalDivisionRatioModel.getDisplayInternalDivisionRatioC(), internalDivisionRatioModel.getInternalDivisionRatioC()));
             }
         });
-        ratioDTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(ratioDTextField));
+        ratioDTextField.getDocument().addDocumentListener(RegexHighlightFactory.onlyDoubleAdapter(ratioDTextField));
         ratioDTextField.addKeyListener(new InputEnterKeyAdapter(ratioDTextField));
         ratioDTextField.addFocusListener(new FocusAdapter() {
             @Override
@@ -167,7 +168,7 @@ public class TopPanel implements PropertyChangeListener {
                 internalDivisionRatioModel.setInternalDivisionRatioD(measuresModel.string2double(internalDivisionRatioModel.getDisplayInternalDivisionRatioD(), internalDivisionRatioModel.getInternalDivisionRatioD()));
             }
         });
-        ratioETextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(ratioETextField));
+        ratioETextField.getDocument().addDocumentListener(RegexHighlightFactory.onlyDoubleAdapter(ratioETextField));
         ratioETextField.addKeyListener(new InputEnterKeyAdapter(ratioETextField));
         ratioETextField.addFocusListener(new FocusAdapter() {
             @Override
@@ -175,7 +176,7 @@ public class TopPanel implements PropertyChangeListener {
                 internalDivisionRatioModel.setInternalDivisionRatioE(measuresModel.string2double(internalDivisionRatioModel.getDisplayInternalDivisionRatioE(), internalDivisionRatioModel.getInternalDivisionRatioE()));
             }
         });
-        ratioFTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(ratioFTextField));
+        ratioFTextField.getDocument().addDocumentListener(RegexHighlightFactory.onlyDoubleAdapter(ratioFTextField));
         ratioFTextField.addKeyListener(new InputEnterKeyAdapter(ratioFTextField));
         ratioFTextField.addFocusListener(new FocusAdapter() {
             @Override
@@ -192,7 +193,7 @@ public class TopPanel implements PropertyChangeListener {
                     AnimationDurations.ZOOM);
         });
         scaleFactorTextField.addActionListener(e -> scaleFactorSetButton.doClick());
-        scaleFactorTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(scaleFactorTextField));
+        scaleFactorTextField.getDocument().addDocumentListener(RegexHighlightFactory.onlyDoubleAdapter(scaleFactorTextField));
         scaleFactorTextField.addKeyListener(new InputEnterKeyAdapter(scaleFactorTextField));
         scaleFactorTextField.addFocusListener(new FocusAdapter() {
             @Override
@@ -206,7 +207,7 @@ public class TopPanel implements PropertyChangeListener {
         });
         rotationSetButton.addActionListener(e -> creasePatternCameraModel.setRotation(measuresModel.string2double(rotationTextField.getText(), creasePatternCameraModel.getRotation())));
         rotationTextField.addActionListener(e -> rotationSetButton.doClick());
-        rotationTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(rotationTextField));
+        rotationTextField.getDocument().addDocumentListener(RegexHighlightFactory.onlyDoubleAdapter(rotationTextField));
         rotationTextField.addKeyListener(new InputEnterKeyAdapter(rotationTextField));
         rotationTextField.addFocusListener(new FocusAdapter() {
             @Override

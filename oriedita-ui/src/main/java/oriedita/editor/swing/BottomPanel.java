@@ -12,6 +12,7 @@ import oriedita.editor.databinding.FoldedFigureModel;
 import oriedita.editor.databinding.FoldedFiguresList;
 import oriedita.editor.databinding.MeasuresModel;
 import oriedita.editor.drawing.FoldedFigure_Drawer;
+import oriedita.editor.factory.RegexHighlightFactory;
 import oriedita.editor.handler.FoldedFigureOperationMode;
 import oriedita.editor.handler.PopupMenuAdapter;
 import oriedita.editor.service.AnimationService;
@@ -138,7 +139,7 @@ public class BottomPanel {
             taskService.executeFoldingEstimateSpecificTask();
         });
         goToFoldedFigureTextField.addActionListener(e -> goToFoldedFigureButton.doClick());
-        goToFoldedFigureTextField.getDocument().addDocumentListener(new OnlyIntAdapter(goToFoldedFigureTextField));
+        goToFoldedFigureTextField.getDocument().addDocumentListener(RegexHighlightFactory.onlyIntAdapter(goToFoldedFigureTextField));
         goToFoldedFigureTextField.addKeyListener(new InputEnterKeyAdapter(goToFoldedFigureTextField));
 
         undoRedo.addUndoActionListener(e -> {
