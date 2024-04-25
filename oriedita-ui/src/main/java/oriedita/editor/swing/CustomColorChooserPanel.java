@@ -100,7 +100,7 @@ public class CustomColorChooserPanel extends AbstractColorChooserPanel {
         });
         saturationSlider.addChangeListener(e -> {
             hsv[1] = (float) saturationSlider.getValue() / 100;
-            saturationSpinner.setValue((int) (hsv[2] * 100));
+            saturationSpinner.setValue((int) (hsv[1] * 100));
 
             currentColor = Color.getHSBColor(hsv[0], hsv[1], hsv[2]);
             colorCodeTF.setText(Integer.toHexString(currentColor.getRGB() & 0x00FFFFFF));
@@ -138,7 +138,7 @@ public class CustomColorChooserPanel extends AbstractColorChooserPanel {
         });
         valueSpinner.addChangeListener(e -> {
             hsv[2] = (float) ((Integer) valueSpinner.getValue()) / 100;
-            saturationSlider.setValue((int) (hsv[2] * 100));
+            valueSlider.setValue((int) (hsv[2] * 100));
 
             currentColor = Color.getHSBColor(hsv[0], hsv[1], hsv[2]);
             colorCodeTF.setText(Integer.toHexString(currentColor.getRGB() & 0x00FFFFFF));
