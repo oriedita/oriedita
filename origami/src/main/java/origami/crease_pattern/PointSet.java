@@ -372,8 +372,10 @@ public class PointSet implements Serializable {
 
     /**
      * Calculates faces in this point set, before calling this method the pointset will not have any faces defined.
+     *
+     * @return Calculating faces can fail, due to a creasepattern not having clearly defined faces, in this case this method returns false.
      */
-    public void calculateFaces() throws InterruptedException {
+    public boolean calculateFaces() throws InterruptedException {
         Logger.info("線分集合->点集合：点集合内で面を発生　開始");
         boolean addNewFace;
         Face tempFace;
@@ -421,12 +423,16 @@ public class PointSet implements Serializable {
              * error and fix things again.
              */
             Logger.warn("Euler characteristic error");
+
+            return false;
         }
 
         Logger.info("全面数　＝　{}", numFaces);
         findLineInFaceBorder();
 
         Logger.info("線分集合->点集合：点集合内で面を発生　終了");
+
+        return true;
     }
 
     private void findLineInFaceBorder() throws InterruptedException {

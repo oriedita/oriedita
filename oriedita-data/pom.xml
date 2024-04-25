@@ -82,5 +82,10 @@
             <version>1.7.32</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.tinylog</groupId>
+            <artifactId>tinylog-impl</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 </project>

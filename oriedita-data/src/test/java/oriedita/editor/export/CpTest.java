@@ -35,10 +35,8 @@ class CpTest {
             save1.addLineSegment(new LineSegment(new Point(edge.getStart().getX(), edge.getStart().getY()), new Point(edge.getEnd().getX(), edge.getEnd().getY()), FoldImporter.getColor(edge.getAssignment())));
         }
 
-        Save save = save1;
-
         File saveFile = File.createTempFile("export", ".cp");
-        new CpExporter(JFrame::new).doExport(save, saveFile);
+        new CpExporter(JFrame::new).doExport(save1, saveFile);
 
         String expected = Files.readString(saveFile.toPath()).replace("\r","");
 
@@ -47,5 +45,31 @@ class CpTest {
         Assertions.assertEquals(expected, actual);
     }
 
+    /**
+     * A file for which faces cannot be computed should still save.
+     */
+    @Test
+    void testLoadAndSaveCpFileWithoutFaces() throws IOException {
+        URL faceless = getClass().getClassLoader().getResource("faceless.cp"); // very simple file so rounding doesnt make the test fail
+        assert faceless != null;
+        InputStream is = faceless.openStream();
+        Save save = SaveProvider.createInstance();
 
+        CreasePatternReader creasePatternReader = new CreasePatternReader(is);
+
+        FoldFile foldFile = creasePatternReader.read();
+
+        for (Edge edge : foldFile.getRootFrame().getEdges()) {
+            save.addLineSegment(new LineSegment(new Point(edge.getStart().getX(), edge.getStart().getY()), new Point(edge.getEnd().getX(), edge.getEnd().getY()), FoldImporter.getColor(edge.getAssignment())));
+        }
+
+        File saveFile = File.createTempFile("export_faceless", ".cp");
+        new CpExporter(JFrame::new).doExport(save, saveFile);
+
+        String expected = Files.readString(saveFile.toPath()).replace("\r","");
+
+        String actual = Files.readString(new File(faceless.getFile()).toPath()).replace("\r","");
+
+        Assertions.assertEquals(expected, actual);
+    }
 }
