@@ -144,7 +144,7 @@ public class App {
         try {
             ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, Objects.requireNonNull(App.class.getClassLoader().getResourceAsStream("Icons2.ttf"))));
         } catch (IOException | FontFormatException e) {
-            e.printStackTrace();
+            Logger.error(e);
         }
     }
 
@@ -221,7 +221,7 @@ public class App {
         try {
             frame.setIconImages(Ico.read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("oriedita.ico"))));
         } catch (IOException | ImageReadException | NullPointerException e) {
-            e.printStackTrace();
+            Logger.error(e);
         }
         frame.setContentPane(editor.$$$getRootComponent$$$());
         frame.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_CONTROL, KeyEvent.CTRL_DOWN_MASK),

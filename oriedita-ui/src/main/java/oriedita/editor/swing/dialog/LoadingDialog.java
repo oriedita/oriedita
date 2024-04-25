@@ -2,6 +2,7 @@ package oriedita.editor.swing.dialog;
 
 import jico.Ico;
 import jico.ImageReadException;
+import org.tinylog.Logger;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -45,7 +46,7 @@ public class LoadingDialog extends JDialog {
             setLocationRelativeTo(null);
             setVisible(true);
         } catch (ImageReadException | IOException e) {
-            e.printStackTrace();
+            Logger.error(e);
         }
     }
 }

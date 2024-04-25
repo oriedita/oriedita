@@ -1,5 +1,7 @@
 package oriedita.editor.swing.dialog;
 
+import org.tinylog.Logger;
+
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -179,7 +181,7 @@ public class ConsoleDialog extends JDialog {
             try {
                 doc.insertString(doc.getLength(), s, style);
             } catch (BadLocationException e) {
-                e.printStackTrace();
+                Logger.error(e);
             }
 
             textPane.select(doc.getLength(), doc.getLength());

@@ -85,9 +85,9 @@ public class ApplicationModelPersistenceServiceImpl implements ApplicationModelP
         } catch (IOException e) {
             // Imported application state isn't accessible
             JOptionPane.showMessageDialog(frame.get(), "<html>Failed to import application state.", "State load failed", JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
+            Logger.error(e);
         } catch (Exception e){
-            e.printStackTrace();
+            Logger.error(e);
         }
     }
 

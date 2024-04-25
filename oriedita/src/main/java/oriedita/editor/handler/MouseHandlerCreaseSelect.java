@@ -52,7 +52,7 @@ public class MouseHandlerCreaseSelect extends BaseMouseHandlerBoxSelect {
     @Override
     public void mousePressed(Point p0, MouseEvent e, int pressedButton) {
         if (e.getClickCount() == 3 && canvasModel.isCkbox_add_frame_SelectAnd3click_isSelected()) {
-            System.out.println("3_Click");//("トリプルクリック"
+            Logger.info("3_Click");//("トリプルクリック"
             tripleClick = true;
             switch (canvasModel.getSelectionOperationMode()) {
                 case MOVE_1:

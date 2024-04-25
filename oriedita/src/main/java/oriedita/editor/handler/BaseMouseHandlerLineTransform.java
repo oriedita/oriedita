@@ -1,5 +1,6 @@
 package oriedita.editor.handler;
 
+import org.tinylog.Logger;
 import oriedita.editor.databinding.AngleSystemModel;
 import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.drawing.tools.Camera;
@@ -102,7 +103,7 @@ public abstract class BaseMouseHandlerLineTransform extends BaseMouseHandlerLine
         if (image != null) {
             Point origin = camera.object2TV(new Point(0, 0));
             Point deltaTransformed = camera.object2TV(delta);
-            System.out.println(delta);
+            Logger.info(delta);
             g2.drawImage(image,
                     (int) (bottomLeft.getX() + deltaTransformed.getX() - origin.getX()),
                     (int) (bottomLeft.getY() + deltaTransformed.getY() - origin.getY()),
