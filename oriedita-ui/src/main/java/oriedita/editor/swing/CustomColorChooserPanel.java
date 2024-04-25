@@ -134,7 +134,7 @@ public class CustomColorChooserPanel extends AbstractColorChooserPanel {
                 colorCodeTF.setText(getHexString());
             }
         });
-        colorCodeTF.getDocument().addDocumentListener(RegexHighlightFactory.onlyHexColorAdapter(colorCodeTF));
+        colorCodeTF.getDocument().addDocumentListener(RegexHighlightFactory.hexColorRegexAdapter(colorCodeTF));
 
         hsvPanel.add(hueSlider, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_NORTHWEST, GridConstraints.FILL_HORIZONTAL, 1, 1, null, null, null, 0, false));
         hsvPanel.add(hueSpinner, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_NORTHWEST, GridConstraints.FILL_HORIZONTAL, 1, 1, null, null, null, 0, false));

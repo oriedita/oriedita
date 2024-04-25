@@ -40,15 +40,15 @@ public class RegexHighlightFactory {
         };
     }
 
-    public static DocumentListener onlyIntAdapter(JTextField tf){
+    public static DocumentListener intRegexAdapter(JTextField tf){
         return genericRegexAdapter(tf, "^-?\\d+(E-?\\d+)?$");
     }
 
-    public static DocumentListener onlyDoubleAdapter(JTextField tf){
+    public static DocumentListener doubleRegexAdapter(JTextField tf){
         return genericRegexAdapter(tf, "^-?\\d+(\\.\\d+)?(E-?\\d+)?$");
     }
 
-    public static DocumentListener onlyHexColorAdapter(JTextField tf){
+    public static DocumentListener hexColorRegexAdapter(JTextField tf){
         return genericRegexAdapter(tf, "^([a-fA-F0-9]){6}$");
     }
 }

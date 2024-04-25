@@ -45,7 +45,7 @@ public class FoldedFigureResize extends JPanel {
                         s -> measuresModel.string2double(foldedFigureSizeTextField.getText(), foldedFigureModel.getScale()), AnimationDurations.ZOOM)
         );
         foldedFigureSizeTextField.addActionListener(e -> foldedFigureSizeSetButton.doClick());
-        foldedFigureSizeTextField.getDocument().addDocumentListener(RegexHighlightFactory.onlyDoubleAdapter(foldedFigureSizeTextField));
+        foldedFigureSizeTextField.getDocument().addDocumentListener(RegexHighlightFactory.doubleRegexAdapter(foldedFigureSizeTextField));
         foldedFigureSizeTextField.addKeyListener(new InputEnterKeyAdapter(foldedFigureSizeTextField));
         foldedFigureSizeTextField.addFocusListener(new FocusAdapter() {
             @Override

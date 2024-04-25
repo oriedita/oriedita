@@ -316,7 +316,7 @@ public class LeftPanel {
             canvasModel.setMouseModeAfterColorSelection(MouseMode.LINE_SEGMENT_DIVISION_27);
         });
         lineSegmentDivisionTextField.addActionListener(e -> lineSegmentDivisionSetButton.doClick());
-        lineSegmentDivisionTextField.getDocument().addDocumentListener(RegexHighlightFactory.onlyIntAdapter(lineSegmentDivisionTextField));
+        lineSegmentDivisionTextField.getDocument().addDocumentListener(RegexHighlightFactory.intRegexAdapter(lineSegmentDivisionTextField));
         lineSegmentDivisionTextField.addKeyListener(new InputEnterKeyAdapter(lineSegmentDivisionTextField));
         lineSegmentDivisionTextField.addFocusListener(new FocusAdapter() {
             @Override
@@ -363,7 +363,7 @@ public class LeftPanel {
 
         gridSizeSetButton.addActionListener(e -> getData(gridModel));
         gridSizeTextField.addActionListener(e -> gridSizeSetButton.doClick());
-        gridSizeTextField.getDocument().addDocumentListener(RegexHighlightFactory.onlyIntAdapter(gridSizeTextField));
+        gridSizeTextField.getDocument().addDocumentListener(RegexHighlightFactory.intRegexAdapter(gridSizeTextField));
         gridSizeTextField.addKeyListener(new InputEnterKeyAdapter(gridSizeTextField));
         gridSizeTextField.addFocusListener(new FocusAdapter() {
             @Override
@@ -373,7 +373,7 @@ public class LeftPanel {
         });
         setIntervalGridSizeButton.addActionListener(e -> getData(gridModel));
         intervalGridSizeTextField.addActionListener(e -> setIntervalGridSizeButton.doClick());
-        intervalGridSizeTextField.getDocument().addDocumentListener(RegexHighlightFactory.onlyIntAdapter(intervalGridSizeTextField));
+        intervalGridSizeTextField.getDocument().addDocumentListener(RegexHighlightFactory.intRegexAdapter(intervalGridSizeTextField));
         intervalGridSizeTextField.addKeyListener(new InputEnterKeyAdapter(intervalGridSizeTextField));
         intervalGridSizeTextField.addFocusListener(new FocusAdapter() {
             @Override
@@ -381,7 +381,7 @@ public class LeftPanel {
                 gridModel.setIntervalGridSize(StringOp.String2int(intervalGridSizeTextField.getText(), gridModel.getIntervalGridSize()));
             }
         });
-        gridXATextField.getDocument().addDocumentListener(RegexHighlightFactory.onlyDoubleAdapter(gridXATextField));
+        gridXATextField.getDocument().addDocumentListener(RegexHighlightFactory.doubleRegexAdapter(gridXATextField));
         gridXATextField.addKeyListener(new InputEnterKeyAdapter(gridXATextField));
         gridXATextField.addFocusListener(new FocusAdapter() {
             @Override
@@ -389,7 +389,7 @@ public class LeftPanel {
                 gridModel.setGridXA(measuresModel.string2double(gridXATextField.getText(), gridModel.getGridXA()));
             }
         });
-        gridXBTextField.getDocument().addDocumentListener(RegexHighlightFactory.onlyDoubleAdapter(gridXBTextField));
+        gridXBTextField.getDocument().addDocumentListener(RegexHighlightFactory.doubleRegexAdapter(gridXBTextField));
         gridXBTextField.addKeyListener(new InputEnterKeyAdapter(gridXBTextField));
         gridXBTextField.addFocusListener(new FocusAdapter() {
             @Override
@@ -397,7 +397,7 @@ public class LeftPanel {
                 gridModel.setGridXB(measuresModel.string2double(gridXBTextField.getText(), gridModel.getGridXB()));
             }
         });
-        gridXCTextField.getDocument().addDocumentListener(RegexHighlightFactory.onlyDoubleAdapter(gridXCTextField));
+        gridXCTextField.getDocument().addDocumentListener(RegexHighlightFactory.doubleRegexAdapter(gridXCTextField));
         gridXCTextField.addKeyListener(new InputEnterKeyAdapter(gridXCTextField));
         gridXCTextField.addFocusListener(new FocusAdapter() {
             @Override
@@ -405,7 +405,7 @@ public class LeftPanel {
                 gridModel.setGridXC(measuresModel.string2double(gridXCTextField.getText(), gridModel.getGridXC()));
             }
         });
-        gridYATextField.getDocument().addDocumentListener(RegexHighlightFactory.onlyDoubleAdapter(gridYATextField));
+        gridYATextField.getDocument().addDocumentListener(RegexHighlightFactory.doubleRegexAdapter(gridYATextField));
         gridYATextField.addKeyListener(new InputEnterKeyAdapter(gridYATextField));
         gridYATextField.addFocusListener(new FocusAdapter() {
             @Override
@@ -413,7 +413,7 @@ public class LeftPanel {
                 gridModel.setGridYA(measuresModel.string2double(gridYATextField.getText(), gridModel.getGridYA()));
             }
         });
-        gridYBTextField.getDocument().addDocumentListener(RegexHighlightFactory.onlyDoubleAdapter(gridYBTextField));
+        gridYBTextField.getDocument().addDocumentListener(RegexHighlightFactory.doubleRegexAdapter(gridYBTextField));
         gridYBTextField.addKeyListener(new InputEnterKeyAdapter(gridYBTextField));
         gridYBTextField.addFocusListener(new FocusAdapter() {
             @Override
@@ -421,7 +421,7 @@ public class LeftPanel {
                 gridModel.setGridYB(measuresModel.string2double(gridYBTextField.getText(), gridModel.getGridYB()));
             }
         });
-        gridYCTextField.getDocument().addDocumentListener(RegexHighlightFactory.onlyDoubleAdapter(gridYCTextField));
+        gridYCTextField.getDocument().addDocumentListener(RegexHighlightFactory.doubleRegexAdapter(gridYCTextField));
         gridYCTextField.addKeyListener(new InputEnterKeyAdapter(gridYCTextField));
         gridYCTextField.addFocusListener(new FocusAdapter() {
             @Override
@@ -436,7 +436,7 @@ public class LeftPanel {
         });
 
         gridAngleTextField.addActionListener(e -> setGridParametersButton.doClick());
-        gridAngleTextField.getDocument().addDocumentListener(RegexHighlightFactory.onlyDoubleAdapter(gridAngleTextField));
+        gridAngleTextField.getDocument().addDocumentListener(RegexHighlightFactory.doubleRegexAdapter(gridAngleTextField));
         gridAngleTextField.addKeyListener(new InputEnterKeyAdapter(gridAngleTextField));
         gridAngleTextField.addFocusListener(new FocusAdapter() {
             @Override

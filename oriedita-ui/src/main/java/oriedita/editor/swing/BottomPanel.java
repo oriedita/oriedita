@@ -139,7 +139,7 @@ public class BottomPanel {
             taskService.executeFoldingEstimateSpecificTask();
         });
         goToFoldedFigureTextField.addActionListener(e -> goToFoldedFigureButton.doClick());
-        goToFoldedFigureTextField.getDocument().addDocumentListener(RegexHighlightFactory.onlyIntAdapter(goToFoldedFigureTextField));
+        goToFoldedFigureTextField.getDocument().addDocumentListener(RegexHighlightFactory.intRegexAdapter(goToFoldedFigureTextField));
         goToFoldedFigureTextField.addKeyListener(new InputEnterKeyAdapter(goToFoldedFigureTextField));
 
         undoRedo.addUndoActionListener(e -> {

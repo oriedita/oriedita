@@ -35,7 +35,7 @@ public class FoldedFigureRotate extends JPanel {
 
         foldedFigureRotateSetButton.addActionListener(e -> foldedFigureModel.setRotation(OritaCalc.angle_between_m180_180(measuresModel.string2double(foldedFigureRotateTextField.getText(), foldedFigureModel.getRotation()))));
         foldedFigureRotateTextField.addActionListener(e -> foldedFigureRotateSetButton.doClick());
-        foldedFigureRotateTextField.getDocument().addDocumentListener(RegexHighlightFactory.onlyDoubleAdapter(foldedFigureRotateTextField));
+        foldedFigureRotateTextField.getDocument().addDocumentListener(RegexHighlightFactory.doubleRegexAdapter(foldedFigureRotateTextField));
         foldedFigureRotateTextField.addKeyListener(new InputEnterKeyAdapter(foldedFigureRotateTextField));
         foldedFigureRotateTextField.addFocusListener(new FocusAdapter() {
             @Override
