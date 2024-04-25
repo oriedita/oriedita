@@ -41,6 +41,6 @@ public class OnlyHexColorAdapter implements DocumentListener {
     }
 
     public boolean onlyHex(JTextField tf) {
-        return Pattern.compile("^([a-fA-F0-9]){0,6}$").matcher(tf.getText()).matches();
+        return Pattern.compile("^([a-fA-F0-9]){6}$").matcher(tf.getText()).matches();
     }
 }
