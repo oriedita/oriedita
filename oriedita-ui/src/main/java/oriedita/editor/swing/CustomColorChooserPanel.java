@@ -53,7 +53,6 @@ public class CustomColorChooserPanel extends AbstractColorChooserPanel {
 
         JPanel hsvPanel = new JPanel();
         hsvPanel.setLayout(new GridLayoutManager(4, 2, new Insets(10, 10, 0, 10), -1, -1));
-        add(hsvPanel);
 
         hueSlider = new JSlider(0, 360);
         saturationSlider = new JSlider(0, 100);
@@ -168,6 +167,8 @@ public class CustomColorChooserPanel extends AbstractColorChooserPanel {
         hsvPanel.add(valueSlider, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_NORTHWEST, GridConstraints.FILL_HORIZONTAL, 1, 1, null, null, null, 0, false));
         hsvPanel.add(valueSpinner, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_NORTHWEST, GridConstraints.FILL_HORIZONTAL, 1, 1, null, null, null, 0, false));
         hsvPanel.add(colorCodeTF, new GridConstraints(3, 1, 1, 1, GridConstraints.ANCHOR_NORTHWEST, GridConstraints.FILL_HORIZONTAL, 1, 1, null, null, null, 0, false));
+
+        add(hsvPanel);
     }
 
     @Override
