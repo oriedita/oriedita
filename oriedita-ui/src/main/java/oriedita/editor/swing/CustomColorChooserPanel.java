@@ -90,8 +90,8 @@ public class CustomColorChooserPanel extends AbstractColorChooserPanel {
 
         // sliders' listeners
         hueSlider.addChangeListener(e -> {
-            hsv[0] = (float) hueSlider.getValue() / 360;
-            hueSpinner.setValue((int) (hsv[0] * 360));
+            hsv[0] = hueSlider.getValue() / 360F;
+            hueSpinner.setValue(hueSlider.getValue());
 
             currentColor = Color.getHSBColor(hsv[0], hsv[1], hsv[2]);
             colorCodeTF.setText(Integer.toHexString(currentColor.getRGB() & 0x00FFFFFF));
@@ -99,8 +99,8 @@ public class CustomColorChooserPanel extends AbstractColorChooserPanel {
             repaint();
         });
         saturationSlider.addChangeListener(e -> {
-            hsv[1] = (float) saturationSlider.getValue() / 100;
-            saturationSpinner.setValue((int) (hsv[1] * 100));
+            hsv[1] = saturationSlider.getValue() / 100F;
+            saturationSpinner.setValue(saturationSlider.getValue());
 
             currentColor = Color.getHSBColor(hsv[0], hsv[1], hsv[2]);
             colorCodeTF.setText(Integer.toHexString(currentColor.getRGB() & 0x00FFFFFF));
@@ -108,8 +108,8 @@ public class CustomColorChooserPanel extends AbstractColorChooserPanel {
             repaint();
         });
         valueSlider.addChangeListener(e -> {
-            hsv[2] = (float) valueSlider.getValue() / 100;
-            valueSpinner.setValue((int) (hsv[2] * 100));
+            hsv[2] = valueSlider.getValue() / 100F;
+            valueSpinner.setValue(valueSlider.getValue());
 
             currentColor = Color.getHSBColor(hsv[0], hsv[1], hsv[2]);
             colorCodeTF.setText(Integer.toHexString(currentColor.getRGB() & 0x00FFFFFF));
@@ -119,8 +119,8 @@ public class CustomColorChooserPanel extends AbstractColorChooserPanel {
 
         // spinners' listeners
         hueSpinner.addChangeListener(e -> {
-            hsv[0] = (float) ((Integer) hueSpinner.getValue()) / 360;
-            hueSlider.setValue((int) (hsv[0] * 360));
+            hsv[0] = ((int) hueSpinner.getValue()) / 360F;
+            hueSlider.setValue((int) hueSpinner.getValue());
 
             currentColor = Color.getHSBColor(hsv[0], hsv[1], hsv[2]);
             colorCodeTF.setText(Integer.toHexString(currentColor.getRGB() & 0x00FFFFFF));
@@ -128,8 +128,8 @@ public class CustomColorChooserPanel extends AbstractColorChooserPanel {
             repaint();
         });
         saturationSpinner.addChangeListener(e -> {
-            hsv[1] = (float) ((Integer) saturationSpinner.getValue()) / 100;
-            saturationSlider.setValue((int) (hsv[1] * 100));
+            hsv[1] = ((int) saturationSpinner.getValue()) / 100F;
+            saturationSlider.setValue((int) saturationSpinner.getValue());
 
             currentColor = Color.getHSBColor(hsv[0], hsv[1], hsv[2]);
             colorCodeTF.setText(Integer.toHexString(currentColor.getRGB() & 0x00FFFFFF));
@@ -137,8 +137,8 @@ public class CustomColorChooserPanel extends AbstractColorChooserPanel {
             repaint();
         });
         valueSpinner.addChangeListener(e -> {
-            hsv[2] = (float) ((Integer) valueSpinner.getValue()) / 100;
-            valueSlider.setValue((int) (hsv[2] * 100));
+            hsv[2] = ((int) valueSpinner.getValue()) / 100F;
+            valueSlider.setValue((int) valueSpinner.getValue());
 
             currentColor = Color.getHSBColor(hsv[0], hsv[1], hsv[2]);
             colorCodeTF.setText(Integer.toHexString(currentColor.getRGB() & 0x00FFFFFF));
@@ -238,6 +238,19 @@ public class CustomColorChooserPanel extends AbstractColorChooserPanel {
                     break;
             }
             g2d.fillRect(t.x, t.y, t.width, t.height);
+        }
+
+
+        @Override
+        protected void scrollDueToClickInTrack(int direction) {
+            int value = slider.getValue();
+
+            if (slider.getOrientation() == JSlider.HORIZONTAL) {
+                value = this.valueForXPosition(slider.getMousePosition().x);
+            } else if (slider.getOrientation() == JSlider.VERTICAL) {
+                value = this.valueForYPosition(slider.getMousePosition().y);
+            }
+            slider.setValue(value);
         }
     }
 }
