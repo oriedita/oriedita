@@ -217,11 +217,6 @@ public class CustomColorChooserPanel extends AbstractColorChooserPanel {
         public void paintFocus(Graphics g) {}
 
         @Override
-        protected void calculateThumbSize() {
-            super.calculateThumbSize();
-        }
-
-        @Override
         public void paintTrack(Graphics g) {
             Graphics2D g2d = (Graphics2D) g;
             Rectangle t = trackRect;
@@ -243,18 +238,6 @@ public class CustomColorChooserPanel extends AbstractColorChooserPanel {
                     break;
             }
             g2d.fillRect(t.x, t.y, t.width, t.height);
-        }
-
-        @Override
-        protected void scrollDueToClickInTrack(int direction) {
-            int value = slider.getValue();
-
-            if (slider.getOrientation() == JSlider.HORIZONTAL) {
-                value = this.valueForXPosition(slider.getMousePosition().x);
-            } else if (slider.getOrientation() == JSlider.VERTICAL) {
-                value = this.valueForYPosition(slider.getMousePosition().y);
-            }
-            slider.setValue(value);
         }
     }
 }
