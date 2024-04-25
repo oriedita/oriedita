@@ -31,10 +31,10 @@ public class RegexHighlightFactory {
             public void changedUpdate(DocumentEvent e) { keyPressed(); }
 
             public void keyPressed() {
-                tf.setBackground(ifMatchRegex(tf) ? UIManager.getColor("TextField.background") : Colors.get(Colors.INVALID_INPUT));
+                tf.setBackground(ifMatchRegex() ? UIManager.getColor("TextField.background") : Colors.get(Colors.INVALID_INPUT));
             }
 
-            public boolean ifMatchRegex(JTextField tf) {
+            public boolean ifMatchRegex() {
                 return Pattern.compile(regex).matcher(tf.getText()).matches();
             }
         };
