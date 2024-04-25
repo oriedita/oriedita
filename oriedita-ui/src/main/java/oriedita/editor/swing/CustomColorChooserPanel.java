@@ -29,7 +29,6 @@ public class CustomColorChooserPanel extends AbstractColorChooserPanel {
     private JSpinner hueSpinner;
     private JSpinner saturationSpinner;
     private JSpinner valueSpinner;
-    private JPanel colorPreviewPanel;
     private final float[] hsv = new float[3];
     private Color color, currentColor;
 
@@ -46,7 +45,6 @@ public class CustomColorChooserPanel extends AbstractColorChooserPanel {
         valueSpinner.setValue(valueSlider.getValue());
 
         colorCodeTF.setText(Integer.toHexString(color.getRGB() & 0x00FFFFFF));
-        colorPreviewPanel.setBackground(color);
     }
 
     @Override
@@ -65,9 +63,7 @@ public class CustomColorChooserPanel extends AbstractColorChooserPanel {
         saturationSlider.setUI(new customSliderUI(saturationSlider, 1));
         valueSlider.setUI(new customSliderUI(valueSlider, 2));
 
-        colorPreviewPanel = new JPanel();
         colorCodeTF = new JTextField(Integer.toHexString(Color.getHSBColor(hsv[0], hsv[1], hsv[2]).getRGB() & 0x00FFFFFF));
-        colorPreviewPanel.setBackground(color);
 
         getColorSelectionModel().setSelectedColor(Color.getHSBColor(hsv[0], hsv[1], hsv[2]));
 
@@ -92,68 +88,55 @@ public class CustomColorChooserPanel extends AbstractColorChooserPanel {
 
         // initialize color code & preview panel
         colorCodeTF.setText(Integer.toHexString(color.getRGB() & 0x00FFFFFF));
-        colorPreviewPanel.setBackground(color);
 
         // sliders' listeners
         hueSlider.addChangeListener(e -> {
             hsv[0] = (float) hueSlider.getValue() / 360;
-            hueSpinner.setValue(hueSlider.getValue());
 
             currentColor = Color.getHSBColor(hsv[0], hsv[1], hsv[2]);
             colorCodeTF.setText(Integer.toHexString(currentColor.getRGB() & 0x00FFFFFF));
-            colorPreviewPanel.setBackground(currentColor);
             getColorSelectionModel().setSelectedColor(currentColor);
             repaint();
         });
         saturationSlider.addChangeListener(e -> {
             hsv[1] = (float) saturationSlider.getValue() / 100;
-            saturationSpinner.setValue(saturationSlider.getValue());
 
             currentColor = Color.getHSBColor(hsv[0], hsv[1], hsv[2]);
             colorCodeTF.setText(Integer.toHexString(currentColor.getRGB() & 0x00FFFFFF));
-            colorPreviewPanel.setBackground(currentColor);
             getColorSelectionModel().setSelectedColor(currentColor);
             repaint();
         });
         valueSlider.addChangeListener(e -> {
             hsv[2] = (float) valueSlider.getValue() / 100;
-            valueSpinner.setValue(valueSlider.getValue());
 
             currentColor = Color.getHSBColor(hsv[0], hsv[1], hsv[2]);
             colorCodeTF.setText(Integer.toHexString(currentColor.getRGB() & 0x00FFFFFF));
-            colorPreviewPanel.setBackground(currentColor);
             getColorSelectionModel().setSelectedColor(currentColor);
             repaint();
         });
 
         // spinners' listeners
         hueSpinner.addChangeListener(e -> {
-            hsv[0] = (float) ((Integer) hueSpinner.getValue()) / 360F;
-            hueSlider.setValue((Integer) hueSpinner.getValue());
+            hsv[0] = (float) ((Integer) hueSpinner.getValue()) / 360;
 
             currentColor = Color.getHSBColor(hsv[0], hsv[1], hsv[2]);
             colorCodeTF.setText(Integer.toHexString(currentColor.getRGB() & 0x00FFFFFF));
-            colorPreviewPanel.setBackground(currentColor);
             getColorSelectionModel().setSelectedColor(currentColor);
             repaint();
         });
         saturationSpinner.addChangeListener(e -> {
-            hsv[1] = (float) ((Integer) saturationSpinner.getValue()) / 100F;
-            saturationSlider.setValue((Integer) saturationSpinner.getValue());
+            hsv[1] = (float) ((Integer) saturationSpinner.getValue()) / 100;
 
             currentColor = Color.getHSBColor(hsv[0], hsv[1], hsv[2]);
             colorCodeTF.setText(Integer.toHexString(currentColor.getRGB() & 0x00FFFFFF));
-            colorPreviewPanel.setBackground(currentColor);
             getColorSelectionModel().setSelectedColor(currentColor);
             repaint();
         });
         valueSpinner.addChangeListener(e -> {
-            hsv[2] = (float) ((Integer) valueSpinner.getValue()) / 100F;
-            valueSlider.setValue((Integer) valueSpinner.getValue());
+            hsv[2] = (float) ((Integer) valueSpinner.getValue()) / 100;
 
             currentColor = Color.getHSBColor(hsv[0], hsv[1], hsv[2]);
             colorCodeTF.setText(Integer.toHexString(currentColor.getRGB() & 0x00FFFFFF));
-            colorPreviewPanel.setBackground(currentColor);
             getColorSelectionModel().setSelectedColor(currentColor);
             repaint();
         });
@@ -184,7 +167,6 @@ public class CustomColorChooserPanel extends AbstractColorChooserPanel {
         hsvPanel.add(saturationSpinner, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_NORTHWEST, GridConstraints.FILL_HORIZONTAL, 1, 1, null, null, null, 0, false));
         hsvPanel.add(valueSlider, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_NORTHWEST, GridConstraints.FILL_HORIZONTAL, 1, 1, null, null, null, 0, false));
         hsvPanel.add(valueSpinner, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_NORTHWEST, GridConstraints.FILL_HORIZONTAL, 1, 1, null, null, null, 0, false));
-        hsvPanel.add(colorPreviewPanel, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_VERTICAL, 1, 1, null, null, null, 0, false));
         hsvPanel.add(colorCodeTF, new GridConstraints(3, 1, 1, 1, GridConstraints.ANCHOR_NORTHWEST, GridConstraints.FILL_HORIZONTAL, 1, 1, null, null, null, 0, false));
     }
 
