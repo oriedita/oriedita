@@ -64,7 +64,7 @@ public class CustomColorChooserPanel extends AbstractColorChooserPanel {
         valueSpinner.setValue(valueSlider.getValue());
 
         // initialize color code
-        colorCodeTF = new JTextField(Integer.toHexString(Color.getHSBColor(hsv[0], hsv[1], hsv[2]).getRGB() & 0x00FFFFFF).toUpperCase());
+        colorCodeTF = new JTextField(String.format("%06X", (Color.getHSBColor(hsv[0], hsv[1], hsv[2]).getRGB() & 0x00FFFFFF)).toUpperCase());
 
         getColorSelectionModel().setSelectedColor(Color.getHSBColor(hsv[0], hsv[1], hsv[2]));
 
@@ -72,21 +72,21 @@ public class CustomColorChooserPanel extends AbstractColorChooserPanel {
         hueSlider.addChangeListener(e -> {
             hsv[0] = hueSlider.getValue() / 360F;
             hueSpinner.setValue(hueSlider.getValue());
-            colorCodeTF.setText(Integer.toHexString(Color.getHSBColor(hsv[0], hsv[1], hsv[2]).getRGB() & 0x00FFFFFF).toUpperCase());
+            colorCodeTF.setText(String.format("%06X", (Color.getHSBColor(hsv[0], hsv[1], hsv[2]).getRGB() & 0x00FFFFFF)).toUpperCase());
             getColorSelectionModel().setSelectedColor(Color.getHSBColor(hsv[0], hsv[1], hsv[2]));
             repaint();
         });
         saturationSlider.addChangeListener(e -> {
             hsv[1] = saturationSlider.getValue() / 100F;
             saturationSpinner.setValue(saturationSlider.getValue());
-            colorCodeTF.setText(Integer.toHexString(Color.getHSBColor(hsv[0], hsv[1], hsv[2]).getRGB() & 0x00FFFFFF).toUpperCase());
+            colorCodeTF.setText(String.format("%06X", (Color.getHSBColor(hsv[0], hsv[1], hsv[2]).getRGB() & 0x00FFFFFF)).toUpperCase());
             getColorSelectionModel().setSelectedColor(Color.getHSBColor(hsv[0], hsv[1], hsv[2]));
             repaint();
         });
         valueSlider.addChangeListener(e -> {
             hsv[2] = valueSlider.getValue() / 100F;
             valueSpinner.setValue(valueSlider.getValue());
-            colorCodeTF.setText(Integer.toHexString(Color.getHSBColor(hsv[0], hsv[1], hsv[2]).getRGB() & 0x00FFFFFF).toUpperCase());
+            colorCodeTF.setText(String.format("%06X", (Color.getHSBColor(hsv[0], hsv[1], hsv[2]).getRGB() & 0x00FFFFFF)).toUpperCase());
             getColorSelectionModel().setSelectedColor(Color.getHSBColor(hsv[0], hsv[1], hsv[2]));
             repaint();
         });
@@ -95,21 +95,21 @@ public class CustomColorChooserPanel extends AbstractColorChooserPanel {
         hueSpinner.addChangeListener(e -> {
             hsv[0] = ((Integer) hueSpinner.getValue()) / 360F;
             hueSlider.setValue((Integer) hueSpinner.getValue());
-            colorCodeTF.setText(Integer.toHexString(Color.getHSBColor(hsv[0], hsv[1], hsv[2]).getRGB() & 0x00FFFFFF).toUpperCase());
+            colorCodeTF.setText(String.format("%06X", (Color.getHSBColor(hsv[0], hsv[1], hsv[2]).getRGB() & 0x00FFFFFF)).toUpperCase());
             getColorSelectionModel().setSelectedColor(Color.getHSBColor(hsv[0], hsv[1], hsv[2]));
             repaint();
         });
         saturationSpinner.addChangeListener(e -> {
             hsv[1] = ((Integer) saturationSpinner.getValue()) / 100F;
             saturationSlider.setValue((Integer) saturationSpinner.getValue());
-            colorCodeTF.setText(Integer.toHexString(Color.getHSBColor(hsv[0], hsv[1], hsv[2]).getRGB() & 0x00FFFFFF).toUpperCase());
+            colorCodeTF.setText(String.format("%06X", (Color.getHSBColor(hsv[0], hsv[1], hsv[2]).getRGB() & 0x00FFFFFF)).toUpperCase());
             getColorSelectionModel().setSelectedColor(Color.getHSBColor(hsv[0], hsv[1], hsv[2]));
             repaint();
         });
         valueSpinner.addChangeListener(e -> {
             hsv[2] = ((Integer) valueSpinner.getValue()) / 100F;
             valueSlider.setValue((Integer) valueSpinner.getValue());
-            colorCodeTF.setText(Integer.toHexString(Color.getHSBColor(hsv[0], hsv[1], hsv[2]).getRGB() & 0x00FFFFFF).toUpperCase());
+            colorCodeTF.setText(String.format("%06X", (Color.getHSBColor(hsv[0], hsv[1], hsv[2]).getRGB() & 0x00FFFFFF)).toUpperCase());
             getColorSelectionModel().setSelectedColor(Color.getHSBColor(hsv[0], hsv[1], hsv[2]));
             repaint();
         });
@@ -130,7 +130,7 @@ public class CustomColorChooserPanel extends AbstractColorChooserPanel {
 
                 getColorSelectionModel().setSelectedColor(Color.getHSBColor(hsv[0], hsv[1], hsv[2]));
             } catch (NumberFormatException ex) {
-                colorCodeTF.setText(Integer.toHexString(Color.getHSBColor(hsv[0], hsv[1], hsv[2]).getRGB() & 0x00FFFFFF).toUpperCase());
+                colorCodeTF.setText(String.format("%06X", (Color.getHSBColor(hsv[0], hsv[1], hsv[2]).getRGB() & 0x00FFFFFF)).toUpperCase());
             }
         });
         colorCodeTF.getDocument().addDocumentListener(new OnlyHexColorAdapter(colorCodeTF));
