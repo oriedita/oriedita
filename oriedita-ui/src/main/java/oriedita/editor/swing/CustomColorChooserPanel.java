@@ -2,6 +2,7 @@ package oriedita.editor.swing;
 
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
+import oriedita.editor.factory.RegexHighlightFactory;
 
 import javax.swing.Icon;
 import javax.swing.JLabel;
@@ -133,7 +134,7 @@ public class CustomColorChooserPanel extends AbstractColorChooserPanel {
                 colorCodeTF.setText(String.format("%06X", (Color.getHSBColor(hsv[0], hsv[1], hsv[2]).getRGB() & 0x00FFFFFF)).toUpperCase());
             }
         });
-        colorCodeTF.getDocument().addDocumentListener(new OnlyHexColorAdapter(colorCodeTF));
+        colorCodeTF.getDocument().addDocumentListener(RegexHighlightFactory.onlyHexColorAdapter(colorCodeTF));
 
         hsvPanel.add(hueSlider, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_NORTHWEST, GridConstraints.FILL_HORIZONTAL, 1, 1, null, null, null, 0, false));
         hsvPanel.add(hueSpinner, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_NORTHWEST, GridConstraints.FILL_HORIZONTAL, 1, 1, null, null, null, 0, false));
