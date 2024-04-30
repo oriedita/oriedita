@@ -144,6 +144,14 @@ public class ButtonServiceImpl implements ButtonService {
             }
         });
     }
+
+    @Override
+    public void removeAllKeyBinds() {
+        for (ActionType value : ActionType.values()) {
+           removeKeyStroke(value.action());
+        }
+    }
+
     @Override
     public void loadAllKeyStrokes() {
         for (ActionType value : ActionType.values()) {
@@ -154,9 +162,7 @@ public class ButtonServiceImpl implements ButtonService {
     public void loadKeyStroke(String key) {
         String keyStrokeString = ResourceUtil.getBundleString("hotkey", key);
         KeyStroke keyStroke = KeyStroke.getKeyStroke(keyStrokeString);
-        if (keyStroke != null) {
-            setKeyStroke(keyStroke, key);
-        }
+        setKeyStroke(keyStroke, key);
     }
 
     private void registerAbstractButton(AbstractButton button, String key) {
