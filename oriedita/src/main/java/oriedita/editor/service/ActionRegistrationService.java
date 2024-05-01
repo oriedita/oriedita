@@ -348,7 +348,7 @@ public class ActionRegistrationService {
         actionService.registerAction(ActionType.h_undoAction, new LambdaAction(mainCreasePatternWorker::auxUndo));
         actionService.registerAction(ActionType.h_redoAction, new LambdaAction(mainCreasePatternWorker::auxRedo));
         actionService.registerAction(ActionType.h_senbun_nyuryokuAction, actionFactory.setMouseModeLineTypeDeleteAction(MouseMode.DRAW_CREASE_FREE_1, FoldLineAdditionalInputMode.AUX_LINE_1));
-        actionService.registerAction(ActionType.h_senbun_sakujyoButton, actionFactory.setMouseModeLineTypeDeleteAction(MouseMode.LINE_SEGMENT_DELETE_3, FoldLineAdditionalInputMode.AUX_LINE_1));
+        actionService.registerAction(ActionType.h_senbun_sakujyoAction, actionFactory.setMouseModeLineTypeDeleteAction(MouseMode.LINE_SEGMENT_DELETE_3, FoldLineAdditionalInputMode.AUX_LINE_1));
 
         // |---------------------------------------------------------------------------|
         // --- Bottom Panel ---
