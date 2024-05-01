@@ -6,7 +6,7 @@ import jakarta.inject.Inject;
 import oriedita.editor.Colors;
 import oriedita.editor.FrameProvider;
 import oriedita.editor.databinding.FoldedFigureModel;
-import oriedita.editor.swing.CustomColorChooserPanel;
+import oriedita.editor.swing.CustomHSVPanel;
 
 import javax.swing.JColorChooser;
 import javax.swing.JDialog;
@@ -39,7 +39,7 @@ public class BackColorAction extends AbstractOrieditaAction {
 
     private Color showCustomColorDialog(FrameProvider frameProvider, String title, Color initialColor){
         JColorChooser colorChooser = new JColorChooser();
-        colorChooser.addChooserPanel(new CustomColorChooserPanel());
+        colorChooser.addChooserPanel(new CustomHSVPanel());
 
         final boolean[] isOK = new boolean[1];
 

@@ -22,7 +22,7 @@ import java.awt.LinearGradientPaint;
 import java.awt.Rectangle;
 import java.awt.geom.Point2D;
 
-public class CustomColorChooserPanel extends AbstractColorChooserPanel {
+public class CustomHSVPanel extends AbstractColorChooserPanel {
     private JSlider hueSlider;
     private JSlider saturationSlider;
     private JSlider valueSlider;
