@@ -394,7 +394,12 @@ public class PointSet implements Serializable {
                 }
             }
             if (addNewFace && tempFace.getNumPoints() != 0 && calculateArea(tempFace) > 0.0) {
-                addFace(tempFace, map);
+                try {
+                    addFace(tempFace, map);
+                } catch (Exception e) {
+                    Logger.error("ERROR: cannot add face.");
+                    return false;
+                }
             }
 
             tempFace = Face_request(lines[i].getEnd(), lines[i].getBegin());
