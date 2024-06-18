@@ -4,11 +4,10 @@ import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import oriedita.editor.databinding.FoldedFigureModel;
 import oriedita.editor.databinding.MeasuresModel;
+import oriedita.editor.factory.RegexHighlightFactory;
 import oriedita.editor.service.ButtonService;
 import oriedita.editor.swing.InputEnterKeyAdapter;
-import oriedita.editor.swing.OnlyDoubleAdapter;
 import origami.crease_pattern.OritaCalc;
-import origami.folding.FoldedFigure;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -45,7 +44,7 @@ public class FoldedFigureRotate extends JPanel {
 
         foldedFigureRotateSetButton.addActionListener(e -> foldedFigureModel.setRotation(OritaCalc.angle_between_m180_180(measuresModel.string2double(foldedFigureRotateTextField.getText(), foldedFigureModel.getRotation()))));
         foldedFigureRotateTextField.addActionListener(e -> foldedFigureRotateSetButton.doClick());
-        foldedFigureRotateTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(foldedFigureRotateTextField));
+        foldedFigureRotateTextField.getDocument().addDocumentListener(RegexHighlightFactory.doubleRegexAdapter(foldedFigureRotateTextField));
         foldedFigureRotateTextField.addKeyListener(new InputEnterKeyAdapter(foldedFigureRotateTextField));
         foldedFigureRotateTextField.addFocusListener(new FocusAdapter() {
             @Override
