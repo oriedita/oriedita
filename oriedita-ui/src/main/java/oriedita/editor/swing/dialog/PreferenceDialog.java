@@ -177,7 +177,6 @@ public class PreferenceDialog extends JDialog {
         mousewheelMovesCPCB.setSelected(applicationModel.getMouseWheelMovesCreasePattern());
         selfIntersectionCB.setSelected(applicationModel.getDisplaySelfIntersection());
         antiAliasCB.setSelected(applicationModel.getAntiAlias());
-        foldAntiAliasCheckBox.setSelected(foldedFigureModel.getAntiAlias());
         displayNumbersCB.setSelected(applicationModel.getDisplayNumbers());
         ck4TF.setText(Integer.toString((applicationModel.getCheck4ColorTransparency() / 5) * 2));
         lineWidthTF.setText(Integer.toString(applicationModel.getLineWidth()));
@@ -197,6 +196,18 @@ public class PreferenceDialog extends JDialog {
         mouseRangeSlider.setValue((int) applicationModel.getMouseRadius());
         roundedEndsCheckbox.setSelected(applicationModel.getRoundedEnds());
         gridDensitySlider.setValue((int) (gridDensitySlider.getMaximum() - applicationModel.getMinGridUnitSize() + 0.6));
+
+        ck4Plus.setEnabled(applicationModel.getCheck4ColorTransparency() < 250);
+        ck4Minus.setEnabled(applicationModel.getCheck4ColorTransparency() > 50);
+        lineWidthMinus.setEnabled(applicationModel.getLineWidth() > 0);
+        auxLineMinus.setEnabled(applicationModel.getAuxLineWidth() > 0);
+        pointSizeMinus.setEnabled(applicationModel.getPointSize() > 0);
+        gridWidthMinus.setEnabled(applicationModel.getGridLineWidth() > 1);
+        animationSpeedSlider.setEnabled(applicationModel.getAnimations());
+    }
+
+    public void setData(FoldedFigureModel foldedFigureModel) {
+        foldAntiAliasCheckBox.setSelected(foldedFigureModel.getAntiAlias());
     }
 
     public PreferenceDialog(
@@ -213,25 +224,22 @@ public class PreferenceDialog extends JDialog {
         this.applicationModel = appModel;
         this.buttonService = buttonService;
         this.tempModel = new ApplicationModel();
-        $$$setupUI$$$();
         this.tempModel.set(appModel);
         this.foldedFigureModel = foldedFigureModel;
         this.tempfoldedModel = new FoldedFigureModel();
         this.tempfoldedModel.set(foldedFigureModel);
+
+        $$$setupUI$$$();
         setData(applicationModel);
+        setData(foldedFigureModel);
         setContentPane($$$getRootComponent$$$());
-        setDefaultCloseOperation(HIDE_ON_CLOSE);
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         getRootPane().setDefaultButton(null);
 
         setupHotKey(buttonService, frameProvider);
 
-        ck4Plus.setEnabled(applicationModel.getCheck4ColorTransparency() < 250);
-        ck4Minus.setEnabled(applicationModel.getCheck4ColorTransparency() > 50);
-        lineWidthMinus.setEnabled(applicationModel.getLineWidth() > 0);
-        auxLineMinus.setEnabled(applicationModel.getAuxLineWidth() > 0);
-        pointSizeMinus.setEnabled(applicationModel.getPointSize() > 0);
-        gridWidthMinus.setEnabled(applicationModel.getGridLineWidth() > 1);
-        animationSpeedSlider.setEnabled(applicationModel.getAnimations());
+        applicationModel.addPropertyChangeListener(e -> setData(applicationModel));
+        foldedFigureModel.addPropertyChangeListener(e -> setData(foldedFigureModel));
 
         spotlightCB.addActionListener(e -> applicationModel.setDisplayPointSpotlight(spotlightCB.isSelected()));
         offsetCB.addActionListener(e -> applicationModel.setDisplayPointOffset(offsetCB.isSelected()));
@@ -347,19 +355,19 @@ public class PreferenceDialog extends JDialog {
             }
         });
         gridColorButton.addActionListener(e -> {
-            Color gridColor = JColorChooser.showDialog(frameProvider.get(), "F_col", Color.white);
+            Color gridColor = JColorChooser.showDialog(frameProvider.get(), "F_col", FlatLaf.isLafDark() ? Colors.GRID_LINE_DARK : Colors.GRID_LINE);
 
             if (gridColor != null) {
                 applicationModel.setGridColor(gridColor);
-                gridColorButton.setIcon(new ColorIcon(applicationModel.getGridColor()));
+                gridColorButton.setIcon(new ColorIcon(gridColor));
             }
         });
         gridScaleColorButton.addActionListener(e -> {
-            Color gridScaleColor = JColorChooser.showDialog(frameProvider.get(), "F_col", Color.white);
+            Color gridScaleColor = JColorChooser.showDialog(frameProvider.get(), "F_col", FlatLaf.isLafDark() ? Colors.GRID_SCALE_DARK : Colors.GRID_SCALE);
 
             if (gridScaleColor != null) {
                 applicationModel.setGridScaleColor(gridScaleColor);
-                gridScaleColorButton.setIcon(new ColorIcon(applicationModel.getGridScaleColor()));
+                gridScaleColorButton.setIcon(new ColorIcon(gridScaleColor));
             }
         });
         animationSpeedSlider.addChangeListener(e -> applicationModel.setAnimationSpeed(animationSpeedSlider.getValue() / 8.0));
@@ -382,19 +390,13 @@ public class PreferenceDialog extends JDialog {
 
         searchBarTF.getDocument().addDocumentListener(new DocumentListener() {
             @Override
-            public void insertUpdate(DocumentEvent e) {
-                refreshHotkeyPanel(frameProvider);
-            }
+            public void insertUpdate(DocumentEvent e) { refreshHotkeyPanel(frameProvider); }
 
             @Override
-            public void removeUpdate(DocumentEvent e) {
-                refreshHotkeyPanel(frameProvider);
-            }
+            public void removeUpdate(DocumentEvent e) { refreshHotkeyPanel(frameProvider); }
 
             @Override
-            public void changedUpdate(DocumentEvent e) {
-                refreshHotkeyPanel(frameProvider);
-            }
+            public void changedUpdate(DocumentEvent e) { refreshHotkeyPanel(frameProvider); }
         });
 
         hasHotkeyCB.addActionListener(e -> refreshHotkeyPanel(frameProvider));
@@ -405,6 +407,7 @@ public class PreferenceDialog extends JDialog {
         importButton.addActionListener(e -> {
             fileSaveService.importPref();
             setData(applicationModel);
+            setData(foldedFigureModel);
             setupHotKey(buttonService, frameProvider);
         });
         exportButton.addActionListener(e -> fileSaveService.exportPref());
@@ -420,9 +423,7 @@ public class PreferenceDialog extends JDialog {
         contentPane.registerKeyboardAction(e -> onCancel(), KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
     }
 
-    private void onOK() {
-        setVisible(false);
-    }
+    private void onOK() { dispose(); }
 
     private void onCancel() {
         setData(tempModel);
@@ -517,10 +518,7 @@ public class PreferenceDialog extends JDialog {
         label.setFocusable(false);
         label.setIconTextGap(4);
         String actionText = ResourceUtil.getBundleString("name", key);
-        if (actionText != null) {
-            actionText = actionText.replaceAll("_", "");
-        }
-        label.setText(actionText);
+        label.setText(actionText != null ? actionText.replaceAll("_", "") : "Invalid name: " + key);
 
         return label;
     }
@@ -594,22 +592,22 @@ public class PreferenceDialog extends JDialog {
 
     private void updateList(List<String[]> allData) {
         for (int i = 1; i < allData.size(); i++) {
-            String[] row = allData.get(i);
-            for (int j = 0; j < row.length; j++) {
-                String action = row[j];
-                if (!action.isEmpty()) {
-                    String hotkey = ResourceUtil.getBundleString("hotkey", action);
+            List<String> actions = List.of(allData.get(i));
+            for (String action : actions) {
+                if (action.isEmpty()) continue;
 
-                    if ((hotkey == null || hotkey.isEmpty()) && hasHotkeyCB.isSelected()) {
-                        continue;
-                    }
+                String hotkey = ResourceUtil.getBundleString("hotkey", action);
+                if ((hotkey == null || hotkey.isEmpty()) && hasHotkeyCB.isSelected()) {
+                    continue;
+                }
 
-                    String actionName = ResourceUtil.getBundleString("name", action);
-                    String finalActionName = actionName.replaceAll("_", "").toLowerCase();
-                    if (searchPhrases.isEmpty() ||
-                            searchPhrases.stream().allMatch(phrase -> finalActionName.contains(phrase.toLowerCase()))) {
-                        hotkeyCategoryMap.get(categoryHeaderList.get(j)).add(action);
-                    }
+                String actionName = ResourceUtil.getBundleString("name", action);
+                if (actionName == null) continue;
+
+                String finalActionName = actionName.replaceAll("_", "").toLowerCase();
+                if (searchPhrases.isEmpty() ||
+                        searchPhrases.stream().allMatch(phrase -> finalActionName.contains(phrase.toLowerCase()))) {
+                    hotkeyCategoryMap.get(categoryHeaderList.get(actions.indexOf(action))).add(action);
                 }
             }
         }

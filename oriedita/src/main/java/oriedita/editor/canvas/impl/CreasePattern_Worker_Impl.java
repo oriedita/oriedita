@@ -108,7 +108,6 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     private boolean check4 = false;//=0 check4を実施しない、1=実施する　
     private boolean isSelectionEmpty;
     //---------------------------------
-    private int check4ColorTransparency = 100;
     // ****************************************************************************************************************************************
     // **************　Variable definition so far　****************************************************************************************************
     // ****************************************************************************************************************************************
@@ -1004,20 +1003,12 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
 
     @Override
     public void lightenCheck4Color() {
-        check4ColorTransparency = check4ColorTransparency - check4ColorTransparencyIncrement;
-        if (check4ColorTransparency < 50) {
-            check4ColorTransparency = check4ColorTransparency + check4ColorTransparencyIncrement;
-        }
-        applicationModel.setCheck4ColorTransparency(check4ColorTransparency);
+        applicationModel.setCheck4ColorTransparency(Math.max(50, applicationModel.getCheck4ColorTransparency() - check4ColorTransparencyIncrement));
     }
 
     @Override
     public void darkenCheck4Color() {
-        check4ColorTransparency = check4ColorTransparency + check4ColorTransparencyIncrement;
-        if (check4ColorTransparency > 250) {
-            check4ColorTransparency = check4ColorTransparency - check4ColorTransparencyIncrement;
-        }
-        applicationModel.setCheck4ColorTransparency(check4ColorTransparency);
+        applicationModel.setCheck4ColorTransparency(Math.min(250, applicationModel.getCheck4ColorTransparency() + check4ColorTransparencyIncrement));
     }
 
     @Override

@@ -172,7 +172,7 @@ public enum ActionType {
     h_senhaba_sageAction("h_senhaba_sageAction"),
     h_senhaba_ageAction("h_senhaba_ageAction"),
     h_senbun_nyuryokuAction("h_senbun_nyuryokuAction"),
-    h_senbun_sakujyoButton("h_senbun_sakujyoButton"),
+    h_senbun_sakujyoAction("h_senbun_sakujyoAction"),
     h_undoAction("h_undoAction"),
     h_redoAction("h_redoAction"),
     l1Action("l1Action"),
