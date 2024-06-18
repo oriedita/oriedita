@@ -28,29 +28,10 @@ public class FrontColorAction extends AbstractOrieditaAction{
     @Override
     public void actionPerformed(ActionEvent e) {
         //以下にやりたいことを書く
-        Color frontColor = showCustomColorDialog(frameProvider, "F_col", FlatLaf.isLafDark() ? Colors.FIGURE_FRONT_DARK : Colors.FIGURE_FRONT);
+        Color frontColor = CustomHSVPanel.showCustomColorDialog(frameProvider, "F_col", FlatLaf.isLafDark() ? Colors.FIGURE_FRONT_DARK : Colors.FIGURE_FRONT);
 
         if (frontColor != null) {
             foldedFigureModel.setFrontColor(frontColor);
         }
-    }
-
-    private Color showCustomColorDialog(FrameProvider frameProvider, String title, Color initialColor){
-        JColorChooser colorChooser = new JColorChooser();
-        colorChooser.addChooserPanel(new CustomHSVPanel());
-
-        final boolean[] isOK = new boolean[1];
-
-        if(initialColor != null){
-            colorChooser.setColor(initialColor);
-        }
-        ActionListener okListener = e -> isOK[0] = true;
-
-        ActionListener cancelListener = e -> isOK[0] = false;
-
-        JDialog dialog = JColorChooser.createDialog(frameProvider.get(), title, true, colorChooser, okListener, cancelListener);
-        dialog.setVisible(true);
-
-        return isOK[0] ? colorChooser.getColor() : initialColor;
     }
 }

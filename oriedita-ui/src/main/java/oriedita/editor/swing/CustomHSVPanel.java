@@ -2,9 +2,12 @@ package oriedita.editor.swing;
 
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
+import oriedita.editor.FrameProvider;
 import oriedita.editor.factory.RegexHighlightFactory;
 
 import javax.swing.Icon;
+import javax.swing.JColorChooser;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
@@ -20,6 +23,7 @@ import java.awt.Graphics2D;
 import java.awt.Insets;
 import java.awt.LinearGradientPaint;
 import java.awt.Rectangle;
+import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
 
 public class CustomHSVPanel extends AbstractColorChooserPanel {
@@ -31,6 +35,25 @@ public class CustomHSVPanel extends AbstractColorChooserPanel {
     private JSpinner saturationSpinner;
     private JSpinner valueSpinner;
     private final float[] hsv = new float[3];
+
+    public static Color showCustomColorDialog(FrameProvider frameProvider, String title, Color initialColor){
+        JColorChooser colorChooser = new JColorChooser();
+        colorChooser.addChooserPanel(new CustomHSVPanel());
+
+        final boolean[] isOK = new boolean[1];
+
+        if(initialColor != null){
+            colorChooser.setColor(initialColor);
+        }
+        ActionListener okListener = e -> isOK[0] = true;
+
+        ActionListener cancelListener = e -> isOK[0] = false;
+
+        JDialog dialog = JColorChooser.createDialog(frameProvider.get(), title, true, colorChooser, okListener, cancelListener);
+        dialog.setVisible(true);
+
+        return isOK[0] ? colorChooser.getColor() : initialColor;
+    }
 
     @Override
     public void updateChooser() {

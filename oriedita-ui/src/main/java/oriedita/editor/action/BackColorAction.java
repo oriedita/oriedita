@@ -30,29 +30,10 @@ public class BackColorAction extends AbstractOrieditaAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         //以下にやりたいことを書く
-        Color backColor = showCustomColorDialog(frameProvider, "B_col", FlatLaf.isLafDark() ? Colors.FIGURE_BACK_DARK : Colors.FIGURE_BACK);
+        Color backColor = CustomHSVPanel.showCustomColorDialog(frameProvider, "B_col", FlatLaf.isLafDark() ? Colors.FIGURE_BACK_DARK : Colors.FIGURE_BACK);
 
         if (backColor != null) {
             foldedFigureModel.setBackColor(backColor);
         }
-    }
-
-    private Color showCustomColorDialog(FrameProvider frameProvider, String title, Color initialColor){
-        JColorChooser colorChooser = new JColorChooser();
-        colorChooser.addChooserPanel(new CustomHSVPanel());
-
-        final boolean[] isOK = new boolean[1];
-
-        if(initialColor != null){
-            colorChooser.setColor(initialColor);
-        }
-        ActionListener okListener = e -> isOK[0] = true;
-
-        ActionListener cancelListener = e -> isOK[0] = false;
-
-        JDialog dialog = JColorChooser.createDialog(frameProvider.get(), title, true, colorChooser, okListener, cancelListener);
-        dialog.setVisible(true);
-
-        return isOK[0] ? colorChooser.getColor() : initialColor;
     }
 }
