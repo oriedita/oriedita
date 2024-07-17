@@ -34,4 +34,6 @@ public interface FileSaveService {
     boolean readBackgroundImageFromFile();
 
     void initAutoSave();
+
+    void openFileInFE();
 }

@@ -89,6 +89,7 @@ public class AppMenuBar {
     private JMenuItem openButton;
     private JMenuItem saveButton;
     private JMenuItem saveAsButton;
+    private JMenuItem revealInFEButton;
     private JMenuItem exportButton;
     private JMenuItem prefButton;
     private JMenuItem exitButton;
@@ -185,6 +186,7 @@ public class AppMenuBar {
         buttonService.registerButton(openRecentMenu, "openRecentAction");
         buttonService.registerButton(saveButton, "saveAction");
         buttonService.registerButton(saveAsButton, "saveAsAction");
+        buttonService.registerButton(revealInFEButton, "revealInFEAction");
         buttonService.registerButton(exportButton, "exportAction");
         buttonService.registerButton(prefButton, "prefAction");
         buttonService.registerButton(exitButton, "exitAction");
@@ -243,12 +245,18 @@ public class AppMenuBar {
 
             mainCreasePatternWorker.record();
             mainCreasePatternWorker.auxRecord();
+
+            revealInFEButton.setEnabled(false);
         });
-        openButton.addActionListener(e -> fileSaveService.openFile());
+        openButton.addActionListener(e -> {
+            fileSaveService.openFile();
+            if(fileModel.getSavedFileName() != null) revealInFEButton.setEnabled(true);
+        });
         clearRecentFileMenuItem.addActionListener(e -> applicationModel.setRecentFileList(new ArrayList<>()));
 
         saveButton.addActionListener(e -> fileSaveService.saveFile());
         saveAsButton.addActionListener(e -> fileSaveService.saveAsFile());
+        revealInFEButton.addActionListener(e -> fileSaveService.openFileInFE());
         exportButton.addActionListener(e -> {
             if (canvasModel.getMouseMode() != MouseMode.OPERATION_FRAME_CREATE_61) {
                 mainCreasePatternWorker.resetLineStep(0);
@@ -423,6 +431,10 @@ public class AppMenuBar {
         saveAsButton = new JMenuItem("Save as...");
         fileMenu.add(saveAsButton);
 
+        revealInFEButton = new JMenuItem("Reveal in File Explorer");
+        revealInFEButton.setEnabled(false);
+        fileMenu.add(revealInFEButton);
+
         fileMenu.addSeparator();
 
         exportButton = new JMenuItem("Export");
@@ -593,6 +605,7 @@ public class AppMenuBar {
                     fileSaveService.openFile(recentFile);
                     // Move this file to the top of the recent file list.
                     applicationModel.addRecentFile(recentFile);
+                    revealInFEButton.setEnabled(true);
                 } catch (FileReadingException ex) {
                     ex.printStackTrace();
                     JOptionPane.showMessageDialog(frameProvider.get(), "An error occurred when reading this file", "Read Error", JOptionPane.ERROR_MESSAGE);

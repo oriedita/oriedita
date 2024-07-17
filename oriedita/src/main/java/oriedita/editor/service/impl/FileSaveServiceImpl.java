@@ -28,6 +28,7 @@ import oriedita.editor.export.api.FileImporter;
 
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
+import java.awt.Desktop;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.io.File;
@@ -517,6 +518,34 @@ public class FileSaveServiceImpl implements FileSaveService {
         autoSavePath.toFile().mkdirs();
 
         updateAutoSave(applicationModel.getAutoSaveInterval());
+    }
+
+    @Override
+    public void openFileInFE() {
+        File currentFile = new File(fileModel.getSavedFileName());
+        String os = System.getProperty("os.name").toLowerCase();
+
+        try {
+            if (!Desktop.isDesktopSupported()) {
+                throw new UnsupportedOperationException("Desktop is not supported");
+            }
+
+            if (os.contains("win")) {
+                // Windows
+//                    Runtime.getRuntime().exec(new String[]{"Explorer /select ", currentFile.getParentFile().toString()});
+                Runtime.getRuntime().exec(new String[]{"explorer /select,%s", currentFile.getAbsolutePath()});
+            } else if (os.contains("mac")) {
+                // MacOS
+                Runtime.getRuntime().exec(new String[]{"open", "-R", currentFile.getAbsolutePath()});
+            } else if (os.contains("nix") || os.contains("nux") || os.contains("aix")) {
+                // Linux/Unix
+                Runtime.getRuntime().exec(new String[]{"xdg-open", currentFile.getAbsolutePath()});
+            } else {
+                throw new UnsupportedOperationException("Platform not supported");
+            }
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        }
     }
 
     private void updateAutoSave(long delay) {
