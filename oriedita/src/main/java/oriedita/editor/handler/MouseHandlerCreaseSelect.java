@@ -144,29 +144,19 @@ public class MouseHandlerCreaseSelect extends BaseMouseHandlerBoxSelect {
 
         if (!tripleClick) {
             mReleased_A_box_select(p0);
+            d.record();
             return;
         }
         switch (d.getI_select_mode()) {
-            case NORMAL_0:
-                mReleased_A_box_select(p0);
-                break;
-            case MOVE_1:
-                mouseHandlerCreaseMove.mouseReleased(p0);//move
-                break;
-            case MOVE4P_2:
-                mouseHandlerCreaseMove4p.mouseReleased(p0);//move 2p2p
-                break;
-            case COPY_3:
-                mouseHandlerCreaseCopy.mouseReleased(p0);//copy
-                break;
-            case COPY4P_4:
-                mouseHandlerCreaseCopy4p.mouseReleased(p0);//copy 2p2p
-                break;
-            case MIRROR_5:
-                mouseHandlerDrawCreaseSymmetric.mouseReleased(p0);//鏡映
-                break;
+            case NORMAL_0 -> mReleased_A_box_select(p0);
+            case MOVE_1 -> mouseHandlerCreaseMove.mouseReleased(p0);//move
+            case MOVE4P_2 -> mouseHandlerCreaseMove4p.mouseReleased(p0);//move 2p2p
+            case COPY_3 -> mouseHandlerCreaseCopy.mouseReleased(p0);//copy
+            case COPY4P_4 -> mouseHandlerCreaseCopy4p.mouseReleased(p0);//copy 2p2p
+            case MIRROR_5 -> mouseHandlerDrawCreaseSymmetric.mouseReleased(p0);//鏡映
         }
         tripleClick = false;
+        d.record();
     }
 
     public void mReleased_A_box_select(Point p0) {
