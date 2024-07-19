@@ -3,7 +3,6 @@ package oriedita.editor.action;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import oriedita.editor.FrameProvider;
-import oriedita.editor.databinding.ApplicationModel;
 import oriedita.editor.export.CpExporter;
 import oriedita.editor.export.CpImporter;
 import oriedita.editor.export.FoldExporter;
@@ -13,8 +12,6 @@ import oriedita.editor.export.OrhImporter;
 import oriedita.editor.export.OriExporter;
 import oriedita.editor.export.OriImporter;
 import oriedita.editor.save.Save;
-
-import static oriedita.editor.swing.dialog.FileDialogUtil.saveFileDialog;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -31,16 +28,14 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Arrays;
+import java.util.Objects;
 
 @ApplicationScoped
 @ActionHandler(ActionType.convertAction)
 public class ConvertAction extends AbstractOrieditaAction{
-    private String selectedOption;
     @Inject
     FrameProvider frameProvider;
-    @Inject
-    ApplicationModel applicationModel;
-
+    private String selectedOption;
     List<String> allowedExtensions = Arrays.asList(".cp", ".ori", ".orh", ".fold");
     String[] options = {"Crease Pattern (.cp)", "Ori (.ori)", "Orihime (.orh)", "FOLD (.fold)"};
 
@@ -52,20 +47,18 @@ public class ConvertAction extends AbstractOrieditaAction{
         File file = selectFile();
 
         try {
-            String fileName = file.getName();
-
-            Save save = importFile(fileName, file);
+            Save save = importFile(Objects.requireNonNull(file));
             if (save == null) return;
 
             openDialog();
-            exportFile(save);
+            exportFile(save, file);
 
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
     }
 
-    public File selectFile(){
+    private File selectFile(){
         FileDialog fileDialog = new FileDialog(frameProvider.get(), "Select a file", FileDialog.LOAD);
         fileDialog.setFilenameFilter((dir, name) -> allowedExtensions.stream().anyMatch(name::endsWith));
         fileDialog.setVisible(true);
@@ -76,6 +69,22 @@ public class ConvertAction extends AbstractOrieditaAction{
         }
 
         return new File(fileDialog.getDirectory(), fileDialog.getFile());
+    }
+
+    private String getFilePathNoExtension(File file){
+        String filePath = file.getAbsolutePath();
+
+        if(filePath.endsWith(".cp")){
+            filePath = filePath.substring(0, filePath.length() - ".cp".length());
+        } else if(filePath.endsWith(".ori")){
+            filePath = filePath.substring(0, filePath.length() - ".ori".length());
+        } else if(filePath.endsWith(".orh")){
+            filePath = filePath.substring(0, filePath.length() - ".orh".length());
+        } else if(filePath.endsWith(".fold")){
+            filePath = filePath.substring(0, filePath.length() - ".fold".length());
+        }
+
+        return filePath;
     }
 
     private void openDialog() {
@@ -108,7 +117,8 @@ public class ConvertAction extends AbstractOrieditaAction{
         dialog.setVisible(true);
     }
 
-    private Save importFile(String fileName, File file) throws IOException {
+    private Save importFile(File file) throws IOException {
+        String fileName = file.getName();
         if(fileName.endsWith(".cp")){
             return new CpImporter().doImport(file);
         } else if(fileName.endsWith(".ori")) {
@@ -121,29 +131,21 @@ public class ConvertAction extends AbstractOrieditaAction{
         return null;
     }
 
-    private void exportFile(Save save) throws IOException {
-        String exportFile;
+    private void exportFile(Save save, File file) throws IOException {
+        String exportFile = getFilePathNoExtension(file);
 
         if (selectedOption.endsWith(".cp)")){
-            exportFile = getFileDirectory(".cp", "CP File");
+            exportFile = exportFile.concat(".cp");
             new CpExporter(frameProvider).doExport(save, new File(exportFile));
         } else if (selectedOption.endsWith(".ori)")) {
-            exportFile = getFileDirectory(".ori", "Ori File");
+            exportFile = exportFile.concat(".ori");
             new OriExporter().doExport(save, new File(exportFile));
         } else if (selectedOption.endsWith(".orh)")) {
-            exportFile = getFileDirectory(".orh", "Orihime File");
+            exportFile = exportFile.concat(".orh");
             new OrhExporter().doExport(save, new File(exportFile));
         } else if (selectedOption.endsWith(".fold)")) {
-            exportFile = getFileDirectory(".fold", "FOLD File");
+            exportFile = exportFile.concat(".fold");
             new FoldExporter().doExport(save, new File(exportFile));
         }
-    }
-
-    private String getFileDirectory(String extension, String description) {
-        String exportFile = saveFileDialog(frameProvider.get(), "Convert file at", applicationModel.getDefaultDirectory(), new String[]{extension}, description);
-        if(!exportFile.endsWith(extension)){
-            exportFile = exportFile.concat(extension);
-        }
-        return exportFile;
     }
 }
