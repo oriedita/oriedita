@@ -523,6 +523,11 @@ public class FileSaveServiceImpl implements FileSaveService {
     @Override
     public void openFileInFE() {
         File currentFile = new File(fileModel.getSavedFileName());
+        openFileInFe(currentFile);
+    }
+
+    @Override
+    public void openFileInFe(File file) {
         String os = System.getProperty("os.name").toLowerCase();
 
         try {
@@ -531,11 +536,11 @@ public class FileSaveServiceImpl implements FileSaveService {
             }
 
             if (os.contains("win")) {
-                Runtime.getRuntime().exec(new String[]{"explorer /select,%s", currentFile.getAbsolutePath()});
+                Runtime.getRuntime().exec(new String[]{"explorer /select,%s", file.getAbsolutePath()});
             } else if (os.contains("mac")) {
-                Runtime.getRuntime().exec(new String[]{"open", "-R", currentFile.getAbsolutePath()});
+                Runtime.getRuntime().exec(new String[]{"open", "-R", file.getAbsolutePath()});
             } else if (os.contains("nix") || os.contains("nux") || os.contains("aix")) {
-                Runtime.getRuntime().exec(new String[]{"xdg-open", currentFile.getAbsolutePath()});
+                Runtime.getRuntime().exec(new String[]{"xdg-open", file.getAbsolutePath()});
             } else {
                 throw new UnsupportedOperationException("Platform not supported");
             }

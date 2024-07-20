@@ -36,4 +36,5 @@ public interface FileSaveService {
     void initAutoSave();
 
     void openFileInFE();
+    void openFileInFe(File file);
 }
