@@ -523,11 +523,11 @@ public class FileSaveServiceImpl implements FileSaveService {
     @Override
     public void openFileInFE() {
         File currentFile = new File(fileModel.getSavedFileName());
-        openFileInFe(currentFile);
+        openFileInFE(currentFile);
     }
 
     @Override
-    public void openFileInFe(File file) {
+    public void openFileInFE(File file) {
         String os = System.getProperty("os.name").toLowerCase();
 
         try {
