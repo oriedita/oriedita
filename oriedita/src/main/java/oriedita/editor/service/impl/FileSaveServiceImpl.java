@@ -536,7 +536,7 @@ public class FileSaveServiceImpl implements FileSaveService {
             }
 
             if (os.contains("win")) {
-                Runtime.getRuntime().exec(new String[]{"explorer /select,%s", file.getAbsolutePath()});
+                Runtime.getRuntime().exec(new String[]{"explorer.exe /select,%s", file.getAbsolutePath()});
             } else if (os.contains("mac")) {
                 Runtime.getRuntime().exec(new String[]{"open", "-R", file.getAbsolutePath()});
             } else if (os.contains("nix") || os.contains("nux") || os.contains("aix")) {
