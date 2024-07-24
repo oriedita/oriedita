@@ -411,15 +411,7 @@ public class FileSaveServiceImpl implements FileSaveService {
 
     @Override
     public Save readImportFile(File file, boolean askOnUnknownFormat) {
-        if (file == null) {
-            return null;
-        }
-
-        if (!file.exists()) {
-            return null;
-        }
-
-        Save save = null;
+        if (file == null || !file.exists()) return null;
 
         try {
             for (var importer : this.importers) {
@@ -433,13 +425,12 @@ public class FileSaveServiceImpl implements FileSaveService {
             Logger.error(e, "Opening file failed");
 
             JOptionPane.showMessageDialog(frame.get(), "Opening of the saved file failed", "Opening failed", JOptionPane.ERROR_MESSAGE);
-
             fileModel.setSavedFileName(null);
 
             return SaveProvider.createInstance();
         }
 
-        return save;
+        return null;
     }
 
     @Override
