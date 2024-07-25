@@ -530,7 +530,7 @@ public class FileSaveServiceImpl implements FileSaveService {
                 Runtime.getRuntime().exec(new String[]{"explorer.exe", "/select,", file.getAbsolutePath()});
             } else if (os.contains("mac")) {
                 Runtime.getRuntime().exec(new String[]{"open", "-R", file.getAbsolutePath()});
-            } else if (os.contains("nix") || os.contains("nux") || os.contains("aix")) {
+            } else if (os.contains("nix") || os.contains("nux") || os.contains("aix") || os.contains("linux")) {
                 Runtime.getRuntime().exec(new String[]{"xdg-open", file.getAbsolutePath()});
             } else {
                 throw new UnsupportedOperationException("Platform not supported");
