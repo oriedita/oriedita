@@ -31,11 +31,13 @@ import javax.swing.KeyStroke;
 import java.awt.Desktop;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -526,12 +528,30 @@ public class FileSaveServiceImpl implements FileSaveService {
                 throw new UnsupportedOperationException("Desktop is not supported");
             }
 
+            String filePath = file.getAbsolutePath();
+
             if (os.contains("win")) {
-                Runtime.getRuntime().exec(new String[]{"explorer.exe", "/select,", file.getAbsolutePath()});
+                Runtime.getRuntime().exec(new String[]{"explorer.exe", "/select,", filePath});
             } else if (os.contains("mac")) {
-                Runtime.getRuntime().exec(new String[]{"open", "-R", file.getAbsolutePath()});
+                Runtime.getRuntime().exec(new String[]{"open", "-R", filePath});
             } else if (os.contains("nix") || os.contains("nux") || os.contains("aix") || os.contains("linux")) {
-                Runtime.getRuntime().exec(new String[]{"xdg-open", file.getParent()});
+
+                Process mimeProcess = Runtime.getRuntime().exec(new String[]{"xdg-mime", "query", "default", "inode/directory"});
+                BufferedReader reader = new BufferedReader(new InputStreamReader(mimeProcess.getInputStream()));
+                String line = reader.readLine().toLowerCase();
+
+                if (line.contains("nautilus")) {
+                    Runtime.getRuntime().exec(new String[]{"nautilus", "--select", filePath});
+                } else if (line.contains("dolphin")) {
+                    Runtime.getRuntime().exec(new String[]{"dolphin", "--select", filePath});
+                } else if (line.contains("thunar")) {
+                    Runtime.getRuntime().exec(new String[]{"thunar", filePath});
+                } else if (line.contains("nemo")) {
+                    Runtime.getRuntime().exec(new String[]{"nemo", "--no-desktop", "--browser", filePath});
+                } else {
+                    Runtime.getRuntime().exec(new String[]{"xdg-open", file.getParent()});
+                }
+
             } else {
                 throw new UnsupportedOperationException("Platform not supported");
             }
