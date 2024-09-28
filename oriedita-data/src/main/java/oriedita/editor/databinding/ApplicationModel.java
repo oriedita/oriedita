@@ -82,6 +82,7 @@ public class ApplicationModel implements Serializable {
     private double animationSpeed;
     private double mouseRadius;
     private long autoSaveInterval;
+    private int defaultGridSize;
 
     /*
     Things to remember when adding a new property:
@@ -94,6 +95,15 @@ public class ApplicationModel implements Serializable {
     @Inject
     public ApplicationModel() {
         reset();
+    }
+
+    public int getDefaultGridSize() { return defaultGridSize; }
+
+    public void setDefaultGridSize(int defaultGridSize) {
+        int oldDefaultGridSize = this.defaultGridSize;
+        this.defaultGridSize = defaultGridSize;
+        this.pcs.firePropertyChange("defaultGridSize", oldDefaultGridSize, defaultGridSize);
+
     }
 
     public double getMouseRadius() {
@@ -391,6 +401,7 @@ public class ApplicationModel implements Serializable {
 
         gridColor = Colors.GRID_LINE;
         gridScaleColor = Colors.GRID_SCALE;
+        defaultGridSize = 8;
         gridLineWidth = 1;
 
         roundedEnds = false;
@@ -448,6 +459,7 @@ public class ApplicationModel implements Serializable {
         lineWidth = 1;
         auxLineWidth = 3;
         pointSize = 1;
+        defaultGridSize = 8;
         gridLineWidth = 1;
         gridColor = Colors.GRID_LINE;
         gridScaleColor = Colors.GRID_SCALE;
@@ -817,6 +829,7 @@ public class ApplicationModel implements Serializable {
         windowState = applicationModel.getWindowState();
         foldWarning = applicationModel.getFoldWarning();
 
+        defaultGridSize = applicationModel.getDefaultGridSize();
         gridColor = applicationModel.getGridColor();
         gridScaleColor = applicationModel.getGridScaleColor();
         gridLineWidth = applicationModel.getGridLineWidth();
