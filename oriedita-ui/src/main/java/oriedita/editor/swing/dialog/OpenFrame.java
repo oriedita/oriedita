@@ -31,6 +31,7 @@ public class OpenFrame extends JDialog {
     private JPanel panel;
     private JButton axiom5Button;
     private JButton axiom7Button;
+    private JButton axiom6Button;
 
     public OpenFrame(String name, Frame owner, ButtonService buttonService) {
         super(owner, name);
@@ -49,6 +50,7 @@ public class OpenFrame extends JDialog {
         buttonService.registerButton(del_l_XButton, "del_l_XAction");
         buttonService.registerButton(selectAnd3ClickCheckBox, "selectAnd3ClickAction");
         buttonService.registerButton(axiom5Button, "axiom5Action");
+        buttonService.registerButton(axiom6Button, "axiom6Action");
         buttonService.registerButton(axiom7Button, "axiom7Action");
 
         pack();
@@ -178,6 +180,13 @@ public class OpenFrame extends JDialog {
         gbc.gridy = 4;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         panel1.add(axiom7Button, gbc);
+        axiom6Button = new JButton();
+        axiom6Button.setText("Ax6");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 1;
+        gbc.gridy = 4;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        panel1.add(axiom6Button, gbc);
     }
 
     /**
