@@ -119,7 +119,7 @@ public class ApplicationModel implements Serializable {
     public void setIsFoldedFigureDetached(boolean isFoldedFigureColorDetached) {
         boolean oldIsFoldedFigureColorDetached = this.isFoldedFigureColorDetached;
         this.isFoldedFigureColorDetached = isFoldedFigureColorDetached;
-        this.pcs.firePropertyChange("isGridColorUI", oldIsFoldedFigureColorDetached, isFoldedFigureColorDetached);
+        this.pcs.firePropertyChange("isFoldedFigureColorDetached", oldIsFoldedFigureColorDetached, isFoldedFigureColorDetached);
     }
 
     public double getMouseRadius() {
