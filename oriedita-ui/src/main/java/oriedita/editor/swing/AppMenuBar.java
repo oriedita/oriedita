@@ -320,7 +320,7 @@ public class AppMenuBar {
                         applicationModel.setGridScaleColor(Colors.GRID_SCALE_DARK);
                     }
 
-                    if (!applicationModel.getIsFoldedFigureDetached()) {
+                    if (!applicationModel.getIsFoldedFigureColorDetached()) {
                         foldedFigureModel.setFrontColor(Colors.FIGURE_FRONT_DARK);
                         foldedFigureModel.setBackColor(Colors.FIGURE_BACK_DARK);
                     }
@@ -330,7 +330,7 @@ public class AppMenuBar {
                         applicationModel.setGridScaleColor(Colors.GRID_SCALE);
                     }
 
-                    if (!applicationModel.getIsFoldedFigureDetached()) {
+                    if (!applicationModel.getIsFoldedFigureColorDetached()) {
                         foldedFigureModel.setFrontColor(Colors.FIGURE_FRONT);
                         foldedFigureModel.setBackColor(Colors.FIGURE_BACK);
                     }
