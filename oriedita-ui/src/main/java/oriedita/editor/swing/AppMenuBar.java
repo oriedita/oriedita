@@ -41,6 +41,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import java.awt.Desktop;
+import java.awt.EventQueue;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.Transferable;
@@ -312,21 +313,29 @@ public class AppMenuBar {
         darkModeCheckBox.addActionListener(e -> {
             lookAndFeelService.toggleDarkMode();
 
-            if (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(frameProvider.get(), "Restore custom colors in grid and folded figure for this color scheme?", "Restore colors", JOptionPane.YES_NO_OPTION)) {
+            EventQueue.invokeLater(() -> {
                 if (FlatLaf.isLafDark()) {
-                    applicationModel.setGridColor(Colors.GRID_LINE_DARK);
-                    applicationModel.setGridScaleColor(Colors.GRID_SCALE_DARK);
+                    if (!applicationModel.getIsGridColorDetached()) {
+                        applicationModel.setGridColor(Colors.GRID_LINE_DARK);
+                        applicationModel.setGridScaleColor(Colors.GRID_SCALE_DARK);
+                    }
 
-                    foldedFigureModel.setFrontColor(Colors.FIGURE_FRONT_DARK);
-                    foldedFigureModel.setBackColor(Colors.FIGURE_BACK_DARK);
+                    if (!applicationModel.getIsFoldedFigureDetached()) {
+                        foldedFigureModel.setFrontColor(Colors.FIGURE_FRONT_DARK);
+                        foldedFigureModel.setBackColor(Colors.FIGURE_BACK_DARK);
+                    }
                 } else {
-                    applicationModel.setGridColor(Colors.GRID_LINE);
-                    applicationModel.setGridScaleColor(Colors.GRID_SCALE);
+                    if (!applicationModel.getIsGridColorDetached()) {
+                        applicationModel.setGridColor(Colors.GRID_LINE);
+                        applicationModel.setGridScaleColor(Colors.GRID_SCALE);
+                    }
 
-                    foldedFigureModel.setFrontColor(Colors.FIGURE_FRONT);
-                    foldedFigureModel.setBackColor(Colors.FIGURE_BACK);
+                    if (!applicationModel.getIsFoldedFigureDetached()) {
+                        foldedFigureModel.setFrontColor(Colors.FIGURE_FRONT);
+                        foldedFigureModel.setBackColor(Colors.FIGURE_BACK);
+                    }
                 }
-            }
+            });
         });
         preciseZoomCheckBox.addActionListener(e -> applicationModel.togglePreciseZoom());
         showSelfIntersectionCheckBox.addActionListener(e -> applicationModel.toggleDisplaySelfIntersection());

@@ -62,11 +62,8 @@ public class ApplicationModel implements Serializable {
     private String laf;
     private Dimension windowSize;
     private List<File> recentFileList;
-
     private double minGridUnitSize;
-
     private boolean showInvisibleTextWarning;
-
     private Color gridColor;
     private Color gridScaleColor;
     private int gridLineWidth;
@@ -83,6 +80,9 @@ public class ApplicationModel implements Serializable {
     private double mouseRadius;
     private long autoSaveInterval;
     private int defaultGridSize;
+    private boolean isGridColorDetached;
+    private boolean isFoldedFigureColorDetached;
+
 
     /*
     Things to remember when adding a new property:
@@ -104,6 +104,22 @@ public class ApplicationModel implements Serializable {
         this.defaultGridSize = defaultGridSize;
         this.pcs.firePropertyChange("defaultGridSize", oldDefaultGridSize, defaultGridSize);
 
+    }
+
+    public boolean getIsGridColorDetached() { return isGridColorDetached; }
+
+    public void setIsGridColorDetached(boolean isGridColorDetached) {
+        boolean oldIsGridColorDetached = this.isGridColorDetached;
+        this.isGridColorDetached = isGridColorDetached;
+        this.pcs.firePropertyChange("isGridColorDetached", oldIsGridColorDetached, isGridColorDetached);
+    }
+
+    public boolean getIsFoldedFigureDetached() { return isFoldedFigureColorDetached; }
+
+    public void setIsFoldedFigureDetached(boolean isFoldedFigureColorDetached) {
+        boolean oldIsFoldedFigureColorDetached = this.isFoldedFigureColorDetached;
+        this.isFoldedFigureColorDetached = isFoldedFigureColorDetached;
+        this.pcs.firePropertyChange("isGridColorUI", oldIsFoldedFigureColorDetached, isFoldedFigureColorDetached);
     }
 
     public double getMouseRadius() {
@@ -403,6 +419,8 @@ public class ApplicationModel implements Serializable {
         gridScaleColor = Colors.GRID_SCALE;
         defaultGridSize = 8;
         gridLineWidth = 1;
+        isGridColorDetached = false;
+        isFoldedFigureColorDetached = false;
 
         roundedEnds = false;
 
@@ -464,6 +482,8 @@ public class ApplicationModel implements Serializable {
         gridColor = Colors.GRID_LINE;
         gridScaleColor = Colors.GRID_SCALE;
         lineStyle = LineStyle.COLOR;
+        isGridColorDetached = false;
+        isFoldedFigureColorDetached = false;
 
         displayTopPanel = true;
         displayBottomPanel = true;
@@ -833,6 +853,8 @@ public class ApplicationModel implements Serializable {
         gridColor = applicationModel.getGridColor();
         gridScaleColor = applicationModel.getGridScaleColor();
         gridLineWidth = applicationModel.getGridLineWidth();
+        isGridColorDetached = applicationModel.getIsGridColorDetached();
+        isFoldedFigureColorDetached = applicationModel.getIsFoldedFigureDetached();
 
         displayTopPanel = applicationModel.getDisplayTopPanel();
         displayBottomPanel = applicationModel.getDisplayBottomPanel();

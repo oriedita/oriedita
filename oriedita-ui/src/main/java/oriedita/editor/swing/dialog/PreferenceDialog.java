@@ -149,6 +149,8 @@ public class PreferenceDialog extends JDialog {
     private JButton defaultGridSizeMinus;
     private JButton defaultGridSizePlus;
     private JTextField defaultGridSizeTF;
+    private JCheckBox detachGridColorCB;
+    private JCheckBox detachFigureColorCB;
     private int tempTransparency;
     private final ApplicationModel applicationModel;
     private final ButtonService buttonService;
@@ -189,6 +191,8 @@ public class PreferenceDialog extends JDialog {
         gridWidthTF.setText(Integer.toString(applicationModel.getGridLineWidth()));
         gridColorButton.setIcon(new ColorIcon(applicationModel.getGridColor()));
         gridScaleColorButton.setIcon(new ColorIcon(applicationModel.getGridScaleColor()));
+        detachGridColorCB.setSelected(applicationModel.getIsGridColorDetached());
+        detachFigureColorCB.setSelected(applicationModel.getIsFoldedFigureDetached());
         lineStyleDropBox.setSelectedIndex(applicationModel.getLineStyle().getType() - 1);
         topPanelCB.setSelected(applicationModel.getDisplayTopPanel());
         bottomPanelCB.setSelected(applicationModel.getDisplayBottomPanel());
@@ -262,29 +266,33 @@ public class PreferenceDialog extends JDialog {
         zoomSpeedSlider.addChangeListener(e -> applicationModel.setZoomSpeed(zoomSpeedSlider.getValue() / 10.0));
         mousewheelMovesCPCB.addActionListener(e -> applicationModel.setMouseWheelMovesCreasePattern(mousewheelMovesCPCB.isSelected()));
         darkModeCheckBox.addActionListener(e -> {
-            if (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(frameProvider.get(), "Restore custom colors in grid and folded figure for this color scheme?", "Restore colors", JOptionPane.YES_NO_OPTION)) {
-                lookAndFeelService.toggleDarkMode();
+            lookAndFeelService.toggleDarkMode();
 
-                EventQueue.invokeLater(() -> {
-                    if (FlatLaf.isLafDark()) {
+            EventQueue.invokeLater(() -> {
+                if (FlatLaf.isLafDark()) {
+                    if (!applicationModel.getIsGridColorDetached()) {
                         applicationModel.setGridColor(Colors.GRID_LINE_DARK);
                         applicationModel.setGridScaleColor(Colors.GRID_SCALE_DARK);
+                    }
 
+                    if (!applicationModel.getIsFoldedFigureDetached()) {
                         foldedFigureModel.setFrontColor(Colors.FIGURE_FRONT_DARK);
                         foldedFigureModel.setBackColor(Colors.FIGURE_BACK_DARK);
-                    } else {
+                    }
+                } else {
+                    if (!applicationModel.getIsGridColorDetached()) {
                         applicationModel.setGridColor(Colors.GRID_LINE);
                         applicationModel.setGridScaleColor(Colors.GRID_SCALE);
+                    }
 
+                    if (!applicationModel.getIsFoldedFigureDetached()) {
                         foldedFigureModel.setFrontColor(Colors.FIGURE_FRONT);
                         foldedFigureModel.setBackColor(Colors.FIGURE_BACK);
                     }
-                    gridColorButton.setIcon(new ColorIcon(applicationModel.getGridColor()));
-                    gridScaleColorButton.setIcon(new ColorIcon(applicationModel.getGridScaleColor()));
-                });
-            } else {
-                lookAndFeelService.toggleDarkMode();
-            }
+                }
+                gridColorButton.setIcon(new ColorIcon(applicationModel.getGridColor()));
+                gridScaleColorButton.setIcon(new ColorIcon(applicationModel.getGridScaleColor()));
+            });
         });
         antiAliasCB.addActionListener(e -> applicationModel.setAntiAlias(antiAliasCB.isSelected()));
         foldAntiAliasCheckBox.addActionListener(e -> foldedFigureModel.setAntiAlias(foldAntiAliasCheckBox.isSelected()));
@@ -393,6 +401,9 @@ public class PreferenceDialog extends JDialog {
         });
         gridDensitySlider.addChangeListener(e -> applicationModel.setMinGridUnitSize(
                 gridDensitySlider.getMaximum() - gridDensitySlider.getValue() + .5));
+
+        detachGridColorCB.addActionListener(e -> applicationModel.setIsGridColorDetached(detachGridColorCB.isSelected()));
+        detachFigureColorCB.addActionListener(e -> applicationModel.setIsFoldedFigureDetached(detachFigureColorCB.isSelected()));
 
         topPanelCB.addActionListener(e -> applicationModel.setDisplayTopPanel(topPanelCB.isSelected()));
         bottomPanelCB.addActionListener(e -> applicationModel.setDisplayBottomPanel(bottomPanelCB.isSelected()));
@@ -1166,42 +1177,42 @@ public class PreferenceDialog extends JDialog {
         label11.setText("Dark mode: ");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.gridy = 10;
+        gbc.gridy = 12;
         gbc.anchor = GridBagConstraints.EAST;
         appearance1Panel.add(label11, gbc);
         darkModeCheckBox = new JCheckBox();
         darkModeCheckBox.setText("");
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
-        gbc.gridy = 10;
+        gbc.gridy = 12;
         gbc.anchor = GridBagConstraints.WEST;
         appearance1Panel.add(darkModeCheckBox, gbc);
         final JLabel label12 = new JLabel();
         label12.setText("Anti-alias: ");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.gridy = 11;
+        gbc.gridy = 13;
         gbc.anchor = GridBagConstraints.EAST;
         appearance1Panel.add(label12, gbc);
         antiAliasCB = new JCheckBox();
         antiAliasCB.setText("");
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
-        gbc.gridy = 11;
+        gbc.gridy = 13;
         gbc.anchor = GridBagConstraints.WEST;
         appearance1Panel.add(antiAliasCB, gbc);
         final JLabel label13 = new JLabel();
         label13.setText("Display numbers: ");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.gridy = 12;
+        gbc.gridy = 14;
         gbc.anchor = GridBagConstraints.EAST;
         appearance1Panel.add(label13, gbc);
         displayNumbersCB = new JCheckBox();
         displayNumbersCB.setText("");
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
-        gbc.gridy = 12;
+        gbc.gridy = 14;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.VERTICAL;
         appearance1Panel.add(displayNumbersCB, gbc);
@@ -1209,21 +1220,21 @@ public class PreferenceDialog extends JDialog {
         label14.setText("Fold anti-alias: ");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.gridy = 13;
+        gbc.gridy = 15;
         gbc.anchor = GridBagConstraints.EAST;
         appearance1Panel.add(label14, gbc);
         foldAntiAliasCheckBox = new JCheckBox();
         foldAntiAliasCheckBox.setText("");
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
-        gbc.gridy = 13;
+        gbc.gridy = 15;
         gbc.anchor = GridBagConstraints.WEST;
         appearance1Panel.add(foldAntiAliasCheckBox, gbc);
         final JLabel label15 = new JLabel();
         label15.setText("Round Line-ends: ");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.gridy = 14;
+        gbc.gridy = 16;
         gbc.anchor = GridBagConstraints.EAST;
         appearance1Panel.add(label15, gbc);
         roundedEndsCheckbox = new JCheckBox();
@@ -1231,7 +1242,7 @@ public class PreferenceDialog extends JDialog {
         roundedEndsCheckbox.setText("");
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
-        gbc.gridy = 14;
+        gbc.gridy = 16;
         gbc.anchor = GridBagConstraints.NORTHWEST;
         appearance1Panel.add(roundedEndsCheckbox, gbc);
         final JLabel label16 = new JLabel();
@@ -1261,6 +1272,35 @@ public class PreferenceDialog extends JDialog {
         defaultGridSizePlus = new JButton();
         defaultGridSizePlus.setText("+");
         panel9.add(defaultGridSizePlus, BorderLayout.EAST);
+        final JLabel label17 = new JLabel();
+        label17.setText("Detach Grid Color: ");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 10;
+        gbc.anchor = GridBagConstraints.EAST;
+        appearance1Panel.add(label17, gbc);
+        detachGridColorCB = new JCheckBox();
+        detachGridColorCB.setText("");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 1;
+        gbc.gridy = 10;
+        gbc.anchor = GridBagConstraints.WEST;
+        appearance1Panel.add(detachGridColorCB, gbc);
+        final JLabel label18 = new JLabel();
+        label18.setText("Detach Figure Color: ");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 11;
+        gbc.anchor = GridBagConstraints.NORTHEAST;
+        appearance1Panel.add(label18, gbc);
+        detachFigureColorCB = new JCheckBox();
+        detachFigureColorCB.setText("");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 1;
+        gbc.gridy = 11;
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.insets = new Insets(0, 0, 20, 0);
+        appearance1Panel.add(detachFigureColorCB, gbc);
         final JPanel panel10 = new JPanel();
         panel10.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 10));
         panel10.setMinimumSize(new Dimension(334, 226));
@@ -1371,10 +1411,10 @@ public class PreferenceDialog extends JDialog {
         searchBarTF = new JTextField();
         searchBarTF.setMargin(new Insets(2, 6, 2, 6));
         panel13.add(searchBarTF, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
-        final JLabel label17 = new JLabel();
-        label17.setOpaque(true);
-        label17.setText("Search:");
-        panel13.add(label17, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final JLabel label19 = new JLabel();
+        label19.setOpaque(true);
+        label19.setText("Search:");
+        panel13.add(label19, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         hasHotkeyCB.setText("Has hotkey");
         panel13.add(hasHotkeyCB, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     }
