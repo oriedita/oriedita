@@ -114,9 +114,9 @@ public class ApplicationModel implements Serializable {
         this.pcs.firePropertyChange("isGridColorDetached", oldIsGridColorDetached, isGridColorDetached);
     }
 
-    public boolean getIsFoldedFigureDetached() { return isFoldedFigureColorDetached; }
+    public boolean getIsFoldedFigureColorDetached() { return isFoldedFigureColorDetached; }
 
-    public void setIsFoldedFigureDetached(boolean isFoldedFigureColorDetached) {
+    public void setIsFoldedFigureColorDetached(boolean isFoldedFigureColorDetached) {
         boolean oldIsFoldedFigureColorDetached = this.isFoldedFigureColorDetached;
         this.isFoldedFigureColorDetached = isFoldedFigureColorDetached;
         this.pcs.firePropertyChange("isFoldedFigureColorDetached", oldIsFoldedFigureColorDetached, isFoldedFigureColorDetached);
@@ -854,7 +854,7 @@ public class ApplicationModel implements Serializable {
         gridScaleColor = applicationModel.getGridScaleColor();
         gridLineWidth = applicationModel.getGridLineWidth();
         isGridColorDetached = applicationModel.getIsGridColorDetached();
-        isFoldedFigureColorDetached = applicationModel.getIsFoldedFigureDetached();
+        isFoldedFigureColorDetached = applicationModel.getIsFoldedFigureColorDetached();
 
         displayTopPanel = applicationModel.getDisplayTopPanel();
         displayBottomPanel = applicationModel.getDisplayBottomPanel();

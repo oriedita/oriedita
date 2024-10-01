@@ -192,7 +192,7 @@ public class PreferenceDialog extends JDialog {
         gridColorButton.setIcon(new ColorIcon(applicationModel.getGridColor()));
         gridScaleColorButton.setIcon(new ColorIcon(applicationModel.getGridScaleColor()));
         detachGridColorCB.setSelected(applicationModel.getIsGridColorDetached());
-        detachFigureColorCB.setSelected(applicationModel.getIsFoldedFigureDetached());
+        detachFigureColorCB.setSelected(applicationModel.getIsFoldedFigureColorDetached());
         lineStyleDropBox.setSelectedIndex(applicationModel.getLineStyle().getType() - 1);
         topPanelCB.setSelected(applicationModel.getDisplayTopPanel());
         bottomPanelCB.setSelected(applicationModel.getDisplayBottomPanel());
@@ -275,7 +275,7 @@ public class PreferenceDialog extends JDialog {
                         applicationModel.setGridScaleColor(Colors.GRID_SCALE_DARK);
                     }
 
-                    if (!applicationModel.getIsFoldedFigureDetached()) {
+                    if (!applicationModel.getIsFoldedFigureColorDetached()) {
                         foldedFigureModel.setFrontColor(Colors.FIGURE_FRONT_DARK);
                         foldedFigureModel.setBackColor(Colors.FIGURE_BACK_DARK);
                     }
@@ -285,7 +285,7 @@ public class PreferenceDialog extends JDialog {
                         applicationModel.setGridScaleColor(Colors.GRID_SCALE);
                     }
 
-                    if (!applicationModel.getIsFoldedFigureDetached()) {
+                    if (!applicationModel.getIsFoldedFigureColorDetached()) {
                         foldedFigureModel.setFrontColor(Colors.FIGURE_FRONT);
                         foldedFigureModel.setBackColor(Colors.FIGURE_BACK);
                     }
@@ -403,7 +403,7 @@ public class PreferenceDialog extends JDialog {
                 gridDensitySlider.getMaximum() - gridDensitySlider.getValue() + .5));
 
         detachGridColorCB.addActionListener(e -> applicationModel.setIsGridColorDetached(detachGridColorCB.isSelected()));
-        detachFigureColorCB.addActionListener(e -> applicationModel.setIsFoldedFigureDetached(detachFigureColorCB.isSelected()));
+        detachFigureColorCB.addActionListener(e -> applicationModel.setIsFoldedFigureColorDetached(detachFigureColorCB.isSelected()));
 
         topPanelCB.addActionListener(e -> applicationModel.setDisplayTopPanel(topPanelCB.isSelected()));
         bottomPanelCB.addActionListener(e -> applicationModel.setDisplayBottomPanel(bottomPanelCB.isSelected()));
