@@ -77,28 +77,28 @@ public class MouseHandlerAxiom6 extends BaseMouseHandlerInputRestricted {
 
     private double[] getPolynomial(int degree, double a, double b, double c, double d) {
         switch (degree) {
-            case 1:
-                return new double[]{-d / c};
             case 2:
-                double discriminant = Math.pow(c, 2.0) - (4.0 * b * d); // quadratic
+                return new double[]{-a / b};
+            case 3:
+                double discriminant = Math.pow(c, 2.0) - (4.0 * a * c); // quadratic
                 // 0 solution
                 if (discriminant < -Epsilon.AXIOM_THRESHOLD) {
                     return new double[]{};
                 }
                 // 1 solution
-                double q1 = -c / (2.0 * b);
+                double q1 = -b / (2.0 * c);
                 if (discriminant < Epsilon.AXIOM_THRESHOLD) {
                     return new double[]{q1};
                 }
                 // 2 solutions
-                double q2 = Math.sqrt(discriminant) / (2.0 * b);
+                double q2 = Math.sqrt(discriminant) / (2.0 * c);
                 return new double[]{q1 + q2, q1 - q2};
-            case 3:
+            case 4:
                 // Cubic
                 // Cardano's formula. convert to depressed cubic
-                double a2 = b / a;
-                double a1 = c / a;
-                double a0 = d / a;
+                double a2 = c / d;
+                double a1 = b / d;
+                double a0 = a / d;
                 double q = (3.0 * a1 - Math.pow(a2, 2.0)) / 9.0;
                 double r = (9.0 * a2 * a1 - 27.0 * a0 - 2.0 * Math.pow(a2, 3.0)) / 54.0;
                 double d0 = Math.pow(q, 3.0) + Math.pow(r, 2.0);
@@ -113,10 +113,10 @@ public class MouseHandlerAxiom6 extends BaseMouseHandlerInputRestricted {
                 }
                 // 2 solutions
                 if (Math.abs(d0) < Epsilon.AXIOM_THRESHOLD) {
-                    double s = Math.pow(r, 1.0 / 3.0);
                     if (r < 0.0) {
                         return new double[]{};
                     }
+                    double s = Math.pow(r, 1.0 / 3.0);
                     return new double[]{u + 2.0 * s, u - s};
                 }
                 // 3 solutions
@@ -171,15 +171,15 @@ public class MouseHandlerAxiom6 extends BaseMouseHandlerInputRestricted {
         double c6 = Vector.dotProduct(line_vec, s2Normal);
         double c7 = Vector.dotProduct(vec2, s2Normal);
 
-        double a = c6;
-        double b = c1 + c4 * c6 + c7;
-        double c = c1 * c2 + c5 * c6 + c4 * c7;
-        double d = c1 * c3 + c5 * c7;
+        double d = c6;
+        double c = c1 + c4 * c6 + c7;
+        double b = c1 * c2 + c5 * c6 + c4 * c7;
+        double a = c1 * c3 + c5 * c7;
 
         int polynomial_degree = 0;
-        if (Math.abs(c) > Epsilon.AXIOM_THRESHOLD) { polynomial_degree = 1; }
+        if (Math.abs(d) > Epsilon.AXIOM_THRESHOLD) { polynomial_degree = 4; }
+        if (Math.abs(c) > Epsilon.AXIOM_THRESHOLD) { polynomial_degree = 3; }
         if (Math.abs(b) > Epsilon.AXIOM_THRESHOLD) { polynomial_degree = 2; }
-        if (Math.abs(a) > Epsilon.AXIOM_THRESHOLD) { polynomial_degree = 3; }
 
         Stream<StraightLine> map = Arrays.stream(getPolynomial(polynomial_degree, a, b, c, d))
                 .mapToObj(n -> Vector.add(Vector.scale(s1Normal, s1Normalized.getC()),
