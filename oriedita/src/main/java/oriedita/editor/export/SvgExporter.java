@@ -521,9 +521,9 @@ public class SvgExporter implements FileExporter {
     }
 
     @Override
-    public boolean supports(File file) {
-        return false;
-    }
+    public boolean supports(File filename) {
+        return filename.getName().endsWith(".svg");
+}
 
     @Override
     public void doExport(Save save, File file) throws IOException {
