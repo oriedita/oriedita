@@ -43,8 +43,6 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Robot;
 import java.awt.Window;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -251,16 +249,16 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
         Point p = e2p(e);
         canvasUI.requestFocus();
 
+        int pressedButton = e.getButton();
         if (e.isMetaDown()) {
-            pressedButtons.add(MouseEvent.BUTTON2);
-        } else {
-            pressedButtons.add(e.getButton());
+            pressedButton = MouseEvent.BUTTON2;
         }
+        pressedButtons.add(pressedButton);
 
         if (mouseModeHandlers.containsKey(mouseMode)) {
             MouseModeHandler handler = mouseModeHandlers.get(mouseMode);
-            if (handler.accepts(e, e.getButton())) {
-                handler.mousePressed(p, e);
+            if (handler.accepts(e, pressedButton)) {
+                handler.mousePressed(p, e, pressedButton);
                 setActiveMouseHandler(handler);
                 mainCreasePatternWorker.setCamera(creasePatternCamera);
                 canvasUI.repaint();
@@ -269,7 +267,7 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
         }
 
         //---------ボタンの種類による動作変更-----------------------------------------
-        switch (e.getButton()) {
+        switch (pressedButton) {
             case MouseEvent.BUTTON2:
                 Logger.info("中ボタンクリック");
 
@@ -314,7 +312,7 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
                         if (activeMouseHandler.getMouseMode() != MouseMode.LINE_SEGMENT_DELETE_3) {
                             mainCreasePatternWorker.setFoldLineAdditional(FoldLineAdditionalInputMode.BOTH_4);
                         }
-                        mouseModeHandlers.get(MouseMode.LINE_SEGMENT_DELETE_3).mousePressed(p, e);
+                        mouseModeHandlers.get(MouseMode.LINE_SEGMENT_DELETE_3).mousePressed(p, e, pressedButton);
                         setActiveMouseHandler(mouseModeHandlers.get(MouseMode.LINE_SEGMENT_DELETE_3));
                         break;
                     case FOLDED_FRONT_1:
@@ -434,7 +432,13 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
     public void mouseReleased(MouseEvent e) {
         Point p = e2p(e);
 
-        pressedButtons.remove(e.getButton());
+        if (!pressedButtons.contains(e.getButton())) {
+            // When pressing this button the meta key was held down.
+            pressedButtons.remove(MouseEvent.BUTTON2);
+        } else {
+            pressedButtons.remove(e.getButton());
+        }
+
         mainCreasePatternWorker.setCamera(creasePatternCamera);
         if (mouseModeHandlers.containsKey(mouseMode)) {
             MouseModeHandler handler = mouseModeHandlers.get(mouseMode);

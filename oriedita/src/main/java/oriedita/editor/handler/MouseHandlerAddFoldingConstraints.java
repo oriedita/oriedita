@@ -42,7 +42,7 @@ public class MouseHandlerAddFoldingConstraints implements MouseModeHandler {
     }
 
     @Override
-    public void mousePressed(Point p0, MouseEvent e) {
+    public void mousePressed(Point p0, MouseEvent e, int pressedButton) {
         FoldedFigure_Drawer selectedFigure = foldedFiguresList.getActiveItem();
         if (selectedFigure == null) {
             return;
@@ -74,7 +74,7 @@ public class MouseHandlerAddFoldingConstraints implements MouseModeHandler {
             return;
         }
 
-        if (e.getButton() == MouseEvent.BUTTON1) {
+        if (pressedButton == MouseEvent.BUTTON1) {
             CustomConstraint nearest = nearConstraintInSelectionRadius(modelCoords, backside,
                     selectedFigure.getFoldedFigure().foldedFigure_worker.hierarchyList.getCustomConstraints());
             if (nearest != null && !e.isControlDown()) {
@@ -82,7 +82,7 @@ public class MouseHandlerAddFoldingConstraints implements MouseModeHandler {
             } else {
                 addConstraint(modelCoords, backside, selectedFigure.getFoldedFigure());
             }
-        } else if (e.getButton() == MouseEvent.BUTTON3) {
+        } else if (pressedButton == MouseEvent.BUTTON3) {
             removeNearestConstraint(modelCoords, backside, selectedFigure.getFoldedFigure().foldedFigure_worker.hierarchyList);
         }
     }

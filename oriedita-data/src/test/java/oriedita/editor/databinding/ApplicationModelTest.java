@@ -4,6 +4,7 @@ import jakarta.annotation.Nonnull;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.tinylog.Logger;
 import oriedita.editor.canvas.LineStyle;
 import origami.crease_pattern.CustomLineTypes;
 
@@ -149,7 +150,7 @@ class ApplicationModelTest {
             secondModel.set(applicationModel);
             if (property.getPropertyType().equals(List.class)){
                 // cannot check equality of lists because Lists are compared by reference, which does not work when value is copied
-                System.out.println("Ignored Property " + property
+                Logger.info("Ignored Property " + property
                         + " in testSet because equality could not be checked. \n Please manually verify it is correctly copied in set()");
             } else {
                 assertEquals(testVal, property.getReadMethod().invoke(secondModel),

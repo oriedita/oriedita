@@ -5,6 +5,7 @@ import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.databinding.AngleSystemModel;
+import oriedita.editor.databinding.ApplicationModel;
 import oriedita.editor.databinding.CameraModel;
 import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.databinding.FoldedFigureModel;
@@ -25,6 +26,7 @@ public class ResetServiceImpl implements ResetService {
     private final AngleSystemModel angleSystemModel;
     private final CameraModel creasePatternCameraModel;
     private final FoldedFiguresList foldedFiguresList;
+    private final ApplicationModel applicationModel;
 
     @Inject
     public ResetServiceImpl(@Named("mainCreasePattern_Worker") CreasePattern_Worker mainCreasePatternWorker,
@@ -35,7 +37,8 @@ public class ResetServiceImpl implements ResetService {
                             GridModel gridModel,
                             AngleSystemModel angleSystemModel,
                             CameraModel creasePatternCameraModel,
-                            FoldedFiguresList foldedFiguresList) {
+                            FoldedFiguresList foldedFiguresList,
+                            ApplicationModel applicationModel) {
         this.mainCreasePatternWorker = mainCreasePatternWorker;
         this.creasePatternCamera = creasePatternCamera;
         this.canvasModel = canvasModel;
@@ -45,6 +48,7 @@ public class ResetServiceImpl implements ResetService {
         this.angleSystemModel = angleSystemModel;
         this.creasePatternCameraModel = creasePatternCameraModel;
         this.foldedFiguresList = foldedFiguresList;
+        this.applicationModel = applicationModel;
     }
 
     public void developmentView_initialization() {
@@ -68,6 +72,7 @@ public class ResetServiceImpl implements ResetService {
         foldedFigureModel.reset();
 
         gridModel.reset();
+        gridModel.setGridSize(applicationModel.getDefaultGridSize());
         angleSystemModel.reset();
         creasePatternCameraModel.reset();
 

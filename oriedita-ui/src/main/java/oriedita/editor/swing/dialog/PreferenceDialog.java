@@ -145,6 +145,10 @@ public class PreferenceDialog extends JDialog {
     private JPanel display1Panel;
     private JPanel display3Panel;
     private JTextField searchBarTF;
+    private JCheckBox hasHotkeyCB;
+    private JButton defaultGridSizeMinus;
+    private JButton defaultGridSizePlus;
+    private JTextField defaultGridSizeTF;
     private int tempTransparency;
     private final ApplicationModel applicationModel;
     private final ButtonService buttonService;
@@ -176,12 +180,12 @@ public class PreferenceDialog extends JDialog {
         mousewheelMovesCPCB.setSelected(applicationModel.getMouseWheelMovesCreasePattern());
         selfIntersectionCB.setSelected(applicationModel.getDisplaySelfIntersection());
         antiAliasCB.setSelected(applicationModel.getAntiAlias());
-        foldAntiAliasCheckBox.setSelected(foldedFigureModel.getAntiAlias());
         displayNumbersCB.setSelected(applicationModel.getDisplayNumbers());
         ck4TF.setText(Integer.toString((applicationModel.getCheck4ColorTransparency() / 5) * 2));
         lineWidthTF.setText(Integer.toString(applicationModel.getLineWidth()));
         auxLineTF.setText(Integer.toString(applicationModel.getAuxLineWidth()));
         pointSizeTF.setText(Integer.toString(applicationModel.getPointSize()));
+        defaultGridSizeTF.setText(Integer.toString(applicationModel.getDefaultGridSize()));
         gridWidthTF.setText(Integer.toString(applicationModel.getGridLineWidth()));
         gridColorButton.setIcon(new ColorIcon(applicationModel.getGridColor()));
         gridScaleColorButton.setIcon(new ColorIcon(applicationModel.getGridScaleColor()));
@@ -196,6 +200,18 @@ public class PreferenceDialog extends JDialog {
         mouseRangeSlider.setValue((int) applicationModel.getMouseRadius());
         roundedEndsCheckbox.setSelected(applicationModel.getRoundedEnds());
         gridDensitySlider.setValue((int) (gridDensitySlider.getMaximum() - applicationModel.getMinGridUnitSize() + 0.6));
+
+        ck4Plus.setEnabled(applicationModel.getCheck4ColorTransparency() < 250);
+        ck4Minus.setEnabled(applicationModel.getCheck4ColorTransparency() > 50);
+        lineWidthMinus.setEnabled(applicationModel.getLineWidth() > 0);
+        auxLineMinus.setEnabled(applicationModel.getAuxLineWidth() > 0);
+        pointSizeMinus.setEnabled(applicationModel.getPointSize() > 0);
+        gridWidthMinus.setEnabled(applicationModel.getGridLineWidth() > 1);
+        animationSpeedSlider.setEnabled(applicationModel.getAnimations());
+    }
+
+    public void setData(FoldedFigureModel foldedFigureModel) {
+        foldAntiAliasCheckBox.setSelected(foldedFigureModel.getAntiAlias());
     }
 
     public PreferenceDialog(
@@ -212,25 +228,22 @@ public class PreferenceDialog extends JDialog {
         this.applicationModel = appModel;
         this.buttonService = buttonService;
         this.tempModel = new ApplicationModel();
-        $$$setupUI$$$();
         this.tempModel.set(appModel);
         this.foldedFigureModel = foldedFigureModel;
         this.tempfoldedModel = new FoldedFigureModel();
         this.tempfoldedModel.set(foldedFigureModel);
+
+        $$$setupUI$$$();
         setData(applicationModel);
+        setData(foldedFigureModel);
         setContentPane($$$getRootComponent$$$());
-        setDefaultCloseOperation(HIDE_ON_CLOSE);
-        getRootPane().setDefaultButton(buttonOK);
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        getRootPane().setDefaultButton(null);
 
         setupHotKey(buttonService, frameProvider);
 
-        ck4Plus.setEnabled(applicationModel.getCheck4ColorTransparency() < 250);
-        ck4Minus.setEnabled(applicationModel.getCheck4ColorTransparency() > 50);
-        lineWidthMinus.setEnabled(applicationModel.getLineWidth() > 0);
-        auxLineMinus.setEnabled(applicationModel.getAuxLineWidth() > 0);
-        pointSizeMinus.setEnabled(applicationModel.getPointSize() > 0);
-        gridWidthMinus.setEnabled(applicationModel.getGridLineWidth() > 1);
-        animationSpeedSlider.setEnabled(applicationModel.getAnimations());
+        applicationModel.addPropertyChangeListener(e -> setData(applicationModel));
+        foldedFigureModel.addPropertyChangeListener(e -> setData(foldedFigureModel));
 
         spotlightCB.addActionListener(e -> applicationModel.setDisplayPointSpotlight(spotlightCB.isSelected()));
         offsetCB.addActionListener(e -> applicationModel.setDisplayPointOffset(offsetCB.isSelected()));
@@ -333,6 +346,18 @@ public class PreferenceDialog extends JDialog {
                 pointSizeTF.setText(Integer.toString(applicationModel.getPointSize()));
             }
         });
+        defaultGridSizePlus.addActionListener(e -> {
+            applicationModel.setDefaultGridSize(Integer.parseInt(defaultGridSizeTF.getText()) + 1);
+            defaultGridSizeTF.setText(Integer.toString(applicationModel.getDefaultGridSize()));
+            defaultGridSizeMinus.setEnabled(true);
+        });
+        defaultGridSizeMinus.addActionListener(e -> {
+            if (applicationModel.getDefaultGridSize() > 1) {
+                applicationModel.setDefaultGridSize(Integer.parseInt(defaultGridSizeTF.getText()) - 1);
+                defaultGridSizeMinus.setEnabled(applicationModel.getDefaultGridSize() > 1);
+                defaultGridSizeTF.setText(Integer.toString(applicationModel.getDefaultGridSize()));
+            }
+        });
         gridWidthPlus.addActionListener(e -> {
             applicationModel.setGridLineWidth(Integer.parseInt(gridWidthTF.getText()) + 1);
             gridWidthTF.setText(Integer.toString(applicationModel.getGridLineWidth()));
@@ -346,19 +371,19 @@ public class PreferenceDialog extends JDialog {
             }
         });
         gridColorButton.addActionListener(e -> {
-            Color gridColor = JColorChooser.showDialog(frameProvider.get(), "F_col", Color.white);
+            Color gridColor = JColorChooser.showDialog(frameProvider.get(), "F_col", FlatLaf.isLafDark() ? Colors.GRID_LINE_DARK : Colors.GRID_LINE);
 
             if (gridColor != null) {
                 applicationModel.setGridColor(gridColor);
-                gridColorButton.setIcon(new ColorIcon(applicationModel.getGridColor()));
+                gridColorButton.setIcon(new ColorIcon(gridColor));
             }
         });
         gridScaleColorButton.addActionListener(e -> {
-            Color gridScaleColor = JColorChooser.showDialog(frameProvider.get(), "F_col", Color.white);
+            Color gridScaleColor = JColorChooser.showDialog(frameProvider.get(), "F_col", FlatLaf.isLafDark() ? Colors.GRID_SCALE_DARK : Colors.GRID_SCALE);
 
             if (gridScaleColor != null) {
                 applicationModel.setGridScaleColor(gridScaleColor);
-                gridScaleColorButton.setIcon(new ColorIcon(applicationModel.getGridScaleColor()));
+                gridScaleColorButton.setIcon(new ColorIcon(gridScaleColor));
             }
         });
         animationSpeedSlider.addChangeListener(e -> applicationModel.setAnimationSpeed(animationSpeedSlider.getValue() / 8.0));
@@ -381,24 +406,22 @@ public class PreferenceDialog extends JDialog {
 
         searchBarTF.getDocument().addDocumentListener(new DocumentListener() {
             @Override
-            public void insertUpdate(DocumentEvent e) { update(); }
+            public void insertUpdate(DocumentEvent e) {
+                refreshHotkeyPanel(frameProvider);
+            }
 
             @Override
-            public void removeUpdate(DocumentEvent e) { update(); }
+            public void removeUpdate(DocumentEvent e) {
+                refreshHotkeyPanel(frameProvider);
+            }
 
             @Override
-            public void changedUpdate(DocumentEvent e) { update(); }
-
-            public void update() {
-                searchPhrases = parseSearchPhrases();
-                // Reset hotkeyCategoryMap keeping headers
-                categoryHeaderList.forEach(header -> hotkeyCategoryMap.put(header, new ArrayList<>()));
-                extractData(allData); // Only update the list in each header
-                setupHotKey(buttonService, frameProvider);
-
-                contentPane.repaint();
+            public void changedUpdate(DocumentEvent e) {
+                refreshHotkeyPanel(frameProvider);
             }
         });
+
+        hasHotkeyCB.addActionListener(e -> refreshHotkeyPanel(frameProvider));
 
         buttonOK.addActionListener(e -> onOK());
         buttonCancel.addActionListener(e -> onCancel());
@@ -406,6 +429,7 @@ public class PreferenceDialog extends JDialog {
         importButton.addActionListener(e -> {
             fileSaveService.importPref();
             setData(applicationModel);
+            setData(foldedFigureModel);
             setupHotKey(buttonService, frameProvider);
         });
         exportButton.addActionListener(e -> fileSaveService.exportPref());
@@ -422,7 +446,7 @@ public class PreferenceDialog extends JDialog {
     }
 
     private void onOK() {
-        setVisible(false);
+        dispose();
     }
 
     private void onCancel() {
@@ -438,13 +462,24 @@ public class PreferenceDialog extends JDialog {
             applicationModel.restorePrefDefaults();
             foldedFigureModel.restorePrefDefaults();
             ResourceUtil.clearBundle("hotkey");
+            buttonService.removeAllKeyBinds();
             buttonService.loadAllKeyStrokes();
+            contentPane.repaint();
         }
     }
 
     private List<String> parseSearchPhrases() {
         String phrase = searchBarTF.getText();
         return phrase.isEmpty() ? Collections.emptyList() : Arrays.asList(phrase.split("\\s+"));
+    }
+
+    private void refreshHotkeyPanel(FrameProvider frameProvider) {
+        searchPhrases = parseSearchPhrases();
+        // Reset hotkeyCategoryMap keeping headers
+        categoryHeaderList.forEach(header -> hotkeyCategoryMap.put(header, new ArrayList<>()));
+        updateList(allData); // Update the action list in each header
+        setupHotKey(buttonService, frameProvider);
+        contentPane.repaint();
     }
 
     public void updateTempModel(ApplicationModel applicationModel) {
@@ -480,15 +515,15 @@ public class PreferenceDialog extends JDialog {
                 assert defaultKeyStrokeString != null;
                 String conflictingAction = buttonService.getActionFromKeystroke(keyStroke);
                 if (keyStroke != null
-                        && buttonService.getActionFromKeystroke(keyStroke) != null
-                        && !Objects.equals(buttonService.getActionFromKeystroke(keyStroke), key)) {
+                        && conflictingAction != null
+                        && !Objects.equals(conflictingAction, key)) {
                     JOptionPane.showMessageDialog(null, "Default has conflict with ".concat(conflictingAction), "Conflict", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
 
                 // else update the action to default
                 ResourceUtil.updateBundleKey("hotkey", key, defaultKeyStrokeString.isEmpty() ? "" : defaultKeyStrokeString);
-                String ksString = KeyStrokeUtil.toString(keyStroke);
+                String ksString = KeyStrokeUtil.toStringWithMetaIcon(KeyStrokeUtil.toString(keyStroke));
                 keystrokeButton.setText(ksString.isEmpty() ? " " : ksString);
                 buttonService.setKeyStroke(keyStroke, key);
             }
@@ -507,10 +542,7 @@ public class PreferenceDialog extends JDialog {
         label.setFocusable(false);
         label.setIconTextGap(4);
         String actionText = ResourceUtil.getBundleString("name", key);
-        if (actionText != null) {
-            actionText = actionText.replaceAll("_", "");
-        }
-        label.setText(actionText);
+        label.setText(actionText != null ? actionText.replaceAll("_", "") : "Invalid name: " + key);
 
         return label;
     }
@@ -527,13 +559,14 @@ public class PreferenceDialog extends JDialog {
         };
 
         JButton keyStrokeButton = new JButton(hotkeyAction);
-        String ksString = KeyStrokeUtil.toString(currentKeyStroke);
+        String ksString = KeyStrokeUtil.toStringWithMetaIcon(KeyStrokeUtil.toString(currentKeyStroke));
 
         PropertyChangeListener listener = e -> {
             if (Objects.equals(e.getPropertyName(), key)) {
                 KeyStroke ks = (KeyStroke) e.getNewValue();
+                String temp = KeyStrokeUtil.toStringWithMetaIcon(KeyStrokeUtil.toString(ks));
                 hotkeyAction.putValue(Action.NAME, ks == null ? " " : KeyStrokeUtil.toString(ks));
-                keyStrokeButton.setText(!KeyStrokeUtil.toString(ks).isEmpty() ? KeyStrokeUtil.toString(ks) : " ");
+                keyStrokeButton.setText(!temp.isEmpty() ? temp : " ");
             }
         };
 
@@ -576,23 +609,29 @@ public class PreferenceDialog extends JDialog {
         }
     }
 
-    private void extractHeaders(List<String[]> allData) {
+    private void loadHeaders(List<String[]> allData) {
         categoryHeaderList.addAll(Arrays.asList(allData.get(0)));
         categoryHeaderList.forEach(header -> hotkeyCategoryMap.put(header, new ArrayList<>()));
     }
 
-    private void extractData(List<String[]> allData) {
+    private void updateList(List<String[]> allData) {
         for (int i = 1; i < allData.size(); i++) {
-            String[] row = allData.get(i);
-            for (int j = 0; j < row.length; j++) {
-                String action = row[j];
-                if (!action.isEmpty()) {
-                    String actionName = ResourceUtil.getBundleString("name", action);
-                    String finalActionName = actionName.replaceAll("_", "").toLowerCase();
-                    if (searchPhrases.stream().allMatch(phrase -> finalActionName.contains(phrase.toLowerCase()))
-                            || searchPhrases.isEmpty()) {
-                        hotkeyCategoryMap.get(categoryHeaderList.get(j)).add(action);
-                    }
+            List<String> actions = List.of(allData.get(i));
+            for (String action : actions) {
+                if (action.isEmpty()) continue;
+
+                String hotkey = ResourceUtil.getBundleString("hotkey", action);
+                if ((hotkey == null || hotkey.isEmpty()) && hasHotkeyCB.isSelected()) {
+                    continue;
+                }
+
+                String actionName = ResourceUtil.getBundleString("name", action);
+                if (actionName == null) continue;
+
+                String finalActionName = actionName.replaceAll("_", "").toLowerCase();
+                if (searchPhrases.isEmpty() ||
+                        searchPhrases.stream().allMatch(phrase -> finalActionName.contains(phrase.toLowerCase()))) {
+                    hotkeyCategoryMap.get(categoryHeaderList.get(actions.indexOf(action))).add(action);
                 }
             }
         }
@@ -614,9 +653,6 @@ public class PreferenceDialog extends JDialog {
             try (CSVReader csvReader = new CSVReaderBuilder(inputStreamReader).withCSVParser(parser).build()) {
                 allData = csvReader.readAll(); // Read all data at once
             }
-
-            extractHeaders(allData); // Extract headers
-            extractData(allData); // Extract Data excluding headers
         } catch (Exception e) {
             Logger.error(e);
         }
@@ -938,7 +974,7 @@ public class PreferenceDialog extends JDialog {
         label6.setText("MV Line style: ");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.gridy = 7;
+        gbc.gridy = 8;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.anchor = GridBagConstraints.EAST;
@@ -954,7 +990,7 @@ public class PreferenceDialog extends JDialog {
         lineStyleDropBox.setToolTipText("Select line style");
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
-        gbc.gridy = 7;
+        gbc.gridy = 8;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.anchor = GridBagConstraints.WEST;
@@ -964,7 +1000,7 @@ public class PreferenceDialog extends JDialog {
         label7.setText(" Main grid color: ");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.gridy = 5;
+        gbc.gridy = 6;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.anchor = GridBagConstraints.EAST;
@@ -973,7 +1009,7 @@ public class PreferenceDialog extends JDialog {
         gridColorButton.setText("Color");
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
-        gbc.gridy = 5;
+        gbc.gridy = 6;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -982,7 +1018,7 @@ public class PreferenceDialog extends JDialog {
         label8.setText(" Sub grid color: ");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.gridy = 6;
+        gbc.gridy = 7;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.anchor = GridBagConstraints.EAST;
@@ -991,7 +1027,7 @@ public class PreferenceDialog extends JDialog {
         gridScaleColorButton.setText("Color");
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
-        gbc.gridy = 6;
+        gbc.gridy = 7;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -1000,7 +1036,7 @@ public class PreferenceDialog extends JDialog {
         label9.setText(" Grid line width: ");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.gridy = 4;
+        gbc.gridy = 5;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.anchor = GridBagConstraints.EAST;
@@ -1092,7 +1128,7 @@ public class PreferenceDialog extends JDialog {
         gridLinePanel.setLayout(new BorderLayout(0, 0));
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
-        gbc.gridy = 4;
+        gbc.gridy = 5;
         gbc.fill = GridBagConstraints.BOTH;
         appearance1Panel.add(gridLinePanel, gbc);
         gridWidthMinus = new JButton();
@@ -1115,13 +1151,13 @@ public class PreferenceDialog extends JDialog {
         label10.setText("Max Grid Density: ");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.gridy = 8;
+        gbc.gridy = 9;
         gbc.anchor = GridBagConstraints.EAST;
         gbc.insets = new Insets(3, 0, 20, 0);
         appearance1Panel.add(label10, gbc);
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
-        gbc.gridy = 8;
+        gbc.gridy = 9;
         gbc.anchor = GridBagConstraints.NORTHWEST;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(3, 0, 0, 0);
@@ -1130,42 +1166,42 @@ public class PreferenceDialog extends JDialog {
         label11.setText("Dark mode: ");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.gridy = 9;
+        gbc.gridy = 10;
         gbc.anchor = GridBagConstraints.EAST;
         appearance1Panel.add(label11, gbc);
         darkModeCheckBox = new JCheckBox();
         darkModeCheckBox.setText("");
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
-        gbc.gridy = 9;
+        gbc.gridy = 10;
         gbc.anchor = GridBagConstraints.WEST;
         appearance1Panel.add(darkModeCheckBox, gbc);
         final JLabel label12 = new JLabel();
         label12.setText("Anti-alias: ");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.gridy = 10;
+        gbc.gridy = 11;
         gbc.anchor = GridBagConstraints.EAST;
         appearance1Panel.add(label12, gbc);
         antiAliasCB = new JCheckBox();
         antiAliasCB.setText("");
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
-        gbc.gridy = 10;
+        gbc.gridy = 11;
         gbc.anchor = GridBagConstraints.WEST;
         appearance1Panel.add(antiAliasCB, gbc);
         final JLabel label13 = new JLabel();
         label13.setText("Display numbers: ");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.gridy = 11;
+        gbc.gridy = 12;
         gbc.anchor = GridBagConstraints.EAST;
         appearance1Panel.add(label13, gbc);
         displayNumbersCB = new JCheckBox();
         displayNumbersCB.setText("");
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
-        gbc.gridy = 11;
+        gbc.gridy = 12;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.VERTICAL;
         appearance1Panel.add(displayNumbersCB, gbc);
@@ -1173,21 +1209,21 @@ public class PreferenceDialog extends JDialog {
         label14.setText("Fold anti-alias: ");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.gridy = 12;
+        gbc.gridy = 13;
         gbc.anchor = GridBagConstraints.EAST;
         appearance1Panel.add(label14, gbc);
         foldAntiAliasCheckBox = new JCheckBox();
         foldAntiAliasCheckBox.setText("");
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
-        gbc.gridy = 12;
+        gbc.gridy = 13;
         gbc.anchor = GridBagConstraints.WEST;
         appearance1Panel.add(foldAntiAliasCheckBox, gbc);
         final JLabel label15 = new JLabel();
         label15.setText("Round Line-ends: ");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.gridy = 13;
+        gbc.gridy = 14;
         gbc.anchor = GridBagConstraints.EAST;
         appearance1Panel.add(label15, gbc);
         roundedEndsCheckbox = new JCheckBox();
@@ -1195,16 +1231,43 @@ public class PreferenceDialog extends JDialog {
         roundedEndsCheckbox.setText("");
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
-        gbc.gridy = 13;
+        gbc.gridy = 14;
         gbc.anchor = GridBagConstraints.NORTHWEST;
         appearance1Panel.add(roundedEndsCheckbox, gbc);
+        final JLabel label16 = new JLabel();
+        label16.setText(" Default grid size: ");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 4;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        gbc.anchor = GridBagConstraints.EAST;
+        appearance1Panel.add(label16, gbc);
         final JPanel panel9 = new JPanel();
-        panel9.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 10));
-        panel9.setMinimumSize(new Dimension(334, 226));
-        tabbedPane1.addTab("BEHAVIOR", panel9);
+        panel9.setLayout(new BorderLayout(0, 0));
+        gbc = new GridBagConstraints();
+        gbc.gridx = 1;
+        gbc.gridy = 4;
+        gbc.fill = GridBagConstraints.BOTH;
+        appearance1Panel.add(panel9, gbc);
+        defaultGridSizeMinus = new JButton();
+        defaultGridSizeMinus.setText("-");
+        panel9.add(defaultGridSizeMinus, BorderLayout.WEST);
+        defaultGridSizeTF = new JTextField();
+        defaultGridSizeTF.setColumns(1);
+        defaultGridSizeTF.setEnabled(false);
+        defaultGridSizeTF.setPreferredSize(new Dimension(17, -1));
+        panel9.add(defaultGridSizeTF, BorderLayout.CENTER);
+        defaultGridSizePlus = new JButton();
+        defaultGridSizePlus.setText("+");
+        panel9.add(defaultGridSizePlus, BorderLayout.EAST);
+        final JPanel panel10 = new JPanel();
+        panel10.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 10));
+        panel10.setMinimumSize(new Dimension(334, 226));
+        tabbedPane1.addTab("BEHAVIOR", panel10);
         behavior2Panel = new JPanel();
         behavior2Panel.setLayout(new GridBagLayout());
-        panel9.add(behavior2Panel);
+        panel10.add(behavior2Panel);
         zoomSpeedSlider.setMajorTickSpacing(10);
         zoomSpeedSlider.setMaximum(100);
         zoomSpeedSlider.setMinimum(0);
@@ -1291,27 +1354,29 @@ public class PreferenceDialog extends JDialog {
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         behavior2Panel.add(offsetCB, gbc);
-        final JPanel panel10 = new JPanel();
-        panel10.setLayout(new GridLayoutManager(2, 1, new Insets(0, 0, 0, 0), -1, -1));
-        tabbedPane1.addTab("HOTKEYS", panel10);
         final JPanel panel11 = new JPanel();
-        panel11.setLayout(new GridLayoutManager(2, 1, new Insets(0, 0, 0, 0), -1, -1));
-        panel10.add(panel11, new GridConstraints(0, 0, 2, 1, GridConstraints.ANCHOR_NORTH, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        panel11.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
+        tabbedPane1.addTab("HOTKEYS", panel11);
+        final JPanel panel12 = new JPanel();
+        panel12.setLayout(new GridLayoutManager(2, 1, new Insets(0, 0, 0, 0), -1, -1));
+        panel11.add(panel12, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_NORTH, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         scrollPane1.setAutoscrolls(false);
         scrollPane1.setVerticalScrollBarPolicy(20);
-        panel11.add(scrollPane1, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_NORTH, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        panel12.add(scrollPane1, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_NORTH, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         scrollPane1.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
         scrollPane1.setViewportView(hotkeyPanel);
-        final JPanel panel12 = new JPanel();
-        panel12.setLayout(new GridLayoutManager(1, 2, new Insets(10, 10, 0, 10), -1, -1));
-        panel11.add(panel12, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_NORTH, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        final JPanel panel13 = new JPanel();
+        panel13.setLayout(new GridLayoutManager(1, 3, new Insets(10, 10, 0, 10), -1, -1));
+        panel12.add(panel13, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_NORTH, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         searchBarTF = new JTextField();
         searchBarTF.setMargin(new Insets(2, 6, 2, 6));
-        panel12.add(searchBarTF, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
-        final JLabel label16 = new JLabel();
-        label16.setOpaque(true);
-        label16.setText("Search:");
-        panel12.add(label16, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        panel13.add(searchBarTF, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        final JLabel label17 = new JLabel();
+        label17.setOpaque(true);
+        label17.setText("Search:");
+        panel13.add(label17, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        hasHotkeyCB.setText("Has hotkey");
+        panel13.add(hasHotkeyCB, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     }
 
     /**
@@ -1348,8 +1413,11 @@ public class PreferenceDialog extends JDialog {
         hotkeyCategoryMap = new LinkedHashMap<>();
         categoryHeaderList = new ArrayList<>();
         searchPhrases = new ArrayList<>();
+        hasHotkeyCB = new JCheckBox();
         allData = new ArrayList<>();
         readCSV();
+        loadHeaders(allData); // Extract headers
+        updateList(allData); // Extract Data excluding headers
 
         hotkeyPanel = new JPanel();
         hotkeyPanel.setLayout(new GridLayoutManager(hotkeyCategoryMap.size() + 1, 2, new Insets(10, 10, 0, 10), -1, -1));

@@ -26,7 +26,7 @@ public class LineColorAction extends AbstractOrieditaAction {
     public void actionPerformed(ActionEvent e) {
         //以下にやりたいことを書く
 
-        Color lineColor = JColorChooser.showDialog(frameProvider.get(), "L_col", Color.white);
+        Color lineColor = JColorChooser.showDialog(frameProvider.get(), "L_col", Color.black);
         if (lineColor != null) {
             foldedFigureModel.setLineColor(lineColor);
         }

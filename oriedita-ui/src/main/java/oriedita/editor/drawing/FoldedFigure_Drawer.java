@@ -135,6 +135,7 @@ public class FoldedFigure_Drawer implements Foldable {
     }
 
     public void folding_estimated(Camera creasePatternCamera, LineSegmentSet lineSegmentSet) throws InterruptedException, FoldingException {//折畳み予測の最初に、wireFrame_worker1.lineStore2pointStore(lineStore)として使う。　Ss0は、mainDrawingWorker.get_for_oritatami()かes1.get_for_select_oritatami()で得る。
+        if(lineSegmentSet.getNumLineSegments() == 0){ return; }
         boolean i_camera_estimated = foldedFigure.estimationStep == FoldedFigure.EstimationStep.STEP_0
                 && foldedFigure.estimationOrder.isAtMost(FoldedFigure.EstimationOrder.ORDER_5);
         boolean shouldCalculateFromTop = foldedFigure.estimationOrder.isAtLeast(FoldedFigure.EstimationOrder.ORDER_4);

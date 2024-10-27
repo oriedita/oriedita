@@ -82,6 +82,7 @@ public class ApplicationModel implements Serializable {
     private double animationSpeed;
     private double mouseRadius;
     private long autoSaveInterval;
+    private int defaultGridSize;
 
     /*
     Things to remember when adding a new property:
@@ -94,6 +95,15 @@ public class ApplicationModel implements Serializable {
     @Inject
     public ApplicationModel() {
         reset();
+    }
+
+    public int getDefaultGridSize() { return defaultGridSize; }
+
+    public void setDefaultGridSize(int defaultGridSize) {
+        int oldDefaultGridSize = this.defaultGridSize;
+        this.defaultGridSize = defaultGridSize;
+        this.pcs.firePropertyChange("defaultGridSize", oldDefaultGridSize, defaultGridSize);
+
     }
 
     public double getMouseRadius() {
@@ -391,6 +401,7 @@ public class ApplicationModel implements Serializable {
 
         gridColor = Colors.GRID_LINE;
         gridScaleColor = Colors.GRID_SCALE;
+        defaultGridSize = 8;
         gridLineWidth = 1;
 
         roundedEnds = false;
@@ -448,6 +459,7 @@ public class ApplicationModel implements Serializable {
         lineWidth = 1;
         auxLineWidth = 3;
         pointSize = 1;
+        defaultGridSize = 8;
         gridLineWidth = 1;
         gridColor = Colors.GRID_LINE;
         gridScaleColor = Colors.GRID_SCALE;
@@ -709,11 +721,7 @@ public class ApplicationModel implements Serializable {
     }
 
     public void decreasePointSize() {
-        int pointSize = this.pointSize - 1;
-        if (pointSize < 0) {
-            pointSize = 0;
-        }
-        setPointSize(pointSize);
+        setPointSize(Math.max(0, this.pointSize - 1));
     }
 
     public void increasePointSize() {
@@ -729,47 +737,27 @@ public class ApplicationModel implements Serializable {
     }
 
     public void decreaseLineWidth() {
-        int lineWidth = this.lineWidth - 2;
-        if (lineWidth < 1) {
-            lineWidth = 1;
-        }
-        setLineWidth(lineWidth);
+        setLineWidth(Math.max(1, this.lineWidth - 1));
     }
 
     public void increaseLineWidth() {
-        setLineWidth(lineWidth + 2);
+        setLineWidth(lineWidth + 1);
     }
 
     public float determineCalculatedLineWidth() {
-        float fLineWidth = (float) lineWidth;
-
-        if (antiAlias) {
-            fLineWidth += 0.2f;
-        }
-
-        return fLineWidth;
+        return antiAlias ? lineWidth + 0.2f : lineWidth;
     }
 
     public void decreaseAuxLineWidth() {
-        int auxLineWidth = this.auxLineWidth - 2;
-        if (auxLineWidth < 3) {
-            auxLineWidth = 3;
-        }
-        setAuxLineWidth(auxLineWidth);
+        setAuxLineWidth(Math.max(1, this.auxLineWidth - 1));
     }
 
     public void increaseAuxLineWidth() {
-        setAuxLineWidth(auxLineWidth + 2);
+        setAuxLineWidth(auxLineWidth + 1);
     }
 
     public float determineCalculatedAuxLineWidth() {
-        float fAuxLineWidth = (float) auxLineWidth;
-
-        if (antiAlias) {
-            fAuxLineWidth += 0.2f;
-        }
-
-        return fAuxLineWidth;
+        return antiAlias ? auxLineWidth + 0.2f : auxLineWidth;
     }
 
     public int getNumPolygonCorners() {
@@ -778,15 +766,7 @@ public class ApplicationModel implements Serializable {
 
     public void setNumPolygonCorners(int numPolygonCorners) {
         int oldNumPolygonCorners = this.numPolygonCorners;
-
-        if (numPolygonCorners < 3) {
-            numPolygonCorners = 3;
-        }
-        if (numPolygonCorners > 100) {
-            numPolygonCorners = 100;
-        }
-
-        this.numPolygonCorners = numPolygonCorners;
+        this.numPolygonCorners = Math.max(3, Math.min(numPolygonCorners, 100));
         this.pcs.firePropertyChange("numPolygonCorners", oldNumPolygonCorners, numPolygonCorners);
     }
 
@@ -849,6 +829,7 @@ public class ApplicationModel implements Serializable {
         windowState = applicationModel.getWindowState();
         foldWarning = applicationModel.getFoldWarning();
 
+        defaultGridSize = applicationModel.getDefaultGridSize();
         gridColor = applicationModel.getGridColor();
         gridScaleColor = applicationModel.getGridScaleColor();
         gridLineWidth = applicationModel.getGridLineWidth();
@@ -929,16 +910,11 @@ public class ApplicationModel implements Serializable {
 
 
     public void decreaseGridLineWidth() {
-        int gridLineWidth = this.gridLineWidth - 2;
-        if (gridLineWidth < 1) {
-            gridLineWidth = 1;
-        }
-
-        setGridLineWidth(gridLineWidth);
+        setGridLineWidth(Math.max(1, this.gridLineWidth - 1));
     }
 
     public void increaseGridLineWidth() {
-        setGridLineWidth(gridLineWidth + 2);
+        setGridLineWidth(gridLineWidth + 1);
     }
 
     public void toggleUseAdvancedCheck4Display() {

@@ -123,7 +123,7 @@ public class SelectKeyStrokeDialog extends JDialog {
         if (keyStroke == null) {
             keyStrokeLabel.setText("<html><i>Press any key</i>");
         } else {
-            keyStrokeLabel.setText("<html>" + KeyStrokeUtil.toString(keyStroke));
+            keyStrokeLabel.setText("<html>" + KeyStrokeUtil.toStringWithMetaIcon(KeyStrokeUtil.toString(keyStroke)));
         }
         this.keyStroke = keyStroke;
     }

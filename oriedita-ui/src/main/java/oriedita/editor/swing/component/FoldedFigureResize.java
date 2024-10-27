@@ -7,10 +7,10 @@ import oriedita.editor.Animations;
 import oriedita.editor.databinding.ApplicationModel;
 import oriedita.editor.databinding.FoldedFigureModel;
 import oriedita.editor.databinding.MeasuresModel;
+import oriedita.editor.factory.RegexHighlightFactory;
 import oriedita.editor.service.AnimationService;
 import oriedita.editor.service.ButtonService;
 import oriedita.editor.swing.InputEnterKeyAdapter;
-import oriedita.editor.swing.OnlyDoubleAdapter;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -54,7 +54,7 @@ public class FoldedFigureResize extends JPanel {
                         s -> measuresModel.string2double(foldedFigureSizeTextField.getText(), foldedFigureModel.getScale()), AnimationDurations.ZOOM)
         );
         foldedFigureSizeTextField.addActionListener(e -> foldedFigureSizeSetButton.doClick());
-        foldedFigureSizeTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(foldedFigureSizeTextField));
+        foldedFigureSizeTextField.getDocument().addDocumentListener(RegexHighlightFactory.doubleRegexAdapter(foldedFigureSizeTextField));
         foldedFigureSizeTextField.addKeyListener(new InputEnterKeyAdapter(foldedFigureSizeTextField));
         foldedFigureSizeTextField.addFocusListener(new FocusAdapter() {
             @Override

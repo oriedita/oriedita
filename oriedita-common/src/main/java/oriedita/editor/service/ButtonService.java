@@ -39,5 +39,7 @@ public interface ButtonService {
 
     void removeKeystrokeChangeListener(PropertyChangeListener listener);
 
-    public void registerTextField(JTextComponent textField, String key);
+    void registerTextField(JTextComponent textField, String key);
+
+    void removeAllKeyBinds();
 }

@@ -11,7 +11,6 @@ import origami.Epsilon;
 import origami.crease_pattern.element.Point;
 
 import java.awt.event.MouseEvent;
-import java.util.EnumSet;
 
 @ApplicationScoped
 @Handles(MouseMode.CREASE_SELECT_19)
@@ -51,26 +50,16 @@ public class MouseHandlerCreaseSelect extends BaseMouseHandlerBoxSelect {
     }
 
     @Override
-    public void mousePressed(Point p0, MouseEvent e) {
+    public void mousePressed(Point p0, MouseEvent e, int pressedButton) {
         if (e.getClickCount() == 3 && canvasModel.isCkbox_add_frame_SelectAnd3click_isSelected()) {
-            System.out.println("3_Click");//("トリプルクリック"
+            Logger.info("3_Click");//("トリプルクリック"
             tripleClick = true;
             switch (canvasModel.getSelectionOperationMode()) {
-                case MOVE_1:
-                    canvasModel.setMouseMode(MouseMode.CREASE_MOVE_21);
-                    break;
-                case MOVE4P_2:
-                    canvasModel.setMouseMode(MouseMode.CREASE_MOVE_4P_31);
-                    break;
-                case COPY_3:
-                    canvasModel.setMouseMode(MouseMode.CREASE_COPY_22);
-                    break;
-                case COPY4P_4:
-                    canvasModel.setMouseMode(MouseMode.CREASE_COPY_4P_32);
-                    break;
-                case MIRROR_5:
-                    canvasModel.setMouseMode(MouseMode.DRAW_CREASE_SYMMETRIC_12);
-                    break;
+                case MOVE_1 -> canvasModel.setMouseMode(MouseMode.CREASE_MOVE_21);
+                case MOVE4P_2 -> canvasModel.setMouseMode(MouseMode.CREASE_MOVE_4P_31);
+                case COPY_3 -> canvasModel.setMouseMode(MouseMode.CREASE_COPY_22);
+                case COPY4P_4 -> canvasModel.setMouseMode(MouseMode.CREASE_COPY_4P_32);
+                case MIRROR_5 -> canvasModel.setMouseMode(MouseMode.DRAW_CREASE_SYMMETRIC_12);
             }
         } else {
             tripleClick = false;
@@ -88,24 +77,12 @@ public class MouseHandlerCreaseSelect extends BaseMouseHandlerBoxSelect {
             return;
         }
         switch (d.getI_select_mode()) {
-            case NORMAL_0:
-                super.mousePressed(p0);
-                break;
-            case MOVE_1:
-                mouseHandlerCreaseMove.mousePressed(p0);//move
-                break;
-            case MOVE4P_2:
-                mouseHandlerCreaseMove4p.mousePressed(p0);//move 2p2p
-                break;
-            case COPY_3:
-                mouseHandlerCreaseCopy.mousePressed(p0);//copy
-                break;
-            case COPY4P_4:
-                mouseHandlerCreaseCopy4p.mousePressed(p0);//copy 2p2p
-                break;
-            case MIRROR_5:
-                mouseHandlerDrawCreaseSymmetric.mousePressed(p0);//鏡映
-                break;
+            case NORMAL_0 -> super.mousePressed(p0);
+            case MOVE_1 -> mouseHandlerCreaseMove.mousePressed(p0);//move
+            case MOVE4P_2 -> mouseHandlerCreaseMove4p.mousePressed(p0);//move 2p2p
+            case COPY_3 -> mouseHandlerCreaseCopy.mousePressed(p0);//copy
+            case COPY4P_4 -> mouseHandlerCreaseCopy4p.mousePressed(p0);//copy 2p2p
+            case MIRROR_5 -> mouseHandlerDrawCreaseSymmetric.mousePressed(p0);//鏡映
         }
     }
 
@@ -119,24 +96,12 @@ public class MouseHandlerCreaseSelect extends BaseMouseHandlerBoxSelect {
         }
 
         switch (d.getI_select_mode()) {
-            case NORMAL_0:
-                super.mouseDragged(p0);
-                break;
-            case MOVE_1:
-                mouseHandlerCreaseMove.mouseDragged(p0);//move
-                break;
-            case MOVE4P_2:
-                mouseHandlerCreaseMove4p.mouseDragged(p0);//move 2p2p
-                break;
-            case COPY_3:
-                mouseHandlerCreaseCopy.mouseDragged(p0);//copy
-                break;
-            case COPY4P_4:
-                mouseHandlerCreaseCopy4p.mouseDragged(p0);//copy 2p2p
-                break;
-            case MIRROR_5:
-                mouseHandlerDrawCreaseSymmetric.mouseDragged(p0);//鏡映
-                break;
+            case NORMAL_0 -> super.mouseDragged(p0);
+            case MOVE_1 -> mouseHandlerCreaseMove.mouseDragged(p0);//move
+            case MOVE4P_2 -> mouseHandlerCreaseMove4p.mouseDragged(p0);//move 2p2p
+            case COPY_3 -> mouseHandlerCreaseCopy.mouseDragged(p0);//copy
+            case COPY4P_4 -> mouseHandlerCreaseCopy4p.mouseDragged(p0);//copy 2p2p
+            case MIRROR_5 -> mouseHandlerDrawCreaseSymmetric.mouseDragged(p0);//鏡映
         }
     }
 
@@ -148,24 +113,12 @@ public class MouseHandlerCreaseSelect extends BaseMouseHandlerBoxSelect {
             return;
         }
         switch (d.getI_select_mode()) {
-            case NORMAL_0:
-                mReleased_A_box_select(p0);
-                break;
-            case MOVE_1:
-                mouseHandlerCreaseMove.mouseReleased(p0);//move
-                break;
-            case MOVE4P_2:
-                mouseHandlerCreaseMove4p.mouseReleased(p0);//move 2p2p
-                break;
-            case COPY_3:
-                mouseHandlerCreaseCopy.mouseReleased(p0);//copy
-                break;
-            case COPY4P_4:
-                mouseHandlerCreaseCopy4p.mouseReleased(p0);//copy 2p2p
-                break;
-            case MIRROR_5:
-                mouseHandlerDrawCreaseSymmetric.mouseReleased(p0);//鏡映
-                break;
+            case NORMAL_0 -> mReleased_A_box_select(p0);
+            case MOVE_1 -> mouseHandlerCreaseMove.mouseReleased(p0);//move
+            case MOVE4P_2 -> mouseHandlerCreaseMove4p.mouseReleased(p0);//move 2p2p
+            case COPY_3 -> mouseHandlerCreaseCopy.mouseReleased(p0);//copy
+            case COPY4P_4 -> mouseHandlerCreaseCopy4p.mouseReleased(p0);//copy 2p2p
+            case MIRROR_5 -> mouseHandlerDrawCreaseSymmetric.mouseReleased(p0);//鏡映
         }
         tripleClick = false;
     }
@@ -173,6 +126,8 @@ public class MouseHandlerCreaseSelect extends BaseMouseHandlerBoxSelect {
     public void mReleased_A_box_select(Point p0) {
         super.mouseReleased(p0);
         d.getLineStep().clear();
+
+        int beforeSelectNum = d.getFoldLineTotalForSelectFolding();
 
         d.select(selectionStart, p0);
         if (selectionStart.distance(p0) <= Epsilon.UNKNOWN_1EN6) {
@@ -182,5 +137,8 @@ public class MouseHandlerCreaseSelect extends BaseMouseHandlerBoxSelect {
                 d.setIsSelectionEmpty(false);
             }
         }
+        int afterSelectNum = d.getFoldLineTotalForSelectFolding();
+
+        if(beforeSelectNum != afterSelectNum) d.record();
     }
 }

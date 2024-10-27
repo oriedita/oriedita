@@ -1,7 +1,9 @@
 package oriedita.editor.action;
 
+import com.formdev.flatlaf.FlatLaf;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import oriedita.editor.Colors;
 import oriedita.editor.FrameProvider;
 import oriedita.editor.databinding.FoldedFigureModel;
 
@@ -23,8 +25,7 @@ public class FrontColorAction extends AbstractOrieditaAction{
     @Override
     public void actionPerformed(ActionEvent e) {
         //以下にやりたいことを書く
-
-        Color frontColor = JColorChooser.showDialog(frameProvider.get(), "F_col", Color.white);
+        Color frontColor = JColorChooser.showDialog(frameProvider.get(), "F_col", FlatLaf.isLafDark() ? Colors.FIGURE_FRONT_DARK : Colors.FIGURE_FRONT);
 
         if (frontColor != null) {
             foldedFigureModel.setFrontColor(frontColor);

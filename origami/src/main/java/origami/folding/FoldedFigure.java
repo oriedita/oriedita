@@ -73,6 +73,7 @@ public class FoldedFigure {
 
     public void folding_estimated(LineSegmentSet lineSegmentSet, int startingFaceId) throws InterruptedException, FoldingException {//折畳み予測の最初に、wireFrame_worker1.lineStore2pointStore(lineStore)として使う。　Ss0は、mainDrawingWorker.get_for_oritatami()かes1.get_for_select_oritatami()で得る。
         //Folded view display camera settings
+        if(lineSegmentSet.getNumLineSegments() == 0){ return; }
 
         EstimationOrder order = estimationOrder; // The latter will be reset during initialization.
         if (order == EstimationOrder.ORDER_51) {

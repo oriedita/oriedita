@@ -13,6 +13,7 @@ import oriedita.editor.databinding.AngleSystemModel;
 import oriedita.editor.databinding.ApplicationModel;
 import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.databinding.MeasuresModel;
+import oriedita.editor.factory.RegexHighlightFactory;
 import oriedita.editor.service.ButtonService;
 import oriedita.editor.service.HistoryState;
 import oriedita.editor.swing.component.ColorIcon;
@@ -200,6 +201,7 @@ public class RightPanel {
         });
         regularPolygonButton.addActionListener(e -> {
             applicationModel.setNumPolygonCorners(StringOp.String2int(polygonSizeTextField.getText(), applicationModel.getNumPolygonCorners()));
+            setData(applicationModel);
         });
         c_colButton.addActionListener(e -> {
             //以下にやりたいことを書く
@@ -219,7 +221,7 @@ public class RightPanel {
 
         ActionListener listener = e -> restrictedAngleSetDEFButton.doClick();
         angleDTextField.addActionListener(listener);
-        angleDTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(angleDTextField));
+        angleDTextField.getDocument().addDocumentListener(RegexHighlightFactory.doubleRegexAdapter(angleDTextField));
         angleDTextField.addKeyListener(new InputEnterKeyAdapter(angleDTextField));
         angleDTextField.addFocusListener(new FocusAdapter() {
             @Override
@@ -229,7 +231,7 @@ public class RightPanel {
             }
         });
         angleETextField.addActionListener(listener);
-        angleETextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(angleETextField));
+        angleETextField.getDocument().addDocumentListener(RegexHighlightFactory.doubleRegexAdapter(angleETextField));
         angleETextField.addKeyListener(new InputEnterKeyAdapter(angleETextField));
         angleETextField.addFocusListener(new FocusAdapter() {
             @Override
@@ -239,7 +241,7 @@ public class RightPanel {
             }
         });
         angleFTextField.addActionListener(listener);
-        angleFTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(angleFTextField));
+        angleFTextField.getDocument().addDocumentListener(RegexHighlightFactory.doubleRegexAdapter(angleFTextField));
         angleFTextField.addKeyListener(new InputEnterKeyAdapter(angleFTextField));
         angleFTextField.addFocusListener(new FocusAdapter() {
             @Override
@@ -250,7 +252,7 @@ public class RightPanel {
         });
         ActionListener listener1 = e -> restrictedAngleABCSetButton.doClick();
         angleATextField.addActionListener(listener1);
-        angleATextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(angleATextField));
+        angleATextField.getDocument().addDocumentListener(RegexHighlightFactory.doubleRegexAdapter(angleATextField));
         angleATextField.addKeyListener(new InputEnterKeyAdapter(angleATextField));
         angleATextField.addFocusListener(new FocusAdapter() {
             @Override
@@ -260,7 +262,7 @@ public class RightPanel {
             }
         });
         angleCTextField.addActionListener(listener1);
-        angleCTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(angleCTextField));
+        angleCTextField.getDocument().addDocumentListener(RegexHighlightFactory.doubleRegexAdapter(angleCTextField));
         angleCTextField.addKeyListener(new InputEnterKeyAdapter(angleCTextField));
         angleCTextField.addFocusListener(new FocusAdapter() {
             @Override
@@ -270,7 +272,7 @@ public class RightPanel {
             }
         });
         angleBTextField.addActionListener(listener1);
-        angleBTextField.getDocument().addDocumentListener(new OnlyDoubleAdapter(angleBTextField));
+        angleBTextField.getDocument().addDocumentListener(RegexHighlightFactory.doubleRegexAdapter(angleBTextField));
         angleBTextField.addKeyListener(new InputEnterKeyAdapter(angleBTextField));
         angleBTextField.addFocusListener(new FocusAdapter() {
             @Override
@@ -280,7 +282,7 @@ public class RightPanel {
             }
         });
         polygonSizeTextField.addActionListener(e -> polygonSizeSetButton.doClick());
-        polygonSizeTextField.getDocument().addDocumentListener(new OnlyIntAdapter(polygonSizeTextField));
+        polygonSizeTextField.getDocument().addDocumentListener(RegexHighlightFactory.intRegexAdapter(polygonSizeTextField));
         polygonSizeTextField.addKeyListener(new InputEnterKeyAdapter(polygonSizeTextField));
         polygonSizeTextField.addFocusListener(new FocusAdapter() {
             @Override
@@ -616,6 +618,8 @@ public class RightPanel {
         cAMVCheckBox.setSelected(data.getCheck4Enabled());
         ckOCheckBox.setSelected(data.getCkOEnabled());
         ckTCheckBox.setSelected(data.getCkTEnabled());
+
+        polygonSizeTextField.setText(Integer.toString(applicationModel.getNumPolygonCorners()));
 
         darkMode = LookAndFeelUtil.determineLafDark(data.getLaf());
 

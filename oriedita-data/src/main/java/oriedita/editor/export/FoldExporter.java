@@ -9,6 +9,7 @@ import fold.model.FoldFrame;
 import fold.model.Vertex;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import org.tinylog.Logger;
 import oriedita.editor.export.api.FileExporter;
 import oriedita.editor.save.OrieditaFoldFile;
 import oriedita.editor.save.Save;
@@ -58,13 +59,7 @@ public class FoldExporter implements FileExporter {
         WireFrame_Worker wireFrame_worker = new WireFrame_Worker(3.0);
         wireFrame_worker.setLineSegmentSetWithoutFaceOccurence(lineSegmentSet);
         PointSet pointSet = wireFrame_worker.get();
-        boolean includeFaces = true;
-        try {
-            pointSet.calculateFaces();
-        } catch (RuntimeException e) {
-            // ignore
-            includeFaces = false;
-        }
+        boolean includeFaces = pointSet.calculateFaces();
 
         OrieditaFoldFile foldFile = new OrieditaFoldFile();
         foldFile.setCreator("oriedita");
@@ -90,36 +85,28 @@ public class FoldExporter implements FileExporter {
             rootFrame.getEdges().add(edge);
         }
 
-        try {
-            if (includeFaces) {
-                for (int i = 1; i <= pointSet.getNumFaces(); i++) {
-                    var pface = pointSet.getFace(i);
-                    var face = new Face();
+        if (includeFaces) {
+            for (int i = 1; i <= pointSet.getNumFaces(); i++) {
+                var pface = pointSet.getFace(i);
+                var face = new Face();
 
-                    var faceVertices = new ArrayList<Vertex>();
-                    var faceEdges = new ArrayList<Edge>();
-                    var vertexFirst = rootFrame.getVertices().get(pface.getPointId(1) - 1);
-                    var vertexLast = rootFrame.getVertices().get(pface.getPointId(pface.getNumPoints()) - 1);
-                    faceVertices.add(vertexFirst);
-                    faceEdges.add(findEdge(vertexFirst, vertexLast, rootFrame.getEdges()));
-                    for (var j = 2; j <= pface.getNumPoints(); j++) {
-                        var currentVertex = rootFrame.getVertices().get(pface.getPointId(j) - 1);
-                        var previousVertex = rootFrame.getVertices().get(pface.getPointId(j - 1) - 1);
-                        faceVertices.add(currentVertex);
-                        faceEdges.add(findEdge(currentVertex, previousVertex, rootFrame.getEdges()));
-                    }
-                    face.setVertices(faceVertices);
-                    face.setEdges(faceEdges);
-
-                    rootFrame.getFaces().add(face);
+                var faceVertices = new ArrayList<Vertex>();
+                var faceEdges = new ArrayList<Edge>();
+                var vertexFirst = rootFrame.getVertices().get(pface.getPointId(1) - 1);
+                var vertexLast = rootFrame.getVertices().get(pface.getPointId(pface.getNumPoints()) - 1);
+                faceVertices.add(vertexFirst);
+                faceEdges.add(findEdge(vertexFirst, vertexLast, rootFrame.getEdges()));
+                for (var j = 2; j <= pface.getNumPoints(); j++) {
+                    var currentVertex = rootFrame.getVertices().get(pface.getPointId(j) - 1);
+                    var previousVertex = rootFrame.getVertices().get(pface.getPointId(j - 1) - 1);
+                    faceVertices.add(currentVertex);
+                    faceEdges.add(findEdge(currentVertex, previousVertex, rootFrame.getEdges()));
                 }
-            }
-        } catch (RuntimeException e) {
-            // Ignore
-            // It is possible that we cannot consistently find faces, in this case we skip adding faces.
-            // TODO there might be a neater way to figure this out.
+                face.setVertices(faceVertices);
+                face.setEdges(faceEdges);
 
-            rootFrame.getFaces().clear();
+                rootFrame.getFaces().add(face);
+            }
         }
 
         foldFile.setCircles(save.getCircles());
@@ -158,7 +145,7 @@ public class FoldExporter implements FileExporter {
             LineSegmentSet s = new LineSegmentSet();
             s.setSave(save);
             if (s.getNumLineSegments() == 0) {
-                s.addLine(new Point(0,0), new Point(0,0), LineColor.BLACK_0);
+                s.addLine(new Point(0, 0), new Point(0, 0), LineColor.BLACK_0);
             }
             exportFile(save, s, file);
         } catch (InterruptedException e) {
