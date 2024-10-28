@@ -45,6 +45,7 @@ public class ConvertAction extends AbstractOrieditaAction{
     @Override
     public void actionPerformed(ActionEvent e) {
         File file = selectFile();
+        if(file == null) return;
 
         try {
             Save save = importFile(Objects.requireNonNull(file));
