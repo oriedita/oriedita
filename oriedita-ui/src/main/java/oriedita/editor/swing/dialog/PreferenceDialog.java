@@ -146,6 +146,9 @@ public class PreferenceDialog extends JDialog {
     private JPanel display3Panel;
     private JTextField searchBarTF;
     private JCheckBox hasHotkeyCB;
+    private JButton defaultGridSizeMinus;
+    private JButton defaultGridSizePlus;
+    private JTextField defaultGridSizeTF;
     private int tempTransparency;
     private final ApplicationModel applicationModel;
     private final ButtonService buttonService;
@@ -182,6 +185,7 @@ public class PreferenceDialog extends JDialog {
         lineWidthTF.setText(Integer.toString(applicationModel.getLineWidth()));
         auxLineTF.setText(Integer.toString(applicationModel.getAuxLineWidth()));
         pointSizeTF.setText(Integer.toString(applicationModel.getPointSize()));
+        defaultGridSizeTF.setText(Integer.toString(applicationModel.getDefaultGridSize()));
         gridWidthTF.setText(Integer.toString(applicationModel.getGridLineWidth()));
         gridColorButton.setIcon(new ColorIcon(applicationModel.getGridColor()));
         gridScaleColorButton.setIcon(new ColorIcon(applicationModel.getGridScaleColor()));
@@ -342,6 +346,18 @@ public class PreferenceDialog extends JDialog {
                 pointSizeTF.setText(Integer.toString(applicationModel.getPointSize()));
             }
         });
+        defaultGridSizePlus.addActionListener(e -> {
+            applicationModel.setDefaultGridSize(Integer.parseInt(defaultGridSizeTF.getText()) + 1);
+            defaultGridSizeTF.setText(Integer.toString(applicationModel.getDefaultGridSize()));
+            defaultGridSizeMinus.setEnabled(true);
+        });
+        defaultGridSizeMinus.addActionListener(e -> {
+            if (applicationModel.getDefaultGridSize() > 1) {
+                applicationModel.setDefaultGridSize(Integer.parseInt(defaultGridSizeTF.getText()) - 1);
+                defaultGridSizeMinus.setEnabled(applicationModel.getDefaultGridSize() > 1);
+                defaultGridSizeTF.setText(Integer.toString(applicationModel.getDefaultGridSize()));
+            }
+        });
         gridWidthPlus.addActionListener(e -> {
             applicationModel.setGridLineWidth(Integer.parseInt(gridWidthTF.getText()) + 1);
             gridWidthTF.setText(Integer.toString(applicationModel.getGridLineWidth()));
@@ -390,13 +406,19 @@ public class PreferenceDialog extends JDialog {
 
         searchBarTF.getDocument().addDocumentListener(new DocumentListener() {
             @Override
-            public void insertUpdate(DocumentEvent e) { refreshHotkeyPanel(frameProvider); }
+            public void insertUpdate(DocumentEvent e) {
+                refreshHotkeyPanel(frameProvider);
+            }
 
             @Override
-            public void removeUpdate(DocumentEvent e) { refreshHotkeyPanel(frameProvider); }
+            public void removeUpdate(DocumentEvent e) {
+                refreshHotkeyPanel(frameProvider);
+            }
 
             @Override
-            public void changedUpdate(DocumentEvent e) { refreshHotkeyPanel(frameProvider); }
+            public void changedUpdate(DocumentEvent e) {
+                refreshHotkeyPanel(frameProvider);
+            }
         });
 
         hasHotkeyCB.addActionListener(e -> refreshHotkeyPanel(frameProvider));
@@ -423,7 +445,9 @@ public class PreferenceDialog extends JDialog {
         contentPane.registerKeyboardAction(e -> onCancel(), KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
     }
 
-    private void onOK() { dispose(); }
+    private void onOK() {
+        dispose();
+    }
 
     private void onCancel() {
         setData(tempModel);
@@ -950,7 +974,7 @@ public class PreferenceDialog extends JDialog {
         label6.setText("MV Line style: ");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.gridy = 7;
+        gbc.gridy = 8;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.anchor = GridBagConstraints.EAST;
@@ -966,7 +990,7 @@ public class PreferenceDialog extends JDialog {
         lineStyleDropBox.setToolTipText("Select line style");
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
-        gbc.gridy = 7;
+        gbc.gridy = 8;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.anchor = GridBagConstraints.WEST;
@@ -976,7 +1000,7 @@ public class PreferenceDialog extends JDialog {
         label7.setText(" Main grid color: ");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.gridy = 5;
+        gbc.gridy = 6;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.anchor = GridBagConstraints.EAST;
@@ -985,7 +1009,7 @@ public class PreferenceDialog extends JDialog {
         gridColorButton.setText("Color");
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
-        gbc.gridy = 5;
+        gbc.gridy = 6;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -994,7 +1018,7 @@ public class PreferenceDialog extends JDialog {
         label8.setText(" Sub grid color: ");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.gridy = 6;
+        gbc.gridy = 7;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.anchor = GridBagConstraints.EAST;
@@ -1003,7 +1027,7 @@ public class PreferenceDialog extends JDialog {
         gridScaleColorButton.setText("Color");
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
-        gbc.gridy = 6;
+        gbc.gridy = 7;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -1012,7 +1036,7 @@ public class PreferenceDialog extends JDialog {
         label9.setText(" Grid line width: ");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.gridy = 4;
+        gbc.gridy = 5;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.anchor = GridBagConstraints.EAST;
@@ -1104,7 +1128,7 @@ public class PreferenceDialog extends JDialog {
         gridLinePanel.setLayout(new BorderLayout(0, 0));
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
-        gbc.gridy = 4;
+        gbc.gridy = 5;
         gbc.fill = GridBagConstraints.BOTH;
         appearance1Panel.add(gridLinePanel, gbc);
         gridWidthMinus = new JButton();
@@ -1127,13 +1151,13 @@ public class PreferenceDialog extends JDialog {
         label10.setText("Max Grid Density: ");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.gridy = 8;
+        gbc.gridy = 9;
         gbc.anchor = GridBagConstraints.EAST;
         gbc.insets = new Insets(3, 0, 20, 0);
         appearance1Panel.add(label10, gbc);
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
-        gbc.gridy = 8;
+        gbc.gridy = 9;
         gbc.anchor = GridBagConstraints.NORTHWEST;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(3, 0, 0, 0);
@@ -1142,42 +1166,42 @@ public class PreferenceDialog extends JDialog {
         label11.setText("Dark mode: ");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.gridy = 9;
+        gbc.gridy = 10;
         gbc.anchor = GridBagConstraints.EAST;
         appearance1Panel.add(label11, gbc);
         darkModeCheckBox = new JCheckBox();
         darkModeCheckBox.setText("");
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
-        gbc.gridy = 9;
+        gbc.gridy = 10;
         gbc.anchor = GridBagConstraints.WEST;
         appearance1Panel.add(darkModeCheckBox, gbc);
         final JLabel label12 = new JLabel();
         label12.setText("Anti-alias: ");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.gridy = 10;
+        gbc.gridy = 11;
         gbc.anchor = GridBagConstraints.EAST;
         appearance1Panel.add(label12, gbc);
         antiAliasCB = new JCheckBox();
         antiAliasCB.setText("");
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
-        gbc.gridy = 10;
+        gbc.gridy = 11;
         gbc.anchor = GridBagConstraints.WEST;
         appearance1Panel.add(antiAliasCB, gbc);
         final JLabel label13 = new JLabel();
         label13.setText("Display numbers: ");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.gridy = 11;
+        gbc.gridy = 12;
         gbc.anchor = GridBagConstraints.EAST;
         appearance1Panel.add(label13, gbc);
         displayNumbersCB = new JCheckBox();
         displayNumbersCB.setText("");
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
-        gbc.gridy = 11;
+        gbc.gridy = 12;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.VERTICAL;
         appearance1Panel.add(displayNumbersCB, gbc);
@@ -1185,21 +1209,21 @@ public class PreferenceDialog extends JDialog {
         label14.setText("Fold anti-alias: ");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.gridy = 12;
+        gbc.gridy = 13;
         gbc.anchor = GridBagConstraints.EAST;
         appearance1Panel.add(label14, gbc);
         foldAntiAliasCheckBox = new JCheckBox();
         foldAntiAliasCheckBox.setText("");
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
-        gbc.gridy = 12;
+        gbc.gridy = 13;
         gbc.anchor = GridBagConstraints.WEST;
         appearance1Panel.add(foldAntiAliasCheckBox, gbc);
         final JLabel label15 = new JLabel();
         label15.setText("Round Line-ends: ");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.gridy = 13;
+        gbc.gridy = 14;
         gbc.anchor = GridBagConstraints.EAST;
         appearance1Panel.add(label15, gbc);
         roundedEndsCheckbox = new JCheckBox();
@@ -1207,16 +1231,43 @@ public class PreferenceDialog extends JDialog {
         roundedEndsCheckbox.setText("");
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
-        gbc.gridy = 13;
+        gbc.gridy = 14;
         gbc.anchor = GridBagConstraints.NORTHWEST;
         appearance1Panel.add(roundedEndsCheckbox, gbc);
+        final JLabel label16 = new JLabel();
+        label16.setText(" Default grid size: ");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 4;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        gbc.anchor = GridBagConstraints.EAST;
+        appearance1Panel.add(label16, gbc);
         final JPanel panel9 = new JPanel();
-        panel9.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 10));
-        panel9.setMinimumSize(new Dimension(334, 226));
-        tabbedPane1.addTab("BEHAVIOR", panel9);
+        panel9.setLayout(new BorderLayout(0, 0));
+        gbc = new GridBagConstraints();
+        gbc.gridx = 1;
+        gbc.gridy = 4;
+        gbc.fill = GridBagConstraints.BOTH;
+        appearance1Panel.add(panel9, gbc);
+        defaultGridSizeMinus = new JButton();
+        defaultGridSizeMinus.setText("-");
+        panel9.add(defaultGridSizeMinus, BorderLayout.WEST);
+        defaultGridSizeTF = new JTextField();
+        defaultGridSizeTF.setColumns(1);
+        defaultGridSizeTF.setEnabled(false);
+        defaultGridSizeTF.setPreferredSize(new Dimension(17, -1));
+        panel9.add(defaultGridSizeTF, BorderLayout.CENTER);
+        defaultGridSizePlus = new JButton();
+        defaultGridSizePlus.setText("+");
+        panel9.add(defaultGridSizePlus, BorderLayout.EAST);
+        final JPanel panel10 = new JPanel();
+        panel10.setLayout(new FlowLayout(FlowLayout.LEFT, 10, 10));
+        panel10.setMinimumSize(new Dimension(334, 226));
+        tabbedPane1.addTab("BEHAVIOR", panel10);
         behavior2Panel = new JPanel();
         behavior2Panel.setLayout(new GridBagLayout());
-        panel9.add(behavior2Panel);
+        panel10.add(behavior2Panel);
         zoomSpeedSlider.setMajorTickSpacing(10);
         zoomSpeedSlider.setMaximum(100);
         zoomSpeedSlider.setMinimum(0);
@@ -1303,29 +1354,29 @@ public class PreferenceDialog extends JDialog {
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         behavior2Panel.add(offsetCB, gbc);
-        final JPanel panel10 = new JPanel();
-        panel10.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
-        tabbedPane1.addTab("HOTKEYS", panel10);
         final JPanel panel11 = new JPanel();
-        panel11.setLayout(new GridLayoutManager(2, 1, new Insets(0, 0, 0, 0), -1, -1));
-        panel10.add(panel11, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_NORTH, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        panel11.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
+        tabbedPane1.addTab("HOTKEYS", panel11);
+        final JPanel panel12 = new JPanel();
+        panel12.setLayout(new GridLayoutManager(2, 1, new Insets(0, 0, 0, 0), -1, -1));
+        panel11.add(panel12, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_NORTH, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         scrollPane1.setAutoscrolls(false);
         scrollPane1.setVerticalScrollBarPolicy(20);
-        panel11.add(scrollPane1, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_NORTH, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        panel12.add(scrollPane1, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_NORTH, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         scrollPane1.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
         scrollPane1.setViewportView(hotkeyPanel);
-        final JPanel panel12 = new JPanel();
-        panel12.setLayout(new GridLayoutManager(1, 3, new Insets(10, 10, 0, 10), -1, -1));
-        panel11.add(panel12, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_NORTH, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        final JPanel panel13 = new JPanel();
+        panel13.setLayout(new GridLayoutManager(1, 3, new Insets(10, 10, 0, 10), -1, -1));
+        panel12.add(panel13, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_NORTH, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         searchBarTF = new JTextField();
         searchBarTF.setMargin(new Insets(2, 6, 2, 6));
-        panel12.add(searchBarTF, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
-        final JLabel label16 = new JLabel();
-        label16.setOpaque(true);
-        label16.setText("Search:");
-        panel12.add(label16, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        panel13.add(searchBarTF, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        final JLabel label17 = new JLabel();
+        label17.setOpaque(true);
+        label17.setText("Search:");
+        panel13.add(label17, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         hasHotkeyCB.setText("Has hotkey");
-        panel12.add(hasHotkeyCB, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        panel13.add(hasHotkeyCB, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     }
 
     /**
