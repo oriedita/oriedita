@@ -3,6 +3,7 @@ package oriedita.editor.action;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import oriedita.editor.FrameProvider;
+import oriedita.editor.databinding.ApplicationModel;
 import oriedita.editor.export.CpExporter;
 import oriedita.editor.export.CpImporter;
 import oriedita.editor.export.FoldExporter;
@@ -15,6 +16,7 @@ import oriedita.editor.save.Save;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
@@ -22,19 +24,19 @@ import javax.swing.ListSelectionModel;
 import java.awt.BorderLayout;
 import java.awt.Dialog;
 import java.awt.Dimension;
-import java.awt.FileDialog;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Arrays;
-import java.util.Objects;
 
 @ApplicationScoped
 @ActionHandler(ActionType.convertAction)
 public class ConvertAction extends AbstractOrieditaAction{
     @Inject
     FrameProvider frameProvider;
+    @Inject
+    ApplicationModel applicationModel;
     private String selectedOption;
     List<String> allowedExtensions = Arrays.asList(".cp", ".ori", ".orh", ".fold");
     String[] options = {"Crease Pattern (.cp)", "Ori (.ori)", "Orihime (.orh)", "FOLD (.fold)"};
@@ -44,32 +46,51 @@ public class ConvertAction extends AbstractOrieditaAction{
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        File file = selectFile();
-        if(file == null) return;
+        JFileChooser jfc = new JFileChooser();
+        jfc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+        jfc.setMultiSelectionEnabled(true);
+        jfc.setCurrentDirectory(new File(applicationModel.getDefaultDirectory()));
 
+        int result = jfc.showOpenDialog(null);
+        if(result != JFileChooser.APPROVE_OPTION) return;
+
+        chooseExportExtension();
+
+        File[] selectedFiles =  jfc.getSelectedFiles();
+        if(selectedFiles.length == 0) return;
+        processSelectedFiles(selectedFiles);
+
+        applicationModel.setDefaultDirectory(selectedFiles[0].getParent());
+    }
+
+    private void processSelectedFiles(File[] selectedFiles){
+        for(File file : selectedFiles) {
+            if(file.isFile()) { processFile(file); }
+            if(file.isDirectory()) {
+                File[] subFiles = file.listFiles();
+                if(subFiles == null) continue;
+                if(subFiles.length == 0) continue;
+
+                // Skipping subdirectories for now
+                for(File subFile : subFiles) {
+                    if(subFile.isDirectory()) continue;
+                    processFile(subFile);
+                }
+            }
+        }
+    }
+
+    private void processFile(File file){
         try {
-            Save save = importFile(Objects.requireNonNull(file));
+            if(file == null) return;
+            Save save = importFile(file);
             if (save == null) return;
 
-            openDialog();
             exportFile(save, file);
 
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
-    }
-
-    private File selectFile(){
-        FileDialog fileDialog = new FileDialog(frameProvider.get(), "Select a file", FileDialog.LOAD);
-        fileDialog.setFilenameFilter((dir, name) -> allowedExtensions.stream().anyMatch(name::endsWith));
-        fileDialog.setVisible(true);
-
-        if (fileDialog.getFile() == null) {
-            System.out.println("File selection cancelled.");
-            return null;
-        }
-
-        return new File(fileDialog.getDirectory(), fileDialog.getFile());
     }
 
     private String getFilePathNoExtension(File file){
@@ -88,7 +109,7 @@ public class ConvertAction extends AbstractOrieditaAction{
         return filePath;
     }
 
-    private void openDialog() {
+    private void chooseExportExtension() {
         JDialog dialog = new JDialog(frameProvider.get(), "Converting options", Dialog.ModalityType.APPLICATION_MODAL);
         dialog.setLayout(new BorderLayout());
 

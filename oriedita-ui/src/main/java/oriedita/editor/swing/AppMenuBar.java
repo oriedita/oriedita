@@ -438,7 +438,7 @@ public class AppMenuBar {
         importAddButton.setActionCommand("inputDataAction");
         fileMenu.add(importAddButton);
 
-        convertButton = new JMenuItem("Convert");
+        convertButton = new JMenuItem("Convert files");
         fileMenu.add(convertButton);
 
         fileMenu.addSeparator();
