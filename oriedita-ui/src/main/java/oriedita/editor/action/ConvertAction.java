@@ -60,7 +60,9 @@ public class ConvertAction extends AbstractOrieditaAction{
         FileDialog fd = new FileDialog(frameProvider.get(), "Select CP files", FileDialog.LOAD);
         fd.setDirectory(applicationModel.getDefaultDirectory());
         fd.setMultipleMode(true);
-        fd.setFilenameFilter(((dir, name) -> allowedExtensions.stream().anyMatch(name::endsWith)));
+        if(!System.getProperty("os.name").toLowerCase().contains("win")){
+            fd.setFilenameFilter(((dir, name) -> allowedExtensions.stream().anyMatch(name::endsWith)));
+        }
         fd.setVisible(true);
         return fd.getFiles();
     }
