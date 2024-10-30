@@ -16,7 +16,6 @@ import oriedita.editor.save.Save;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JFileChooser;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
@@ -24,6 +23,7 @@ import javax.swing.ListSelectionModel;
 import java.awt.BorderLayout;
 import java.awt.Dialog;
 import java.awt.Dimension;
+import java.awt.FileDialog;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
@@ -46,21 +46,52 @@ public class ConvertAction extends AbstractOrieditaAction{
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        JFileChooser jfc = new JFileChooser();
-        jfc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-        jfc.setMultiSelectionEnabled(true);
-        jfc.setCurrentDirectory(new File(applicationModel.getDefaultDirectory()));
-
-        int result = jfc.showOpenDialog(null);
-        if(result != JFileChooser.APPROVE_OPTION) return;
+        File[] selectedFiles;
+        if((selectedFiles = getSelectedFiles()).length == 0) return;
 
         chooseExportExtension();
 
-        File[] selectedFiles =  jfc.getSelectedFiles();
-        if(selectedFiles.length == 0) return;
         processSelectedFiles(selectedFiles);
 
         applicationModel.setDefaultDirectory(selectedFiles[0].getParent());
+    }
+
+    private File[] getSelectedFiles(){
+        FileDialog fd = new FileDialog(frameProvider.get(), "Select CP files", FileDialog.LOAD);
+        fd.setDirectory(applicationModel.getDefaultDirectory());
+        fd.setMultipleMode(true);
+        fd.setFilenameFilter(((dir, name) -> allowedExtensions.stream().anyMatch(name::endsWith)));
+        fd.setVisible(true);
+        return fd.getFiles();
+    }
+
+    private void chooseExportExtension() {
+        JDialog dialog = new JDialog(frameProvider.get(), "Converting options", Dialog.ModalityType.APPLICATION_MODAL);
+        dialog.setLayout(new BorderLayout());
+
+        JList<String> optionsList = new JList<>(options);
+        optionsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+        JScrollPane scrollPane = new JScrollPane(optionsList);
+        dialog.add(scrollPane);
+
+        JButton selectButton = new JButton("Convert");
+        selectButton.addActionListener(e -> {
+            selectedOption = optionsList.getSelectedValue();
+
+            if (selectedOption != null) { dialog.dispose(); }
+            else {
+                JOptionPane.showMessageDialog(dialog,
+                        "Please select an option", "No Selection",
+                        JOptionPane.WARNING_MESSAGE);
+            }
+        });
+
+        dialog.add(selectButton, BorderLayout.SOUTH);
+
+        dialog.setMinimumSize(new Dimension(300, 200));
+        dialog.setLocationRelativeTo(null);
+        dialog.setVisible(true);
     }
 
     private void processSelectedFiles(File[] selectedFiles){
@@ -93,52 +124,6 @@ public class ConvertAction extends AbstractOrieditaAction{
         }
     }
 
-    private String getFilePathNoExtension(File file){
-        String filePath = file.getAbsolutePath();
-
-        if(filePath.endsWith(".cp")){
-            filePath = filePath.substring(0, filePath.length() - ".cp".length());
-        } else if(filePath.endsWith(".ori")){
-            filePath = filePath.substring(0, filePath.length() - ".ori".length());
-        } else if(filePath.endsWith(".orh")){
-            filePath = filePath.substring(0, filePath.length() - ".orh".length());
-        } else if(filePath.endsWith(".fold")){
-            filePath = filePath.substring(0, filePath.length() - ".fold".length());
-        }
-
-        return filePath;
-    }
-
-    private void chooseExportExtension() {
-        JDialog dialog = new JDialog(frameProvider.get(), "Converting options", Dialog.ModalityType.APPLICATION_MODAL);
-        dialog.setLayout(new BorderLayout());
-
-        JList<String> optionsList = new JList<>(options);
-        optionsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-
-        JScrollPane scrollPane = new JScrollPane(optionsList);
-        dialog.add(scrollPane);
-
-        JButton selectButton = new JButton("Convert");
-        selectButton.addActionListener(e -> {
-            selectedOption = optionsList.getSelectedValue();
-
-            if (selectedOption != null) {
-                dialog.dispose();
-            } else {
-                JOptionPane.showMessageDialog(dialog,
-                        "Please select an option", "No Selection",
-                        JOptionPane.WARNING_MESSAGE);
-            }
-        });
-
-        dialog.add(selectButton, BorderLayout.SOUTH);
-
-        dialog.setMinimumSize(new Dimension(300, 200));
-        dialog.setLocationRelativeTo(null);
-        dialog.setVisible(true);
-    }
-
     private Save importFile(File file) throws IOException {
         String fileName = file.getName();
         if(fileName.endsWith(".cp")){
@@ -169,5 +154,13 @@ public class ConvertAction extends AbstractOrieditaAction{
             exportFile = exportFile.concat(".fold");
             new FoldExporter().doExport(save, new File(exportFile));
         }
+    }
+
+    private String getFilePathNoExtension(File file){
+        String filePath = file.getAbsolutePath();
+
+        return allowedExtensions.stream().filter(filePath::endsWith).findFirst()
+                .map(extension -> filePath.substring(0, filePath.length() - extension.length()))
+                .orElse(filePath); // This should never happen
     }
 }
