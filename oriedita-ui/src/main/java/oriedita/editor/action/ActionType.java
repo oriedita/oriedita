@@ -9,6 +9,7 @@ public enum ActionType {
     openAction("openAction"),
     saveAction("saveAction"),
     saveAsAction("saveAsAction"),
+    revealInFEAction("revealInFEAction"),
     exitAction("exitAction"),
     IMPORT("importAction"),
     IMPORT_ADD("inputDataAction"),
