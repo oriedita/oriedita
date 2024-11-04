@@ -80,7 +80,7 @@ public class MouseHandlerAxiom6 extends BaseMouseHandlerInputRestricted {
             case 2:
                 return new double[]{-a / b};
             case 3:
-                double discriminant = Math.pow(c, 2.0) - (4.0 * a * c); // quadratic
+                double discriminant = Math.pow(b, 2.0) - (4.0 * a * c); // quadratic
                 // 0 solution
                 if (discriminant < -Epsilon.AXIOM_THRESHOLD) {
                     return new double[]{};
