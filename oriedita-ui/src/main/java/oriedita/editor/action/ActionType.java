@@ -13,6 +13,7 @@ public enum ActionType {
     exitAction("exitAction"),
     IMPORT("importAction"),
     IMPORT_ADD("inputDataAction"),
+    convertAction("convertAction"),
     drawCreaseFreeAction("drawCreaseFreeAction"),
     lineWidthIncreaseAction("lineWidthIncreaseAction"),
     pointSizeDecreaseAction("pointSizeDecreaseAction"),

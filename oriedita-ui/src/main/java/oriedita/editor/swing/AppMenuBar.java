@@ -91,6 +91,7 @@ public class AppMenuBar {
     private JMenuItem saveAsButton;
     private JMenuItem revealInFEButton;
     private JMenuItem exportButton;
+    private JMenuItem convertButton;
     private JMenuItem prefButton;
     private JMenuItem exitButton;
     private JMenuItem toggleHelpMenuItem;
@@ -188,6 +189,7 @@ public class AppMenuBar {
         buttonService.registerButton(saveAsButton, "saveAsAction");
         buttonService.registerButton(revealInFEButton, "revealInFEAction");
         buttonService.registerButton(exportButton, "exportAction");
+        buttonService.registerButton(convertButton, "convertAction");
         buttonService.registerButton(prefButton, "prefAction");
         buttonService.registerButton(exitButton, "exitAction");
         buttonService.registerButton(showPointRangeCheckBox, "showPointRangeAction");
@@ -448,6 +450,9 @@ public class AppMenuBar {
         importAddButton.setActionCommand("inputDataAction");
         fileMenu.add(importAddButton);
 
+        convertButton = new JMenuItem("Convert files");
+        fileMenu.add(convertButton);
+
         fileMenu.addSeparator();
 
         prefButton = new JMenuItem("Preferences");
@@ -607,7 +612,7 @@ public class AppMenuBar {
                     applicationModel.addRecentFile(recentFile);
                     revealInFEButton.setEnabled(true);
                 } catch (FileReadingException ex) {
-                    ex.printStackTrace();
+                    Logger.error(ex.getMessage());
                     JOptionPane.showMessageDialog(frameProvider.get(), "An error occurred when reading this file", "Read Error", JOptionPane.ERROR_MESSAGE);
                     applicationModel.removeRecentFile(recentFile);
                 }
