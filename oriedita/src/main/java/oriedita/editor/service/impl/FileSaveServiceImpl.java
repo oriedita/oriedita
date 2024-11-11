@@ -28,13 +28,16 @@ import oriedita.editor.export.api.FileImporter;
 
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
+import java.awt.Desktop;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -410,15 +413,7 @@ public class FileSaveServiceImpl implements FileSaveService {
 
     @Override
     public Save readImportFile(File file, boolean askOnUnknownFormat) {
-        if (file == null) {
-            return null;
-        }
-
-        if (!file.exists()) {
-            return null;
-        }
-
-        Save save = null;
+        if (file == null || !file.exists()) return null;
 
         try {
             for (var importer : this.importers) {
@@ -432,13 +427,12 @@ public class FileSaveServiceImpl implements FileSaveService {
             Logger.error(e, "Opening file failed");
 
             JOptionPane.showMessageDialog(frame.get(), "Opening of the saved file failed", "Opening failed", JOptionPane.ERROR_MESSAGE);
-
             fileModel.setSavedFileName(null);
 
             return SaveProvider.createInstance();
         }
 
-        return save;
+        return null;
     }
 
     @Override
@@ -517,6 +511,53 @@ public class FileSaveServiceImpl implements FileSaveService {
         autoSavePath.toFile().mkdirs();
 
         updateAutoSave(applicationModel.getAutoSaveInterval());
+    }
+
+    @Override
+    public void openFileInFE() {
+        File currentFile = new File(fileModel.getSavedFileName());
+        openFileInFE(currentFile);
+    }
+
+    @Override
+    public void openFileInFE(File file) {
+        String os = System.getProperty("os.name").toLowerCase();
+
+        try {
+            if (!Desktop.isDesktopSupported()) {
+                throw new UnsupportedOperationException("Desktop is not supported");
+            }
+
+            String filePath = file.getAbsolutePath();
+
+            if (os.contains("win")) {
+                Runtime.getRuntime().exec(new String[]{"explorer.exe", "/select,", filePath});
+            } else if (os.contains("mac")) {
+                Runtime.getRuntime().exec(new String[]{"open", "-R", filePath});
+            } else if (os.contains("nix") || os.contains("nux") || os.contains("aix") || os.contains("linux")) {
+
+                Process mimeProcess = Runtime.getRuntime().exec(new String[]{"xdg-mime", "query", "default", "inode/directory"});
+                BufferedReader reader = new BufferedReader(new InputStreamReader(mimeProcess.getInputStream()));
+                String line = reader.readLine().toLowerCase();
+
+                if (line.contains("nautilus")) {
+                    Runtime.getRuntime().exec(new String[]{"nautilus", "--select", filePath});
+                } else if (line.contains("dolphin")) {
+                    Runtime.getRuntime().exec(new String[]{"dolphin", "--select", filePath});
+                } else if (line.contains("thunar")) {
+                    Runtime.getRuntime().exec(new String[]{"thunar", filePath});
+                } else if (line.contains("nemo")) {
+                    Runtime.getRuntime().exec(new String[]{"nemo", "--no-desktop", "--browser", filePath});
+                } else {
+                    Runtime.getRuntime().exec(new String[]{"xdg-open", file.getParent()});
+                }
+
+            } else {
+                throw new UnsupportedOperationException("Platform not supported");
+            }
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        }
     }
 
     private void updateAutoSave(long delay) {

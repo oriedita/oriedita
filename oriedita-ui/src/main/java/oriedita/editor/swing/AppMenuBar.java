@@ -41,6 +41,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import java.awt.Desktop;
+import java.awt.EventQueue;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.Transferable;
@@ -89,7 +90,9 @@ public class AppMenuBar {
     private JMenuItem openButton;
     private JMenuItem saveButton;
     private JMenuItem saveAsButton;
+    private JMenuItem revealInFEButton;
     private JMenuItem exportButton;
+    private JMenuItem convertButton;
     private JMenuItem prefButton;
     private JMenuItem exitButton;
     private JMenuItem toggleHelpMenuItem;
@@ -185,7 +188,9 @@ public class AppMenuBar {
         buttonService.registerButton(openRecentMenu, "openRecentAction");
         buttonService.registerButton(saveButton, "saveAction");
         buttonService.registerButton(saveAsButton, "saveAsAction");
+        buttonService.registerButton(revealInFEButton, "revealInFEAction");
         buttonService.registerButton(exportButton, "exportAction");
+        buttonService.registerButton(convertButton, "convertAction");
         buttonService.registerButton(prefButton, "prefAction");
         buttonService.registerButton(exitButton, "exitAction");
         buttonService.registerButton(showPointRangeCheckBox, "showPointRangeAction");
@@ -243,12 +248,18 @@ public class AppMenuBar {
 
             mainCreasePatternWorker.record();
             mainCreasePatternWorker.auxRecord();
+
+            revealInFEButton.setEnabled(false);
         });
-        openButton.addActionListener(e -> fileSaveService.openFile());
+        openButton.addActionListener(e -> {
+            fileSaveService.openFile();
+            if(fileModel.getSavedFileName() != null) revealInFEButton.setEnabled(true);
+        });
         clearRecentFileMenuItem.addActionListener(e -> applicationModel.setRecentFileList(new ArrayList<>()));
 
         saveButton.addActionListener(e -> fileSaveService.saveFile());
         saveAsButton.addActionListener(e -> fileSaveService.saveAsFile());
+        revealInFEButton.addActionListener(e -> fileSaveService.openFileInFE());
         exportButton.addActionListener(e -> {
             if (canvasModel.getMouseMode() != MouseMode.OPERATION_FRAME_CREATE_61) {
                 mainCreasePatternWorker.resetLineStep(0);
@@ -312,21 +323,29 @@ public class AppMenuBar {
         darkModeCheckBox.addActionListener(e -> {
             lookAndFeelService.toggleDarkMode();
 
-            if (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(frameProvider.get(), "Restore custom colors in grid and folded figure for this color scheme?", "Restore colors", JOptionPane.YES_NO_OPTION)) {
+            EventQueue.invokeLater(() -> {
                 if (FlatLaf.isLafDark()) {
-                    applicationModel.setGridColor(Colors.GRID_LINE_DARK);
-                    applicationModel.setGridScaleColor(Colors.GRID_SCALE_DARK);
+                    if (!applicationModel.getIsGridColorDetached()) {
+                        applicationModel.setGridColor(Colors.GRID_LINE_DARK);
+                        applicationModel.setGridScaleColor(Colors.GRID_SCALE_DARK);
+                    }
 
-                    foldedFigureModel.setFrontColor(Colors.FIGURE_FRONT_DARK);
-                    foldedFigureModel.setBackColor(Colors.FIGURE_BACK_DARK);
+                    if (!applicationModel.getIsFoldedFigureColorDetached()) {
+                        foldedFigureModel.setFrontColor(Colors.FIGURE_FRONT_DARK);
+                        foldedFigureModel.setBackColor(Colors.FIGURE_BACK_DARK);
+                    }
                 } else {
-                    applicationModel.setGridColor(Colors.GRID_LINE);
-                    applicationModel.setGridScaleColor(Colors.GRID_SCALE);
+                    if (!applicationModel.getIsGridColorDetached()) {
+                        applicationModel.setGridColor(Colors.GRID_LINE);
+                        applicationModel.setGridScaleColor(Colors.GRID_SCALE);
+                    }
 
-                    foldedFigureModel.setFrontColor(Colors.FIGURE_FRONT);
-                    foldedFigureModel.setBackColor(Colors.FIGURE_BACK);
+                    if (!applicationModel.getIsFoldedFigureColorDetached()) {
+                        foldedFigureModel.setFrontColor(Colors.FIGURE_FRONT);
+                        foldedFigureModel.setBackColor(Colors.FIGURE_BACK);
+                    }
                 }
-            }
+            });
         });
         preciseZoomCheckBox.addActionListener(e -> applicationModel.togglePreciseZoom());
         showSelfIntersectionCheckBox.addActionListener(e -> applicationModel.toggleDisplaySelfIntersection());
@@ -423,6 +442,10 @@ public class AppMenuBar {
         saveAsButton = new JMenuItem("Save as...");
         fileMenu.add(saveAsButton);
 
+        revealInFEButton = new JMenuItem("Reveal in File Explorer");
+        revealInFEButton.setEnabled(false);
+        fileMenu.add(revealInFEButton);
+
         fileMenu.addSeparator();
 
         exportButton = new JMenuItem("Export");
@@ -435,6 +458,9 @@ public class AppMenuBar {
         JMenuItem importAddButton = new JMenuItem("Import (Add)");
         importAddButton.setActionCommand("inputDataAction");
         fileMenu.add(importAddButton);
+
+        convertButton = new JMenuItem("Convert files");
+        fileMenu.add(convertButton);
 
         fileMenu.addSeparator();
 
@@ -593,8 +619,9 @@ public class AppMenuBar {
                     fileSaveService.openFile(recentFile);
                     // Move this file to the top of the recent file list.
                     applicationModel.addRecentFile(recentFile);
+                    revealInFEButton.setEnabled(true);
                 } catch (FileReadingException ex) {
-                    ex.printStackTrace();
+                    Logger.error(ex.getMessage());
                     JOptionPane.showMessageDialog(frameProvider.get(), "An error occurred when reading this file", "Read Error", JOptionPane.ERROR_MESSAGE);
                     applicationModel.removeRecentFile(recentFile);
                 }
