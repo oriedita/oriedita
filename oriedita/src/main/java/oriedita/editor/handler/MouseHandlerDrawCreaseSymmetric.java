@@ -75,6 +75,7 @@ public class MouseHandlerDrawCreaseSymmetric extends BaseMouseHandlerInputRestri
             d.getFoldLineSet().divideLineSegmentWithNewLines(old_sousuu, new_sousuu);
 
             d.record();
+            d.unselect_all(false);
             d.getLineStep().clear();
         }
     }
