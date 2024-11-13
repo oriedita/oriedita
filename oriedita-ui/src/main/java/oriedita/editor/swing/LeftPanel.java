@@ -1017,6 +1017,8 @@ public class LeftPanel {
         delTypeDropBox.setSelectedIndex(applicationModel.getDelLineType().getNumber() + 1);
         fromLineDropBox.setSelectedIndex(applicationModel.getCustomFromLineType().getNumber() + 1);
 
+        selectPersistentCheckBox.setSelected(applicationModel.getSelectPersistent());
+
         // -------- CONTEXT FOR THE BELOW LOGIC --------
         // - The Replace-to dropbox items are Edge, Mountain, Valley, Aux in that order
         // - Dropbox starts at index 0 for first item
