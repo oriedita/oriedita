@@ -26,3 +26,5 @@ exitAction;drawTwoColoredCpAction;setGridParametersAction;angleBisectorAction;in
 ;;;regularPolygonAction;;;;;;;;;;
 ;;;polygonSizeSetAction;;;;;;;;;;
 ;;;all_s_step_to_orisenAction;;;;;;;;;;
+;;;axiom5Action;;;;;;;;;;
+;;;axiom7Action;;;;;;;;;;
