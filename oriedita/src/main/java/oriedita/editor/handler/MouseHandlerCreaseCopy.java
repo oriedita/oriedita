@@ -41,6 +41,7 @@ public class MouseHandlerCreaseCopy extends BaseMouseHandlerLineTransform {
             int sousuu_new = d.getFoldLineSet().getTotal();
             d.getFoldLineSet().divideLineSegmentWithNewLines(sousuu_old, sousuu_new);
 
+            d.unselect_all(false);
             d.record();
         }
         lines = null;

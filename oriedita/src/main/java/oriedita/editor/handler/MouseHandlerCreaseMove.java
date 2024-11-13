@@ -42,6 +42,7 @@ public class MouseHandlerCreaseMove extends BaseMouseHandlerLineTransform {
             int total_new = d.getFoldLineSet().getTotal();
             d.getFoldLineSet().divideLineSegmentWithNewLines(total_old, total_new);
 
+            d.unselect_all(false);
             d.record();
         }
         lines = null;
