@@ -41,7 +41,7 @@
               <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="&lt;html&gt;&lt;br/&gt;&lt;b&gt;.FOLD&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;Save all lines, circles, text,&lt;br/&gt;and grid.&lt;br/&gt; &lt;br/&gt; &lt;i&gt;Compatible with other origami&lt;br/&gt;related software. &lt;/i&gt;&lt;br/&gt;"/>
+              <text value="&lt;html&gt;&lt;br/&gt;&lt;b&gt;.FOLD&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;Save all lines, circles, and text.&lt;br/&gt; &lt;br/&gt; &lt;i&gt;Compatible with other origami&lt;br/&gt;related software. &lt;/i&gt;&lt;br/&gt;"/>
               <verticalAlignment value="1"/>
             </properties>
           </component>
