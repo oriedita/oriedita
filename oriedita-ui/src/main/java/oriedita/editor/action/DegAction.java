@@ -7,7 +7,7 @@ import oriedita.editor.service.ButtonService;
 
 import java.awt.event.ActionEvent;
 
-public class DegAction extends AbstractOrieditaAction implements OrieditaAction{
+public class DegAction extends AbstractOrieditaAction {
     private final CanvasModel canvasModel;
     private final AngleSystemModel angleSystemModel;
     private final ButtonService buttonService;

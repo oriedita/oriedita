@@ -2,7 +2,7 @@ package oriedita.editor.action;
 
 import java.awt.event.ActionEvent;
 
-public class LambdaAction extends AbstractOrieditaAction implements OrieditaAction{
+public class LambdaAction extends AbstractOrieditaAction {
     private final Runnable actionMethod;
 
     public LambdaAction(Runnable actionMethod) {

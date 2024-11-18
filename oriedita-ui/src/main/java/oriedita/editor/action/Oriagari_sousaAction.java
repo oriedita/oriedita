@@ -8,7 +8,7 @@ import oriedita.editor.handler.FoldedFigureOperationMode;
 
 import java.awt.event.ActionEvent;
 
-public class Oriagari_sousaAction extends AbstractOrieditaAction implements OrieditaAction {
+public class Oriagari_sousaAction extends AbstractOrieditaAction {
     private final FoldedFiguresList foldedFiguresList;
     private final CanvasModel canvasModel;
     private final FoldedFigureOperationMode foldedFigureOperationMode;
