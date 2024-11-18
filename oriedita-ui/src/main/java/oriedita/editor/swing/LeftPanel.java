@@ -742,8 +742,8 @@ public class LeftPanel {
         del_l_typeButton = new JButton();
         del_l_typeButton.setText("");
         panel6.add(del_l_typeButton, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        delTypeDropBox = new JComboBox();
-        final DefaultComboBoxModel defaultComboBoxModel1 = new DefaultComboBoxModel();
+        delTypeDropBox = new JComboBox<>();
+        final DefaultComboBoxModel<String> defaultComboBoxModel1 = new DefaultComboBoxModel<>();
         defaultComboBoxModel1.addElement("Any");
         defaultComboBoxModel1.addElement("E");
         defaultComboBoxModel1.addElement("M & V");
@@ -775,8 +775,8 @@ public class LeftPanel {
         replace_lineButton = new JButton();
         replace_lineButton.setText("Button");
         panel8.add(replace_lineButton, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        fromLineDropBox = new JComboBox();
-        final DefaultComboBoxModel defaultComboBoxModel2 = new DefaultComboBoxModel();
+        fromLineDropBox = new JComboBox<>();
+        final DefaultComboBoxModel<String> defaultComboBoxModel2 = new DefaultComboBoxModel<>();
         defaultComboBoxModel2.addElement("Any");
         defaultComboBoxModel2.addElement("E");
         defaultComboBoxModel2.addElement("M & V");
@@ -788,8 +788,8 @@ public class LeftPanel {
         replaceLabel = new JLabel();
         replaceLabel.setText("");
         panel8.add(replaceLabel, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        toLineDropBox = new JComboBox();
-        final DefaultComboBoxModel defaultComboBoxModel3 = new DefaultComboBoxModel();
+        toLineDropBox = new JComboBox<>();
+        final DefaultComboBoxModel<String> defaultComboBoxModel3 = new DefaultComboBoxModel<>();
         defaultComboBoxModel3.addElement("E");
         defaultComboBoxModel3.addElement("M");
         defaultComboBoxModel3.addElement("V");
