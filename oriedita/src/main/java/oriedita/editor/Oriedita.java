@@ -16,15 +16,9 @@ import oriedita.editor.swing.dialog.LoadingDialogUtil;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
-import java.awt.EventQueue;
-import java.awt.Font;
-import java.awt.FontFormatException;
-import java.awt.GraphicsEnvironment;
 import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
-import java.util.Objects;
 
 @ApplicationScoped
 public class Oriedita {

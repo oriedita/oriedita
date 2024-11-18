@@ -7,7 +7,7 @@ import oriedita.editor.databinding.CanvasModel;
 
 import java.awt.event.ActionEvent;
 
-public class SetMouseModeWithUnselectAction extends AbstractOrieditaAction implements OrieditaAction{
+public class SetMouseModeWithUnselectAction extends AbstractOrieditaAction {
     private final CanvasModel canvasModel;
     private final CreasePattern_Worker mainCreasePatternWorker;
     private final MouseMode mouseMode;

@@ -1,6 +1,5 @@
 package oriedita.editor.action;
 
-import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.databinding.FoldedFiguresList;
@@ -9,7 +8,7 @@ import oriedita.editor.handler.FoldedFigureOperationMode;
 
 import java.awt.event.ActionEvent;
 
-public class Oriagari_sousaAction extends AbstractOrieditaAction implements OrieditaAction {
+public class Oriagari_sousaAction extends AbstractOrieditaAction {
     private final FoldedFiguresList foldedFiguresList;
     private final CanvasModel canvasModel;
     private final FoldedFigureOperationMode foldedFigureOperationMode;

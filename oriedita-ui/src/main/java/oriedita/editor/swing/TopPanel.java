@@ -40,10 +40,13 @@ import java.beans.PropertyChangeListener;
 public class TopPanel implements PropertyChangeListener {
     private final MeasuresModel measuresModel;
     private final ButtonService buttonService;
+    @SuppressWarnings("unused")
     private final CanvasModel canvasModel;
     private final InternalDivisionRatioModel internalDivisionRatioModel;
+    @SuppressWarnings("unused")
     private final CreasePattern_Worker mainCreasePatternWorker;
     private final CameraModel creasePatternCameraModel;
+    @SuppressWarnings("unused")
     private final Canvas canvas;
     private final ApplicationModel applicationModel;
     private JButton operationFrameSelectButton;

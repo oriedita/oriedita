@@ -12,7 +12,8 @@ public class Text implements Serializable {
     private String text;
     private static Graphics g;
 
-    private Text() {
+    @SuppressWarnings("unused") // Used for unit test
+	private Text() {
         this(0, 0, "");
     }
 

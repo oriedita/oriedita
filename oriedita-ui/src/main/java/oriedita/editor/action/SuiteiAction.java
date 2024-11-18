@@ -9,7 +9,7 @@ import origami.folding.FoldedFigure;
 import java.awt.event.ActionEvent;
 
 @ApplicationScoped
-public class SuiteiAction extends AbstractOrieditaAction implements OrieditaAction {
+public class SuiteiAction extends AbstractOrieditaAction {
     private final FoldingService foldingService;
     private final CreasePattern_Worker mainCreasePatternWorker;
     private final FoldedFigure.EstimationOrder estimationOrder;

@@ -45,6 +45,7 @@ import java.beans.PropertyChangeEvent;
 public class BottomPanel {
     private final ButtonService buttonService;
     private final MeasuresModel measuresModel;
+    @SuppressWarnings("unused")
     private final CanvasModel canvasModel;
     private final ApplicationModel applicationModel;
     private final FoldedFigureModel foldedFigureModel;
