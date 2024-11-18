@@ -91,7 +91,7 @@ public class SaveTypeDialog extends JDialog {
         completeOriAlsoSavesButton.setVerticalAlignment(1);
         panel1.add(completeOriAlsoSavesButton, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         completeFoldAlsoSavesButton = new JButton();
-        completeFoldAlsoSavesButton.setText("<html><br/><b>.FOLD</b><br/><br/>Save all lines, circles, text,<br/>and grid.<br/> <br/> <i>Compatible with other origami<br/>related software. </i><br/>");
+        completeFoldAlsoSavesButton.setText("<html><br/><b>.FOLD</b><br/><br/>Save all lines, circles, and text.<br/> <br/> <i>Compatible with other origami<br/>related software. </i><br/>");
         completeFoldAlsoSavesButton.setVerticalAlignment(1);
         panel1.add(completeFoldAlsoSavesButton, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     }

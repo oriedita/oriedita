@@ -186,7 +186,7 @@ public class ExportDialog extends JDialog {
         final JPanel panel3 = new JPanel();
         panel3.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 0, 0), -1, -1));
         contentPane.add(panel3, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-        list1 = new JList();
+        list1 = new JList<>();
         panel3.add(list1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(150, 50), null, 0, false));
         optionsCard = new JPanel();
         optionsCard.setLayout(new CardLayout(0, 0));
@@ -228,8 +228,8 @@ public class ExportDialog extends JDialog {
         if (label3Font != null) label3.setFont(label3Font);
         label3.setText("Export");
         panel5.add(label3, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        comboBox1 = new JComboBox();
-        final DefaultComboBoxModel defaultComboBoxModel1 = new DefaultComboBoxModel();
+        comboBox1 = new JComboBox<>();
+        final DefaultComboBoxModel<String> defaultComboBoxModel1 = new DefaultComboBoxModel<>();
         defaultComboBoxModel1.addElement("COLOR");
         defaultComboBoxModel1.addElement("COLOR_AND_SHAPE");
         defaultComboBoxModel1.addElement("BLACK_ONE_DOT");

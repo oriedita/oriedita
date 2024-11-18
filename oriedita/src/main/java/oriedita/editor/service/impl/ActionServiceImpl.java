@@ -10,10 +10,8 @@ import oriedita.editor.action.ActionType;
 import oriedita.editor.action.OrieditaAction;
 import oriedita.editor.action.ActionService;
 
-import java.lang.annotation.Annotation;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 @ApplicationScoped
 public class ActionServiceImpl implements ActionService {

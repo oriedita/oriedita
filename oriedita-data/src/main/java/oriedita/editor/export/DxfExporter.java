@@ -65,6 +65,7 @@ public class DxfExporter implements FileExporter {
                         case CYAN_3:
                             layerName = "AuxiliaryLine";
                             colorNumber = 4; // cyan
+                        default:
                     }
                     x1 = lineSegment.determineAX() + 200;
                     y1 = lineSegment.determineAY() - 200;
