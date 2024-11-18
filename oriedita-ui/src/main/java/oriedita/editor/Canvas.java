@@ -80,8 +80,6 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
     private final AnimationService animationService;
     private MouseModeHandler activeMouseHandler;
 
-    private final Point p_mouse_TV_position = new Point();//マウスのTV座標上の位置
-
 
     private TextEditingArea cpTextEditingArea;
 

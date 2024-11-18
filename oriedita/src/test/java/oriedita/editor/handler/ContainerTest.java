@@ -38,9 +38,9 @@ public class ContainerTest {
 
         Assertions.assertEquals(List.of(), differences, "Too many implementations");
 
-        List<T> differences2 = options.stream().sorted()
-                .filter(element -> !implementations.contains(element))
-                .collect(Collectors.toList());
+        // List<T> differences2 = options.stream().sorted()
+        //         .filter(element -> !implementations.contains(element))
+        //         .collect(Collectors.toList());
 
         // TODO: Enable these statements
 //        Assertions.assertEquals(List.of(), differences2, "Too many options");
