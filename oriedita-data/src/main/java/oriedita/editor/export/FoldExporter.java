@@ -9,7 +9,6 @@ import fold.model.FoldFrame;
 import fold.model.Vertex;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import org.tinylog.Logger;
 import oriedita.editor.export.api.FileExporter;
 import oriedita.editor.save.OrieditaFoldFile;
 import oriedita.editor.save.Save;
