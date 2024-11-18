@@ -16,7 +16,7 @@ public abstract class BaseMouseHandlerPolygon extends BaseMouseHandler {
     }
 
     private void updateGridAssistCandidate(Point p0) {
-        if (d.getGridInputAssist()) {
+        if (d.getGridInputAssist() && d.getLineStep().size() > 1) {
             d.getLineCandidate().clear();
 
             Point p = d.getCamera().TV2object(p0);
