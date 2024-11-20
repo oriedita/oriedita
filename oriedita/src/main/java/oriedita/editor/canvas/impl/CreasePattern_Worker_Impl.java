@@ -48,6 +48,7 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.geom.GeneralPath;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -578,6 +579,25 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
                 DrawingUtil.drawLineStep(g, s, camera, lineWidth, gridInputAssist);
             }
         }
+
+        GeneralPath gp1;
+
+        gp1 = new GeneralPath();
+        gp1.moveTo(310, 20);
+        gp1.lineTo(380, 20);
+        gp1.lineTo(380, 80);
+        gp1.lineTo(320, 80);
+        gp1.lineTo(320, 10);
+        gp1.lineTo(340, 10);
+        gp1.lineTo(340, 60);
+        gp1.lineTo(360, 60);
+        gp1.lineTo(360, 40);
+        gp1.lineTo(310, 40);
+        gp1.closePath();
+
+        // TODO: TEST DRAW LASSO HERE
+        DrawingUtil.drawCurve(g, camera.object2TV(gp1), lineWidth);
+
         //候補入力時の候補を描く//Logger.info("_");
         g2.setStroke(new BasicStroke(lineWidth + 0.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));//基本指定A
 
