@@ -990,8 +990,8 @@ public class PreferenceDialog extends JDialog {
         gbc.weighty = 1.0;
         gbc.anchor = GridBagConstraints.EAST;
         appearance1Panel.add(label6, gbc);
-        lineStyleDropBox = new JComboBox<>();
-        final DefaultComboBoxModel<String> defaultComboBoxModel1 = new DefaultComboBoxModel<>();
+        lineStyleDropBox = new JComboBox();
+        final DefaultComboBoxModel defaultComboBoxModel1 = new DefaultComboBoxModel();
         defaultComboBoxModel1.addElement("Color solid");
         defaultComboBoxModel1.addElement("BW solid");
         defaultComboBoxModel1.addElement("Color dashes");
