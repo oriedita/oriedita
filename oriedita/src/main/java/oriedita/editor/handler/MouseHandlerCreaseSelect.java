@@ -60,6 +60,7 @@ public class MouseHandlerCreaseSelect extends BaseMouseHandlerBoxSelect {
                 case COPY_3 -> canvasModel.setMouseMode(MouseMode.CREASE_COPY_22);
                 case COPY4P_4 -> canvasModel.setMouseMode(MouseMode.CREASE_COPY_4P_32);
                 case MIRROR_5 -> canvasModel.setMouseMode(MouseMode.DRAW_CREASE_SYMMETRIC_12);
+                default -> {}
             }
         } else {
             tripleClick = false;

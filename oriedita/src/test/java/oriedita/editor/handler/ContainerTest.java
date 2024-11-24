@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.Spliterators;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -38,9 +37,9 @@ public class ContainerTest {
 
         Assertions.assertEquals(List.of(), differences, "Too many implementations");
 
-        List<T> differences2 = options.stream().sorted()
-                .filter(element -> !implementations.contains(element))
-                .collect(Collectors.toList());
+        // List<T> differences2 = options.stream().sorted()
+        //         .filter(element -> !implementations.contains(element))
+        //         .collect(Collectors.toList());
 
         // TODO: Enable these statements
 //        Assertions.assertEquals(List.of(), differences2, "Too many options");

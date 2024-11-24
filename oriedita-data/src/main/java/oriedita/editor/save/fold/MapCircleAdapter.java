@@ -4,7 +4,6 @@ import fold.custom.Adapter;
 import origami.crease_pattern.element.Circle;
 import origami.crease_pattern.element.LineColor;
 
-import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;

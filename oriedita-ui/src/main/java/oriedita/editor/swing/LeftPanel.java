@@ -46,6 +46,9 @@ import javax.swing.event.PopupMenuEvent;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Insets;
+import java.awt.Scrollbar;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
@@ -540,10 +543,10 @@ public class LeftPanel {
     private void $$$setupUI$$$() {
         createUIComponents();
         root = new JPanel();
-        root.setLayout(new GridLayoutManager(1, 1, new Insets(1, 1, 1, 1), 1, 1));
+        root.setLayout(new GridLayoutManager(2, 1, new Insets(1, 1, 1, 1), 1, 1));
         scrollPane1.setHorizontalScrollBarPolicy(31);
-        scrollPane1.setVerticalScrollBarPolicy(21);
-        root.add(scrollPane1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        scrollPane1.setVerticalScrollBarPolicy(20);
+        root.add(scrollPane1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_NORTH, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         scrollPane1.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
         final JPanel panel1 = new JPanel();
         panel1.setLayout(new GridLayoutManager(23, 1, new Insets(0, 0, 0, 0), -1, -1));
@@ -994,6 +997,8 @@ public class LeftPanel {
         coloredXRayIncreaseButton.setActionCommand("coloredXRayIncreaseAction");
         coloredXRayIncreaseButton.setIcon(new ImageIcon(getClass().getResource("/ppp/ck4_color_age.png")));
         panel16.add(coloredXRayIncreaseButton, new GridConstraints(0, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        final Spacer spacer6 = new Spacer();
+        root.add(spacer6, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
     }
 
     /**
@@ -1016,6 +1021,8 @@ public class LeftPanel {
 
         delTypeDropBox.setSelectedIndex(applicationModel.getDelLineType().getNumber() + 1);
         fromLineDropBox.setSelectedIndex(applicationModel.getCustomFromLineType().getNumber() + 1);
+
+        selectPersistentCheckBox.setSelected(applicationModel.getSelectPersistent());
 
         // -------- CONTEXT FOR THE BELOW LOGIC --------
         // - The Replace-to dropbox items are Edge, Mountain, Valley, Aux in that order
@@ -1248,5 +1255,6 @@ public class LeftPanel {
     private void createUIComponents() {
         scrollPane1 = new JScrollPane();
         scrollPane1.getVerticalScrollBar().setUnitIncrement(16);
+        scrollPane1.getVerticalScrollBar().setPreferredSize(new Dimension(0, 0));
     }
 }

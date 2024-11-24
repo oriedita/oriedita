@@ -113,8 +113,8 @@ public class MouseHandlerCreaseCopy4p extends BaseMouseHandlerInputRestricted {
             int sousuu_new = d.getFoldLineSet().getTotal();
             d.getFoldLineSet().divideLineSegmentWithNewLines(sousuu_old, sousuu_new);
 
+            d.unselect_all(false);
             d.record();
-
             d.getLineStep().clear();
         }
     }

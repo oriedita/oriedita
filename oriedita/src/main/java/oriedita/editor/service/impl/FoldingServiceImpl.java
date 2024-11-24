@@ -33,6 +33,7 @@ public class FoldingServiceImpl implements FoldingService {
     private final CanvasModel canvasModel;
     private final FrameProvider frame;
     private final Camera creasePatternCamera;
+    @SuppressWarnings("unused")
     private final CreasePattern_Worker backupCreasePatternWorker;
     private final TaskExecutorService foldingExecutor;
     private final ApplicationModel applicationModel;

@@ -69,7 +69,6 @@ public class ResourceUtil {
     };
     private static Map<String, ResourceBundle> userBundleCache = new ConcurrentHashMap<>();
     private static Map<String, ResourceBundle> localBundleCache = new ConcurrentHashMap<>();
-    private static Map<String, ResourceBundle> jarBundleCache = new ConcurrentHashMap<>();
 
 
     /**

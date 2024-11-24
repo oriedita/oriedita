@@ -16,11 +16,6 @@ public class MeasuresModel {
     private double measuredAngle2;
     private double measuredAngle3;
 
-    private double displayMeasuredLength1;
-    private double displayMeasuredLength2;
-    private double displayMeasuredAngle1;
-    private double displayMeasuredAngle2;
-    private double displayMeasuredAngle3;
 
     @Inject
     public MeasuresModel() {

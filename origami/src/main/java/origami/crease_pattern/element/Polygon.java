@@ -83,6 +83,7 @@ public class Polygon {
                     intersections.add(new Point(s.getA()));
                     intersections.add(new Point(s.getB()));
                     break;
+                default:
             }
 
         }
@@ -109,6 +110,7 @@ public class Polygon {
                 case OUTSIDE -> outside = true;
                 case BORDER -> border = true;
                 case INSIDE -> inside = true;
+                default -> {}
             }
 
             if (i != nbox.getTotal()) {
@@ -116,6 +118,7 @@ public class Polygon {
                     case OUTSIDE -> outside = true;
                     case BORDER -> border = true;
                     case INSIDE -> inside = true;
+                    default -> {}
                 }
             }
         }
@@ -139,6 +142,7 @@ public class Polygon {
                 case INTERSECT_AT_POINT_S2_6:
                 case INTERSECT_AT_POINT_S1_5:
                     return false;
+                default:
             }
 
             if (kh.isOverlapping()) {

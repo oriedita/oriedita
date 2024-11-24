@@ -8,7 +8,7 @@ import oriedita.editor.service.ButtonService;
 
 import java.awt.event.ActionEvent;
 
-public class SetMouseModeWithAfterColorAndUnselectAction extends AbstractOrieditaAction implements OrieditaAction{
+public class SetMouseModeWithAfterColorAndUnselectAction extends AbstractOrieditaAction {
     private final CanvasModel canvasModel;
     private final CreasePattern_Worker mainCreasePatternWorker;
     private final ButtonService buttonService;
