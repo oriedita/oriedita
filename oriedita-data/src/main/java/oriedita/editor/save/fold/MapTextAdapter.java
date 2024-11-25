@@ -3,7 +3,6 @@ package oriedita.editor.save.fold;
 import fold.custom.Adapter;
 import oriedita.editor.text.Text;
 
-import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
