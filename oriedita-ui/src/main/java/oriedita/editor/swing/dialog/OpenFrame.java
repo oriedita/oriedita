@@ -32,6 +32,8 @@ public class OpenFrame extends JDialog {
     private JButton axiom5Button;
     private JButton axiom7Button;
     private JButton axiom6Button;
+    private JButton selectLassoButton;
+    private JButton unselectLassoButton;
 
     public OpenFrame(String name, Frame owner, ButtonService buttonService) {
         super(owner, name);
@@ -42,6 +44,8 @@ public class OpenFrame extends JDialog {
 
         buttonService.registerButton(o_F_checkButton, "o_F_checkAction");
         buttonService.registerButton(foldableLinePlusGridInputButton, "foldableLinePlusGridInputAction");
+        buttonService.registerButton(selectLassoButton, "selectLassoAction");
+        buttonService.registerButton(unselectLassoButton, "unselectLassoAction");
         buttonService.registerButton(select_polygonButton, "select_polygonAction");
         buttonService.registerButton(unselect_polygonButton, "unselect_polygonAction");
         buttonService.registerButton(select_lXButton, "select_lXAction");
@@ -63,6 +67,8 @@ public class OpenFrame extends JDialog {
 
             o_F_checkButton.setSelected(m == MouseMode.FLAT_FOLDABLE_CHECK_63);
             foldableLinePlusGridInputButton.setSelected(m == MouseMode.FOLDABLE_LINE_INPUT_39);
+            selectLassoButton.setSelected(m == MouseMode.SELECT_LASSO_74);
+            unselectLassoButton.setSelected(m == MouseMode.UNSELECT_LASSO_75);
             select_polygonButton.setSelected(m == MouseMode.SELECT_POLYGON_66);
             unselect_polygonButton.setSelected(m == MouseMode.UNSELECT_POLYGON_67);
             unselect_lXButton.setSelected(m == MouseMode.UNSELECT_LINE_INTERSECTING_69);
@@ -115,7 +121,7 @@ public class OpenFrame extends JDialog {
         select_polygonButton.setText("select_polygon");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.gridy = 1;
+        gbc.gridy = 2;
         gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         panel1.add(select_polygonButton, gbc);
@@ -124,7 +130,7 @@ public class OpenFrame extends JDialog {
         select_lXButton.setText("select_lX");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.gridy = 2;
+        gbc.gridy = 3;
         gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         panel1.add(select_lXButton, gbc);
@@ -132,7 +138,7 @@ public class OpenFrame extends JDialog {
         del_lButton.setText("Del_l");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.gridy = 3;
+        gbc.gridy = 4;
         gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         panel1.add(del_lButton, gbc);
@@ -141,7 +147,7 @@ public class OpenFrame extends JDialog {
         unselect_polygonButton.setText("unselect_polygon");
         gbc = new GridBagConstraints();
         gbc.gridx = 2;
-        gbc.gridy = 1;
+        gbc.gridy = 2;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         panel1.add(unselect_polygonButton, gbc);
         unselect_lXButton = new JButton();
@@ -149,14 +155,14 @@ public class OpenFrame extends JDialog {
         unselect_lXButton.setText("unselect_lX");
         gbc = new GridBagConstraints();
         gbc.gridx = 2;
-        gbc.gridy = 2;
+        gbc.gridy = 3;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         panel1.add(unselect_lXButton, gbc);
         del_l_XButton = new JButton();
         del_l_XButton.setText("Del_l_X");
         gbc = new GridBagConstraints();
         gbc.gridx = 2;
-        gbc.gridy = 3;
+        gbc.gridy = 4;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         panel1.add(del_l_XButton, gbc);
         foldableLinePlusGridInputButton = new JButton();
@@ -170,14 +176,14 @@ public class OpenFrame extends JDialog {
         axiom5Button.setText("Ax5");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.gridy = 4;
+        gbc.gridy = 5;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         panel1.add(axiom5Button, gbc);
         axiom7Button = new JButton();
         axiom7Button.setText("Ax7");
         gbc = new GridBagConstraints();
         gbc.gridx = 2;
-        gbc.gridy = 4;
+        gbc.gridy = 5;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         panel1.add(axiom7Button, gbc);
         axiom6Button = new JButton();
@@ -187,6 +193,21 @@ public class OpenFrame extends JDialog {
         gbc.gridy = 4;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         panel1.add(axiom6Button, gbc);
+        selectLassoButton = new JButton();
+        selectLassoButton.setText("select_lasso");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.gridwidth = 2;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        panel1.add(selectLassoButton, gbc);
+        unselectLassoButton = new JButton();
+        unselectLassoButton.setText("unselect_lasso");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 2;
+        gbc.gridy = 1;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        panel1.add(unselectLassoButton, gbc);
     }
 
     /**

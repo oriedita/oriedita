@@ -13,8 +13,8 @@ exitAction;backgroundToggleAction;gridConfigureResetAction;symmetricDrawAction;o
 ;backgroundLockAction;;rabbitEarAction;zen_yama_tani_henkanAction;copy2p2pAction;c_colAction;a2Action;coloredXRayDecreaseAction;oriagari_sousa_2Action;;antiAliasToggleAction;correctCpBeforeFoldingAction;toEdgeAction
 ;backgroundTrimAction;;voronoiAction;vertexAddAction;reflectAction;h_senbun_nyuryokuAction;a3Action;coloredXRayIncreaseAction;foldedFigureUndoAction;;foldedFigureToggleAntiAliasAction;selectPersistentAction;toAuxAction
 ;readBackgroundAction;;lengthenCreaseAction;vertexDeleteAction;deleteSelectedLineSegmentAction;colOrangeAction;;;foldedFigureRedoAction;;foldedFigureToggleShadowAction;;senbun_yoke_henkanAction
-;transparentAction;;parallelDrawAction;v_del_ccAction;;colYellowAction;;;foldedFigureUndoCountAction;;;;selectAnd3ClickAction
-;;;deg1Action;v_del_allAction;;h_senbun_sakujyoAction;;;frontColorAction;;;;
+;transparentAction;;parallelDrawAction;v_del_ccAction;selectLassoAction;colYellowAction;;;foldedFigureUndoCountAction;;;;selectAnd3ClickAction
+;;;deg1Action;v_del_allAction;unselectLassoAction;h_senbun_sakujyoAction;;;frontColorAction;;;;
 ;;;deg3Action;v_del_all_ccAction;;h_undoAction;;;backColorAction;;;;
 ;;;fishBoneDrawAction;trimBranchesAction;;h_redoAction;;;lineColorAction;;;;
 ;;;doubleSymmetricDrawAction;;;h_undoTotalSetAction;;;;;;;

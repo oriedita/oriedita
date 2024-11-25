@@ -17,6 +17,7 @@ import origami.crease_pattern.element.Point;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.geom.GeneralPath;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.List;
@@ -216,6 +217,8 @@ public interface CreasePattern_Worker {
     void selectConnected(Point p);
 
     java.util.List<LineSegment> getLineStep();
+
+    GeneralPath getLinePath();
 
     Camera getCamera();
 
