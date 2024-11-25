@@ -48,6 +48,7 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.geom.GeneralPath;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -79,6 +80,10 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
      * Temporary line segments when drawing.
      */
     private final List<LineSegment> lineStep = new ArrayList<>();
+    /**
+     * Temporary GeneralPath when drawing.
+     */
+    private final GeneralPath linePath = new GeneralPath();
     /**
      * Temporary circles when drawing.
      */
@@ -176,6 +181,7 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
         camera.reset();
         lineStep.clear();
         circleStep.clear();
+        linePath.reset();
     }
 
     @Override
@@ -189,6 +195,7 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
         camera.reset();
         lineStep.clear();
         circleStep.clear();
+        linePath.reset();
     }
 
     @Override
@@ -578,6 +585,10 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
                 DrawingUtil.drawLineStep(g, s, camera, lineWidth, gridInputAssist);
             }
         }
+
+        g.setColor(Color.MAGENTA);
+        DrawingUtil.drawCurve(g, camera.object2TV(linePath), lineWidth);
+
         //候補入力時の候補を描く//Logger.info("_");
         g2.setStroke(new BasicStroke(lineWidth + 0.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));//基本指定A
 
@@ -736,6 +747,9 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
         }
     }
 
+    public void resetLinePath(){
+        linePath.reset();
+    }
 
     //動作概要　
     //マウスボタン押されたとき　
@@ -1068,6 +1082,11 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     @Override
     public List<LineSegment> getLineStep() {
         return lineStep;
+    }
+
+    @Override
+    public GeneralPath getLinePath() {
+        return linePath;
     }
 
     @Override
