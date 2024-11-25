@@ -6,6 +6,11 @@ import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.StraightLine;
 
+import java.awt.geom.GeneralPath;
+import java.awt.geom.Line2D;
+import java.awt.geom.PathIterator;
+import java.awt.geom.Point2D;
+
 /**
  * Static utilities for calculations.
  */
@@ -786,6 +791,40 @@ public class OritaCalc {
     //A function that considers a line segment as a straight line and finds the intersection with another straight line. Even if it does not intersect as a line segment, it returns the intersection when it intersects as a straight line
     public static Point findIntersection(LineSegment s1, StraightLine t2) {
         return findIntersection(lineSegmentToStraightLine(s1), t2);
+    }
+
+    /**
+     * Check if a line segment is fully contained inside a GeneralPath.
+     * @param path a GeneralPath
+     * @param lineSegment a target line segment
+     * @return if the line is fully contained
+     */
+    public static boolean isSegmentContainedInGeneralPath(GeneralPath path, Line2D lineSegment) {
+        if (!path.contains(lineSegment.getP1()) || !path.contains(lineSegment.getP2())) return false;
+
+        PathIterator pathIterator = path.getPathIterator(null);
+        double[] coords = new double[2];
+        Point2D.Double lastPoint;
+        Point2D.Double currentPoint = new Point2D.Double();
+
+        while (!pathIterator.isDone()) {
+            int segmentType = pathIterator.currentSegment(coords);
+            switch (segmentType) {
+                case PathIterator.SEG_MOVETO:
+                    currentPoint.setLocation(coords[0], coords[1]);
+                    break;
+                case PathIterator.SEG_LINETO:
+                    lastPoint = (Point2D.Double) currentPoint.clone();
+                    currentPoint.setLocation(coords[0], coords[1]);
+                    Line2D pathSegment = new Line2D.Double(lastPoint, currentPoint);
+                    if (lineSegment.intersectsLine(pathSegment)) return false;
+                    break;
+                case PathIterator.SEG_CLOSE: break;
+            }
+            pathIterator.next();
+        }
+
+        return true;
     }
 
     //A function that moves a line segment in parallel to the side (returns a new line segment without changing the original line segment)

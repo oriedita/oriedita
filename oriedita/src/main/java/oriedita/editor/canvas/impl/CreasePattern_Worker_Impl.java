@@ -81,6 +81,10 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
      */
     private final List<LineSegment> lineStep = new ArrayList<>();
     /**
+     * Temporary GeneralPath when drawing.
+     */
+    private final GeneralPath linePath = new GeneralPath();
+    /**
      * Temporary circles when drawing.
      */
     private final List<Circle> circleStep = new ArrayList<>();
@@ -177,6 +181,7 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
         camera.reset();
         lineStep.clear();
         circleStep.clear();
+        linePath.reset();
     }
 
     @Override
@@ -190,6 +195,7 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
         camera.reset();
         lineStep.clear();
         circleStep.clear();
+        linePath.reset();
     }
 
     @Override
@@ -580,23 +586,8 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
             }
         }
 
-        GeneralPath gp1;
-
-        gp1 = new GeneralPath();
-        gp1.moveTo(310, 20);
-        gp1.lineTo(380, 20);
-        gp1.lineTo(380, 80);
-        gp1.lineTo(320, 80);
-        gp1.lineTo(320, 10);
-        gp1.lineTo(340, 10);
-        gp1.lineTo(340, 60);
-        gp1.lineTo(360, 60);
-        gp1.lineTo(360, 40);
-        gp1.lineTo(310, 40);
-        gp1.closePath();
-
-        // TODO: TEST DRAW LASSO HERE
-        DrawingUtil.drawCurve(g, camera.object2TV(gp1), lineWidth);
+        g.setColor(Color.MAGENTA);
+        DrawingUtil.drawCurve(g, camera.object2TV(linePath), lineWidth);
 
         //候補入力時の候補を描く//Logger.info("_");
         g2.setStroke(new BasicStroke(lineWidth + 0.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));//基本指定A
@@ -756,6 +747,9 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
         }
     }
 
+    public void resetLinePath(){
+        linePath.reset();
+    }
 
     //動作概要　
     //マウスボタン押されたとき　
@@ -1088,6 +1082,11 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     @Override
     public List<LineSegment> getLineStep() {
         return lineStep;
+    }
+
+    @Override
+    public GeneralPath getLinePath() {
+        return linePath;
     }
 
     @Override
