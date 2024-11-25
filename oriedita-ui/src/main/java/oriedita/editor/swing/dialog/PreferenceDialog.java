@@ -63,6 +63,7 @@ import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeListener;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.PushbackInputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -654,7 +655,14 @@ public class PreferenceDialog extends JDialog {
             InputStream is = this.getClass().getResourceAsStream("/categories.csv");
 
             assert is != null;
-            InputStreamReader inputStreamReader = new InputStreamReader(is);
+            PushbackInputStream pushbackInputStream = new PushbackInputStream(is, 3);
+            InputStreamReader inputStreamReader = new InputStreamReader(pushbackInputStream, "UTF-8");
+
+            // Check for BOM
+            byte[] bom = new byte[3];
+            int bytesRead = pushbackInputStream.read(bom, 0, 3);
+            boolean hasBOM = bytesRead == 3 && bom[0] == (byte) 0xEF && bom[1] == (byte) 0xBB && bom[2] == (byte) 0xBF;
+            if (!hasBOM) pushbackInputStream.unread(bom, 0, bytesRead);
 
             // create csvParser object with custom separator semicolon
             CSVParser parser = new CSVParserBuilder().withSeparator(';').build();
@@ -990,8 +998,8 @@ public class PreferenceDialog extends JDialog {
         gbc.weighty = 1.0;
         gbc.anchor = GridBagConstraints.EAST;
         appearance1Panel.add(label6, gbc);
-        lineStyleDropBox = new JComboBox<>();
-        final DefaultComboBoxModel<String> defaultComboBoxModel1 = new DefaultComboBoxModel<>();
+        lineStyleDropBox = new JComboBox();
+        final DefaultComboBoxModel defaultComboBoxModel1 = new DefaultComboBoxModel();
         defaultComboBoxModel1.addElement("Color solid");
         defaultComboBoxModel1.addElement("BW solid");
         defaultComboBoxModel1.addElement("Color dashes");
