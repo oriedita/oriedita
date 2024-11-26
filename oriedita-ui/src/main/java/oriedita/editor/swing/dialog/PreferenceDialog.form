@@ -6,8 +6,8 @@
     </constraints>
     <properties>
       <focusTraversalPolicyProvider value="true"/>
-      <minimumSize width="361" height="565"/>
-      <preferredSize width="361" height="565"/>
+      <minimumSize width="361" height="580"/>
+      <preferredSize width="361" height="580"/>
     </properties>
     <border type="none"/>
     <children>
@@ -269,11 +269,20 @@
                                   </component>
                                   <component id="c78a6" class="javax.swing.JCheckBox" binding="toggleHelpCB">
                                     <constraints>
-                                      <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                                      <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                                       <gridbag weightx="1.0" weighty="1.0"/>
                                     </constraints>
                                     <properties>
                                       <text value="Help dialog"/>
+                                    </properties>
+                                  </component>
+                                  <component id="d7f5c" class="javax.swing.JCheckBox" binding="cpExportWarningCB">
+                                    <constraints>
+                                      <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                      <gridbag weightx="0.0" weighty="0.0"/>
+                                    </constraints>
+                                    <properties>
+                                      <text value="CP export warning"/>
                                     </properties>
                                   </component>
                                 </children>

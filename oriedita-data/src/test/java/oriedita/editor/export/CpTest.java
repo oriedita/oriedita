@@ -6,6 +6,7 @@ import fold.model.FoldFile;
 import jakarta.enterprise.context.ApplicationScoped;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import oriedita.editor.databinding.ApplicationModel;
 import oriedita.editor.save.Save;
 import oriedita.editor.save.SaveProvider;
 import origami.crease_pattern.element.LineSegment;
@@ -36,7 +37,7 @@ class CpTest {
         }
 
         File saveFile = File.createTempFile("export", ".cp");
-        new CpExporter(JFrame::new).doExport(save1, saveFile);
+        new CpExporter(JFrame::new, new ApplicationModel()).doExport(save1, saveFile);
 
         String expected = Files.readString(saveFile.toPath()).replace("\r","");
 
@@ -64,7 +65,7 @@ class CpTest {
         }
 
         File saveFile = File.createTempFile("export_faceless", ".cp");
-        new CpExporter(JFrame::new).doExport(save, saveFile);
+        new CpExporter(JFrame::new, new ApplicationModel()).doExport(save, saveFile);
 
         String expected = Files.readString(saveFile.toPath()).replace("\r","");
 
