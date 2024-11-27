@@ -708,7 +708,7 @@ public class PreferenceDialog extends JDialog {
         contentPane.setLayout(new BorderLayout(0, 0));
         contentPane.setFocusTraversalPolicyProvider(true);
         contentPane.setMinimumSize(new Dimension(361, 580));
-        contentPane.setPreferredSize(new Dimension(361, 575));
+        contentPane.setPreferredSize(new Dimension(361, 580));
         topPanel = new JPanel();
         topPanel.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
         topPanel.setMinimumSize(new Dimension(530, 530));
