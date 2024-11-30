@@ -394,12 +394,7 @@ public class PointSet implements Serializable {
                 }
             }
             if (addNewFace && tempFace.getNumPoints() != 0 && calculateArea(tempFace) > 0.0) {
-                try {
-                    addFace(tempFace, map);
-                } catch (Exception e) {
-                    Logger.error("ERROR: cannot add face.");
-                    return false;
-                }
+                addFace(tempFace, map);
             }
 
             tempFace = Face_request(lines[i].getEnd(), lines[i].getBegin());
@@ -411,12 +406,7 @@ public class PointSet implements Serializable {
                 }
             }
             if (addNewFace && tempFace.getNumPoints() != 0 && calculateArea(tempFace) > 0.0) {
-                try {
-                    addFace(tempFace, map);
-                } catch (Exception e) {
-                    Logger.error("ERROR: cannot add face.");
-                    return false;
-                }
+                addFace(tempFace, map);
             }
 
             // No need for InterruptedException here since this algorithm is now way too
