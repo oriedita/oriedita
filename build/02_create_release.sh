@@ -24,9 +24,9 @@ jpackage \
 
 pushd ci-build/portable || return
 if ! type zip > /dev/null; then
-  7z a -tzip "../Oriedita Portable ($name) $version.zip" .
+  7z a -tzip "../Oriedita Portable ($name$suffix) $version.zip" .
 else
-  zip -r "../Oriedita Portable ($name) $version.zip" .
+  zip -r "../Oriedita Portable ($name$suffix) $version.zip" .
 fi
 popd || return
 
