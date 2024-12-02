@@ -4,14 +4,14 @@
 
     <groupId>oriedita</groupId>
     <artifactId>root</artifactId>
-    <version>1.1.2-SNAPSHOT</version>
+    <version>1.1.2</version>
     <packaging>pom</packaging>
 
     <scm>
         <url>https://github.com/oriedita/oriedita</url>
         <developerConnection>scm:git:https://github.com/oriedita/oriedita.git</developerConnection>
         <connection>https://github.com/oriedita/oriedita/tree/master</connection>
-        <tag>HEAD</tag>
+        <tag>v1.1.2</tag>
     </scm>
 
     <dependencyManagement>
