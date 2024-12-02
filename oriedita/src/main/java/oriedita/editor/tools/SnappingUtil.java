@@ -30,7 +30,7 @@ public class SnappingUtil {
         LineSegment snapLine = new LineSegment(s.getB(), new Point(s.determineBX() + Math.cos(d_rad), s.determineBY() + Math.sin(d_rad)));
         Point pret = OritaCalc.findProjection(snapLine, p);
         if (OritaCalc.determineLineSegmentDistance(p, s2) <= d.getSelectionDistance()) {
-            if (OritaCalc.isLineSegmentParallel(s2, snapLine, Epsilon.PARALLEL) == OritaCalc.ParallelJudgement.NOT_PARALLEL) {
+            if (OritaCalc.isLineSegmentParallel(s2, snapLine, Epsilon.PARALLEL_FOR_FIX) == OritaCalc.ParallelJudgement.NOT_PARALLEL) {
                 pret = OritaCalc.findIntersection(s2, snapLine);
             }
         }

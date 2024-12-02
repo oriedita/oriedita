@@ -20,7 +20,7 @@ public class Check1 {
                 LineSegment si1 = new LineSegment(si);
                 LineSegment sj1 = new LineSegment(sj);
 
-                LineSegment.Intersection intersection = OritaCalc.determineLineSegmentIntersection(si, sj, Epsilon.UNKNOWN_0001, Epsilon.PARALLEL);
+                LineSegment.Intersection intersection = OritaCalc.determineLineSegmentIntersection(si, sj, Epsilon.UNKNOWN_0001, Epsilon.PARALLEL_FOR_FIX);
                 switch (intersection) {
                     case PARALLEL_EQUAL_31:
                     case PARALLEL_START_OF_S1_CONTAINS_START_OF_S2_321:

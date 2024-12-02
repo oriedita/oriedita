@@ -23,7 +23,7 @@ public class Fix2 {
                         //T-intersection
                         //折線iをその点pの影で分割する。ただし、点pの影がどれか折線の端点と同じとみなされる場合は何もしない。
                         //r_hitosiiとr_heikouhanteiは、hitosiiとheikou_hanteiのずれの許容程度
-                        LineSegment.Intersection intersection = OritaCalc.determineLineSegmentIntersectionSweet(si, sj, Epsilon.UNKNOWN_0001, Epsilon.PARALLEL);
+                        LineSegment.Intersection intersection = OritaCalc.determineLineSegmentIntersectionSweet(si, sj, Epsilon.UNKNOWN_0001, Epsilon.PARALLEL_FOR_FIX);
                         switch (intersection) {
                             case INTERSECTS_TSHAPE_S1_VERTICAL_BAR_25:
                                 applyLineSegmentDivide(foldLineSet, si.getA(), j);

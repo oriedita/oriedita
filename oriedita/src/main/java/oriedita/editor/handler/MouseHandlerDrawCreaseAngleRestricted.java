@@ -193,7 +193,7 @@ public class MouseHandlerDrawCreaseAngleRestricted extends BaseMouseHandler {
                 //２つの線分が平行かどうかを判定する関数。oc.heikou_hantei(Tyokusen t1,Tyokusen t2)//0=平行でない、1=平行で２直線が一致しない、2=平行で２直線が一致する
                 //0=平行でない、1=平行で２直線が一致しない、2=平行で２直線が一致する
 
-                if (OritaCalc.isLineSegmentParallel(d.getLineStep().get(d.getLineStep().size() - 1 - 1), d.getLineStep().get(d.getLineStep().size() - 1), Epsilon.UNKNOWN_01) != OritaCalc.ParallelJudgement.NOT_PARALLEL) {//ここは安全を見て閾値を0.1と大目にとっておこのがよさそう
+                if (OritaCalc.isLineSegmentParallel(d.getLineStep().get(d.getLineStep().size() - 1 - 1), d.getLineStep().get(d.getLineStep().size() - 1)) != OritaCalc.ParallelJudgement.NOT_PARALLEL) {//ここは安全を見て閾値を0.1と大目にとっておこのがよさそう
                     d.getLineStep().clear();
                     return;
                 }

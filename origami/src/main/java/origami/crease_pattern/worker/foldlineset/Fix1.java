@@ -16,7 +16,7 @@ public class Fix1 {
                     LineSegment sj = foldLineSet.get(j);//r_hitosiiとr_heikouhanteiは、hitosiiとheikou_hanteiのずれの許容程度
                     if (sj.getColor() != LineColor.CYAN_3) {
                         //T字型交差
-                        LineSegment.Intersection intersection = OritaCalc.determineLineSegmentIntersection(si, sj, Epsilon.UNKNOWN_0001, Epsilon.PARALLEL);
+                        LineSegment.Intersection intersection = OritaCalc.determineLineSegmentIntersection(si, sj, Epsilon.UNKNOWN_0001, Epsilon.PARALLEL_FOR_FIX);
                         switch (intersection) {
                             case PARALLEL_EQUAL_31:
                                 si.setColor(sj.getColor());
