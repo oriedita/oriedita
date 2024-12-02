@@ -5,27 +5,27 @@
     <parent>
         <groupId>oriedita</groupId>
         <artifactId>root</artifactId>
-        <version>1.1.2-SNAPSHOT</version>
+        <version>1.1.3-SNAPSHOT</version>
     </parent>
 
     <artifactId>oriedita</artifactId>
-    <version>1.1.2-SNAPSHOT</version>
+    <version>1.1.3-SNAPSHOT</version>
 
     <dependencies>
         <dependency>
             <groupId>oriedita</groupId>
             <artifactId>origami</artifactId>
-            <version>1.1.2-SNAPSHOT</version>
+            <version>1.1.3-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>oriedita</groupId>
             <artifactId>oriedita-common</artifactId>
-            <version>1.1.2-SNAPSHOT</version>
+            <version>1.1.3-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>oriedita</groupId>
             <artifactId>oriedita-common</artifactId>
-            <version>1.1.2-SNAPSHOT</version>
+            <version>1.1.3-SNAPSHOT</version>
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
@@ -33,12 +33,12 @@
         <dependency>
             <groupId>oriedita</groupId>
             <artifactId>oriedita-data</artifactId>
-            <version>1.1.2-SNAPSHOT</version>
+            <version>1.1.3-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>oriedita</groupId>
             <artifactId>oriedita-ui</artifactId>
-            <version>1.1.2-SNAPSHOT</version>
+            <version>1.1.3-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>jakarta.enterprise</groupId>
