@@ -24,7 +24,6 @@ public class Epsilon {
     // Most likely, they don't actually have a fixed meaning throughout the code base,
     // and in each of their use cases it just happen to require an epsilon of that magnitude.
 
-    public static final double UNKNOWN_01 = factor * 0.1;
     public static final double UNKNOWN_05 = factor * 0.5;
     public static final double UNKNOWN_001 = factor * 1E-2;
     public static final double UNKNOWN_0001 = factor * 1E-3;
@@ -32,12 +31,15 @@ public class Epsilon {
     public static final double UNKNOWN_1EN5 = factor * 1E-5;
     public static final double UNKNOWN_1EN6 = factor * 1E-6;
     public static final double UNKNOWN_1EN7 = factor * 1E-7;
+
     // These are the constants with a known purpose.
 
-    public static final double PARALLEL = factor * 0.5;
+    public static final double PARALLEL_FOR_EDIT = factor * 0.1;
+    public static final double PARALLEL_FOR_FIX = factor * 0.5; // TODO: do we need two parallel comparison standards?
     public static final double FLAT = factor * 1E-4;
     public static final double QUAD_TREE_ITEM = factor * 0.5;
     public static final double GRID_ANGLE_THRESHOLD = 1;
+
     /**
      * For the most part, this is the smallest epsilon used in the code. Any value
      * that is even smaller is considered zero.

@@ -21,7 +21,7 @@ public class StraightLine {
             tmpB = -tmpB;
             tmpC = -tmpC;
         }
-        if ((-Epsilon.UNKNOWN_01 < tmpA) && (tmpA < Epsilon.UNKNOWN_01)) {
+        if ((-Epsilon.PARALLEL_FOR_EDIT < tmpA) && (tmpA < Epsilon.PARALLEL_FOR_EDIT)) {
             if (tmpB < 0.0) {
                 tmpA = -tmpA;
                 tmpB = -tmpB;
