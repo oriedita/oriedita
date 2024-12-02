@@ -34,7 +34,7 @@ public class OritaCalc {
 
     //A function that determines whether two points are in the same position (true) or different (false) -------------------------------- -
     public static boolean equal(Point p1, Point p2) {
-        return equal(p1, p2, Epsilon.UNKNOWN_01);//The error is defined here.
+        return equal(p1, p2, Epsilon.POINT);
     }
 
     public static boolean equal(Point p1, Point p2, double r) {//r is the error tolerance. Strict judgment if r is negative.
@@ -222,16 +222,16 @@ public class OritaCalc {
             y2min = s2.determineBY();
         }
 
-        if (x1max + rhit + Epsilon.UNKNOWN_01 < x2min) {
+        if (x1max + rhit + Epsilon.POINT < x2min) {
             return LineSegment.Intersection.NO_INTERSECTION_0;
         }
-        if (x1min - rhit - Epsilon.UNKNOWN_01 > x2max) {
+        if (x1min - rhit - Epsilon.POINT > x2max) {
             return LineSegment.Intersection.NO_INTERSECTION_0;
         }
-        if (y1max + rhit + Epsilon.UNKNOWN_01 < y2min) {
+        if (y1max + rhit + Epsilon.POINT < y2min) {
             return LineSegment.Intersection.NO_INTERSECTION_0;
         }
-        if (y1min - rhit - Epsilon.UNKNOWN_01 > y2max) {
+        if (y1min - rhit - Epsilon.POINT > y2max) {
             return LineSegment.Intersection.NO_INTERSECTION_0;
         }
 
@@ -440,16 +440,16 @@ public class OritaCalc {
             y2min = s2.determineBY();
         }
 
-        if (x1max + rhit + Epsilon.UNKNOWN_01 < x2min) {
+        if (x1max + rhit + Epsilon.POINT < x2min) {
             return LineSegment.Intersection.NO_INTERSECTION_0;
         }
-        if (x1min - rhit - Epsilon.UNKNOWN_01 > x2max) {
+        if (x1min - rhit - Epsilon.POINT > x2max) {
             return LineSegment.Intersection.NO_INTERSECTION_0;
         }
-        if (y1max + rhit + Epsilon.UNKNOWN_01 < y2min) {
+        if (y1max + rhit + Epsilon.POINT < y2min) {
             return LineSegment.Intersection.NO_INTERSECTION_0;
         }
-        if (y1min - rhit - Epsilon.UNKNOWN_01 > y2max) {
+        if (y1min - rhit - Epsilon.POINT > y2max) {
             return LineSegment.Intersection.NO_INTERSECTION_0;
         }
 

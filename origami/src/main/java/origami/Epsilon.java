@@ -11,16 +11,18 @@ import origami.crease_pattern.OritaCalc;
 public class Epsilon {
 
     /**
-     * In the following, all constants after "factor" are the original epsilon
-     * constants used by Orihime. Those epsilons are, however, too big for
-     * super-complex models such as full Ryujin with shaped scales. Before we have a
-     * better understanding of the purpose of these different epsilons, let's just
-     * multiply all of them by a factor to fix this problem. By using a factor of
-     * 0.01, that essentially means all CPs are now 100x larger than the origin.
+     * In the following, all constants after "factor" are the original epsilon constants used by Orihime
+     * (except for those in the "modified" section).
+     * Those epsilons are, however, too big for super-complex models such as full Ryujin with shaped scales.
+     * Before we have a better understanding of the purpose of these different epsilons,
+     * let's just multiply all of them by a factor to fix this problem.
+     * By using a factor of 0.01, that essentially means all CPs are now 100x larger than the origin.
      */
     private static final double factor = 0.01;
 
     // These are the constants of which purpose is uncertain.
+    // Most likely, they don't actually have a fixed meaning throughout the code base,
+    // and in each of their use cases it just happen to require an epsilon of that magnitude.
 
     public static final double UNKNOWN_01 = factor * 0.1;
     public static final double UNKNOWN_05 = factor * 0.5;
@@ -51,6 +53,10 @@ public class Epsilon {
      * found. So I settled with this particular value which seems to work best.
      */
     public static final double SWEET_DISTANCE = factor * 1E-10;
+
+    // These are the constants that has been modified from the original values.
+
+    public static final double POINT = factor * 0.05; // Originally the value was 0.1
 
     /**
      * This is the default instance of the Epsilon class. In the future I expect
