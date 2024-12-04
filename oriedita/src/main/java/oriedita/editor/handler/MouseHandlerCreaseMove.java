@@ -9,6 +9,7 @@ import oriedita.editor.databinding.AngleSystemModel;
 import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.save.Save;
 import oriedita.editor.save.SaveProvider;
+import oriedita.editor.service.HistoryState;
 import origami.Epsilon;
 import origami.crease_pattern.FoldLineSet;
 import origami.crease_pattern.element.Point;
@@ -16,6 +17,9 @@ import origami.crease_pattern.element.Point;
 @ApplicationScoped
 @Handles(MouseMode.CREASE_MOVE_21)
 public class MouseHandlerCreaseMove extends BaseMouseHandlerLineTransform {
+    @Inject
+    @Named("normal")
+    HistoryState normalHistoryState;
 
     @Inject
     public MouseHandlerCreaseMove(@Named("mainCreasePattern_Worker") CreasePattern_Worker d, CanvasModel canvasModel, AngleSystemModel angleSystemModel) {
@@ -28,6 +32,8 @@ public class MouseHandlerCreaseMove extends BaseMouseHandlerLineTransform {
         super.mouseReleased(p0);
         if (Epsilon.high.gt0(delta.distance(new Point(0, 0)))) {
             //やりたい動作はここに書く
+
+            if(normalHistoryState.getLastState() == null) d.record();
 
             FoldLineSet ori_s_temp = new FoldLineSet();    //セレクトされた折線だけ取り出すために使う
             Save save = SaveProvider.createInstance();

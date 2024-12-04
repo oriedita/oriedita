@@ -9,6 +9,7 @@ import oriedita.editor.databinding.AngleSystemModel;
 import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.save.Save;
 import oriedita.editor.save.SaveProvider;
+import oriedita.editor.service.HistoryState;
 import origami.Epsilon;
 import origami.crease_pattern.FoldLineSet;
 import origami.crease_pattern.element.Point;
@@ -16,6 +17,9 @@ import origami.crease_pattern.element.Point;
 @ApplicationScoped
 @Handles(MouseMode.CREASE_COPY_22)
 public class MouseHandlerCreaseCopy extends BaseMouseHandlerLineTransform {
+    @Inject
+    @Named("normal")
+    HistoryState normalHistoryState;
 
     @Inject
     public MouseHandlerCreaseCopy(@Named("mainCreasePattern_Worker") CreasePattern_Worker d, CanvasModel canvasModel, AngleSystemModel angleSystemModel) {
@@ -29,6 +33,8 @@ public class MouseHandlerCreaseCopy extends BaseMouseHandlerLineTransform {
 
         if (Epsilon.high.gt0(delta.distance(new Point(0, 0)))) {
             //やりたい動作はここに書く
+
+            if(normalHistoryState.getLastState() == null) d.record();
 
             FoldLineSet ori_s_temp = lines;
             ori_s_temp.move(delta.getX(), delta.getY());
