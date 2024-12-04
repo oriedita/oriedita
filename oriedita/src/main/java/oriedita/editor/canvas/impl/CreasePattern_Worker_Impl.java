@@ -787,6 +787,7 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     public void select_all() {
         foldLineSet.select_all();
         refreshIsSelectionEmpty();
+        canvasModel.markDirty();
     }
 
     @Override
