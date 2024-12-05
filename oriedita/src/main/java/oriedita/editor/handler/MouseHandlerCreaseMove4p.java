@@ -19,9 +19,6 @@ import origami.crease_pattern.element.Point;
 @ApplicationScoped
 @Handles(MouseMode.CREASE_MOVE_4P_31)
 public class MouseHandlerCreaseMove4p extends BaseMouseHandlerInputRestricted {
-    @Inject
-    @Named("normal")
-    HistoryState normalHistoryState;
     private final CanvasModel canvasModel;
 
     @Inject

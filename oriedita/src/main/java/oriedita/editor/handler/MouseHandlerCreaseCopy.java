@@ -18,10 +18,6 @@ import origami.crease_pattern.element.Point;
 @Handles(MouseMode.CREASE_COPY_22)
 public class MouseHandlerCreaseCopy extends BaseMouseHandlerLineTransform {
     @Inject
-    @Named("normal")
-    HistoryState normalHistoryState;
-
-    @Inject
     public MouseHandlerCreaseCopy(@Named("mainCreasePattern_Worker") CreasePattern_Worker d, CanvasModel canvasModel, AngleSystemModel angleSystemModel) {
         super(canvasModel, angleSystemModel);
         this.d = d;
