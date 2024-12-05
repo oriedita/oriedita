@@ -152,6 +152,7 @@ public class PreferenceDialog extends JDialog {
     private JTextField defaultGridSizeTF;
     private JCheckBox detachGridColorCB;
     private JCheckBox detachFigureColorCB;
+    private JCheckBox cpExportWarningCB;
     private int tempTransparency;
     private final ApplicationModel applicationModel;
     private final ButtonService buttonService;
@@ -177,6 +178,7 @@ public class PreferenceDialog extends JDialog {
         cpOnTopCB.setSelected(applicationModel.getDisplayCreasePatternOnTop());
         foldingProgressCB.setSelected(applicationModel.getDisplayFoldingProgress());
         foldWarningCB.setSelected(!applicationModel.getFoldWarning());
+        cpExportWarningCB.setSelected(!applicationModel.getCpExportWarning());
         toggleHelpCB.setSelected(applicationModel.getHelpVisible());
         darkModeCheckBox.setSelected(applicationModel.getLaf().equals(FlatDarkLaf.class.getName()));
         preciseZoomCB.setSelected(applicationModel.isPreciseZoom());
@@ -262,6 +264,7 @@ public class PreferenceDialog extends JDialog {
         foldingProgressCB.addActionListener(e -> applicationModel.setDisplayFoldingProgress(foldingProgressCB.isSelected()));
         selfIntersectionCB.addActionListener(e -> applicationModel.setDisplaySelfIntersection(selfIntersectionCB.isSelected()));
         foldWarningCB.addActionListener(e -> applicationModel.setFoldWarning(!foldWarningCB.isSelected()));
+        cpExportWarningCB.addActionListener(e -> applicationModel.setCpExportWarning(!cpExportWarningCB.isSelected()));
         toggleHelpCB.addActionListener(e -> applicationModel.setHelpVisible(toggleHelpCB.isSelected()));
         preciseZoomCB.addActionListener(e -> applicationModel.setPreciseZoom(preciseZoomCB.isSelected()));
         zoomSpeedSlider.addChangeListener(e -> applicationModel.setZoomSpeed(zoomSpeedSlider.getValue() / 10.0));
@@ -704,8 +707,8 @@ public class PreferenceDialog extends JDialog {
         contentPane = new JPanel();
         contentPane.setLayout(new BorderLayout(0, 0));
         contentPane.setFocusTraversalPolicyProvider(true);
-        contentPane.setMinimumSize(new Dimension(361, 565));
-        contentPane.setPreferredSize(new Dimension(361, 565));
+        contentPane.setMinimumSize(new Dimension(365, 580));
+        contentPane.setPreferredSize(new Dimension(365, 580));
         topPanel = new JPanel();
         topPanel.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
         topPanel.setMinimumSize(new Dimension(530, 530));
@@ -906,11 +909,18 @@ public class PreferenceDialog extends JDialog {
         toggleHelpCB.setText("Help dialog");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.gridy = 5;
+        gbc.gridy = 6;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         panel5.add(toggleHelpCB, gbc);
+        cpExportWarningCB = new JCheckBox();
+        cpExportWarningCB.setText("CP export warning");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 5;
+        gbc.anchor = GridBagConstraints.WEST;
+        panel5.add(cpExportWarningCB, gbc);
         final JPanel panel6 = new JPanel();
         panel6.setLayout(new FlowLayout(FlowLayout.LEFT, 14, 14));
         panel6.setMinimumSize(new Dimension(354, 403));
