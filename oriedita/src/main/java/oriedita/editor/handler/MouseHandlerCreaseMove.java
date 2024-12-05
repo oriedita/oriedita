@@ -16,7 +16,6 @@ import origami.crease_pattern.element.Point;
 @ApplicationScoped
 @Handles(MouseMode.CREASE_MOVE_21)
 public class MouseHandlerCreaseMove extends BaseMouseHandlerLineTransform {
-
     @Inject
     public MouseHandlerCreaseMove(@Named("mainCreasePattern_Worker") CreasePattern_Worker d, CanvasModel canvasModel, AngleSystemModel angleSystemModel) {
         super(canvasModel, angleSystemModel);
