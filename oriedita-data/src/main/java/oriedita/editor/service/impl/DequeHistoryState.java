@@ -157,10 +157,4 @@ public class DequeHistoryState implements HistoryState {
 
         return getCurrent();
     }
-
-    @Override
-    public Save getLastState() {
-        try { return (Save) convertFromBytes(history.peekFirst()); }
-        catch (Exception e) { return null; }
-    }
 }

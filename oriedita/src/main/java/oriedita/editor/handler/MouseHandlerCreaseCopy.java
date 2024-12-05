@@ -34,8 +34,6 @@ public class MouseHandlerCreaseCopy extends BaseMouseHandlerLineTransform {
         if (Epsilon.high.gt0(delta.distance(new Point(0, 0)))) {
             //やりたい動作はここに書く
 
-            if(normalHistoryState.getLastState() == null) d.record();
-
             FoldLineSet ori_s_temp = lines;
             ori_s_temp.move(delta.getX(), delta.getY());
             ori_s_temp.unselect_all();

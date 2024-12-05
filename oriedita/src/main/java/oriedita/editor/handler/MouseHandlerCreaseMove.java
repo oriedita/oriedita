@@ -33,8 +33,6 @@ public class MouseHandlerCreaseMove extends BaseMouseHandlerLineTransform {
         if (Epsilon.high.gt0(delta.distance(new Point(0, 0)))) {
             //やりたい動作はここに書く
 
-            if(normalHistoryState.getLastState() == null) d.record();
-
             FoldLineSet ori_s_temp = new FoldLineSet();    //セレクトされた折線だけ取り出すために使う
             Save save = SaveProvider.createInstance();
             d.getFoldLineSet().getMemoSelectOption(save, 2);

@@ -20,6 +20,4 @@ public interface HistoryState {
     Save undo();
 
     Save redo();
-
-    Save getLastState();
 }

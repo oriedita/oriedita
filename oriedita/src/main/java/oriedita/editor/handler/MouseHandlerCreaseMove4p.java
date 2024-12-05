@@ -102,8 +102,6 @@ public class MouseHandlerCreaseMove4p extends BaseMouseHandlerInputRestricted {
     //マウス操作(mouseMode==31move2p2p　でボタンを離したとき)を行う関数----------------------------------------------------
     public void mouseReleased(Point p0) {
         if (d.getLineStep().size() == 4) {
-            if(normalHistoryState.getLastState() == null) d.record();
-
             canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.NORMAL_0);//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
 
             FoldLineSet ori_s_temp = new FoldLineSet();    //セレクトされた折線だけ取り出すために使う
