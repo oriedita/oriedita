@@ -177,14 +177,8 @@ public class ActionRegistrationService {
         actionService.registerAction(ActionType.lineStyleChangeAction, new LambdaAction(applicationModel::advanceLineStyle));
 
         // - select and transform actions
-        actionService.registerAction(ActionType.selectAllAction, new LambdaAction(() -> {
-            mainCreasePatternWorker.select_all();
-            mainCreasePatternWorker.record();
-        }));
-        actionService.registerAction(ActionType.unselectAllAction, new LambdaAction(() -> {
-            mainCreasePatternWorker.unselect_all();
-            mainCreasePatternWorker.record();
-        }));
+        actionService.registerAction(ActionType.selectAllAction, new LambdaAction(mainCreasePatternWorker::select_all));
+        actionService.registerAction(ActionType.unselectAllAction, new LambdaAction(mainCreasePatternWorker::unselect_all));
         actionService.registerAction(ActionType.moveAction, actionFactory.selectionOperationAction(CanvasModel.SelectionOperationMode.MOVE_1, MouseMode.CREASE_MOVE_21));
         actionService.registerAction(ActionType.move2p2pAction, actionFactory.selectionOperationAction(CanvasModel.SelectionOperationMode.MOVE4P_2, MouseMode.CREASE_MOVE_4P_31));
         actionService.registerAction(ActionType.copyAction, actionFactory.selectionOperationAction(CanvasModel.SelectionOperationMode.COPY_3, MouseMode.CREASE_COPY_22));

@@ -785,17 +785,23 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
 
     @Override
     public void select_all() {
+        boolean beforeSelection = getIsSelectionEmpty();
         foldLineSet.select_all();
         refreshIsSelectionEmpty();
         canvasModel.markDirty();
+        boolean afterSelection = getIsSelectionEmpty();
+        if (beforeSelection != afterSelection) record();
     }
 
     @Override
     public void unselect_all(boolean ignorePersistent) {
         if (!applicationModel.getSelectPersistent() || ignorePersistent) {
+            boolean beforeSelection = getIsSelectionEmpty();
             foldLineSet.unselect_all();
             setIsSelectionEmpty(true);
             canvasModel.markDirty();
+            boolean afterSelection = getIsSelectionEmpty();
+            if (beforeSelection != afterSelection) record();
         }
     }
 
