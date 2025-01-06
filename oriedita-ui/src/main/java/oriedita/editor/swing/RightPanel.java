@@ -30,7 +30,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
-import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -39,7 +38,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.beans.PropertyChangeEvent;
-import java.util.EventListener;
 
 @ApplicationScoped
 public class RightPanel {
@@ -228,7 +226,6 @@ public class RightPanel {
         measuredAngle1TextField.addCaretListener(measureCaretListener);
         measuredAngle2TextField.addCaretListener(measureCaretListener);
         measuredAngle3TextField.addCaretListener(measureCaretListener);
-
 
         measuredLength1TextField.addMouseListener(new TextFieldTempPopupAdapter(measuredLength1TextField, "Copied"));
         measuredLength2TextField.addMouseListener(new TextFieldTempPopupAdapter(measuredLength2TextField, "Copied"));
