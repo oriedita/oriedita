@@ -30,6 +30,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.CaretListener;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Insets;
@@ -213,6 +214,19 @@ public class RightPanel {
 
             canvasModel.setMouseMode(MouseMode.CIRCLE_CHANGE_COLOR_59);
         });
+
+        CaretListener measureCaretListener = e -> {
+            JTextField tf = (JTextField) e.getSource();
+            if (tf.getCaretPosition() != 0) {
+                tf.setCaretPosition(0);
+            }
+        };
+        measuredLength1TextField.addCaretListener(measureCaretListener);
+        measuredLength2TextField.addCaretListener(measureCaretListener);
+        measuredAngle1TextField.addCaretListener(measureCaretListener);
+        measuredAngle2TextField.addCaretListener(measureCaretListener);
+        measuredAngle3TextField.addCaretListener(measureCaretListener);
+
         measuredLength1TextField.addMouseListener(new TextFieldTempPopupAdapter(measuredLength1TextField, "Copied"));
         measuredLength2TextField.addMouseListener(new TextFieldTempPopupAdapter(measuredLength2TextField, "Copied"));
         measuredAngle1TextField.addMouseListener(new TextFieldTempPopupAdapter(measuredAngle1TextField, "Copied"));
