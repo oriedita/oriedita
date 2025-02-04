@@ -15,9 +15,9 @@ import java.util.concurrent.TimeoutException;
 @ApplicationScoped
 public class SingleTaskExecutorServiceImpl implements TaskExecutorService {
     private final ExecutorService pool;
-    private static Future<?> currentTask = CompletableFuture.completedFuture(null);
+    private Future<?> currentTask = CompletableFuture.completedFuture(null);
 
-    private static String taskName = "";
+    private String taskName = "";
 
     public SingleTaskExecutorServiceImpl() {
         pool = Executors.newFixedThreadPool(1);
