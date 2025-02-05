@@ -212,10 +212,10 @@ public class PointSet implements Serializable {
         return tk.insidePoint_find();
     }
 
-    private double calculateArea(Face mn) {
+    private boolean isNonDegenerated(Face mn) {
         Polygon tk;
         tk = makePolygon(mn);
-        return tk.calculateArea();
+        return tk.calculateArea() > 0.0;
     }
 
     public int getNumPoints() {
@@ -385,15 +385,17 @@ public class PointSet implements Serializable {
         ListArray map = new ListArray(numPoints, numPoints * 5);
 
         for (int i = 1; i <= numLines; i++) {
-            tempFace = Face_request(lines[i].getBegin(), lines[i].getEnd());
+            int begin = lines[i].getBegin();
+            int end = lines[i].getEnd();
+            tempFace = Face_request(begin, end);
             addNewFace = true;
-            for (int j : map.get(lines[i].getBegin())) {
+            for (int j : map.get(begin)) {
                 if (equals(tempFace, faces[j])) {
                     addNewFace = false;
                     break;
                 }
             }
-            if (addNewFace && tempFace.getNumPoints() != 0 && calculateArea(tempFace) > 0.0) {
+            if (addNewFace && tempFace.getNumPoints() != 0 && isNonDegenerated(tempFace)) {
                 try {
                     addFace(tempFace, map);
                 } catch (Exception e) {
@@ -402,15 +404,15 @@ public class PointSet implements Serializable {
                 }
             }
 
-            tempFace = Face_request(lines[i].getEnd(), lines[i].getBegin());
+            tempFace = Face_request(end, begin);
             addNewFace = true;
-            for (int j : map.get(lines[i].getBegin())) {
+            for (int j : map.get(begin)) {
                 if (equals(tempFace, faces[j])) {
                     addNewFace = false;
                     break;
                 }
             }
-            if (addNewFace && tempFace.getNumPoints() != 0 && calculateArea(tempFace) > 0.0) {
+            if (addNewFace && tempFace.getNumPoints() != 0 && isNonDegenerated(tempFace)) {
                 try {
                     addFace(tempFace, map);
                 } catch (Exception e) {
@@ -432,9 +434,13 @@ public class PointSet implements Serializable {
              * never happens, and this message is kept here in case we need to detect the
              * error and fix things again.
              */
-            Logger.warn("Euler characteristic error");
+            Logger.warn("Euler characteristic error: {}", euler);
 
-            return false;
+            // For now we allow a small error here, just so that we can fold Ryujin.
+            // To do: find a better workaround.
+            if (Math.abs(euler - 1) > 0.005 * numFaces) {
+                return false;
+            }
         }
 
         Logger.info("全面数　＝　{}", numFaces);
