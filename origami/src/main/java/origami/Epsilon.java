@@ -58,7 +58,7 @@ public class Epsilon {
 
     // These are the constants that has been modified from the original values.
 
-    public static final double POINT = factor * 0.05; // Originally the value was 0.1
+    public static final double POINT = factor * 0.025; // Originally the value was 0.1
 
     /**
      * This is the default instance of the Epsilon class. In the future I expect

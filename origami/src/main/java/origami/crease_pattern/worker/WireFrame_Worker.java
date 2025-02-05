@@ -246,8 +246,7 @@ public class WireFrame_Worker {
         }
 
         int numPoints = adapter.getCount();
-        Logger.info("点の全数　addPointNum＝　");
-        Logger.info(numPoints);
+        Logger.info("Total number of points = {}", numPoints);
 
         int numLines = lineSegmentSet.getNumLineSegments();
 
@@ -292,7 +291,7 @@ public class WireFrame_Worker {
             if (Thread.interrupted()) throw new InterruptedException();
         }
 
-        Logger.info("棒の全数　＝ {}", pointSet.getNumLines());
+        Logger.info("Total number of lines = {}", pointSet.getNumLines());
     }
 
     /**
