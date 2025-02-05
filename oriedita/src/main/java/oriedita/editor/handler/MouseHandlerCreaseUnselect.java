@@ -17,13 +17,19 @@ public class MouseHandlerCreaseUnselect extends BaseMouseHandlerBoxSelect {
     public void mouseReleased(Point p0) {
         super.mouseReleased(p0);
         d.getLineStep().clear();
-        d.unselect(selectionStart, p0);
 
+        int beforeSelectNum = d.getFoldLineTotalForSelectFolding();
+
+        d.unselect(selectionStart, p0);
         if (selectionStart.distance(p0) <= Epsilon.UNKNOWN_1EN6) {
             Point p = d.getCamera().TV2object(p0);
             if (d.getFoldLineSet().closestLineSegmentDistance(p) < d.getSelectionDistance()) {//点pに最も近い線分の番号での、その距離を返す	public double mottomo_tikai_senbun_kyori(Ten p)
                 d.getFoldLineSet().closestLineSegmentSearch(p).setSelected(0);
             }
         }
+
+        int afterSelectNum = d.getFoldLineTotalForSelectFolding();
+
+        if(beforeSelectNum != afterSelectNum) d.record();;
     }
 }

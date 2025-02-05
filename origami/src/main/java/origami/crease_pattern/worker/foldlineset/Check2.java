@@ -21,7 +21,7 @@ public class Check2 {
                 LineSegment sj1 = new LineSegment(sj);
 
                 //T-shaped intersection
-                LineSegment.Intersection intersection = OritaCalc.determineLineSegmentIntersectionSweet(si, sj, Epsilon.UNKNOWN_0001, Epsilon.PARALLEL);
+                LineSegment.Intersection intersection = OritaCalc.determineLineSegmentIntersectionSweet(si, sj, Epsilon.UNKNOWN_0001, Epsilon.PARALLEL_FOR_FIX);
                 switch (intersection) {
                     case INTERSECTS_TSHAPE_S1_VERTICAL_BAR_25:
                     case INTERSECTS_TSHAPE_S1_VERTICAL_BAR_26:

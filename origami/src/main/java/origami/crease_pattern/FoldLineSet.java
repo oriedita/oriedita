@@ -221,7 +221,7 @@ public class FoldLineSet {
             }
         }
     }
-    
+
     public boolean isSelectionEmpty(){
         for (int i = 1; i <= total; i++) {
             LineSegment s = lineSegments.get(i);
@@ -1585,7 +1585,7 @@ public class FoldLineSet {
     public LineSegment getClosestLineSegment(Point p) {
         int minrid = 0;
         double minr = 100000.0;
-        LineSegment s1 = new LineSegment(100000.0, 100000.0, 100000.0, 100000.0 + Epsilon.UNKNOWN_01);
+        LineSegment s1 = new LineSegment(100000.0, 100000.0, 100000.0, 100000.1);
         for (int i = 1; i <= total; i++) {
             double sk = OritaCalc.determineLineSegmentDistance(p, get(i));
             if (minr > sk) {

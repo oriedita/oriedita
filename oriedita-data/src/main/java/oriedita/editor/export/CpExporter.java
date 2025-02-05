@@ -5,9 +5,11 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.tinylog.Logger;
 import oriedita.editor.FrameProvider;
+import oriedita.editor.databinding.ApplicationModel;
 import oriedita.editor.export.api.FileExporter;
 import oriedita.editor.save.Save;
 
+import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -20,16 +22,22 @@ import java.io.PrintWriter;
 @ApplicationScoped
 public class CpExporter implements FileExporter {
     private final FrameProvider frame;
+    private final ApplicationModel applicationModel;
 
     @Inject
-    public CpExporter(FrameProvider frame) {
+    public CpExporter(FrameProvider frame, ApplicationModel applicationModel) {
         this.frame = frame;
+        this.applicationModel = applicationModel;
     }
 
     @Override
     public void doExport(Save save, File file) throws IOException {
-        if (!save.canSaveAsCp()) {
-            JOptionPane.showMessageDialog(frame.get(), "The saved .cp file does not contain circles, text and yellow aux lines. Save as a .ori file to also save these lines.", "Warning", JOptionPane.WARNING_MESSAGE);
+        if (!save.canSaveAsCp() && !applicationModel.getCpExportWarning()) {
+            JCheckBox checkbox = new JCheckBox("Don't show this again");
+            Object[] params = {"The saved .cp file does not contain circles, text and yellow aux lines. Save as a .ori file to also save these lines.", checkbox};
+            JOptionPane.showMessageDialog(frame.get(), params, "Warning", JOptionPane.WARNING_MESSAGE);
+
+            applicationModel.setCpExportWarning(checkbox.isSelected());
         }
 
         try (FileWriter fw = new FileWriter(file); BufferedWriter bw = new BufferedWriter(fw); PrintWriter pw = new PrintWriter(bw); OutputStream os = new FileOutputStream(file)) {

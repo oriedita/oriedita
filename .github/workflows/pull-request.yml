@@ -35,15 +35,15 @@ jobs:
       - name: Build with Maven
         run: mvn -B package --file pom.xml
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: ${{ matrix.version == '21' }}
         with:
           name: oriedita-jar
           path: oriedita/target/oriedita-*.jar
 
       - name: Test Report
-        uses: actions/upload-artifact@v3
-        if: success() || failure()    # run this step even if previous step failed
+        uses: actions/upload-artifact@v4
+        if: (success() || failure()) && matrix.version == '21'    # run this step even if previous step failed
         with:
           name: test-results
           path: "*/target/surefire-reports/TEST*.xml"    # Path to test results

@@ -145,7 +145,7 @@ public class ConvertAction extends AbstractOrieditaAction{
 
         if (selectedOption.endsWith(".cp)")){
             exportFile = exportFile.concat(".cp");
-            new CpExporter(frameProvider).doExport(save, new File(exportFile));
+            new CpExporter(frameProvider, applicationModel).doExport(save, new File(exportFile));
         } else if (selectedOption.endsWith(".ori)")) {
             exportFile = exportFile.concat(".ori");
             new OriExporter().doExport(save, new File(exportFile));

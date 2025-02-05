@@ -69,6 +69,7 @@ public class ApplicationModel implements Serializable {
     private int gridLineWidth;
     private boolean displayNumbers;
     private boolean foldWarning;
+    private boolean cpExportWarning;
     private CustomLineTypes customFromLineType;
     private CustomLineTypes customToLineType;
     private CustomLineTypes delLineType;
@@ -170,6 +171,16 @@ public class ApplicationModel implements Serializable {
 
     public boolean getFoldWarning() {
         return foldWarning;
+    }
+
+    public void setCpExportWarning(boolean cpExportWarning) {
+        boolean oldCpExportWarning = this.cpExportWarning;
+        this.cpExportWarning = cpExportWarning;
+        this.pcs.firePropertyChange("cpExportWarning", oldCpExportWarning, cpExportWarning);
+    }
+
+    public boolean getCpExportWarning() {
+        return cpExportWarning;
     }
 
     public void setCheck4ColorTransparency(int check4ColorTransparency){
@@ -410,6 +421,7 @@ public class ApplicationModel implements Serializable {
         defaultDirectory = null;
         recentFileList = new ArrayList<>();
         foldWarning = false;
+        cpExportWarning = false;
 
         windowPosition = null;
         windowState = Frame.NORMAL;
@@ -464,6 +476,7 @@ public class ApplicationModel implements Serializable {
         displayFoldingProgress = false;
         displaySelfIntersection = true;
         foldWarning = false;
+        cpExportWarning = false;
         helpVisible = true;
         roundedEnds = false;
 
@@ -848,6 +861,7 @@ public class ApplicationModel implements Serializable {
         windowPosition = applicationModel.getWindowPosition();
         windowState = applicationModel.getWindowState();
         foldWarning = applicationModel.getFoldWarning();
+        cpExportWarning = applicationModel.getCpExportWarning();
 
         defaultGridSize = applicationModel.getDefaultGridSize();
         gridColor = applicationModel.getGridColor();
