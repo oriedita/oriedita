@@ -51,6 +51,10 @@ public enum LineColor {
         if (this == RED_1) return BLUE_2;
         if (this == BLUE_2) return RED_1;
 
+        //Zaema's change #337
+        if (this == BLACK_0) return CYAN_3;
+        if (this == CYAN_3) return BLACK_0;
+
         return this;
     }
 
