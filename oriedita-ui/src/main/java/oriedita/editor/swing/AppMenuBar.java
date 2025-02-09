@@ -621,8 +621,11 @@ public class AppMenuBar {
                     applicationModel.addRecentFile(recentFile);
                     revealInFEButton.setEnabled(true);
                 } catch (FileReadingException ex) {
-                    Logger.error(ex.getMessage());
-                    JOptionPane.showMessageDialog(frameProvider.get(), "An error occurred when reading this file", "Read Error", JOptionPane.ERROR_MESSAGE);
+                    String exMsg = ex.getMessage();
+                    JOptionPane.showMessageDialog(frameProvider.get(),
+                            "Can't open file: " + exMsg.substring(exMsg.split(":")[0].length() + 2),
+                            "Read Error",
+                            JOptionPane.ERROR_MESSAGE);
                     applicationModel.removeRecentFile(recentFile);
                 }
             });
