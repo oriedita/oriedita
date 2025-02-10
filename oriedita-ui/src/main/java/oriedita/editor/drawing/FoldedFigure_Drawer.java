@@ -320,6 +320,10 @@ public class FoldedFigure_Drawer implements Foldable {
         }
     }
 
+    public void drawSelfInterestingSubFaces(Graphics g) {
+     foldedFigure_worker_drawer.drawSelfInterestingSubFaces(g, wireFrame_worker_drawer1, foldedFigure.wireFrame_worker3.get());
+    }
+
     public void record() {
         wireFrame_worker_drawer2.record();
     }

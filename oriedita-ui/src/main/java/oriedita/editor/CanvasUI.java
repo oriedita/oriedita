@@ -185,7 +185,7 @@ public class CanvasUI extends JPanel {
         // バッファー画面のクリア
         bufferGraphics.clearRect(0, 0, dim.width, dim.height);
 
-        bufferGraphics.setColor(Colors.get(Color.red));
+        bufferGraphics.setColor(Colors.get(Color.black));
         //描画したい内容は以下に書くことVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
 
         //カメラのセット
@@ -196,8 +196,15 @@ public class CanvasUI extends JPanel {
             d.setMoveWithCp(applicationModel.getMoveFoldedModelWithCp());
         }
 
+        mainCreasePatternWorker.drawGrid(bufferGraphics, dim.width, dim.height);
 
         FoldedFigure_Drawer OZi;
+
+        for (int i_oz = 0; i_oz < foldedFiguresList.getSize(); i_oz++) {
+            OZi = foldedFiguresList.getElementAt(i_oz);
+            OZi.drawSelfInterestingSubFaces(bufferGraphics);
+        }
+
         for (int i_oz = 0; i_oz < foldedFiguresList.getSize(); i_oz++) {
             OZi = foldedFiguresList.getElementAt(i_oz);
             OZi.getWireFrame_worker_drawer1().setCamera(creasePatternCamera);
