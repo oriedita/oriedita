@@ -439,15 +439,19 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
         auxHistoryState.record(h_getSave());
     }
 
+
     //------------------------------------------------------------------------------
     //Drawing the basic branch
     //------------------------------------------------------------------------------
+
+    @Override
+    public void drawGrid(Graphics g, int p0x_max, int p0y_max) {
+        grid.draw(g, camera, p0x_max, p0y_max, gridInputAssist, applicationModel.getMinGridUnitSize());
+    }
+    
     @Override
     public void drawWithCamera(Graphics g, boolean displayComments, boolean displayCpLines, boolean displayAuxLines, boolean displayAuxLiveLines, float lineWidth, LineStyle lineStyle, float f_h_WireframeLineWidth, int p0x_max, int p0y_max, boolean i_mejirusi_display, boolean hideOperationFrame) {//引数はカメラ設定、線幅、画面X幅、画面y高さ
         Graphics2D g2 = (Graphics2D) g;
-
-        //Drawing grid lines
-        grid.draw(g, camera, p0x_max, p0y_max, gridInputAssist, applicationModel.getMinGridUnitSize());
 
         BasicStroke BStroke = new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER);
         g2.setStroke(BStroke);//Line thickness and shape of the end of the line

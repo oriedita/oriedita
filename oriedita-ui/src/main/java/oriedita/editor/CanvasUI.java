@@ -39,6 +39,8 @@ import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 @Dependent // This bean is not proxyable (because JPanel)
 public class CanvasUI extends JPanel {
@@ -185,22 +187,25 @@ public class CanvasUI extends JPanel {
         // バッファー画面のクリア
         bufferGraphics.clearRect(0, 0, dim.width, dim.height);
 
-        bufferGraphics.setColor(Colors.get(Color.red));
+        bufferGraphics.setColor(Colors.get(Color.black));
         //描画したい内容は以下に書くことVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
 
         //カメラのセット
         mainCreasePatternWorker.setCamera(creasePatternCamera);
+        mainCreasePatternWorker.drawGrid(bufferGraphics, dim.width, dim.height);
 
-        for (FoldedFigure_Drawer d : foldedFiguresList.getItems()) {
+        FoldedFigure_Drawer[] foldedFigureDrawers = foldedFiguresList.getItems();
+        for (FoldedFigure_Drawer d : foldedFigureDrawers) {
             d.setParentCamera(applicationModel.getMoveFoldedModelWithCp() ? creasePatternCamera : null);
             d.setMoveWithCp(applicationModel.getMoveFoldedModelWithCp());
         }
 
+        for (FoldedFigure_Drawer d : foldedFigureDrawers) {
+            d.drawSelfIntersectingSubFaces(bufferGraphics);
+        }
 
-        FoldedFigure_Drawer OZi;
-        for (int i_oz = 0; i_oz < foldedFiguresList.getSize(); i_oz++) {
-            OZi = foldedFiguresList.getElementAt(i_oz);
-            OZi.getWireFrame_worker_drawer1().setCamera(creasePatternCamera);
+        for (FoldedFigure_Drawer d : foldedFigureDrawers) {
+            d.getWireFrame_worker_drawer1().setCamera(creasePatternCamera);
         }
 
         FoldedFigure_Drawer selectedFigure = foldedFiguresList.getActiveItem();
@@ -286,9 +291,10 @@ public class CanvasUI extends JPanel {
 
 
         //折り上がりの各種お絵かき
-        for (int i_oz = 0; i_oz < foldedFiguresList.getSize(); i_oz++) {
-            OZi = foldedFiguresList.getElementAt(i_oz);
-            OZi.foldUp_draw(bufferGraphics, displayMarkings, i_oz + 1, OZi == foldedFiguresList.getSelectedItem());
+        int ffDrawerIndex = 0;
+        for (FoldedFigure_Drawer d : foldedFigureDrawers) {
+            d.foldUp_draw(bufferGraphics, displayMarkings, ffDrawerIndex + 1, d == foldedFiguresList.getSelectedItem());
+            ffDrawerIndex++;
         }
 
         //展開図を折り上がり図の上に描くために、展開図を再表示する
