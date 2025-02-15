@@ -194,17 +194,17 @@ public class CanvasUI extends JPanel {
         mainCreasePatternWorker.setCamera(creasePatternCamera);
         mainCreasePatternWorker.drawGrid(bufferGraphics, dim.width, dim.height);
 
-        List<FoldedFigure_Drawer> foldedFigureDrawersList = Arrays.stream(foldedFiguresList.getItems()).toList();
-        for (FoldedFigure_Drawer d : foldedFigureDrawersList) {
+        FoldedFigure_Drawer[] foldedFigureDrawers = foldedFiguresList.getItems();
+        for (FoldedFigure_Drawer d : foldedFigureDrawers) {
             d.setParentCamera(applicationModel.getMoveFoldedModelWithCp() ? creasePatternCamera : null);
             d.setMoveWithCp(applicationModel.getMoveFoldedModelWithCp());
         }
 
-        for (FoldedFigure_Drawer d : foldedFigureDrawersList) {
-            d.drawSelfInterestingSubFaces(bufferGraphics);
+        for (FoldedFigure_Drawer d : foldedFigureDrawers) {
+            d.drawSelfIntersectingSubFaces(bufferGraphics);
         }
 
-        for (FoldedFigure_Drawer d : foldedFigureDrawersList) {
+        for (FoldedFigure_Drawer d : foldedFigureDrawers) {
             d.getWireFrame_worker_drawer1().setCamera(creasePatternCamera);
         }
 
@@ -291,8 +291,10 @@ public class CanvasUI extends JPanel {
 
 
         //折り上がりの各種お絵かき
-        for (FoldedFigure_Drawer d : foldedFigureDrawersList) {
-            d.foldUp_draw(bufferGraphics, displayMarkings, foldedFigureDrawersList.indexOf(d) + 1, d == foldedFiguresList.getSelectedItem());
+        int ffDrawerIndex = 0;
+        for (FoldedFigure_Drawer d : foldedFigureDrawers) {
+            d.foldUp_draw(bufferGraphics, displayMarkings, ffDrawerIndex + 1, d == foldedFiguresList.getSelectedItem());
+            ffDrawerIndex++;
         }
 
         //展開図を折り上がり図の上に描くために、展開図を再表示する

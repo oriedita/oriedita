@@ -126,7 +126,7 @@ public class FoldedFigure_Worker_Drawer {
         drawLines(g2, camera, subFace_figure);
     }
 
-    public void drawSelfInterestingSubFaces(Graphics g, WireFrame_Worker_Drawer orite, PointSet subFace_figure) {
+    public void drawSelfIntersectingSubFaces(Graphics g, WireFrame_Worker_Drawer orite, PointSet subFace_figure) {
         if (worker.errorPos != null && displaySsi) {
             Graphics2D g2 = (Graphics2D) g;
             g2.setColor(Colors.get(new Color(255, 0, 0, 75)));
