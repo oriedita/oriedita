@@ -147,8 +147,8 @@ public class FoldLineSet {
     }
 
     public void setColor(LineSegment s, LineColor icol) {
-        this.deleteLine(s);
-        this.addLine(s.withColor(icol));
+        int index = lineSegments.indexOf(s);
+        lineSegments.set(index, s.withColor(icol));
     }
 
     public void setCircleCustomized(int i, int customized) {

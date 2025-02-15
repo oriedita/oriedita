@@ -78,8 +78,8 @@ public class LineSegmentSet {
     }
 
     public void setColor(LineSegment s, LineColor icol) {
-        lineSegments.remove(s);
-        addLine(s.getA(), s.getB(), icol);
+        int index = lineSegments.indexOf(s);
+        lineSegments.set(index, s.withColor(icol));
     }
 
     public void setSave(LineSegmentSave memo1) {
