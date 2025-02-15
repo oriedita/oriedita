@@ -1091,6 +1091,12 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     }
 
     @Override
+    public void setLineStepColor(LineSegment s, LineColor icol) {
+        int index = lineStep.indexOf(s);
+        lineStep.set(index, s.withColor(icol));
+    }
+
+    @Override
     public GeneralPath getLinePath() {
         return linePath;
     }

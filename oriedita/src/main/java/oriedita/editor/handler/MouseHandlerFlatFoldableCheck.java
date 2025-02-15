@@ -137,7 +137,7 @@ public class MouseHandlerFlatFoldableCheck extends BaseMouseHandler {
 
 
                 for (LineSegment s : d.getLineStep()) {
-                    s.setColor(i_hantai_color);
+                    d.setLineStepColor(s, i_hantai_color);
                 }
             }
         }

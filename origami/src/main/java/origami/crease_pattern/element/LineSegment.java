@@ -126,13 +126,8 @@ public class LineSegment implements Serializable, Cloneable {
         return color;
     }
 
-    public void setColor(LineColor i) {
-        color = i;
-    }
-
     public LineSegment withColor(LineColor c) {
-        LineSegment ls = new LineSegment(this, c);
-        return ls;
+        return new LineSegment(this, c);
     }
 
     public ActiveState getActive() {
