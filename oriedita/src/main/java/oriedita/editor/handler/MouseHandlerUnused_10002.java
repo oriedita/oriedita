@@ -23,9 +23,8 @@ public class MouseHandlerUnused_10002 extends BaseMouseHandler {
     //マウス操作(mouseMode==10002　でボタンを押したとき)時の作業
     public void mousePressed(Point p0) {
         Point p = d.getCamera().TV2object(p0);
-        LineSegment closestLineSegment = new LineSegment(d.getClosestLineSegment(p));
+        LineSegment closestLineSegment = new LineSegment(d.getClosestLineSegment(p).withColor(LineColor.GREEN_6));
         if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.getSelectionDistance()) {
-            closestLineSegment.setColor(LineColor.GREEN_6);
             d.lineStepAdd(closestLineSegment);
         }
     }

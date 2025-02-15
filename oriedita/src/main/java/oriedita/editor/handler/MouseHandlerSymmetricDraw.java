@@ -64,7 +64,7 @@ public class MouseHandlerSymmetricDraw extends BaseMouseHandlerInputRestricted {
             Point t_taisyou = OritaCalc.findLineSymmetryPoint(cross, d.getLineStep().get(1).determineFurthestEndpoint(cross), d.getLineStep().get(0).determineFurthestEndpoint(cross));
             LineSegment add_sen = new LineSegment(cross, t_taisyou);
             add_sen = d.extendToIntersectionPoint(add_sen);
-            add_sen.setColor(d.getLineColor());
+            add_sen = add_sen.withColor(d.getLineColor());
 
             if (Epsilon.high.gt0(add_sen.determineLength())) {
                 d.addLineSegment(add_sen);
@@ -79,7 +79,7 @@ public class MouseHandlerSymmetricDraw extends BaseMouseHandlerInputRestricted {
 
             LineSegment add_sen = new LineSegment(d.getLineStep().get(1).getA(), t_taisyou);
             add_sen = d.extendToIntersectionPoint(add_sen);
-            add_sen.setColor(d.getLineColor());
+            add_sen = add_sen.withColor(d.getLineColor());
 
             if (Epsilon.high.gt0(add_sen.determineLength())) {
                 d.addLineSegment(add_sen);

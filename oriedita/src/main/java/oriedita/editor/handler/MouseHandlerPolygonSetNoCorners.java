@@ -66,13 +66,11 @@ public class MouseHandlerPolygonSetNoCorners extends BaseMouseHandler {
         if (d.getLineStep().size() == 2) {
 
 
-            LineSegment s_tane = new LineSegment(d.getLineStep().get(0));
-            s_tane.setColor(d.getLineColor());
+            LineSegment s_tane = d.getLineStep().get(0).withColor(d.getLineColor());
             d.addLineSegment(s_tane);
             for (int i = 2; i <= d.getNumPolygonCorners(); i++) {
                 LineSegment s_deki = OritaCalc.lineSegment_rotate(s_tane, (double) (d.getNumPolygonCorners() - 2) * 180.0 / (double) d.getNumPolygonCorners());
-                s_tane = new LineSegment(s_deki.getB(), s_deki.getA());
-                s_tane.setColor(d.getLineColor());
+                s_tane = new LineSegment(s_deki.getB(), s_deki.getA(), d.getLineColor());
                 d.addLineSegment(s_tane);
 
             }

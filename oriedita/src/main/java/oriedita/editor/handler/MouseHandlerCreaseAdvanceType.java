@@ -63,12 +63,12 @@ public class MouseHandlerCreaseAdvanceType extends BaseMouseHandler {
             if ((ic_temp == LineColor.BLACK_0) && (is_temp == 0)) {
                 lineSegment.setSelected(2);
             } else if ((ic_temp == LineColor.BLACK_0) && (is_temp == 2)) {
-                lineSegment.setColor(LineColor.RED_1);
+                lineSegment = lineSegment.withColor(LineColor.RED_1);
                 lineSegment.setSelected(0);
             } else if ((ic_temp == LineColor.RED_1) && (is_temp == 0)) {
-                lineSegment.setColor(LineColor.BLUE_2);
+                lineSegment = lineSegment.withColor(LineColor.BLUE_2);
             } else if ((ic_temp == LineColor.BLUE_2) && (is_temp == 0)) {
-                lineSegment.setColor(LineColor.BLACK_0);
+                lineSegment = lineSegment.withColor(LineColor.BLACK_0);
             }
             d.getFoldLineSet().addLine(lineSegment);
             d.record();

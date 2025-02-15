@@ -16,8 +16,7 @@ public class InsideToAux {
                 if (b.totu_boundary_inside(s)) {
                     numChangedLines = numChangedLines + 1;
 
-                    LineSegment add_sen = new LineSegment(s);
-                    add_sen.setColor(LineColor.CYAN_3);
+                    LineSegment add_sen = s.withColor(LineColor.CYAN_3);
 
                     foldLineSet.deleteLine(i);
                     foldLineSet.addLine(add_sen);

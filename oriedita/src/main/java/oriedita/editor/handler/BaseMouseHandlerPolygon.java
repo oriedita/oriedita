@@ -41,12 +41,10 @@ public abstract class BaseMouseHandlerPolygon extends BaseMouseHandler {
             if (p.distance(closest_point) > d.getSelectionDistance()) {
                 closest_point = p;
             }
-            s = new LineSegment(closest_point, p);
+            s = new LineSegment(closest_point, p, LineColor.MAGENTA_5);
         } else {//ここでi_egaki_dankai=0となることはない。
-            s = new LineSegment(d.getLineStep().get(d.getLineStep().size() - 1).getB(), p);
+            s = new LineSegment(d.getLineStep().get(d.getLineStep().size() - 1).getB(), p, LineColor.MAGENTA_5);
         }
-        s.setColor(LineColor.MAGENTA_5);
-
         d.lineStepAdd(s);
     }
 

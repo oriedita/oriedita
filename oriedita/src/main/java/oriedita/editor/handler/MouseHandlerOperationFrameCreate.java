@@ -56,7 +56,7 @@ public class MouseHandlerOperationFrameCreate extends BaseMouseHandler {
         ls.add(new LineSegment(frame.getP3(), frame.getP4()));
         ls.add(new LineSegment(frame.getP4(), frame.getP1()));
         for (LineSegment l : ls) {
-            l.setColor(LineColor.GREEN_6);
+            l = l.withColor(LineColor.GREEN_6);
             l.setActive(LineSegment.ActiveState.ACTIVE_BOTH_3);
             DrawingUtil.drawLineStep(g2,
                     cam.TV2object(l),

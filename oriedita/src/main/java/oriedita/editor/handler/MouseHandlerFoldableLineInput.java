@@ -95,7 +95,7 @@ public class MouseHandlerFoldableLineInput extends BaseMouseHandlerInputRestrict
                         Logger.info("i_step_for39_2_   4");
                     } else if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.getSelectionDistance()) {//最寄の既存折線が近い場合
                         d.getLineCandidate().clear();
-                        closestLineSegment.setColor(d.getLineColor());
+                        closestLineSegment = closestLineSegment.withColor(d.getLineColor());
                         d.getLineCandidate().add(closestLineSegment);
 
                         Logger.info("i_step_for39_2_   5");
@@ -187,7 +187,7 @@ public class MouseHandlerFoldableLineInput extends BaseMouseHandlerInputRestrict
                                 double s_kiso_length = s_kiso.determineLength();
 
                                 LineSegment s = OritaCalc.lineSegment_rotate(s_kiso, kakukagenti / 2.0, d.getGrid().getGridWidth() / s_kiso_length);
-                                s.setColor(LineColor.PURPLE_8);
+                                s = s.withColor(LineColor.PURPLE_8);
                                 s.setActive(LineSegment.ActiveState.ACTIVE_A_1);
 
                                 d.lineStepAdd(s);
@@ -273,8 +273,7 @@ public class MouseHandlerFoldableLineInput extends BaseMouseHandlerInputRestrict
                 }
 
                 if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.getSelectionDistance()) {//最寄の既存折線が近い場合
-                    LineSegment s = new LineSegment(closestLineSegment);
-                    s.setColor(LineColor.GREEN_6);
+                    LineSegment s = new LineSegment(closestLineSegment, LineColor.GREEN_6);
                     d.lineStepAdd(s);
                     Point kousa_point = OritaCalc.findIntersection(d.getLineStep().get(0), d.getLineStep().get(1));
                     LineSegment add_sen = new LineSegment(kousa_point, d.getLineStep().get(0).getA(), d.getLineColor());

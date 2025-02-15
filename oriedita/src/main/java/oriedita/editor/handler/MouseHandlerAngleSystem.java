@@ -123,8 +123,7 @@ public class MouseHandlerAngleSystem extends BaseMouseHandlerInputRestricted {
     private LineSegment determineLineSegmentToAdd(Point p) {
         LineSegment closestLineSegment = d.getClosestLineSegment(p);
         if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.getSelectionDistance()) {
-            LineSegment s = new LineSegment(closestLineSegment);
-            s.setColor(LineColor.GREEN_6);
+            LineSegment s = closestLineSegment.withColor(LineColor.GREEN_6);
             Point startingPoint = OritaCalc.findIntersection(s, direction);
             return new LineSegment(startingPoint, pEnd, d.getLineColor());
         }
@@ -137,8 +136,7 @@ public class MouseHandlerAngleSystem extends BaseMouseHandlerInputRestricted {
         if (closestLineSegmentO.isPresent()) {
             LineSegment closestLineSegment = closestLineSegmentO.get();
             if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.getSelectionDistance()) {
-                LineSegment s = new LineSegment(closestLineSegment);
-                s.setColor(LineColor.BLUE_2);
+                LineSegment s = closestLineSegment.withColor(LineColor.BLUE_2);
                 return s;
             }
         }
@@ -156,8 +154,7 @@ public class MouseHandlerAngleSystem extends BaseMouseHandlerInputRestricted {
 
         //線分abをaを中心にd度回転した線分を返す関数（元の線分は変えずに新しい線分を返す）public oc.Senbun_kaiten(Senbun s0,double d)
 
-        LineSegment startingSegment = new LineSegment(pEnd, pStart);
-        startingSegment.setColor(LineColor.GREEN_6);
+        LineSegment startingSegment = new LineSegment(pEnd, pStart, LineColor.GREEN_6);
         candidates.add(startingSegment);
 
         if (angleSystemModel.getCurrentAngleSystemDivider() != 0) {
@@ -168,9 +165,9 @@ public class MouseHandlerAngleSystem extends BaseMouseHandlerInputRestricted {
                 angle += angleStep;
                 LineSegment e = OritaCalc.lineSegment_rotate(startingSegment, angle, 1.0);
                 if (i % 2 == 0) {
-                    e.setColor(LineColor.ORANGE_4);
+                    e = e.withColor(LineColor.ORANGE_4);
                 } else {
-                    e.setColor(LineColor.GREEN_6);
+                    e = e.withColor(LineColor.GREEN_6);
                 }
                 e.setActive(LineSegment.ActiveState.ACTIVE_BOTH_3);
                 candidates.add(e);
@@ -182,7 +179,7 @@ public class MouseHandlerAngleSystem extends BaseMouseHandlerInputRestricted {
                 LineSegment s = OritaCalc.lineSegment_rotate(startingSegment, angles[i], 1.0);
                 s.setActive(LineSegment.ActiveState.ACTIVE_BOTH_3);
                 candidates.add(s);
-                s.setColor(customAngleColors[i % 3]);
+                d.getFoldLineSet().setColor(s, customAngleColors[i % 3]);
             }
         }
         return candidates;

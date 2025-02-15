@@ -137,10 +137,8 @@ public class MouseHandlerLengthenCrease extends BaseMouseHandler {
                 return;
             }
             for (int i = 1; i <= linesToExtendSortingBox.getTotal(); i++) {
-                LineSegment s = new LineSegment(linesToExtendSortingBox.getValue(i));
-                s.setColor(LineColor.GREEN_6);
+                LineSegment s = linesToExtendSortingBox.getValue(i).withColor(LineColor.GREEN_6);
                 s.setActive(LineSegment.ActiveState.ACTIVE_BOTH_3);
-
                 linesToExtend.add(s);
             }
             currentStep = Step.DRAW_EXTENSION_POINT;
@@ -208,10 +206,10 @@ public class MouseHandlerLengthenCrease extends BaseMouseHandler {
     private void addExtendedLineSegment(FoldLineSet lineSet, LineSegment addLineSegment, LineSegment original) {
         if (Epsilon.high.gt0(addLineSegment.determineLength())) {
             if (getMouseMode() == MouseMode.LENGTHEN_CREASE_5) {
-                addLineSegment.setColor(d.getLineColor());
+                addLineSegment = addLineSegment.withColor(d.getLineColor());
             }
             if (getMouseMode() == MouseMode.LENGTHEN_CREASE_SAME_COLOR_70) {
-                addLineSegment.setColor(original.getColor());
+                addLineSegment = addLineSegment.withColor(original.getColor());
             }
 
             lineSet.addLine(addLineSegment);//ori_sのsenbunの最後にs0の情報をを加えるだけ//(2)

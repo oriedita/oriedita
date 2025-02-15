@@ -69,9 +69,9 @@ public class MouseHandlerDrawCreaseAngleRestricted3_2 extends BaseMouseHandlerIn
 
                     LineSegment s = OritaCalc.lineSegment_rotate(s_kiso, kakudo, 100.0);
                     if (i_jyun) {
-                        s.setColor(LineColor.ORANGE_4);
+                        s = s.withColor(LineColor.ORANGE_4);
                     } else {
-                        s.setColor(LineColor.GREEN_6);
+                        s = s.withColor(LineColor.GREEN_6);
                     }
                     d.lineStepAdd(s);
                 }
@@ -88,22 +88,22 @@ public class MouseHandlerDrawCreaseAngleRestricted3_2 extends BaseMouseHandlerIn
                     LineSegment s = OritaCalc.lineSegment_rotate(s_kiso, kakudo, 100.0);
 
                     if (i == 0) {
-                        s.setColor(LineColor.ORANGE_4);
+                        s = s.withColor(LineColor.ORANGE_4);
                     }
                     if (i == 1) {
-                        s.setColor(LineColor.GREEN_6);
+                        s = s.withColor(LineColor.GREEN_6);
                     }
                     if (i == 2) {
-                        s.setColor(LineColor.PURPLE_8);
+                        s = s.withColor(LineColor.PURPLE_8);
                     }
                     if (i == 3) {
-                        s.setColor(LineColor.ORANGE_4);
+                        s = s.withColor(LineColor.ORANGE_4);
                     }
                     if (i == 4) {
-                        s.setColor(LineColor.GREEN_6);
+                        s = s.withColor(LineColor.GREEN_6);
                     }
                     if (i == 5) {
-                        s.setColor(LineColor.PURPLE_8);
+                        s = s.withColor(LineColor.PURPLE_8);
                     }
                     d.lineStepAdd(s);
                 }
@@ -136,8 +136,7 @@ public class MouseHandlerDrawCreaseAngleRestricted3_2 extends BaseMouseHandlerIn
 
                 }
 
-                LineSegment add_sen = new LineSegment(mokuhyou_point, d.getLineStep().get(1).getA());
-                add_sen.setColor(d.getLineColor());
+                LineSegment add_sen = new LineSegment(mokuhyou_point, d.getLineStep().get(1).getA(), d.getLineColor());
                 d.addLineSegment(add_sen);
                 d.record();
             }

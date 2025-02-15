@@ -932,8 +932,7 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     public void addPreviewLinesToCp() {//20181014
         for (LineSegment s : lineStep) {
             if (Epsilon.high.gt0(s.determineLength())) {
-                LineSegment add_sen = new LineSegment(s);
-                add_sen.setColor(lineColor);
+                LineSegment add_sen = s.withColor(lineColor);
                 addLineSegment(add_sen);
             } else {
                 addCircle(s.determineAX(), s.determineAY(), 5.0, LineColor.CYAN_3);
