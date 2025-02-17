@@ -622,11 +622,21 @@ public class AppMenuBar {
                     revealInFEButton.setEnabled(true);
                 } catch (FileReadingException ex) {
                     String exMsg = ex.getMessage();
-                    JOptionPane.showMessageDialog(frameProvider.get(),
-                            "Can't open file: " + exMsg.substring(exMsg.split(":")[0].length() + 2),
+//                    JOptionPane.showMessageDialog(frameProvider.get(),
+//                            "Can't open file: " + exMsg.substring(exMsg.split(":")[0].length() + 2),
+//                            "Read Error",
+//                            JOptionPane.ERROR_MESSAGE);
+                    Object[] options = {"Yes", "No"};
+                    int choice = JOptionPane.showOptionDialog(frameProvider.get(),
+                            "Can't open file: " + exMsg.substring(exMsg.split(":")[0].length() + 2)
+                                    + ".\nDo you want to remove this entry?",
                             "Read Error",
-                            JOptionPane.ERROR_MESSAGE);
-                    applicationModel.removeRecentFile(recentFile);
+                            JOptionPane.YES_NO_OPTION,
+                            JOptionPane.WARNING_MESSAGE,
+                            null,
+                            options,
+                            options[0]);
+                    if(choice == JOptionPane.YES_OPTION) applicationModel.removeRecentFile(recentFile);
                 }
             });
             openRecentMenu.add(recentFileMenuItem);
