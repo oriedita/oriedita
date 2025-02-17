@@ -626,7 +626,7 @@ public class AppMenuBar {
                     int choice = JOptionPane.showOptionDialog(frameProvider.get(),
                             "Can't open file: " + exMsg.substring(exMsg.split(":")[0].length() + 2)
                                     + ".\nDo you want to remove this entry?",
-                            "Read Error",
+                            "Error reading recent file",
                             JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null,
                             options, options[0]);
                     if(choice == JOptionPane.YES_OPTION) applicationModel.removeRecentFile(recentFile);
