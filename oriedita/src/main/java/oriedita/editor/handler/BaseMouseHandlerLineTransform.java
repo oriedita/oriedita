@@ -151,7 +151,7 @@ public abstract class BaseMouseHandlerLineTransform extends BaseMouseHandlerLine
             if ((regionA & regionB) == DrawingUtil.CENTER) {
                 Point pa = s.getA().move(delta);
                 Point pb = s.getB().move(delta);
-                LineSegment s2 = new LineSegment(pa, pb);
+                LineSegment s2 = new LineSegment(pa, pb, s.getColor());
                 DrawingUtil.drawCpLine(g2, s2, camera, settings.getLineStyle(), settings.getLineWidth(),
                         d.getPointSize(), settings.getWidth(), settings.getHeight(), settings.useRoundedEnds());
             }

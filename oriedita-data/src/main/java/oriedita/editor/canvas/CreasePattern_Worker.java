@@ -222,6 +222,8 @@ public interface CreasePattern_Worker {
 
     GeneralPath getLinePath();
 
+    void setLineStepColor(LineSegment s, LineColor icol);
+
     Camera getCamera();
 
     boolean getGridInputAssist();

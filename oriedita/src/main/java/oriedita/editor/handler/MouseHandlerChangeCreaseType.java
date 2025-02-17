@@ -34,7 +34,7 @@ public class MouseHandlerChangeCreaseType extends BaseMouseHandler {
             LineSegment minris = d.getFoldLineSet().closestLineSegmentSearch(p);
             LineColor ic_temp = minris.getColor();
             if (ic_temp.isFoldingLine()) {
-                minris.setColor(ic_temp.advanceFolding());
+                d.getFoldLineSet().setColor(minris, ic_temp.advanceFolding());
                 d.record();
             }
         }

@@ -63,9 +63,8 @@ public class MouseHandlerDrawCreaseSymmetric extends BaseMouseHandlerInputRestri
 
             for (var s : d.getFoldLineSet().getLineSegmentsCollection()) {
                 if (s.getSelected() == 2) {
-                    LineSegment adds = OritaCalc.findLineSymmetryLineSegment(s, d.getLineStep().get(0));
-                    adds.setColor(s.getColor());
-
+                    LineSegment adds = OritaCalc.findLineSymmetryLineSegment(s, d.getLineStep().get(0))
+                            .withColor(s.getColor());
                     d.getFoldLineSet().addLine(adds);
                 }
             }

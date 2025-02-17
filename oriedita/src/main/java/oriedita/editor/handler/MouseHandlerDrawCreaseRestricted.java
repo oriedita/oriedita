@@ -36,7 +36,7 @@ public class MouseHandlerDrawCreaseRestricted extends BaseMouseHandlerInputRestr
 
         Point p = d.getCamera().TV2object(p0);
         d.getLineStep().set(0, d.getLineStep().get(0).withA(p));
-        d.getLineStep().get(0).setColor(d.getLineColor());
+        d.setLineStepColor(d.getLineStep().get(0), d.getLineColor());
 
         if (d.getGridInputAssist()) {
             d.getLineCandidate().clear();

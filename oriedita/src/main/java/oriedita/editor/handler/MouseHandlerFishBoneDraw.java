@@ -66,9 +66,7 @@ public class MouseHandlerFishBoneDraw extends BaseMouseHandlerInputRestricted {
                             LineSegment adds = new LineSegment(px, py, px - dy, py + dx);
                             if (kouten_ari_nasi(adds) == 1) {
                                 adds = d.extendToIntersectionPoint(adds);
-                                adds.setColor(icol_temp);
-
-                                d.addLineSegment(adds);
+                                d.addLineSegment(adds.withColor(icol_temp));
                                 i_sen++;
                             }
 
@@ -76,9 +74,7 @@ public class MouseHandlerFishBoneDraw extends BaseMouseHandlerInputRestricted {
                             LineSegment adds2 = new LineSegment(px, py, px + dy, py - dx);
                             if (kouten_ari_nasi(adds2) == 1) {
                                 adds2 = d.extendToIntersectionPoint(adds2);
-                                adds2.setColor(icol_temp);
-
-                                d.addLineSegment(adds2);
+                                d.addLineSegment(adds2.withColor(icol_temp));
                                 i_sen++;
                             }
 

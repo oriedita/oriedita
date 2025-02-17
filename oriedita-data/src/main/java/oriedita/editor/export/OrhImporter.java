@@ -472,7 +472,7 @@ public class OrhImporter implements FileImporter {
             if ((reading_flag == 1) && (str.equals("色"))) {
                 str = tk.nextToken();
                 ic = LineColor.from(str);
-                s.setColor(ic);
+                s = s.withColor(ic);
             }
 
             if (reading_flag == 1) {

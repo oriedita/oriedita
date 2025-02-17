@@ -106,7 +106,7 @@ public class IntersectDivide {
                 if (i < j) {
                     overlapping_col = sj.getColor();
                 }
-                sj.setColor(overlapping_col);
+                lineSegmentSet.setColor(sj, overlapping_col);
 
                 return 0;
             }
@@ -116,7 +116,7 @@ public class IntersectDivide {
                 if (i < j) {
                     overlapping_col = sj.getColor();
                 }
-                si.setColor(overlapping_col);
+                lineSegmentSet.setColor(si, overlapping_col);
 
                 return 0;
             }
@@ -128,7 +128,7 @@ public class IntersectDivide {
                 if (i < j) {
                     overlapping_col = sj.getColor();
                 }
-                sj.setColor(overlapping_col);
+                lineSegmentSet.setColor(sj, overlapping_col);
 
                 return 0;
             }
@@ -139,7 +139,7 @@ public class IntersectDivide {
                 if (i < j) {
                     overlapping_col = sj.getColor();
                 }
-                si.setColor(overlapping_col);
+                lineSegmentSet.setColor(si, overlapping_col);
                 return 0;
             }
             case PARALLEL_END_OF_S1_CONTAINS_START_OF_S2_341: {//The endpoints of two line segments (p2 and p3) overlap at one point. si contains sj
@@ -149,7 +149,7 @@ public class IntersectDivide {
                 if (i < j) {
                     overlapping_col = sj.getColor();
                 }
-                sj.setColor(overlapping_col);
+                lineSegmentSet.setColor(sj, overlapping_col);
 
                 return 0;
             }
@@ -159,7 +159,7 @@ public class IntersectDivide {
                 if (i < j) {
                     overlapping_col = sj.getColor();
                 }
-                si.setColor(overlapping_col);
+                lineSegmentSet.setColor(si, overlapping_col);
 
                 return 0;
             }
@@ -170,7 +170,7 @@ public class IntersectDivide {
                 if (i < j) {
                     overlapping_col = sj.getColor();
                 }
-                sj.setColor(overlapping_col);
+                lineSegmentSet.setColor(sj, overlapping_col);
 
                 return 0;
             }
@@ -181,7 +181,7 @@ public class IntersectDivide {
                 if (i < j) {
                     overlapping_col = sj.getColor();
                 }
-                si.setColor(overlapping_col);
+                lineSegmentSet.setColor(si, overlapping_col);
 
                 return 0;
             }
@@ -192,7 +192,7 @@ public class IntersectDivide {
                 if (i < j) {
                     overlapping_col = sj.getColor();
                 }
-                sj.setColor(overlapping_col);
+                lineSegmentSet.setColor(sj, overlapping_col);
 
                 return 1;
             }
@@ -205,7 +205,7 @@ public class IntersectDivide {
                 if (i < j) {
                     overlapping_col = sj.getColor();
                 }
-                sj.setColor(overlapping_col);
+                lineSegmentSet.setColor(sj, overlapping_col);
 
                 return 1;
             }
@@ -218,7 +218,7 @@ public class IntersectDivide {
                 if (i < j) {
                     overlapping_col = sj.getColor();
                 }
-                si.setColor(overlapping_col);
+                lineSegmentSet.setColor(si, overlapping_col);
 
                 return 1;
             }
@@ -231,7 +231,7 @@ public class IntersectDivide {
                 if (i < j) {
                     overlapping_col = sj.getColor();
                 }
-                si.setColor(overlapping_col);
+                lineSegmentSet.setColor(si, overlapping_col);
 
                 return 1;
             }

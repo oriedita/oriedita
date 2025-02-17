@@ -93,8 +93,7 @@ public class FoldLineSet {
 
     public void replaceAux(CustomLineTypes to, List<LineSegment> reserveAux) {
         for (LineSegment s : reserveAux) {
-            LineSegment auxChange = s.clone();
-            auxChange.setColor(LineColor.fromNumber(to.getNumberForLineColor()));
+            LineSegment auxChange = s.withColor(LineColor.fromNumber(to.getNumberForLineColor()));
             deleteLine(s);
             addLineSegmentForReplace(auxChange);
         }
@@ -138,13 +137,18 @@ public class FoldLineSet {
     //Enter the color of the i-th line segment
     public void setColor(int i, LineColor icol) {
         LineSegment s = lineSegments.get(i);
-        s.setColor(icol);
+        setColor(s, icol);
     }
 
     //Output the color of the i-th line segment
     public LineColor getColor(int i) {
         LineSegment s = lineSegments.get(i);
         return s.getColor();
+    }
+
+    public void setColor(LineSegment s, LineColor icol) {
+        int index = lineSegments.indexOf(s);
+        lineSegments.set(index, s.withColor(icol));
     }
 
     public void setCircleCustomized(int i, int customized) {
@@ -286,7 +290,7 @@ public class FoldLineSet {
     public void allMountainValleyChange() {
         for (int ic_id = 1; ic_id <= total; ic_id++) {
             LineSegment s = lineSegments.get(ic_id);
-            s.setColor(s.getColor().changeMV());
+            setColor(s, s.getColor().changeMV());
         }
     }
 
@@ -371,9 +375,9 @@ public class FoldLineSet {
             if (p.totu_boundary_inside(s)) {
                 LineColor ic_temp = s.getColor();/**/
                 if (ic_temp == LineColor.RED_1) {
-                    s.setColor(LineColor.BLUE_2);
+                    setColor(s, LineColor.BLUE_2);
                 } else if (ic_temp == LineColor.BLUE_2) {
-                    s.setColor(LineColor.RED_1);
+                    setColor(s, LineColor.RED_1);
                 }
                 i_r = 1;
             }
@@ -389,7 +393,7 @@ public class FoldLineSet {
             LineSegment s;
             s = lineSegments.get(i);
             if (p.totu_boundary_inside(s)) {
-                s.setColor(LineColor.RED_1);
+                setColor(s, LineColor.RED_1);
                 i_r = true;
             }
         }
@@ -404,7 +408,7 @@ public class FoldLineSet {
             LineSegment s;
             s = lineSegments.get(i);
             if (b.totu_boundary_inside(s)) {
-                s.setColor(LineColor.BLUE_2);
+                setColor(s, LineColor.BLUE_2);
                 i_r = true;
             }
         }
@@ -419,7 +423,7 @@ public class FoldLineSet {
             LineSegment s;
             s = lineSegments.get(i);
             if (b.totu_boundary_inside(s)) {
-                s.setColor(LineColor.BLACK_0);
+                setColor(s, LineColor.BLACK_0);
                 i_r = true;
             }
         }
@@ -440,26 +444,26 @@ public class FoldLineSet {
                         if(s.getColor() == LineColor.CYAN_3) {
                             reserveAux.add(s);
                         } else {
-                            s.setColor(LineColor.fromNumber(to.getNumberForLineColor()));
+                            setColor(s, LineColor.fromNumber(to.getNumberForLineColor()));
                         }
                         i_r = true;
                         break;
                     case EGDE:
                         if (s.getColor() == LineColor.BLACK_0) {
-                            s.setColor(LineColor.fromNumber(to.getNumberForLineColor()));
+                            setColor(s, LineColor.fromNumber(to.getNumberForLineColor()));
                             i_r = true;
                         }
                         break;
                     case MANDV:
                         if (s.getColor() == LineColor.RED_1 || s.getColor() == LineColor.BLUE_2) {
-                            s.setColor(LineColor.fromNumber(to.getNumberForLineColor()));
+                            setColor(s, LineColor.fromNumber(to.getNumberForLineColor()));
                             i_r = true;
                         }
                         break;
                     case MOUNTAIN:
                     case VALLEY:
                         if (s.getColor() == LineColor.fromNumber(from.getNumber() - 1)) {
-                            s.setColor(LineColor.fromNumber(to.getNumberForLineColor()));
+                            setColor(s, LineColor.fromNumber(to.getNumberForLineColor()));
                             i_r = true;
                         }
                         break;
@@ -1108,7 +1112,7 @@ public class FoldLineSet {
                     if ((si.getColor() != LineColor.CYAN_3) && (sj.getColor() == LineColor.CYAN_3)) {
                         return LineSegment.Intersection.NO_INTERSECTION_0;
                     }//加えるほうiが折線、元からあるほうjが水色線（補助活線）
-                    sj.setColor(si.getColor());
+                    setColor(sj, si.getColor());
                     setLine(i, si.withA(sj.getB()));
                     return LineSegment.Intersection.PARALLEL_START_OF_S1_CONTAINS_START_OF_S2_321;
                 case PARALLEL_START_OF_S2_CONTAINS_START_OF_S1_322: //(p1=p3)_p2_p4、siがsjに含まれる。
@@ -1129,7 +1133,7 @@ public class FoldLineSet {
                         return LineSegment.Intersection.NO_INTERSECTION_0;
                     }//加えるほうiが折線、元からあるほうjが水色線（補助活線）
 
-                    sj.setColor(si.getColor());
+                    setColor(sj, si.getColor());
                     setLine(i, si.withA(sj.getA()));
                     return LineSegment.Intersection.PARALLEL_START_OF_S1_CONTAINS_END_OF_S2_331;
                 case PARALLEL_END_OF_S2_CONTAINS_START_OF_S1_332: //(p1=p4)_p2_p3、siがsjに含まれる。
@@ -1152,7 +1156,7 @@ public class FoldLineSet {
                         return LineSegment.Intersection.NO_INTERSECTION_0;
                     }//The one to add i is the polygonal line, and the one from the original j is the light blue line (auxiliary live line)
 
-                    sj.setColor(si.getColor());
+                    setColor(sj, si.getColor());
                     setLine(i, si.withB(sj.getB()));
                     return LineSegment.Intersection.PARALLEL_END_OF_S1_CONTAINS_START_OF_S2_341;
 
@@ -1176,7 +1180,7 @@ public class FoldLineSet {
                         return LineSegment.Intersection.NO_INTERSECTION_0;
                     }//加えるほうiが折線、元からあるほうjが水色線（補助活線）
 
-                    sj.setColor(si.getColor());
+                    setColor(sj, si.getColor());
                     setLine(i, si.withB(sj.getA()));
                     return LineSegment.Intersection.PARALLEL_END_OF_S1_CONTAINS_END_OF_S2_351;
 
@@ -1201,7 +1205,7 @@ public class FoldLineSet {
                         return LineSegment.Intersection.NO_INTERSECTION_0;
                     }//加えるほうiが折線、元からあるほうjが水色線（補助活線）
 
-                    sj.setColor(si.getColor());
+                    setColor(sj, si.getColor());
                     addLine(sj.getB(), si.getB(), si);
 
                     setLine(i, si.withB(sj.getA()));
@@ -1214,7 +1218,7 @@ public class FoldLineSet {
                         return LineSegment.Intersection.NO_INTERSECTION_0;
                     }//加えるほうiが折線、元からあるほうjが水色線（補助活線）
 
-                    sj.setColor(si.getColor());
+                    setColor(sj, si.getColor());
                     addLine(sj.getA(), si.getB(), si);
 
                     setLine(i, si.withB(sj.getB()));
@@ -1740,7 +1744,7 @@ public class FoldLineSet {
 
         deleteLine(si);
         deleteLine(sj);
-        addLine.setColor(i_c);
+        addLine = addLine.withColor(i_c);
         addLine(addLine);
         //p2,p1,p4 ixb_ixa,iya_iyb
         return addLine;
@@ -1888,48 +1892,48 @@ public class FoldLineSet {
             }
 
             if ((lix.getColor() == LineColor.BLACK_0) && (liy.getColor() == LineColor.BLACK_0)) {
-                lix.setColor(LineColor.BLACK_0);
-                liy.setColor(LineColor.BLACK_0);
+                setColor(lix, LineColor.BLACK_0);
+                setColor(liy, LineColor.BLACK_0);
             }
             if ((lix.getColor() == LineColor.BLACK_0) && (liy.getColor() == LineColor.RED_1)) {
-                lix.setColor(LineColor.RED_1);
-                liy.setColor(LineColor.RED_1);
+                setColor(lix, LineColor.RED_1);
+                setColor(liy, LineColor.RED_1);
             }
             if ((lix.getColor() == LineColor.BLACK_0) && (liy.getColor() == LineColor.BLUE_2)) {
-                lix.setColor(LineColor.BLUE_2);
-                liy.setColor(LineColor.BLUE_2);
+                setColor(lix, LineColor.BLUE_2);
+                setColor(liy, LineColor.BLUE_2);
             }
             if ((lix.getColor() == LineColor.BLACK_0) && (liy.getColor() == LineColor.CYAN_3)) {
                 return false;
             }
 
             if ((lix.getColor() == LineColor.RED_1) && (liy.getColor() == LineColor.BLACK_0)) {
-                lix.setColor(LineColor.RED_1);
-                liy.setColor(LineColor.RED_1);
+                setColor(lix, LineColor.RED_1);
+                setColor(liy, LineColor.RED_1);
             }
             if ((lix.getColor() == LineColor.RED_1) && (liy.getColor() == LineColor.RED_1)) {
-                lix.setColor(LineColor.RED_1);
-                liy.setColor(LineColor.RED_1);
+                setColor(lix, LineColor.RED_1);
+                setColor(liy, LineColor.RED_1);
             }
             if ((lix.getColor() == LineColor.RED_1) && (liy.getColor() == LineColor.BLUE_2)) {
-                lix.setColor(LineColor.BLACK_0);
-                liy.setColor(LineColor.BLACK_0);
+                setColor(lix, LineColor.BLACK_0);
+                setColor(liy, LineColor.BLACK_0);
             }
             if ((lix.getColor() == LineColor.RED_1) && (liy.getColor() == LineColor.CYAN_3)) {
                 return false;
             }
 
             if ((lix.getColor() == LineColor.BLUE_2) && (liy.getColor() == LineColor.BLACK_0)) {
-                lix.setColor(LineColor.BLUE_2);
-                liy.setColor(LineColor.BLUE_2);
+                setColor(lix, LineColor.BLUE_2);
+                setColor(liy, LineColor.BLUE_2);
             }
             if ((lix.getColor() == LineColor.BLUE_2) && (liy.getColor() == LineColor.RED_1)) {
-                lix.setColor(LineColor.BLACK_0);
-                liy.setColor(LineColor.BLACK_0);
+                setColor(lix, LineColor.BLACK_0);
+                setColor(liy, LineColor.BLACK_0);
             }
             if ((lix.getColor() == LineColor.BLUE_2) && (liy.getColor() == LineColor.BLUE_2)) {
-                lix.setColor(LineColor.BLUE_2);
-                liy.setColor(LineColor.BLUE_2);
+                setColor(lix, LineColor.BLUE_2);
+                setColor(liy, LineColor.BLUE_2);
             }
             if ((lix.getColor() == LineColor.BLUE_2) && (liy.getColor() == LineColor.CYAN_3)) {
                 return false;
@@ -1945,8 +1949,8 @@ public class FoldLineSet {
                 return false;
             }
             if ((lix.getColor() == LineColor.CYAN_3) && (liy.getColor() == LineColor.CYAN_3)) {
-                lix.setColor(LineColor.CYAN_3);
-                liy.setColor(LineColor.CYAN_3);
+                setColor(lix, LineColor.CYAN_3);
+                setColor(liy, LineColor.CYAN_3);
             }
 
 

@@ -36,15 +36,13 @@ public class MouseHandlerParallelDraw extends BaseMouseHandlerInputRestricted {
                 d.lineStepAdd(new LineSegment(closestPoint, closestPoint, d.getLineColor()));
             }
         } else if (d.getLineStep().size() == 1) {
-            LineSegment closestLineSegment = new LineSegment(d.getClosestLineSegment(p));
+            LineSegment closestLineSegment = d.getClosestLineSegment(p).withColor(LineColor.GREEN_6);
             if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.getSelectionDistance()) {
-                closestLineSegment.setColor(LineColor.GREEN_6);
                 d.lineStepAdd(closestLineSegment);
             }
         } else if (d.getLineStep().size() == 2) {
-            LineSegment closestLineSegment = new LineSegment(d.getClosestLineSegment(p));
+            LineSegment closestLineSegment = d.getClosestLineSegment(p).withColor(LineColor.GREEN_6);
             if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.getSelectionDistance()) {
-                closestLineSegment.setColor(LineColor.GREEN_6);
                 d.lineStepAdd(closestLineSegment);
             }
         }

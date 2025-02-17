@@ -67,8 +67,7 @@ public class MouseHandlerDoubleSymmetricDraw extends BaseMouseHandlerInputRestri
 
                             LineSegment add_sen = new LineSegment(OritaCalc.findIntersection(s, d.getLineStep().get(0)), t_taisyou);
 
-                            add_sen = d.extendToIntersectionPoint(add_sen);
-                            add_sen.setColor(s.getColor());
+                            add_sen = d.extendToIntersectionPoint(add_sen).withColor(s.getColor());
                             if (Epsilon.high.gt0(add_sen.determineLength())) {
                                 d.addLineSegment(add_sen);
                             }

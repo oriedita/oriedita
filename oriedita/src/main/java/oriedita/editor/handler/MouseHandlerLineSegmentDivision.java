@@ -61,8 +61,7 @@ public class MouseHandlerLineSegmentDivision extends BaseMouseHandlerInputRestri
                 double ay = ((double) (d.getFoldLineDividingNumber() - i) * d.getLineStep().get(0).determineAY() + (double) i * d.getLineStep().get(0).determineBY()) / ((double) d.getFoldLineDividingNumber());
                 double bx = ((double) (d.getFoldLineDividingNumber() - i - 1) * d.getLineStep().get(0).determineAX() + (double) (i + 1) * d.getLineStep().get(0).determineBX()) / ((double) d.getFoldLineDividingNumber());
                 double by = ((double) (d.getFoldLineDividingNumber() - i - 1) * d.getLineStep().get(0).determineAY() + (double) (i + 1) * d.getLineStep().get(0).determineBY()) / ((double) d.getFoldLineDividingNumber());
-                LineSegment s_ad = new LineSegment(ax, ay, bx, by);
-                s_ad.setColor(d.getLineColor());
+                LineSegment s_ad = new LineSegment(ax, ay, bx, by).withColor(d.getLineColor());
                 d.addLineSegment(s_ad);
             }
             d.record();

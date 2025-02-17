@@ -47,10 +47,10 @@ public class MouseHandlerVoronoiCreate extends BaseMouseHandler {
             LineSegment candidate = new LineSegment(p, p, LineColor.BLACK_0, LineSegment.ActiveState.ACTIVE_BOTH_3);
 
             if (d.getI_foldLine_additional() == FoldLineAdditionalInputMode.POLY_LINE_0) {
-                candidate.setColor(d.getLineColor());
+                candidate = candidate.withColor(d.getLineColor());
             }
             if (d.getI_foldLine_additional() == FoldLineAdditionalInputMode.AUX_LINE_1) {
-                candidate.setColor(d.getAuxLineColor());
+                candidate = candidate.withColor(d.getAuxLineColor());
             }
 
             d.getLineCandidate().clear();
@@ -221,9 +221,8 @@ public class MouseHandlerVoronoiCreate extends BaseMouseHandler {
         //ボロノイ図も表示するようにs_stepの後にボロノイ図の線を入れる
 
         for (LineSegmentVoronoi lsv : voronoiLineSet) {
-            LineSegment s = new LineSegment(lsv);
+            LineSegment s = lsv.withColor(LineColor.MAGENTA_5);
             s.setActive(LineSegment.ActiveState.INACTIVE_0);
-            s.setColor(LineColor.MAGENTA_5);
             d.getLineStep().add(s);
         }
     }

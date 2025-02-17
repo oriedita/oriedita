@@ -41,14 +41,13 @@ public abstract class BaseMouseHandlerLineSelect extends BaseMouseHandler {
     public void mousePressed(Point p0) {
         Point p = d.getCamera().TV2object(p0);
 
-        LineSegment s = new LineSegment(p, p);
+        LineSegment s = new LineSegment(p, p,
+                LineColor.MAGENTA_5, LineSegment.ActiveState.ACTIVE_B_2);
 
         Point closest_point = d.getClosestPoint(p);
         if (p.distance(closest_point) < d.getSelectionDistance()) {
             s = s.withB(closest_point);
         }
-        s.setColor(LineColor.MAGENTA_5);
-        s.setActive(LineSegment.ActiveState.ACTIVE_B_2);
         d.lineStepAdd(s);
         selectionLine = s;
     }

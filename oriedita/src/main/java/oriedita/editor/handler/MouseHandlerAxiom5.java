@@ -41,10 +41,9 @@ public class MouseHandlerAxiom5 extends BaseMouseHandlerInputRestricted{
 
         // 2. target segment
         if(d.getLineStep().size() == 1){
-            LineSegment closestLineSegment = new LineSegment(d.getClosestLineSegment(p));
+            LineSegment closestLineSegment = d.getClosestLineSegment(p).withColor(LineColor.GREEN_6);
 
             if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.getSelectionDistance()) {
-                closestLineSegment.setColor(LineColor.GREEN_6);
                 d.lineStepAdd(closestLineSegment);
             }
             return;
@@ -76,13 +75,12 @@ public class MouseHandlerAxiom5 extends BaseMouseHandlerInputRestricted{
                 return;
             }
 
-            LineSegment closestLineSegment = new LineSegment(d.getClosestLineSegment(p));
+            LineSegment closestLineSegment = d.getClosestLineSegment(p).withColor(LineColor.GREEN_6);
 
             if (!(OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.getSelectionDistance())) {
                 return;
             }
 
-            closestLineSegment.setColor(LineColor.GREEN_6);
             d.lineStepAdd(closestLineSegment);
         }
     }

@@ -28,10 +28,10 @@ public class MouseHandlerDrawCreaseFree extends BaseMouseHandler {
             LineSegment candidate = new LineSegment(p, p);
 
             if (d.getI_foldLine_additional() == FoldLineAdditionalInputMode.POLY_LINE_0) {
-                candidate.setColor(d.getLineColor());
+                candidate = candidate.withColor(d.getLineColor());
             }
             if (d.getI_foldLine_additional() == FoldLineAdditionalInputMode.AUX_LINE_1) {
-                candidate.setColor(d.getAuxLineColor());
+                candidate = candidate.withColor(d.getAuxLineColor());
             }
             candidate.setActive(LineSegment.ActiveState.ACTIVE_BOTH_3);
 
@@ -51,10 +51,10 @@ public class MouseHandlerDrawCreaseFree extends BaseMouseHandler {
         }
 
         if (d.getI_foldLine_additional() == FoldLineAdditionalInputMode.POLY_LINE_0) {
-            s.setColor(d.getLineColor());
+            s = s.withColor(d.getLineColor());
         }
         if (d.getI_foldLine_additional() == FoldLineAdditionalInputMode.AUX_LINE_1) {
-            s.setColor(d.getAuxLineColor());
+            s = s.withColor(d.getAuxLineColor());
         }
         s.setActive(LineSegment.ActiveState.ACTIVE_B_2);
 
@@ -65,12 +65,8 @@ public class MouseHandlerDrawCreaseFree extends BaseMouseHandler {
         Point p = d.getCamera().TV2object(p0);
 
         if (!d.getGridInputAssist()) {
-
-            if (d.getI_foldLine_additional() == FoldLineAdditionalInputMode.AUX_LINE_1) {
-                d.getLineStep().get(0).setColor(d.getAuxLineColor());
-            } else {
-                d.getLineStep().get(0).setColor(d.getLineColor());
-            }
+            boolean isAuxInputMode = d.getI_foldLine_additional() == FoldLineAdditionalInputMode.AUX_LINE_1;
+            d.setLineStepColor(d.getLineStep().get(0),isAuxInputMode ? d.getAuxLineColor() : d.getLineColor());
         }
 
         if (d.getGridInputAssist()) {
@@ -83,10 +79,10 @@ public class MouseHandlerDrawCreaseFree extends BaseMouseHandler {
 
             LineSegment candidate = new LineSegment(p, p);
             if (d.getI_foldLine_additional() == FoldLineAdditionalInputMode.POLY_LINE_0) {
-                candidate.setColor(d.getLineColor());
+                candidate = candidate.withColor(d.getLineColor());
             }
             if (d.getI_foldLine_additional() == FoldLineAdditionalInputMode.AUX_LINE_1) {
-                candidate.setColor(d.getAuxLineColor());
+                candidate = candidate.withColor(d.getAuxLineColor());
             }
             candidate.setActive(LineSegment.ActiveState.ACTIVE_BOTH_3);
             d.getLineCandidate().add(candidate);

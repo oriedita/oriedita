@@ -41,14 +41,14 @@ public class MouseHandlerReplaceTypeSelect extends BaseMouseHandlerBoxSelect {
                 switch (from){
                     case ANY:
                         d.getFoldLineSet().deleteLine(s);
-                        s.setColor(LineColor.fromNumber(to.getNumberForLineColor()));
+                        s = s.withColor(LineColor.fromNumber(to.getNumberForLineColor()));
                         d.addLineSegment(s);
                         d.record();
                         break;
                     case EGDE:
                         if (s.getColor() == LineColor.BLACK_0) {
                             d.getFoldLineSet().deleteLine(s);
-                            s.setColor(LineColor.fromNumber(to.getNumberForLineColor()));
+                            s = s.withColor(LineColor.fromNumber(to.getNumberForLineColor()));
                             d.addLineSegment(s);
                             d.record();
                         }
@@ -56,7 +56,7 @@ public class MouseHandlerReplaceTypeSelect extends BaseMouseHandlerBoxSelect {
                     case MANDV:
                         if (s.getColor() == LineColor.RED_1 || s.getColor() == LineColor.BLUE_2) {
                             d.getFoldLineSet().deleteLine(s);
-                            s.setColor(LineColor.fromNumber(to.getNumberForLineColor()));
+                            s = s.withColor(LineColor.fromNumber(to.getNumberForLineColor()));
                             d.addLineSegment(s);
                             d.record();
                         }
@@ -66,7 +66,7 @@ public class MouseHandlerReplaceTypeSelect extends BaseMouseHandlerBoxSelect {
                     case AUX:
                         if (s.getColor() == LineColor.fromNumber(from.getNumber() - 1)) {
                             d.getFoldLineSet().deleteLine(s);
-                            s.setColor(LineColor.fromNumber(to.getNumberForLineColor()));
+                            s = s.withColor(LineColor.fromNumber(to.getNumberForLineColor()));
                             d.addLineSegment(s);
                             d.record();
                         }
