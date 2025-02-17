@@ -106,7 +106,7 @@ public class FileSaveServiceImpl implements FileSaveService {
     @Override
     public void openFile(File file) throws FileReadingException {
         if (file == null || !file.exists()) {
-            return;
+            throw new FileReadingException(new Throwable("File doesn't exist or null"));
         }
 
         fileModel.setSaved(true);
