@@ -159,7 +159,7 @@ public class MouseHandlerVertexMakeAngularlyFlatFoldable extends BaseMouseHandle
                                 double s_kiso_length = s_kiso.determineLength();
 
                                 LineSegment s = OritaCalc.lineSegment_rotate(s_kiso, kakukagenti / 2.0, d.getGrid().getGridWidth() / s_kiso_length);
-                                s.setColor(LineColor.PURPLE_8);
+                                s = s.withColor(LineColor.PURPLE_8);
                                 s.setActive(LineSegment.ActiveState.INACTIVE_0);
                                 d.lineStepAdd(s);
                             }
@@ -192,7 +192,7 @@ public class MouseHandlerVertexMakeAngularlyFlatFoldable extends BaseMouseHandle
                 break;
             }
             case STEP_2: {
-                LineSegment closestLineSegment = new LineSegment(d.getClosestLineSegment(p));
+                LineSegment closestLineSegment = d.getClosestLineSegment(p).withColor(LineColor.GREEN_6);
                 LineSegment moyori_step_lineSegment = new LineSegment(
                         d.getClosestLineStepSegment(p, 1, d.getLineStep().size()));
                 if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) >= d.getSelectionDistance()) {//最寄の既存折線が遠くて選択無効の場合
@@ -208,8 +208,6 @@ public class MouseHandlerVertexMakeAngularlyFlatFoldable extends BaseMouseHandle
                 }
 
                 if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.getSelectionDistance()) {//最寄の既存折線が近い場合
-
-                    closestLineSegment.setColor(LineColor.GREEN_6);
                     d.lineStepAdd(closestLineSegment);
 
                     Point kousa_point = OritaCalc.findIntersection(d.getLineStep().get(0), d.getLineStep().get(1));

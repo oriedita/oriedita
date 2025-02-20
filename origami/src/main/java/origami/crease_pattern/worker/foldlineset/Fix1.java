@@ -19,7 +19,7 @@ public class Fix1 {
                         LineSegment.Intersection intersection = OritaCalc.determineLineSegmentIntersection(si, sj, Epsilon.UNKNOWN_0001, Epsilon.PARALLEL_FOR_FIX);
                         switch (intersection) {
                             case PARALLEL_EQUAL_31:
-                                si.setColor(sj.getColor());
+                                foldLineSet.setColor(si, sj.getColor());
                                 foldLineSet.deleteLine(j);
                                 return true;
                             case PARALLEL_START_OF_S1_CONTAINS_START_OF_S2_321:

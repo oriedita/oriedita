@@ -37,9 +37,9 @@ public class MouseHandlerCreaseToggleMV extends BaseMouseHandlerBoxSelect {
                 LineSegment s = d.getFoldLineSet().closestLineSegmentSearch(p);
                 LineColor ic_temp = s.getColor();
                 if (ic_temp == LineColor.RED_1) {
-                    s.setColor(LineColor.BLUE_2);
+                    d.getFoldLineSet().setColor(s, LineColor.BLUE_2);
                 } else if (ic_temp == LineColor.BLUE_2) {
-                    s.setColor(LineColor.RED_1);
+                    d.getFoldLineSet().setColor(s, LineColor.RED_1);
                 }
 
                 d.record();

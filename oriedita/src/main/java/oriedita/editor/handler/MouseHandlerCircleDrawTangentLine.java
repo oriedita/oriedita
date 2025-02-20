@@ -153,8 +153,9 @@ public class MouseHandlerCircleDrawTangentLine extends BaseMouseHandler {
 
                 Point kouten = OritaCalc.internalDivisionRatio(c1, c2, r1, r2);
                 StraightLine ty = new StraightLine(c1, kouten).orthogonalize(kouten);
-                LineSegment s = OritaCalc.circle_to_straightLine_no_intersect_wo_connect_LineSegment(new Circle(kouten, (r1 + r2) / 2.0, LineColor.BLACK_0), ty);
-                s.setColor(LineColor.PURPLE_8);
+                LineSegment s = OritaCalc.circle_to_straightLine_no_intersect_wo_connect_LineSegment(
+                        new Circle(kouten, (r1 + r2) / 2.0, LineColor.BLACK_0), ty)
+                        .withColor(LineColor.PURPLE_8);
                 d.lineStepAdd(s);
             } else if ((r1 + r2) * (r1 + r2) < (xp * xp + yp * yp)) {//外接線2本と内接線2本の場合
                 //             ---------------------------------------------------------------

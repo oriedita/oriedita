@@ -35,7 +35,7 @@ public class MouseHandlerCreaseMakeMountain extends BaseMouseHandlerBoxSelect {
         } else {//現状では赤を赤に変えたときもUNDO用に記録されてしまう20161218
             Point p = d.getCamera().TV2object(p0);
             if (d.getFoldLineSet().closestLineSegmentDistance(p) < d.getSelectionDistance()) {//点pに最も近い線分の番号での、その距離を返す	public double closestLineSegmentDistance(Ten p)
-                d.getFoldLineSet().closestLineSegmentSearch(p).setColor(LineColor.RED_1);
+                d.getFoldLineSet().setColor(d.getFoldLineSet().closestLineSegmentSearch(p), LineColor.RED_1);
                 d.fix2();
                 d.record();
             }

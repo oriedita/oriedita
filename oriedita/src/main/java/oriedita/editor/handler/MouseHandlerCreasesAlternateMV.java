@@ -73,7 +73,7 @@ public class MouseHandlerCreasesAlternateMV extends BaseMouseHandlerInputRestric
                 LineColor icol_temp = d.getLineColor();
 
                 for (int i = 1; i <= nbox.getTotal(); i++) {
-                    nbox.getValue(i).setColor(icol_temp);
+                    d.getFoldLineSet().setColor(nbox.getValue(i), icol_temp);
 
                     if (icol_temp == LineColor.RED_1) {
                         icol_temp = LineColor.BLUE_2;

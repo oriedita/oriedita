@@ -79,8 +79,7 @@ public class MouseHandlerLineSegmentRatioSet extends BaseMouseHandlerInputRestri
                 d.addLineSegment(l0);
             }
             if ((internalDivisionRatio_s != 0.0) && (internalDivisionRatio_t != 0.0)) {
-                LineSegment s_ad = new LineSegment();
-                s_ad.setColor(d.getLineColor());
+                LineSegment s_ad = new LineSegment().withColor(d.getLineColor());
                 double nx = (internalDivisionRatio_t * l0.determineBX() + internalDivisionRatio_s * l0.determineAX())
                         / (internalDivisionRatio_s + internalDivisionRatio_t);
                 double ny = (internalDivisionRatio_t * l0.determineBY() + internalDivisionRatio_s * l0.determineAY())

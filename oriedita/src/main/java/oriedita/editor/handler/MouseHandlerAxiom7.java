@@ -39,24 +39,23 @@ public class MouseHandlerAxiom7 extends BaseMouseHandlerInputRestricted{
         // 2. target segment
         // Don't allow segment that spans through the target point
         if(d.getLineStep().size() == 1){
-            LineSegment closestLineSegment = new LineSegment(d.getClosestLineSegment(p));
+            LineSegment closestLineSegment = d.getClosestLineSegment(p).withColor(LineColor.GREEN_6);
 
             if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.getSelectionDistance() &&
                     !OritaCalc.isPointWithinLineSpan(d.getLineStep().get(0).getA(), closestLineSegment)) {
-                closestLineSegment.setColor(LineColor.GREEN_6);
                 d.lineStepAdd(closestLineSegment);
             }
+
             return;
         }
 
         // 3. reference segment
         if(d.getLineStep().size() == 2){
-            LineSegment closestLineSegment = new LineSegment(d.getClosestLineSegment(p));
+            LineSegment closestLineSegment = d.getClosestLineSegment(p).withColor(LineColor.ORANGE_4);
 
             // Don't allow segment that is parallel to target segment
             if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.getSelectionDistance() &&
                     OritaCalc.isLineSegmentParallel(closestLineSegment, d.getLineStep().get(1)) == OritaCalc.ParallelJudgement.NOT_PARALLEL) {
-                closestLineSegment.setColor(LineColor.ORANGE_4);
                 d.lineStepAdd(closestLineSegment);
             }
             return;
@@ -78,14 +77,13 @@ public class MouseHandlerAxiom7 extends BaseMouseHandlerInputRestricted{
                 return;
             }
 
-            LineSegment closestLineSegment = new LineSegment(d.getClosestLineSegment(p));
+            LineSegment closestLineSegment = d.getClosestLineSegment(p).withColor(LineColor.GREEN_6);
 
             if (!(OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.getSelectionDistance()) ||
                     OritaCalc.isLineSegmentParallel(closestLineSegment, d.getLineStep().get(3)) != OritaCalc.ParallelJudgement.NOT_PARALLEL) {
                 return;
             }
 
-            closestLineSegment.setColor(LineColor.GREEN_6);
             d.lineStepAdd(closestLineSegment);
         }
     }

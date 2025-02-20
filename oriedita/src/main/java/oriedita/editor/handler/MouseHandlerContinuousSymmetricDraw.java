@@ -51,14 +51,12 @@ public class MouseHandlerContinuousSymmetricDraw extends BaseMouseHandlerInputRe
 
             LineColor lineType = d.getLineColor();
             for (int i = 2; i < d.getLineStep().size(); i++) {
-                LineSegment lineSegment = d.getLineStep().get(i).clone();
-                lineSegment.setColor(lineType);
+                LineSegment lineSegment = d.getLineStep().get(i).withColor(lineType);
                 lineType = lineType.changeMV();
                 d.addLineSegment(lineSegment);
             }
 
             d.record();
-
             d.getLineStep().clear();
         }
     }
