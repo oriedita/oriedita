@@ -444,26 +444,26 @@ public class FoldLineSet {
                         if(s.getColor() == LineColor.CYAN_3) {
                             reserveAux.add(s);
                         } else {
-                            setColor(s, LineColor.fromNumber(to.getNumberForLineColor()));
+                            s = s.withColor(LineColor.fromNumber(to.getNumberForLineColor()));
                         }
                         i_r = true;
                         break;
                     case EGDE:
                         if (s.getColor() == LineColor.BLACK_0) {
-                            setColor(s, LineColor.fromNumber(to.getNumberForLineColor()));
+                            s = s.withColor(LineColor.fromNumber(to.getNumberForLineColor()));
                             i_r = true;
                         }
                         break;
                     case MANDV:
                         if (s.getColor() == LineColor.RED_1 || s.getColor() == LineColor.BLUE_2) {
-                            setColor(s, LineColor.fromNumber(to.getNumberForLineColor()));
+                            s = s.withColor(LineColor.fromNumber(to.getNumberForLineColor()));
                             i_r = true;
                         }
                         break;
                     case MOUNTAIN:
                     case VALLEY:
                         if (s.getColor() == LineColor.fromNumber(from.getNumber() - 1)) {
-                            setColor(s, LineColor.fromNumber(to.getNumberForLineColor()));
+                            s = s.withColor(LineColor.fromNumber(to.getNumberForLineColor()));
                             i_r = true;
                         }
                         break;
