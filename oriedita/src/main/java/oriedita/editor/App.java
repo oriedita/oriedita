@@ -172,6 +172,7 @@ public class App {
 
         frame.addWindowStateListener(new WindowAdapter() {
             public void windowStateChanged(WindowEvent eve) {
+                if(eve.getNewState() == Frame.ICONIFIED) return;
                 applicationModel.setWindowState(eve.getNewState());
             }
         });
