@@ -289,6 +289,7 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     public void allMountainValleyChange() {
         foldLineSet.allMountainValleyChange();
         checkIfNecessary();
+        record();
     }
 
     @Override
