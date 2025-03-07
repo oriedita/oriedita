@@ -293,7 +293,7 @@ public class ActionRegistrationService {
             boolean isEnabled = applicationModel.getCkTEnabled();
             applicationModel.setCkTEnabled(!isEnabled);
 
-            if (isEnabled) {
+            if (applicationModel.getCkTEnabled()) {
                 mainCreasePatternWorker.check2();//r_hitosiiとr_heikouhanteiは、hitosiiとheikou_hanteiのずれの許容程度
                 mainCreasePatternWorker.setCheck2(true);
             } else {
@@ -306,11 +306,13 @@ public class ActionRegistrationService {
             mainCreasePatternWorker.unselect_all();
             mainCreasePatternWorker.fix1();
             mainCreasePatternWorker.check1();
+            mainCreasePatternWorker.record();
         }));
         actionService.registerAction(ActionType.fxTAction, new LambdaAction(() -> {
             mainCreasePatternWorker.unselect_all();
             mainCreasePatternWorker.fix2();
             mainCreasePatternWorker.check2();
+            mainCreasePatternWorker.record();
         }));
         actionService.registerAction(ActionType.cAMVAction, e -> {
             applicationModel.setCheck4Enabled(!applicationModel.getCheck4Enabled());
@@ -322,7 +324,7 @@ public class ActionRegistrationService {
             boolean isEnabled = applicationModel.getCkOEnabled();
             applicationModel.setCkOEnabled(!isEnabled);
 
-            if (isEnabled) {
+            if (applicationModel.getCkOEnabled()) {
                 mainCreasePatternWorker.check1();//r_hitosiiとr_heikouhanteiは、hitosiiとheikou_hanteiのずれの許容程度
                 mainCreasePatternWorker.set_i_check1(true);
             } else {
