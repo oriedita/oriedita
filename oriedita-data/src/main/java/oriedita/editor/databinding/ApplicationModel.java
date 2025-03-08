@@ -5,6 +5,7 @@ import jakarta.inject.Inject;
 import oriedita.editor.Colors;
 import oriedita.editor.canvas.LineStyle;
 import origami.crease_pattern.CustomLineTypes;
+import origami.crease_pattern.SelectLassoMode;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -73,6 +74,7 @@ public class ApplicationModel implements Serializable {
     private CustomLineTypes customFromLineType;
     private CustomLineTypes customToLineType;
     private CustomLineTypes delLineType;
+    private SelectLassoMode selectLassoMode;
     private int check4ColorTransparency;
     private double zoomSpeed;
     private boolean moveFoldedModelWithCp;
@@ -215,6 +217,14 @@ public class ApplicationModel implements Serializable {
         CustomLineTypes oldDelLineType = this.delLineType;
         this.delLineType = delLineType;
         this.pcs.firePropertyChange("delLineType", oldDelLineType, delLineType);
+    }
+
+    public SelectLassoMode getSelectLassoMode() { return selectLassoMode; }
+
+    public void setSelectLassoMode(SelectLassoMode selectLassoMode){
+        SelectLassoMode oldSelectLassoMode = this.selectLassoMode;
+        this.selectLassoMode = selectLassoMode;
+        this.pcs.firePropertyChange("selectLassoMode", oldSelectLassoMode, selectLassoMode);
     }
 
     public CustomLineTypes getCustomToLineType(){
@@ -443,6 +453,7 @@ public class ApplicationModel implements Serializable {
         customFromLineType = CustomLineTypes.ANY;
         customToLineType = CustomLineTypes.EGDE;
         delLineType = CustomLineTypes.ANY;
+        selectLassoMode = SelectLassoMode.INTERSECT;
 
         zoomSpeed = 1;
         animations = true;
@@ -883,6 +894,7 @@ public class ApplicationModel implements Serializable {
         customFromLineType = applicationModel.getCustomFromLineType();
         customToLineType = applicationModel.getCustomToLineType();
         delLineType = applicationModel.getDelLineType();
+        selectLassoMode = applicationModel.getSelectLassoMode();
 
         moveFoldedModelWithCp = applicationModel.getMoveFoldedModelWithCp();
         animationSpeed = applicationModel.getAnimationSpeed();

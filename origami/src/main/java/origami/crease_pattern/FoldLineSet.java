@@ -2190,7 +2190,7 @@ public class FoldLineSet {
         }
     }
 
-    public void select_lasso(Path2D path, String selectMode) {
+    public void select_lasso(Path2D path, String selectMode, SelectLassoMode mode) {
         for (int i = 1; i <= total; i++){
             LineSegment s = lineSegments.get(i);
             if(selectMode.equals("select") && s.getSelected() == 2) continue;
@@ -2198,10 +2198,11 @@ public class FoldLineSet {
 
             Line2D s2d = new Line2D.Double(s.determineAX(), s.determineAY(), s.determineBX(), s.determineBY());
 
-            boolean isContained = OritaCalc.isLineSegmentContainedInPath(path, s2d)
-            || OritaCalc.isLineSegmentIntersectingPath(path, s2d);
+            boolean isValid = false;
+            if (mode == SelectLassoMode.INTERSECT) isValid = OritaCalc.isLineSegmentIntersectingPath(path, s2d);
+            if (mode == SelectLassoMode.CONTAIN) isValid = OritaCalc.isLineSegmentContainedInPath(path, s2d);
 
-            if(isContained) {
+            if(isValid) {
                 if(selectMode.equals("select")) s.setSelected(2);
                 if(selectMode.equals("unselect")) s.setSelected(0);
             }

@@ -19,6 +19,7 @@ import oriedita.editor.service.HistoryState;
 import oriedita.editor.swing.component.ColorIcon;
 import oriedita.editor.tools.LookAndFeelUtil;
 import oriedita.editor.tools.StringOp;
+import origami.crease_pattern.SelectLassoMode;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -109,6 +110,7 @@ public class RightPanel {
     private JButton textBtn;
     private JScrollPane scrollPane1;
     private boolean darkMode;
+    private SelectLassoMode switchLassoMode;
 
     @Inject
     public RightPanel(FrameProvider frameProvider,
@@ -133,6 +135,8 @@ public class RightPanel {
         auxHistoryState.addPropertyChangeListener(e -> setData(auxHistoryState));
 
         $$$setupUI$$$();
+
+        switchLassoMode = SelectLassoMode.INTERSECT;
     }
 
     public void init() {
@@ -691,6 +695,27 @@ public class RightPanel {
                     break;
             }
         }
+
+        switch (canvasModel.getMouseMode()) {
+            case SELECT_LASSO_74:
+                if ((canvasModel.getToggleLineColor() && switchLassoMode == SelectLassoMode.INTERSECT)
+                        || (!canvasModel.getToggleLineColor() && switchLassoMode == SelectLassoMode.CONTAIN)) {
+                    if (applicationModel.getSelectLassoMode() == SelectLassoMode.INTERSECT) {
+                        applicationModel.setSelectLassoMode(SelectLassoMode.CONTAIN);
+                    }
+                    else if (applicationModel.getSelectLassoMode() == SelectLassoMode.CONTAIN) {
+                        applicationModel.setSelectLassoMode(SelectLassoMode.INTERSECT);
+                    }
+                    toggleSelectLassoMode();
+                }
+                break;
+        }
+    }
+
+    private void toggleSelectLassoMode() {
+        switchLassoMode = switchLassoMode == SelectLassoMode.INTERSECT
+                ? SelectLassoMode.CONTAIN
+                : SelectLassoMode.INTERSECT;
     }
 
     private void createUIComponents() {
