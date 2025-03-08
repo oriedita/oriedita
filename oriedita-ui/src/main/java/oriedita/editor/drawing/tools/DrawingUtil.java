@@ -17,7 +17,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.Ellipse2D;
-import java.awt.geom.GeneralPath;
+import java.awt.geom.Path2D;
 
 /**
  * Static utility class for drawing
@@ -283,7 +283,7 @@ public class DrawingUtil {
         }
     }
 
-    public static void drawCurve(Graphics g, GeneralPath curve, float lineWidth) {
+    public static void drawCurve(Graphics g, Path2D curve, float lineWidth) {
         Graphics2D g2 = (Graphics2D) g;
         g2.setStroke(new BasicStroke(lineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
         g2.draw(curve);
