@@ -2,7 +2,6 @@ package oriedita.editor.handler;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import org.tinylog.Logger;
 import oriedita.editor.canvas.MouseMode;
 
 @ApplicationScoped
@@ -13,7 +12,6 @@ public class MouseHandlerSelectLasso extends BaseMouseHandlerLasso{
 
     @Override
     protected void performAction() {
-        Logger.debug("selected");
         d.getFoldLineSet().select_lasso(d.getLinePath(), "select");
     }
 }
