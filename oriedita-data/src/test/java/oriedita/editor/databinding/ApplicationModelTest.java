@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 import org.tinylog.Logger;
 import oriedita.editor.canvas.LineStyle;
 import origami.crease_pattern.CustomLineTypes;
-import origami.crease_pattern.SelectLassoMode;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -50,7 +49,6 @@ class ApplicationModelTest {
         testValues.put(String.class, new String[]{"abc", "123"});
         testValues.put(Color.class, new Color[]{Color.MAGENTA, Color.YELLOW});
         testValues.put(CustomLineTypes.class, new CustomLineTypes[]{CustomLineTypes.EGDE, CustomLineTypes.MOUNTAIN});
-        testValues.put(SelectLassoMode.class, new SelectLassoMode[]{SelectLassoMode.INTERSECT, SelectLassoMode.CONTAIN});
         testValues.put(LineStyle.class, new LineStyle[]{LineStyle.BLACK_ONE_DOT, LineStyle.COLOR});
         testValues.put(Point.class, new Point[]{new Point(0, 0), new Point(5, 10)});
         testValues.put(Dimension.class, new Dimension[]{new Dimension(1, 2), new Dimension(5, 10)});

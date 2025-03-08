@@ -700,12 +700,6 @@ public class RightPanel {
             case SELECT_LASSO_74:
                 if ((canvasModel.getToggleLineColor() && switchLassoMode == SelectLassoMode.INTERSECT)
                         || (!canvasModel.getToggleLineColor() && switchLassoMode == SelectLassoMode.CONTAIN)) {
-                    if (applicationModel.getSelectLassoMode() == SelectLassoMode.INTERSECT) {
-                        applicationModel.setSelectLassoMode(SelectLassoMode.CONTAIN);
-                    }
-                    else if (applicationModel.getSelectLassoMode() == SelectLassoMode.CONTAIN) {
-                        applicationModel.setSelectLassoMode(SelectLassoMode.INTERSECT);
-                    }
                     toggleSelectLassoMode();
                 }
                 break;
