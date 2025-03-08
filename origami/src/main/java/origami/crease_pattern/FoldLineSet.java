@@ -17,7 +17,7 @@ import origami.data.save.LineSegmentSave;
 import origami.folding.util.SortingBox;
 
 import java.awt.Color;
-import java.awt.geom.GeneralPath;
+import java.awt.geom.Path2D;
 import java.awt.geom.Line2D;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -2190,12 +2190,12 @@ public class FoldLineSet {
         }
     }
 
-    public void select_lasso(GeneralPath gp, String selectMode) {
+    public void select_lasso(Path2D path, String selectMode) {
         boolean isContained;
 
         for (int i = 1; i <= total; i++){
             LineSegment s = lineSegments.get(i);
-            isContained = OritaCalc.isSegmentContainedInGeneralPath(gp,
+            isContained = OritaCalc.isSegmentContainedInGeneralPath(path,
                     new Line2D.Double(s.determineAX(), s.determineAY(), s.determineBX(), s.determineBY()));
 
             if(isContained) {

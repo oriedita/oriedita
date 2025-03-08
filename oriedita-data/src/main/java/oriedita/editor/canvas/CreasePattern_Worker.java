@@ -17,7 +17,7 @@ import origami.crease_pattern.element.Point;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.geom.GeneralPath;
+import java.awt.geom.Path2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.List;
@@ -220,7 +220,7 @@ public interface CreasePattern_Worker {
 
     java.util.List<LineSegment> getLineStep();
 
-    GeneralPath getLinePath();
+    Path2D getLinePath();
 
     void setLineStepColor(LineSegment s, LineColor icol);
 

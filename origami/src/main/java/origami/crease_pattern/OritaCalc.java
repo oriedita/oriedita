@@ -6,7 +6,7 @@ import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.StraightLine;
 
-import java.awt.geom.GeneralPath;
+import java.awt.geom.Path2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
@@ -798,7 +798,7 @@ public class OritaCalc {
      * @param lineSegment a target line segment
      * @return if the line is fully contained
      */
-    public static boolean isSegmentContainedInGeneralPath(GeneralPath path, Line2D lineSegment) {
+    public static boolean isSegmentContainedInGeneralPath(Path2D path, Line2D lineSegment) {
         if (!path.contains(lineSegment.getP1()) || !path.contains(lineSegment.getP2())) return false;
 
         PathIterator pathIterator = path.getPathIterator(null);
