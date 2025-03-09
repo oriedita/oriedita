@@ -4,7 +4,12 @@ import java.io.Serializable;
 import java.util.Objects;
 
 public class Point implements Serializable {
-    //Used to represent point coordinates, direction vectors, etc.
+    // Used to represent point coordinates, direction vectors, etc.
+
+    /* UPDATE: this class should only be used for Point usage for semantic reason.
+        To semantically create vector, use Vector subclass
+     */
+
     private final double x;
     private final double y;
 

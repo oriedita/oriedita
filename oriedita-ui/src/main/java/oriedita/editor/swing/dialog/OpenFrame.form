@@ -33,26 +33,6 @@
               <text value="O_F_check"/>
             </properties>
           </component>
-          <component id="72a7b" class="javax.swing.JButton" binding="select_polygonButton" default-binding="true">
-            <constraints>
-              <grid row="2" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="0.0" weighty="0.0"/>
-            </constraints>
-            <properties>
-              <background color="-16711936"/>
-              <text value="select_polygon"/>
-            </properties>
-          </component>
-          <component id="4ac21" class="javax.swing.JButton" binding="select_lXButton" default-binding="true">
-            <constraints>
-              <grid row="3" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="0.0" weighty="0.0"/>
-            </constraints>
-            <properties>
-              <background color="-16711936"/>
-              <text value="select_lX"/>
-            </properties>
-          </component>
           <component id="f779a" class="javax.swing.JButton" binding="del_lButton" default-binding="true">
             <constraints>
               <grid row="4" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
@@ -134,6 +114,35 @@
             </constraints>
             <properties>
               <text value="unselect_lasso"/>
+            </properties>
+          </component>
+          <component id="4ac21" class="javax.swing.JButton" binding="select_lXButton" default-binding="true">
+            <constraints>
+              <grid row="3" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties>
+              <background color="-16711936"/>
+              <text value="select_lX"/>
+            </properties>
+          </component>
+          <component id="72a7b" class="javax.swing.JButton" binding="select_polygonButton" default-binding="true">
+            <constraints>
+              <grid row="2" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties>
+              <background color="-16711936"/>
+              <text value="select_polygon"/>
+            </properties>
+          </component>
+          <component id="cb683" class="javax.swing.JButton" binding="axiom6Button">
+            <constraints>
+              <grid row="5" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties>
+              <text value="Ax6"/>
             </properties>
           </component>
         </children>

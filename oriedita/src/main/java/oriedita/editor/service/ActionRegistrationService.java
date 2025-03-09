@@ -153,6 +153,7 @@ public class ActionRegistrationService {
             put(ActionType.foldableLineDrawAction, MouseMode.FOLDABLE_LINE_DRAW_71);
             put(ActionType.regularPolygonAction, MouseMode.POLYGON_SET_NO_CORNERS_29);
             put(ActionType.axiom5Action, MouseMode.AXIOM_5);
+            put(ActionType.axiom6Action, MouseMode.AXIOM_6);
             put(ActionType.axiom7Action, MouseMode.AXIOM_7);
         }};
 

@@ -37,6 +37,10 @@ public class StraightLine {
         this(p1.getX(), p1.getY(), p2.getX(), p2.getY());
     }
 
+    public StraightLine(Vector p1, Vector p2) {
+        this(p1.getX(), p1.getY(), p2.getX(), p2.getY());
+    }
+
     public StraightLine(LineSegment s0) {
         this(s0.determineAX(), s0.determineAY(), s0.determineBX(), s0.determineBY());
     }
@@ -44,6 +48,10 @@ public class StraightLine {
     public StraightLine(double x1, double y1, double x2, double y2) {
         //Find the straight line a, b, and c by specifying two points
         this(y2-y1, x1-x2, y1*x2 - x1*y2);
+    }
+
+    public StraightLine(Vector p, double distance){
+        this(p.getX(), p.getY(), distance);
     }
 
     //translation
@@ -63,6 +71,14 @@ public class StraightLine {
         return c;
     }
 
+    public Point getNormal(){ return new Point(a, b); }
+
+    public Point getOppositeNormal(){ return new Point(-a, -b); }
+
+    public StraightLine clone(){
+        return new StraightLine(a, b, c);
+    }
+
     public double calculateDistance(Point p) {// Distance between straight line and point p
         double x = p.getX();
         double y = p.getY();
@@ -73,6 +89,10 @@ public class StraightLine {
         double x = p.getX();
         double y = p.getY();
         return (a * x + b * y + c) * (a * x + b * y + c) / (a * a + b * b);
+    }
+
+    public double getMagnitude(){
+        return Math.abs(Math.sqrt(a * a + b * b));
     }
 
     public StraightLine orthogonalize(Point p) {

@@ -676,26 +676,11 @@ public class OritaCalc {
 
     //Fully extend a line until it hits a line nearest to it
     public static LineSegment fullExtendUntilHit(FoldLineSet foldLineSet, LineSegment s0){
-        LineSegment temp = getSegmentWithLength(s0, 0.5);
+        LineSegment temp = lineSegmentChangeLength(s0, 0.5);
         Point point = temp.getA();
         temp = extendToIntersectionPoint_2(foldLineSet, temp);
         temp = new LineSegment(point, temp.determineFurthestEndpoint(point), s0.getColor());
         return temp;
-    }
-
-    /**
-     * Return a lineSegment with a certain length (assuming A is the starting point).
-     * @param s0 a LineSegment
-     * @param length a double value for desired length. Use negative value to flip the segment.
-     * @return a LineSegment with new endpoint to match the length
-     */
-    public static LineSegment getSegmentWithLength(LineSegment s0, double length){
-        double scaleFactor = length / s0.determineLength();
-
-        double newX = s0.determineAX() + (s0.determineBX() - s0.determineAX()) * scaleFactor;
-        double newY = s0.determineAY() + (s0.determineBY() - s0.determineAY()) * scaleFactor;
-
-        return new LineSegment(s0.getA(), new Point(newX, newY), s0.getColor());
     }
 
     //A function that determines whether two straight lines are parallel.
@@ -871,7 +856,7 @@ public class OritaCalc {
         double ax1 = s0.determineAX();
         double ay1 = s0.determineAY();
 
-        return new LineSegment(ax1, ay1, bx1, by1);
+        return new LineSegment(ax1, ay1, bx1, by1, s0.getColor());
     }
 
     //線分abをaを中心にr倍してd度回転した線分を返す関数（元の線分は変えずに新しい線分を返す）
@@ -1138,6 +1123,13 @@ public class OritaCalc {
     public static boolean lineSegment_X_kousa_decide(LineSegment s1, LineSegment s2) {//0はX交差しない。1は交差する。20201017追加
         return determineLineSegmentIntersection(s1, s2, Epsilon.UNKNOWN_1EN4) == LineSegment.Intersection.INTERSECTS_1;
     }
+
+    /**
+     * Return a lineSegment with a certain length (assuming A is the starting point).
+     * @param s a LineSegment
+     * @param newLength a double value for desired length. Use negative value to flip the segment.
+     * @return a LineSegment with new endpoint to match the length
+     */
 
     public static LineSegment lineSegmentChangeLength(LineSegment s, double newLength) {
         double dx = s.determineBX() - s.determineAX();
