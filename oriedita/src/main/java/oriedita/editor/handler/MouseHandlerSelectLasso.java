@@ -6,7 +6,7 @@ import jakarta.inject.Named;
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.databinding.CanvasModel;
-import origami.crease_pattern.SelectLassoMode;
+import origami.crease_pattern.LassoInteractionMode;
 
 @ApplicationScoped
 @Handles(MouseMode.SELECT_LASSO_74)
@@ -21,9 +21,9 @@ public class MouseHandlerSelectLasso extends BaseMouseHandlerLasso{
 
     @Override
     protected void performAction() {
-        SelectLassoMode mode = !canvasModel.getToggleLineColor() ? SelectLassoMode.INTERSECT : SelectLassoMode.CONTAIN;
+        String selectMode = !canvasModel.getToggleLineColor() ? "select" : "unselect";
         int beforeSelectNum = mainCreasePatternWorker.getFoldLineTotalForSelectFolding();
-        d.getFoldLineSet().select_lasso(d.getLinePath(), "select", mode);
+        d.getFoldLineSet().select_lasso(d.getLinePath(), selectMode, LassoInteractionMode.INTERSECT);
         int afterSelectNum = mainCreasePatternWorker.getFoldLineTotalForSelectFolding();
         if(beforeSelectNum != afterSelectNum) d.record();
     }

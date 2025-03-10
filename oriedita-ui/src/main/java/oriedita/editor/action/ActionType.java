@@ -192,7 +192,6 @@ public enum ActionType {
     unselect_polygonAction("unselect_polygonAction"),
     unselect_lXAction("unselect_lXAction"),
     selectLassoAction("selectLassoAction"),
-    unselectLassoAction("unselectLassoAction"),
     a1Action("a1Action"),
     a2Action("a2Action"),
     a3Action("a3Action"),

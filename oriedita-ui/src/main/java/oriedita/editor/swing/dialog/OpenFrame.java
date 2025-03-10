@@ -32,7 +32,6 @@ public class OpenFrame extends JDialog {
     private JButton axiom5Button;
     private JButton axiom7Button;
     private JButton selectLassoButton;
-    private JButton unselectLassoButton;
 
     public OpenFrame(String name, Frame owner, ButtonService buttonService) {
         super(owner, name);
@@ -44,7 +43,6 @@ public class OpenFrame extends JDialog {
         buttonService.registerButton(o_F_checkButton, "o_F_checkAction");
         buttonService.registerButton(foldableLinePlusGridInputButton, "foldableLinePlusGridInputAction");
         buttonService.registerButton(selectLassoButton, "selectLassoAction");
-        buttonService.registerButton(unselectLassoButton, "unselectLassoAction");
         buttonService.registerButton(select_polygonButton, "select_polygonAction");
         buttonService.registerButton(unselect_polygonButton, "unselect_polygonAction");
         buttonService.registerButton(select_lXButton, "select_lXAction");
@@ -66,7 +64,6 @@ public class OpenFrame extends JDialog {
             o_F_checkButton.setSelected(m == MouseMode.FLAT_FOLDABLE_CHECK_63);
             foldableLinePlusGridInputButton.setSelected(m == MouseMode.FOLDABLE_LINE_INPUT_39);
             selectLassoButton.setSelected(m == MouseMode.SELECT_LASSO_74);
-            unselectLassoButton.setSelected(m == MouseMode.UNSELECT_LASSO_75);
             select_polygonButton.setSelected(m == MouseMode.SELECT_POLYGON_66);
             unselect_polygonButton.setSelected(m == MouseMode.UNSELECT_POLYGON_67);
             unselect_lXButton.setSelected(m == MouseMode.UNSELECT_LINE_INTERSECTING_69);
@@ -189,16 +186,9 @@ public class OpenFrame extends JDialog {
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 1;
-        gbc.gridwidth = 2;
+        gbc.gridwidth = 3;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         panel1.add(selectLassoButton, gbc);
-        unselectLassoButton = new JButton();
-        unselectLassoButton.setText("unselect_lasso");
-        gbc = new GridBagConstraints();
-        gbc.gridx = 2;
-        gbc.gridy = 1;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        panel1.add(unselectLassoButton, gbc);
     }
 
     /**
