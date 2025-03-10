@@ -95,6 +95,7 @@ public class ActionRegistrationService {
             put(ActionType.del_lAction, MouseMode.CREASE_DELETE_OVERLAPPING_64);
             put(ActionType.del_l_XAction, MouseMode.CREASE_DELETE_INTERSECTING_65);
             put(ActionType.selectLassoAction, MouseMode.SELECT_LASSO_74);
+            put(ActionType.unselectLassoAction, MouseMode.UNSELECT_LASSO_75);
             put(ActionType.select_polygonAction, MouseMode.SELECT_POLYGON_66);
             put(ActionType.unselect_polygonAction, MouseMode.UNSELECT_POLYGON_67);
             put(ActionType.select_lXAction, MouseMode.SELECT_LINE_INTERSECTING_68);
