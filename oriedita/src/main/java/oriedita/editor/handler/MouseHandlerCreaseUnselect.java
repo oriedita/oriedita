@@ -30,6 +30,6 @@ public class MouseHandlerCreaseUnselect extends BaseMouseHandlerBoxSelect {
 
         int afterSelectNum = d.getFoldLineTotalForSelectFolding();
 
-        if(beforeSelectNum != afterSelectNum) d.record();;
+        if(beforeSelectNum != afterSelectNum) d.record();
     }
 }
