@@ -5,7 +5,7 @@ import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 
 import java.awt.geom.AffineTransform;
-import java.awt.geom.GeneralPath;
+import java.awt.geom.Path2D;
 import java.io.Serializable;
 
 public class Camera implements Serializable { // Mediation between actual coordinates and display coordinates
@@ -201,13 +201,13 @@ public class Camera implements Serializable { // Mediation between actual coordi
                 .withB(object2TV(s_ob.getB()));
     }
 
-    public GeneralPath object2TV(GeneralPath path_ob) {
+    public Path2D object2TV(Path2D path) {
         AffineTransform transform = new AffineTransform();
         transform.translate(display_position_x, display_position_y);
         transform.rotate(-camera_rad);
         transform.scale(getCameraZoomX(), getCameraZoomY());
         transform.translate(-camera_position_x, -camera_position_y);
-        return (GeneralPath) path_ob.createTransformedShape(transform);
+        return (Path2D) path.createTransformedShape(transform);
     }
 
     public Circle object2TV(Circle s_ob) {
