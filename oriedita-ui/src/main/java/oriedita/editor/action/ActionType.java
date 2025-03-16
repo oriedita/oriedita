@@ -201,6 +201,7 @@ public enum ActionType {
     restrictedAngleSetDEFAction("restrictedAngleSetDEFAction"),
     addColorConstraintAction("addColorConstraintAction"),
     axiom5Action("axiom5Action"),
+    axiom6Action("axiom6Action"),
     axiom7Action("axiom7Action"),
     switchReplaceAction("switchReplaceAction");
 

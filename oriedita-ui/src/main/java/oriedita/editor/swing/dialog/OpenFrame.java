@@ -31,6 +31,7 @@ public class OpenFrame extends JDialog {
     private JPanel panel;
     private JButton axiom5Button;
     private JButton axiom7Button;
+    private JButton axiom6Button;
     private JButton selectLassoButton;
     private JButton unselectLassoButton;
 
@@ -53,6 +54,7 @@ public class OpenFrame extends JDialog {
         buttonService.registerButton(del_l_XButton, "del_l_XAction");
         buttonService.registerButton(selectAnd3ClickCheckBox, "selectAnd3ClickAction");
         buttonService.registerButton(axiom5Button, "axiom5Action");
+        buttonService.registerButton(axiom6Button, "axiom6Action");
         buttonService.registerButton(axiom7Button, "axiom7Action");
 
         pack();
@@ -114,24 +116,6 @@ public class OpenFrame extends JDialog {
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         panel1.add(o_F_checkButton, gbc);
-        select_polygonButton = new JButton();
-        select_polygonButton.setBackground(new Color(-16711936));
-        select_polygonButton.setText("select_polygon");
-        gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 2;
-        gbc.gridwidth = 2;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        panel1.add(select_polygonButton, gbc);
-        select_lXButton = new JButton();
-        select_lXButton.setBackground(new Color(-16711936));
-        select_lXButton.setText("select_lX");
-        gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 3;
-        gbc.gridwidth = 2;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        panel1.add(select_lXButton, gbc);
         del_lButton = new JButton();
         del_lButton.setText("Del_l");
         gbc = new GridBagConstraints();
@@ -199,6 +183,31 @@ public class OpenFrame extends JDialog {
         gbc.gridy = 1;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         panel1.add(unselectLassoButton, gbc);
+        select_lXButton = new JButton();
+        select_lXButton.setBackground(new Color(-16711936));
+        select_lXButton.setText("select_lX");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        gbc.gridwidth = 2;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        panel1.add(select_lXButton, gbc);
+        select_polygonButton = new JButton();
+        select_polygonButton.setBackground(new Color(-16711936));
+        select_polygonButton.setText("select_polygon");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.gridwidth = 2;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        panel1.add(select_polygonButton, gbc);
+        axiom6Button = new JButton();
+        axiom6Button.setText("Ax6");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 1;
+        gbc.gridy = 5;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        panel1.add(axiom6Button, gbc);
     }
 
     /**
