@@ -6,6 +6,7 @@ import jakarta.inject.Named;
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.canvas.MouseMode;
 import origami.crease_pattern.LassoInteractionMode;
+import origami.crease_pattern.worker.SelectMode;
 
 @ApplicationScoped
 @Handles(MouseMode.UNSELECT_LASSO_75)
@@ -19,7 +20,7 @@ public class MouseHandlerUnselectLasso extends BaseMouseHandlerLasso{
     @Override
     protected void performAction() {
         int beforeSelectNum = mainCreasePatternWorker.getFoldLineTotalForSelectFolding();
-        d.getFoldLineSet().select_lasso(d.getLinePath(), "unselect", LassoInteractionMode.INTERSECT);
+        d.getFoldLineSet().select_lasso(d.getLinePath(), SelectMode.UNSELECT, LassoInteractionMode.INTERSECT);
         int afterSelectNum = mainCreasePatternWorker.getFoldLineTotalForSelectFolding();
         if(beforeSelectNum != afterSelectNum) d.record();
     }
