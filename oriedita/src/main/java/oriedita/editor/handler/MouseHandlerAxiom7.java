@@ -3,130 +3,156 @@ package oriedita.editor.handler;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
+import oriedita.editor.drawing.tools.Camera;
+import oriedita.editor.drawing.tools.DrawingUtil;
 import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 
+import java.awt.Graphics2D;
+
 @ApplicationScoped
 @Handles(MouseMode.AXIOM_7)
 public class MouseHandlerAxiom7 extends BaseMouseHandlerInputRestricted{
+
     private Point midPoint = new Point();
+    private Point targetPoint;
+    private LineSegment targetSegment;
+    private LineSegment perpendicularSegment;
+    private LineSegment indicator1;
+    private LineSegment indicator2;
+    private LineSegment destinationSegment;
+    private Step currentStep = Step.SELECT_TARGET_POINT;
+
+    private enum Step {
+        SELECT_TARGET_POINT,
+        SELECT_TARGET_SEGMENT,
+        SELECT_PERPENDICULAR_SEGMENT,
+        SHOW_INDICATORS,
+        SELECT_DESTINATION_OR_INDICATOR,
+        SELECT_DESTINATION
+    }
+
     @Inject
     public MouseHandlerAxiom7(){}
 
-    //マウス操作(マウスを動かしたとき)を行う関数
-    public void mouseMoved(Point p0) {
-        if (d.getLineStep().isEmpty()) {
-            super.mouseMoved(p0);
-        }
-    }
+    @Override
+    public void mousePressed(Point p0) {}
+
+    public void mouseMoved(Point p0) { highlightSelection(p0); }
 
     @Override
-    public void mousePressed(Point p0) {
-        Point p = d.getCamera().TV2object(p0);
-
-        // 1. target point
-        if(d.getLineStep().isEmpty()){
-            Point closestPoint = d.getClosestPoint(p);
-            if (p.distance(closestPoint) < d.getSelectionDistance()) {
-                d.lineStepAdd(new LineSegment(closestPoint, closestPoint, d.getLineColor()));
-                return;
-            }
-        }
-
-        // 2. target segment
-        // Don't allow segment that spans through the target point
-        if(d.getLineStep().size() == 1){
-            LineSegment closestLineSegment = d.getClosestLineSegment(p).withColor(LineColor.GREEN_6);
-
-            if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.getSelectionDistance() &&
-                    !OritaCalc.isPointWithinLineSpan(d.getLineStep().get(0).getA(), closestLineSegment)) {
-                d.lineStepAdd(closestLineSegment);
-            }
-
-            return;
-        }
-
-        // 3. reference segment
-        if(d.getLineStep().size() == 2){
-            LineSegment closestLineSegment = d.getClosestLineSegment(p).withColor(LineColor.ORANGE_4);
-
-            // Don't allow segment that is parallel to target segment
-            if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.getSelectionDistance() &&
-                    OritaCalc.isLineSegmentParallel(closestLineSegment, d.getLineStep().get(1)) == OritaCalc.ParallelJudgement.NOT_PARALLEL) {
-                d.lineStepAdd(closestLineSegment);
-            }
-            return;
-        }
-
-        // index 3 and 4 are the purple indicators
-        // 4. indicators (case 1) & destination line (case 2)
-        // Don't accept segment that is parallel to the purple indicators
-        if(d.getLineStep().size() == 5){
-            if (OritaCalc.determineLineSegmentDistance(p, d.getLineStep().get(3)) < d.getSelectionDistance() ||
-                    OritaCalc.determineLineSegmentDistance(p, d.getLineStep().get(4)) < d.getSelectionDistance()) {
-                LineSegment s = d.getClosestLineStepSegment(p, 4, 5);
-                s = new LineSegment(s.getB(), s.getA(), d.getLineColor());
-                s = (OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), s));
-
-                d.addLineSegment(s);
-                d.record();
-                d.getLineStep().clear();
-                return;
-            }
-
-            LineSegment closestLineSegment = d.getClosestLineSegment(p).withColor(LineColor.GREEN_6);
-
-            if (!(OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.getSelectionDistance()) ||
-                    OritaCalc.isLineSegmentParallel(closestLineSegment, d.getLineStep().get(3)) != OritaCalc.ParallelJudgement.NOT_PARALLEL) {
-                return;
-            }
-
-            d.lineStepAdd(closestLineSegment);
-        }
-    }
-
-    @Override
-    public void mouseDragged(Point p0) {}
+    public void mouseDragged(Point p0) { highlightSelection(p0); }
 
     @Override
     public void mouseReleased(Point p0) {
+        Point p = d.getCamera().TV2object(p0);
+        switch(currentStep) {
+            case SELECT_TARGET_POINT: {
+                if (targetPoint == null) return;
+                d.lineStepAdd(new LineSegment(targetPoint, targetPoint, d.getLineColor()));
+                currentStep = Step.SELECT_TARGET_SEGMENT;
+                return;
+            }
+            case SELECT_TARGET_SEGMENT: {
+                if (targetSegment == null) return;
+                d.lineStepAdd(targetSegment);
+                currentStep = Step.SELECT_PERPENDICULAR_SEGMENT;
+                return;
+            }
+            case SELECT_PERPENDICULAR_SEGMENT: {
+                if (perpendicularSegment == null) return;
+                d.lineStepAdd(perpendicularSegment);
+                currentStep = Step.SHOW_INDICATORS;
+            }
+            case SHOW_INDICATORS: {
+                midPoint = drawAxiom7FoldIndicators(targetPoint, targetSegment, perpendicularSegment);
+                currentStep = Step.SELECT_DESTINATION_OR_INDICATOR;
+                return;
+            }
+            case SELECT_DESTINATION_OR_INDICATOR: {
+                if (OritaCalc.determineLineSegmentDistance(p, indicator1) < d.getSelectionDistance() ||
+                        OritaCalc.determineLineSegmentDistance(p, indicator2) < d.getSelectionDistance()) {
+                    LineSegment s = d.getClosestLineStepSegment(p, 4, 5);
+                    s = new LineSegment(s.getB(), s.getA(), d.getLineColor());
+                    s = (OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), s));
 
-        // First 3 are clicked
-        if(d.getLineStep().size() == 3){
-            midPoint = drawAxiom7FoldIndicators(d.getLineStep().get(0), d.getLineStep().get(1), d.getLineStep().get(2));
-        }
+                    d.addLineSegment(s);
+                    d.record();
+                    d.getLineStep().clear();
+                    reset();
+                    return;
+                }
 
-        // Case 2: Click on destination line to extend result line from midpoint
-        if(d.getLineStep().size() == 6){
-            LineSegment ls3 = d.getLineStep().get(3);
-            LineSegment midTemp = new LineSegment(
-                    midPoint,
-                    new Point(
-                            midPoint.getX() + ls3.determineBX() - ls3.determineAX(),
-                            midPoint.getY() + ls3.determineBY() - ls3.determineAY()));
-            LineSegment result = getExtendedSegment(midTemp, d.getLineStep().get(5), d.getLineColor());
-            d.addLineSegment(result);
-            d.record();
-            d.getLineStep().clear();
+                if (destinationSegment == null) return;
+                d.lineStepAdd(destinationSegment);
+                currentStep = Step.SELECT_DESTINATION;
+            }
+            case SELECT_DESTINATION: {
+                LineSegment midTemp = new LineSegment(
+                        midPoint,
+                        new Point(
+                                midPoint.getX() + indicator1.determineBX() - indicator1.determineAX(),
+                                midPoint.getY() + indicator1.determineBY() - indicator1.determineAY()));
+                LineSegment result = getExtendedSegment(midTemp, destinationSegment, d.getLineColor());
+                d.addLineSegment(result);
+                d.record();
+                d.getLineStep().clear();
+                reset();
+            }
         }
     }
 
-    public Point drawAxiom7FoldIndicators(LineSegment target, LineSegment targetSegment, LineSegment refSegment){
-        LineSegment temp = target.withB(
-                new Point(
-                        target.determineAX() + refSegment.determineBX() - refSegment.determineAX(),
-                        target.determineAY() + refSegment.determineBY() - refSegment.determineAY()));
+    public void highlightSelection(Point p0){
+        if (d.getLineStep().isEmpty() && currentStep != Step.SELECT_TARGET_POINT) reset();
+
+        Point p = d.getCamera().TV2object(p0);
+        switch (currentStep) {
+            case SELECT_TARGET_POINT: {
+                if (p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
+                    targetPoint = d.getClosestPoint(p);
+                } else targetPoint = null;
+                return;
+            }
+            case SELECT_TARGET_SEGMENT: {
+                if (OritaCalc.determineLineSegmentDistance(p, d.getClosestLineSegment(p)) < d.getSelectionDistance() &&
+                        !OritaCalc.isPointWithinLineSpan(targetPoint, d.getClosestLineSegment(p))) {
+                    targetSegment = d.getClosestLineSegment(p).withColor(LineColor.GREEN_6);
+                } else targetSegment = null;
+                return;
+            }
+            case SELECT_PERPENDICULAR_SEGMENT: {
+                if (OritaCalc.determineLineSegmentDistance(p, d.getClosestLineSegment(p)) < d.getSelectionDistance() &&
+                        OritaCalc.isLineSegmentParallel(d.getClosestLineSegment(p), targetSegment) == OritaCalc.ParallelJudgement.NOT_PARALLEL) {
+                    perpendicularSegment = d.getClosestLineSegment(p).withColor(LineColor.ORANGE_4);
+                } else perpendicularSegment = null;
+                return;
+            }
+            case SELECT_DESTINATION_OR_INDICATOR: {
+                if (OritaCalc.determineLineSegmentDistance(p, d.getClosestLineSegment(p)) < d.getSelectionDistance() &&
+                        OritaCalc.isLineSegmentParallel(d.getClosestLineSegment(p), indicator1) == OritaCalc.ParallelJudgement.NOT_PARALLEL) {
+                    destinationSegment = d.getClosestLineSegment(p).withColor(LineColor.GREEN_6);
+                } else destinationSegment = null;
+            }
+        }
+    }
+
+    public Point drawAxiom7FoldIndicators(Point targetPoint, LineSegment targetSegment, LineSegment perpendicularSegment){
+        LineSegment temp = new LineSegment(targetPoint, new Point(
+                targetPoint.getX() + perpendicularSegment.determineBX() - perpendicularSegment.determineAX(),
+                targetPoint.getY() + perpendicularSegment.determineBY() - perpendicularSegment.determineAY()));
         LineSegment extendLine = getExtendedSegment(temp, targetSegment, LineColor.PURPLE_8);
 
         if (extendLine == null) { return null; }
 
-        Point mid = OritaCalc.midPoint(target.getA(), OritaCalc.findIntersection(extendLine, targetSegment));
+        Point mid = OritaCalc.midPoint(targetPoint, OritaCalc.findIntersection(extendLine, targetSegment));
 
         LineSegment s1 = OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), new LineSegment(mid, OritaCalc.findProjection(OritaCalc.moveParallel(extendLine, 1), mid), LineColor.PURPLE_8));
         LineSegment s2 = OritaCalc.fullExtendUntilHit(d .getFoldLineSet(), new LineSegment(mid, OritaCalc.findProjection(OritaCalc.moveParallel(extendLine, -1), mid), LineColor.PURPLE_8));
+        indicator1 = s1.clone();
+        indicator2 = s2.clone();
         d.lineStepAdd(s1);
         d.lineStepAdd(s2);
         return mid;
@@ -157,5 +183,42 @@ public class MouseHandlerAxiom7 extends BaseMouseHandlerInputRestricted{
         }
 
         return null;
+    }
+
+    @Override
+    public void drawPreview(Graphics2D g2, Camera camera, DrawingSettings settings) {
+        super.drawPreview(g2, camera, settings);
+        switch (currentStep) {
+            case SELECT_TARGET_POINT: {
+                if (targetPoint == null) return;
+                DrawingUtil.drawStepVertex(g2, targetPoint, d.getLineColor(), camera, d.getGridInputAssist());
+                return;
+            }
+            case SELECT_TARGET_SEGMENT: {
+                if (targetSegment == null) return;
+                DrawingUtil.drawLineStep(g2, targetSegment, camera, settings.getLineWidth(), d.getGridInputAssist());
+                return;
+            }
+            case SELECT_PERPENDICULAR_SEGMENT: {
+                if (perpendicularSegment == null) return;
+                DrawingUtil.drawLineStep(g2, perpendicularSegment, camera, settings.getLineWidth(), d.getGridInputAssist());
+                return;
+            }
+            case SELECT_DESTINATION_OR_INDICATOR: {
+                if (destinationSegment == null) return;
+                DrawingUtil.drawLineStep(g2, destinationSegment, camera, settings.getLineWidth(), d.getGridInputAssist());
+            }
+        }
+    }
+
+    @Override
+    public void reset() {
+        currentStep = Step.SELECT_TARGET_POINT;
+        targetPoint = null;
+        targetSegment = null;
+        perpendicularSegment = null;
+        indicator1 = null;
+        indicator2 = null;
+        destinationSegment = null;
     }
 }
