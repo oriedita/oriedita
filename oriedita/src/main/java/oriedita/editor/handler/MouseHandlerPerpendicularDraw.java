@@ -51,21 +51,17 @@ public class MouseHandlerPerpendicularDraw extends BaseMouseHandlerInputRestrict
         switch (currentStep) {
             case SELECT_TARGET_POINT: {
                 if(targetPoint == null) return;
-                d.lineStepAdd(new LineSegment(targetPoint, targetPoint, d.getLineColor()));
                 currentStep = Step.SELECT_PERPENDICULAR_SEGMENT;
                 return;
             }
             case SELECT_PERPENDICULAR_SEGMENT:{
                 if(perpendicularSegment == null) return;
-                d.lineStepAdd(perpendicularSegment);
                 currentStep = Step.CHECK_IF_NON_BASE;
                 }
             case CHECK_IF_NON_BASE: {
                 if (OritaCalc.isPointWithinLineSpan(targetPoint, perpendicularSegment)) {
                     indicator1 = OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), new LineSegment(targetPoint, OritaCalc.findProjection(OritaCalc.moveParallel(perpendicularSegment, 1.0), targetPoint), LineColor.PURPLE_8));
                     indicator2 = OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), new LineSegment(targetPoint, OritaCalc.findProjection(OritaCalc.moveParallel(perpendicularSegment, -1.0), targetPoint), LineColor.PURPLE_8));
-                    d.lineStepAdd(indicator1);
-                    d.lineStepAdd(indicator2);
                     currentStep = Step.SELECT_DESTINATION_OR_INDICATOR;
                     return;
                 } else {
@@ -73,12 +69,11 @@ public class MouseHandlerPerpendicularDraw extends BaseMouseHandlerInputRestrict
                 }
             }
             case SELECT_DESTINATION_NON_BASE: {
-                LineSegment nonBaseResultLine = new LineSegment(targetPoint, OritaCalc.findProjection(OritaCalc.lineSegmentToStraightLine(d.getLineStep().get(1)), d.getLineStep().get(0).getA()), d.getLineColor());
+                LineSegment nonBaseResultLine = new LineSegment(targetPoint, OritaCalc.findProjection(OritaCalc.lineSegmentToStraightLine(perpendicularSegment), targetPoint), d.getLineColor());
 
                 if (Epsilon.high.gt0(nonBaseResultLine.determineLength())) {
                     d.addLineSegment(nonBaseResultLine);
                     d.record();
-                    d.getLineStep().clear();
                     reset();
                 }
                 return;
@@ -86,19 +81,18 @@ public class MouseHandlerPerpendicularDraw extends BaseMouseHandlerInputRestrict
             case SELECT_DESTINATION_OR_INDICATOR: {
                 if (OritaCalc.determineLineSegmentDistance(p, indicator1) < d.getSelectionDistance() ||
                         OritaCalc.determineLineSegmentDistance(p, indicator2) < d.getSelectionDistance()) {
-                    LineSegment s = d.getClosestLineStepSegment(p, 3, 4);
+                    LineSegment s = OritaCalc.determineLineSegmentDistance(p, indicator1) < OritaCalc.determineLineSegmentDistance(p, indicator2)
+                            ? indicator1 : indicator2;
                     s = new LineSegment(s.getB(), s.getA(), d.getLineColor());
                     s = OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), s);
 
                     d.addLineSegment(s);
                     d.record();
-                    d.getLineStep().clear();
                     reset();
                     return;
                 }
 
                 if (destinationSegment == null) return;
-                d.lineStepAdd(destinationSegment);
                 currentStep = Step.SELECT_DESTINATION;
             }
             case SELECT_DESTINATION: {
@@ -108,19 +102,16 @@ public class MouseHandlerPerpendicularDraw extends BaseMouseHandlerInputRestrict
                                 targetPoint.getY() + indicator1.determineBY() - indicator1.determineAY())
                 );
                 LineSegment newLine = s_step_additional_intersection(temp, destinationSegment, d.getLineColor());
-
                 if (newLine == null) return;
 
                 d.addLineSegment(newLine);
                 d.record();
-                d.getLineStep().clear();
                 reset();
             }
         }
     }
 
     public void highlightSelection(Point p0){
-        if (d.getLineStep().isEmpty() && currentStep != Step.SELECT_TARGET_POINT) reset();
         Point p = d.getCamera().TV2object(p0);
         switch (currentStep) {
             case SELECT_TARGET_POINT: {
@@ -175,21 +166,20 @@ public class MouseHandlerPerpendicularDraw extends BaseMouseHandlerInputRestrict
     @Override
     public void drawPreview(Graphics2D g2, Camera camera, DrawingSettings settings) {
         super.drawPreview(g2, camera, settings);
-        switch (currentStep) {
-            case SELECT_TARGET_POINT: {
-                if (targetPoint == null) return;
-                DrawingUtil.drawStepVertex(g2, targetPoint, d.getLineColor(), camera, d.getGridInputAssist());
-                return;
-            }
-            case SELECT_PERPENDICULAR_SEGMENT: {
-                if (perpendicularSegment == null) return;
-                DrawingUtil.drawLineStep(g2, perpendicularSegment, camera, settings.getLineWidth(), d.getGridInputAssist());
-                return;
-            }
-            case SELECT_DESTINATION_OR_INDICATOR: {
-                if (destinationSegment == null) return;
-                DrawingUtil.drawLineStep(g2, destinationSegment, camera, settings.getLineWidth(), d.getGridInputAssist());
-            }
+        if (targetPoint != null) {
+            DrawingUtil.drawStepVertex(g2, targetPoint, d.getLineColor(), camera, d.getGridInputAssist());
+        }
+        if (perpendicularSegment != null) {
+            DrawingUtil.drawLineStep(g2, perpendicularSegment, camera, settings.getLineWidth(), d.getGridInputAssist());
+        }
+        if (indicator1 != null) {
+            DrawingUtil.drawLineStep(g2, indicator1, camera, settings.getLineWidth(), d.getGridInputAssist());
+        }
+        if (indicator2 != null) {
+            DrawingUtil.drawLineStep(g2, indicator2, camera, settings.getLineWidth(), d.getGridInputAssist());
+        }
+        if (destinationSegment != null) {
+            DrawingUtil.drawLineStep(g2, destinationSegment, camera, settings.getLineWidth(), d.getGridInputAssist());
         }
     }
 

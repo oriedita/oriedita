@@ -20,6 +20,7 @@ public class MouseHandlerParallelDraw extends BaseMouseHandlerInputRestricted {
     private Point targetPoint;
     private LineSegment parallelSegment;
     private LineSegment destinationSegment;
+    private LineSegment resultSegment;
     private Step currentStep = Step.SELECT_TARGET_POINT;
 
     private enum Step {
@@ -42,36 +43,26 @@ public class MouseHandlerParallelDraw extends BaseMouseHandlerInputRestricted {
     public void mouseDragged(Point p0) { highlightSelection(p0); }
 
     public void mouseReleased(Point p0) {
-        Point p = d.getCamera().TV2object(p0);
-
         switch (currentStep) {
             case SELECT_TARGET_POINT: {
                 if (targetPoint == null) return;
-                if (p.distance(targetPoint) < d.getSelectionDistance()) {
-                    d.lineStepAdd(new LineSegment(targetPoint, targetPoint, d.getLineColor()));
-                    currentStep = Step.SELECT_PARALLEL_SEGMENT;
-                }
+                currentStep = Step.SELECT_PARALLEL_SEGMENT;
                 return;
             }
             case SELECT_PARALLEL_SEGMENT: {
                 if (parallelSegment == null) return;
-                if (OritaCalc.determineLineSegmentDistance(p, parallelSegment) < d.getSelectionDistance()) {
-                    d.lineStepAdd(parallelSegment);
-                    currentStep = Step.SELECT_DESTINATION;
-                }
+                currentStep = Step.SELECT_DESTINATION;
                 return;
             }
             case SELECT_DESTINATION: {
                 if (destinationSegment == null) return;
-                d.lineStepAdd(destinationSegment);
                 LineSegment s = new LineSegment(targetPoint, new Point(
                         targetPoint.getX() + parallelSegment.determineBX() - parallelSegment.determineAX(),
                         targetPoint.getY() + parallelSegment.determineBY() - parallelSegment.determineAY()));
 
-                if (s_step_additional_intersection(2, s, destinationSegment, d.getLineColor()) > 0) {
-                    d.addLineSegment(d.getLineStep().get(2));
+                if (s_step_additional_intersection(s, destinationSegment, d.getLineColor()) > 0) {
+                    d.addLineSegment(resultSegment);
                     d.record();
-                    d.getLineStep().clear();
                     reset();
                 }
             }
@@ -79,8 +70,6 @@ public class MouseHandlerParallelDraw extends BaseMouseHandlerInputRestricted {
     }
 
     public void highlightSelection(Point p0) {
-        if (d.getLineStep().isEmpty() && currentStep != Step.SELECT_TARGET_POINT) reset();
-
         Point p = d.getCamera().TV2object(p0);
         switch (currentStep) {
             case SELECT_TARGET_POINT: {
@@ -109,7 +98,7 @@ public class MouseHandlerParallelDraw extends BaseMouseHandlerInputRestricted {
      * extends the line segment s_o to the intersection of s_k while keeping Point a as it is. Returns 1 on success,
      * -500 on failure to add due to some inconvenience.
      */
-    public int s_step_additional_intersection(int i_e_d, LineSegment s_o, LineSegment s_k, LineColor icolo) {
+    public int s_step_additional_intersection(LineSegment s_o, LineSegment s_k, LineColor icolo) {
 
         Point cross_point = new Point();
 
@@ -131,7 +120,7 @@ public class MouseHandlerParallelDraw extends BaseMouseHandlerInputRestricted {
         LineSegment add_sen = new LineSegment(cross_point, s_o.getA(), icolo);
 
         if (Epsilon.high.gt0(add_sen.determineLength())) {
-            d.getLineStep().set(i_e_d, add_sen);
+            resultSegment = add_sen;
             return 1;
         }
 
@@ -141,21 +130,14 @@ public class MouseHandlerParallelDraw extends BaseMouseHandlerInputRestricted {
     @Override
     public void drawPreview(Graphics2D g2, Camera camera, DrawingSettings settings) {
         super.drawPreview(g2, camera, settings);
-        switch (currentStep) {
-            case SELECT_TARGET_POINT: {
-                if (targetPoint == null) return;
-                DrawingUtil.drawStepVertex(g2, targetPoint, d.getLineColor(), camera, d.getGridInputAssist());
-                return;
-            }
-            case SELECT_PARALLEL_SEGMENT: {
-                if (parallelSegment == null) return;
-                DrawingUtil.drawLineStep(g2, parallelSegment, camera, settings.getLineWidth(), d.getGridInputAssist());
-                return;
-            }
-            case SELECT_DESTINATION: {
-                if (destinationSegment == null) return;
-                DrawingUtil.drawLineStep(g2, destinationSegment, camera, settings.getLineWidth(), d.getGridInputAssist());
-            }
+        if (targetPoint != null) {
+            DrawingUtil.drawStepVertex(g2, targetPoint, d.getLineColor(), camera, d.getGridInputAssist());
+        }
+        if (parallelSegment != null) {
+            DrawingUtil.drawLineStep(g2, parallelSegment, camera, settings.getLineWidth(), d.getGridInputAssist());
+        }
+        if (destinationSegment != null) {
+            DrawingUtil.drawLineStep(g2, destinationSegment, camera, settings.getLineWidth(), d.getGridInputAssist());
         }
     }
 
@@ -165,5 +147,6 @@ public class MouseHandlerParallelDraw extends BaseMouseHandlerInputRestricted {
         targetPoint = null;
         parallelSegment = null;
         destinationSegment = null;
+        resultSegment = null;
     }
 }

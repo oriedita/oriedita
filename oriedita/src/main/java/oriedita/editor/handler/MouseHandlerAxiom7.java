@@ -52,19 +52,16 @@ public class MouseHandlerAxiom7 extends BaseMouseHandlerInputRestricted{
         switch(currentStep) {
             case SELECT_TARGET_POINT: {
                 if (targetPoint == null) return;
-                d.lineStepAdd(new LineSegment(targetPoint, targetPoint, d.getLineColor()));
                 currentStep = Step.SELECT_TARGET_SEGMENT;
                 return;
             }
             case SELECT_TARGET_SEGMENT: {
                 if (targetSegment == null) return;
-                d.lineStepAdd(targetSegment);
                 currentStep = Step.SELECT_PERPENDICULAR_SEGMENT;
                 return;
             }
             case SELECT_PERPENDICULAR_SEGMENT: {
                 if (perpendicularSegment == null) return;
-                d.lineStepAdd(perpendicularSegment);
                 currentStep = Step.SHOW_INDICATORS;
             }
             case SHOW_INDICATORS: {
@@ -81,13 +78,11 @@ public class MouseHandlerAxiom7 extends BaseMouseHandlerInputRestricted{
 
                     d.addLineSegment(s);
                     d.record();
-                    d.getLineStep().clear();
                     reset();
                     return;
                 }
 
                 if (destinationSegment == null) return;
-                d.lineStepAdd(destinationSegment);
                 currentStep = Step.SELECT_DESTINATION;
             }
             case SELECT_DESTINATION: {
@@ -99,15 +94,12 @@ public class MouseHandlerAxiom7 extends BaseMouseHandlerInputRestricted{
                 LineSegment result = getExtendedSegment(midTemp, destinationSegment, d.getLineColor());
                 d.addLineSegment(result);
                 d.record();
-                d.getLineStep().clear();
                 reset();
             }
         }
     }
 
     public void highlightSelection(Point p0){
-        if (d.getLineStep().isEmpty() && currentStep != Step.SELECT_TARGET_POINT) reset();
-
         Point p = d.getCamera().TV2object(p0);
         switch (currentStep) {
             case SELECT_TARGET_POINT: {
@@ -149,12 +141,8 @@ public class MouseHandlerAxiom7 extends BaseMouseHandlerInputRestricted{
 
         Point mid = OritaCalc.midPoint(targetPoint, OritaCalc.findIntersection(extendLine, targetSegment));
 
-        LineSegment s1 = OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), new LineSegment(mid, OritaCalc.findProjection(OritaCalc.moveParallel(extendLine, 1), mid), LineColor.PURPLE_8));
-        LineSegment s2 = OritaCalc.fullExtendUntilHit(d .getFoldLineSet(), new LineSegment(mid, OritaCalc.findProjection(OritaCalc.moveParallel(extendLine, -1), mid), LineColor.PURPLE_8));
-        indicator1 = s1.clone();
-        indicator2 = s2.clone();
-        d.lineStepAdd(s1);
-        d.lineStepAdd(s2);
+        indicator1 = OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), new LineSegment(mid, OritaCalc.findProjection(OritaCalc.moveParallel(extendLine, 1), mid), LineColor.PURPLE_8));
+        indicator2 = OritaCalc.fullExtendUntilHit(d .getFoldLineSet(), new LineSegment(mid, OritaCalc.findProjection(OritaCalc.moveParallel(extendLine, -1), mid), LineColor.PURPLE_8));
         return mid;
     }
 
@@ -188,26 +176,23 @@ public class MouseHandlerAxiom7 extends BaseMouseHandlerInputRestricted{
     @Override
     public void drawPreview(Graphics2D g2, Camera camera, DrawingSettings settings) {
         super.drawPreview(g2, camera, settings);
-        switch (currentStep) {
-            case SELECT_TARGET_POINT: {
-                if (targetPoint == null) return;
-                DrawingUtil.drawStepVertex(g2, targetPoint, d.getLineColor(), camera, d.getGridInputAssist());
-                return;
-            }
-            case SELECT_TARGET_SEGMENT: {
-                if (targetSegment == null) return;
-                DrawingUtil.drawLineStep(g2, targetSegment, camera, settings.getLineWidth(), d.getGridInputAssist());
-                return;
-            }
-            case SELECT_PERPENDICULAR_SEGMENT: {
-                if (perpendicularSegment == null) return;
-                DrawingUtil.drawLineStep(g2, perpendicularSegment, camera, settings.getLineWidth(), d.getGridInputAssist());
-                return;
-            }
-            case SELECT_DESTINATION_OR_INDICATOR: {
-                if (destinationSegment == null) return;
-                DrawingUtil.drawLineStep(g2, destinationSegment, camera, settings.getLineWidth(), d.getGridInputAssist());
-            }
+        if (targetPoint != null) {
+            DrawingUtil.drawStepVertex(g2, targetPoint, d.getLineColor(), camera, d.getGridInputAssist());
+        }
+        if (targetSegment != null) {
+            DrawingUtil.drawLineStep(g2, targetSegment, camera, settings.getLineWidth(), d.getGridInputAssist());
+        }
+        if (perpendicularSegment != null) {
+            DrawingUtil.drawLineStep(g2, perpendicularSegment, camera, settings.getLineWidth(), d.getGridInputAssist());
+        }
+        if (indicator1 != null) {
+            DrawingUtil.drawLineStep(g2, indicator1, camera, settings.getLineWidth(), d.getGridInputAssist());
+        }
+        if (indicator2 != null) {
+            DrawingUtil.drawLineStep(g2, indicator2, camera, settings.getLineWidth(), d.getGridInputAssist());
+        }
+        if (destinationSegment != null) {
+            DrawingUtil.drawLineStep(g2, destinationSegment, camera, settings.getLineWidth(), d.getGridInputAssist());
         }
     }
 
