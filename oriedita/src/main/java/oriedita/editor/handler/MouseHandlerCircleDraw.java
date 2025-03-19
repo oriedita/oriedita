@@ -71,11 +71,7 @@ public class MouseHandlerCircleDraw extends BaseMouseHandler {
 
     @Override
     public void drawPreview(Graphics2D g2, Camera camera, DrawingSettings settings) {
-        if (previewCircle != null) {
             DrawingUtil.drawCircleStep(g2, previewCircle, camera);
-        }
-        if (previewLine != null) {
             DrawingUtil.drawLineStep(g2, previewLine, camera, settings.getLineWidth(), d.getGridInputAssist());
-        }
     }
 }
