@@ -65,7 +65,7 @@ public class MouseHandlerAxiom5 extends BaseMouseHandlerInputRestricted{
             }
             case SELECT_PIVOT_POINT: {
                 if (pivotPoint == null) return;
-                currentStep = Step.SHOW_INDICATORS;
+                currentStep = Step.SHOW_INDICATORS; // Continue immediately
             }
             case SHOW_INDICATORS: {
                 double radius = OritaCalc.distance(targetPoint, pivotPoint);
@@ -88,7 +88,7 @@ public class MouseHandlerAxiom5 extends BaseMouseHandlerInputRestricted{
                 }
 
                 if (destinationSegment == null) return;
-                currentStep = Step.SELECT_DESTINATION;
+                currentStep = Step.SELECT_DESTINATION;  // Continue immediately
             }
             case SELECT_DESTINATION: {
                 Point intersectPoint1 = OritaCalc.findIntersection(indicator1, destinationSegment);

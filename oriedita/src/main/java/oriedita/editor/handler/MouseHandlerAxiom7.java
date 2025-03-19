@@ -62,7 +62,7 @@ public class MouseHandlerAxiom7 extends BaseMouseHandlerInputRestricted{
             }
             case SELECT_PERPENDICULAR_SEGMENT: {
                 if (perpendicularSegment == null) return;
-                currentStep = Step.SHOW_INDICATORS;
+                currentStep = Step.SHOW_INDICATORS; // Continue immediately
             }
             case SHOW_INDICATORS: {
                 midPoint = drawAxiom7FoldIndicators(targetPoint, targetSegment, perpendicularSegment);
@@ -83,7 +83,7 @@ public class MouseHandlerAxiom7 extends BaseMouseHandlerInputRestricted{
                 }
 
                 if (destinationSegment == null) return;
-                currentStep = Step.SELECT_DESTINATION;
+                currentStep = Step.SELECT_DESTINATION;  // Continue immediately
             }
             case SELECT_DESTINATION: {
                 LineSegment midTemp = new LineSegment(

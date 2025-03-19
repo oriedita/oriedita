@@ -56,8 +56,8 @@ public class MouseHandlerPerpendicularDraw extends BaseMouseHandlerInputRestrict
             }
             case SELECT_PERPENDICULAR_SEGMENT:{
                 if(perpendicularSegment == null) return;
-                currentStep = Step.CHECK_IF_NON_BASE;
-                }
+                currentStep = Step.CHECK_IF_NON_BASE;   // Continue immediately
+            }
             case CHECK_IF_NON_BASE: {
                 if (OritaCalc.isPointWithinLineSpan(targetPoint, perpendicularSegment)) {
                     indicator1 = OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), new LineSegment(targetPoint, OritaCalc.findProjection(OritaCalc.moveParallel(perpendicularSegment, 1.0), targetPoint), LineColor.PURPLE_8));
@@ -65,7 +65,7 @@ public class MouseHandlerPerpendicularDraw extends BaseMouseHandlerInputRestrict
                     currentStep = Step.SELECT_DESTINATION_OR_INDICATOR;
                     return;
                 } else {
-                    currentStep = Step.SELECT_DESTINATION_NON_BASE;
+                    currentStep = Step.SELECT_DESTINATION_NON_BASE; // Continue immediately
                 }
             }
             case SELECT_DESTINATION_NON_BASE: {
@@ -93,7 +93,7 @@ public class MouseHandlerPerpendicularDraw extends BaseMouseHandlerInputRestrict
                 }
 
                 if (destinationSegment == null) return;
-                currentStep = Step.SELECT_DESTINATION;
+                currentStep = Step.SELECT_DESTINATION;  // Continue immediately
             }
             case SELECT_DESTINATION: {
                 LineSegment temp = new LineSegment(targetPoint,
