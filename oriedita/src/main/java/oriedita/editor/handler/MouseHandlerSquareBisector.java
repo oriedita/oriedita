@@ -21,7 +21,7 @@ import java.util.Map;
 @Handles(MouseMode.SQUARE_BISECTOR_7)
 public class MouseHandlerSquareBisector extends BaseMouseHandlerInputRestricted {
     private Point p;
-    private StepBranchedLinkedList steps = new StepBranchedLinkedList(Step.SELECT_2L_OR_3P, new StepNode(action_2L_or_3P()));
+    private StepBranchedLinkedList steps = new StepBranchedLinkedList(Step.SELECT_2L_OR_3P, this::action_2L_or_3P);
 
     private int counter_3P = 0;
     private int counter_2L = 0;
@@ -67,20 +67,15 @@ public class MouseHandlerSquareBisector extends BaseMouseHandlerInputRestricted 
         private StepNode currentNode;
         private Step currentStep;
 
-        public StepBranchedLinkedList(Step step, StepNode stepNode) {
+        public StepBranchedLinkedList(Step step, Runnable action) {
             this.nodes = new HashMap<>();
-            this.currentNode = stepNode;
+            this.currentNode = new StepNode(action);
             this.currentStep = step;
-            nodes.put(step, stepNode);
-        }
-
-        public Step getCurrentStep() {
-            return currentStep;
+            nodes.put(currentStep, currentNode);
         }
 
         public void addNode(Step step, Runnable action) {
-            StepNode newNode = new StepNode(action);
-            nodes.put(step, newNode);
+            nodes.put(step, new StepNode(action));
         }
 
         public void connectNodes(Step step1, Step transition, Step step2) {
@@ -97,144 +92,122 @@ public class MouseHandlerSquareBisector extends BaseMouseHandlerInputRestricted 
         }
 
         public void moveForwardAndRun(Step step) {
-            if (currentNode == null) return;
-            if (!currentNode.nextNodes.containsKey(step)) return;
-            currentNode = currentNode.nextNodes.get(step);
+            moveForward(step);
             runCurrentAction();
         }
 
-        public void runCurrentAction() {
-            currentNode.run();
+        public Step getCurrentStep() { return currentStep; }
+
+        public void runCurrentAction() { currentNode.run(); }
+    }
+
+    private void action_2L_or_3P() {
+        if (pointsList_3P.get(counter_3P) != null) {
+            counter_3P++;
+            steps.moveForward(Step.SELECT_3P);
+        }
+        if (segmentsList_2L.get(counter_2L) != null) {
+            counter_2L++;
+            steps.moveForward(Step.SELECT_2L);
         }
     }
 
-    private Runnable action_2L_or_3P() {
-        return () -> {
-            if (pointsList_3P.get(counter_3P) != null) {
-                counter_3P++;
-                steps.moveForward(Step.SELECT_3P);
-//                currentStep = Step.SELECT_3P;
-            }
-            if (segmentsList_2L.get(counter_2L) != null) {
-                counter_2L++;
-                steps.moveForward(Step.SELECT_2L);
-//                currentStep = Step.SELECT_2L;
-            }
-        };
+    private void action_select_3P() {
+        if(pointsList_3P.get(counter_3P) == null) return;
+        counter_3P++;
+        if (counter_3P < 3) return;
+        steps.moveForward(Step.SELECT_DESTINATION_3P);
     }
 
-    private Runnable action_select_3P() {
-        return () -> {
-            if(pointsList_3P.get(counter_3P) == null) return;
-            counter_3P++;
-            if (counter_3P < 3) return;
-            steps.moveForward(Step.SELECT_DESTINATION_3P);
-        };
+    private void action_destination_3P() {
+        if (destinationSegment_3P == null) return;
+
+        Point naisin = OritaCalc.center(pointsList_3P.get(0), pointsList_3P.get(1), pointsList_3P.get(2));
+        LineSegment add_sen2 = new LineSegment(pointsList_3P.get(1), naisin);
+        Point cross_point = OritaCalc.findIntersection(add_sen2, destinationSegment_3P);
+
+        LineSegment add_sen = new LineSegment(cross_point, pointsList_3P.get(1), d.getLineColor());
+        if (Epsilon.high.gt0(add_sen.determineLength())) {
+            d.addLineSegment(add_sen);
+            d.record();
+            reset();
+        }
     }
 
-    private Runnable action_destination_3P() {
-        return () -> {
-            if (destinationSegment_3P == null) return;
-
-            Point naisin = OritaCalc.center(pointsList_3P.get(0), pointsList_3P.get(1), pointsList_3P.get(2));
-            LineSegment add_sen2 = new LineSegment(pointsList_3P.get(1), naisin);
-            Point cross_point = OritaCalc.findIntersection(add_sen2, destinationSegment_3P);
-
-            LineSegment add_sen = new LineSegment(cross_point, pointsList_3P.get(1), d.getLineColor());
-            if (Epsilon.high.gt0(add_sen.determineLength())) {
-                d.addLineSegment(add_sen);
-                d.record();
-                reset();
-            }
-        };
+    private void action_select_2L() {
+        if(segmentsList_2L.get(counter_2L) == null) return;
+        counter_2L++;
+        if (counter_2L < 2) return;
+        steps.moveForwardAndRun(Step.CHECK_IF_PARALLEL);
     }
 
-    private Runnable action_select_2L() {
-        return () -> {
-            if(segmentsList_2L.get(counter_2L) == null) return;
-            counter_2L++;
-            if (counter_2L < 2) return;
-            steps.moveForwardAndRun(Step.CHECK_IF_PARALLEL);
-        };
+    private void action_check_if_parallel() {
+        if (OritaCalc.isLineSegmentParallel(segmentsList_2L.get(0), segmentsList_2L.get(1), Epsilon.UNKNOWN_1EN4) == OritaCalc.ParallelJudgement.NOT_PARALLEL) {
+            steps.moveForward(Step.SELECT_DESTINATION_2L_NP);
+        } else {
+            Point projectedPoint = OritaCalc.findProjection(segmentsList_2L.get(0), segmentsList_2L.get(1).getA());
+
+            // Get midpoint
+            Point midPoint = OritaCalc.midPoint(segmentsList_2L.get(1).getA(), projectedPoint);
+
+            // Draw purple indicators for bisector
+            LineSegment tempPerpenLine = new LineSegment(segmentsList_2L.get(1).getA(), projectedPoint);
+            indicatorsList_2L_P.set(0, OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), new LineSegment(midPoint, OritaCalc.findProjection(OritaCalc.moveParallel(tempPerpenLine, -1.0), midPoint), LineColor.PURPLE_8)));
+            indicatorsList_2L_P.set(1, OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), new LineSegment(midPoint, OritaCalc.findProjection(OritaCalc.moveParallel(tempPerpenLine, 1.0), midPoint), LineColor.PURPLE_8)));
+            steps.moveForward(Step.SELECT_DESTINATION_2L_P);
+        }
     }
 
-    private Runnable action_check_if_parallel() {
-        return () -> {
-            if (OritaCalc.isLineSegmentParallel(segmentsList_2L.get(0), segmentsList_2L.get(1), Epsilon.UNKNOWN_1EN4) == OritaCalc.ParallelJudgement.NOT_PARALLEL) {
-                steps.moveForward(Step.SELECT_DESTINATION_2L_NP);
-            } else {
-                Point projectedPoint = OritaCalc.findProjection(segmentsList_2L.get(0), segmentsList_2L.get(1).getA());
+    private void action_select_destination_2L_NP() {
+        if (destinationSegment_2L_NP == null) return;
 
-                // Get midpoint
-                Point midPoint = OritaCalc.midPoint(segmentsList_2L.get(1).getA(), projectedPoint);
+        Point intersection = OritaCalc.findIntersection(segmentsList_2L.get(0), segmentsList_2L.get(1));
 
-                // Draw purple indicators for bisector
-                LineSegment tempPerpenLine = new LineSegment(segmentsList_2L.get(1).getA(), projectedPoint);
-                indicatorsList_2L_P.set(0, OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), new LineSegment(midPoint, OritaCalc.findProjection(OritaCalc.moveParallel(tempPerpenLine, -1.0), midPoint), LineColor.PURPLE_8)));
-                indicatorsList_2L_P.set(1, OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), new LineSegment(midPoint, OritaCalc.findProjection(OritaCalc.moveParallel(tempPerpenLine, 1.0), midPoint), LineColor.PURPLE_8)));
-                steps.moveForward(Step.SELECT_DESTINATION_2L_P);
-            }
-        };
+        // Find another point by taking the center point of 3 points
+        Point center = OritaCalc.center(intersection, segmentsList_2L.get(0).determineFurthestEndpoint(intersection), segmentsList_2L.get(1).determineFurthestEndpoint(intersection));
+
+        // Make a temporary line to connect intersection and center
+        LineSegment tempBisect = new LineSegment(intersection, center);
+
+        // Find intersection of temp line to the destination line
+        Point cross_point = OritaCalc.findIntersection(tempBisect, destinationSegment_2L_NP);
+
+        // Draw the bisector
+        LineSegment destinationLine = new LineSegment(cross_point, intersection, d.getLineColor());
+        if (Epsilon.high.gt0(destinationLine.determineLength())) {
+            d.addLineSegment(destinationLine);
+            d.record();
+            reset();
+        }
     }
 
-    private Runnable action_select_destination_2L_NP() {
-        return () -> {
-            if (destinationSegment_2L_NP == null) return;
+    private void action_select_destination_2L_P() {
+        if (OritaCalc.determineLineSegmentDistance(p, indicatorsList_2L_P.get(0)) < d.getSelectionDistance() ||
+                OritaCalc.determineLineSegmentDistance(p, indicatorsList_2L_P.get(1)) < d.getSelectionDistance()) {
+            LineSegment s = OritaCalc.determineLineSegmentDistance(p, indicatorsList_2L_P.get(0)) < OritaCalc.determineLineSegmentDistance(p, indicatorsList_2L_P.get(1))
+                    ? indicatorsList_2L_P.get(0) : indicatorsList_2L_P.get(1);
+            s = new LineSegment(s.getB(), s.getA(), d.getLineColor());
+            s = OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), s).withColor(d.getLineColor());
+            d.addLineSegment(s);
+            d.record();
+            reset();
+            return;
+        }
 
-            Point intersection = OritaCalc.findIntersection(segmentsList_2L.get(0), segmentsList_2L.get(1));
+        if(destinationSegmentsList_2L_P.get(counter_2L_P) == null) return;
+        counter_2L_P++;
+        if (counter_2L_P != 2) return;
+        Point intersect1 = OritaCalc.findIntersection(indicatorsList_2L_P.get(0), destinationSegmentsList_2L_P.get(0));
+        Point intersect2 = OritaCalc.findIntersection(indicatorsList_2L_P.get(0), destinationSegmentsList_2L_P.get(1));
 
-            // Find another point by taking the center point of 3 points
-            /* 2 points that are not the intersection have to be far away from said intersection
-             * to prevent them from being the intersection themselves, which can cause problems when
-             * finding the triangle center.
-             */
-            Point center = OritaCalc.center(intersection, segmentsList_2L.get(0).determineFurthestEndpoint(intersection), segmentsList_2L.get(1).determineFurthestEndpoint(intersection));
+        // Draw the bisector
+        LineSegment bisector = new LineSegment(intersect1, intersect2, d.getLineColor());
 
-            // Make a temporary line to connect intersection and center
-            LineSegment tempBisect = new LineSegment(intersection, center);
-
-            // Find intersection of temp line to the destination line
-            Point cross_point = OritaCalc.findIntersection(tempBisect, destinationSegment_2L_NP);
-
-            // Draw the bisector
-            LineSegment destinationLine = new LineSegment(cross_point, intersection, d.getLineColor());
-            if (Epsilon.high.gt0(destinationLine.determineLength())) {
-                d.addLineSegment(destinationLine);
-                d.record();
-                reset();
-            }
-        };
-    }
-
-    private Runnable action_select_destination_2L_P() {
-        return () -> {
-            if (OritaCalc.determineLineSegmentDistance(p, indicatorsList_2L_P.get(0)) < d.getSelectionDistance() ||
-                    OritaCalc.determineLineSegmentDistance(p, indicatorsList_2L_P.get(1)) < d.getSelectionDistance()) {
-                LineSegment s = OritaCalc.determineLineSegmentDistance(p, indicatorsList_2L_P.get(0)) < OritaCalc.determineLineSegmentDistance(p, indicatorsList_2L_P.get(1))
-                        ? indicatorsList_2L_P.get(0) : indicatorsList_2L_P.get(1);
-                s = new LineSegment(s.getB(), s.getA(), d.getLineColor());
-                s = OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), s).withColor(d.getLineColor());
-                d.addLineSegment(s);
-                d.record();
-                reset();
-                return;
-            }
-
-            if(destinationSegmentsList_2L_P.get(counter_2L_P) == null) return;
-            counter_2L_P++;
-            if (counter_2L_P != 2) return;
-            Point intersect1 = OritaCalc.findIntersection(indicatorsList_2L_P.get(0), destinationSegmentsList_2L_P.get(0));
-            Point intersect2 = OritaCalc.findIntersection(indicatorsList_2L_P.get(0), destinationSegmentsList_2L_P.get(1));
-
-            // Draw the bisector
-            LineSegment bisector = new LineSegment(intersect1, intersect2, d.getLineColor());
-
-            if (Epsilon.high.gt0(bisector.determineLength())) {
-                d.addLineSegment(bisector);
-                d.record();
-                reset();
-            }
-        };
+        if (Epsilon.high.gt0(bisector.determineLength())) {
+            d.addLineSegment(bisector);
+            d.record();
+            reset();
+        }
     }
 
     //マウス操作(マウスを動かしたとき)を行う関数
@@ -332,13 +305,13 @@ public class MouseHandlerSquareBisector extends BaseMouseHandlerInputRestricted 
     }
 
     private void initializeSteps() {
-        steps = new StepBranchedLinkedList(Step.SELECT_2L_OR_3P, new StepNode(action_2L_or_3P()));
-        steps.addNode(Step.SELECT_3P, action_select_3P());
-        steps.addNode(Step.SELECT_DESTINATION_3P, action_destination_3P());
-        steps.addNode(Step.SELECT_2L, action_select_2L());
-        steps.addNode(Step.CHECK_IF_PARALLEL, action_check_if_parallel());
-        steps.addNode(Step.SELECT_DESTINATION_2L_NP, action_select_destination_2L_NP());
-        steps.addNode(Step.SELECT_DESTINATION_2L_P, action_select_destination_2L_P());
+        steps = new StepBranchedLinkedList(Step.SELECT_2L_OR_3P, this::action_2L_or_3P);
+        steps.addNode(Step.SELECT_3P, this::action_select_3P);
+        steps.addNode(Step.SELECT_DESTINATION_3P, this::action_destination_3P);
+        steps.addNode(Step.SELECT_2L, this::action_select_2L);
+        steps.addNode(Step.CHECK_IF_PARALLEL, this::action_check_if_parallel);
+        steps.addNode(Step.SELECT_DESTINATION_2L_NP, this::action_select_destination_2L_NP);
+        steps.addNode(Step.SELECT_DESTINATION_2L_P, this::action_select_destination_2L_P);
 
         steps.connectNodes(Step.SELECT_2L_OR_3P, Step.SELECT_3P, Step.SELECT_3P);
         steps.connectNodes(Step.SELECT_3P, Step.SELECT_DESTINATION_3P, Step.SELECT_DESTINATION_3P);
