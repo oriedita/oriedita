@@ -13,9 +13,7 @@ import origami.crease_pattern.element.Point;
 
 import java.awt.Graphics2D;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @ApplicationScoped
 @Handles(MouseMode.SQUARE_BISECTOR_7)
@@ -43,62 +41,8 @@ public class MouseHandlerSquareBisector extends BaseMouseHandlerInputRestricted 
         SELECT_2L,
         CHECK_IF_PARALLEL,
         SELECT_DESTINATION_2L_NP,
+        SHOW_INDICATORS_2L_P,
         SELECT_DESTINATION_2L_P,
-    }
-
-    private static class StepNode {
-        private final Runnable action;
-        Map<Step, StepNode> nextNodes;
-
-        public StepNode(Runnable action) {
-            this.action = action;
-            this.nextNodes = new HashMap<>();
-        }
-
-        public void addNext(Step step, StepNode stepNode) {
-            nextNodes.put(step, stepNode);
-        }
-
-        public void run() { action.run(); }
-    }
-
-    private static class StepBranchedLinkedList {
-        private final Map<Step, StepNode> nodes;
-        private StepNode currentNode;
-        private Step currentStep;
-
-        public StepBranchedLinkedList(Step step, Runnable action) {
-            this.nodes = new HashMap<>();
-            this.currentNode = new StepNode(action);
-            this.currentStep = step;
-            nodes.put(currentStep, currentNode);
-        }
-
-        public void addNode(Step step, Runnable action) {
-            nodes.put(step, new StepNode(action));
-        }
-
-        public void connectNodes(Step step1, Step transition, Step step2) {
-            if (nodes.containsKey(step1) && nodes.containsKey(step2)) {
-                nodes.get(step1).addNext(transition, nodes.get(step2));
-            }
-        }
-
-        public void moveForward(Step step) {
-            if (currentNode == null) return;
-            if (!currentNode.nextNodes.containsKey(step)) return;
-            currentNode = currentNode.nextNodes.get(step);
-            currentStep = step;
-        }
-
-        public void moveForwardAndRun(Step step) {
-            moveForward(step);
-            runCurrentAction();
-        }
-
-        public Step getCurrentStep() { return currentStep; }
-
-        public void runCurrentAction() { currentNode.run(); }
     }
 
     private void action_2L_or_3P() {
@@ -145,17 +89,21 @@ public class MouseHandlerSquareBisector extends BaseMouseHandlerInputRestricted 
         if (OritaCalc.isLineSegmentParallel(segmentsList_2L.get(0), segmentsList_2L.get(1), Epsilon.UNKNOWN_1EN4) == OritaCalc.ParallelJudgement.NOT_PARALLEL) {
             steps.moveForward(Step.SELECT_DESTINATION_2L_NP);
         } else {
-            Point projectedPoint = OritaCalc.findProjection(segmentsList_2L.get(0), segmentsList_2L.get(1).getA());
-
-            // Get midpoint
-            Point midPoint = OritaCalc.midPoint(segmentsList_2L.get(1).getA(), projectedPoint);
-
-            // Draw purple indicators for bisector
-            LineSegment tempPerpenLine = new LineSegment(segmentsList_2L.get(1).getA(), projectedPoint);
-            indicatorsList_2L_P.set(0, OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), new LineSegment(midPoint, OritaCalc.findProjection(OritaCalc.moveParallel(tempPerpenLine, -1.0), midPoint), LineColor.PURPLE_8)));
-            indicatorsList_2L_P.set(1, OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), new LineSegment(midPoint, OritaCalc.findProjection(OritaCalc.moveParallel(tempPerpenLine, 1.0), midPoint), LineColor.PURPLE_8)));
-            steps.moveForward(Step.SELECT_DESTINATION_2L_P);
+            steps.moveForwardAndRun(Step.SHOW_INDICATORS_2L_P);
         }
+    }
+
+    private void action_show_indicators_2L_P() {
+        Point projectedPoint = OritaCalc.findProjection(segmentsList_2L.get(0), segmentsList_2L.get(1).getA());
+
+        // Get midpoint
+        Point midPoint = OritaCalc.midPoint(segmentsList_2L.get(1).getA(), projectedPoint);
+
+        // Draw purple indicators for bisector
+        LineSegment tempPerpenLine = new LineSegment(segmentsList_2L.get(1).getA(), projectedPoint);
+        indicatorsList_2L_P.set(0, OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), new LineSegment(midPoint, OritaCalc.findProjection(OritaCalc.moveParallel(tempPerpenLine, -1.0), midPoint), LineColor.PURPLE_8)));
+        indicatorsList_2L_P.set(1, OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), new LineSegment(midPoint, OritaCalc.findProjection(OritaCalc.moveParallel(tempPerpenLine, 1.0), midPoint), LineColor.PURPLE_8)));
+        steps.moveForward(Step.SELECT_DESTINATION_2L_P);
     }
 
     private void action_select_destination_2L_NP() {
@@ -210,24 +158,25 @@ public class MouseHandlerSquareBisector extends BaseMouseHandlerInputRestricted 
         }
     }
 
-    //マウス操作(マウスを動かしたとき)を行う関数
-    public void mouseMoved(Point p0) { highlightSelection(p0); }
+    public void mouseMoved(Point p0) {
+        p = d.getCamera().TV2object(p0);
+        highlightSelection();
+    }
 
-    //マウス操作(ボタンを押したとき)時の作業
     public void mousePressed(Point p0) {}
 
-    //マウス操作(ドラッグしたとき)を行う関数
-    public void mouseDragged(Point p0) { highlightSelection(p0); }
+    public void mouseDragged(Point p0) {
+        p = d.getCamera().TV2object(p0);
+        highlightSelection();
+    }
 
-    //マウス操作(ボタンを離したとき)を行う関数
     public void mouseReleased(Point p0) {
         p = d.getCamera().TV2object(p0);
         steps.runCurrentAction();
     }
 
-    public void highlightSelection(Point p0){
-        p = d.getCamera().TV2object(p0);
-        switch (steps.getCurrentStep()) {
+    public void highlightSelection(){
+        switch ((Step) steps.getCurrentStep()) {
             case SELECT_2L_OR_3P: {
                 double pointDistance = p.distance(d.getClosestPoint(p));
                 double segmentDistance = OritaCalc.determineLineSegmentDistance(p, d.getClosestLineSegment(p));
@@ -311,14 +260,28 @@ public class MouseHandlerSquareBisector extends BaseMouseHandlerInputRestricted 
         steps.addNode(Step.SELECT_2L, this::action_select_2L);
         steps.addNode(Step.CHECK_IF_PARALLEL, this::action_check_if_parallel);
         steps.addNode(Step.SELECT_DESTINATION_2L_NP, this::action_select_destination_2L_NP);
+        steps.addNode(Step.SHOW_INDICATORS_2L_P, this::action_show_indicators_2L_P);
         steps.addNode(Step.SELECT_DESTINATION_2L_P, this::action_select_destination_2L_P);
 
-        steps.connectNodes(Step.SELECT_2L_OR_3P, Step.SELECT_3P, Step.SELECT_3P);
-        steps.connectNodes(Step.SELECT_3P, Step.SELECT_DESTINATION_3P, Step.SELECT_DESTINATION_3P);
+        {
+            select_3_points: {
+                steps.connectNodes(Step.SELECT_2L_OR_3P, Step.SELECT_3P);
+                steps.connectNodes(Step.SELECT_3P, Step.SELECT_DESTINATION_3P);
+            }
 
-        steps.connectNodes(Step.SELECT_2L_OR_3P, Step.SELECT_2L, Step.SELECT_2L);
-        steps.connectNodes(Step.SELECT_2L, Step.CHECK_IF_PARALLEL, Step.CHECK_IF_PARALLEL);
-        steps.connectNodes(Step.CHECK_IF_PARALLEL, Step.SELECT_DESTINATION_2L_NP, Step.SELECT_DESTINATION_2L_NP);
-        steps.connectNodes(Step.CHECK_IF_PARALLEL, Step.SELECT_DESTINATION_2L_P, Step.SELECT_DESTINATION_2L_P);
+            select_2_lines: {
+                steps.connectNodes(Step.SELECT_2L_OR_3P, Step.SELECT_2L);
+                steps.connectNodes(Step.SELECT_2L, Step.CHECK_IF_PARALLEL);
+
+                not_parallel: {
+                    steps.connectNodes(Step.CHECK_IF_PARALLEL, Step.SELECT_DESTINATION_2L_NP);
+                }
+
+                parallel: {
+                    steps.connectNodes(Step.CHECK_IF_PARALLEL, Step.SHOW_INDICATORS_2L_P);
+                    steps.connectNodes(Step.SHOW_INDICATORS_2L_P, Step.SELECT_DESTINATION_2L_P);
+                }
+            }
+        }
     }
 }
