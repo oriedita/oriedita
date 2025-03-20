@@ -17,7 +17,7 @@ import java.awt.Graphics2D;
 @Handles(MouseMode.PARALLEL_DRAW_40)
 public class MouseHandlerParallelDraw extends BaseMouseHandlerInputRestricted {
 
-    private StepBranchedLinkedList<Step> steps = new StepBranchedLinkedList<>(Step.SELECT_TARGET_POINT, this::action_select_target_point);
+    private StepGraph<Step> steps = new StepGraph<>(Step.SELECT_TARGET_POINT, this::action_select_target_point);
 
     private Point targetPoint;
     private LineSegment parallelSegment;
@@ -120,7 +120,7 @@ public class MouseHandlerParallelDraw extends BaseMouseHandlerInputRestricted {
     }
 
     private void initializeSteps() {
-        steps = new StepBranchedLinkedList<>(Step.SELECT_TARGET_POINT, this::action_select_target_point);
+        steps = new StepGraph<>(Step.SELECT_TARGET_POINT, this::action_select_target_point);
         steps.addNode(Step.SELECT_PARALLEL_SEGMENT, this::action_select_parallel_segment);
         steps.addNode(Step.SELECT_DESTINATION, this::action_select_destination);
 
@@ -128,18 +128,18 @@ public class MouseHandlerParallelDraw extends BaseMouseHandlerInputRestricted {
         steps.connectNodes(Step.SELECT_PARALLEL_SEGMENT, Step.SELECT_DESTINATION);
     }
 
-    private void action_select_target_point() {
-        if (targetPoint == null) return;
-        steps.moveForward(Step.SELECT_PARALLEL_SEGMENT);
+    private Step action_select_target_point() {
+        if (targetPoint == null) return null;
+        return Step.SELECT_PARALLEL_SEGMENT;
     }
 
-    private void action_select_parallel_segment() {
-        if (parallelSegment == null) return;
-        steps.moveForward(Step.SELECT_DESTINATION);
+    private Step action_select_parallel_segment() {
+        if (parallelSegment == null) return null;
+        return Step.SELECT_DESTINATION;
     }
 
-    private void action_select_destination() {
-        if (destinationSegment == null) return;
+    private Step action_select_destination() {
+        if (destinationSegment == null) return null;
         LineSegment s = new LineSegment(targetPoint, new Point(
                 targetPoint.getX() + parallelSegment.determineBX() - parallelSegment.determineAX(),
                 targetPoint.getY() + parallelSegment.determineBY() - parallelSegment.determineAY()));
@@ -149,5 +149,6 @@ public class MouseHandlerParallelDraw extends BaseMouseHandlerInputRestricted {
             d.record();
             reset();
         }
+        return null;
     }
 }

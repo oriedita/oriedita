@@ -2,13 +2,14 @@ package oriedita.editor.handler;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 
-public class StepBranchedLinkedList<T extends Enum<T>> {
+public class StepGraph<T extends Enum<T>> {
     private final Map<T, StepNode<T>> nodes;
     private StepNode<T> currentNode;
     private T currentStep;
 
-    public StepBranchedLinkedList(T step, Runnable action) {
+    public StepGraph(T step, Supplier<T> action) {
         this.currentNode = new StepNode<>(action);
         this.currentStep = step;
         this.nodes = new HashMap<>();
@@ -17,9 +18,7 @@ public class StepBranchedLinkedList<T extends Enum<T>> {
 
     public T getCurrentStep() { return currentStep; }
 
-    public void runCurrentAction() { currentNode.run(); }
-
-    public void addNode(T step, Runnable action) {
+    public void addNode(T step, Supplier<T> action) {
         nodes.put(step, new StepNode<>(action));
     }
 
@@ -28,15 +27,11 @@ public class StepBranchedLinkedList<T extends Enum<T>> {
         nodes.get(from).addNext(to, nodes.get(to));
     }
 
-    public void moveForward(T step) {
+    public void runCurrentAction() {
+        T step = currentNode.run();
         if (currentNode == null) return;
         if (!currentNode.nextNodes.containsKey(step)) return;
         currentNode = currentNode.nextNodes.get(step);
         currentStep = step;
-    }
-
-    public void moveForwardAndRun(T step) {
-        moveForward(step);
-        runCurrentAction();
     }
 }

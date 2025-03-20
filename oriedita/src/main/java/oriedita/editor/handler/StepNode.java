@@ -2,12 +2,13 @@ package oriedita.editor.handler;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 
- public class StepNode <T extends Enum<T>> {
-     private final Runnable action;
+public class StepNode <T extends Enum<T>> {
+     private final Supplier<T> action;
      Map<T, StepNode<T>> nextNodes;
 
-     public StepNode(Runnable action) {
+     public StepNode(Supplier<T> action) {
          this.action = action;
          this.nextNodes = new HashMap<>();
      }
@@ -16,5 +17,5 @@ import java.util.Map;
          nextNodes.put(step, stepNode);
      }
 
-     public void run() { action.run(); }
+     public T run() { return action.get(); }
 }
