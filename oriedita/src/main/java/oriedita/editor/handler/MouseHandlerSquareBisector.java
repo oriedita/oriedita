@@ -19,7 +19,7 @@ import java.util.List;
 @Handles(MouseMode.SQUARE_BISECTOR_7)
 public class MouseHandlerSquareBisector extends BaseMouseHandlerInputRestricted {
     private Point p;
-    private StepBranchedLinkedList steps = new StepBranchedLinkedList(Step.SELECT_2L_OR_3P, this::action_2L_or_3P);
+    private StepBranchedLinkedList<Step> steps = new StepBranchedLinkedList<>(Step.SELECT_2L_OR_3P, this::action_2L_or_3P);
 
     private int counter_3P = 0;
     private int counter_2L = 0;
@@ -141,7 +141,7 @@ public class MouseHandlerSquareBisector extends BaseMouseHandlerInputRestricted 
     }
 
     private void initializeSteps() {
-        steps = new StepBranchedLinkedList(Step.SELECT_2L_OR_3P, this::action_2L_or_3P);
+        steps = new StepBranchedLinkedList<>(Step.SELECT_2L_OR_3P, this::action_2L_or_3P);
         steps.addNode(Step.SELECT_3P, this::action_select_3P);
         steps.addNode(Step.SELECT_DESTINATION_3P, this::action_destination_3P);
         steps.addNode(Step.SELECT_2L, this::action_select_2L);

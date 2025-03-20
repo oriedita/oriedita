@@ -17,7 +17,7 @@ import java.awt.Graphics2D;
 @Handles(MouseMode.PARALLEL_DRAW_40)
 public class MouseHandlerParallelDraw extends BaseMouseHandlerInputRestricted {
 
-    private StepBranchedLinkedList steps = new StepBranchedLinkedList(Step.SELECT_TARGET_POINT, this::action_select_target_point);
+    private StepBranchedLinkedList<Step> steps = new StepBranchedLinkedList<>(Step.SELECT_TARGET_POINT, this::action_select_target_point);
 
     private Point targetPoint;
     private LineSegment parallelSegment;
@@ -120,7 +120,7 @@ public class MouseHandlerParallelDraw extends BaseMouseHandlerInputRestricted {
     }
 
     private void initializeSteps() {
-        steps = new StepBranchedLinkedList(Step.SELECT_TARGET_POINT, this::action_select_target_point);
+        steps = new StepBranchedLinkedList<>(Step.SELECT_TARGET_POINT, this::action_select_target_point);
         steps.addNode(Step.SELECT_PARALLEL_SEGMENT, this::action_select_parallel_segment);
         steps.addNode(Step.SELECT_DESTINATION, this::action_select_destination);
 

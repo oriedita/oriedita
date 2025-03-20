@@ -3,16 +3,16 @@ package oriedita.editor.handler;
 import java.util.HashMap;
 import java.util.Map;
 
- public class StepNode {
+ public class StepNode <T extends Enum<T>> {
      private final Runnable action;
-     Map<Enum<?>, StepNode> nextNodes;
+     Map<T, StepNode<T>> nextNodes;
 
      public StepNode(Runnable action) {
          this.action = action;
          this.nextNodes = new HashMap<>();
      }
 
-     public void addNext(Enum<?> step, StepNode stepNode) {
+     public void addNext(T step, StepNode<T> stepNode) {
          nextNodes.put(step, stepNode);
      }
 
