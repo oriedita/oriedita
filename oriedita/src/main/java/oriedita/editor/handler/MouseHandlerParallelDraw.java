@@ -46,7 +46,7 @@ public class MouseHandlerParallelDraw extends BaseMouseHandlerInputRestricted {
 
     public void highlightSelection(Point p0) {
         Point p = d.getCamera().TV2object(p0);
-        switch ((Step) steps.getCurrentStep()) {
+        switch (steps.getCurrentStep()) {
             case SELECT_TARGET_POINT: {
                 if (p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
                     targetPoint = d.getClosestPoint(p);

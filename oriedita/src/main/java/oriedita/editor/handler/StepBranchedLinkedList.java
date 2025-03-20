@@ -20,7 +20,7 @@ public class StepBranchedLinkedList<T extends Enum<T>> {
     public void runCurrentAction() { currentNode.run(); }
 
     public void addNode(T step, Runnable action) {
-        nodes.put(step, new StepNode<T>(action));
+        nodes.put(step, new StepNode<>(action));
     }
 
     public void connectNodes(T from, T to) {

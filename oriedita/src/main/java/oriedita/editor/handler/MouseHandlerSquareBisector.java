@@ -63,7 +63,7 @@ public class MouseHandlerSquareBisector extends BaseMouseHandlerInputRestricted 
     }
 
     public void highlightSelection(){
-        switch ((Step) steps.getCurrentStep()) {
+        switch (steps.getCurrentStep()) {
             case SELECT_2L_OR_3P: {
                 double pointDistance = p.distance(d.getClosestPoint(p));
                 double segmentDistance = OritaCalc.determineLineSegmentDistance(p, d.getClosestLineSegment(p));
