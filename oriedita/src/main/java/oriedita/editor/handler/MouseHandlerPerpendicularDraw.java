@@ -17,24 +17,23 @@ import java.awt.Graphics2D;
 @Handles(MouseMode.PERPENDICULAR_DRAW_9)
 public class MouseHandlerPerpendicularDraw extends BaseMouseHandlerInputRestricted {
 
+    private Point p;
+    private StepGraph<Step> steps = new StepGraph<>(Step.SELECT_TARGET_POINT, this::action_select_target_point);
+
     private Point targetPoint;
     private LineSegment perpendicularSegment;
     private LineSegment indicator1;
     private LineSegment indicator2;
     private LineSegment destinationSegment;
-    private Step currentStep = Step.SELECT_TARGET_POINT;
 
     private enum Step {
         SELECT_TARGET_POINT,
         SELECT_PERPENDICULAR_SEGMENT,
-        CHECK_IF_NON_BASE,
-        SELECT_DESTINATION_NON_BASE,
         SELECT_DESTINATION_OR_INDICATOR,
-        SELECT_DESTINATION
     }
 
     @Inject
-    public MouseHandlerPerpendicularDraw() {}
+    public MouseHandlerPerpendicularDraw() { initializeSteps(); }
 
     //マウス操作(ボタンを押したとき)時の作業
     public void mousePressed(Point p0) {}
@@ -46,74 +45,11 @@ public class MouseHandlerPerpendicularDraw extends BaseMouseHandlerInputRestrict
     public void mouseDragged(Point p0) { highlightSelection(p0); }
 
     //マウス操作(ボタンを離したとき)を行う関数
-    public void mouseReleased(Point p0) {
-        Point p = d.getCamera().TV2object(p0);
-        switch (currentStep) {
-            case SELECT_TARGET_POINT: {
-                if(targetPoint == null) return;
-                currentStep = Step.SELECT_PERPENDICULAR_SEGMENT;
-                return;
-            }
-            case SELECT_PERPENDICULAR_SEGMENT:{
-                if(perpendicularSegment == null) return;
-                currentStep = Step.CHECK_IF_NON_BASE;   // Continue immediately
-            }
-            case CHECK_IF_NON_BASE: {
-                if (OritaCalc.isPointWithinLineSpan(targetPoint, perpendicularSegment)) {
-                    indicator1 = OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), new LineSegment(targetPoint, OritaCalc.findProjection(OritaCalc.moveParallel(perpendicularSegment, 1.0), targetPoint), LineColor.PURPLE_8));
-                    indicator2 = OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), new LineSegment(targetPoint, OritaCalc.findProjection(OritaCalc.moveParallel(perpendicularSegment, -1.0), targetPoint), LineColor.PURPLE_8));
-                    currentStep = Step.SELECT_DESTINATION_OR_INDICATOR;
-                    return;
-                } else {
-                    currentStep = Step.SELECT_DESTINATION_NON_BASE; // Continue immediately
-                }
-            }
-            case SELECT_DESTINATION_NON_BASE: {
-                LineSegment nonBaseResultLine = new LineSegment(targetPoint, OritaCalc.findProjection(OritaCalc.lineSegmentToStraightLine(perpendicularSegment), targetPoint), d.getLineColor());
-
-                if (Epsilon.high.gt0(nonBaseResultLine.determineLength())) {
-                    d.addLineSegment(nonBaseResultLine);
-                    d.record();
-                    reset();
-                }
-                return;
-            }
-            case SELECT_DESTINATION_OR_INDICATOR: {
-                if (OritaCalc.determineLineSegmentDistance(p, indicator1) < d.getSelectionDistance() ||
-                        OritaCalc.determineLineSegmentDistance(p, indicator2) < d.getSelectionDistance()) {
-                    LineSegment s = OritaCalc.determineLineSegmentDistance(p, indicator1) < OritaCalc.determineLineSegmentDistance(p, indicator2)
-                            ? indicator1 : indicator2;
-                    s = new LineSegment(s.getB(), s.getA(), d.getLineColor());
-                    s = OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), s);
-
-                    d.addLineSegment(s);
-                    d.record();
-                    reset();
-                    return;
-                }
-
-                if (destinationSegment == null) return;
-                currentStep = Step.SELECT_DESTINATION;  // Continue immediately
-            }
-            case SELECT_DESTINATION: {
-                LineSegment temp = new LineSegment(targetPoint,
-                        new Point(
-                                targetPoint.getX() + indicator1.determineBX() - indicator1.determineAX(),
-                                targetPoint.getY() + indicator1.determineBY() - indicator1.determineAY())
-                );
-                LineSegment newLine = s_step_additional_intersection(temp, destinationSegment, d.getLineColor());
-                if (newLine == null) return;
-
-                d.addLineSegment(newLine);
-                d.record();
-                reset();
-            }
-        }
-    }
+    public void mouseReleased(Point p0) { steps.runCurrentAction(); }
 
     public void highlightSelection(Point p0){
-        Point p = d.getCamera().TV2object(p0);
-        switch (currentStep) {
+        p = d.getCamera().TV2object(p0);
+        switch (steps.getCurrentStep()) {
             case SELECT_TARGET_POINT: {
                 if (p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
                     targetPoint = d.getClosestPoint(p);
@@ -175,11 +111,72 @@ public class MouseHandlerPerpendicularDraw extends BaseMouseHandlerInputRestrict
 
     @Override
     public void reset() {
-        currentStep = Step.SELECT_TARGET_POINT;
         targetPoint = null;
         perpendicularSegment = null;
         indicator1 = null;
         indicator2 = null;
         destinationSegment = null;
+        initializeSteps();
+    }
+
+    private void initializeSteps() {
+        steps = new StepGraph<>(Step.SELECT_TARGET_POINT, this::action_select_target_point);
+        steps.addNode(Step.SELECT_PERPENDICULAR_SEGMENT, this::action_select_perpendicular_segment);
+        steps.addNode(Step.SELECT_DESTINATION_OR_INDICATOR, this::select_destination_or_indicator);
+
+        steps.connectNodes(Step.SELECT_TARGET_POINT, Step.SELECT_PERPENDICULAR_SEGMENT);
+        steps.connectNodes(Step.SELECT_PERPENDICULAR_SEGMENT, Step.SELECT_DESTINATION_OR_INDICATOR);
+    }
+
+    private Step action_select_target_point() {
+        if(targetPoint == null) return null;
+        return Step.SELECT_PERPENDICULAR_SEGMENT;
+    }
+
+    private Step action_select_perpendicular_segment() {
+        if(perpendicularSegment == null) return null;
+
+        if (OritaCalc.isPointWithinLineSpan(targetPoint, perpendicularSegment)) {
+            indicator1 = OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), new LineSegment(targetPoint, OritaCalc.findProjection(OritaCalc.moveParallel(perpendicularSegment, 1.0), targetPoint), LineColor.PURPLE_8));
+            indicator2 = OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), new LineSegment(targetPoint, OritaCalc.findProjection(OritaCalc.moveParallel(perpendicularSegment, -1.0), targetPoint), LineColor.PURPLE_8));
+            return Step.SELECT_DESTINATION_OR_INDICATOR;
+        }
+
+        LineSegment nonBaseResultLine = new LineSegment(targetPoint, OritaCalc.findProjection(OritaCalc.lineSegmentToStraightLine(perpendicularSegment), targetPoint), d.getLineColor());
+
+        if (Epsilon.high.gt0(nonBaseResultLine.determineLength())) {
+            d.addLineSegment(nonBaseResultLine);
+            d.record();
+            reset();
+        }
+        return null;
+    }
+
+    private Step select_destination_or_indicator() {
+        if (OritaCalc.determineLineSegmentDistance(p, indicator1) < d.getSelectionDistance() ||
+                OritaCalc.determineLineSegmentDistance(p, indicator2) < d.getSelectionDistance()) {
+            LineSegment s = OritaCalc.determineLineSegmentDistance(p, indicator1) < OritaCalc.determineLineSegmentDistance(p, indicator2)
+                    ? indicator1 : indicator2;
+            s = new LineSegment(s.getB(), s.getA(), d.getLineColor());
+            s = OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), s);
+
+            d.addLineSegment(s);
+            d.record();
+            reset();
+            return null;
+        }
+
+        if (destinationSegment == null) return null;
+        LineSegment temp = new LineSegment(targetPoint,
+                new Point(
+                        targetPoint.getX() + indicator1.determineBX() - indicator1.determineAX(),
+                        targetPoint.getY() + indicator1.determineBY() - indicator1.determineAY())
+        );
+        LineSegment newLine = s_step_additional_intersection(temp, destinationSegment, d.getLineColor());
+
+        d.addLineSegment(newLine);
+        d.record();
+        reset();
+        return null;
     }
 }

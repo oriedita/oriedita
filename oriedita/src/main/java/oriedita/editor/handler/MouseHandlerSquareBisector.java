@@ -52,7 +52,7 @@ public class MouseHandlerSquareBisector extends BaseMouseHandlerInputRestricted 
     public void mouseReleased(Point p0) { steps.runCurrentAction(); }
 
     public void highlightSelection(Point p0){
-        Point p = d.getCamera().TV2object(p0);
+        p = d.getCamera().TV2object(p0);
         switch (steps.getCurrentStep()) {
             case SELECT_2L_OR_3P: {
                 double pointDistance = p.distance(d.getClosestPoint(p));
@@ -138,22 +138,20 @@ public class MouseHandlerSquareBisector extends BaseMouseHandlerInputRestricted 
         steps.addNode(Step.SELECT_DESTINATION_2L_NP, this::action_select_destination_2L_NP);
         steps.addNode(Step.SELECT_DESTINATION_2L_P, this::action_select_destination_2L_P);
 
-        {
-            select_3_points: {
-                steps.connectNodes(Step.SELECT_2L_OR_3P, Step.SELECT_3P);
-                steps.connectNodes(Step.SELECT_3P, Step.SELECT_DESTINATION_3P);
+        select_3_points: {
+            steps.connectNodes(Step.SELECT_2L_OR_3P, Step.SELECT_3P);
+            steps.connectNodes(Step.SELECT_3P, Step.SELECT_DESTINATION_3P);
+        }
+
+        select_2_lines: {
+            steps.connectNodes(Step.SELECT_2L_OR_3P, Step.SELECT_2L);
+
+            not_parallel: {
+                steps.connectNodes(Step.SELECT_2L, Step.SELECT_DESTINATION_2L_NP);
             }
 
-            select_2_lines: {
-                steps.connectNodes(Step.SELECT_2L_OR_3P, Step.SELECT_2L);
-
-                not_parallel: {
-                    steps.connectNodes(Step.SELECT_2L, Step.SELECT_DESTINATION_2L_NP);
-                }
-
-                parallel: {
-                    steps.connectNodes(Step.SELECT_2L, Step.SELECT_DESTINATION_2L_P);
-                }
+            parallel: {
+                steps.connectNodes(Step.SELECT_2L, Step.SELECT_DESTINATION_2L_P);
             }
         }
     }

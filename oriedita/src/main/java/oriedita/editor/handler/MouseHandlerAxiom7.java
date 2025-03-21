@@ -16,6 +16,8 @@ import java.awt.Graphics2D;
 @ApplicationScoped
 @Handles(MouseMode.AXIOM_7)
 public class MouseHandlerAxiom7 extends BaseMouseHandlerInputRestricted{
+    private Point p;
+    private StepGraph<Step> steps = new StepGraph<>(Step.SELECT_TARGET_POINT, this::action_select_target_point);
 
     private Point midPoint = new Point();
     private Point targetPoint;
@@ -24,19 +26,16 @@ public class MouseHandlerAxiom7 extends BaseMouseHandlerInputRestricted{
     private LineSegment indicator1;
     private LineSegment indicator2;
     private LineSegment destinationSegment;
-    private Step currentStep = Step.SELECT_TARGET_POINT;
 
     private enum Step {
         SELECT_TARGET_POINT,
         SELECT_TARGET_SEGMENT,
         SELECT_PERPENDICULAR_SEGMENT,
-        SHOW_INDICATORS,
         SELECT_DESTINATION_OR_INDICATOR,
-        SELECT_DESTINATION
     }
 
     @Inject
-    public MouseHandlerAxiom7(){}
+    public MouseHandlerAxiom7(){ initializeSteps(); }
 
     @Override
     public void mousePressed(Point p0) {}
@@ -48,60 +47,12 @@ public class MouseHandlerAxiom7 extends BaseMouseHandlerInputRestricted{
 
     @Override
     public void mouseReleased(Point p0) {
-        Point p = d.getCamera().TV2object(p0);
-        switch(currentStep) {
-            case SELECT_TARGET_POINT: {
-                if (targetPoint == null) return;
-                currentStep = Step.SELECT_TARGET_SEGMENT;
-                return;
-            }
-            case SELECT_TARGET_SEGMENT: {
-                if (targetSegment == null) return;
-                currentStep = Step.SELECT_PERPENDICULAR_SEGMENT;
-                return;
-            }
-            case SELECT_PERPENDICULAR_SEGMENT: {
-                if (perpendicularSegment == null) return;
-                currentStep = Step.SHOW_INDICATORS; // Continue immediately
-            }
-            case SHOW_INDICATORS: {
-                midPoint = drawAxiom7FoldIndicators(targetPoint, targetSegment, perpendicularSegment);
-                currentStep = Step.SELECT_DESTINATION_OR_INDICATOR;
-                return;
-            }
-            case SELECT_DESTINATION_OR_INDICATOR: {
-                if (OritaCalc.determineLineSegmentDistance(p, indicator1) < d.getSelectionDistance() ||
-                        OritaCalc.determineLineSegmentDistance(p, indicator2) < d.getSelectionDistance()) {
-                    LineSegment s = d.getClosestLineStepSegment(p, 4, 5);
-                    s = new LineSegment(s.getB(), s.getA(), d.getLineColor());
-                    s = (OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), s));
-
-                    d.addLineSegment(s);
-                    d.record();
-                    reset();
-                    return;
-                }
-
-                if (destinationSegment == null) return;
-                currentStep = Step.SELECT_DESTINATION;  // Continue immediately
-            }
-            case SELECT_DESTINATION: {
-                LineSegment midTemp = new LineSegment(
-                        midPoint,
-                        new Point(
-                                midPoint.getX() + indicator1.determineBX() - indicator1.determineAX(),
-                                midPoint.getY() + indicator1.determineBY() - indicator1.determineAY()));
-                LineSegment result = getExtendedSegment(midTemp, destinationSegment, d.getLineColor());
-                d.addLineSegment(result);
-                d.record();
-                reset();
-            }
-        }
+        steps.runCurrentAction();
     }
 
     public void highlightSelection(Point p0){
-        Point p = d.getCamera().TV2object(p0);
-        switch (currentStep) {
+        p = d.getCamera().TV2object(p0);
+        switch (steps.getCurrentStep()) {
             case SELECT_TARGET_POINT: {
                 if (p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
                     targetPoint = d.getClosestPoint(p);
@@ -186,12 +137,66 @@ public class MouseHandlerAxiom7 extends BaseMouseHandlerInputRestricted{
 
     @Override
     public void reset() {
-        currentStep = Step.SELECT_TARGET_POINT;
         targetPoint = null;
         targetSegment = null;
         perpendicularSegment = null;
         indicator1 = null;
         indicator2 = null;
         destinationSegment = null;
+        initializeSteps();
+    }
+
+    private void initializeSteps() {
+        steps = new StepGraph<>(Step.SELECT_TARGET_POINT, this::action_select_target_point);
+        steps.addNode(Step.SELECT_TARGET_SEGMENT, this::action_select_target_segment);
+        steps.addNode(Step.SELECT_PERPENDICULAR_SEGMENT, this::action_select_perpendicular_segment);
+        steps.addNode(Step.SELECT_DESTINATION_OR_INDICATOR, this::action_select_destination_or_indicator);
+
+        steps.connectNodes(Step.SELECT_TARGET_POINT, Step.SELECT_TARGET_SEGMENT);
+        steps.connectNodes(Step.SELECT_TARGET_SEGMENT, Step.SELECT_PERPENDICULAR_SEGMENT);
+        steps.connectNodes(Step.SELECT_PERPENDICULAR_SEGMENT, Step.SELECT_DESTINATION_OR_INDICATOR);
+    }
+
+    private Step action_select_target_point() {
+        if (targetPoint == null) return null;
+        return Step.SELECT_TARGET_SEGMENT;
+    }
+
+    private Step action_select_target_segment() {
+        if (targetSegment == null) return null;
+        return Step.SELECT_PERPENDICULAR_SEGMENT;
+    }
+
+    private Step action_select_perpendicular_segment() {
+        if (perpendicularSegment == null) return null;
+        midPoint = drawAxiom7FoldIndicators(targetPoint, targetSegment, perpendicularSegment);
+        return Step.SELECT_DESTINATION_OR_INDICATOR;
+    }
+
+    private Step action_select_destination_or_indicator() {
+        if (OritaCalc.determineLineSegmentDistance(p, indicator1) < d.getSelectionDistance() ||
+                OritaCalc.determineLineSegmentDistance(p, indicator2) < d.getSelectionDistance()) {
+            LineSegment s = OritaCalc.determineLineSegmentDistance(p, indicator1) < OritaCalc.determineLineSegmentDistance(p, indicator2)
+                    ? indicator1 : indicator2;
+            s = new LineSegment(s.getB(), s.getA(), d.getLineColor());
+            s = (OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), s));
+
+            d.addLineSegment(s);
+            d.record();
+            reset();
+            return null;
+        }
+
+        if (destinationSegment == null) return null;
+        LineSegment midTemp = new LineSegment(
+                midPoint,
+                new Point(
+                        midPoint.getX() + indicator1.determineBX() - indicator1.determineAX(),
+                        midPoint.getY() + indicator1.determineBY() - indicator1.determineAY()));
+        LineSegment result = getExtendedSegment(midTemp, destinationSegment, d.getLineColor());
+        d.addLineSegment(result);
+        d.record();
+        reset();
+        return null;
     }
 }

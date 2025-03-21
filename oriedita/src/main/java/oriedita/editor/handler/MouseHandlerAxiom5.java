@@ -19,6 +19,8 @@ import java.awt.Graphics2D;
 @ApplicationScoped
 @Handles(MouseMode.AXIOM_5)
 public class MouseHandlerAxiom5 extends BaseMouseHandlerInputRestricted{
+    private Point p;
+    private StepGraph<Step> steps = new StepGraph<>(Step.SELECT_TARGET_POINT, this::action_select_target_point);
 
     private Point targetPoint;
     private LineSegment targetSegment;
@@ -26,19 +28,16 @@ public class MouseHandlerAxiom5 extends BaseMouseHandlerInputRestricted{
     private LineSegment indicator1;
     private LineSegment indicator2;
     private LineSegment destinationSegment;
-    private Step currentStep = Step.SELECT_TARGET_POINT;
 
     private enum Step {
         SELECT_TARGET_POINT,
         SELECT_TARGET_SEGMENT,
         SELECT_PIVOT_POINT,
-        SHOW_INDICATORS,
         SELECT_DESTINATION_OR_INDICATOR,
-        SELECT_DESTINATION
     }
 
     @Inject
-    public MouseHandlerAxiom5() {}
+    public MouseHandlerAxiom5() { initializeSteps(); }
 
     @Override
     public void mousePressed(Point p0) {}
@@ -49,63 +48,11 @@ public class MouseHandlerAxiom5 extends BaseMouseHandlerInputRestricted{
     public void mouseDragged(Point p0) { highlightSelection(p0); }
 
     @Override
-    public void mouseReleased(Point p0) {
-        Point p = d.getCamera().TV2object(p0);
-
-        switch (currentStep) {
-            case SELECT_TARGET_POINT: {
-                if (targetPoint == null) return;
-                currentStep = Step.SELECT_TARGET_SEGMENT;
-                return;
-            }
-            case SELECT_TARGET_SEGMENT: {
-                if (targetSegment == null) return;
-                currentStep = Step.SELECT_PIVOT_POINT;
-                return;
-            }
-            case SELECT_PIVOT_POINT: {
-                if (pivotPoint == null) return;
-                currentStep = Step.SHOW_INDICATORS; // Continue immediately
-            }
-            case SHOW_INDICATORS: {
-                double radius = OritaCalc.distance(targetPoint, pivotPoint);
-                drawAxiom5FoldIndicators(radius, targetPoint, targetSegment, pivotPoint);
-                currentStep = Step.SELECT_DESTINATION_OR_INDICATOR;
-                return;
-            }
-            case SELECT_DESTINATION_OR_INDICATOR: {
-                if (OritaCalc.determineLineSegmentDistance(p, indicator1) < d.getSelectionDistance() ||
-                        OritaCalc.determineLineSegmentDistance(p, indicator2) < d.getSelectionDistance()) {
-                    LineSegment s = OritaCalc.determineLineSegmentDistance(p, indicator1) < OritaCalc.determineLineSegmentDistance(p, indicator2)
-                            ? indicator1 : indicator2;
-                    s = new LineSegment(s.getB(), s.getA(), d.getLineColor());
-                    s = (OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), s));
-
-                    d.addLineSegment(s);
-                    d.record();
-                    reset();
-                    return;
-                }
-
-                if (destinationSegment == null) return;
-                currentStep = Step.SELECT_DESTINATION;  // Continue immediately
-            }
-            case SELECT_DESTINATION: {
-                Point intersectPoint1 = OritaCalc.findIntersection(indicator1, destinationSegment);
-                Point intersectPoint2 = OritaCalc.findIntersection(indicator2, destinationSegment);
-
-                double d1 = OritaCalc.distance(p, intersectPoint1);
-                double d2 = OritaCalc.distance(p, intersectPoint2);
-                d.addLineSegment(new LineSegment(pivotPoint, d1 < d2 ? intersectPoint1 : intersectPoint2, d.getLineColor()));
-                d.record();
-                reset();
-            }
-        }
-    }
+    public void mouseReleased(Point p0) { steps.runCurrentAction(); }
 
     public void highlightSelection(Point p0) {
-        Point p = d.getCamera().TV2object(p0);
-        switch (currentStep) {
+        p = d.getCamera().TV2object(p0);
+        switch (steps.getCurrentStep()) {
             case SELECT_TARGET_POINT: {
                 if (p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
                     targetPoint = d.getClosestPoint(p);
@@ -296,12 +243,66 @@ public class MouseHandlerAxiom5 extends BaseMouseHandlerInputRestricted{
 
     @Override
     public void reset() {
-        currentStep = Step.SELECT_TARGET_POINT;
         targetPoint = null;
         targetSegment = null;
         pivotPoint = null;
         indicator1 = null;
         indicator2 = null;
         destinationSegment = null;
+        initializeSteps();
+    }
+
+    private void initializeSteps() {
+        steps = new StepGraph<>(Step.SELECT_TARGET_POINT, this::action_select_target_point);
+        steps.addNode(Step.SELECT_TARGET_SEGMENT, this::action_select_target_segment);
+        steps.addNode(Step.SELECT_PIVOT_POINT, this::action_select_pivot_point);
+        steps.addNode(Step.SELECT_DESTINATION_OR_INDICATOR, this::action_select_destination_or_indicator);
+
+        steps.connectNodes(Step.SELECT_TARGET_POINT, Step.SELECT_TARGET_SEGMENT);
+        steps.connectNodes(Step.SELECT_TARGET_SEGMENT, Step.SELECT_PIVOT_POINT);
+        steps.connectNodes(Step.SELECT_PIVOT_POINT, Step.SELECT_DESTINATION_OR_INDICATOR);
+    }
+
+    private Step action_select_target_point() {
+        if (targetPoint == null) return null;
+        return Step.SELECT_TARGET_SEGMENT;
+    }
+
+    private Step action_select_target_segment() {
+        if (targetSegment == null) return null;
+        return Step.SELECT_PIVOT_POINT;
+    }
+
+    private Step action_select_pivot_point() {
+        if (pivotPoint == null) return null;
+        double radius = OritaCalc.distance(targetPoint, pivotPoint);
+        drawAxiom5FoldIndicators(radius, targetPoint, targetSegment, pivotPoint);
+        return Step.SELECT_DESTINATION_OR_INDICATOR;
+    }
+
+    private Step action_select_destination_or_indicator() {
+        if (OritaCalc.determineLineSegmentDistance(p, indicator1) < d.getSelectionDistance() ||
+                OritaCalc.determineLineSegmentDistance(p, indicator2) < d.getSelectionDistance()) {
+            LineSegment s = OritaCalc.determineLineSegmentDistance(p, indicator1) < OritaCalc.determineLineSegmentDistance(p, indicator2)
+                    ? indicator1 : indicator2;
+            s = new LineSegment(s.getB(), s.getA(), d.getLineColor());
+            s = (OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), s));
+
+            d.addLineSegment(s);
+            d.record();
+            reset();
+            return null;
+        }
+
+        if (destinationSegment == null) return null;
+        Point intersectPoint1 = OritaCalc.findIntersection(indicator1, destinationSegment);
+        Point intersectPoint2 = OritaCalc.findIntersection(indicator2, destinationSegment);
+
+        double d1 = OritaCalc.distance(p, intersectPoint1);
+        double d2 = OritaCalc.distance(p, intersectPoint2);
+        d.addLineSegment(new LineSegment(pivotPoint, d1 < d2 ? intersectPoint1 : intersectPoint2, d.getLineColor()));
+        d.record();
+        reset();
+        return null;
     }
 }
