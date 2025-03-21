@@ -17,6 +17,7 @@ import java.awt.Graphics2D;
 @Handles(MouseMode.PARALLEL_DRAW_40)
 public class MouseHandlerParallelDraw extends BaseMouseHandlerInputRestricted {
 
+    private Point p = new Point();
     private StepGraph<Step> steps = new StepGraph<>(Step.SELECT_TARGET_POINT, this::action_select_target_point);
 
     private Point targetPoint;
@@ -45,7 +46,7 @@ public class MouseHandlerParallelDraw extends BaseMouseHandlerInputRestricted {
     public void mouseReleased(Point p0) { steps.runCurrentAction(); }
 
     public void highlightSelection(Point p0) {
-        Point p = d.getCamera().TV2object(p0);
+        p = d.getCamera().TV2object(p0);
         switch (steps.getCurrentStep()) {
             case SELECT_TARGET_POINT: {
                 if (p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
@@ -108,6 +109,7 @@ public class MouseHandlerParallelDraw extends BaseMouseHandlerInputRestricted {
         DrawingUtil.drawStepVertex(g2, targetPoint, d.getLineColor(), camera, d.getGridInputAssist());
         DrawingUtil.drawLineStep(g2, parallelSegment, camera, settings.getLineWidth(), d.getGridInputAssist());
         DrawingUtil.drawLineStep(g2, destinationSegment, camera, settings.getLineWidth(), d.getGridInputAssist());
+        DrawingUtil.drawText(g2, steps.getCurrentStep().name(), p.withX(p.getX() + 20).withY(p.getY() + 20), camera);
     }
 
     @Override

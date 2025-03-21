@@ -378,6 +378,16 @@ public class DrawingUtil {
         g2.draw(new Ellipse2D.Double(a.getX() - d_width, a.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
     }
 
+    public static void drawText(Graphics g, String text, Point position, Camera camera) {
+        if (position == null) return;
+        if (text == null || text.isBlank()) return;
+        Point p = camera.object2TV(position);
+        Color tempColor = g.getColor();
+        g.setColor(Colors.get(Color.black));
+        g.drawString(text, (int) p.getX(), (int) p.getY());
+        g.setColor(tempColor);
+    }
+
     private static final float[] dash_M1 = {10.0f, 3.0f, 3.0f, 3.0f};//一点鎖線
     private static final float[] dash_M2 = {10.0f, 3.0f, 3.0f, 3.0f, 3.0f, 3.0f};//二点鎖線
     private static final float[] dash_V = {8.0f, 8.0f};//破線

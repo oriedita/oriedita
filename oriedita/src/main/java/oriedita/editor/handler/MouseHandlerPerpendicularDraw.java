@@ -17,7 +17,7 @@ import java.awt.Graphics2D;
 @Handles(MouseMode.PERPENDICULAR_DRAW_9)
 public class MouseHandlerPerpendicularDraw extends BaseMouseHandlerInputRestricted {
 
-    private Point p;
+    private Point p = new Point();
     private StepGraph<Step> steps = new StepGraph<>(Step.SELECT_TARGET_POINT, this::action_select_target_point);
 
     private Point targetPoint;
@@ -107,6 +107,7 @@ public class MouseHandlerPerpendicularDraw extends BaseMouseHandlerInputRestrict
         DrawingUtil.drawLineStep(g2, indicator1, camera, settings.getLineWidth(), d.getGridInputAssist());
         DrawingUtil.drawLineStep(g2, indicator2, camera, settings.getLineWidth(), d.getGridInputAssist());
         DrawingUtil.drawLineStep(g2, destinationSegment, camera, settings.getLineWidth(), d.getGridInputAssist());
+        DrawingUtil.drawText(g2, steps.getCurrentStep().name(), p.withX(p.getX() + 20).withY(p.getY() + 20), camera);
     }
 
     @Override

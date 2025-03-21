@@ -18,7 +18,7 @@ import java.util.List;
 @ApplicationScoped
 @Handles(MouseMode.SQUARE_BISECTOR_7)
 public class MouseHandlerSquareBisector extends BaseMouseHandlerInputRestricted {
-    private Point p;
+    private Point p = new Point();
     private StepGraph<Step> steps = new StepGraph<>(Step.SELECT_2L_OR_3P, this::action_2L_or_3P);
 
     private int counter_3P = 0;
@@ -114,6 +114,7 @@ public class MouseHandlerSquareBisector extends BaseMouseHandlerInputRestricted 
         DrawingUtil.drawLineStep(g2, indicatorsList_2L_P.get(1), camera, settings.getLineWidth(), d.getGridInputAssist());
         DrawingUtil.drawLineStep(g2, destinationSegmentsList_2L_P.get(0), camera, settings.getLineWidth(), d.getGridInputAssist());
         DrawingUtil.drawLineStep(g2, destinationSegmentsList_2L_P.get(1), camera, settings.getLineWidth(), d.getGridInputAssist());
+        DrawingUtil.drawText(g2, steps.getCurrentStep().name(), p.withX(p.getX() + 20).withY(p.getY() + 20), camera);
     }
 
     @Override
