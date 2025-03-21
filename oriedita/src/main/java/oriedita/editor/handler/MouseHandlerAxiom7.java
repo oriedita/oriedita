@@ -23,8 +23,7 @@ public class MouseHandlerAxiom7 extends BaseMouseHandlerInputRestricted{
     private Point targetPoint;
     private LineSegment targetSegment;
     private LineSegment perpendicularSegment;
-    private LineSegment indicator1;
-    private LineSegment indicator2;
+    private LineSegment indicator;
     private LineSegment destinationSegment;
 
     private enum Step {
@@ -69,14 +68,20 @@ public class MouseHandlerAxiom7 extends BaseMouseHandlerInputRestricted{
             case SELECT_PERPENDICULAR_SEGMENT: {
                 if (OritaCalc.determineLineSegmentDistance(p, d.getClosestLineSegment(p)) < d.getSelectionDistance() &&
                         OritaCalc.isLineSegmentParallel(d.getClosestLineSegment(p), targetSegment) == OritaCalc.ParallelJudgement.NOT_PARALLEL) {
-                    perpendicularSegment = d.getClosestLineSegment(p).withColor(LineColor.ORANGE_4);
+                    perpendicularSegment = d.getClosestLineSegment(p).withColor(LineColor.GREEN_6);
                 } else perpendicularSegment = null;
                 return;
             }
             case SELECT_DESTINATION_OR_INDICATOR: {
-                if (OritaCalc.determineLineSegmentDistance(p, d.getClosestLineSegment(p)) < d.getSelectionDistance() &&
-                        OritaCalc.isLineSegmentParallel(d.getClosestLineSegment(p), indicator1) == OritaCalc.ParallelJudgement.NOT_PARALLEL) {
-                    destinationSegment = d.getClosestLineSegment(p).withColor(LineColor.GREEN_6);
+                double indicatorDistance = OritaCalc.determineLineSegmentDistance(p, indicator);
+                double normalDistance = OritaCalc.determineLineSegmentDistance(p, d.getClosestLineSegment(p));
+                if (indicatorDistance < normalDistance
+                        && indicatorDistance < d.getSelectionDistance()) {
+                    destinationSegment = indicator.withColor(LineColor.ORANGE_4);
+                } else if (normalDistance < indicatorDistance
+                        && normalDistance < d.getSelectionDistance()
+                        && OritaCalc.isLineSegmentParallel(d.getClosestLineSegment(p), indicator) == OritaCalc.ParallelJudgement.NOT_PARALLEL) {
+                    destinationSegment = d.getClosestLineSegment(p).withColor(LineColor.ORANGE_4);
                 } else destinationSegment = null;
             }
         }
@@ -92,8 +97,8 @@ public class MouseHandlerAxiom7 extends BaseMouseHandlerInputRestricted{
 
         Point mid = OritaCalc.midPoint(targetPoint, OritaCalc.findIntersection(extendLine, targetSegment));
 
-        indicator1 = OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), new LineSegment(mid, OritaCalc.findProjection(OritaCalc.moveParallel(extendLine, 1), mid), LineColor.PURPLE_8));
-        indicator2 = OritaCalc.fullExtendUntilHit(d .getFoldLineSet(), new LineSegment(mid, OritaCalc.findProjection(OritaCalc.moveParallel(extendLine, -1), mid), LineColor.PURPLE_8));
+        indicator = OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), new LineSegment(mid, OritaCalc.findProjection(OritaCalc.moveParallel(extendLine, 1), mid), LineColor.PURPLE_8));
+        indicator = OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), indicator.withCoordinates(indicator.getB(), indicator.getA()));
         return mid;
     }
 
@@ -130,8 +135,7 @@ public class MouseHandlerAxiom7 extends BaseMouseHandlerInputRestricted{
         DrawingUtil.drawStepVertex(g2, targetPoint, d.getLineColor(), camera, d.getGridInputAssist());
         DrawingUtil.drawLineStep(g2, targetSegment, camera, settings.getLineWidth(), d.getGridInputAssist());
         DrawingUtil.drawLineStep(g2, perpendicularSegment, camera, settings.getLineWidth(), d.getGridInputAssist());
-        DrawingUtil.drawLineStep(g2, indicator1, camera, settings.getLineWidth(), d.getGridInputAssist());
-        DrawingUtil.drawLineStep(g2, indicator2, camera, settings.getLineWidth(), d.getGridInputAssist());
+        DrawingUtil.drawLineStep(g2, indicator, camera, settings.getLineWidth(), d.getGridInputAssist());
         DrawingUtil.drawLineStep(g2, destinationSegment, camera, settings.getLineWidth(), d.getGridInputAssist());
         DrawingUtil.drawText(g2, steps.getCurrentStep().name(), p.withX(p.getX() + 20).withY(p.getY() + 20), camera);
     }
@@ -141,8 +145,7 @@ public class MouseHandlerAxiom7 extends BaseMouseHandlerInputRestricted{
         targetPoint = null;
         targetSegment = null;
         perpendicularSegment = null;
-        indicator1 = null;
-        indicator2 = null;
+        indicator = null;
         destinationSegment = null;
         initializeSteps();
     }
@@ -175,26 +178,15 @@ public class MouseHandlerAxiom7 extends BaseMouseHandlerInputRestricted{
     }
 
     private Step action_select_destination_or_indicator() {
-        if (OritaCalc.determineLineSegmentDistance(p, indicator1) < d.getSelectionDistance() ||
-                OritaCalc.determineLineSegmentDistance(p, indicator2) < d.getSelectionDistance()) {
-            LineSegment s = OritaCalc.determineLineSegmentDistance(p, indicator1) < OritaCalc.determineLineSegmentDistance(p, indicator2)
-                    ? indicator1 : indicator2;
-            s = new LineSegment(s.getB(), s.getA(), d.getLineColor());
-            s = (OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), s));
-
-            d.addLineSegment(s);
+        if (OritaCalc.determineLineSegmentDistance(p, indicator) < d.getSelectionDistance()) {
+            d.addLineSegment(indicator.withColor(d.getLineColor()));
             d.record();
             reset();
             return null;
         }
 
         if (destinationSegment == null) return null;
-        LineSegment midTemp = new LineSegment(
-                midPoint,
-                new Point(
-                        midPoint.getX() + indicator1.determineBX() - indicator1.determineAX(),
-                        midPoint.getY() + indicator1.determineBY() - indicator1.determineAY()));
-        LineSegment result = getExtendedSegment(midTemp, destinationSegment, d.getLineColor());
+        LineSegment result = getExtendedSegment(indicator, destinationSegment, d.getLineColor());
         d.addLineSegment(result);
         d.record();
         reset();

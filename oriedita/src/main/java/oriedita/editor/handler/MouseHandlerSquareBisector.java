@@ -27,7 +27,7 @@ public class MouseHandlerSquareBisector extends BaseMouseHandlerInputRestricted 
     private LineSegment destinationSegment_3P;
     private List<LineSegment> segmentsList_2L = Arrays.asList(null, null);
     private LineSegment destinationSegment_2L_NP;
-    private List<LineSegment> indicatorsList_2L_P = Arrays.asList(null, null);
+    private LineSegment indicator;
     private int counter_2L_P = 0;
     private List<LineSegment> destinationSegmentsList_2L_P = Arrays.asList(null, null);
 
@@ -110,8 +110,7 @@ public class MouseHandlerSquareBisector extends BaseMouseHandlerInputRestricted 
         DrawingUtil.drawLineStep(g2, segmentsList_2L.get(0), camera, settings.getLineWidth(), d.getGridInputAssist());
         DrawingUtil.drawLineStep(g2, segmentsList_2L.get(1), camera, settings.getLineWidth(), d.getGridInputAssist());
         DrawingUtil.drawLineStep(g2, destinationSegment_2L_NP, camera, settings.getLineWidth(), d.getGridInputAssist());
-        DrawingUtil.drawLineStep(g2, indicatorsList_2L_P.get(0), camera, settings.getLineWidth(), d.getGridInputAssist());
-        DrawingUtil.drawLineStep(g2, indicatorsList_2L_P.get(1), camera, settings.getLineWidth(), d.getGridInputAssist());
+        DrawingUtil.drawLineStep(g2, indicator, camera, settings.getLineWidth(), d.getGridInputAssist());
         DrawingUtil.drawLineStep(g2, destinationSegmentsList_2L_P.get(0), camera, settings.getLineWidth(), d.getGridInputAssist());
         DrawingUtil.drawLineStep(g2, destinationSegmentsList_2L_P.get(1), camera, settings.getLineWidth(), d.getGridInputAssist());
         DrawingUtil.drawText(g2, steps.getCurrentStep().name(), p.withX(p.getX() + 20).withY(p.getY() + 20), camera);
@@ -124,8 +123,8 @@ public class MouseHandlerSquareBisector extends BaseMouseHandlerInputRestricted 
         pointsList_3P = Arrays.asList(null, null, null);
         destinationSegment_3P = null;
         segmentsList_2L = Arrays.asList(null, null);
+        indicator = null;
         destinationSegment_2L_NP = null;
-        indicatorsList_2L_P = Arrays.asList(null, null);
         counter_2L_P = 0;
         destinationSegmentsList_2L_P = Arrays.asList(null, null);
         initializeSteps();
@@ -224,13 +223,8 @@ public class MouseHandlerSquareBisector extends BaseMouseHandlerInputRestricted 
     }
 
     private Step action_select_destination_2L_P() {
-        if (OritaCalc.determineLineSegmentDistance(p, indicatorsList_2L_P.get(0)) < d.getSelectionDistance() ||
-                OritaCalc.determineLineSegmentDistance(p, indicatorsList_2L_P.get(1)) < d.getSelectionDistance()) {
-            LineSegment s = OritaCalc.determineLineSegmentDistance(p, indicatorsList_2L_P.get(0)) < OritaCalc.determineLineSegmentDistance(p, indicatorsList_2L_P.get(1))
-                    ? indicatorsList_2L_P.get(0) : indicatorsList_2L_P.get(1);
-            s = new LineSegment(s.getB(), s.getA(), d.getLineColor());
-            s = OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), s).withColor(d.getLineColor());
-            d.addLineSegment(s);
+        if (OritaCalc.determineLineSegmentDistance(p, indicator) < d.getSelectionDistance()) {
+            d.addLineSegment(indicator.withColor(d.getLineColor()));
             d.record();
             reset();
             return null;
@@ -239,8 +233,8 @@ public class MouseHandlerSquareBisector extends BaseMouseHandlerInputRestricted 
         if(destinationSegmentsList_2L_P.get(counter_2L_P) == null) return null;
         counter_2L_P++;
         if (counter_2L_P != 2) return null;
-        Point intersect1 = OritaCalc.findIntersection(indicatorsList_2L_P.get(0), destinationSegmentsList_2L_P.get(0));
-        Point intersect2 = OritaCalc.findIntersection(indicatorsList_2L_P.get(0), destinationSegmentsList_2L_P.get(1));
+        Point intersect1 = OritaCalc.findIntersection(indicator, destinationSegmentsList_2L_P.get(0));
+        Point intersect2 = OritaCalc.findIntersection(indicator, destinationSegmentsList_2L_P.get(1));
 
         // Draw the bisector
         LineSegment bisector = new LineSegment(intersect1, intersect2, d.getLineColor());
@@ -264,8 +258,8 @@ public class MouseHandlerSquareBisector extends BaseMouseHandlerInputRestricted 
 
             // Draw purple indicators for bisector
             LineSegment tempPerpenLine = new LineSegment(segmentsList_2L.get(1).getA(), projectedPoint);
-            indicatorsList_2L_P.set(0, OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), new LineSegment(midPoint, OritaCalc.findProjection(OritaCalc.moveParallel(tempPerpenLine, -1.0), midPoint), LineColor.PURPLE_8)));
-            indicatorsList_2L_P.set(1, OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), new LineSegment(midPoint, OritaCalc.findProjection(OritaCalc.moveParallel(tempPerpenLine, 1.0), midPoint), LineColor.PURPLE_8)));
+            indicator = OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), new LineSegment(midPoint, OritaCalc.findProjection(OritaCalc.moveParallel(tempPerpenLine, -1.0), midPoint), LineColor.PURPLE_8));
+            indicator = OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), indicator.withCoordinates(indicator.getB(), indicator.getA()));
             return  Step.SELECT_DESTINATION_2L_P;
         }
     }

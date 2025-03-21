@@ -15,6 +15,8 @@ import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.StraightLine;
 
 import java.awt.Graphics2D;
+import java.util.Arrays;
+import java.util.Collections;
 
 @ApplicationScoped
 @Handles(MouseMode.AXIOM_5)
@@ -74,8 +76,25 @@ public class MouseHandlerAxiom5 extends BaseMouseHandlerInputRestricted{
                 return;
             }
             case SELECT_DESTINATION_OR_INDICATOR: {
-                if (OritaCalc.determineLineSegmentDistance(p, d.getClosestLineSegment(p)) < d.getSelectionDistance()) {
-                    destinationSegment = d.getClosestLineSegment(p).withColor(LineColor.GREEN_6);
+                double indicator1Distance = OritaCalc.determineLineSegmentDistance(p, indicator1);
+                double indicator2Distance = OritaCalc.determineLineSegmentDistance(p, indicator2);
+                double targetSegmentDistance = OritaCalc.determineLineSegmentDistance(p, targetSegment);
+                double normalDistance = OritaCalc.determineLineSegmentDistance(p, d.getClosestLineSegment(p));
+
+                double minDistance = Collections.min(Arrays.asList(indicator1Distance, indicator2Distance, targetSegmentDistance, normalDistance));
+
+                if (Math.abs(minDistance - indicator1Distance) < Epsilon.UNKNOWN_1EN6
+                        && indicator1Distance < d.getSelectionDistance()) {
+                    destinationSegment = indicator1.withColor(LineColor.ORANGE_4);
+                } else if (Math.abs(minDistance - indicator2Distance) < Epsilon.UNKNOWN_1EN6
+                        && indicator2Distance < d.getSelectionDistance()) {
+                    destinationSegment = indicator2.withColor(LineColor.ORANGE_4);
+                } else if (Math.abs(minDistance - targetSegmentDistance) < Epsilon.UNKNOWN_1EN6
+                        && targetSegmentDistance < d.getSelectionDistance()) {
+                    destinationSegment = null;
+                } else if (Math.abs(minDistance - normalDistance) < Epsilon.UNKNOWN_1EN6
+                        && normalDistance < d.getSelectionDistance()) {
+                    destinationSegment = d.getClosestLineSegment(p).withColor(LineColor.ORANGE_4);
                 } else destinationSegment = null;
             }
         }
