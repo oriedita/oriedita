@@ -19,7 +19,7 @@ import java.util.List;
 @Handles(MouseMode.SQUARE_BISECTOR_7)
 public class MouseHandlerSquareBisector extends BaseMouseHandlerInputRestricted {
     private Point p = new Point();
-    private StepGraph<Step> steps = new StepGraph<>(Step.SELECT_2L_OR_3P, this::action_2L_or_3P);
+    private StepGraph<Step> steps = new StepGraph<>(Step.SELECT_2L_OR_3P, this::action_select_2L_or_3P);
 
     private int counter_3P = 0;
     private int counter_2L = 0;
@@ -43,13 +43,13 @@ public class MouseHandlerSquareBisector extends BaseMouseHandlerInputRestricted 
         SELECT_DESTINATION_2L_P,
     }
 
-    public void mouseMoved(Point p0) { highlightSelection(p0); }
+    public void mousePressed(Point p0) { steps.runCurrentAction(); }
 
-    public void mousePressed(Point p0) {}
+    public void mouseMoved(Point p0) { highlightSelection(p0); }
 
     public void mouseDragged(Point p0) { highlightSelection(p0); }
 
-    public void mouseReleased(Point p0) { steps.runCurrentAction(); }
+    public void mouseReleased(Point p0) {}
 
     public void highlightSelection(Point p0){
         p = d.getCamera().TV2object(p0);
@@ -131,7 +131,7 @@ public class MouseHandlerSquareBisector extends BaseMouseHandlerInputRestricted 
     }
 
     private void initializeSteps() {
-        steps = new StepGraph<>(Step.SELECT_2L_OR_3P, this::action_2L_or_3P);
+        steps = new StepGraph<>(Step.SELECT_2L_OR_3P, this::action_select_2L_or_3P);
         steps.addNode(Step.SELECT_3P, this::action_select_3P);
         steps.addNode(Step.SELECT_DESTINATION_3P, this::action_destination_3P);
         steps.addNode(Step.SELECT_2L, this::action_select_2L);
@@ -156,7 +156,7 @@ public class MouseHandlerSquareBisector extends BaseMouseHandlerInputRestricted 
         }
     }
 
-    private Step action_2L_or_3P() {
+    private Step action_select_2L_or_3P() {
         if (pointsList_3P.get(counter_3P) != null) {
             counter_3P++;
             return Step.SELECT_3P;

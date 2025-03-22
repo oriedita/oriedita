@@ -9,7 +9,6 @@ public enum MouseMode {
     LINE_SEGMENT_DELETE_3(3),
     CHANGE_CREASE_TYPE_4(4),
     LENGTHEN_CREASE_5(5),
-    UNUSED_6(6),
     SQUARE_BISECTOR_7(7),
     INWARD_8(8),
     PERPENDICULAR_DRAW_9(9),
@@ -85,9 +84,6 @@ public enum MouseMode {
     ADD_FOLDING_CONSTRAINT(104),
     AXIOM_5(105),
     AXIOM_7(106),
-
-    UNUSED_10001(10001),
-    UNUSED_10002(10002),
     ;
 
     int mode;

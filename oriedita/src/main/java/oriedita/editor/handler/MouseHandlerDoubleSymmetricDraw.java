@@ -4,82 +4,130 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.tinylog.Logger;
 import oriedita.editor.canvas.MouseMode;
+import oriedita.editor.drawing.tools.Camera;
+import oriedita.editor.drawing.tools.DrawingUtil;
 import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
+import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
+
+import java.awt.Graphics2D;
 
 @ApplicationScoped
 @Handles(MouseMode.DOUBLE_SYMMETRIC_DRAW_35)
 public class MouseHandlerDoubleSymmetricDraw extends BaseMouseHandlerInputRestricted {
-    private final MouseHandlerDrawCreaseRestricted mouseHandlerDrawCreaseRestricted;
+    private Point p = new Point();
+    private StepGraph<Step> steps = new StepGraph<>(Step.CLICK_DRAG_POINT, this::action_click_drag_point);
+
+    private Point anchorPoint;
+    private Point releasePoint;
+    private LineSegment dragSegment;
+
+    private enum Step {
+        CLICK_DRAG_POINT,
+        RELEASE_POINT,
+    }
 
     @Inject
-    public MouseHandlerDoubleSymmetricDraw(@Handles(MouseMode.DRAW_CREASE_RESTRICTED_11) MouseHandlerDrawCreaseRestricted mouseHandlerDrawCreaseRestricted) {
-        this.mouseHandlerDrawCreaseRestricted = mouseHandlerDrawCreaseRestricted;
-    }
+    public MouseHandlerDoubleSymmetricDraw() { initializeSteps(); }
 
-    //マウス操作(mouseMode==35　でドラッグしたとき)を行う関数----------------------------------------------------
+    public void mousePressed(Point p0) { steps.runCurrentAction(); }
 
-    //マウス操作(mouseMode==35　でボタンを押したとき)時の作業----------------------------------------------------
-    public void mousePressed(Point p0) {
-        d.getLineStep().clear();
+    public void mouseMoved(Point p0) { highlightSelection(p0); }
 
-        Point p = d.getCamera().TV2object(p0);
-        Point closestPoint = d.getClosestPoint(p);
-        if (p.distance(closestPoint) > d.getSelectionDistance()) {
-            return;
-        }
-        d.lineStepAdd(new LineSegment(p, closestPoint, d.getLineColor()));
-    }
-
-    public void mouseDragged(Point p0) {
-        mouseHandlerDrawCreaseRestricted.mouseDragged(p0);
-    }
-
+    public void mouseDragged(Point p0) { highlightSelection(p0); }
 
     //マウス操作(mouseMode==35　でボタンを離したとき)を行う関数----------------------------------------------------
     public void mouseReleased(Point p0) {
-        if (d.getLineStep().size() == 1) {
-            Point p = d.getCamera().TV2object(p0);
-            Point closestPoint = d.getClosestPoint(p);
+        if (steps.getCurrentStep() == Step.CLICK_DRAG_POINT) return;
+        steps.runCurrentAction();
+    }
 
-            d.getLineStep().set(0, d.getLineStep().get(0).withA(closestPoint));
-            if (p.distance(closestPoint) <= d.getSelectionDistance()) {
-                if (Epsilon.high.gt0(d.getLineStep().get(0).determineLength())) {
-                    for (var s : d.getFoldLineSet().getLineSegmentsCollection()) {
-                        LineSegment.Intersection i_lineSegment_intersection_decision = OritaCalc.determineLineSegmentIntersectionSweet(s, d.getLineStep().get(0), Epsilon.UNKNOWN_001, Epsilon.UNKNOWN_001);
-                        boolean i_jikkou = i_lineSegment_intersection_decision == LineSegment.Intersection.INTERSECTS_TSHAPE_S1_VERTICAL_BAR_25;
-                        //T字型 s1が縦棒
-                        if (i_lineSegment_intersection_decision == LineSegment.Intersection.INTERSECTS_TSHAPE_S1_VERTICAL_BAR_26) {
-                            i_jikkou = true;
-                        }//T字型 s1が縦棒
+    private void highlightSelection(Point p0) {
+        p = d.getCamera().TV2object(p0);
+        switch (steps.getCurrentStep()) {
+            case CLICK_DRAG_POINT: {
+                if (p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
+                    anchorPoint = d.getClosestPoint(p);
+                } else anchorPoint = null;
+                return;
+            }
+            case RELEASE_POINT: {
+                releasePoint = p;
+                dragSegment = new LineSegment(anchorPoint, releasePoint).withColor(d.getLineColor());
+            }
+        }
+    }
 
-                        if (i_jikkou) {
-                            Point t_moto = s.getA();
-                            Logger.info("i_senbun_kousa_hantei_" + i_lineSegment_intersection_decision);
-                            if (OritaCalc.determineLineSegmentDistance(t_moto, d.getLineStep().get(0)) < OritaCalc.determineLineSegmentDistance(s.getB(), d.getLineStep().get(0))) {
-                                t_moto = s.getB();
-                            }
+    @Override
+    public void drawPreview(Graphics2D g2, Camera camera, DrawingSettings settings) {
+        super.drawPreview(g2, camera, settings);
+        DrawingUtil.drawStepVertex(g2, anchorPoint, d.getLineColor(), camera, d.getGridInputAssist());
+        DrawingUtil.drawStepVertex(g2, releasePoint, d.getLineColor(), camera, d.getGridInputAssist());
+        DrawingUtil.drawLineStep(g2, dragSegment, camera, settings.getLineWidth(), d.getGridInputAssist());
+        DrawingUtil.drawText(g2, steps.getCurrentStep().name(), p.withX(p.getX() + 20).withY(p.getY() + 20), camera);
+    }
 
-                            //２つの点t1,t2を通る直線に関して、点pの対照位置にある点を求める public Ten oc.sentaisyou_ten_motome(Ten t1,Ten t2,Ten p){
-                            Point t_taisyou = OritaCalc.findLineSymmetryPoint(d.getLineStep().get(0).getA(), d.getLineStep().get(0).getB(), t_moto);
+    @Override
+    public void reset() {
+        anchorPoint = null;
+        releasePoint = null;
+        dragSegment = null;
+        initializeSteps();
+    }
 
-                            LineSegment add_sen = new LineSegment(OritaCalc.findIntersection(s, d.getLineStep().get(0)), t_taisyou);
+    private void initializeSteps() {
+        steps = new StepGraph<>(Step.CLICK_DRAG_POINT, this::action_click_drag_point);
+        steps.addNode(Step.RELEASE_POINT, this::action_release_point);
 
-                            add_sen = d.extendToIntersectionPoint(add_sen).withColor(s.getColor());
-                            if (Epsilon.high.gt0(add_sen.determineLength())) {
-                                d.addLineSegment(add_sen);
-                            }
-                        }
+        steps.connectNodes(Step.CLICK_DRAG_POINT, Step.RELEASE_POINT);
+    }
 
-                    }
+    private Step action_click_drag_point() {
+        if (anchorPoint == null) return null;
+        return Step.RELEASE_POINT;
+    }
 
-                    d.record();
+    private Step action_release_point() {
+        Point closestPoint = d.getClosestPoint(releasePoint);
+        dragSegment = new LineSegment(anchorPoint, closestPoint);
+
+        if(releasePoint.distance(p) > d.getSelectionDistance()) {
+            reset();
+            return null;
+        }
+
+        if (!Epsilon.high.gt0(dragSegment.determineLength())) {
+            reset();
+            return null;
+        }
+
+        boolean isChanged = false;
+        for (var s : d.getFoldLineSet().getLineSegmentsCollection()) {
+            LineSegment.Intersection intersection = OritaCalc.determineLineSegmentIntersectionSweet(s, dragSegment, Epsilon.UNKNOWN_001, Epsilon.UNKNOWN_001);
+
+            if (intersection == LineSegment.Intersection.INTERSECTS_TSHAPE_S1_VERTICAL_BAR_25
+                || intersection == LineSegment.Intersection.INTERSECTS_TSHAPE_S1_VERTICAL_BAR_26) {
+                Point t_moto = s.getA();
+                if (OritaCalc.determineLineSegmentDistance(t_moto, dragSegment) < OritaCalc.determineLineSegmentDistance(s.getB(), dragSegment)) {
+                    t_moto = s.getB();
+                }
+
+                //２つの点t1,t2を通る直線に関して、点pの対照位置にある点を求める public Ten oc.sentaisyou_ten_motome(Ten t1,Ten t2,Ten p){
+                Point t_taisyou = OritaCalc.findLineSymmetryPoint(dragSegment.getA(), dragSegment.getB(), t_moto);
+                LineSegment add_sen = new LineSegment(OritaCalc.findIntersection(s, dragSegment), t_taisyou);
+                add_sen = d.extendToIntersectionPoint(add_sen).withColor(s.getColor());
+
+                if (Epsilon.high.gt0(add_sen.determineLength())) {
+                    isChanged = true;
+                    d.addLineSegment(add_sen);
                 }
             }
-
-            d.getLineStep().clear();
         }
+
+        if (isChanged) d.record();
+        reset();
+        return null;
     }
 }

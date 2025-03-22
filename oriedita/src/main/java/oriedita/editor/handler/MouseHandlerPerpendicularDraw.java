@@ -37,7 +37,7 @@ public class MouseHandlerPerpendicularDraw extends BaseMouseHandlerInputRestrict
     public MouseHandlerPerpendicularDraw() { initializeSteps(); }
 
     //マウス操作(ボタンを押したとき)時の作業
-    public void mousePressed(Point p0) {}
+    public void mousePressed(Point p0) { steps.runCurrentAction(); }
 
     //マウス操作(マウスを動かしたとき)を行う関数
     public void mouseMoved(Point p0) { highlightSelection(p0); }
@@ -46,7 +46,7 @@ public class MouseHandlerPerpendicularDraw extends BaseMouseHandlerInputRestrict
     public void mouseDragged(Point p0) { highlightSelection(p0); }
 
     //マウス操作(ボタンを離したとき)を行う関数
-    public void mouseReleased(Point p0) { steps.runCurrentAction(); }
+    public void mouseReleased(Point p0) {}
 
     public void highlightSelection(Point p0){
         p = d.getCamera().TV2object(p0);

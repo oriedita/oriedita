@@ -37,13 +37,13 @@ public class MouseHandlerParallelDraw extends BaseMouseHandlerInputRestricted {
     //２つの点t1,t2を通る直線に関して、点pの対照位置にある点を求める public Ten oc.sentaisyou_ten_motome(Ten t1,Ten t2,Ten p){
     //Ten t_taisyou =new Ten(); t_taisyou.set(oc.sentaisyou_ten_motome(lineStep.get(1).geta(),line_step[3].geta(),lineStep.get(0).geta()));
 
-    public void mousePressed(Point p0) {}
+    public void mousePressed(Point p0) { steps.runCurrentAction(); }
 
     public void mouseMoved(Point p0) { highlightSelection(p0); }
 
     public void mouseDragged(Point p0) { highlightSelection(p0); }
 
-    public void mouseReleased(Point p0) { steps.runCurrentAction(); }
+    public void mouseReleased(Point p0) {}
 
     public void highlightSelection(Point p0) {
         p = d.getCamera().TV2object(p0);

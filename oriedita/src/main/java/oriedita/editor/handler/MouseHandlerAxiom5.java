@@ -42,7 +42,7 @@ public class MouseHandlerAxiom5 extends BaseMouseHandlerInputRestricted{
     public MouseHandlerAxiom5() { initializeSteps(); }
 
     @Override
-    public void mousePressed(Point p0) {}
+    public void mousePressed(Point p0) { steps.runCurrentAction(); }
 
     public void mouseMoved(Point p0) { highlightSelection(p0); }
 
@@ -50,7 +50,7 @@ public class MouseHandlerAxiom5 extends BaseMouseHandlerInputRestricted{
     public void mouseDragged(Point p0) { highlightSelection(p0); }
 
     @Override
-    public void mouseReleased(Point p0) { steps.runCurrentAction(); }
+    public void mouseReleased(Point p0) {}
 
     public void highlightSelection(Point p0) {
         p = d.getCamera().TV2object(p0);
@@ -100,68 +100,68 @@ public class MouseHandlerAxiom5 extends BaseMouseHandlerInputRestricted{
         }
     }
 
-    public void drawAxiom5FoldIndicators(double radius, Point target, LineSegment targetSegment, Point pivot) {
+    public void drawAxiom5FoldIndicators(double radius) {
         // Make sure circle radius is not 0
         if(radius <= Epsilon.UNKNOWN_1EN7){ reset(); return; }
 
         double length_a = 0.0; //Distance between the center of the circle and target segment
-        Point center = new Point(pivot);
+        Point center = new Point(pivotPoint);
 
         // If pivot point is not within the target segment span
-        if(!OritaCalc.isPointWithinLineSpan(pivot, targetSegment)){
+        if(!OritaCalc.isPointWithinLineSpan(pivotPoint, targetSegment)){
             length_a = OritaCalc.distance(center, OritaCalc.findProjection(targetSegment, center));
         }
 
         // Intersect at one point
         if(Math.abs(length_a - radius) < Epsilon.UNKNOWN_1EN7){
-            Point projectionPoint = OritaCalc.findProjection(targetSegment, pivot);
-            LineSegment projectionLine = new LineSegment(pivot, projectionPoint);
+            Point projectionPoint = OritaCalc.findProjection(targetSegment, pivotPoint);
+            LineSegment projectionLine = new LineSegment(pivotPoint, projectionPoint);
 
-            if(OritaCalc.isPointWithinLineSpan(target, projectionLine)){
-                if(OritaCalc.distance(projectionPoint, target) < Epsilon.UNKNOWN_1EN7){
-                    Point midPoint = new Point(OritaCalc.midPoint(pivot, projectionPoint));
+            if(OritaCalc.isPointWithinLineSpan(targetPoint, projectionLine)){
+                if(OritaCalc.distance(projectionPoint, targetPoint) < Epsilon.UNKNOWN_1EN7){
+                    Point midPoint = new Point(OritaCalc.midPoint(pivotPoint, projectionPoint));
 
                     indicator1 = OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), new LineSegment(midPoint, OritaCalc.findProjection(OritaCalc.moveParallel(projectionLine, -1.0), midPoint), LineColor.PURPLE_8));
                     indicator2 = OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), new LineSegment(midPoint, OritaCalc.findProjection(OritaCalc.moveParallel(projectionLine, 1.0), midPoint), LineColor.PURPLE_8));
                     return;
                 }
 
-                indicator1 = OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), new LineSegment(pivot, OritaCalc.findProjection(OritaCalc.moveParallel(projectionLine, 1.0), pivot), LineColor.PURPLE_8));
-                indicator2 = OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), new LineSegment(pivot, OritaCalc.findProjection(OritaCalc.moveParallel(projectionLine, -1.0), pivot), LineColor.PURPLE_8));
+                indicator1 = OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), new LineSegment(pivotPoint, OritaCalc.findProjection(OritaCalc.moveParallel(projectionLine, 1.0), pivotPoint), LineColor.PURPLE_8));
+                indicator2 = OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), new LineSegment(pivotPoint, OritaCalc.findProjection(OritaCalc.moveParallel(projectionLine, -1.0), pivotPoint), LineColor.PURPLE_8));
                 return;
             }
 
             LineSegment s;
 
-            if(OritaCalc.isLineSegmentParallel(new LineSegment(pivot, target), projectionLine) == OritaCalc.ParallelJudgement.NOT_PARALLEL){
-                s = OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), new LineSegment(pivot, OritaCalc.center(pivot, target, projectionPoint), LineColor.PURPLE_8));
+            if(OritaCalc.isLineSegmentParallel(new LineSegment(pivotPoint, targetPoint), projectionLine) == OritaCalc.ParallelJudgement.NOT_PARALLEL){
+                s = OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), new LineSegment(pivotPoint, OritaCalc.center(pivotPoint, targetPoint, projectionPoint), LineColor.PURPLE_8));
             } else{
-                s = OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), new LineSegment(pivot, projectionPoint, LineColor.PURPLE_8));
+                s = OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), new LineSegment(pivotPoint, projectionPoint, LineColor.PURPLE_8));
             }
             indicator1 = s;
             indicator2 = s;
         } else if (length_a > radius) { // Doesn't intersect
             reset();
         } else {  // Intersect at two points
-            LineSegment l = new LineSegment(target, pivot);
-            Point projectPoint = OritaCalc.findProjection(targetSegment, pivot);
+            LineSegment l = new LineSegment(targetPoint, pivotPoint);
+            Point projectPoint = OritaCalc.findProjection(targetSegment, pivotPoint);
 
             // Length of the last segment of a right triangle (circle center, projection point, and the ultimate guiding point for indicators)
             double length_b = Math.sqrt((radius * radius) - (length_a * length_a));
-            LineSegment l1 = processProjectedLineOfIndicator(pivot, projectPoint, length_b);
-            LineSegment l2 = processProjectedLineOfIndicator(pivot, projectPoint, -length_b);
+            LineSegment l1 = processProjectedLineOfIndicator(pivotPoint, projectPoint, length_b);
+            LineSegment l2 = processProjectedLineOfIndicator(pivotPoint, projectPoint, -length_b);
 
             // Recalibrate l1 and l2 for later calculations
-            Pair<LineSegment, LineSegment> ls = processPivotWithinSegmentSpan(l1, l2, targetSegment, pivot);
+            Pair<LineSegment, LineSegment> ls = processPivotWithinSegmentSpan(l1, l2, targetSegment, pivotPoint);
             l1 = ls.getLeft();
             l2 = ls.getRight();
 
             // Center points for placeholders to draw bisecting indicators on
-            Point center1 = processCenter(pivot, l, l1);
-            Point center2 = processCenter(pivot, l, l2);
+            Point center1 = processCenter(pivotPoint, l, l1);
+            Point center2 = processCenter(pivotPoint, l, l2);
 
             // Decide the indicators on different cases
-            determineIndicators(l, l1, l2, pivot, center1, center2, target, targetSegment, pivot);
+            determineIndicators(l, l1, l2, pivotPoint, center1, center2, targetPoint, targetSegment, pivotPoint);
         }
     }
 
@@ -296,7 +296,7 @@ public class MouseHandlerAxiom5 extends BaseMouseHandlerInputRestricted{
     private Step action_select_pivot_point() {
         if (pivotPoint == null) return null;
         double radius = OritaCalc.distance(targetPoint, pivotPoint);
-        drawAxiom5FoldIndicators(radius, targetPoint, targetSegment, pivotPoint);
+        drawAxiom5FoldIndicators(radius);
         return Step.SELECT_DESTINATION_OR_INDICATOR;
     }
 
