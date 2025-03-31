@@ -70,7 +70,9 @@ public class DropdownToolButton extends JButton {
         setActiveAction(0);
     }
 
-
+    public List<ActionType> getActions() {
+        return actions;
+    }
 
     public boolean setActiveAction(int index) {
         if (this.actions.size() > index) {

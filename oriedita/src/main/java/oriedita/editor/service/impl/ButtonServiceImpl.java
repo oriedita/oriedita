@@ -180,6 +180,18 @@ public class ButtonServiceImpl implements ButtonService {
                     }
                 }
             }
+            button.addPropertyChangeListener("activeAction", e -> {
+                String newKey = ((ActionType) e.getNewValue()).action();
+                String oldKey = ((ActionType) e.getOldValue()).action();
+                String newIcon = ResourceUtil.getBundleString("icons", newKey);
+                GlyphIcon glyphIcon = new GlyphIcon(newIcon, button.getForeground());
+                setAction(button, newKey);
+                registeredButtons.remove(oldKey, button);
+                registeredButtons.put(newKey, button);
+                setTooltip(newKey);
+                addContextMenu(button, newKey);
+                button.setIcon(glyphIcon);
+            });
         }
         KeyStrokeUtil.resetButton(button);
 
@@ -223,6 +235,7 @@ public class ButtonServiceImpl implements ButtonService {
             } else {
                 menuItem.setText(name);
             }
+            menuItem.setActionCommand(key);
         }
 
         if (!StringOp.isEmpty(icon)) {
@@ -275,15 +288,17 @@ public class ButtonServiceImpl implements ButtonService {
 
     @Override
     public Map<KeyStroke, AbstractButton> getHelpInputMap() {
-        //noinspection OptionalGetWithoutIsPresent
-        return registeredButtons.asMap().entrySet().stream()
-                .filter(e -> keystrokes.containsKey(e.getKey()) && keystrokes.get(e.getKey()) != null)
-                .collect(Collectors.toMap(
-                        e -> keystrokes.get(e.getKey()),
-                        e -> e.getValue().stream().findFirst().get() // get is safe because MultiMap only contains
-                                                                     // keys with at least one entry
-                )
-        );
+        synchronized (keystrokes) {
+            //noinspection OptionalGetWithoutIsPresent
+            return registeredButtons.asMap().entrySet().stream()
+                    .filter(e -> keystrokes.containsKey(e.getKey()) && keystrokes.get(e.getKey()) != null)
+                    .collect(Collectors.toMap(
+                                    e -> keystrokes.get(e.getKey()),
+                                    e -> e.getValue().stream().findFirst().get() // get is safe because MultiMap only contains
+                                    // keys with at least one entry
+                            )
+                    );
+        }
     }
 
     @Override
@@ -323,10 +338,15 @@ public class ButtonServiceImpl implements ButtonService {
 
     @Override
     public void setKeyStroke(KeyStroke keyStroke, String key) {
-        KeyStroke oldValue = keystrokes.get(key);
+        KeyStroke oldValue;
+        synchronized (keystrokes) {
+            oldValue = keystrokes.get(key);
+        }
         removeKeyStroke(key);
         if (keyStroke != null){
-            keystrokes.put(key, keyStroke);
+            synchronized (keystrokes) {
+                keystrokes.put(key, keyStroke);
+            }
             if (!GraphicsEnvironment.isHeadless()) {
                 addUIKeystroke(key, keyStroke);
             }
@@ -336,7 +356,9 @@ public class ButtonServiceImpl implements ButtonService {
     }
 
     public String getActionFromKeystroke(KeyStroke stroke) {
-        return keystrokes.inverse().get(stroke);
+        synchronized (keystrokes) {
+            return keystrokes.inverse().get(stroke);
+        }
     }
 
     private void addContextMenu(AbstractButton button, String key) {
@@ -344,14 +366,19 @@ public class ButtonServiceImpl implements ButtonService {
         Action addKeybindAction = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                KeyStroke currentKeyStroke = keystrokes.get(key);
+                KeyStroke currentKeyStroke;
+                synchronized (keystrokes) {
+                    currentKeyStroke = keystrokes.get(key);
+                }
                 new SelectKeyStrokeDialog(owner.get(), key, ButtonServiceImpl.this, currentKeyStroke);
             }
         };
         String actionName = "Change key stroke";
 
-        if (keystrokes.containsKey(key)) {
-            actionName += " (Current: " + KeyStrokeUtil.toString(keystrokes.get(key)) + ")";
+        synchronized (keystrokes) {
+            if (keystrokes.containsKey(key)) {
+                actionName += " (Current: " + KeyStrokeUtil.toString(keystrokes.get(key)) + ")";
+            }
         }
         addKeybindAction.putValue(Action.NAME, actionName);
         popup.add(addKeybindAction);
@@ -408,6 +435,19 @@ public class ButtonServiceImpl implements ButtonService {
                 public void actionPerformed(ActionEvent e) {
                     if (!(KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner() instanceof JTextComponent)) {
                         tempAction.actionPerformed(e);
+                        var btn = registeredButtons.values().stream()
+                                .filter(b -> b instanceof DropdownToolButton)
+                                .map(b -> (DropdownToolButton) b)
+                                .filter(b ->
+                                        b.getActions().stream().anyMatch(a -> a.action().equals(key)))
+                        .findFirst();
+                        if (btn.isPresent()) {
+                            var action = btn.get().getActions().stream()
+                                    .filter(a -> a.action().equals(key))
+                                    .findFirst()
+                                    .orElseThrow();
+                            btn.get().setActiveAction(btn.get().getActions().indexOf(action));
+                        }
                     }
                 }
             };
@@ -417,9 +457,12 @@ public class ButtonServiceImpl implements ButtonService {
     }
 
     private void removeKeyStroke(String key) {
-        if (!GraphicsEnvironment.isHeadless())
-            owner.get().getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).remove(keystrokes.get(key));
-        keystrokes.remove(key);
+        synchronized (keystrokes) {
+            if (!GraphicsEnvironment.isHeadless()) {
+                owner.get().getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).remove(keystrokes.get(key));
+            }
+            keystrokes.remove(key);
+        }
     }
 
     public void setTooltip(String key) {
