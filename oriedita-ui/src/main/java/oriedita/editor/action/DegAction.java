@@ -7,7 +7,7 @@ import oriedita.editor.service.ButtonService;
 
 import java.awt.event.ActionEvent;
 
-public class DegAction extends AbstractOrieditaAction {
+public class DegAction extends AbstractOrieditaAction implements MouseModeAction {
     private final CanvasModel canvasModel;
     private final AngleSystemModel angleSystemModel;
     private final ButtonService buttonService;
@@ -31,5 +31,10 @@ public class DegAction extends AbstractOrieditaAction {
         angleSystemModel.setAngleSystemInputType(angleSystemInputType);
         canvasModel.setMouseMode(mouseMode);
         buttonService.Button_shared_operation();
+    }
+
+    @Override
+    public MouseMode getMouseMode() {
+        return mouseMode;
     }
 }

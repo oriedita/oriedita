@@ -3,13 +3,14 @@ package oriedita.editor.factory;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
-import oriedita.editor.action.AbstractOrieditaAction;
 import oriedita.editor.action.DegAction;
 import oriedita.editor.action.Oriagari_sousaAction;
 import oriedita.editor.action.OrieditaAction;
 import oriedita.editor.action.SelectionOperationAction;
+import oriedita.editor.action.SetMouseModeAction;
 import oriedita.editor.action.SetMouseModeLineTypeDeleteAction;
 import oriedita.editor.action.SetMouseModeWithAfterColorAndUnselectAction;
+import oriedita.editor.action.SetMouseModeWithUnselectAction;
 import oriedita.editor.action.SuiteiAction;
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.canvas.FoldLineAdditionalInputMode;
@@ -21,8 +22,6 @@ import oriedita.editor.handler.FoldedFigureOperationMode;
 import oriedita.editor.service.ButtonService;
 import oriedita.editor.service.FoldingService;
 import origami.folding.FoldedFigure;
-
-import java.awt.event.ActionEvent;
 
 @ApplicationScoped
 public class ActionFactory {
@@ -41,22 +40,11 @@ public class ActionFactory {
     ButtonService buttonService;
 
     public OrieditaAction setMouseModeAction(MouseMode mouseMode){
-        return new AbstractOrieditaAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                canvasModel.setMouseMode(mouseMode);
-            }
-        };
+        return new SetMouseModeAction(canvasModel, mouseMode);
     }
 
     public OrieditaAction setMouseModeWithUnselectAction(MouseMode mouseMode){
-        return new AbstractOrieditaAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                canvasModel.setMouseMode(mouseMode);
-                mainCreasePattern_Worker.unselect_all();
-            }
-        };
+        return new SetMouseModeWithUnselectAction(canvasModel, mainCreasePattern_Worker, mouseMode);
     }
 
     public SetMouseModeWithAfterColorAndUnselectAction setMouseModeWithAfterColorAndUnselectAction(MouseMode mouseMode){

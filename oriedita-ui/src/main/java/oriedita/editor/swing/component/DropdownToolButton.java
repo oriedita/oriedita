@@ -1,10 +1,12 @@
 package oriedita.editor.swing.component;
 
 import oriedita.editor.action.ActionType;
+import oriedita.editor.handler.PopupMenuAdapter;
 
 import javax.swing.JButton;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+import javax.swing.event.PopupMenuEvent;
 import java.awt.Graphics;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -28,6 +30,8 @@ public class DropdownToolButton extends JButton {
                 if (isInTriangle(e) && e.getButton() == MouseEvent.BUTTON1) {
                     dropdownMenu.setLocation(e.getLocationOnScreen());
                     dropdownMenu.setVisible(true);
+                    e.consume();
+                    setEnabled(false);
                 }
             }
         });
@@ -67,6 +71,13 @@ public class DropdownToolButton extends JButton {
             });
             dropdownMenu.add(item);
         }
+
+        dropdownMenu.addPopupMenuListener(new PopupMenuAdapter() {
+            @Override
+            public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+                setEnabled(true);
+            }
+        });
         setActiveAction(0);
     }
 

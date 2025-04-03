@@ -434,7 +434,6 @@ public class ButtonServiceImpl implements ButtonService {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     if (!(KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner() instanceof JTextComponent)) {
-                        tempAction.actionPerformed(e);
                         var btn = registeredButtons.values().stream()
                                 .filter(b -> b instanceof DropdownToolButton)
                                 .map(b -> (DropdownToolButton) b)
@@ -448,6 +447,7 @@ public class ButtonServiceImpl implements ButtonService {
                                     .orElseThrow();
                             btn.get().setActiveAction(btn.get().getActions().indexOf(action));
                         }
+                        tempAction.actionPerformed(e);
                     }
                 }
             };
