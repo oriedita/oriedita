@@ -39,8 +39,6 @@ import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
 
 @Dependent // This bean is not proxyable (because JPanel)
 public class CanvasUI extends JPanel {
@@ -281,9 +279,9 @@ public class CanvasUI extends JPanel {
                 bufferGraphics.drawString("計算中。　なお、計算を取り消し通常状態に戻りたいなら、右辺の[check A+MV]のチェックをはずし、ブレーキボタン（下辺の、自転車のブレーキのアイコン）を押す。 ", 10, 83); //この表示内容はvoid kekka_syoriで決められる。
             }
 
-            if (Canvas.userWarningMessage != null) {
+            if (canvasModel.getWarningMessage() != null) {
                 bufferGraphics.setColor(Colors.get(Color.yellow));
-                bufferGraphics.drawString(Canvas.userWarningMessage, 10, 97);
+                bufferGraphics.drawString(canvasModel.getWarningMessage(), 10, 97);
             }
 
             bulletinBoard.draw(bufferGraphics);//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

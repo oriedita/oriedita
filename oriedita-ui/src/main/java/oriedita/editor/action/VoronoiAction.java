@@ -12,7 +12,7 @@ import java.awt.event.ActionEvent;
 
 @ApplicationScoped
 @ActionHandler(ActionType.voronoiAction)
-public class VoronoiAction extends AbstractOrieditaAction {
+public class VoronoiAction extends AbstractOrieditaAction implements MouseModeAction {
 
     @Inject
     CanvasModel canvasModel;
@@ -31,5 +31,10 @@ public class VoronoiAction extends AbstractOrieditaAction {
         canvasModel.setMouseModeAfterColorSelection(MouseMode.VORONOI_CREATE_62);
 
         mainCreasePatternWorker.unselect_all(false);
+    }
+
+    @Override
+    public MouseMode getMouseMode() {
+        return MouseMode.VORONOI_CREATE_62;
     }
 }

@@ -7,7 +7,6 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import org.tinylog.Logger;
-import oriedita.editor.Canvas;
 import oriedita.editor.Colors;
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.canvas.FoldLineAdditionalInputMode;
@@ -46,9 +45,6 @@ import javax.swing.event.PopupMenuEvent;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Insets;
-import java.awt.Scrollbar;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
@@ -1076,7 +1072,7 @@ public class LeftPanel {
             sttButton.setBorder(defaultBorder);
         }
 
-        Canvas.clearUserWarningMessage();
+        //Canvas.clearUserWarningMessage();
     }
 
     private void refreshSelectionButtons() {
@@ -1098,7 +1094,7 @@ public class LeftPanel {
             if (!nonEmptySelection) {
                 highlight = new LineBorder(Color.yellow);
                 Logger.info("Highlight for selection tools has been set to yellow");
-                Canvas.setUserWarningMessage("Selection Transformation Tools depend on crease(s) being selected in advance");
+                //Canvas.setUserWarningMessage("Selection Transformation Tools depend on crease(s) being selected in advance");
                 sttButton.setBorder(highlight);
             }
         }
