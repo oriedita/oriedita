@@ -185,7 +185,6 @@ public class Camera implements Serializable { // Mediation between actual coordi
         double x2 = cos_rad * x1 + sin_rad * y1;
         double y2 = -sin_rad * x1 + cos_rad * y1;
 
-        x2 = x2 * camera_mirror;       //鏡
         x2 = x2 * camera_zoom_x;
         y2 = y2 * camera_zoom_y;
         Point t_tv = new Point(x2 + display_position_x, y2 + display_position_y);
@@ -228,8 +227,6 @@ public class Camera implements Serializable { // Mediation between actual coordi
         y1 = y1 - display_position_y;
         x1 = x1 / camera_zoom_x;
         y1 = y1 / camera_zoom_y;
-
-        x1 = x1 * camera_mirror;       //鏡
 
         x2 = cos_rad * x1 - sin_rad * y1;
         y2 = sin_rad * x1 + cos_rad * y1;
