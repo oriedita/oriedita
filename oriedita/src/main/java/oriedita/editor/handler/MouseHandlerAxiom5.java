@@ -38,6 +38,13 @@ public class MouseHandlerAxiom5 extends BaseMouseHandlerInputRestricted{
         SELECT_DESTINATION_OR_INDICATOR,
     }
 
+    // axiom 5 is a fucking bitch to write
+    // 2.3 metric fucktons of edge cases
+    // coz each segment instance has 2 distinct endpoints
+    // so if say l1 has A and B going left to right, and l2 is right to left
+    // gotta handle that shit
+    // the logic is purely geometric
+
     @Inject
     public MouseHandlerAxiom5() { initializeSteps(); }
 
@@ -258,7 +265,10 @@ public class MouseHandlerAxiom5 extends BaseMouseHandlerInputRestricted{
         DrawingUtil.drawLineStep(g2, indicator1, camera, settings.getLineWidth(), d.getGridInputAssist());
         DrawingUtil.drawLineStep(g2, indicator2, camera, settings.getLineWidth(), d.getGridInputAssist());
         DrawingUtil.drawLineStep(g2, destinationSegment, camera, settings.getLineWidth(), d.getGridInputAssist());
-        DrawingUtil.drawText(g2, steps.getCurrentStep().name(), p.withX(p.getX() + 20).withY(p.getY() + 20), camera);
+
+        double textPosX = p.getX() + 20 / camera.getCameraZoomX();
+        double textPosY = p.getY() + 20 / camera.getCameraZoomY();
+        DrawingUtil.drawText(g2, steps.getCurrentStep().name(), p.withX(textPosX).withY(textPosY), camera);
     }
 
     @Override

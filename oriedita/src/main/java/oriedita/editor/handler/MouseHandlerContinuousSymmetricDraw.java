@@ -6,7 +6,8 @@ import jakarta.inject.Named;
 import org.tinylog.Logger;
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.canvas.MouseMode;
-import oriedita.editor.databinding.CanvasModel;
+import oriedita.editor.drawing.tools.Camera;
+import oriedita.editor.drawing.tools.DrawingUtil;
 import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineColor;
@@ -16,61 +17,107 @@ import origami.crease_pattern.element.StraightLine;
 import origami.crease_pattern.util.CreasePattern_Worker_Toolbox;
 import origami.folding.util.SortingBox;
 
+import java.awt.Graphics2D;
+import java.util.ArrayList;
+import java.util.List;
+
 @ApplicationScoped
 @Handles(MouseMode.CONTINUOUS_SYMMETRIC_DRAW_52)
 public class MouseHandlerContinuousSymmetricDraw extends BaseMouseHandlerInputRestricted {
 
     private final CreasePattern_Worker d;
-    private final CanvasModel canvasModel;
     private final CreasePattern_Worker_Toolbox toolbox;
 
-    //マウス操作(ボタンを押したとき)時の作業
-    public void mousePressed(Point p0) {
-        Logger.info("i_egaki_dankai=" + d.getLineStep().size());
+    private Point p = new Point();
+    private Point p1, p2;
+    private List<LineSegment> resultantSegments = new ArrayList<>();
+    private StepGraph<Step> steps = new StepGraph<>(Step.SELECT_P1, this::action_select_p1);
 
-        Point p = d.getCamera().TV2object(p0);
-        Point closest_point = d.getClosestPoint(p);
-
-        if (p.distance(closest_point) < d.getSelectionDistance()) {
-            d.lineStepAdd(new LineSegment(closest_point, closest_point, d.getLineColor()));
-        } else {
-            d.lineStepAdd(new LineSegment(p, p, d.getLineColor()));
-        }
-
-        Logger.info("i_egaki_dankai=" + d.getLineStep().size());
-    }
-
-    //マウス操作(ドラッグしたとき)を行う関数
-    public void mouseDragged(Point p0) {
-    }
-
-    //マウス操作(ボタンを離したとき)を行う関数
-    public void mouseReleased(Point p0) {
-        if (d.getLineStep().size() == 2) {
-            continuous_folding_new(d.getLineStep().get(0).getA(), d.getLineStep().get(1).getA(), null);
-
-            LineColor lineType = d.getLineColor();
-            for (int i = 2; i < d.getLineStep().size(); i++) {
-                LineSegment lineSegment = d.getLineStep().get(i).withColor(lineType);
-                lineType = lineType.changeMV();
-                d.addLineSegment(lineSegment);
-            }
-
-            d.record();
-            d.getLineStep().clear();
-        }
+    private enum Step {
+        SELECT_P1,
+        SELECT_P2,
     }
 
     @Inject
-    public MouseHandlerContinuousSymmetricDraw(@Named("mainCreasePattern_Worker") CreasePattern_Worker d, CanvasModel canvasModel) {
+    public MouseHandlerContinuousSymmetricDraw(@Named("mainCreasePattern_Worker") CreasePattern_Worker d) {
         this.d = d;
-        this.canvasModel = canvasModel;
         this.toolbox = new CreasePattern_Worker_Toolbox(d.getFoldLineSet());
+        initializeSteps();
+    }
+
+    public void mousePressed(Point p0) { steps.runCurrentAction(); }
+
+    public void mouseMoved(Point p0) { highlightSelection(p0); }
+
+    public void mouseDragged(Point p0) { highlightSelection(p0); }
+
+    public void mouseReleased(Point p0) {}
+
+    private void highlightSelection(Point p0) {
+        p = p0 != null ? d.getCamera().TV2object(p0) : p;
+        switch (steps.getCurrentStep()) {
+            case SELECT_P1: {
+                p1 = p;
+                if (p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
+                    p1 = d.getClosestPoint(p);
+                }
+                return;
+            }
+            case SELECT_P2: {
+                p2 = p;
+                if (p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
+                    p2 = d.getClosestPoint(p);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void drawPreview(Graphics2D g2, Camera camera, DrawingSettings settings) {
+        super.drawPreview(g2, camera, settings);
+        DrawingUtil.drawStepVertex(g2, p1, d.getLineColor(), camera, d.getGridInputAssist());
+        DrawingUtil.drawStepVertex(g2, p2, d.getLineColor(), camera, d.getGridInputAssist());
+
+        double textPosX = p.getX() + 20 / camera.getCameraZoomX();
+        double textPosY = p.getY() + 20 / camera.getCameraZoomY();
+        DrawingUtil.drawText(g2, steps.getCurrentStep().name(), p.withX(textPosX).withY(textPosY), camera);
+    }
+
+    @Override
+    public void reset() {
+        p1 = null;
+        p2 = null;
+        resultantSegments = new ArrayList<>();
+        initializeSteps();
+    }
+
+    private void initializeSteps() {
+        steps = new StepGraph<>(Step.SELECT_P1, this::action_select_p1);
+        steps.addNode(Step.SELECT_P2, this::action_select_p2);
+
+        steps.connectNodes(Step.SELECT_P1, Step.SELECT_P2);
+    }
+
+    private Step action_select_p1() {
+        return Step.SELECT_P2;
+    }
+
+    private Step action_select_p2() {
+        continuous_folding_new(p1, p2, null);
+
+        LineColor lineType = d.getLineColor();
+        for (LineSegment segment : resultantSegments) {
+            LineSegment lineSegment = segment.withColor(lineType);
+            lineType = lineType.changeMV();
+            d.addLineSegment(lineSegment);
+        }
+
+        d.record();
+        reset();
+        return null;
     }
 
     public void continuous_folding_new(Point a, Point b, Point start) {//An improved version of continuous folding.
-        canvasModel.markDirty();
-
         //ベクトルab(=s0)を点aからb方向に、最初に他の折線(直線に含まれる線分は無視。)と交差するところまで延長する
 
         //与えられたベクトルabを延長して、それと重ならない折線との、最も近い交点までs_stepとする。
@@ -86,7 +133,7 @@ public class MouseHandlerContinuousSymmetricDraw extends BaseMouseHandlerInputRe
         }
 
         LineSegment s = new LineSegment(toolbox.getLengthenUntilIntersectionLineSegment_new());
-        d.lineStepAdd(s);
+        resultantSegments.add(s);
         s.setActive(LineSegment.ActiveState.ACTIVE_BOTH_3);
         if (start != null && Epsilon.high.eq0(start.distance(s.getB()))) {
             return;

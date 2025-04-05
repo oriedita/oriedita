@@ -120,7 +120,10 @@ public class MouseHandlerPerpendicularDraw extends BaseMouseHandlerInputRestrict
         DrawingUtil.drawLineStep(g2, perpendicularSegment, camera, settings.getLineWidth(), d.getGridInputAssist());
         DrawingUtil.drawLineStep(g2, indicator, camera, settings.getLineWidth(), d.getGridInputAssist());
         DrawingUtil.drawLineStep(g2, destinationSegment, camera, settings.getLineWidth(), d.getGridInputAssist());
-        DrawingUtil.drawText(g2, steps.getCurrentStep().name(), p.withX(p.getX() + 20).withY(p.getY() + 20), camera);
+
+        double textPosX = p.getX() + 20 / camera.getCameraZoomX();
+        double textPosY = p.getY() + 20 / camera.getCameraZoomY();
+        DrawingUtil.drawText(g2, steps.getCurrentStep().name(), p.withX(textPosX).withY(textPosY), camera);
     }
 
     @Override
