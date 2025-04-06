@@ -382,7 +382,7 @@ public class DrawingTab {
         root = new JPanel();
         root.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
         final JPanel panel1 = new JPanel();
-        panel1.setLayout(new GridLayoutManager(13, 1, new Insets(0, 0, 0, 0), -1, -1));
+        panel1.setLayout(new GridLayoutManager(10, 1, new Insets(0, 0, 0, 0), -1, -1));
         root.add(panel1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         final JPanel panel2 = new JPanel();
         panel2.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
@@ -391,7 +391,7 @@ public class DrawingTab {
         label1.setText("Draw");
         panel2.add(label1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final Spacer spacer1 = new Spacer();
-        panel1.add(spacer1, new GridConstraints(12, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        panel1.add(spacer1, new GridConstraints(9, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         final JPanel panel3 = new JPanel();
         panel3.setLayout(new GridBagLayout());
         panel1.add(panel3, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
@@ -656,6 +656,15 @@ public class DrawingTab {
         final JPanel panel6 = new JPanel();
         panel6.setLayout(new GridBagLayout());
         panel1.add(panel6, new GridConstraints(8, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        final JPanel panel7 = new JPanel();
+        panel7.setLayout(new GridBagLayout());
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        gbc.fill = GridBagConstraints.BOTH;
+        panel6.add(panel7, gbc);
         eraseBtn = new JButton();
         eraseBtn.setActionCommand("del_l_typeAction");
         eraseBtn.setText("erase");
@@ -665,7 +674,7 @@ public class DrawingTab {
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        panel6.add(eraseBtn, gbc);
+        panel7.add(eraseBtn, gbc);
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
         gbc.gridy = 0;
@@ -673,10 +682,16 @@ public class DrawingTab {
         gbc.weighty = 1.0;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.BOTH;
-        panel6.add(eraserTypeComboBox, gbc);
-        final JPanel panel7 = new JPanel();
-        panel7.setLayout(new GridBagLayout());
-        panel1.add(panel7, new GridConstraints(9, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        panel7.add(eraserTypeComboBox, gbc);
+        final JPanel panel8 = new JPanel();
+        panel8.setLayout(new GridBagLayout());
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        gbc.fill = GridBagConstraints.BOTH;
+        panel6.add(panel8, gbc);
         deleteOnLineDropdown.setText("deleteOnLine");
         deleteOnLineDropdown.setToolTipText("");
         gbc = new GridBagConstraints();
@@ -685,7 +700,7 @@ public class DrawingTab {
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        panel7.add(deleteOnLineDropdown, gbc);
+        panel8.add(deleteOnLineDropdown, gbc);
         removeVerticesDropdown.setText("removeVertices");
         gbc = new GridBagConstraints();
         gbc.gridx = 2;
@@ -693,7 +708,7 @@ public class DrawingTab {
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        panel7.add(removeVerticesDropdown, gbc);
+        panel8.add(removeVerticesDropdown, gbc);
         addVertexBtn = new JButton();
         addVertexBtn.setActionCommand("vertexAddAction");
         addVertexBtn.setText("addVertex");
@@ -703,10 +718,16 @@ public class DrawingTab {
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        panel7.add(addVertexBtn, gbc);
-        final JPanel panel8 = new JPanel();
-        panel8.setLayout(new GridBagLayout());
-        panel1.add(panel8, new GridConstraints(10, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        panel8.add(addVertexBtn, gbc);
+        final JPanel panel9 = new JPanel();
+        panel9.setLayout(new GridBagLayout());
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        gbc.fill = GridBagConstraints.BOTH;
+        panel6.add(panel9, gbc);
         replaceBtn = new JButton();
         replaceBtn.setActionCommand("replace_lineAction");
         replaceBtn.setText("replace");
@@ -716,7 +737,7 @@ public class DrawingTab {
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        panel8.add(replaceBtn, gbc);
+        panel9.add(replaceBtn, gbc);
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
         gbc.gridy = 0;
@@ -724,7 +745,7 @@ public class DrawingTab {
         gbc.weighty = 1.0;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.BOTH;
-        panel8.add(replaceFromComboBox, gbc);
+        panel9.add(replaceFromComboBox, gbc);
         replaceLabel = new JLabel();
         replaceLabel.setText("->");
         gbc = new GridBagConstraints();
@@ -732,7 +753,7 @@ public class DrawingTab {
         gbc.gridy = 0;
         gbc.weighty = 1.0;
         gbc.anchor = GridBagConstraints.WEST;
-        panel8.add(replaceLabel, gbc);
+        panel9.add(replaceLabel, gbc);
         gbc = new GridBagConstraints();
         gbc.gridx = 3;
         gbc.gridy = 0;
@@ -740,7 +761,7 @@ public class DrawingTab {
         gbc.weighty = 1.0;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.BOTH;
-        panel8.add(replaceToComboBox, gbc);
+        panel9.add(replaceToComboBox, gbc);
         switchReplaceBtn = new JButton();
         switchReplaceBtn.setActionCommand("switchReplaceAction");
         switchReplaceBtn.setText("⇆");
@@ -748,10 +769,16 @@ public class DrawingTab {
         gbc.gridx = 4;
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.BOTH;
-        panel8.add(switchReplaceBtn, gbc);
-        final JPanel panel9 = new JPanel();
-        panel9.setLayout(new GridBagLayout());
-        panel1.add(panel9, new GridConstraints(11, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        panel9.add(switchReplaceBtn, gbc);
+        final JPanel panel10 = new JPanel();
+        panel10.setLayout(new GridBagLayout());
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        gbc.fill = GridBagConstraints.BOTH;
+        panel6.add(panel10, gbc);
         alternateIntersectedBtn = new JButton();
         alternateIntersectedBtn.setActionCommand("on_L_col_changeAction");
         alternateIntersectedBtn.setText("alternateIntersected");
@@ -761,7 +788,7 @@ public class DrawingTab {
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        panel9.add(alternateIntersectedBtn, gbc);
+        panel10.add(alternateIntersectedBtn, gbc);
         alternateIncludedBtn = new JButton();
         alternateIncludedBtn.setActionCommand("in_L_col_changeAction");
         alternateIncludedBtn.setText("alternateIncluded");
@@ -771,7 +798,7 @@ public class DrawingTab {
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        panel9.add(alternateIncludedBtn, gbc);
+        panel10.add(alternateIncludedBtn, gbc);
         mvDropdown.setText("invertMv");
         gbc = new GridBagConstraints();
         gbc.gridx = 2;
@@ -779,7 +806,7 @@ public class DrawingTab {
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        panel9.add(mvDropdown, gbc);
+        panel10.add(mvDropdown, gbc);
     }
 
     /**
