@@ -4,8 +4,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.drawing.tools.Camera;
-import oriedita.editor.drawing.tools.MouseHandlerDrawingHelper;
-import origami.Epsilon;
+import oriedita.editor.drawing.tools.DrawingUtil;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.Circle;
 import origami.crease_pattern.element.LineColor;
@@ -17,93 +16,132 @@ import java.awt.Graphics2D;
 @ApplicationScoped
 @Handles(MouseMode.CIRCLE_DRAW_CONCENTRIC_48)
 public class MouseHandlerCircleDrawConcentric extends BaseMouseHandler {
+    private Point p = new Point();
+    private StepGraph<Step> steps = new StepGraph<>(Step.SELECT_CIRCLE, this::action_select_circle);
+
+    private Point anchorPoint;
+    private Point releasePoint;
     private LineSegment radiusDifference;
     private Circle originalCircle;
     private Circle newCircle;
 
+    private enum Step {
+        SELECT_CIRCLE,
+        CLICK_DRAG_POINT,
+        RELEASE_POINT
+    }
+
     @Inject
-    public MouseHandlerCircleDrawConcentric() {
-    }
+    public MouseHandlerCircleDrawConcentric() { initializeSteps(); }
 
     @Override
-    public void mouseMoved(Point p0) {
+    public void mouseMoved(Point p0) { highlightSelection(p0); }
 
+    public void mousePressed(Point p0) { steps.runCurrentAction(); }
+
+    public void mouseDragged(Point p0) { highlightSelection(p0); }
+
+    public void mouseReleased(Point p0) {
+        if (steps.getCurrentStep() == Step.CLICK_DRAG_POINT) return;
+        steps.runCurrentAction();
     }
 
-    @Override
-    public void reset() {
-        super.reset();
-        originalCircle = null;
-        radiusDifference = null;
-        newCircle = null;
+    private void highlightSelection(Point p0) {
+        p = p0 != null ? d.getCamera().TV2object(p0) : p;
+        switch (steps.getCurrentStep()) {
+            case SELECT_CIRCLE: {
+                if (OritaCalc.distance_circumference(p, d.getClosestCircleMidpoint(p)) < d.getSelectionDistance()) {
+                    originalCircle = new Circle(d.getClosestCircleMidpoint(p));
+                    originalCircle.setColor(LineColor.GREEN_6);
+                } else originalCircle = null;
+                return;
+            }
+            case CLICK_DRAG_POINT: {
+                anchorPoint = p;
+                if (anchorPoint.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
+                    anchorPoint = d.getClosestPoint(p);
+                } else anchorPoint = null;
+                return;
+            }
+            case RELEASE_POINT: {
+                releasePoint = p;
+
+                if (anchorPoint.equals(releasePoint)) {
+                    newCircle = null;
+                    radiusDifference = null;
+                    return;
+                }
+
+                radiusDifference = new LineSegment(anchorPoint, releasePoint, LineColor.CYAN_3);
+                newCircle = new Circle(originalCircle.determineCenter(),
+                        originalCircle.getR() + radiusDifference.determineLength(), LineColor.CYAN_3);
+            }
+        }
     }
 
     @Override
     public void drawPreview(Graphics2D g2, Camera camera, DrawingSettings settings) {
         super.drawPreview(g2, camera, settings);
-        MouseHandlerDrawingHelper helper = new MouseHandlerDrawingHelper(g2, settings, camera, d.getGridInputAssist());
-        helper.drawLineStep(radiusDifference);
-        helper.drawCircle(originalCircle);
-        helper.drawCircle(newCircle);
+        DrawingUtil.drawStepVertex(g2, anchorPoint, LineColor.CYAN_3, camera, d.getGridInputAssist());
+        DrawingUtil.drawStepVertex(g2, releasePoint, LineColor.CYAN_3, camera, d.getGridInputAssist());
+        DrawingUtil.drawCircleStep(g2, originalCircle, camera);
+        DrawingUtil.drawCircleStep(g2, newCircle, camera);
+        DrawingUtil.drawLineStep(g2, radiusDifference, camera, settings.getLineWidth(), d.getGridInputAssist());
+
+        double textPosX = p.getX() + 20 / camera.getCameraZoomX();
+        double textPosY = p.getY() + 20 / camera.getCameraZoomY();
+        DrawingUtil.drawText(g2, steps.getCurrentStep().name(), p.withX(textPosX).withY(textPosY), camera);
     }
 
-    //マウス操作(mouseMode==48 同心円　線分入力　でボタンを押したとき)時の作業----------------------------------------------------
-    public void mousePressed(Point p0) {
-        Point p = d.getCamera().TV2object(p0);
-        Circle closest_circumference = new Circle(d.getClosestCircleMidpoint(p)); //Circle with the circumference closest to the mouse
-        Point closestPoint = d.getClosestPoint(p);
-
-        if ((originalCircle == null) && (radiusDifference == null)) {
-            if (OritaCalc.distance_circumference(p, closest_circumference) > d.getSelectionDistance()) {
-                return;
-            }
-            originalCircle = new Circle(
-                    closest_circumference.determineCenter(),
-                    closest_circumference.getR(),
-                    LineColor.GREEN_6);
-            return;
-        }
-
-        if ((originalCircle != null) && (radiusDifference == null)) {
-            if (p.distance(closestPoint) > d.getSelectionDistance()) {
-                return;
-            }
-
-            radiusDifference = new LineSegment(p, closestPoint, LineColor.CYAN_3);
-            newCircle = new Circle(
-                    originalCircle.determineCenter(),
-                    originalCircle.getR(),
-                    LineColor.GREEN_6);
-        }
+    @Override
+    public void reset() {
+        anchorPoint = null;
+        releasePoint = null;
+        originalCircle = null;
+        newCircle = null;
+        radiusDifference = null;
+        initializeSteps();
     }
 
-    //マウス操作(mouseMode==48 同心円　線分入力　でドラッグしたとき)を行う関数----------------------------------------------------
-    public void mouseDragged(Point p0) {
-        Point p = d.getCamera().TV2object(p0);
-        if (radiusDifference != null && newCircle != null) {
-            radiusDifference = radiusDifference.withA(p);
-            newCircle.setR(originalCircle.getR() + radiusDifference.determineLength());
-        }
+    private void initializeSteps() {
+        steps = new StepGraph<>(Step.SELECT_CIRCLE, this::action_select_circle);
+        steps.addNode(Step.CLICK_DRAG_POINT, this::action_click_drag_point);
+        steps.addNode(Step.RELEASE_POINT, this::action_release_point);
+
+        steps.connectNodes(Step.SELECT_CIRCLE, Step.CLICK_DRAG_POINT);
+        steps.connectNodes(Step.CLICK_DRAG_POINT, Step.RELEASE_POINT);
+        steps.connectNodes(Step.RELEASE_POINT, Step.CLICK_DRAG_POINT);
     }
 
-    //マウス操作(mouseMode==48 同心円　線分入力　でボタンを離したとき)を行う関数----------------------------------------------------
-    public void mouseReleased(Point p0) {
-        if ((radiusDifference != null) && (newCircle != null)) {
-            Circle circle1 = originalCircle;
-            Circle circle2 = newCircle;
+    private Step action_select_circle() {
+        if (originalCircle == null) return null;
+        return Step.CLICK_DRAG_POINT;
+    }
 
-            Point p = d.getCamera().TV2object(p0);
-            Point closestPoint = d.getClosestPoint(p);
-            radiusDifference = radiusDifference.withA(closestPoint);
-            if (p.distance(closestPoint) <= d.getSelectionDistance()) {
-                if (Epsilon.high.gt0(radiusDifference.determineLength())) {
-                    d.addLineSegment(radiusDifference);
-                    circle2.setR(circle1.getR() + radiusDifference.determineLength());
-                    d.addCircle(circle2);
-                    d.record();
-                }
-            }
-            reset();
+    private Step action_click_drag_point() {
+        if (anchorPoint == null) return null;
+        return Step.RELEASE_POINT;
+    }
+
+    private Step action_release_point() {
+        if (releasePoint == null
+                || releasePoint.distance(d.getClosestPoint(p)) > d.getSelectionDistance()) {
+            anchorPoint = null;
+            releasePoint = null;
+            radiusDifference = null;
+            newCircle = null;
+            return Step.CLICK_DRAG_POINT;
         }
+
+        releasePoint = d.getClosestPoint(p);
+        radiusDifference = new LineSegment(anchorPoint, releasePoint);
+        newCircle = new Circle(originalCircle.determineCenter(),
+                originalCircle.getR() + radiusDifference.determineLength(), LineColor.CYAN_3);
+        d.addCircle(newCircle);
+        d.record();
+        reset();
+        return null;
     }
 }
+
+
