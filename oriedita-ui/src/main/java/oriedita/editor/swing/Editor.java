@@ -38,7 +38,7 @@ public class Editor {
     }
 
     public void init(Executor service) throws InterruptedException {
-        service.execute(leftPanel::init);
+        //service.execute(leftPanel::init);
         service.execute(topPanel::init);
         //service.execute(rightPanel::init);
         service.execute(bottomPanel::init);

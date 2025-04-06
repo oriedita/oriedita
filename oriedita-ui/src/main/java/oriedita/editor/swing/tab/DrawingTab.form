@@ -3,12 +3,12 @@
   <grid id="27dc6" binding="root" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
-      <xy x="20" y="20" width="500" height="427"/>
+      <xy x="20" y="20" width="500" height="616"/>
     </constraints>
     <properties/>
     <border type="none"/>
     <children>
-      <grid id="3594e" layout-manager="GridLayoutManager" row-count="7" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+      <grid id="3594e" layout-manager="GridLayoutManager" row-count="13" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -36,7 +36,7 @@
           </grid>
           <vspacer id="1ddca">
             <constraints>
-              <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+              <grid row="12" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
             </constraints>
           </vspacer>
           <grid id="51112" layout-manager="GridBagLayout">
@@ -358,6 +358,176 @@
                   </component>
                 </children>
               </grid>
+            </children>
+          </grid>
+          <vspacer id="15fdb">
+            <constraints>
+              <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="1" anchor="0" fill="0" indent="0" use-parent-layout="false">
+                <minimum-size width="-1" height="5"/>
+                <preferred-size width="-1" height="5"/>
+              </grid>
+            </constraints>
+          </vspacer>
+          <component id="95a8a" class="javax.swing.JLabel">
+            <constraints>
+              <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <text value="Edit"/>
+            </properties>
+          </component>
+          <grid id="68185" layout-manager="GridBagLayout">
+            <constraints>
+              <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <component id="b361" class="javax.swing.JButton" binding="eraseBtn">
+                <constraints>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <gridbag weightx="1.0" weighty="1.0"/>
+                </constraints>
+                <properties>
+                  <actionCommand value="del_l_typeAction"/>
+                  <text value="erase"/>
+                </properties>
+              </component>
+              <component id="1a541" class="javax.swing.JComboBox" binding="eraserTypeComboBox" custom-create="true">
+                <constraints>
+                  <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="3" indent="0" use-parent-layout="false"/>
+                  <gridbag weightx="1.0" weighty="1.0"/>
+                </constraints>
+                <properties/>
+              </component>
+            </children>
+          </grid>
+          <grid id="ebfb9" layout-manager="GridBagLayout">
+            <constraints>
+              <grid row="9" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <component id="34d" class="oriedita.editor.swing.component.DropdownToolButton" binding="deleteOnLineDropdown" custom-create="true">
+                <constraints>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <gridbag weightx="1.0" weighty="1.0"/>
+                </constraints>
+                <properties>
+                  <text value="deleteOnLine"/>
+                  <toolTipText value=""/>
+                </properties>
+              </component>
+              <component id="8849" class="oriedita.editor.swing.component.DropdownToolButton" binding="removeVerticesDropdown" custom-create="true">
+                <constraints>
+                  <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <gridbag weightx="1.0" weighty="1.0"/>
+                </constraints>
+                <properties>
+                  <text value="removeVertices"/>
+                </properties>
+              </component>
+              <component id="1ad2c" class="javax.swing.JButton" binding="addVertexBtn">
+                <constraints>
+                  <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <gridbag weightx="1.0" weighty="1.0"/>
+                </constraints>
+                <properties>
+                  <actionCommand value="vertexAddAction"/>
+                  <text value="addVertex"/>
+                </properties>
+              </component>
+            </children>
+          </grid>
+          <grid id="c95f4" layout-manager="GridBagLayout">
+            <constraints>
+              <grid row="10" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <component id="f59a7" class="javax.swing.JButton" binding="replaceBtn">
+                <constraints>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <gridbag weightx="1.0" weighty="1.0"/>
+                </constraints>
+                <properties>
+                  <actionCommand value="replace_lineAction"/>
+                  <text value="replace"/>
+                </properties>
+              </component>
+              <component id="55590" class="javax.swing.JComboBox" binding="replaceFromComboBox" custom-create="true">
+                <constraints>
+                  <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="3" indent="0" use-parent-layout="false"/>
+                  <gridbag weightx="1.0" weighty="1.0"/>
+                </constraints>
+                <properties/>
+              </component>
+              <component id="e34b1" class="javax.swing.JLabel" binding="replaceLabel">
+                <constraints>
+                  <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <gridbag weightx="0.0" weighty="1.0"/>
+                </constraints>
+                <properties>
+                  <text value="-&gt;"/>
+                </properties>
+              </component>
+              <component id="2df66" class="javax.swing.JComboBox" binding="replaceToComboBox" custom-create="true">
+                <constraints>
+                  <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="3" indent="0" use-parent-layout="false"/>
+                  <gridbag weightx="1.0" weighty="1.0"/>
+                </constraints>
+                <properties/>
+              </component>
+              <component id="6e6aa" class="javax.swing.JButton" binding="switchReplaceBtn">
+                <constraints>
+                  <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                  <gridbag weightx="0.0" weighty="0.0"/>
+                </constraints>
+                <properties>
+                  <actionCommand value="switchReplaceAction"/>
+                  <text value="⇆"/>
+                </properties>
+              </component>
+            </children>
+          </grid>
+          <grid id="9a839" layout-manager="GridBagLayout">
+            <constraints>
+              <grid row="11" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <component id="8a147" class="javax.swing.JButton" binding="alternateIntersectedBtn">
+                <constraints>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <gridbag weightx="1.0" weighty="1.0"/>
+                </constraints>
+                <properties>
+                  <actionCommand value="on_L_col_changeAction"/>
+                  <text value="alternateIntersected"/>
+                </properties>
+              </component>
+              <component id="2ba64" class="javax.swing.JButton" binding="alternateIncludedBtn">
+                <constraints>
+                  <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <gridbag weightx="1.0" weighty="1.0"/>
+                </constraints>
+                <properties>
+                  <actionCommand value="in_L_col_changeAction"/>
+                  <text value="alternateIncluded"/>
+                </properties>
+              </component>
+              <component id="fc5bd" class="oriedita.editor.swing.component.DropdownToolButton" binding="mvDropdown" custom-create="true">
+                <constraints>
+                  <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <gridbag weightx="1.0" weighty="1.0"/>
+                </constraints>
+                <properties>
+                  <text value="invertMv"/>
+                </properties>
+              </component>
             </children>
           </grid>
         </children>
