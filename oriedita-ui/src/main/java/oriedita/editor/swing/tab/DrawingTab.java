@@ -244,6 +244,14 @@ public class DrawingTab {
         })).forEach(button -> {
             if (button.getAction() instanceof MouseModeAction action) {
                 button.setSelected(m == action.getMouseMode());
+            } else {
+                button.setSelected(false);
+            }
+
+            // The new action of the button is only set after the action is executed, so at this point the button
+            // still has the old action and therefore won't be selected in the first if statement.
+            if (button instanceof DropdownToolButton dtb && dtb.wasDropdownItemJustSelected()) {
+                button.setSelected(true);
             }
         });
         updateSelectionTransformButtons();

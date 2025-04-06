@@ -17,6 +17,7 @@ public class DropdownToolButton extends JButton {
     private JPopupMenu dropdownMenu;
     private List<ActionType> actions = new ArrayList<>();
     private ActionType activeAction;
+    private boolean dropdownOpened = false;
 
     public DropdownToolButton() {
         this.addMouseListener(new MouseAdapter() {
@@ -68,6 +69,7 @@ public class DropdownToolButton extends JButton {
             item.addActionListener(e -> {
                 setActiveAction(finalI);
                 dropdownMenu.setVisible(false);
+                dropdownOpened = false;
             });
             dropdownMenu.add(item);
         }
@@ -76,6 +78,16 @@ public class DropdownToolButton extends JButton {
             @Override
             public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
                 setEnabled(true);
+            }
+
+            @Override
+            public void popupMenuCanceled(PopupMenuEvent e) {
+                dropdownOpened = false;
+            }
+
+            @Override
+            public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
+                dropdownOpened = true;
             }
         });
         setActiveAction(0);
@@ -94,5 +106,9 @@ public class DropdownToolButton extends JButton {
             return true;
         }
         return false;
+    }
+
+    public boolean wasDropdownItemJustSelected() {
+        return dropdownOpened && !dropdownMenu.isVisible();
     }
 }
