@@ -6,7 +6,6 @@ import com.intellij.uiDesigner.core.Spacer;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
-import org.tinylog.Logger;
 import oriedita.editor.action.ActionType;
 import oriedita.editor.action.MouseModeAction;
 import oriedita.editor.canvas.CreasePattern_Worker;
@@ -130,10 +129,7 @@ public class DrawingTab {
     }
 
     private void setupNumberTextField(JTextField textField, String key) {
-        textField.addActionListener(e -> {
-            getData(applicationModel);
-            Logger.info(textField.getWidth());
-        });
+        textField.addActionListener(e -> getData(applicationModel));
         textField.getDocument().addDocumentListener(RegexHighlightFactory.intRegexAdapter(textField));
         textField.addKeyListener(new InputEnterKeyAdapter(textField));
         textField.addFocusListener(new FocusAdapter() {
@@ -192,7 +188,6 @@ public class DrawingTab {
             replaceFromComboBox.setSelectedItem(data.getCustomFromLineType());
         }
 
-        Logger.info(data.getCustomFromLineType().toString() + " to " + data.getCustomToLineType().toString());
         updateSwitchBtn(data, canvasModel);
     }
 
