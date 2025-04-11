@@ -11,6 +11,7 @@ import oriedita.editor.AnimationDurations;
 import oriedita.editor.Animations;
 import oriedita.editor.Colors;
 import oriedita.editor.FrameProvider;
+import oriedita.editor.action.ActionType;
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.databinding.ApplicationModel;
@@ -107,6 +108,8 @@ public class AppMenuBar {
     private JMenuItem selectAllButton;
     private JMenuItem unselectAllButton;
     private JMenuItem invertMVButton;
+    private JMenuItem undoButton;
+    private JMenuItem redoButton;
     private AppMenuBarUI appMenuBarUI;
     private PreferenceDialog preferenceDialog;
     private final AnimationService animationService;
@@ -223,6 +226,8 @@ public class AppMenuBar {
         buttonService.registerButton(selectAllButton, "selectAllAction");
         buttonService.registerButton(unselectAllButton, "unselectAllAction");
         buttonService.registerButton(invertMVButton, "zen_yama_tani_henkanAction");
+        buttonService.registerButton(undoButton, ActionType.undoAction.action());
+        buttonService.registerButton(redoButton, ActionType.redoAction.action());
 
         newButton.addActionListener(e -> {
             if (!fileModel.isSaved()) {
@@ -497,6 +502,11 @@ public class AppMenuBar {
 
         invertMVButton = new JMenuItem("Invert MV");
         editMenu.add(invertMVButton);
+
+        undoButton = new JMenuItem("Undo");
+        editMenu.add(undoButton);
+        redoButton = new JMenuItem("Redo");
+        editMenu.add(redoButton);
 
         JMenu viewMenu = new JMenu("View");
         viewMenu.setMnemonic('V');

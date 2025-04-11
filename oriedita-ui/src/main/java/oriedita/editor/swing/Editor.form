@@ -21,6 +21,9 @@
       </nested-form>
       <nested-form id="34be9" form-file="oriedita/editor/swing/LeftPanel.form" binding="leftPanel" custom-create="true">
         <constraints border-constraint="West"/>
+      </nested-form>      
+      <nested-form id="62be5" form-file="oriedita/editor/swing/ToolsPanel.form" binding="toolsPanel" custom-create="true">
+        <constraints border-constraint="West"/>
       </nested-form>
     </children>
   </grid>

@@ -272,6 +272,14 @@ public class ActionRegistrationService {
                 canvasModel.setMouseMode(MouseMode.CHANGE_STANDARD_FACE_103);
             }
         }));
+        actionService.registerAction(ActionType.undoAction, new LambdaAction(() -> {
+            mainCreasePatternWorker.undo();
+            canvasModel.markDirty();
+        }));
+        actionService.registerAction(ActionType.redoAction, new LambdaAction(() -> {
+            mainCreasePatternWorker.redo();
+            canvasModel.markDirty();
+        }));
 
         // |---------------------------------------------------------------------------|
         // --- Top Panel ---
