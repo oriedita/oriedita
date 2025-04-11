@@ -148,6 +148,9 @@
       <item class="oriedita.editor.swing.component.DropdownToolButton" icon="/com/intellij/uiDesigner/icons/button.svg" removable="true" auto-create-binding="true" can-attach-label="false">
         <default-constraints vsize-policy="3" hsize-policy="3" anchor="0" fill="0" />
       </item>
+      <item class="oriedita.editor.swing.tab.ReferencesTab" icon="" removable="true" auto-create-binding="false" can-attach-label="false">
+        <default-constraints vsize-policy="3" hsize-policy="3" anchor="0" fill="0" />
+      </item>
       <item class="oriedita.editor.swing.tab.DrawingTab" icon="" removable="true" auto-create-binding="false" can-attach-label="false">
         <default-constraints vsize-policy="3" hsize-policy="3" anchor="0" fill="0" />
       </item>

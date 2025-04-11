@@ -177,6 +177,8 @@ public enum ActionType {
     h_senbun_sakujyoAction("h_senbun_sakujyoAction"),
     h_undoAction("h_undoAction"),
     h_redoAction("h_redoAction"),
+    undoAction("undoAction"),
+    redoAction("redoAction"),
     l1Action("l1Action"),
     l2Action("l2Action"),
     o_F_checkAction("o_F_checkAction"),
