@@ -6,6 +6,7 @@ import jakarta.inject.Inject;
 import oriedita.editor.AbstractModel;
 import oriedita.editor.service.BindingService;
 
+@SuppressWarnings("unused") // model properties are used through reflection
 @ApplicationScoped
 public class InternalDivisionRatioModel extends AbstractModel {
     private double internalDivisionRatioA;
@@ -22,7 +23,7 @@ public class InternalDivisionRatioModel extends AbstractModel {
     }
 
     public void reset() {
-        internalDivisionRatioA = 1.0;
+        internalDivisionRatioA = 1;
         internalDivisionRatioB = 0.0;
         internalDivisionRatioC = 0.0;
         internalDivisionRatioD = 0.0;

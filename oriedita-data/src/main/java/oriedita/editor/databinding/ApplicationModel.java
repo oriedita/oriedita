@@ -2,16 +2,16 @@ package oriedita.editor.databinding;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import oriedita.editor.AbstractModel;
 import oriedita.editor.Colors;
 import oriedita.editor.canvas.LineStyle;
+import oriedita.editor.service.BindingService;
 import origami.crease_pattern.CustomLineTypes;
 
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Point;
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -22,8 +22,7 @@ import java.util.stream.Collectors;
  * This model is saved to disk and restored when the application starts.
  */
 @ApplicationScoped
-public class ApplicationModel implements Serializable {
-    private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+public class ApplicationModel extends AbstractModel implements Serializable {
     private boolean displayPointSpotlight;
     private boolean displayPointOffset;
     private boolean displayGridInputAssist;
@@ -94,8 +93,13 @@ public class ApplicationModel implements Serializable {
      */
 
     @Inject
-    public ApplicationModel() {
+    public ApplicationModel(BindingService bindingService) {
+        super(bindingService);
         reset();
+    }
+
+    public ApplicationModel() {
+        this(BindingService.dummy());
     }
 
     public int getDefaultGridSize() { return defaultGridSize; }
@@ -453,7 +457,7 @@ public class ApplicationModel implements Serializable {
 
         autoSaveInterval = 5;
 
-        this.pcs.firePropertyChange(null, null, null);
+        this.notifyAllListeners();
     }
 
     public boolean getMoveFoldedModelWithCp() {
@@ -582,14 +586,6 @@ public class ApplicationModel implements Serializable {
         boolean oldAdvancedCheck4Display = this.advancedCheck4Display;
         this.advancedCheck4Display = advancedCheck4Display;
         this.pcs.firePropertyChange("advancedCheck4Display", oldAdvancedCheck4Display, advancedCheck4Display);
-    }
-
-    public void addPropertyChangeListener(PropertyChangeListener listener) {
-        this.pcs.addPropertyChangeListener(listener);
-    }
-
-    public void removePropertyChangeListener(PropertyChangeListener listener) {
-        this.pcs.removePropertyChangeListener(listener);
     }
 
     public int getLineWidth() {

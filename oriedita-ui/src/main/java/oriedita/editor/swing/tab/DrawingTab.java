@@ -8,16 +8,12 @@ import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import oriedita.editor.action.ActionType;
 import oriedita.editor.canvas.CreasePattern_Worker;
-import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.databinding.ApplicationModel;
 import oriedita.editor.databinding.CanvasModel;
-import oriedita.editor.factory.RegexHighlightFactory;
 import oriedita.editor.handler.PopupMenuAdapter;
 import oriedita.editor.service.ButtonService;
-import oriedita.editor.swing.InputEnterKeyAdapter;
 import oriedita.editor.swing.component.DropdownToolButton;
 import oriedita.editor.swing.component.combobox.CustomTextComboBoxRenderer;
-import oriedita.editor.tools.StringOp;
 import origami.crease_pattern.CustomLineTypes;
 
 import javax.swing.DefaultComboBoxModel;
@@ -36,8 +32,6 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseWheelEvent;
 
@@ -108,35 +102,25 @@ public class DrawingTab {
         canvasModel.addPropertyChangeListener(event -> setData(canvasModel));
         applicationModel.addPropertyChangeListener(event -> setData(applicationModel));
 
-        setupNumberTextField(lineDivisionsTextField, "senbun_b_nyuryokuAction");
-        setupNumberTextField(polygonTextField, "regularPolygonAction");
+        applicationModel.bind(lineDivisionsTextField, "foldLineDividingNumber");
+        buttonService.registerTextField(lineDivisionsTextField, "senbun_b_nyuryokuAction");
+        applicationModel.bind(polygonTextField, "numPolygonCorners");
+        buttonService.registerTextField(polygonTextField, "regularPolygonAction");
+
         mainCreasePatternWorker.addPropertyChangeListener(e -> {
             if (e.getPropertyName().equals("isSelectionEmpty")) {
                 updateSelectionTransformButtons();
             }
         });
 
-        eraserTypeComboBox.addActionListener(e ->
-                getData(applicationModel));
-        replaceToComboBox.addActionListener(e -> getData(applicationModel));
-        replaceFromComboBox.addActionListener(e -> getData(applicationModel));
+        applicationModel.bind(eraserTypeComboBox, "delLineType");
+        applicationModel.bind(replaceFromComboBox, "customFromLineType");
+        applicationModel.bind(replaceToComboBox, "customToLineType");
         setupComboBox(eraserTypeComboBox, eraseBtn);
         setupComboBox(replaceFromComboBox, replaceBtn);
         setupComboBox(replaceToComboBox, replaceBtn);
-        buttonService.setIcon(replaceLabel, "labelReplace");
-    }
 
-    private void setupNumberTextField(JTextField textField, String key) {
-        textField.addActionListener(e -> getData(applicationModel));
-        textField.getDocument().addDocumentListener(RegexHighlightFactory.intRegexAdapter(textField));
-        textField.addKeyListener(new InputEnterKeyAdapter(textField));
-        textField.addFocusListener(new FocusAdapter() {
-            @Override
-            public void focusLost(FocusEvent e) {
-                getData(applicationModel);
-            }
-        });
-        buttonService.registerTextField(textField, key);
+        buttonService.setIcon(replaceLabel, "labelReplace");
     }
 
     private void setupComboBox(JComboBox<?> comboBox, JButton toolButton) {
@@ -163,42 +147,18 @@ public class DrawingTab {
         });
     }
 
-    private void getData(ApplicationModel data) {
-        data.setFoldLineDividingNumber(StringOp.String2int(lineDivisionsTextField.getText(), data.getFoldLineDividingNumber()));
-        data.setNumPolygonCorners(StringOp.String2int(polygonTextField.getText(), data.getNumPolygonCorners()));
-
-        data.setDelLineType((CustomLineTypes) eraserTypeComboBox.getSelectedItem());
-        data.setCustomFromLineType((CustomLineTypes) replaceFromComboBox.getSelectedItem());
-        data.setCustomToLineType((CustomLineTypes) replaceToComboBox.getSelectedItem());
-    }
-
     public void setData(ApplicationModel data) {
-        lineDivisionsTextField.setText(String.valueOf(data.getFoldLineDividingNumber()));
-        polygonTextField.setText(String.valueOf(data.getNumPolygonCorners()));
-
-        if (data.getDelLineType() != eraserTypeComboBox.getSelectedItem()) {
-            eraserTypeComboBox.setSelectedItem(data.getDelLineType());
-        }
-        if (data.getCustomToLineType() != replaceToComboBox.getSelectedItem()) {
-            replaceToComboBox.setSelectedItem(data.getCustomToLineType());
-        }
-        if (data.getCustomFromLineType() != replaceFromComboBox.getSelectedItem()) {
-            replaceFromComboBox.setSelectedItem(data.getCustomFromLineType());
-        }
-
-        updateSwitchBtn(data, canvasModel);
+        updateSwitchBtn(data);
     }
 
-    private void updateSwitchBtn(ApplicationModel applicationModel, CanvasModel canvasModel) {
-        var switchEnabled = canvasModel.getMouseMode() == MouseMode.REPLACE_LINE_TYPE_SELECT_72
-                && applicationModel.getCustomFromLineType() != CustomLineTypes.ANY
+    private void updateSwitchBtn(ApplicationModel applicationModel) {
+        var switchEnabled = applicationModel.getCustomFromLineType() != CustomLineTypes.ANY
                 && applicationModel.getCustomFromLineType() != CustomLineTypes.MANDV;
         switchReplaceBtn.setEnabled(switchEnabled);
     }
 
     public void setData(CanvasModel data) {
         updateSelectionTransformButtons();
-        updateSwitchBtn(applicationModel, data);
     }
 
     private void updateSelectionTransformButtons() {

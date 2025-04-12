@@ -3,12 +3,11 @@ package oriedita.editor.databinding;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
+import oriedita.editor.AbstractModel;
+import oriedita.editor.service.BindingService;
 
 @ApplicationScoped
-public class AngleSystemModel {
+public class AngleSystemModel extends AbstractModel {
     private double angleA;
     private double angleB;
     private double angleC;
@@ -28,19 +27,10 @@ public class AngleSystemModel {
     private double currentAngleC;
     private AngleSystemInputType angleSystemInputType;
 
-    private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
-
     @Inject
-    public AngleSystemModel() {
+    public AngleSystemModel(BindingService bindingService) {
+        super(bindingService);
         reset();
-    }
-
-    public void addPropertyChangeListener(PropertyChangeListener listener) {
-        this.pcs.addPropertyChangeListener(listener);
-    }
-
-    public void removePropertyChangeListener(PropertyChangeListener listener) {
-        this.pcs.removePropertyChangeListener(listener);
     }
 
     public void setCurrentABC() {

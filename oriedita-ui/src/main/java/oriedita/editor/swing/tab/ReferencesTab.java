@@ -5,13 +5,9 @@ import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import oriedita.common.converter.DoubleConverter;
 import oriedita.editor.databinding.AngleSystemModel;
 import oriedita.editor.databinding.InternalDivisionRatioModel;
-import oriedita.editor.databinding.MeasuresModel;
-import oriedita.editor.factory.RegexHighlightFactory;
 import oriedita.editor.service.ButtonService;
-import oriedita.editor.swing.InputEnterKeyAdapter;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -25,17 +21,14 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.util.Locale;
-import java.util.function.Consumer;
 
 @ApplicationScoped
 public class ReferencesTab {
     private final ButtonService buttonService;
     private final AngleSystemModel angleSystemModel;
-    private final MeasuresModel measuresModel;
     private final InternalDivisionRatioModel internalDivisionRatioModel;
 
     private JPanel root;
@@ -64,11 +57,9 @@ public class ReferencesTab {
     @Inject
     public ReferencesTab(ButtonService buttonService,
                          AngleSystemModel angleSystemModel,
-                         MeasuresModel measuresModel,
                          InternalDivisionRatioModel internalDivisionRatioModel) {
         this.buttonService = buttonService;
         this.angleSystemModel = angleSystemModel;
-        this.measuresModel = measuresModel;
         this.internalDivisionRatioModel = internalDivisionRatioModel;
     }
 
@@ -76,21 +67,25 @@ public class ReferencesTab {
         buttonService.addDefaultListener($$$getRootComponent$$$());
         angleSystemModel.addPropertyChangeListener(e -> setData(angleSystemModel));
 
-        ActionListener customAnglesListener = e -> useCustomAnglesBtn.doClick();
-        Consumer<FocusEvent> customAngleFocusLost = e -> {
-            getData(angleSystemModel);
-            angleSystemModel.setCurrentABC();
+        var customAngleFocusLost = new FocusAdapter() {
+            @Override
+            public void focusLost(FocusEvent e) {
+                angleSystemModel.setCurrentABC();
+            }
         };
-        initTextField(angleATextField, customAnglesListener, customAngleFocusLost);
-        initTextField(angleBTextField, customAnglesListener, customAngleFocusLost);
-        initTextField(angleCTextField, customAnglesListener, customAngleFocusLost);
+        angleSystemModel.bind(angleATextField, "angleA");
+        angleSystemModel.bind(angleBTextField, "angleB");
+        angleSystemModel.bind(angleCTextField, "angleC");
+        angleATextField.addFocusListener(customAngleFocusLost);
+        angleBTextField.addFocusListener(customAngleFocusLost);
+        angleCTextField.addFocusListener(customAngleFocusLost);
 
-        internalDivisionRatioModel.bind(ratio1TextField, "internalDivisionRatioA", new DoubleConverter());
-        internalDivisionRatioModel.bind(ratio2TextField, "internalDivisionRatioB", new DoubleConverter());
-        internalDivisionRatioModel.bind(ratio3TextField, "internalDivisionRatioC", new DoubleConverter());
-        internalDivisionRatioModel.bind(ratio4TextField, "internalDivisionRatioD", new DoubleConverter());
-        internalDivisionRatioModel.bind(ratio5TextField, "internalDivisionRatioE", new DoubleConverter());
-        internalDivisionRatioModel.bind(ratio6TextField, "internalDivisionRatioF", new DoubleConverter());
+        internalDivisionRatioModel.bind(ratio1TextField, "internalDivisionRatioA");
+        internalDivisionRatioModel.bind(ratio2TextField, "internalDivisionRatioB");
+        internalDivisionRatioModel.bind(ratio3TextField, "internalDivisionRatioC");
+        internalDivisionRatioModel.bind(ratio4TextField, "internalDivisionRatioD");
+        internalDivisionRatioModel.bind(ratio5TextField, "internalDivisionRatioE");
+        internalDivisionRatioModel.bind(ratio6TextField, "internalDivisionRatioF");
 
         buttonService.setIcon(ratioLabel1, "labelPlus");
         buttonService.setIcon(ratioLabel2, "labelSqrt");
@@ -98,48 +93,8 @@ public class ReferencesTab {
         buttonService.setIcon(ratioLabel4, "labelSqrt");
     }
 
-    private void initTextField(JTextField textField, ActionListener l, Consumer<FocusEvent> focusLost) {
-        textField.addActionListener(l);
-        textField.getDocument().addDocumentListener(RegexHighlightFactory.doubleRegexAdapter(textField));
-        textField.addKeyListener(new InputEnterKeyAdapter(textField));
-        textField.addFocusListener(new FocusAdapter() {
-            @Override
-            public void focusLost(FocusEvent e) {
-                focusLost.accept(e);
-            }
-        });
-    }
-
-    public void getData(AngleSystemModel data) {
-        data.setAngleA(measuresModel.string2double(angleATextField.getText(), data.getAngleA()));
-        data.setAngleB(measuresModel.string2double(angleBTextField.getText(), data.getAngleB()));
-        data.setAngleC(measuresModel.string2double(angleCTextField.getText(), data.getAngleC()));
-    }
-
     public void setData(AngleSystemModel angleSystemModel) {
-        angleATextField.setText(String.valueOf(angleSystemModel.getAngleA()));
-        angleBTextField.setText(String.valueOf(angleSystemModel.getAngleB()));
-        angleCTextField.setText(String.valueOf(angleSystemModel.getAngleC()));
-
         angleSystemBtn.setText(angleSystemModel.getAngleSystemADescription());
-    }
-
-    public void getData(InternalDivisionRatioModel data) {
-        //data.setInternalDivisionRatioA(measuresModel.string2double(ratio1TextField.getText(), data.getInternalDivisionRatioA()));
-        data.setInternalDivisionRatioB(measuresModel.string2double(ratio2TextField.getText(), data.getInternalDivisionRatioB()));
-        data.setInternalDivisionRatioC(measuresModel.string2double(ratio3TextField.getText(), data.getInternalDivisionRatioC()));
-        data.setInternalDivisionRatioD(measuresModel.string2double(ratio4TextField.getText(), data.getInternalDivisionRatioD()));
-        data.setInternalDivisionRatioE(measuresModel.string2double(ratio5TextField.getText(), data.getInternalDivisionRatioE()));
-        data.setInternalDivisionRatioF(measuresModel.string2double(ratio6TextField.getText(), data.getInternalDivisionRatioF()));
-    }
-
-    public void setData(InternalDivisionRatioModel data) {
-        //ratio1TextField.setText(String.valueOf(data.getInternalDivisionRatioA()));
-        ratio2TextField.setText(String.valueOf(data.getInternalDivisionRatioB()));
-        ratio3TextField.setText(String.valueOf(data.getInternalDivisionRatioC()));
-        ratio4TextField.setText(String.valueOf(data.getInternalDivisionRatioD()));
-        ratio5TextField.setText(String.valueOf(data.getInternalDivisionRatioE()));
-        ratio6TextField.setText(String.valueOf(data.getInternalDivisionRatioF()));
     }
 
     {
