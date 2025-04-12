@@ -136,8 +136,7 @@ public class MouseHandlerAngleSystem extends BaseMouseHandlerInputRestricted {
         if (closestLineSegmentO.isPresent()) {
             LineSegment closestLineSegment = closestLineSegmentO.get();
             if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.getSelectionDistance()) {
-                LineSegment s = closestLineSegment.withColor(LineColor.BLUE_2);
-                return s;
+                return closestLineSegment.withColor(LineColor.BLUE_2);
             }
         }
         return null;
@@ -178,8 +177,7 @@ public class MouseHandlerAngleSystem extends BaseMouseHandlerInputRestricted {
             for (int i = 0; i < 6; i++) {
                 LineSegment s = OritaCalc.lineSegment_rotate(startingSegment, angles[i], 1.0);
                 s.setActive(LineSegment.ActiveState.ACTIVE_BOTH_3);
-                candidates.add(s);
-                d.getFoldLineSet().setColor(s, customAngleColors[i % 3]);
+                candidates.add(s.withColor(customAngleColors[i % 3]));
             }
         }
         return candidates;

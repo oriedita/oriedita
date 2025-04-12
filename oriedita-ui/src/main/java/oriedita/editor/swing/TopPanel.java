@@ -7,6 +7,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Any;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
+import oriedita.common.converter.DoubleConverter;
 import oriedita.editor.AnimationDurations;
 import oriedita.editor.Animations;
 import oriedita.editor.Canvas;
@@ -134,63 +135,63 @@ public class TopPanel implements PropertyChangeListener {
         buttonService.setIcon(ratioLabel4, "labelPlus");
         buttonService.setIcon(ratioLabel5, "labelSqrt");
 
-        internalDivisionRatioModel.bind(ratioATextField, "displayInternalDivisionRatioA");
-        internalDivisionRatioModel.bind(ratioBTextField, "displayInternalDivisionRatioB");
-        internalDivisionRatioModel.bind(ratioCTextField, "displayInternalDivisionRatioC");
-        internalDivisionRatioModel.bind(ratioDTextField, "displayInternalDivisionRatioD");
-        internalDivisionRatioModel.bind(ratioETextField, "displayInternalDivisionRatioE");
-        internalDivisionRatioModel.bind(ratioFTextField, "displayInternalDivisionRatioF");
+        internalDivisionRatioModel.bind(ratioATextField, "internalDivisionRatioA", new DoubleConverter());
+//        internalDivisionRatioModel.bind(ratioBTextField, "displayInternalDivisionRatioB");
+//        internalDivisionRatioModel.bind(ratioCTextField, "displayInternalDivisionRatioC");
+//        internalDivisionRatioModel.bind(ratioDTextField, "displayInternalDivisionRatioD");
+//        internalDivisionRatioModel.bind(ratioETextField, "displayInternalDivisionRatioE");
+//        internalDivisionRatioModel.bind(ratioFTextField, "displayInternalDivisionRatioF");
 
         mouseSettingsCheckBox.addActionListener(e -> applicationModel.setMouseWheelMovesCreasePattern(mouseSettingsCheckBox.isSelected()));
 
-        ratioATextField.getDocument().addDocumentListener(RegexHighlightFactory.doubleRegexAdapter(ratioATextField));
-        ratioATextField.addKeyListener(new InputEnterKeyAdapter(ratioATextField));
-        ratioATextField.addFocusListener(new FocusAdapter() {
-            @Override
-            public void focusLost(FocusEvent e) {
-                internalDivisionRatioModel.setInternalDivisionRatioA(measuresModel.string2double(internalDivisionRatioModel.getDisplayInternalDivisionRatioA(), internalDivisionRatioModel.getInternalDivisionRatioA()));
-            }
-        });
-        ratioBTextField.getDocument().addDocumentListener(RegexHighlightFactory.doubleRegexAdapter(ratioBTextField));
-        ratioBTextField.addKeyListener(new InputEnterKeyAdapter(ratioBTextField));
-        ratioBTextField.addFocusListener(new FocusAdapter() {
-            @Override
-            public void focusLost(FocusEvent e) {
-                internalDivisionRatioModel.setInternalDivisionRatioB(measuresModel.string2double(internalDivisionRatioModel.getDisplayInternalDivisionRatioB(), internalDivisionRatioModel.getInternalDivisionRatioB()));
-            }
-        });
-        ratioCTextField.getDocument().addDocumentListener(RegexHighlightFactory.doubleRegexAdapter(ratioCTextField));
-        ratioCTextField.addKeyListener(new InputEnterKeyAdapter(ratioCTextField));
-        ratioCTextField.addFocusListener(new FocusAdapter() {
-            @Override
-            public void focusLost(FocusEvent e) {
-                internalDivisionRatioModel.setInternalDivisionRatioC(measuresModel.string2double(internalDivisionRatioModel.getDisplayInternalDivisionRatioC(), internalDivisionRatioModel.getInternalDivisionRatioC()));
-            }
-        });
-        ratioDTextField.getDocument().addDocumentListener(RegexHighlightFactory.doubleRegexAdapter(ratioDTextField));
-        ratioDTextField.addKeyListener(new InputEnterKeyAdapter(ratioDTextField));
-        ratioDTextField.addFocusListener(new FocusAdapter() {
-            @Override
-            public void focusLost(FocusEvent e) {
-                internalDivisionRatioModel.setInternalDivisionRatioD(measuresModel.string2double(internalDivisionRatioModel.getDisplayInternalDivisionRatioD(), internalDivisionRatioModel.getInternalDivisionRatioD()));
-            }
-        });
-        ratioETextField.getDocument().addDocumentListener(RegexHighlightFactory.doubleRegexAdapter(ratioETextField));
-        ratioETextField.addKeyListener(new InputEnterKeyAdapter(ratioETextField));
-        ratioETextField.addFocusListener(new FocusAdapter() {
-            @Override
-            public void focusLost(FocusEvent e) {
-                internalDivisionRatioModel.setInternalDivisionRatioE(measuresModel.string2double(internalDivisionRatioModel.getDisplayInternalDivisionRatioE(), internalDivisionRatioModel.getInternalDivisionRatioE()));
-            }
-        });
-        ratioFTextField.getDocument().addDocumentListener(RegexHighlightFactory.doubleRegexAdapter(ratioFTextField));
-        ratioFTextField.addKeyListener(new InputEnterKeyAdapter(ratioFTextField));
-        ratioFTextField.addFocusListener(new FocusAdapter() {
-            @Override
-            public void focusLost(FocusEvent e) {
-                internalDivisionRatioModel.setInternalDivisionRatioF(measuresModel.string2double(internalDivisionRatioModel.getDisplayInternalDivisionRatioF(), internalDivisionRatioModel.getInternalDivisionRatioF()));
-            }
-        });
+//        ratioATextField.getDocument().addDocumentListener(RegexHighlightFactory.doubleRegexAdapter(ratioATextField));
+//        ratioATextField.addKeyListener(new InputEnterKeyAdapter(ratioATextField));
+//        ratioATextField.addFocusListener(new FocusAdapter() {
+//            @Override
+//            public void focusLost(FocusEvent e) {
+//                internalDivisionRatioModel.setInternalDivisionRatioA(measuresModel.string2double(ratioATextField.getText(), internalDivisionRatioModel.getInternalDivisionRatioA()));
+//            }
+//        });
+//        ratioBTextField.getDocument().addDocumentListener(RegexHighlightFactory.doubleRegexAdapter(ratioBTextField));
+//        ratioBTextField.addKeyListener(new InputEnterKeyAdapter(ratioBTextField));
+//        ratioBTextField.addFocusListener(new FocusAdapter() {
+//            @Override
+//            public void focusLost(FocusEvent e) {
+//                internalDivisionRatioModel.setInternalDivisionRatioB(measuresModel.string2double(internalDivisionRatioModel.getDisplayInternalDivisionRatioB(), internalDivisionRatioModel.getInternalDivisionRatioB()));
+//            }
+//        });
+//        ratioCTextField.getDocument().addDocumentListener(RegexHighlightFactory.doubleRegexAdapter(ratioCTextField));
+//        ratioCTextField.addKeyListener(new InputEnterKeyAdapter(ratioCTextField));
+//        ratioCTextField.addFocusListener(new FocusAdapter() {
+//            @Override
+//            public void focusLost(FocusEvent e) {
+//                internalDivisionRatioModel.setInternalDivisionRatioC(measuresModel.string2double(internalDivisionRatioModel.getDisplayInternalDivisionRatioC(), internalDivisionRatioModel.getInternalDivisionRatioC()));
+//            }
+//        });
+//        ratioDTextField.getDocument().addDocumentListener(RegexHighlightFactory.doubleRegexAdapter(ratioDTextField));
+//        ratioDTextField.addKeyListener(new InputEnterKeyAdapter(ratioDTextField));
+//        ratioDTextField.addFocusListener(new FocusAdapter() {
+//            @Override
+//            public void focusLost(FocusEvent e) {
+//                internalDivisionRatioModel.setInternalDivisionRatioD(measuresModel.string2double(internalDivisionRatioModel.getDisplayInternalDivisionRatioD(), internalDivisionRatioModel.getInternalDivisionRatioD()));
+//            }
+//        });
+//        ratioETextField.getDocument().addDocumentListener(RegexHighlightFactory.doubleRegexAdapter(ratioETextField));
+//        ratioETextField.addKeyListener(new InputEnterKeyAdapter(ratioETextField));
+//        ratioETextField.addFocusListener(new FocusAdapter() {
+//            @Override
+//            public void focusLost(FocusEvent e) {
+//                internalDivisionRatioModel.setInternalDivisionRatioE(measuresModel.string2double(internalDivisionRatioModel.getDisplayInternalDivisionRatioE(), internalDivisionRatioModel.getInternalDivisionRatioE()));
+//            }
+//        });
+//        ratioFTextField.getDocument().addDocumentListener(RegexHighlightFactory.doubleRegexAdapter(ratioFTextField));
+//        ratioFTextField.addKeyListener(new InputEnterKeyAdapter(ratioFTextField));
+//        ratioFTextField.addFocusListener(new FocusAdapter() {
+//            @Override
+//            public void focusLost(FocusEvent e) {
+//                internalDivisionRatioModel.setInternalDivisionRatioF(measuresModel.string2double(internalDivisionRatioModel.getDisplayInternalDivisionRatioF(), internalDivisionRatioModel.getInternalDivisionRatioF()));
+//            }
+//        });
 
         scaleFactorSetButton.addActionListener(e -> {
             double d_syukusyaku_keisuu_old = creasePatternCameraModel.getScale();

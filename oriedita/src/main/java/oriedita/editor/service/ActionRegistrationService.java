@@ -347,6 +347,7 @@ public class ActionRegistrationService {
         actionService.registerAction(ActionType.angleSystemBDecreaseAction, new LambdaAction(angleSystemModel::decreaseAngleSystemB));
         actionService.registerAction(ActionType.angleSystemBAction, new LambdaAction(() -> angleSystemModel.setCurrentAngleSystemDivider(angleSystemModel.getAngleSystemBDivider())));
         actionService.registerAction(ActionType.angleSystemBIncreaseAction, new LambdaAction(angleSystemModel::increaseAngleSystemB));
+        actionService.registerAction(ActionType.restrictedAngleABCSetAction, new LambdaAction(angleSystemModel::setCurrentABC));
         actionService.registerAction(ActionType.deg1Action, actionFactory.degAction(MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13, AngleSystemModel.AngleSystemInputType.DEG_1));
         actionService.registerAction(ActionType.deg2Action, actionFactory.degAction(MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_5_37, AngleSystemModel.AngleSystemInputType.DEG_5));
         actionService.registerAction(ActionType.deg3Action, actionFactory.degAction(MouseMode.ANGLE_SYSTEM_16, AngleSystemModel.AngleSystemInputType.DEG_2));

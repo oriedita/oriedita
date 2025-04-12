@@ -7,7 +7,6 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import oriedita.editor.action.ActionType;
-import oriedita.editor.action.MouseModeAction;
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.databinding.ApplicationModel;
@@ -41,7 +40,6 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseWheelEvent;
-import java.util.Arrays;
 
 @ApplicationScoped
 public class DrawingTab {
@@ -199,58 +197,8 @@ public class DrawingTab {
     }
 
     public void setData(CanvasModel data) {
-        MouseMode m = data.getMouseMode();
-
-        Arrays.stream((new JButton[]{
-                drawCreaseFreeBtn,
-                drawCreaseRestrictedBtn,
-                angleRestrictedToolsDropdown,
-                lengthenCreaseBtn,
-                rabbitEarBtn,
-                flatfoldVertexBtn,
-                perpendicularDropdown,
-                mirroLineBtn,
-                angleBisectorBtn,
-                fishBoneBtn,
-                reflectOverLineBtn,
-                reflectThroughLinesBtn,
-                axiomDropdown,
-                voronoiBtn,
-                applyBtn,
-                equallyDividedLineBtn,
-                polygonBtn,
-                addSelectionDropdown,
-                removeSelectionDropdown,
-                setSelectionDropdown,
-                mirrorBtn,
-                copyLineBtn,
-                copy4pBtn,
-                moveLineBtn,
-                move4pBtn,
-                eraseBtn,
-                deleteOnLineDropdown,
-                addVertexBtn,
-                removeVerticesDropdown,
-                replaceBtn,
-                switchReplaceBtn,
-                alternateIntersectedBtn,
-                alternateIncludedBtn,
-                mvDropdown
-        })).forEach(button -> {
-            if (button.getAction() instanceof MouseModeAction action) {
-                button.setSelected(m == action.getMouseMode());
-            } else {
-                button.setSelected(false);
-            }
-
-            // The new action of the button is only set after the action is executed, so at this point the button
-            // still has the old action and therefore won't be selected in the first if statement.
-            if (button instanceof DropdownToolButton dtb && dtb.wasDropdownItemJustSelected()) {
-                button.setSelected(true);
-            }
-        });
         updateSelectionTransformButtons();
-        updateSwitchBtn(applicationModel, canvasModel);
+        updateSwitchBtn(applicationModel, data);
     }
 
     private void updateSelectionTransformButtons() {
@@ -532,13 +480,15 @@ public class DrawingTab {
         gbc.gridx = 1;
         gbc.gridy = 5;
         gbc.weightx = 1.0;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.fill = GridBagConstraints.BOTH;
         panel3.add(equallyDividedLineBtn, gbc);
         lineDivisionsTextField = new JTextField();
+        lineDivisionsTextField.setPreferredSize(new Dimension(-1, 30));
         lineDivisionsTextField.setText("2");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 5;
+        gbc.weightx = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
         panel3.add(lineDivisionsTextField, gbc);
         polygonBtn = new JButton();
@@ -548,13 +498,15 @@ public class DrawingTab {
         gbc.gridx = 1;
         gbc.gridy = 6;
         gbc.weightx = 1.0;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.fill = GridBagConstraints.BOTH;
         panel3.add(polygonBtn, gbc);
         polygonTextField = new JTextField();
+        polygonTextField.setPreferredSize(new Dimension(-1, 30));
         polygonTextField.setText("3");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 6;
+        gbc.weightx = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
         panel3.add(polygonTextField, gbc);
         final JLabel label2 = new JLabel();

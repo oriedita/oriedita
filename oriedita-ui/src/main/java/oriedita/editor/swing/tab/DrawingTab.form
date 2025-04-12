@@ -196,7 +196,7 @@
               </component>
               <component id="399e" class="javax.swing.JButton" binding="equallyDividedLineBtn">
                 <constraints>
-                  <grid row="5" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <grid row="5" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                   <gridbag weightx="1.0" weighty="0.0"/>
                 </constraints>
                 <properties>
@@ -210,15 +210,16 @@
                     <preferred-size width="40" height="-1"/>
                     <maximum-size width="40" height="-1"/>
                   </grid>
-                  <gridbag weightx="0.0" weighty="0.0"/>
+                  <gridbag weightx="1.0" weighty="0.0"/>
                 </constraints>
                 <properties>
+                  <preferredSize width="-1" height="30"/>
                   <text value="2"/>
                 </properties>
               </component>
               <component id="3b3c" class="javax.swing.JButton" binding="polygonBtn">
                 <constraints>
-                  <grid row="6" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <grid row="6" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                   <gridbag weightx="1.0" weighty="0.0"/>
                 </constraints>
                 <properties>
@@ -232,9 +233,10 @@
                     <preferred-size width="40" height="-1"/>
                     <maximum-size width="40" height="-1"/>
                   </grid>
-                  <gridbag weightx="0.0" weighty="0.0"/>
+                  <gridbag weightx="1.0" weighty="0.0"/>
                 </constraints>
                 <properties>
+                  <preferredSize width="-1" height="30"/>
                   <text value="3"/>
                 </properties>
               </component>

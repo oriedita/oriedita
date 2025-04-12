@@ -1,15 +1,19 @@
 package oriedita.editor;
 
+import oriedita.common.converter.Converter;
+import oriedita.editor.service.BindingService;
+
 import javax.swing.JTextField;
-import java.beans.IntrospectionException;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.beans.PropertyDescriptor;
-import java.lang.reflect.InvocationTargetException;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class AbstractModel {
     protected final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+    private  final BindingService bindingService;
+
+    public AbstractModel(BindingService bindingService) {
+        this.bindingService = bindingService;
+    }
 
     public void removePropertyChangeListener(PropertyChangeListener listener) {
         this.pcs.removePropertyChangeListener(listener);
@@ -25,32 +29,9 @@ public class AbstractModel {
 
     /**
      * Bind a textfield component to a field in this model.
+     * @param property name of the property to bind to (without get or set)
      */
-    public void bind(JTextField component, String property) {
-        try {
-            PropertyDescriptor propertyDescriptor = new PropertyDescriptor(property, getClass());
-            propertyDescriptor.getWriteMethod().invoke(this, component.getText());
-
-            AtomicReference<String> value = new AtomicReference<>(component.getText());
-
-            component.addCaretListener(e -> {
-                try {
-                    if (!value.get().equals(component.getText())) {
-                        value.set(component.getText());
-                        propertyDescriptor.getWriteMethod().invoke(this, component.getText());
-                    }
-                } catch (IllegalAccessException | InvocationTargetException ex) {
-                    ex.printStackTrace();
-                }
-            });
-            addPropertyChangeListener(property, e -> {
-                if (!e.getNewValue().equals(component.getText())) {
-                    component.setText((String) e.getNewValue());
-                }
-            });
-
-        } catch (IntrospectionException | IllegalAccessException | InvocationTargetException e) {
-            throw new RuntimeException(e);
-        }
+    public <T> void bind(JTextField component, String property, Converter<T, String> converter) {
+        bindingService.addBinding(this, component, property, converter);
     }
 }

@@ -5,6 +5,7 @@ import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import oriedita.editor.databinding.AngleSystemModel;
 import oriedita.editor.swing.component.DropdownToolButton;
 import oriedita.editor.swing.tab.DrawingTab;
 import oriedita.editor.swing.tab.ReferencesTab;
@@ -23,6 +24,7 @@ public class ToolsPanel {
     private JTabbedPane tabbedPane1;
     private JPanel root;
     private DrawingTab drawingTab;
+    private ReferencesTab referencesTab;
     private JButton drawCreaseFreeBtn;
     private JButton drawCreaseRestrictedBtn;
     private DropdownToolButton angleRestrictedToolsDropdown;
@@ -53,14 +55,16 @@ public class ToolsPanel {
 
 
     @Inject
-    public ToolsPanel(DrawingTab drawingTab) {
+    public ToolsPanel(DrawingTab drawingTab, ReferencesTab referencesTab) {
         this.drawingTab = drawingTab;
+        this.referencesTab = referencesTab;
         $$$setupUI$$$();
     }
 
 
     public void init() {
         drawingTab.init();
+        referencesTab.init();
     }
 
     /**
@@ -88,8 +92,7 @@ public class ToolsPanel {
         final JPanel panel3 = new JPanel();
         panel3.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
         tabbedPane1.addTab("References", panel3);
-        final ReferencesTab nestedForm1 = new ReferencesTab();
-        panel3.add(nestedForm1.$$$getRootComponent$$$(), new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        panel3.add(referencesTab.$$$getRootComponent$$$(), new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         final JPanel panel4 = new JPanel();
         panel4.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
         tabbedPane1.addTab("Folding", panel4);
