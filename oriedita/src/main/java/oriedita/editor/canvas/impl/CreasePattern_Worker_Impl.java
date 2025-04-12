@@ -237,6 +237,7 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     public String setMemo_for_redo_undo(Save save) {//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<undo,redoでのkiroku復元用
         textWorker.setSave(save);
         textModel.setSelected(false);
+        auxLines.setAuxSave(save);
         return foldLineSet.setSave(save);
     }
 
@@ -335,6 +336,7 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     public Save getSave(String title) {
         Save save_temp = SaveProvider.createInstance();
         foldLineSet.getSave(save_temp, title);
+        auxLines.h_getSave(save_temp);
 
         saveAdditionalInformation(save_temp);
         return save_temp;

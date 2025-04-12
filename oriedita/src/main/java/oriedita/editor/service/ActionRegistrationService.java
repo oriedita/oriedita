@@ -257,6 +257,12 @@ public class ActionRegistrationService {
                 applicationModel.setGridScaleColor(color);
             }
         }));
+        actionService.registerAction(ActionType.c_colAction, new LambdaAction(() -> {
+            Color color = JColorChooser.showDialog(frameProvider.get(), "color", new Color(100, 200, 200));
+            if (color != null) {
+                applicationModel.setCircleCustomizedColor(color);
+            }
+        }));
 
         // - other actions
         actionService.registerAction(ActionType.suitei_01Action, actionFactory.suiteiAction(FoldedFigure.EstimationOrder.ORDER_1));

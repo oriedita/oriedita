@@ -121,6 +121,7 @@ public class DrawingTab {
         setupComboBox(replaceToComboBox, replaceBtn);
 
         buttonService.setIcon(replaceLabel, "labelReplace");
+        updateSwitchBtn(applicationModel);
     }
 
     private void setupComboBox(JComboBox<?> comboBox, JButton toolButton) {

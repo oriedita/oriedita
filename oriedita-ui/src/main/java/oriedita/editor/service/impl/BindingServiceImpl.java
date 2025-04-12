@@ -84,6 +84,7 @@ public class BindingServiceImpl implements BindingService {
     public <T> void addBinding(AbstractModel model, JComboBox<T> component, String property) {
         try {
             PropertyDescriptor propertyDescriptor = new PropertyDescriptor(property, model.getClass());
+            component.setSelectedItem(propertyDescriptor.getReadMethod().invoke(model));
             model.addPropertyChangeListener(property, e -> {
                 if (e.getNewValue() != component.getSelectedItem()) {
                     component.setSelectedItem(e.getNewValue());
@@ -96,7 +97,7 @@ public class BindingServiceImpl implements BindingService {
                     throw new RuntimeException(ex);
                 }
             });
-        } catch (IntrospectionException e) {
+        } catch (IntrospectionException | InvocationTargetException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
     }

@@ -105,7 +105,7 @@ public class MouseHandlerDrawCreaseFree extends BaseMouseHandler {
             }
             if (d.getI_foldLine_additional() == FoldLineAdditionalInputMode.AUX_LINE_1) {
                 d.addLineSegment_auxiliary(d.getLineStep().get(0));
-                d.auxRecord();
+                d.record();
             }
         }
 
