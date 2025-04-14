@@ -250,6 +250,9 @@ public class ActionRegistrationService {
             }
             //以上でやりたいことは書き終わり
         }));
+        actionService.registerAction(ActionType.drawDiagonalGridlinesAction, new LambdaAction(() -> {
+            gridModel.setDrawDiagonalGridlines(!gridModel.getDrawDiagonalGridlines());
+        }));
         actionService.registerAction(ActionType.intervalGridColorAction, new LambdaAction(() -> {
             Color color = JColorChooser.showDialog(frameProvider.get(), "Col", FlatLaf.isLafDark() ? Colors.GRID_SCALE_DARK : Colors.GRID_SCALE);
             if (color != null) {
@@ -284,6 +287,9 @@ public class ActionRegistrationService {
         actionService.registerAction(ActionType.redoAction, new LambdaAction(() -> {
             mainCreasePatternWorker.redo();
             canvasModel.markDirty();
+        }));
+        actionService.registerAction(ActionType.selectPersistentAction, new LambdaAction(() -> {
+            applicationModel.setSelectPersistent(!applicationModel.getSelectPersistent());
         }));
 
         // |---------------------------------------------------------------------------|

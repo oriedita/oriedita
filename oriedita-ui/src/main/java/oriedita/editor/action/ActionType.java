@@ -168,6 +168,7 @@ public enum ActionType {
     foldedFigureSizeSetAction("foldedFigureSizeSetAction"),
     foldedFigureRotateClockwiseAction("foldedFigureRotateClockwiseAction"),
     foldedFigureRotateAntiClockwiseAction("foldedFigureRotateAntiClockwiseAction"),
+    foldedFigureRotateSetAction("foldedFigureRotateSetAction"),
     foldedFigureToggleAntiAliasAction("foldedFigureToggleAntiAliasAction"),
     foldedFigureToggleShadowAction("foldedFigureToggleShadowAction"),
     foldedFigureUndoAction("foldedFigureUndoAction"),
@@ -206,7 +207,11 @@ public enum ActionType {
     addColorConstraintAction("addColorConstraintAction"),
     axiom5Action("axiom5Action"),
     axiom7Action("axiom7Action"),
-    switchReplaceAction("switchReplaceAction");
+    switchReplaceAction("switchReplaceAction"),
+    setGridAngleAction("setGridAngleAction"),
+    setGridXAction("setGridXAction"),
+    setGridYAction("setGridYAction"),
+    selectPersistentAction("selectPersistentAction");
 
 
     static final Map<String, ActionType> actionMap;

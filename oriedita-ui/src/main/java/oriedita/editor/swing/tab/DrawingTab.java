@@ -32,8 +32,6 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseWheelEvent;
 
 @ApplicationScoped
 public class DrawingTab {
@@ -166,9 +164,9 @@ public class DrawingTab {
         applicationModel.addPropertyChangeListener(event -> setData(applicationModel));
 
         applicationModel.bind(lineDivisionsTextField, "foldLineDividingNumber");
-        buttonService.registerTextField(lineDivisionsTextField, "senbun_b_nyuryokuAction");
+        buttonService.registerTextField(lineDivisionsTextField, ActionType.lineSegmentDivisionSetAction.action());
         applicationModel.bind(polygonTextField, "numPolygonCorners");
-        buttonService.registerTextField(polygonTextField, "regularPolygonAction");
+        buttonService.registerTextField(polygonTextField, ActionType.polygonSizeSetAction.action());
 
         mainCreasePatternWorker.addPropertyChangeListener(e -> {
             if (e.getPropertyName().equals("isSelectionEmpty")) {
@@ -192,21 +190,6 @@ public class DrawingTab {
             @Override
             public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
                 toolButton.doClick();
-            }
-        });
-        comboBox.addMouseWheelListener(new MouseAdapter() {
-            @Override
-            public void mouseWheelMoved(MouseWheelEvent e) {
-                int index = comboBox.getSelectedIndex();
-                int itemCount = comboBox.getItemCount();
-                if (e.getWheelRotation() > 0) {
-                    comboBox.setSelectedIndex((index + 1) % itemCount);
-                } else if (e.getWheelRotation() < 0) {
-                    comboBox.setSelectedIndex(index != 0 ? (index - 1) % itemCount : itemCount - 1);
-                }
-
-                e.consume();
-                comboBox.showPopup();
             }
         });
     }

@@ -135,6 +135,9 @@ public class ReferencesTab {
         angleATextField.addFocusListener(customAngleFocusLost);
         angleBTextField.addFocusListener(customAngleFocusLost);
         angleCTextField.addFocusListener(customAngleFocusLost);
+        buttonService.registerTextField(angleATextField, ActionType.restrictedAngleABCSetAction.action());
+        buttonService.registerTextField(angleBTextField, ActionType.restrictedAngleABCSetAction.action());
+        buttonService.registerTextField(angleCTextField, ActionType.restrictedAngleABCSetAction.action());
 
         internalDivisionRatioModel.bind(ratio1TextField, "internalDivisionRatioA");
         internalDivisionRatioModel.bind(ratio2TextField, "internalDivisionRatioB");
@@ -142,6 +145,12 @@ public class ReferencesTab {
         internalDivisionRatioModel.bind(ratio4TextField, "internalDivisionRatioD");
         internalDivisionRatioModel.bind(ratio5TextField, "internalDivisionRatioE");
         internalDivisionRatioModel.bind(ratio6TextField, "internalDivisionRatioF");
+        buttonService.registerTextField(ratio1TextField, ActionType.lineSegmentInternalDivisionRatioSetAction.action());
+        buttonService.registerTextField(ratio2TextField, ActionType.lineSegmentInternalDivisionRatioSetAction.action());
+        buttonService.registerTextField(ratio3TextField, ActionType.lineSegmentInternalDivisionRatioSetAction.action());
+        buttonService.registerTextField(ratio4TextField, ActionType.lineSegmentInternalDivisionRatioSetAction.action());
+        buttonService.registerTextField(ratio5TextField, ActionType.lineSegmentInternalDivisionRatioSetAction.action());
+        buttonService.registerTextField(ratio6TextField, ActionType.lineSegmentInternalDivisionRatioSetAction.action());
 
         buttonService.setIcon(ratioLabel1, "labelPlus");
         buttonService.setIcon(ratioLabel2, "labelSqrt");

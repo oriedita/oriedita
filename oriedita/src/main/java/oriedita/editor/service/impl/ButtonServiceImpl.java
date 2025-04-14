@@ -16,6 +16,7 @@ import oriedita.editor.action.OrieditaAction;
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.service.ButtonService;
+import oriedita.editor.swing.DropdownMouseWheelAdapter;
 import oriedita.editor.swing.component.DropdownToolButton;
 import oriedita.editor.swing.component.GlyphIcon;
 import oriedita.editor.swing.dialog.HelpDialog;
@@ -29,6 +30,7 @@ import javax.swing.AbstractButton;
 import javax.swing.Action;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -357,6 +359,10 @@ public class ButtonServiceImpl implements ButtonService {
                 if (key != null && !key.isEmpty()) {
                     registerButton(button, key, replaceUnderscoresInMenus);
                 }
+            }
+
+            if (component1 instanceof JComboBox<?> comboBox) {
+                comboBox.addMouseListener(new DropdownMouseWheelAdapter(comboBox));
             }
 
             if (component1 instanceof JMenu) {
