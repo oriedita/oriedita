@@ -166,6 +166,7 @@ public class CanvasUI extends JPanel {
     }
 
     public void paintComponent(Graphics bufferGraphics) {
+        this.displayMarkings = applicationModel.getDisplayMarkings();
         //「f」を付けることでfloat型の数値として記述することができる
         Graphics2D g2 = (Graphics2D) bufferGraphics;
         animationService.update();

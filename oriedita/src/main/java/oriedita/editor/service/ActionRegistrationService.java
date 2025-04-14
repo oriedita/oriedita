@@ -27,7 +27,6 @@ import oriedita.editor.drawing.FoldedFigure_Drawer;
 import oriedita.editor.factory.ActionFactory;
 import oriedita.editor.handler.FoldedFigureOperationMode;
 import origami.crease_pattern.CustomLineTypes;
-import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineColor;
 import origami.folding.FoldedFigure;
 
@@ -372,6 +371,19 @@ public class ActionRegistrationService {
         // |---------------------------------------------------------------------------|
         // --- Bottom Panel ---
         // foldedFigure actions
+        actionService.registerAction(ActionType.foldedFigureUndoAction, new LambdaAction(() -> {
+            FoldedFigure_Drawer selectedFigure = foldedFiguresList.getActiveItem();
+
+            if (selectedFigure != null) {
+                selectedFigure.undo();
+            }
+        }));
+        actionService.registerAction(ActionType.foldedFigureRedoAction, new LambdaAction(() -> {
+            FoldedFigure_Drawer selectedFigure = foldedFiguresList.getActiveItem();
+            if (selectedFigure != null) {
+                selectedFigure.redo();
+            }
+        }));
         actionService.registerAction(ActionType.foldedFigureToggleAntiAliasAction, new LambdaAction(foldedFigureModel::toggleAntiAlias));
         actionService.registerAction(ActionType.foldedFigureToggleShadowAction, new LambdaAction(foldedFigureModel::toggleDisplayShadows));
         actionService.registerAction(ActionType.foldedFigureSizeIncreaseAction, new LambdaAction(() -> {
@@ -389,12 +401,18 @@ public class ActionRegistrationService {
                     AnimationDurations.ZOOM);
         }));
         actionService.registerAction(ActionType.foldedFigureRotateClockwiseAction, new LambdaAction(() -> {
-            double rotation = foldedFigureModel.getState() == FoldedFigure.State.BACK_1 ? foldedFigureModel.getRotation() + 11.25 : foldedFigureModel.getRotation() - 11.25;
-            foldedFigureModel.setRotation(OritaCalc.angle_between_m180_180(rotation));
+            animationService.animate(Animations.ROTATE_FOLDED_MODEL,
+                    foldedFigureModel::setRotation,
+                    foldedFigureModel::getRotation,
+                    r -> foldedFigureModel.getState() == FoldedFigure.State.BACK_1 ? r + 11.25 : r - 11.25,
+                    AnimationDurations.ZOOM);
         }));
         actionService.registerAction(ActionType.foldedFigureRotateAntiClockwiseAction, new LambdaAction(() -> {
-            double rotation = foldedFigureModel.getState() != FoldedFigure.State.BACK_1 ? foldedFigureModel.getRotation() + 11.25 : foldedFigureModel.getRotation() - 11.25;
-            foldedFigureModel.setRotation(OritaCalc.angle_between_m180_180(rotation));
+            animationService.animate(Animations.ROTATE_FOLDED_MODEL,
+                    foldedFigureModel::setRotation,
+                    foldedFigureModel::getRotation,
+                    r -> foldedFigureModel.getState() == FoldedFigure.State.BACK_1 ? r - 11.25 : r + 11.25,
+                    AnimationDurations.ZOOM);
         }));
         actionService.registerAction(ActionType.oriagari_sousaAction, actionFactory.oriagari_sousaAction(FoldedFigureOperationMode.MODE_1));
         actionService.registerAction(ActionType.oriagari_sousa_2Action, actionFactory.oriagari_sousaAction(FoldedFigureOperationMode.MODE_2));

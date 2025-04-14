@@ -66,7 +66,7 @@
                   <text value="drawCreaseRestricted"/>
                 </properties>
               </component>
-              <component id="3e8a6" class="oriedita.editor.swing.component.DropdownToolButton" binding="angleRestrictedToolsDropdown" custom-create="true">
+              <component id="3e8a6" class="oriedita.editor.swing.component.DropdownToolButton" binding="angleRestrictedToolsDropdown">
                 <constraints>
                   <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                   <gridbag weightx="1.0" weighty="1.0"/>
@@ -106,7 +106,7 @@
                   <text value="flatfoldVertex"/>
                 </properties>
               </component>
-              <component id="a7ee4" class="oriedita.editor.swing.component.DropdownToolButton" binding="perpendicularDropdown" custom-create="true">
+              <component id="a7ee4" class="oriedita.editor.swing.component.DropdownToolButton" binding="perpendicularDropdown">
                 <constraints>
                   <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                   <gridbag weightx="0.0" weighty="1.0"/>
@@ -165,7 +165,7 @@
                   <text value="reflectThroughLines"/>
                 </properties>
               </component>
-              <component id="57f7b" class="oriedita.editor.swing.component.DropdownToolButton" binding="axiomDropdown" custom-create="true">
+              <component id="57f7b" class="oriedita.editor.swing.component.DropdownToolButton" binding="axiomDropdown">
                 <constraints>
                   <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                   <gridbag weightx="0.0" weighty="1.0"/>
@@ -273,7 +273,7 @@
             <properties/>
             <border type="none"/>
             <children>
-              <component id="65f9e" class="oriedita.editor.swing.component.DropdownToolButton" binding="addSelectionDropdown" custom-create="true">
+              <component id="65f9e" class="oriedita.editor.swing.component.DropdownToolButton" binding="addSelectionDropdown">
                 <constraints>
                   <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                   <gridbag weightx="1.0" weighty="1.0"/>
@@ -282,7 +282,7 @@
                   <text value="addSelection"/>
                 </properties>
               </component>
-              <component id="962e7" class="oriedita.editor.swing.component.DropdownToolButton" binding="removeSelectionDropdown" custom-create="true">
+              <component id="962e7" class="oriedita.editor.swing.component.DropdownToolButton" binding="removeSelectionDropdown">
                 <constraints>
                   <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                   <gridbag weightx="1.0" weighty="1.0"/>
@@ -291,7 +291,7 @@
                   <text value="removeSelection"/>
                 </properties>
               </component>
-              <component id="8cce" class="oriedita.editor.swing.component.DropdownToolButton" binding="setSelectionDropdown" custom-create="true">
+              <component id="8cce" class="oriedita.editor.swing.component.DropdownToolButton" binding="setSelectionDropdown">
                 <constraints>
                   <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                   <gridbag weightx="1.0" weighty="1.0"/>
@@ -385,7 +385,7 @@
             <properties/>
             <border type="none"/>
             <children>
-              <grid id="68185" layout-manager="GridBagLayout">
+              <grid id="ebfb9" layout-manager="GridBagLayout">
                 <constraints>
                   <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                   <gridbag weightx="1.0" weighty="1.0"/>
@@ -393,6 +393,35 @@
                 <properties/>
                 <border type="none"/>
                 <children>
+                  <component id="34d" class="oriedita.editor.swing.component.DropdownToolButton" binding="deleteOnLineDropdown">
+                    <constraints>
+                      <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                      <gridbag weightx="1.0" weighty="1.0"/>
+                    </constraints>
+                    <properties>
+                      <text value="deleteOnLine"/>
+                      <toolTipText value=""/>
+                    </properties>
+                  </component>
+                  <component id="8849" class="oriedita.editor.swing.component.DropdownToolButton" binding="removeVerticesDropdown">
+                    <constraints>
+                      <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                      <gridbag weightx="1.0" weighty="1.0"/>
+                    </constraints>
+                    <properties>
+                      <text value="removeVertices"/>
+                    </properties>
+                  </component>
+                  <component id="1ad2c" class="javax.swing.JButton" binding="addVertexBtn">
+                    <constraints>
+                      <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                      <gridbag weightx="1.0" weighty="1.0"/>
+                    </constraints>
+                    <properties>
+                      <actionCommand value="vertexAddAction"/>
+                      <text value="addVertex"/>
+                    </properties>
+                  </component>
                   <component id="b361" class="javax.swing.JButton" binding="eraseBtn">
                     <constraints>
                       <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
@@ -403,57 +432,18 @@
                       <text value="erase"/>
                     </properties>
                   </component>
-                  <component id="1a541" class="javax.swing.JComboBox" binding="eraserTypeComboBox" custom-create="true">
+                  <component id="1a541" class="javax.swing.JComboBox" binding="eraserTypeComboBox">
                     <constraints>
-                      <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="3" indent="0" use-parent-layout="false"/>
+                      <grid row="0" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="2" anchor="8" fill="3" indent="0" use-parent-layout="false"/>
                       <gridbag weightx="1.0" weighty="1.0"/>
                     </constraints>
                     <properties/>
                   </component>
                 </children>
               </grid>
-              <grid id="ebfb9" layout-manager="GridBagLayout">
-                <constraints>
-                  <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-                  <gridbag weightx="1.0" weighty="1.0"/>
-                </constraints>
-                <properties/>
-                <border type="none"/>
-                <children>
-                  <component id="34d" class="oriedita.editor.swing.component.DropdownToolButton" binding="deleteOnLineDropdown" custom-create="true">
-                    <constraints>
-                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                      <gridbag weightx="1.0" weighty="1.0"/>
-                    </constraints>
-                    <properties>
-                      <text value="deleteOnLine"/>
-                      <toolTipText value=""/>
-                    </properties>
-                  </component>
-                  <component id="8849" class="oriedita.editor.swing.component.DropdownToolButton" binding="removeVerticesDropdown" custom-create="true">
-                    <constraints>
-                      <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                      <gridbag weightx="1.0" weighty="1.0"/>
-                    </constraints>
-                    <properties>
-                      <text value="removeVertices"/>
-                    </properties>
-                  </component>
-                  <component id="1ad2c" class="javax.swing.JButton" binding="addVertexBtn">
-                    <constraints>
-                      <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                      <gridbag weightx="1.0" weighty="1.0"/>
-                    </constraints>
-                    <properties>
-                      <actionCommand value="vertexAddAction"/>
-                      <text value="addVertex"/>
-                    </properties>
-                  </component>
-                </children>
-              </grid>
               <grid id="c95f4" layout-manager="GridBagLayout">
                 <constraints>
-                  <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                  <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                   <gridbag weightx="1.0" weighty="1.0"/>
                 </constraints>
                 <properties/>
@@ -469,7 +459,7 @@
                       <text value="replace"/>
                     </properties>
                   </component>
-                  <component id="55590" class="javax.swing.JComboBox" binding="replaceFromComboBox" custom-create="true">
+                  <component id="55590" class="javax.swing.JComboBox" binding="replaceFromComboBox">
                     <constraints>
                       <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="3" indent="0" use-parent-layout="false"/>
                       <gridbag weightx="1.0" weighty="1.0"/>
@@ -485,7 +475,7 @@
                       <text value="-&gt;"/>
                     </properties>
                   </component>
-                  <component id="2df66" class="javax.swing.JComboBox" binding="replaceToComboBox" custom-create="true">
+                  <component id="2df66" class="javax.swing.JComboBox" binding="replaceToComboBox">
                     <constraints>
                       <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="3" indent="0" use-parent-layout="false"/>
                       <gridbag weightx="1.0" weighty="1.0"/>
@@ -506,7 +496,7 @@
               </grid>
               <grid id="9a839" layout-manager="GridBagLayout">
                 <constraints>
-                  <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                  <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                   <gridbag weightx="1.0" weighty="1.0"/>
                 </constraints>
                 <properties/>
@@ -532,7 +522,7 @@
                       <text value="alternateIncluded"/>
                     </properties>
                   </component>
-                  <component id="fc5bd" class="oriedita.editor.swing.component.DropdownToolButton" binding="mvDropdown" custom-create="true">
+                  <component id="fc5bd" class="oriedita.editor.swing.component.DropdownToolButton" binding="mvDropdown">
                     <constraints>
                       <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                       <gridbag weightx="1.0" weighty="1.0"/>

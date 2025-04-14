@@ -111,11 +111,17 @@ public class ReferencesTab {
     }
 
     public void init() {
+        restrictedCircleDropdown.setActions(
+                ActionType.circleDrawAction, ActionType.circleDrawSeparateAction
+        );
+        concentricCircleDropdown.setActions(
+                ActionType.circleDrawConcentricAction, ActionType.circleDrawTwoConcentricAction, ActionType.circleDrawConcentricSelectAction
+        );
         buttonService.addDefaultListener($$$getRootComponent$$$());
+
         angleSystemModel.addPropertyChangeListener(e -> setData(angleSystemModel));
         applicationModel.addPropertyChangeListener(e -> setData(applicationModel));
         canvasModel.addPropertyChangeListener(e -> setData(canvasModel));
-
 
         var customAngleFocusLost = new FocusAdapter() {
             @Override
@@ -142,9 +148,7 @@ public class ReferencesTab {
         buttonService.setIcon(ratioLabel3, "labelPlus");
         buttonService.setIcon(ratioLabel4, "labelSqrt");
 
-        circleColorButton.addActionListener(e -> {
-            circleColorToolButton.doClick();
-        });
+        circleColorButton.addActionListener(e -> circleColorToolButton.doClick());
 
         measuresModel.bind(measureLength1TextField, "measuredLength1");
         measuresModel.bind(measureLength2TextField, "measuredLength2");
@@ -205,7 +209,6 @@ public class ReferencesTab {
      * @noinspection ALL
      */
     private void $$$setupUI$$$() {
-        createUIComponents();
         root = new JPanel();
         root.setLayout(new GridLayoutManager(2, 1, new Insets(0, 0, 0, 0), -1, -1));
         final Spacer spacer1 = new Spacer();
@@ -479,6 +482,7 @@ public class ReferencesTab {
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         panel6.add(circleButton, gbc);
+        restrictedCircleDropdown = new DropdownToolButton();
         restrictedCircleDropdown.setText("restrictedCircle");
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
@@ -487,6 +491,7 @@ public class ReferencesTab {
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         panel6.add(restrictedCircleDropdown, gbc);
+        concentricCircleDropdown = new DropdownToolButton();
         concentricCircleDropdown.setText("concentricCircle");
         gbc = new GridBagConstraints();
         gbc.gridx = 2;
@@ -766,14 +771,4 @@ public class ReferencesTab {
         return root;
     }
 
-    private void createUIComponents() {
-        restrictedCircleDropdown = new DropdownToolButton();
-        restrictedCircleDropdown.setActions(
-                ActionType.circleDrawAction, ActionType.circleDrawSeparateAction
-        );
-        concentricCircleDropdown = new DropdownToolButton();
-        concentricCircleDropdown.setActions(
-                ActionType.circleDrawConcentricAction, ActionType.circleDrawTwoConcentricAction, ActionType.circleDrawConcentricSelectAction
-        );
-    }
 }

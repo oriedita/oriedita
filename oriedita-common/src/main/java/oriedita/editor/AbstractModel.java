@@ -8,10 +8,11 @@ import javax.swing.JTextField;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.io.Serializable;
 
-public class AbstractModel {
+public class AbstractModel implements Serializable {
     protected final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
-    private  final BindingService bindingService;
+    private final BindingService bindingService;
 
     public AbstractModel(BindingService bindingService) {
         this.bindingService = bindingService;

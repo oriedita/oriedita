@@ -16,12 +16,13 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
+import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
 @ApplicationScoped
-public class BindingServiceImpl implements BindingService {
+public class BindingServiceImpl implements BindingService, Serializable {
     @Override
     public <T> void addBinding(AbstractModel model, JTextField component, String property, Converter<T, String> converter) {
 
@@ -38,7 +39,10 @@ public class BindingServiceImpl implements BindingService {
 
 
             //noinspection unchecked
-            component.setText(finalConverter.convert((T) propertyDescriptor.getReadMethod().invoke(model)));
+            T tmpValue = (T) propertyDescriptor.getReadMethod().invoke(model);
+            if (finalConverter.canConvert(tmpValue)){
+                component.setText(finalConverter.convert(tmpValue));
+            }
 
             AtomicReference<String> value = new AtomicReference<>(component.getText());
 
@@ -58,9 +62,17 @@ public class BindingServiceImpl implements BindingService {
                 }
             });
             model.addPropertyChangeListener(property, e -> {
-                if (!e.getNewValue().toString().equals(component.getText())) {
+                if (e.getNewValue() == null || !e.getNewValue().toString().equals(component.getText())) {
                     if (!component.isFocusOwner()){
-                        component.setText(e.getNewValue().toString());
+                        try {
+                            //noinspection unchecked
+                            T newValue = (T) propertyDescriptor.getReadMethod().invoke(model);
+                            if (finalConverter.canConvert(newValue)){
+                                component.setText(finalConverter.convert(newValue));
+                            }
+                        } catch (IllegalAccessException | InvocationTargetException | ClassCastException ex) {
+                            throw new RuntimeException(ex);
+                        }
                     }
                 }
             });
@@ -68,7 +80,11 @@ public class BindingServiceImpl implements BindingService {
                 @Override
                 public void focusLost(FocusEvent e) {
                     try {
-                        component.setText(propertyDescriptor.getReadMethod().invoke(model).toString());
+                        //noinspection unchecked
+                        T newValue = (T) propertyDescriptor.getReadMethod().invoke(model);
+                        if (finalConverter.canConvert(newValue)){
+                            component.setText(finalConverter.convert(newValue));
+                        }
                     } catch (IllegalAccessException | InvocationTargetException ex) {
                         Logger.error(ex);
                     }

@@ -5,6 +5,7 @@ import oriedita.common.converter.Converter;
 
 import javax.swing.JComboBox;
 import javax.swing.JTextField;
+import java.io.Serializable;
 
 public interface BindingService {
     <T> void addBinding(AbstractModel model, JTextField component, String property, Converter<T, String> converter);
@@ -14,16 +15,16 @@ public interface BindingService {
      * @return a dummy bindingService that does nothing when bind is called.
      */
     static BindingService dummy() {
-        return new BindingService() {
-            @Override
-            public <T> void addBinding(AbstractModel model, JTextField component, String property, Converter<T, String> converter) {
-            }
+        return new DummyBindingService();
+    }
+    class DummyBindingService implements BindingService, Serializable{
+        @Override
+        public <T> void addBinding(AbstractModel model, JTextField component, String property, Converter<T, String> converter) {
+        }
 
-            @Override
-            public <T> void addBinding(AbstractModel model, JComboBox<T> component, String modelProperty) {
-                
-            }
+        @Override
+        public <T> void addBinding(AbstractModel model, JComboBox<T> component, String modelProperty) {
 
-        };
+        }
     }
 }

@@ -170,6 +170,8 @@ public enum ActionType {
     foldedFigureRotateAntiClockwiseAction("foldedFigureRotateAntiClockwiseAction"),
     foldedFigureToggleAntiAliasAction("foldedFigureToggleAntiAliasAction"),
     foldedFigureToggleShadowAction("foldedFigureToggleShadowAction"),
+    foldedFigureUndoAction("foldedFigureUndoAction"),
+    foldedFigureRedoAction("foldedFigureRedoAction"),
     goToFoldedFigureAction("goToFoldedFigureAction"),
     h_senhaba_sageAction("h_senhaba_sageAction"),
     h_senhaba_ageAction("h_senhaba_ageAction"),
