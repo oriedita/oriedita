@@ -1,6 +1,5 @@
 package oriedita.editor.canvas;
 
-import oriedita.editor.databinding.AngleSystemModel;
 import oriedita.editor.databinding.ApplicationModel;
 import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.databinding.GridModel;
@@ -211,8 +210,6 @@ public interface CreasePattern_Worker {
     void setData(PropertyChangeEvent e, ApplicationModel data);
 
     void setData(CanvasModel data);
-
-    void setData(AngleSystemModel angleSystemModel);
 
     Point getCameraPosition();
 

@@ -8,7 +8,6 @@ import oriedita.editor.canvas.LineStyle;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.canvas.OperationFrame;
 import oriedita.editor.canvas.TextWorker;
-import oriedita.editor.databinding.AngleSystemModel;
 import oriedita.editor.databinding.ApplicationModel;
 import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.databinding.FileModel;
@@ -111,7 +110,7 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     private boolean check2 = false;//=0 check2を実施しない、1=実施する　
     private boolean check3 = false;//=0 check3を実施しない、1=実施する　// TODO: intellij says this field is never written to, double check if check3 can be removed
     private boolean check4 = false;//=0 check4を実施しない、1=実施する　
-    private boolean isSelectionEmpty;
+    private boolean isSelectionEmpty = false;
     //---------------------------------
     // ****************************************************************************************************************************************
     // **************　Variable definition so far　****************************************************************************************************
@@ -1073,11 +1072,6 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
         setAuxLineColor(data.calculateAuxColor());
         setFoldLineAdditional(data.getFoldLineAdditionalInputMode());
         i_select_mode = data.getSelectionOperationMode();
-    }
-
-    @Override
-    public void setData(AngleSystemModel angleSystemModel) {
-        unselect_all();
     }
 
     @Override
