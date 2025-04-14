@@ -8,6 +8,7 @@ import jakarta.inject.Inject;
 import oriedita.editor.databinding.AngleSystemModel;
 import oriedita.editor.swing.component.DropdownToolButton;
 import oriedita.editor.swing.tab.DrawingTab;
+import oriedita.editor.swing.tab.FoldingTab;
 import oriedita.editor.swing.tab.ReferencesTab;
 
 import javax.swing.JButton;
@@ -25,39 +26,14 @@ public class ToolsPanel {
     private JPanel root;
     private DrawingTab drawingTab;
     private ReferencesTab referencesTab;
-    private JButton drawCreaseFreeBtn;
-    private JButton drawCreaseRestrictedBtn;
-    private DropdownToolButton angleRestrictedToolsDropdown;
-    private JButton lengthenCreaseBtn;
-    private JButton rabbitEarBtn;
-    private JButton flatfoldVertexBtn;
-    private DropdownToolButton perpendicularDropdown;
-    private JButton mirroLineBtn;
-    private JButton angleBisectorBtn;
-    private JButton fishBoneBtn;
-    private JButton reflectOverLineBtn;
-    private JButton reflectThroughLinesBtn;
-    private DropdownToolButton axiomDropdown;
-    private JButton voronoiBtn;
-    private JButton applyBtn;
-    private JButton equallyDividedLineBtn;
-    private JTextField lineDivisionsTextField;
-    private JButton polygonBtn;
-    private JTextField polygonTextField;
-    private DropdownToolButton addSelectionDropdown;
-    private DropdownToolButton removeSelectionDropdown;
-    private DropdownToolButton setSelectionDropdown;
-    private JButton mirrorBtn;
-    private JButton copyLineBtn;
-    private JButton copy4pBtn;
-    private JButton moveLineBtn;
-    private JButton move4pBtn;
+    private FoldingTab foldingTab;
 
 
     @Inject
-    public ToolsPanel(DrawingTab drawingTab, ReferencesTab referencesTab) {
+    public ToolsPanel(DrawingTab drawingTab, ReferencesTab referencesTab, FoldingTab foldingTab) {
         this.drawingTab = drawingTab;
         this.referencesTab = referencesTab;
+        this.foldingTab = foldingTab;
         $$$setupUI$$$();
     }
 
@@ -65,6 +41,7 @@ public class ToolsPanel {
     public void init() {
         drawingTab.init();
         referencesTab.init();
+        foldingTab.init();
     }
 
     /**
@@ -96,6 +73,7 @@ public class ToolsPanel {
         final JPanel panel4 = new JPanel();
         panel4.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
         tabbedPane1.addTab("Folding", panel4);
+        panel4.add(foldingTab.$$$getRootComponent$$$(), new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         final JPanel panel5 = new JPanel();
         panel5.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
         tabbedPane1.addTab("Grid", panel5);

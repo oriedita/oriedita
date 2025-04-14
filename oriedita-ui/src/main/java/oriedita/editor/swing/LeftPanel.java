@@ -1208,7 +1208,8 @@ public class LeftPanel {
             case CONTINUOUS_SYMMETRIC_DRAW_52:
             case VORONOI_CREATE_62:
             case FOLDABLE_LINE_DRAW_71:
-                if (canvasModel.getMouseMode() == MouseMode.DRAW_CREASE_FREE_1 && data.getFoldLineAdditionalInputMode() == FoldLineAdditionalInputMode.AUX_LINE_1) {
+                if (canvasModel.getMouseMode() == MouseMode.DRAW_CREASE_FREE_1 && data.
+                        getFoldLineAdditionalInputMode() == FoldLineAdditionalInputMode.AUX_LINE_1) {
                     break;
                 }
 
