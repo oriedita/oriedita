@@ -3,7 +3,7 @@
   <grid id="27dc6" binding="root" layout-manager="GridLayoutManager" row-count="13" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
-      <xy x="20" y="20" width="500" height="528"/>
+      <xy x="20" y="20" width="500" height="588"/>
     </constraints>
     <properties/>
     <border type="none"/>
@@ -28,55 +28,6 @@
           </grid>
         </constraints>
       </vspacer>
-      <grid id="72086" layout-manager="GridBagLayout">
-        <constraints>
-          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties/>
-        <border type="none"/>
-        <children>
-          <component id="5bd9d" class="javax.swing.JButton" binding="decreaseLineThicknessButton" default-binding="true">
-            <constraints>
-              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="1.0" weighty="1.0"/>
-            </constraints>
-            <properties>
-              <actionCommand value="lineWidthDecreaseAction"/>
-              <text value="decreaseLineThickness"/>
-            </properties>
-          </component>
-          <component id="8b908" class="javax.swing.JButton" binding="increaseLineThicknessButton" default-binding="true">
-            <constraints>
-              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="1.0" weighty="1.0"/>
-            </constraints>
-            <properties>
-              <actionCommand value="lineWidthIncreaseAction"/>
-              <text value="increaseLineThickness"/>
-            </properties>
-          </component>
-          <component id="859f6" class="javax.swing.JButton" binding="decreaseCamvOpacityButton" default-binding="true">
-            <constraints>
-              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="1.0" weighty="1.0"/>
-            </constraints>
-            <properties>
-              <actionCommand value="ck4_colorDecreaseAction"/>
-              <text value="decreaseCamvOpacity"/>
-            </properties>
-          </component>
-          <component id="7b13" class="javax.swing.JButton" binding="increaseCamvOpacityButton" default-binding="true">
-            <constraints>
-              <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="1.0" weighty="1.0"/>
-            </constraints>
-            <properties>
-              <actionCommand value="ck4_colorIncreaseAction"/>
-              <text value="increaseCamvOpacity"/>
-            </properties>
-          </component>
-        </children>
-      </grid>
       <component id="42ae4" class="javax.swing.JLabel">
         <constraints>
           <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
@@ -344,6 +295,7 @@
             </constraints>
             <properties>
               <actionCommand value="backgroundToggleAction"/>
+              <horizontalAlignment value="0"/>
               <text value="Show"/>
             </properties>
           </component>
@@ -354,6 +306,7 @@
             </constraints>
             <properties>
               <actionCommand value="backgroundLockAction"/>
+              <horizontalAlignment value="0"/>
               <text value="Lock"/>
             </properties>
           </component>
@@ -398,6 +351,7 @@
             </constraints>
             <properties>
               <actionCommand value="selectPersistentAction"/>
+              <horizontalAlignment value="0"/>
               <text value="Persist"/>
             </properties>
           </component>
@@ -418,7 +372,58 @@
             </constraints>
             <properties>
               <actionCommand value="selectAnd3ClickAction"/>
+              <horizontalAlignment value="0"/>
               <text value="sel mcm"/>
+            </properties>
+          </component>
+        </children>
+      </grid>
+      <grid id="65e16" layout-manager="GridLayoutManager" row-count="2" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+        <margin top="0" left="0" bottom="0" right="0"/>
+        <constraints>
+          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <component id="5d10" class="javax.swing.JLabel">
+            <constraints>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <horizontalAlignment value="0"/>
+              <text value="Line Thickness: "/>
+            </properties>
+          </component>
+          <component id="e853d" class="javax.swing.JSlider" binding="lineThicknessSlider">
+            <constraints>
+              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="1" hsize-policy="1" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <maximum value="10"/>
+              <paintTicks value="false"/>
+              <snapToTicks value="true"/>
+              <value value="1"/>
+            </properties>
+          </component>
+          <component id="a37ee" class="javax.swing.JSlider" binding="errorOpacitySlider">
+            <constraints>
+              <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="1" hsize-policy="1" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <maximum value="100"/>
+              <snapToTicks value="true"/>
+              <value value="1"/>
+            </properties>
+          </component>
+          <component id="6c5aa" class="javax.swing.JLabel">
+            <constraints>
+              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties>
+              <horizontalAlignment value="0"/>
+              <horizontalTextPosition value="11"/>
+              <text value="Error Opacity:"/>
             </properties>
           </component>
         </children>

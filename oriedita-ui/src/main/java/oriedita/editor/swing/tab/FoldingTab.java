@@ -174,6 +174,7 @@ public class FoldingTab {
         panel1.add(panel2, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         overlapCheckBox = new JCheckBox();
         overlapCheckBox.setActionCommand("ckOAction");
+        overlapCheckBox.setHorizontalAlignment(0);
         overlapCheckBox.setText("Overlap");
         GridBagConstraints gbc;
         gbc = new GridBagConstraints();
@@ -192,9 +193,11 @@ public class FoldingTab {
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.ipady = 5;
         panel2.add(fixOverlapButton, gbc);
         verticesCheckBox = new JCheckBox();
         verticesCheckBox.setActionCommand("ckTAction");
+        verticesCheckBox.setHorizontalAlignment(0);
         verticesCheckBox.setText("Vertices");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
@@ -212,6 +215,7 @@ public class FoldingTab {
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.ipady = 5;
         panel2.add(fixVerticesButton, gbc);
         final JPanel panel3 = new JPanel();
         panel3.setLayout(new GridBagLayout());
@@ -231,6 +235,7 @@ public class FoldingTab {
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.ipady = 5;
         panel3.add(polygonFoldabilityButton, gbc);
         CP_rcgButton = new JButton();
         CP_rcgButton.setActionCommand("suitei_01Action");
@@ -240,7 +245,7 @@ public class FoldingTab {
         gbc.gridy = 1;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.fill = GridBagConstraints.BOTH;
         panel3.add(CP_rcgButton, gbc);
         s_faceButton = new JButton();
         s_faceButton.setActionCommand("koteimen_siteiAction");
@@ -250,7 +255,8 @@ public class FoldingTab {
         gbc.gridy = 1;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.ipady = 5;
         panel3.add(s_faceButton, gbc);
         final Spacer spacer1 = new Spacer();
         panel1.add(spacer1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, new Dimension(-1, 7), null, null, 0, false));
@@ -303,6 +309,7 @@ public class FoldingTab {
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
+        gbc.ipady = 5;
         panel6.add(a_sButton, gbc);
         constraintButton = new JButton();
         constraintButton.setActionCommand("constraintAction");
@@ -350,6 +357,7 @@ public class FoldingTab {
         gbc.gridwidth = 2;
         gbc.weightx = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
+        gbc.ipady = 5;
         panel6.add(goButton, gbc);
         final JPanel panel7 = new JPanel();
         panel7.setLayout(new GridBagLayout());
@@ -521,6 +529,7 @@ public class FoldingTab {
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
+        gbc.ipady = 5;
         panel9.add(lineColorButton, gbc);
         mvWireframeButton = new JButton();
         mvWireframeButton.setActionCommand("suitei_02Action");

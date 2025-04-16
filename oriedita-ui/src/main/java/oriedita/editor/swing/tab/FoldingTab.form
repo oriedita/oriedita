@@ -38,13 +38,14 @@
                 </constraints>
                 <properties>
                   <actionCommand value="ckOAction"/>
+                  <horizontalAlignment value="0"/>
                   <text value="Overlap"/>
                 </properties>
               </component>
               <component id="f7742" class="javax.swing.JButton" binding="fixOverlapButton" default-binding="true">
                 <constraints>
                   <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                  <gridbag weightx="1.0" weighty="1.0"/>
+                  <gridbag weightx="1.0" weighty="1.0" ipady="5"/>
                 </constraints>
                 <properties>
                   <actionCommand value="fxOAction"/>
@@ -58,13 +59,14 @@
                 </constraints>
                 <properties>
                   <actionCommand value="ckTAction"/>
+                  <horizontalAlignment value="0"/>
                   <text value="Vertices"/>
                 </properties>
               </component>
               <component id="ba27f" class="javax.swing.JButton" binding="fixVerticesButton" default-binding="true">
                 <constraints>
                   <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                  <gridbag weightx="1.0" weighty="1.0"/>
+                  <gridbag weightx="1.0" weighty="1.0" ipady="5"/>
                 </constraints>
                 <properties>
                   <actionCommand value="fxTAction"/>
@@ -82,7 +84,7 @@
                   <component id="261de" class="javax.swing.JButton" binding="polygonFoldabilityButton" default-binding="true">
                     <constraints>
                       <grid row="0" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                      <gridbag weightx="1.0" weighty="1.0"/>
+                      <gridbag weightx="1.0" weighty="1.0" ipady="5"/>
                     </constraints>
                     <properties>
                       <actionCommand value="o_F_checkAction"/>
@@ -91,7 +93,7 @@
                   </component>
                   <component id="dbfd6" class="javax.swing.JButton" binding="CP_rcgButton" default-binding="true">
                     <constraints>
-                      <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                      <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                       <gridbag weightx="1.0" weighty="1.0"/>
                     </constraints>
                     <properties>
@@ -101,8 +103,8 @@
                   </component>
                   <component id="43f09" class="javax.swing.JButton" binding="s_faceButton" default-binding="true">
                     <constraints>
-                      <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                      <gridbag weightx="1.0" weighty="1.0"/>
+                      <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                      <gridbag weightx="1.0" weighty="1.0" ipady="5"/>
                     </constraints>
                     <properties>
                       <actionCommand value="koteimen_siteiAction"/>
@@ -182,7 +184,7 @@
                   <component id="9bd04" class="javax.swing.JButton" binding="a_sButton" default-binding="true">
                     <constraints>
                       <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-                      <gridbag weightx="1.0" weighty="1.0"/>
+                      <gridbag weightx="1.0" weighty="1.0" ipady="5"/>
                     </constraints>
                     <properties>
                       <actionCommand value="anotherSolutionAction"/>
@@ -229,7 +231,7 @@
                   <component id="aa9ea" class="javax.swing.JButton" binding="goButton" default-binding="true">
                     <constraints>
                       <grid row="0" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-                      <gridbag weightx="1.0" weighty="0.0"/>
+                      <gridbag weightx="1.0" weighty="0.0" ipady="5"/>
                     </constraints>
                     <properties>
                       <actionCommand value="goToFoldedFigureAction"/>
@@ -441,7 +443,7 @@
           <component id="31e1f" class="javax.swing.JButton" binding="lineColorButton">
             <constraints>
               <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="1.0" weighty="1.0"/>
+              <gridbag weightx="1.0" weighty="1.0" ipady="5"/>
             </constraints>
             <properties>
               <actionCommand value="lineColorAction"/>

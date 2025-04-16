@@ -623,12 +623,14 @@ public class DrawingTab {
         gbc.fill = GridBagConstraints.BOTH;
         panel8.add(replaceFromComboBox, gbc);
         replaceLabel = new JLabel();
+        replaceLabel.setHorizontalAlignment(0);
         replaceLabel.setText("->");
         gbc = new GridBagConstraints();
         gbc.gridx = 2;
         gbc.gridy = 0;
         gbc.weighty = 1.0;
-        gbc.anchor = GridBagConstraints.WEST;
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.ipadx = 10;
         panel8.add(replaceLabel, gbc);
         replaceToComboBox = new JComboBox();
         gbc = new GridBagConstraints();

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="oriedita.editor.swing.ToolsPanel">
-  <grid id="27dc6" binding="root" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+  <grid id="27dc6" binding="root" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
-      <xy x="20" y="20" width="585" height="612"/>
+      <xy x="20" y="20" width="585" height="851"/>
     </constraints>
     <properties/>
     <border type="none"/>
@@ -33,7 +33,9 @@
                   <grid id="e52d9" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                     <margin top="0" left="0" bottom="0" right="0"/>
                     <constraints>
-                      <tabbedpane title="Drawing"/>
+                      <tabbedpane title="Drawing">
+                        <tooltip value="Drawing"/>
+                      </tabbedpane>
                     </constraints>
                     <properties/>
                     <border type="none"/>
@@ -48,7 +50,9 @@
                   <grid id="576b9" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                     <margin top="0" left="0" bottom="0" right="0"/>
                     <constraints>
-                      <tabbedpane title="References"/>
+                      <tabbedpane title="References">
+                        <tooltip value="References"/>
+                      </tabbedpane>
                     </constraints>
                     <properties/>
                     <border type="none"/>
@@ -63,7 +67,9 @@
                   <grid id="b8bfd" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                     <margin top="0" left="0" bottom="0" right="0"/>
                     <constraints>
-                      <tabbedpane title="Folding"/>
+                      <tabbedpane title="Folding">
+                        <tooltip value="Folding"/>
+                      </tabbedpane>
                     </constraints>
                     <properties/>
                     <border type="none"/>
@@ -78,7 +84,9 @@
                   <grid id="9b7ba" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                     <margin top="0" left="0" bottom="0" right="0"/>
                     <constraints>
-                      <tabbedpane title="Settings"/>
+                      <tabbedpane title="Settings">
+                        <tooltip value="Settings"/>
+                      </tabbedpane>
                     </constraints>
                     <properties/>
                     <border type="none"/>
@@ -96,11 +104,6 @@
           </grid>
         </children>
       </scrollpane>
-      <vspacer id="8bde9">
-        <constraints>
-          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
-        </constraints>
-      </vspacer>
     </children>
   </grid>
 </form>

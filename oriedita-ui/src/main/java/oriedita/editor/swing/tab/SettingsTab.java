@@ -27,10 +27,6 @@ import java.awt.Insets;
 @ApplicationScoped
 public class SettingsTab {
     private JPanel root;
-    private JButton decreaseLineThicknessButton;
-    private JButton increaseLineThicknessButton;
-    private JButton decreaseCamvOpacityButton;
-    private JButton increaseCamvOpacityButton;
     private JButton toggleDiagonalButton;
     private JTextField gridAngleTextField;
     private JButton resetButton;
@@ -57,7 +53,8 @@ public class SettingsTab {
     private JCheckBox persistCheckBox;
     private JButton frameButton;
     private JCheckBox selectAnd3ClickCheckbox;
-    private JSlider opacitySlider;
+    private JSlider lineThicknessSlider;
+    private JSlider errorOpacitySlider;
 
     private final ButtonService buttonService;
     private final GridModel gridModel;
@@ -84,6 +81,8 @@ public class SettingsTab {
         applicationModel.addPropertyChangeListener(e -> setData(applicationModel));
         canvasModel.addPropertyChangeListener(e -> setData(canvasModel));
 
+        setData(applicationModel);
+
         buttonService.setIcon(ratioLabel1, "labelPlus");
         buttonService.setIcon(ratioLabel2, "labelSqrt");
         buttonService.setIcon(ratioLabel3, "labelPlus");
@@ -106,6 +105,9 @@ public class SettingsTab {
         buttonService.registerTextField(gridYATextField, ActionType.setGridYAction.action());
         buttonService.registerTextField(gridYBTextField, ActionType.setGridYAction.action());
         buttonService.registerTextField(gridYCTextField, ActionType.setGridYAction.action());
+
+        errorOpacitySlider.addChangeListener(e -> applicationModel.setCheck4ColorTransparency(errorOpacitySlider.getValue()));
+        lineThicknessSlider.addChangeListener(e -> applicationModel.setLineWidth(lineThicknessSlider.getValue()));
     }
 
     private void setData(CanvasModel canvasModel) {
@@ -114,6 +116,8 @@ public class SettingsTab {
 
     private void setData(ApplicationModel applicationModel) {
         persistCheckBox.setSelected(applicationModel.getSelectPersistent());
+        errorOpacitySlider.setValue(applicationModel.getCheck4ColorTransparency());
+        lineThicknessSlider.setValue(applicationModel.getLineWidth());
     }
 
     private void setData(BackgroundModel backgroundModel) {
@@ -145,67 +149,24 @@ public class SettingsTab {
         root.add(spacer1, new GridConstraints(12, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         final Spacer spacer2 = new Spacer();
         root.add(spacer2, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_CAN_GROW, new Dimension(-1, 7), null, null, 0, false));
-        final JPanel panel1 = new JPanel();
-        panel1.setLayout(new GridBagLayout());
-        root.add(panel1, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-        decreaseLineThicknessButton = new JButton();
-        decreaseLineThicknessButton.setActionCommand("lineWidthDecreaseAction");
-        decreaseLineThicknessButton.setText("decreaseLineThickness");
-        GridBagConstraints gbc;
-        gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.weightx = 1.0;
-        gbc.weighty = 1.0;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        panel1.add(decreaseLineThicknessButton, gbc);
-        increaseLineThicknessButton = new JButton();
-        increaseLineThicknessButton.setActionCommand("lineWidthIncreaseAction");
-        increaseLineThicknessButton.setText("increaseLineThickness");
-        gbc = new GridBagConstraints();
-        gbc.gridx = 1;
-        gbc.gridy = 0;
-        gbc.weightx = 1.0;
-        gbc.weighty = 1.0;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        panel1.add(increaseLineThicknessButton, gbc);
-        decreaseCamvOpacityButton = new JButton();
-        decreaseCamvOpacityButton.setActionCommand("ck4_colorDecreaseAction");
-        decreaseCamvOpacityButton.setText("decreaseCamvOpacity");
-        gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        gbc.weightx = 1.0;
-        gbc.weighty = 1.0;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        panel1.add(decreaseCamvOpacityButton, gbc);
-        increaseCamvOpacityButton = new JButton();
-        increaseCamvOpacityButton.setActionCommand("ck4_colorIncreaseAction");
-        increaseCamvOpacityButton.setText("increaseCamvOpacity");
-        gbc = new GridBagConstraints();
-        gbc.gridx = 1;
-        gbc.gridy = 1;
-        gbc.weightx = 1.0;
-        gbc.weighty = 1.0;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        panel1.add(increaseCamvOpacityButton, gbc);
         final JLabel label2 = new JLabel();
         label2.setText("Grid");
         root.add(label2, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final Spacer spacer3 = new Spacer();
         root.add(spacer3, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_CAN_GROW, new Dimension(-1, 7), null, null, 0, false));
-        final JPanel panel2 = new JPanel();
-        panel2.setLayout(new GridBagLayout());
-        root.add(panel2, new GridConstraints(5, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        final JPanel panel1 = new JPanel();
+        panel1.setLayout(new GridBagLayout());
+        root.add(panel1, new GridConstraints(5, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         toggleDiagonalButton = new JButton();
         toggleDiagonalButton.setActionCommand("drawDiagonalGridlinesAction");
         toggleDiagonalButton.setText("toggleDiagonal");
+        GridBagConstraints gbc;
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.weightx = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
-        panel2.add(toggleDiagonalButton, gbc);
+        panel1.add(toggleDiagonalButton, gbc);
         gridAngleTextField = new JTextField();
         gridAngleTextField.setMinimumSize(new Dimension(40, 30));
         gbc = new GridBagConstraints();
@@ -214,7 +175,7 @@ public class SettingsTab {
         gbc.weightx = 1.0;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.BOTH;
-        panel2.add(gridAngleTextField, gbc);
+        panel1.add(gridAngleTextField, gbc);
         resetButton = new JButton();
         resetButton.setActionCommand("gridConfigureResetAction");
         resetButton.setText("Reset");
@@ -223,7 +184,7 @@ public class SettingsTab {
         gbc.gridy = 0;
         gbc.weightx = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
-        panel2.add(resetButton, gbc);
+        panel1.add(resetButton, gbc);
         moveVerticallyButton = new JButton();
         moveVerticallyButton.setActionCommand("moveIntervalGridVerticalAction");
         moveVerticallyButton.setText("moveVertically");
@@ -232,7 +193,7 @@ public class SettingsTab {
         gbc.gridy = 1;
         gbc.weightx = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
-        panel2.add(moveVerticallyButton, gbc);
+        panel1.add(moveVerticallyButton, gbc);
         lineOffsetTextField = new JTextField();
         lineOffsetTextField.setMinimumSize(new Dimension(40, 30));
         gbc = new GridBagConstraints();
@@ -240,7 +201,7 @@ public class SettingsTab {
         gbc.gridy = 1;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.BOTH;
-        panel2.add(lineOffsetTextField, gbc);
+        panel1.add(lineOffsetTextField, gbc);
         moveHorizontallyButton = new JButton();
         moveHorizontallyButton.setActionCommand("moveIntervalGridHorizontalAction");
         moveHorizontallyButton.setText("moveHorizontally");
@@ -249,9 +210,9 @@ public class SettingsTab {
         gbc.gridy = 1;
         gbc.weightx = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
-        panel2.add(moveHorizontallyButton, gbc);
-        final JPanel panel3 = new JPanel();
-        panel3.setLayout(new GridBagLayout());
+        panel1.add(moveHorizontallyButton, gbc);
+        final JPanel panel2 = new JPanel();
+        panel2.setLayout(new GridBagLayout());
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 2;
@@ -259,7 +220,7 @@ public class SettingsTab {
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
-        panel2.add(panel3, gbc);
+        panel1.add(panel2, gbc);
         gridXATextField = new JTextField();
         gridXATextField.setMinimumSize(new Dimension(40, 30));
         gbc = new GridBagConstraints();
@@ -269,7 +230,7 @@ public class SettingsTab {
         gbc.weighty = 1.0;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.BOTH;
-        panel3.add(gridXATextField, gbc);
+        panel2.add(gridXATextField, gbc);
         ratioLabel1 = new JLabel();
         ratioLabel1.setText("+");
         gbc = new GridBagConstraints();
@@ -277,7 +238,7 @@ public class SettingsTab {
         gbc.gridy = 0;
         gbc.weighty = 1.0;
         gbc.anchor = GridBagConstraints.WEST;
-        panel3.add(ratioLabel1, gbc);
+        panel2.add(ratioLabel1, gbc);
         gridXBTextField = new JTextField();
         gridXBTextField.setMinimumSize(new Dimension(40, 30));
         gbc = new GridBagConstraints();
@@ -287,7 +248,7 @@ public class SettingsTab {
         gbc.weighty = 1.0;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.BOTH;
-        panel3.add(gridXBTextField, gbc);
+        panel2.add(gridXBTextField, gbc);
         ratioLabel2 = new JLabel();
         ratioLabel2.setText("sqrt");
         gbc = new GridBagConstraints();
@@ -295,7 +256,7 @@ public class SettingsTab {
         gbc.gridy = 0;
         gbc.weighty = 1.0;
         gbc.anchor = GridBagConstraints.WEST;
-        panel3.add(ratioLabel2, gbc);
+        panel2.add(ratioLabel2, gbc);
         gridXCTextField = new JTextField();
         gridXCTextField.setMinimumSize(new Dimension(40, 30));
         gbc = new GridBagConstraints();
@@ -305,7 +266,7 @@ public class SettingsTab {
         gbc.weighty = 1.0;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.BOTH;
-        panel3.add(gridXCTextField, gbc);
+        panel2.add(gridXCTextField, gbc);
         gridYATextField = new JTextField();
         gridYATextField.setMinimumSize(new Dimension(40, 30));
         gbc = new GridBagConstraints();
@@ -314,7 +275,7 @@ public class SettingsTab {
         gbc.weighty = 1.0;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.BOTH;
-        panel3.add(gridYATextField, gbc);
+        panel2.add(gridYATextField, gbc);
         ratioLabel3 = new JLabel();
         ratioLabel3.setText("+");
         gbc = new GridBagConstraints();
@@ -322,7 +283,7 @@ public class SettingsTab {
         gbc.gridy = 1;
         gbc.weighty = 1.0;
         gbc.anchor = GridBagConstraints.WEST;
-        panel3.add(ratioLabel3, gbc);
+        panel2.add(ratioLabel3, gbc);
         gridYBTextField = new JTextField();
         gridYBTextField.setMinimumSize(new Dimension(40, 30));
         gbc = new GridBagConstraints();
@@ -331,7 +292,7 @@ public class SettingsTab {
         gbc.weighty = 1.0;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.BOTH;
-        panel3.add(gridYBTextField, gbc);
+        panel2.add(gridYBTextField, gbc);
         ratioLabel4 = new JLabel();
         ratioLabel4.setText("sqrt");
         gbc = new GridBagConstraints();
@@ -339,7 +300,7 @@ public class SettingsTab {
         gbc.gridy = 1;
         gbc.weighty = 1.0;
         gbc.anchor = GridBagConstraints.WEST;
-        panel3.add(ratioLabel4, gbc);
+        panel2.add(ratioLabel4, gbc);
         gridYCTextField = new JTextField();
         gridYCTextField.setMinimumSize(new Dimension(40, 30));
         gbc = new GridBagConstraints();
@@ -348,15 +309,15 @@ public class SettingsTab {
         gbc.weighty = 1.0;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.BOTH;
-        panel3.add(gridYCTextField, gbc);
+        panel2.add(gridYCTextField, gbc);
         final JLabel label3 = new JLabel();
         label3.setText("Background");
         root.add(label3, new GridConstraints(7, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final Spacer spacer4 = new Spacer();
         root.add(spacer4, new GridConstraints(6, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_CAN_GROW, new Dimension(-1, 7), null, null, 0, false));
-        final JPanel panel4 = new JPanel();
-        panel4.setLayout(new GridBagLayout());
-        root.add(panel4, new GridConstraints(8, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        final JPanel panel3 = new JPanel();
+        panel3.setLayout(new GridBagLayout());
+        root.add(panel3, new GridConstraints(8, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         selectButton = new JButton();
         selectButton.setActionCommand("readBackgroundAction");
         selectButton.setText("Select");
@@ -366,7 +327,7 @@ public class SettingsTab {
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        panel4.add(selectButton, gbc);
+        panel3.add(selectButton, gbc);
         transparentButton = new JButton();
         transparentButton.setActionCommand("transparentAction");
         transparentButton.setText("Transparent");
@@ -376,7 +337,7 @@ public class SettingsTab {
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        panel4.add(transparentButton, gbc);
+        panel3.add(transparentButton, gbc);
         moveButton = new JButton();
         moveButton.setActionCommand("backgroundSetPositionAction");
         moveButton.setText("Move");
@@ -386,7 +347,7 @@ public class SettingsTab {
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        panel4.add(moveButton, gbc);
+        panel3.add(moveButton, gbc);
         trimButton = new JButton();
         trimButton.setActionCommand("backgroundTrimAction");
         trimButton.setText("Trim");
@@ -396,18 +357,20 @@ public class SettingsTab {
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        panel4.add(trimButton, gbc);
+        panel3.add(trimButton, gbc);
         showCheckBox = new JCheckBox();
         showCheckBox.setActionCommand("backgroundToggleAction");
+        showCheckBox.setHorizontalAlignment(0);
         showCheckBox.setText("Show");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.BOTH;
         gbc.ipadx = 10;
-        panel4.add(showCheckBox, gbc);
+        panel3.add(showCheckBox, gbc);
         lockCheckBox = new JCheckBox();
         lockCheckBox.setActionCommand("backgroundLockAction");
+        lockCheckBox.setHorizontalAlignment(0);
         lockCheckBox.setText("Lock");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
@@ -415,15 +378,15 @@ public class SettingsTab {
         gbc.weightx = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
         gbc.ipadx = 10;
-        panel4.add(lockCheckBox, gbc);
+        panel3.add(lockCheckBox, gbc);
         final JLabel label4 = new JLabel();
         label4.setText("Misc");
         root.add(label4, new GridConstraints(10, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final Spacer spacer5 = new Spacer();
         root.add(spacer5, new GridConstraints(9, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_CAN_GROW, new Dimension(-1, 7), null, null, 0, false));
-        final JPanel panel5 = new JPanel();
-        panel5.setLayout(new GridBagLayout());
-        root.add(panel5, new GridConstraints(11, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        final JPanel panel4 = new JPanel();
+        panel4.setLayout(new GridBagLayout());
+        root.add(panel4, new GridConstraints(11, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         twoColorButton = new JButton();
         twoColorButton.setActionCommand("drawTwoColoredCpAction");
         twoColorButton.setText("twoColor");
@@ -433,9 +396,10 @@ public class SettingsTab {
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        panel5.add(twoColorButton, gbc);
+        panel4.add(twoColorButton, gbc);
         persistCheckBox = new JCheckBox();
         persistCheckBox.setActionCommand("selectPersistentAction");
+        persistCheckBox.setHorizontalAlignment(0);
         persistCheckBox.setText("Persist");
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
@@ -443,7 +407,7 @@ public class SettingsTab {
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
-        panel5.add(persistCheckBox, gbc);
+        panel4.add(persistCheckBox, gbc);
         frameButton = new JButton();
         frameButton.setActionCommand("operationFrameSelectAction");
         frameButton.setText("frame");
@@ -453,9 +417,10 @@ public class SettingsTab {
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        panel5.add(frameButton, gbc);
+        panel4.add(frameButton, gbc);
         selectAnd3ClickCheckbox = new JCheckBox();
         selectAnd3ClickCheckbox.setActionCommand("selectAnd3ClickAction");
+        selectAnd3ClickCheckbox.setHorizontalAlignment(0);
         selectAnd3ClickCheckbox.setText("sel mcm");
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
@@ -463,7 +428,30 @@ public class SettingsTab {
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
-        panel5.add(selectAnd3ClickCheckbox, gbc);
+        panel4.add(selectAnd3ClickCheckbox, gbc);
+        final JPanel panel5 = new JPanel();
+        panel5.setLayout(new GridLayoutManager(2, 2, new Insets(0, 0, 0, 0), -1, -1));
+        root.add(panel5, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        final JLabel label5 = new JLabel();
+        label5.setHorizontalAlignment(0);
+        label5.setText("Line Thickness: ");
+        panel5.add(label5, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        lineThicknessSlider = new JSlider();
+        lineThicknessSlider.setMaximum(10);
+        lineThicknessSlider.setPaintTicks(false);
+        lineThicknessSlider.setSnapToTicks(true);
+        lineThicknessSlider.setValue(1);
+        panel5.add(lineThicknessSlider, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, 1, 1, null, null, null, 0, false));
+        errorOpacitySlider = new JSlider();
+        errorOpacitySlider.setMaximum(100);
+        errorOpacitySlider.setSnapToTicks(true);
+        errorOpacitySlider.setValue(1);
+        panel5.add(errorOpacitySlider, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, 1, 1, null, null, null, 0, false));
+        final JLabel label6 = new JLabel();
+        label6.setHorizontalAlignment(0);
+        label6.setHorizontalTextPosition(11);
+        label6.setText("Error Opacity:");
+        panel5.add(label6, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     }
 
     /**
