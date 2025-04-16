@@ -168,8 +168,11 @@ public enum ActionType {
     foldedFigureSizeSetAction("foldedFigureSizeSetAction"),
     foldedFigureRotateClockwiseAction("foldedFigureRotateClockwiseAction"),
     foldedFigureRotateAntiClockwiseAction("foldedFigureRotateAntiClockwiseAction"),
+    foldedFigureRotateSetAction("foldedFigureRotateSetAction"),
     foldedFigureToggleAntiAliasAction("foldedFigureToggleAntiAliasAction"),
     foldedFigureToggleShadowAction("foldedFigureToggleShadowAction"),
+    foldedFigureUndoAction("foldedFigureUndoAction"),
+    foldedFigureRedoAction("foldedFigureRedoAction"),
     goToFoldedFigureAction("goToFoldedFigureAction"),
     h_senhaba_sageAction("h_senhaba_sageAction"),
     h_senhaba_ageAction("h_senhaba_ageAction"),
@@ -177,6 +180,8 @@ public enum ActionType {
     h_senbun_sakujyoAction("h_senbun_sakujyoAction"),
     h_undoAction("h_undoAction"),
     h_redoAction("h_redoAction"),
+    undoAction("undoAction"),
+    redoAction("redoAction"),
     l1Action("l1Action"),
     l2Action("l2Action"),
     o_F_checkAction("o_F_checkAction"),
@@ -202,7 +207,11 @@ public enum ActionType {
     addColorConstraintAction("addColorConstraintAction"),
     axiom5Action("axiom5Action"),
     axiom7Action("axiom7Action"),
-    switchReplaceAction("switchReplaceAction");
+    switchReplaceAction("switchReplaceAction"),
+    setGridAngleAction("setGridAngleAction"),
+    setGridXAction("setGridXAction"),
+    setGridYAction("setGridYAction"),
+    selectPersistentAction("selectPersistentAction");
 
 
     static final Map<String, ActionType> actionMap;

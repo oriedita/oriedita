@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="oriedita.editor.swing.TopToolbar">
+  <grid id="27dc6" binding="root" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+    <margin top="0" left="0" bottom="0" right="0"/>
+    <constraints>
+      <xy x="20" y="20" width="2175" height="77"/>
+    </constraints>
+    <properties/>
+    <border type="none"/>
+    <children>
+      <scrollpane id="5bc41">
+        <constraints>
+          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties/>
+        <border type="empty"/>
+        <children>
+          <grid id="b861" layout-manager="GridLayoutManager" row-count="1" column-count="9" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+            <margin top="0" left="0" bottom="0" right="0"/>
+            <constraints/>
+            <properties/>
+            <border type="empty"/>
+            <children>
+              <grid id="bf41b" layout-manager="GridBagLayout">
+                <constraints>
+                  <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties/>
+                <border type="none"/>
+                <children>
+                  <component id="d7600" class="javax.swing.JButton" binding="cycleGridButton" default-binding="true">
+                    <constraints>
+                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                      <gridbag weightx="1.0" weighty="1.0" ipadx="10"/>
+                    </constraints>
+                    <properties>
+                      <actionCommand value="changeGridStateAction"/>
+                      <text value="cycleGrid"/>
+                    </properties>
+                  </component>
+                  <component id="6410a" class="javax.swing.JButton" binding="decreaseGridSizeButton" default-binding="true">
+                    <constraints>
+                      <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                      <gridbag weightx="1.0" weighty="1.0" ipadx="10"/>
+                    </constraints>
+                    <properties>
+                      <actionCommand value="gridSizeDecreaseAction"/>
+                      <text value="decreaseGridSize"/>
+                    </properties>
+                  </component>
+                  <component id="868d5" class="javax.swing.JTextField" binding="gridSizeTextField">
+                    <constraints>
+                      <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="3" indent="0" use-parent-layout="false">
+                        <preferred-size width="150" height="-1"/>
+                      </grid>
+                      <gridbag weightx="0.0" weighty="1.0"/>
+                    </constraints>
+                    <properties/>
+                  </component>
+                  <component id="f8044" class="javax.swing.JButton" binding="increaseGridSizeButton" default-binding="true">
+                    <constraints>
+                      <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                      <gridbag weightx="1.0" weighty="1.0" ipadx="10"/>
+                    </constraints>
+                    <properties>
+                      <actionCommand value="gridSizeIncreaseAction"/>
+                      <text value="increaseGridSize"/>
+                    </properties>
+                  </component>
+                </children>
+              </grid>
+              <grid id="d5130" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                <margin top="0" left="0" bottom="0" right="0"/>
+                <constraints>
+                  <grid row="0" column="8" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties/>
+                <border type="none"/>
+                <children>
+                  <component id="65270" class="javax.swing.JButton" binding="resetButton" default-binding="true">
+                    <constraints>
+                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
+                        <minimum-size width="30" height="-1"/>
+                      </grid>
+                    </constraints>
+                    <properties>
+                      <actionCommand value="resetAction"/>
+                      <text value="reset"/>
+                    </properties>
+                  </component>
+                </children>
+              </grid>
+              <hspacer id="f4bfa">
+                <constraints>
+                  <grid row="0" column="7" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                </constraints>
+              </hspacer>
+              <hspacer id="ec9f6">
+                <constraints>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                </constraints>
+              </hspacer>
+              <grid id="8493c" layout-manager="GridBagLayout">
+                <constraints>
+                  <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties/>
+                <border type="none"/>
+                <children>
+                  <component id="4f4a" class="javax.swing.JButton" binding="foldButton">
+                    <constraints>
+                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                      <gridbag weightx="1.0" weighty="1.0" ipadx="10"/>
+                    </constraints>
+                    <properties>
+                      <actionCommand value="foldAction"/>
+                      <text value="fold"/>
+                    </properties>
+                  </component>
+                  <component id="ab17" class="javax.swing.JButton" binding="stopFoldingButton">
+                    <constraints>
+                      <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                      <gridbag weightx="1.0" weighty="1.0" ipadx="10"/>
+                    </constraints>
+                    <properties>
+                      <actionCommand value="haltAction"/>
+                      <text value="stopFolding"/>
+                    </properties>
+                  </component>
+                  <component id="67902" class="javax.swing.JButton" binding="trashButton">
+                    <constraints>
+                      <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                      <gridbag weightx="1.0" weighty="1.0" ipadx="10"/>
+                    </constraints>
+                    <properties>
+                      <actionCommand value="foldedFigureTrashAction"/>
+                      <text value="trash"/>
+                    </properties>
+                  </component>
+                </children>
+              </grid>
+              <grid id="46ae3" layout-manager="GridBagLayout">
+                <constraints>
+                  <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties/>
+                <border type="none"/>
+                <children>
+                  <component id="399fa" class="javax.swing.JButton" binding="mountainButton">
+                    <constraints>
+                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                      <gridbag weightx="1.0" weighty="1.0" ipadx="20"/>
+                    </constraints>
+                    <properties>
+                      <actionCommand value="colRedAction"/>
+                      <text value="M"/>
+                    </properties>
+                  </component>
+                  <component id="cac6d" class="javax.swing.JButton" binding="valleyButton">
+                    <constraints>
+                      <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                      <gridbag weightx="1.0" weighty="1.0" ipadx="20"/>
+                    </constraints>
+                    <properties>
+                      <actionCommand value="colBlueAction"/>
+                      <text value="V"/>
+                    </properties>
+                  </component>
+                  <component id="cc099" class="javax.swing.JButton" binding="edgeButton">
+                    <constraints>
+                      <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                      <gridbag weightx="1.0" weighty="1.0" ipadx="20"/>
+                    </constraints>
+                    <properties>
+                      <actionCommand value="colBlackAction"/>
+                      <text value="E"/>
+                    </properties>
+                  </component>
+                  <component id="76d98" class="javax.swing.JButton" binding="auxButton">
+                    <constraints>
+                      <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                      <gridbag weightx="1.0" weighty="1.0" ipadx="20"/>
+                    </constraints>
+                    <properties>
+                      <actionCommand value="colCyanAction"/>
+                      <text value="A"/>
+                    </properties>
+                  </component>
+                </children>
+              </grid>
+              <grid id="5db6f" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                <margin top="0" left="0" bottom="0" right="0"/>
+                <constraints>
+                  <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties/>
+                <border type="none"/>
+                <children>
+                  <grid id="1e1f6" layout-manager="GridBagLayout">
+                    <constraints>
+                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties/>
+                    <border type="none"/>
+                    <children>
+                      <component id="7d773" class="javax.swing.JButton" binding="moveButton">
+                        <constraints>
+                          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                          <gridbag weightx="1.0" weighty="1.0" ipadx="10"/>
+                        </constraints>
+                        <properties>
+                          <actionCommand value="moveCreasePatternAction"/>
+                          <text value="move"/>
+                        </properties>
+                      </component>
+                      <component id="3f31e" class="javax.swing.JButton" binding="zoomOutButton">
+                        <constraints>
+                          <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                          <gridbag weightx="1.0" weighty="1.0" ipadx="10"/>
+                        </constraints>
+                        <properties>
+                          <actionCommand value="creasePatternZoomOutAction"/>
+                          <text value="zoomOut"/>
+                        </properties>
+                      </component>
+                      <component id="be9b4" class="javax.swing.JTextField" binding="zoomTextField">
+                        <constraints>
+                          <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="3" indent="0" use-parent-layout="false">
+                            <preferred-size width="150" height="-1"/>
+                          </grid>
+                          <gridbag weightx="0.0" weighty="1.0"/>
+                        </constraints>
+                        <properties/>
+                      </component>
+                      <component id="2ab5b" class="javax.swing.JButton" binding="zoomInButton">
+                        <constraints>
+                          <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                          <gridbag weightx="1.0" weighty="1.0" ipadx="10"/>
+                        </constraints>
+                        <properties>
+                          <actionCommand value="creasePatternZoomInAction"/>
+                          <text value="zoomIn"/>
+                        </properties>
+                      </component>
+                    </children>
+                  </grid>
+                </children>
+              </grid>
+              <grid id="3b444" layout-manager="GridBagLayout">
+                <constraints>
+                  <grid row="0" column="5" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties/>
+                <border type="none"/>
+                <children>
+                  <component id="c2969" class="javax.swing.JButton" binding="rotateCounterClockwiseButton">
+                    <constraints>
+                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                      <gridbag weightx="1.0" weighty="1.0" ipadx="10"/>
+                    </constraints>
+                    <properties>
+                      <actionCommand value="rotateAnticlockwiseAction"/>
+                      <text value="rotateCounterClockwise"/>
+                    </properties>
+                  </component>
+                  <component id="e497c" class="javax.swing.JTextField" binding="rotationTextField">
+                    <constraints>
+                      <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="3" indent="0" use-parent-layout="false">
+                        <preferred-size width="150" height="-1"/>
+                      </grid>
+                      <gridbag weightx="0.0" weighty="1.0"/>
+                    </constraints>
+                    <properties/>
+                  </component>
+                  <component id="8c265" class="javax.swing.JButton" binding="rotateClockwiseButton">
+                    <constraints>
+                      <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                      <gridbag weightx="1.0" weighty="1.0" ipadx="10"/>
+                    </constraints>
+                    <properties>
+                      <actionCommand value="rotateClockwiseAction"/>
+                      <text value="rotateClockwise"/>
+                    </properties>
+                  </component>
+                </children>
+              </grid>
+              <component id="d0dd8" class="javax.swing.JCheckBox" binding="foldabilityCheckbox">
+                <constraints>
+                  <grid row="0" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <actionCommand value="cAMVAction"/>
+                  <text value="Check Foldability"/>
+                </properties>
+              </component>
+            </children>
+          </grid>
+        </children>
+      </scrollpane>
+    </children>
+  </grid>
+</form>

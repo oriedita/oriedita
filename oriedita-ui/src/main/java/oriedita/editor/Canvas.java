@@ -100,16 +100,6 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
 
     private final CanvasUI canvasUI;
 
-    public static String userWarningMessage = null;
-
-    public static void setUserWarningMessage(String uwm) {
-        Canvas.userWarningMessage = uwm;
-    }
-
-    public static void clearUserWarningMessage() {
-        Canvas.userWarningMessage = null;
-    }
-
     public CanvasUI getCanvasImpl() {
         return canvasUI;
     }
@@ -536,7 +526,6 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
     public void setData(ApplicationModel applicationModel) {
         canvasUI.setData(applicationModel);
         mouseWheelMovesCreasePattern = applicationModel.getMouseWheelMovesCreasePattern();
-        Logger.debug("repainting");
         canvasUI.repaint();
     }
 

@@ -7,7 +7,6 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import org.tinylog.Logger;
-import oriedita.editor.Canvas;
 import oriedita.editor.Colors;
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.canvas.FoldLineAdditionalInputMode;
@@ -46,9 +45,6 @@ import javax.swing.event.PopupMenuEvent;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Insets;
-import java.awt.Scrollbar;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
@@ -354,7 +350,7 @@ public class LeftPanel {
             }
         });
         fromLineDropBox.addActionListener(e -> {
-            applicationModel.setCustomFromLineType(CustomLineTypes.from(fromLineDropBox.getSelectedIndex() - 1));
+            //applicationModel.setCustomFromLineType(CustomLineTypes.from(fromLineDropBox.getSelectedIndex() - 1));
 
             // Disable switchReplaceButton if "Any" or "M & V" is active
             switchReplaceButton.setEnabled(applicationModel.getCustomFromLineType() != CustomLineTypes.ANY &&
@@ -384,9 +380,9 @@ public class LeftPanel {
         toLineDropBox.addActionListener(e -> {
             int index = toLineDropBox.getSelectedIndex();
             if (index == CustomLineTypes.EGDE.getNumber()) {
-                applicationModel.setCustomToLineType(CustomLineTypes.from(index));
+                //applicationModel.setCustomToLineType(CustomLineTypes.from(index));
             } else {
-                applicationModel.setCustomToLineType(CustomLineTypes.from(index + 1));
+                //applicationModel.setCustomToLineType(CustomLineTypes.from(index + 1));
             }
         });
         toLineDropBox.addMouseWheelListener(new MouseAdapter() {
@@ -395,9 +391,9 @@ public class LeftPanel {
                 int index = toLineDropBox.getSelectedIndex();
                 int itemCount = toLineDropBox.getItemCount();
                 if (e.getWheelRotation() > 0) {
-                    toLineDropBox.setSelectedIndex((index + 1) % itemCount);
+                    //toLineDropBox.setSelectedIndex((index + 1) % itemCount);
                 } else if (e.getWheelRotation() < 0) {
-                    toLineDropBox.setSelectedIndex(index != 0 ? (index - 1) % itemCount : itemCount - 1);
+                    //toLineDropBox.setSelectedIndex(index != 0 ? (index - 1) % itemCount : itemCount - 1);
                 }
 
                 e.consume();
@@ -1076,7 +1072,7 @@ public class LeftPanel {
             sttButton.setBorder(defaultBorder);
         }
 
-        Canvas.clearUserWarningMessage();
+        //Canvas.clearUserWarningMessage();
     }
 
     private void refreshSelectionButtons() {
@@ -1098,7 +1094,7 @@ public class LeftPanel {
             if (!nonEmptySelection) {
                 highlight = new LineBorder(Color.yellow);
                 Logger.info("Highlight for selection tools has been set to yellow");
-                Canvas.setUserWarningMessage("Selection Transformation Tools depend on crease(s) being selected in advance");
+                //Canvas.setUserWarningMessage("Selection Transformation Tools depend on crease(s) being selected in advance");
                 sttButton.setBorder(highlight);
             }
         }
@@ -1212,7 +1208,8 @@ public class LeftPanel {
             case CONTINUOUS_SYMMETRIC_DRAW_52:
             case VORONOI_CREATE_62:
             case FOLDABLE_LINE_DRAW_71:
-                if (canvasModel.getMouseMode() == MouseMode.DRAW_CREASE_FREE_1 && data.getFoldLineAdditionalInputMode() == FoldLineAdditionalInputMode.AUX_LINE_1) {
+                if (canvasModel.getMouseMode() == MouseMode.DRAW_CREASE_FREE_1 && data.
+                        getFoldLineAdditionalInputMode() == FoldLineAdditionalInputMode.AUX_LINE_1) {
                     break;
                 }
 

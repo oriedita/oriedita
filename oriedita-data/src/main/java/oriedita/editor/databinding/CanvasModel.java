@@ -22,6 +22,7 @@ public class CanvasModel implements Serializable {
     private MouseMode mouseModeAfterColorSelection;
     private FoldLineAdditionalInputMode foldLineAdditionalInputMode;
     private FoldLineAdditionalInputMode foldLineAdditionalInputMode_old;
+    private String warningMessage;
 
     public AtomicBoolean getW_image_running() {
         return w_image_running;
@@ -205,6 +206,16 @@ public class CanvasModel implements Serializable {
         MouseWheelTarget oldMouseInCpOrFoldedFigure = this.mouseInCpOrFoldedFigure;
         this.mouseInCpOrFoldedFigure = mouseInCpOrFoldedFigure;
         this.pcs.firePropertyChange("mouseInCpOrFoldedFigure", oldMouseInCpOrFoldedFigure, mouseInCpOrFoldedFigure);
+    }
+
+    public String getWarningMessage() {
+        return warningMessage;
+    }
+
+    public void setWarningMessage(String warningMessage) {
+        String oldWarningMessage = this.warningMessage;
+        this.warningMessage = warningMessage;
+        this.pcs.firePropertyChange("warningMessage", oldWarningMessage, warningMessage);
     }
 
     public enum SelectionOperationMode {

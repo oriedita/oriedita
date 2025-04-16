@@ -23,14 +23,18 @@ public class Editor {
     private BottomPanel bottomPanel;
     private TopPanel topPanel;
     private LeftPanel leftPanel;
+    private ToolsPanel toolsPanel;
+    private TopToolbar topToolbar;
 
     @Inject
-    public Editor(Canvas canvas, RightPanel rightPanel, BottomPanel bottomPanel, TopPanel topPanel, LeftPanel leftPanel) {
+    public Editor(Canvas canvas, RightPanel rightPanel, BottomPanel bottomPanel, TopPanel topPanel, LeftPanel leftPanel, ToolsPanel toolsPanel, TopToolbar topToolbar) {
         this.canvas1 = canvas;
         this.rightPanel = rightPanel;
         this.bottomPanel = bottomPanel;
         this.topPanel = topPanel;
         this.leftPanel = leftPanel;
+        this.toolsPanel = toolsPanel;
+        this.topToolbar = topToolbar;
 
         $$$setupUI$$$();
     }
@@ -38,8 +42,10 @@ public class Editor {
     public void init(Executor service) throws InterruptedException {
         service.execute(leftPanel::init);
         service.execute(topPanel::init);
-        service.execute(rightPanel::init);
+        //service.execute(rightPanel::init);
         service.execute(bottomPanel::init);
+        service.execute(toolsPanel::init);
+        service.execute(topToolbar::init);
     }
 
     private void createUIComponents() {
@@ -60,8 +66,9 @@ public class Editor {
         root.add(bottomPanel.$$$getRootComponent$$$(), BorderLayout.SOUTH);
         root.add(rightPanel.$$$getRootComponent$$$(), BorderLayout.EAST);
         root.add(canvas, BorderLayout.CENTER);
-        root.add(topPanel.$$$getRootComponent$$$(), BorderLayout.NORTH);
         root.add(leftPanel.$$$getRootComponent$$$(), BorderLayout.WEST);
+        root.add(toolsPanel.$$$getRootComponent$$$(), BorderLayout.WEST);
+        root.add(topToolbar.$$$getRootComponent$$$(), BorderLayout.NORTH);
     }
 
     /**
