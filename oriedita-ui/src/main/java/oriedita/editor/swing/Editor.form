@@ -15,15 +15,16 @@
       </nested-form>
       <component id="cf2c7" class="oriedita.editor.CanvasUI" binding="canvas" custom-create="true" default-binding="true">
         <constraints border-constraint="Center"/>
+        <properties/>
       </component>
-      <nested-form id="6ca88" form-file="oriedita/editor/swing/TopPanel.form" binding="topPanel" custom-create="true">
-        <constraints border-constraint="North"/>
-      </nested-form>
       <nested-form id="34be9" form-file="oriedita/editor/swing/LeftPanel.form" binding="leftPanel" custom-create="true">
         <constraints border-constraint="West"/>
-      </nested-form>      
+      </nested-form>
       <nested-form id="62be5" form-file="oriedita/editor/swing/ToolsPanel.form" binding="toolsPanel" custom-create="true">
         <constraints border-constraint="West"/>
+      </nested-form>
+      <nested-form id="873ab" form-file="oriedita/editor/swing/TopToolbar.form" binding="topToolbar" custom-create="true">
+        <constraints border-constraint="North"/>
       </nested-form>
     </children>
   </grid>

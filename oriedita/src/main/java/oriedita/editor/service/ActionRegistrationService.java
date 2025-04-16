@@ -295,8 +295,20 @@ public class ActionRegistrationService {
         // |---------------------------------------------------------------------------|
         // --- Top Panel ---
         // - transform CP(crease pattern) actions
-        actionService.registerAction(ActionType.rotateClockwiseAction, new LambdaAction(cameraModel::decreaseRotation));
-        actionService.registerAction(ActionType.rotateAnticlockwiseAction, new LambdaAction(cameraModel::increaseRotation));
+        actionService.registerAction(ActionType.rotateClockwiseAction, new LambdaAction(() -> {
+            animationService.animate(Animations.ROTATE_CP,
+                    cameraModel::setRotation,
+                    cameraModel::getRotation,
+                    r -> r - 11.25,
+                    AnimationDurations.ZOOM);
+        }));
+        actionService.registerAction(ActionType.rotateAnticlockwiseAction, new LambdaAction(() -> {
+            animationService.animate(Animations.ROTATE_CP,
+                    cameraModel::setRotation,
+                    cameraModel::getRotation,
+                    r -> r + 11.25,
+                    AnimationDurations.ZOOM);
+        }));
 
         // - background actions
         actionService.registerAction(ActionType.transparentAction, new LambdaAction(canvas::createTransparentBackground));
