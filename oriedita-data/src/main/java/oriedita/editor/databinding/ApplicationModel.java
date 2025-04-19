@@ -479,7 +479,7 @@ public class ApplicationModel extends AbstractModel implements Serializable {
 
         autoSaveInterval = 5;
 
-        this.pcs.firePropertyChange(null, null, null);
+        this.notifyAllListeners();
     }
 
     public int getAuxLineWidth() {
