@@ -162,9 +162,9 @@ public class App {
 
         // ---
         // Bind model to ui
-        backgroundModel.addPropertyChangeListener(editor.getTopPanel());
-        applicationModel.addPropertyChangeListener(editor.getTopPanel());
-        cameraModel.addPropertyChangeListener(editor.getTopPanel());
+        //backgroundModel.addPropertyChangeListener(editor.getTopPanel());
+        //applicationModel.addPropertyChangeListener(editor.getTopPanel());
+        //cameraModel.addPropertyChangeListener(editor.getTopPanel());
         // ---
 
         JFrame frame = frameProvider.get();
@@ -359,9 +359,7 @@ public class App {
     }
 
     private void setData(ApplicationModel applicationModel) {
-        editor.getBottomPanel().$$$getRootComponent$$$().setVisible(applicationModel.getDisplayBottomPanel());
-        editor.getTopPanel().$$$getRootComponent$$$().setVisible(applicationModel.getDisplayTopPanel());
-        editor.getRightPanel().$$$getRootComponent$$$().setVisible(applicationModel.getDisplayRightPanel());
-        editor.getLeftPanel().$$$getRootComponent$$$().setVisible(applicationModel.getDisplayLeftPanel());
+        editor.getToolsPanel().$$$getRootComponent$$$().setVisible(applicationModel.getDisplayLeftPanel());
+        editor.getTopToolbar().$$$getRootComponent$$$().setVisible(applicationModel.getDisplayTopPanel());
     }
 }

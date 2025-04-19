@@ -227,10 +227,10 @@ public class ActionRegistrationService {
             mainCreasePatternWorker.unselect_all(false);
         }));
         actionService.registerAction(ActionType.switchReplaceAction, new LambdaAction(() -> {
-            CustomLineTypes temp = applicationModel.getCustomFromLineType();
+            CustomLineTypes temp = canvasModel.getCustomFromLineType();
 
-            applicationModel.setCustomFromLineType(applicationModel.getCustomToLineType());
-            applicationModel.setCustomToLineType(temp);
+            canvasModel.setCustomFromLineType(canvasModel.getCustomToLineType());
+            canvasModel.setCustomToLineType(temp);
         }));
 
         // - grid actions

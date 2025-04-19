@@ -1,5 +1,6 @@
 package oriedita.editor.service;
 
+import org.tinylog.Logger;
 import oriedita.editor.AbstractModel;
 import oriedita.common.converter.Converter;
 
@@ -20,11 +21,12 @@ public interface BindingService {
     class DummyBindingService implements BindingService, Serializable{
         @Override
         public <T> void addBinding(AbstractModel model, JTextField component, String property, Converter<T, String> converter) {
+            Logger.warn("called dummy addBinding");
         }
 
         @Override
         public <T> void addBinding(AbstractModel model, JComboBox<T> component, String modelProperty) {
-
+            Logger.warn("called dummy addBinding");
         }
     }
 }

@@ -305,8 +305,8 @@ public class LeftPanel {
         buttonService.setIcon(replaceLabel, "labelReplace");
 
         // Disable switchReplaceButton if "Any" or "M & V" is active
-        switchReplaceButton.setEnabled(applicationModel.getCustomFromLineType() != CustomLineTypes.ANY &&
-                applicationModel.getCustomFromLineType() != CustomLineTypes.MANDV);
+        //switchReplaceButton.setEnabled(applicationModel.getCustomFromLineType() != CustomLineTypes.ANY &&
+        //        applicationModel.getCustomFromLineType() != CustomLineTypes.MANDV);
 
         undoRedo.addUndoActionListener(e -> mainCreasePatternWorker.undo());
         undoRedo.addRedoActionListener(e -> mainCreasePatternWorker.redo());
@@ -326,7 +326,7 @@ public class LeftPanel {
             }
         });
         senbun_b_nyuryokuButton.addActionListener(e -> getData(applicationModel));
-        delTypeDropBox.addActionListener(e -> applicationModel.setDelLineType(CustomLineTypes.from(delTypeDropBox.getSelectedIndex() - 1)));
+        //delTypeDropBox.addActionListener(e -> applicationModel.setDelLineType(CustomLineTypes.from(delTypeDropBox.getSelectedIndex() - 1)));
         delTypeDropBox.addMouseWheelListener(new MouseAdapter() {
             @Override
             public void mouseWheelMoved(MouseWheelEvent e) {
@@ -353,8 +353,8 @@ public class LeftPanel {
             //applicationModel.setCustomFromLineType(CustomLineTypes.from(fromLineDropBox.getSelectedIndex() - 1));
 
             // Disable switchReplaceButton if "Any" or "M & V" is active
-            switchReplaceButton.setEnabled(applicationModel.getCustomFromLineType() != CustomLineTypes.ANY &&
-                    applicationModel.getCustomFromLineType() != CustomLineTypes.MANDV);
+            //switchReplaceButton.setEnabled(applicationModel.getCustomFromLineType() != CustomLineTypes.ANY &&
+            //        applicationModel.getCustomFromLineType() != CustomLineTypes.MANDV);
         });
         fromLineDropBox.addMouseWheelListener(new MouseAdapter() {
             @Override
@@ -1015,8 +1015,8 @@ public class LeftPanel {
         gridColorButton.setIcon(new ColorIcon(data.getGridColor()));
         intervalGridColorButton.setIcon(new ColorIcon(data.getGridScaleColor()));
 
-        delTypeDropBox.setSelectedIndex(applicationModel.getDelLineType().getNumber() + 1);
-        fromLineDropBox.setSelectedIndex(applicationModel.getCustomFromLineType().getNumber() + 1);
+       // delTypeDropBox.setSelectedIndex(applicationModel.getDelLineType().getNumber() + 1);
+        //fromLineDropBox.setSelectedIndex(applicationModel.getCustomFromLineType().getNumber() + 1);
 
         selectPersistentCheckBox.setSelected(applicationModel.getSelectPersistent());
 
@@ -1030,22 +1030,22 @@ public class LeftPanel {
         // 3 options in CustomLineType are after M&V, therefore each has an extra value increment)
         // - If somehow Any is selected (from manual edit in applicationModel), set its value in applicationModel
         // to CustomLineType.EDGE, and set dropdown's selected index to 0, corresponding to Edge
-        switch (applicationModel.getCustomToLineType()) {
-            case EGDE:
-                toLineDropBox.setSelectedIndex(CustomLineTypes.EGDE.getNumber());
-                break;
-            case MOUNTAIN:
-            case VALLEY:
-            case AUX:
-                toLineDropBox.setSelectedIndex(applicationModel.getCustomToLineType().getNumber() - 1);
-                break;
-            case ANY: // Impossible in general case (redundancy)
-                applicationModel.setCustomToLineType(CustomLineTypes.EGDE);
-                toLineDropBox.setSelectedIndex(CustomLineTypes.EGDE.getNumber());
-                break;
-            default:
-                break;
-        }
+        //switch (applicationModel.getCustomToLineType()) {
+//            case EGDE:
+//                toLineDropBox.setSelectedIndex(CustomLineTypes.EGDE.getNumber());
+//                break;
+//            case MOUNTAIN:
+//            case VALLEY:
+//            case AUX:
+//                toLineDropBox.setSelectedIndex(applicationModel.getCustomToLineType().getNumber() - 1);
+//                break;
+//            case ANY: // Impossible in general case (redundancy)
+//                applicationModel.setCustomToLineType(CustomLineTypes.EGDE);
+//                toLineDropBox.setSelectedIndex(CustomLineTypes.EGDE.getNumber());
+//                break;
+//            default:
+//                break;
+//        }
         // ------ END LOGIC ------
 
         if (e.getPropertyName() == null || e.getPropertyName().equals("laf")) {
@@ -1160,10 +1160,10 @@ public class LeftPanel {
             case REPLACE_LINE_TYPE_SELECT_72:
                 if (switchReplaceButton.isEnabled()) {
                     if ((canvasModel.getToggleLineColor() && !isReplaceHold) || (!canvasModel.getToggleLineColor() && isReplaceHold)) {
-                        CustomLineTypes temp = applicationModel.getCustomFromLineType();
-
-                        applicationModel.setCustomFromLineType(applicationModel.getCustomToLineType());
-                        applicationModel.setCustomToLineType(temp);
+//                        CustomLineTypes temp = applicationModel.getCustomFromLineType();
+//
+//                        applicationModel.setCustomFromLineType(applicationModel.getCustomToLineType());
+//                        applicationModel.setCustomToLineType(temp);
 
                         isReplaceHold = !isReplaceHold;
                     }
@@ -1171,13 +1171,13 @@ public class LeftPanel {
                 break;
             case DELETE_LINE_TYPE_SELECT_73:
                 if ((canvasModel.getToggleLineColor() && !isDelTypeHold) || (!canvasModel.getToggleLineColor() && isDelTypeHold)) {
-                    if (applicationModel.getDelLineType() == CustomLineTypes.MOUNTAIN) {
-                        applicationModel.setDelLineType(CustomLineTypes.VALLEY);
-                        isDelTypeHold = !isDelTypeHold;
-                    } else if (applicationModel.getDelLineType() == CustomLineTypes.VALLEY) {
-                        applicationModel.setDelLineType(CustomLineTypes.MOUNTAIN);
-                        isDelTypeHold = !isDelTypeHold;
-                    }
+//                    if (applicationModel.getDelLineType() == CustomLineTypes.MOUNTAIN) {
+//                        applicationModel.setDelLineType(CustomLineTypes.VALLEY);
+//                        isDelTypeHold = !isDelTypeHold;
+//                    } else if (applicationModel.getDelLineType() == CustomLineTypes.VALLEY) {
+//                        applicationModel.setDelLineType(CustomLineTypes.MOUNTAIN);
+//                        isDelTypeHold = !isDelTypeHold;
+//                    }
                 }
                 break;
             case AXIOM_5:

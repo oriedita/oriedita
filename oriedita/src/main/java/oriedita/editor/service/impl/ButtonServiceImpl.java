@@ -362,7 +362,7 @@ public class ButtonServiceImpl implements ButtonService {
             }
 
             if (component1 instanceof JComboBox<?> comboBox) {
-                comboBox.addMouseListener(new DropdownMouseWheelAdapter(comboBox));
+                comboBox.addMouseWheelListener(new DropdownMouseWheelAdapter(comboBox));
             }
 
             if (component1 instanceof JMenu) {

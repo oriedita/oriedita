@@ -37,7 +37,7 @@ public class FoldingTab {
     private JCheckBox overlapCheckBox;
     private JButton fixOverlapButton;
     private JCheckBox verticesCheckBox;
-    private JButton fixVerticesButton;
+    private JButton fixTIntersectionsButton;
     private JButton polygonFoldabilityButton;
     private JButton CP_rcgButton;
     private JButton s_faceButton;
@@ -186,7 +186,7 @@ public class FoldingTab {
         panel2.add(overlapCheckBox, gbc);
         fixOverlapButton = new JButton();
         fixOverlapButton.setActionCommand("fxOAction");
-        fixOverlapButton.setText("fixOverlap");
+        fixOverlapButton.setText("fix Overlap");
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
         gbc.gridy = 0;
@@ -198,7 +198,7 @@ public class FoldingTab {
         verticesCheckBox = new JCheckBox();
         verticesCheckBox.setActionCommand("ckTAction");
         verticesCheckBox.setHorizontalAlignment(0);
-        verticesCheckBox.setText("Vertices");
+        verticesCheckBox.setText("T-Intersections");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 1;
@@ -206,9 +206,9 @@ public class FoldingTab {
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
         panel2.add(verticesCheckBox, gbc);
-        fixVerticesButton = new JButton();
-        fixVerticesButton.setActionCommand("fxTAction");
-        fixVerticesButton.setText("fixVertices");
+        fixTIntersectionsButton = new JButton();
+        fixTIntersectionsButton.setActionCommand("fxTAction");
+        fixTIntersectionsButton.setText("fix T Intersections");
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
         gbc.gridy = 1;
@@ -216,7 +216,7 @@ public class FoldingTab {
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.ipady = 5;
-        panel2.add(fixVerticesButton, gbc);
+        panel2.add(fixTIntersectionsButton, gbc);
         final JPanel panel3 = new JPanel();
         panel3.setLayout(new GridBagLayout());
         gbc = new GridBagConstraints();
@@ -312,7 +312,7 @@ public class FoldingTab {
         gbc.ipady = 5;
         panel6.add(a_sButton, gbc);
         constraintButton = new JButton();
-        constraintButton.setActionCommand("constraintAction");
+        constraintButton.setActionCommand("addColorConstraintAction");
         constraintButton.setText("C");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
