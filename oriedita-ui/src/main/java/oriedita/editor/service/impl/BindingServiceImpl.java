@@ -103,7 +103,11 @@ public class BindingServiceImpl implements BindingService, Serializable {
             component.setSelectedItem(propertyDescriptor.getReadMethod().invoke(model));
             model.addPropertyChangeListener(property, e -> {
                 if (e.getNewValue() != component.getSelectedItem()) {
-                    component.setSelectedItem(e.getNewValue());
+                    try {
+                        component.setSelectedItem(propertyDescriptor.getReadMethod().invoke(model));
+                    } catch (IllegalAccessException | InvocationTargetException ex) {
+                        throw new RuntimeException(ex);
+                    }
                 }
             });
             component.addActionListener(e -> {

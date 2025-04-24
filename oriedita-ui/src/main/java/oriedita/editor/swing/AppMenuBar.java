@@ -81,9 +81,7 @@ public class AppMenuBar {
     private JCheckBoxMenuItem showSelfIntersectionCheckBox;
     private JCheckBoxMenuItem useAdvancedCheck4Display;
     private JCheckBoxMenuItem displayTopPanel;
-    private JCheckBoxMenuItem displayBottomPanel;
     private JCheckBoxMenuItem displayLeftPanel;
-    private JCheckBoxMenuItem displayRightPanel;
     private JCheckBoxMenuItem moveFoldedModelWithCp;
     private JCheckBoxMenuItem doAnimations;
     private JMenuItem scaleCP;
@@ -205,9 +203,7 @@ public class AppMenuBar {
         buttonService.registerButton(showLiveAuxLinesCheckBox, "displayLiveAuxLinesAction");
         buttonService.registerButton(showStandardFaceMarksCheckBox, "displayStandardFaceMarksAction");
         buttonService.registerButton(displayTopPanel, "displayTopPanel");
-        buttonService.registerButton(displayBottomPanel, "displayBottomPanel");
         buttonService.registerButton(displayLeftPanel, "displayLeftPanel");
-        buttonService.registerButton(displayRightPanel, "displayRightPanel");
         buttonService.registerButton(cpOnTopCheckBox, "cpOnTopAction");
         buttonService.registerButton(toggleHelpMenuItem, "toggleHelpAction");
         buttonService.registerButton(showConfigFolderMenuItem, "showConfigFolderAction");
@@ -356,8 +352,6 @@ public class AppMenuBar {
         showSelfIntersectionCheckBox.addActionListener(e -> applicationModel.toggleDisplaySelfIntersection());
         useAdvancedCheck4Display.addActionListener(e -> applicationModel.toggleUseAdvancedCheck4Display());
         displayTopPanel.addActionListener(e -> getData(applicationModel));
-        displayBottomPanel.addActionListener(e -> getData(applicationModel));
-        displayRightPanel.addActionListener(e -> getData(applicationModel));
         displayLeftPanel.addActionListener(e -> getData(applicationModel));
         doAnimations.addActionListener(e -> getData(applicationModel));
         scaleCP.addActionListener(e -> {
@@ -548,12 +542,8 @@ public class AppMenuBar {
         viewMenu.add(displayPanelMenu);
         displayTopPanel = new JCheckBoxMenuItem("Top Panel");
         displayPanelMenu.add(displayTopPanel);
-        displayBottomPanel = new JCheckBoxMenuItem("Bottom Panel");
-        displayPanelMenu.add(displayBottomPanel);
         displayLeftPanel = new JCheckBoxMenuItem("Left Panel");
         displayPanelMenu.add(displayLeftPanel);
-        displayRightPanel = new JCheckBoxMenuItem("Right Panel");
-        displayPanelMenu.add(displayRightPanel);
         moveFoldedModelWithCp = new JCheckBoxMenuItem("Move Folded Model with CP");
         viewMenu.add(moveFoldedModelWithCp);
         doAnimations = new JCheckBoxMenuItem("Animations");
@@ -588,9 +578,7 @@ public class AppMenuBar {
         applicationModel.setDisplaySelfIntersection(showSelfIntersectionCheckBox.isSelected());
         applicationModel.setAdvancedCheck4Display(useAdvancedCheck4Display.isSelected());
         applicationModel.setDisplayTopPanel(displayTopPanel.isSelected());
-        applicationModel.setDisplayBottomPanel(displayBottomPanel.isSelected());
         applicationModel.setDisplayLeftPanel(displayLeftPanel.isSelected());
-        applicationModel.setDisplayRightPanel(displayRightPanel.isSelected());
         applicationModel.setMoveFoldedModelWithCp(moveFoldedModelWithCp.isSelected());
         applicationModel.setAnimations(doAnimations.isSelected());
     }
@@ -610,9 +598,7 @@ public class AppMenuBar {
         showSelfIntersectionCheckBox.setSelected(applicationModel.getDisplaySelfIntersection());
         useAdvancedCheck4Display.setSelected(applicationModel.getAdvancedCheck4Display());
         displayTopPanel.setSelected(applicationModel.getDisplayTopPanel());
-        displayBottomPanel.setSelected(applicationModel.getDisplayBottomPanel());
         displayLeftPanel.setSelected(applicationModel.getDisplayLeftPanel());
-        displayRightPanel.setSelected(applicationModel.getDisplayRightPanel());
         moveFoldedModelWithCp.setSelected(applicationModel.getMoveFoldedModelWithCp());
         doAnimations.setSelected(applicationModel.getAnimations());
 

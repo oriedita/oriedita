@@ -189,10 +189,11 @@
                   </component>
                   <component id="d75ba" class="javax.swing.JLabel" binding="ratioLabel1">
                     <constraints>
-                      <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                      <gridbag weightx="0.0" weighty="1.0"/>
+                      <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                      <gridbag weightx="0.0" weighty="1.0" ipadx="5"/>
                     </constraints>
                     <properties>
+                      <horizontalAlignment value="0"/>
                       <text value="+"/>
                     </properties>
                   </component>
@@ -209,10 +210,11 @@
                   </component>
                   <component id="79b9c" class="javax.swing.JLabel" binding="ratioLabel2">
                     <constraints>
-                      <grid row="1" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                      <gridbag weightx="0.0" weighty="1.0"/>
+                      <grid row="1" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                      <gridbag weightx="0.0" weighty="1.0" ipadx="5"/>
                     </constraints>
                     <properties>
+                      <horizontalAlignment value="0"/>
                       <text value="sqrt"/>
                     </properties>
                   </component>
@@ -250,10 +252,11 @@
                   </component>
                   <component id="54945" class="javax.swing.JLabel" binding="ratioLabel3">
                     <constraints>
-                      <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                      <gridbag weightx="0.0" weighty="1.0"/>
+                      <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                      <gridbag weightx="0.0" weighty="1.0" ipadx="5"/>
                     </constraints>
                     <properties>
+                      <horizontalAlignment value="0"/>
                       <text value="+"/>
                     </properties>
                   </component>
@@ -270,10 +273,11 @@
                   </component>
                   <component id="170aa" class="javax.swing.JLabel" binding="ratioLabel4">
                     <constraints>
-                      <grid row="2" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                      <gridbag weightx="0.0" weighty="1.0"/>
+                      <grid row="2" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                      <gridbag weightx="0.0" weighty="1.0" ipadx="5"/>
                     </constraints>
                     <properties>
+                      <horizontalAlignment value="0"/>
                       <text value="sqrt"/>
                     </properties>
                   </component>

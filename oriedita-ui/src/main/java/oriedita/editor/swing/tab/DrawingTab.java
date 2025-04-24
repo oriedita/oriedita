@@ -158,10 +158,8 @@ public class DrawingTab {
 
         buttonService.addDefaultListener($$$getRootComponent$$$());
 
-        setData(applicationModel);
         setData(canvasModel);
         canvasModel.addPropertyChangeListener(event -> setData(canvasModel));
-        applicationModel.addPropertyChangeListener(event -> setData(applicationModel));
 
         applicationModel.bind(lineDivisionsTextField, "foldLineDividingNumber");
         buttonService.registerTextField(lineDivisionsTextField, ActionType.lineSegmentDivisionSetAction.action());
@@ -174,15 +172,14 @@ public class DrawingTab {
             }
         });
 
-        applicationModel.bind(eraserTypeComboBox, "delLineType");
-        applicationModel.bind(replaceFromComboBox, "customFromLineType");
-        applicationModel.bind(replaceToComboBox, "customToLineType");
+        canvasModel.bind(eraserTypeComboBox, "delLineType");
+        canvasModel.bind(replaceFromComboBox, "customFromLineType");
+        canvasModel.bind(replaceToComboBox, "customToLineType");
         setupComboBox(eraserTypeComboBox, eraseBtn);
         setupComboBox(replaceFromComboBox, replaceBtn);
         setupComboBox(replaceToComboBox, replaceBtn);
 
         buttonService.setIcon(replaceLabel, "labelReplace");
-        updateSwitchBtn(applicationModel);
     }
 
     private void setupComboBox(JComboBox<?> comboBox, JButton toolButton) {
@@ -194,17 +191,14 @@ public class DrawingTab {
         });
     }
 
-    public void setData(ApplicationModel data) {
-        updateSwitchBtn(data);
-    }
-
-    private void updateSwitchBtn(ApplicationModel applicationModel) {
-        var switchEnabled = applicationModel.getCustomFromLineType() != CustomLineTypes.ANY
-                && applicationModel.getCustomFromLineType() != CustomLineTypes.MANDV;
+    private void updateSwitchBtn(CanvasModel canvasModel) {
+        var switchEnabled = canvasModel.getCustomFromLineType() != CustomLineTypes.ANY
+                && canvasModel.getCustomFromLineType() != CustomLineTypes.MANDV;
         switchReplaceBtn.setEnabled(switchEnabled);
     }
 
     public void setData(CanvasModel data) {
+        updateSwitchBtn(data);
         updateSelectionTransformButtons();
     }
 
