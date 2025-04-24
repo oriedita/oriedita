@@ -3,9 +3,11 @@
   <grid id="27dc6" binding="root" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
-      <xy x="20" y="20" width="500" height="656"/>
+      <xy x="20" y="20" width="507" height="656"/>
     </constraints>
-    <properties/>
+    <properties>
+      <minimumSize width="100" height="597"/>
+    </properties>
     <border type="none"/>
     <children>
       <grid id="3594e" layout-manager="GridLayoutManager" row-count="10" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
@@ -138,7 +140,7 @@
               <component id="b1b2f" class="javax.swing.JButton" binding="fishBoneBtn">
                 <constraints>
                   <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                  <gridbag weightx="0.0" weighty="0.0"/>
+                  <gridbag weightx="1.0" weighty="0.0"/>
                 </constraints>
                 <properties>
                   <actionCommand value="fishBoneDrawAction"/>
@@ -210,9 +212,10 @@
                     <preferred-size width="40" height="-1"/>
                     <maximum-size width="40" height="-1"/>
                   </grid>
-                  <gridbag weightx="1.0" weighty="0.0"/>
+                  <gridbag weightx="0.0" weighty="0.0"/>
                 </constraints>
                 <properties>
+                  <minimumSize width="-1" height="30"/>
                   <preferredSize width="-1" height="30"/>
                   <text value="2"/>
                 </properties>
@@ -233,9 +236,10 @@
                     <preferred-size width="40" height="-1"/>
                     <maximum-size width="40" height="-1"/>
                   </grid>
-                  <gridbag weightx="1.0" weighty="0.0"/>
+                  <gridbag weightx="0.0" weighty="0.0"/>
                 </constraints>
                 <properties>
+                  <minimumSize width="-1" height="30"/>
                   <preferredSize width="-1" height="30"/>
                   <text value="3"/>
                 </properties>
@@ -449,27 +453,17 @@
                 <properties/>
                 <border type="none"/>
                 <children>
-                  <component id="f59a7" class="javax.swing.JButton" binding="replaceBtn">
-                    <constraints>
-                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                      <gridbag weightx="1.0" weighty="1.0"/>
-                    </constraints>
-                    <properties>
-                      <actionCommand value="replace_lineAction"/>
-                      <text value="replace"/>
-                    </properties>
-                  </component>
                   <component id="55590" class="javax.swing.JComboBox" binding="replaceFromComboBox">
                     <constraints>
-                      <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="3" indent="0" use-parent-layout="false"/>
+                      <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="3" indent="0" use-parent-layout="false"/>
                       <gridbag weightx="1.0" weighty="1.0"/>
                     </constraints>
                     <properties/>
                   </component>
                   <component id="e34b1" class="javax.swing.JLabel" binding="replaceLabel">
                     <constraints>
-                      <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-                      <gridbag weightx="0.0" weighty="1.0" ipadx="10"/>
+                      <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                      <gridbag weightx="0.0" weighty="1.0" ipadx="10" ipady="5"/>
                     </constraints>
                     <properties>
                       <horizontalAlignment value="0"/>
@@ -478,14 +472,24 @@
                   </component>
                   <component id="2df66" class="javax.swing.JComboBox" binding="replaceToComboBox">
                     <constraints>
-                      <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="3" indent="0" use-parent-layout="false"/>
+                      <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="3" indent="0" use-parent-layout="false"/>
                       <gridbag weightx="1.0" weighty="1.0"/>
                     </constraints>
                     <properties/>
                   </component>
+                  <component id="f59a7" class="javax.swing.JButton" binding="replaceBtn">
+                    <constraints>
+                      <grid row="0" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                      <gridbag weightx="1.0" weighty="1.0"/>
+                    </constraints>
+                    <properties>
+                      <actionCommand value="replace_lineAction"/>
+                      <text value="replace"/>
+                    </properties>
+                  </component>
                   <component id="6e6aa" class="javax.swing.JButton" binding="switchReplaceBtn">
                     <constraints>
-                      <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                      <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                       <gridbag weightx="0.0" weighty="0.0"/>
                     </constraints>
                     <properties>
