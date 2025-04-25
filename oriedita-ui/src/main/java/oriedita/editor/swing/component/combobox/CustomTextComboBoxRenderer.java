@@ -10,7 +10,6 @@ import java.util.function.Function;
 
 public class CustomTextComboBoxRenderer<T> implements ListCellRenderer<T> {
 
-
     private final BiFunction<T, Integer, String> textProvider;
     private final DefaultListCellRenderer defaultRenderer;
 

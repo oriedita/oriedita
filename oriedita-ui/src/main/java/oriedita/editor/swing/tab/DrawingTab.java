@@ -13,7 +13,7 @@ import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.handler.PopupMenuAdapter;
 import oriedita.editor.service.ButtonService;
 import oriedita.editor.swing.component.DropdownToolButton;
-import oriedita.editor.swing.component.combobox.CustomTextComboBoxRenderer;
+import oriedita.editor.swing.component.combobox.CustomLineTypeComboBoxRenderer;
 import origami.crease_pattern.CustomLineTypes;
 
 import javax.swing.DefaultComboBoxModel;
@@ -114,14 +114,7 @@ public class DrawingTab {
         );
 
         eraserTypeComboBox.setModel(new DefaultComboBoxModel<>(CustomLineTypes.values()));
-        eraserTypeComboBox.setRenderer(new CustomTextComboBoxRenderer<>(l -> switch (l) {
-            case ANY -> "Any";
-            case EGDE -> "E";
-            case MANDV -> "M & V";
-            case MOUNTAIN -> "M";
-            case VALLEY -> "V";
-            case AUX -> "A";
-        }));
+        eraserTypeComboBox.setRenderer(new CustomLineTypeComboBoxRenderer());
 
         deleteOnLineDropdown.setActions(
                 ActionType.del_lAction, ActionType.del_l_XAction, ActionType.trimBranchesAction
@@ -131,25 +124,11 @@ public class DrawingTab {
                 ActionType.v_del_allAction, ActionType.v_del_all_ccAction, ActionType.v_del_ccAction
         );
         replaceFromComboBox.setModel(new DefaultComboBoxModel<>(CustomLineTypes.values()));
-        replaceFromComboBox.setRenderer(new CustomTextComboBoxRenderer<>(l -> switch (l) {
-            case ANY -> "Any";
-            case EGDE -> "E";
-            case MANDV -> "M & V";
-            case MOUNTAIN -> "M";
-            case VALLEY -> "V";
-            case AUX -> "A";
-        }));
+        replaceFromComboBox.setRenderer(new CustomLineTypeComboBoxRenderer());
         replaceToComboBox.setModel(new DefaultComboBoxModel<>(new CustomLineTypes[]{
                 CustomLineTypes.EGDE, CustomLineTypes.MOUNTAIN, CustomLineTypes.VALLEY, CustomLineTypes.AUX
         }));
-        replaceToComboBox.setRenderer(new CustomTextComboBoxRenderer<>(l -> switch (l) {
-            case ANY -> "Any (error)";
-            case EGDE -> "E";
-            case MANDV -> "M & V (error)";
-            case MOUNTAIN -> "M";
-            case VALLEY -> "V";
-            case AUX -> "A";
-        }));
+        replaceToComboBox.setRenderer(new CustomLineTypeComboBoxRenderer());
         mvDropdown.setActions(
                 ActionType.senbun_henkan2Action,
                 ActionType.senbun_henkanAction,
