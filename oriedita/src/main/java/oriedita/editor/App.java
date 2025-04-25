@@ -312,7 +312,6 @@ public class App {
             mainCreasePatternWorker.setCamera(canvas.getCreasePatternCamera());
 
             mainCreasePatternWorker.record();
-            mainCreasePatternWorker.auxRecord();
         });
         executor.execute(resetService::developmentView_initialization);
         executor.execute(() -> {

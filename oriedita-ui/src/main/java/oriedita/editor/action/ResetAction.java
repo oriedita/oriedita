@@ -36,6 +36,5 @@ public class ResetAction extends AbstractOrieditaAction{
         canvasModel.setMouseMode(MouseMode.FOLDABLE_LINE_DRAW_71);
 
         mainCreasePatternWorker.record();
-        mainCreasePatternWorker.auxRecord();
     }
 }

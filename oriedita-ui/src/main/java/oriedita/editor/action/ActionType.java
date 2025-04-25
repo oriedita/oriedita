@@ -178,7 +178,9 @@ public enum ActionType {
     h_senhaba_ageAction("h_senhaba_ageAction"),
     h_senbun_nyuryokuAction("h_senbun_nyuryokuAction"),
     h_senbun_sakujyoAction("h_senbun_sakujyoAction"),
+    @Deprecated
     h_undoAction("h_undoAction"),
+    @Deprecated
     h_redoAction("h_redoAction"),
     undoAction("undoAction"),
     redoAction("redoAction"),

@@ -2,7 +2,7 @@ package oriedita.editor.swing.component.combobox;
 
 import oriedita.editor.Colors;
 import oriedita.editor.swing.component.ColorIcon;
-import oriedita.editor.swing.component.GridColorIcon;
+import oriedita.editor.swing.component.ColorGridIcon;
 import origami.crease_pattern.CustomLineTypes;
 
 import javax.swing.JLabel;
@@ -30,11 +30,11 @@ public class CustomLineTypeComboBoxRenderer implements ListCellRenderer<CustomLi
         var c = baseRenderer.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
         if (c instanceof JLabel label) {
             var icon = switch (value) {
-                case ANY -> new GridColorIcon(
+                case ANY -> new ColorGridIcon(
                         Colors.get(Color.BLACK), Colors.get(Color.RED), Colors.get(Color.CYAN), Colors.get(Color.BLUE)
                 );
                 case EGDE -> new ColorIcon(Colors.get(Color.BLACK), 14, false);
-                case MANDV -> new GridColorIcon(
+                case MANDV -> new ColorGridIcon(
                         Colors.get(Color.RED), Colors.get(Color.BLUE)
                 );
                 case MOUNTAIN -> new ColorIcon(Colors.get(Color.RED), 14, false);

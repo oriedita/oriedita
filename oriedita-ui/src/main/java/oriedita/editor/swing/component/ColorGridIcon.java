@@ -1,27 +1,25 @@
 package oriedita.editor.swing.component;
 
 
-import oriedita.editor.Colors;
-
 import javax.swing.Icon;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
 
-public class GridColorIcon implements Icon {
+public class ColorGridIcon implements Icon {
     private final Color color1;
     private final Color color2;
     private final Color color3;
     private final Color color4;
 
-    public GridColorIcon(Color colorNW, Color colorNE, Color colorSW, Color colorSE) {
+    public ColorGridIcon(Color colorNW, Color colorNE, Color colorSW, Color colorSE) {
         this.color1 = colorNW;
         this.color2 = colorNE;
         this.color3 = colorSW;
         this.color4 = colorSE;
     }
 
-    public GridColorIcon(Color colorLeft, Color colorRight) {
+    public ColorGridIcon(Color colorLeft, Color colorRight) {
         this(colorLeft, colorRight, colorLeft, colorRight);
     }
 

@@ -479,44 +479,24 @@
                       <text value="a2"/>
                     </properties>
                   </component>
-                  <component id="a095d" class="javax.swing.JButton" binding="markerToolButton" default-binding="true">
-                    <constraints>
-                      <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                      <gridbag weightx="1.0" weighty="1.0"/>
-                    </constraints>
-                    <properties>
-                      <actionCommand value="h_senbun_nyuryokuAction"/>
-                      <text value="markerTool"/>
-                    </properties>
-                  </component>
-                  <component id="aa4e" class="javax.swing.JButton" binding="markerRedoButton" default-binding="true">
-                    <constraints>
-                      <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                      <gridbag weightx="1.0" weighty="1.0"/>
-                    </constraints>
-                    <properties>
-                      <actionCommand value="h_redoAction"/>
-                      <text value="markerRedo"/>
-                    </properties>
-                  </component>
-                  <component id="60ac0" class="javax.swing.JButton" binding="markerUndoButton" default-binding="true">
+                  <component id="89c55" class="javax.swing.JButton" binding="markerEraseButton" default-binding="true">
                     <constraints>
                       <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                       <gridbag weightx="1.0" weighty="1.0"/>
                     </constraints>
                     <properties>
-                      <actionCommand value="h_undoAction"/>
-                      <text value="markerUndo"/>
+                      <actionCommand value="h_senbun_sakujyoAction"/>
+                      <text value="markerErase"/>
                     </properties>
                   </component>
-                  <component id="89c55" class="javax.swing.JButton" binding="markerEraseButton" default-binding="true">
+                  <component id="a095d" class="javax.swing.JButton" binding="markerToolButton" default-binding="true">
                     <constraints>
-                      <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                      <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                       <gridbag weightx="1.0" weighty="1.0"/>
                     </constraints>
                     <properties>
-                      <actionCommand value="h_senbun_sakujyoAction"/>
-                      <text value="markerErase"/>
+                      <actionCommand value="h_senbun_nyuryokuAction"/>
+                      <text value="markerTool"/>
                     </properties>
                   </component>
                 </children>

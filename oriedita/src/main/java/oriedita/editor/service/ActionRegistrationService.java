@@ -391,8 +391,6 @@ public class ActionRegistrationService {
         actionService.registerAction(ActionType.colYellowAction, new LambdaAction(() -> canvasModel.setAuxLiveLineColor(LineColor.YELLOW_7)));
         actionService.registerAction(ActionType.h_senhaba_sageAction, new LambdaAction(applicationModel::decreaseAuxLineWidth));
         actionService.registerAction(ActionType.h_senhaba_ageAction, new LambdaAction(applicationModel::increaseAuxLineWidth));
-        actionService.registerAction(ActionType.h_undoAction, new LambdaAction(mainCreasePatternWorker::auxUndo));
-        actionService.registerAction(ActionType.h_redoAction, new LambdaAction(mainCreasePatternWorker::auxRedo));
         actionService.registerAction(ActionType.h_senbun_nyuryokuAction, actionFactory.setMouseModeLineTypeDeleteAction(MouseMode.DRAW_CREASE_FREE_1, FoldLineAdditionalInputMode.AUX_LINE_1));
         actionService.registerAction(ActionType.h_senbun_sakujyoAction, actionFactory.setMouseModeLineTypeDeleteAction(MouseMode.LINE_SEGMENT_DELETE_3, FoldLineAdditionalInputMode.AUX_LINE_1));
 

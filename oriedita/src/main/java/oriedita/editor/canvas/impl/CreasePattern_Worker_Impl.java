@@ -75,7 +75,6 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     private final FoldLineSet foldLineSet;    //Store polygonal lines
     private final Grid grid = new Grid();
     private final HistoryState historyState;
-    private final HistoryState auxHistoryState;
     /**
      * Temporary line segments when drawing.
      */
@@ -125,7 +124,6 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
 
     public CreasePattern_Worker_Impl(Camera creasePatternCamera,
                                      HistoryState normalHistoryState,
-                                     HistoryState auxHistoryState,
                                      FoldLineSet auxLines,
                                      FoldLineSet foldLineSet,
                                      TaskExecutorService camvTaskExecutor,
@@ -138,7 +136,6 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
                                      SelectedTextModel textModel) {
         this.creasePatternCamera = creasePatternCamera;  //コンストラクタ
         this.historyState = normalHistoryState;
-        this.auxHistoryState = auxHistoryState;
         this.camvTaskExecutor = camvTaskExecutor;
         this.canvasModel = canvasModel;
         this.applicationModel = applicationModel;
@@ -190,7 +187,6 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
         auxLines.reset();
 
         historyState.reset();
-        auxHistoryState.reset();
 
         camera.reset();
         lineStep.clear();
@@ -282,11 +278,6 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     }
 
     @Override
-    public void setAuxMemo(Save memo1) {
-        auxLines.setAuxSave(memo1);
-    }
-
-    @Override
     public void allMountainValleyChange() {
         foldLineSet.allMountainValleyChange();
         checkIfNecessary();
@@ -340,12 +331,6 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
 
         saveAdditionalInformation(save_temp);
         return save_temp;
-    }
-
-    public Save h_getSave() {
-        Save save = SaveProvider.createInstance();
-        auxLines.h_getSave(save);
-        return save;
     }
 
     @Override
@@ -425,21 +410,6 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
         }
 
         historyState.record(getSave(s_title));
-    }
-
-    @Override
-    public void auxUndo() {
-        setAuxMemo(auxHistoryState.undo());
-    }
-
-    @Override
-    public void auxRedo() {
-        setAuxMemo(auxHistoryState.redo());
-    }
-
-    @Override
-    public void auxRecord() {
-        auxHistoryState.record(h_getSave());
     }
 
 
