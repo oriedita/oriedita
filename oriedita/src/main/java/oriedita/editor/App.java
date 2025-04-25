@@ -160,13 +160,6 @@ public class App {
 
         Logger.trace("Init stage finished");
 
-        // ---
-        // Bind model to ui
-        //backgroundModel.addPropertyChangeListener(editor.getTopPanel());
-        //applicationModel.addPropertyChangeListener(editor.getTopPanel());
-        //cameraModel.addPropertyChangeListener(editor.getTopPanel());
-        // ---
-
         JFrame frame = frameProvider.get();
         frame.setTitle("Oriedita " + ResourceUtil.getVersionFromManifest());//Specify the title and execute the constructor
 
@@ -359,7 +352,7 @@ public class App {
     }
 
     private void setData(ApplicationModel applicationModel) {
-        editor.getToolsPanel().$$$getRootComponent$$$().setVisible(applicationModel.getDisplayLeftPanel());
         editor.getTopToolbar().$$$getRootComponent$$$().setVisible(applicationModel.getDisplayTopPanel());
+        editor.getToolsPanel().$$$getRootComponent$$$().setVisible(applicationModel.getDisplayLeftPanel());
     }
 }

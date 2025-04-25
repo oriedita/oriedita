@@ -34,9 +34,7 @@ public class ApplicationModel extends AbstractModel implements Serializable {
     private boolean displayFoldingProgress;
     private boolean displaySelfIntersection;
     private boolean displayTopPanel;
-    private boolean displayBottomPanel;
     private boolean displayLeftPanel;
-    private boolean displayRightPanel;
     private boolean preciseZoom;
     private boolean roundedEnds;
     private int lineWidth;
@@ -268,16 +266,6 @@ public class ApplicationModel extends AbstractModel implements Serializable {
         this.pcs.firePropertyChange("displayTopPanel", oldDisplayTopPanel, displayTopPanel);
     }
 
-    public boolean getDisplayBottomPanel() {
-        return displayBottomPanel;
-    }
-
-    public void setDisplayBottomPanel(boolean displayBottomPanel) {
-        boolean oldDisplayBottomPanel = this.displayBottomPanel;
-        this.displayBottomPanel = displayBottomPanel;
-        this.pcs.firePropertyChange("displayBottomPanel", oldDisplayBottomPanel, displayBottomPanel);
-    }
-
     public boolean getDisplayLeftPanel() {
         return displayLeftPanel;
     }
@@ -286,16 +274,6 @@ public class ApplicationModel extends AbstractModel implements Serializable {
         boolean oldDisplayLeftPanel = this.displayLeftPanel;
         this.displayLeftPanel = displayLeftPanel;
         this.pcs.firePropertyChange("displayLeftPanel", oldDisplayLeftPanel, displayLeftPanel);
-    }
-
-    public boolean getDisplayRightPanel() {
-        return displayRightPanel;
-    }
-
-    public void setDisplayRightPanel(boolean displayRightPanel) {
-        boolean oldDisplayRightPanel = this.displayRightPanel;
-        this.displayRightPanel = displayRightPanel;
-        this.pcs.firePropertyChange("displayRightPanel", oldDisplayRightPanel, displayRightPanel);
     }
 
     public String getLaf() {
@@ -381,9 +359,7 @@ public class ApplicationModel extends AbstractModel implements Serializable {
         advancedCheck4Display = true;
 
         displayTopPanel = true;
-        displayBottomPanel = true;
         displayLeftPanel = true;
-        displayRightPanel = true;
 
         circleCustomizedColor = new Color(100, 200, 200);
 
@@ -467,9 +443,7 @@ public class ApplicationModel extends AbstractModel implements Serializable {
         isFoldedFigureColorDetached = false;
 
         displayTopPanel = true;
-        displayBottomPanel = true;
         displayLeftPanel = true;
-        displayRightPanel = true;
 
         zoomSpeed = 1;
         animations = true;
@@ -831,8 +805,6 @@ public class ApplicationModel extends AbstractModel implements Serializable {
         isFoldedFigureColorDetached = applicationModel.getIsFoldedFigureColorDetached();
 
         displayTopPanel = applicationModel.getDisplayTopPanel();
-        displayBottomPanel = applicationModel.getDisplayBottomPanel();
-        displayRightPanel = applicationModel.getDisplayRightPanel();
         displayLeftPanel = applicationModel.getDisplayLeftPanel();
 
         showInvisibleTextWarning = applicationModel.getShowInvisibleTextWarning();
@@ -849,7 +821,7 @@ public class ApplicationModel extends AbstractModel implements Serializable {
         autoSaveInterval = applicationModel.getAutoSaveInterval();
         minGridUnitSize = applicationModel.getMinGridUnitSize();
 
-        this.pcs.firePropertyChange(null, null, null);
+        this.notifyAllListeners();
     }
 
     public void toggleHelpVisible() {
