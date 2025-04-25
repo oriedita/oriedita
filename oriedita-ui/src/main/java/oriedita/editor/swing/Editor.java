@@ -3,12 +3,14 @@ package oriedita.editor.swing;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import org.tinylog.Logger;
 import oriedita.editor.Canvas;
 import oriedita.editor.CanvasUI;
 
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.util.concurrent.Executor;
 
 /**

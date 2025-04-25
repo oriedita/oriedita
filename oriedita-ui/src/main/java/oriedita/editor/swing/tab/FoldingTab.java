@@ -36,8 +36,6 @@ public class FoldingTab {
     private JPanel root;
     private JCheckBox overlapCheckBox;
     private JButton fixOverlapButton;
-    private JCheckBox verticesCheckBox;
-    private JButton fixTIntersectionsButton;
     private JButton polygonFoldabilityButton;
     private JButton CP_rcgButton;
     private JButton s_faceButton;
@@ -135,7 +133,6 @@ public class FoldingTab {
 
     private void getData(ApplicationModel applicationModel) {
         overlapCheckBox.setSelected(applicationModel.getCkOEnabled());
-        verticesCheckBox.setSelected(applicationModel.getCkTEnabled());
     }
 
     private void getData(FoldedFigureModel foldedFigureModel) {
@@ -195,33 +192,11 @@ public class FoldingTab {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.ipady = 5;
         panel2.add(fixOverlapButton, gbc);
-        verticesCheckBox = new JCheckBox();
-        verticesCheckBox.setActionCommand("ckTAction");
-        verticesCheckBox.setHorizontalAlignment(0);
-        verticesCheckBox.setText("T-Intersections");
-        gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        gbc.weightx = 1.0;
-        gbc.weighty = 1.0;
-        gbc.fill = GridBagConstraints.BOTH;
-        panel2.add(verticesCheckBox, gbc);
-        fixTIntersectionsButton = new JButton();
-        fixTIntersectionsButton.setActionCommand("fxTAction");
-        fixTIntersectionsButton.setText("fix T Intersections");
-        gbc = new GridBagConstraints();
-        gbc.gridx = 1;
-        gbc.gridy = 1;
-        gbc.weightx = 1.0;
-        gbc.weighty = 1.0;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.ipady = 5;
-        panel2.add(fixTIntersectionsButton, gbc);
         final JPanel panel3 = new JPanel();
         panel3.setLayout(new GridBagLayout());
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.gridy = 2;
+        gbc.gridy = 1;
         gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.BOTH;
         panel2.add(panel3, gbc);

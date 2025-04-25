@@ -337,6 +337,8 @@ public class ActionRegistrationService {
             mainCreasePatternWorker.unselect_all();
             mainCreasePatternWorker.fix1();
             mainCreasePatternWorker.check1();
+            mainCreasePatternWorker.fix2();
+            mainCreasePatternWorker.check2();
             mainCreasePatternWorker.record();
         }));
         actionService.registerAction(ActionType.fxTAction, new LambdaAction(() -> {
@@ -354,12 +356,20 @@ public class ActionRegistrationService {
             mainCreasePatternWorker.unselect_all();
             boolean isEnabled = applicationModel.getCkOEnabled();
             applicationModel.setCkOEnabled(!isEnabled);
+            applicationModel.setCkTEnabled(!isEnabled);
 
             if (applicationModel.getCkOEnabled()) {
                 mainCreasePatternWorker.check1();//r_hitosiiとr_heikouhanteiは、hitosiiとheikou_hanteiのずれの許容程度
                 mainCreasePatternWorker.set_i_check1(true);
             } else {
                 mainCreasePatternWorker.set_i_check1(false);
+            }
+
+            if (applicationModel.getCkTEnabled()) {
+                mainCreasePatternWorker.check2();//r_hitosiiとr_heikouhanteiは、hitosiiとheikou_hanteiのずれの許容程度
+                mainCreasePatternWorker.setCheck2(true);
+            } else {
+                mainCreasePatternWorker.setCheck2(false);
             }
         });
 

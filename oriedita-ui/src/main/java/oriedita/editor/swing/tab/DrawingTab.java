@@ -613,7 +613,6 @@ public class DrawingTab {
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
-        gbc.gridwidth = 2;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -622,8 +621,9 @@ public class DrawingTab {
         switchReplaceBtn.setActionCommand("switchReplaceAction");
         switchReplaceBtn.setText("⇆");
         gbc = new GridBagConstraints();
-        gbc.gridx = 2;
+        gbc.gridx = 1;
         gbc.gridy = 0;
+        gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.BOTH;
         panel8.add(switchReplaceBtn, gbc);
         final JPanel panel9 = new JPanel();
