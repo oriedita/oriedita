@@ -6,9 +6,9 @@ import oriedita.editor.handler.PopupMenuAdapter;
 import javax.swing.JButton;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+import javax.swing.Timer;
 import javax.swing.event.PopupMenuEvent;
 import java.awt.Graphics;
-import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -19,10 +19,8 @@ public class DropdownToolButton extends JButton {
     private List<ActionType> actions = new ArrayList<>();
     private ActionType activeAction;
     private boolean dropdownOpened = false;
-    private final int NANO_TO_MILLI = 1000000;
 
-    private Point clickPos;
-    private long clickTime;
+    private Timer timer;
 
     public DropdownToolButton() {
         this.addMouseListener(new MouseAdapter() {
@@ -33,19 +31,26 @@ public class DropdownToolButton extends JButton {
             }
             @Override
             public void mousePressed(MouseEvent e) {
-                clickPos = e.getLocationOnScreen();
-                clickTime = System.nanoTime();
+                timer = new Timer(300, ev -> openDropdown());
+                timer.setRepeats(false);
+                timer.start();
             }
             @Override
             public void mouseReleased(MouseEvent e) {
-                if (e.getButton() == MouseEvent.BUTTON1 && (isInTriangle(e) || System.nanoTime() - clickTime > 300 * NANO_TO_MILLI)) {
-                    dropdownMenu.setLocation(clickPos);
-                    dropdownMenu.setVisible(true);
+                timer.stop();
+                if (e.getButton() == MouseEvent.BUTTON1 && (isInTriangle(e) )) {
                     e.consume();
-                    setEnabled(false);
+                    openDropdown();
                 }
             }
         });
+    }
+
+    private void openDropdown() {
+        var locOnScreen = getLocationOnScreen();
+        dropdownMenu.setLocation(locOnScreen.x, locOnScreen.y + getHeight());
+        dropdownMenu.setVisible(true);
+        setEnabled(false);
     }
 
     public JPopupMenu getDropdownMenu() {
@@ -102,7 +107,6 @@ public class DropdownToolButton extends JButton {
         });
         setActiveAction(0);
     }
-
     public List<ActionType> getActions() {
         return actions;
     }

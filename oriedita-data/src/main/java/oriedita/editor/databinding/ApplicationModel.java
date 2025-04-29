@@ -450,7 +450,6 @@ public class ApplicationModel extends AbstractModel implements Serializable {
         animationSpeed = 1;
         mouseRadius = 10;
         minGridUnitSize = 0.5;
-
         autoSaveInterval = 5;
 
         this.notifyAllListeners();
