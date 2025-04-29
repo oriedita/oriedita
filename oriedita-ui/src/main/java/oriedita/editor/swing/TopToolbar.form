@@ -50,15 +50,6 @@
                       <text value="decreaseGridSize"/>
                     </properties>
                   </component>
-                  <component id="868d5" class="javax.swing.JTextField" binding="gridSizeTextField">
-                    <constraints>
-                      <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="3" indent="0" use-parent-layout="false">
-                        <preferred-size width="150" height="-1"/>
-                      </grid>
-                      <gridbag weightx="0.0" weighty="1.0"/>
-                    </constraints>
-                    <properties/>
-                  </component>
                   <component id="f8044" class="javax.swing.JButton" binding="increaseGridSizeButton" default-binding="true">
                     <constraints>
                       <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -68,6 +59,13 @@
                       <actionCommand value="gridSizeIncreaseAction"/>
                       <text value="increaseGridSize"/>
                     </properties>
+                  </component>
+                  <component id="721fe" class="oriedita.editor.swing.component.DraggableTextField" binding="gridSizeTextField" custom-create="true">
+                    <constraints>
+                      <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                      <gridbag weightx="0.0" weighty="1.0"/>
+                    </constraints>
+                    <properties/>
                   </component>
                 </children>
               </grid>
