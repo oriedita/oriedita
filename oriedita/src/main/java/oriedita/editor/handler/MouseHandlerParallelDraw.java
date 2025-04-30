@@ -18,7 +18,7 @@ import java.awt.Graphics2D;
 public class MouseHandlerParallelDraw extends BaseMouseHandlerInputRestricted {
 
     private Point p = new Point();
-    private StepGraph<Step> steps;
+    private StepCollection<Step> steps;
 
     private Point targetPoint;
     private LineSegment parallelSegment;
@@ -125,26 +125,23 @@ public class MouseHandlerParallelDraw extends BaseMouseHandlerInputRestricted {
     }
 
     private void initializeSteps() {
-        steps = new StepGraph<>(Step.SELECT_TARGET_POINT, this::action_select_target_point);
+        steps = new StepCollection<>(Step.SELECT_TARGET_POINT, this::action_select_target_point);
         steps.addNode(Step.SELECT_PARALLEL_SEGMENT, this::action_select_parallel_segment);
         steps.addNode(Step.SELECT_DESTINATION, this::action_select_destination);
-
-        steps.connectNodes(Step.SELECT_TARGET_POINT, Step.SELECT_PARALLEL_SEGMENT);
-        steps.connectNodes(Step.SELECT_PARALLEL_SEGMENT, Step.SELECT_DESTINATION);
     }
 
-    private Step action_select_target_point() {
-        if (targetPoint == null) return null;
-        return Step.SELECT_PARALLEL_SEGMENT;
+    private void action_select_target_point() {
+        if (targetPoint == null) return;
+        steps.setCurrentStep(Step.SELECT_PARALLEL_SEGMENT);
     }
 
-    private Step action_select_parallel_segment() {
-        if (parallelSegment == null) return null;
-        return Step.SELECT_DESTINATION;
+    private void action_select_parallel_segment() {
+        if (parallelSegment == null) return;
+        steps.setCurrentStep(Step.SELECT_DESTINATION);
     }
 
-    private Step action_select_destination() {
-        if (destinationSegment == null) return null;
+    private void action_select_destination() {
+        if (destinationSegment == null) return;
         LineSegment s = new LineSegment(targetPoint, new Point(
                 targetPoint.getX() + parallelSegment.determineBX() - parallelSegment.determineAX(),
                 targetPoint.getY() + parallelSegment.determineBY() - parallelSegment.determineAY()));
@@ -154,6 +151,5 @@ public class MouseHandlerParallelDraw extends BaseMouseHandlerInputRestricted {
             d.record();
             reset();
         }
-        return null;
     }
 }

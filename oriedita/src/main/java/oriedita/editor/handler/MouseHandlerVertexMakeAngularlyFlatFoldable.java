@@ -25,7 +25,7 @@ public class MouseHandlerVertexMakeAngularlyFlatFoldable extends BaseMouseHandle
     LineColor icol_temp = LineColor.BLACK_0;
 
     Point p = new Point();
-    StepGraph<Step> steps;
+    StepCollection<Step> steps;
 
     private Point invalidPoint;
     private List<LineSegment> candidates = new ArrayList<>();
@@ -71,7 +71,8 @@ public class MouseHandlerVertexMakeAngularlyFlatFoldable extends BaseMouseHandle
                 return;
             }
             case SELECT_DESTINATION: {
-                if(OritaCalc.determineLineSegmentDistance(p, d.getClosestLineSegment(p)) < d.getSelectionDistance()) {
+                if(OritaCalc.determineLineSegmentDistance(p, d.getClosestLineSegment(p)) < d.getSelectionDistance()
+                    && OritaCalc.isLineSegmentParallel(selectedCandidate, d.getClosestLineSegment(p)) == OritaCalc.ParallelJudgement.NOT_PARALLEL) {
                     destinationSegment = d.getClosestLineSegment(p).withColor(LineColor.ORANGE_4);
                 } else destinationSegment = null;
             }
@@ -100,7 +101,7 @@ public class MouseHandlerVertexMakeAngularlyFlatFoldable extends BaseMouseHandle
     }
 
     private void initializeSteps() {
-        steps = new StepGraph<>(Step.SELECT_INVALID_VERTEX, this::action_select_invalid_vertex);
+        steps = new StepCollection<>(Step.SELECT_INVALID_VERTEX, this::action_select_invalid_vertex);
         steps.addNode(Step.SELECT_CANDIDATE, this::action_select_candidate);
         steps.addNode(Step.SELECT_DESTINATION, this::action_select_destination);
 
@@ -114,8 +115,8 @@ public class MouseHandlerVertexMakeAngularlyFlatFoldable extends BaseMouseHandle
         }
     }
 
-    private Step action_select_invalid_vertex() {
-        if(invalidPoint == null) return Step.SELECT_INVALID_VERTEX;
+    private void action_select_invalid_vertex() {
+        if(invalidPoint == null) return;
 
         //t1を端点とする折線をNarabebakoに入れる
         SortingBox<LineSegment> nbox = new SortingBox<>();
@@ -202,26 +203,27 @@ public class MouseHandlerVertexMakeAngularlyFlatFoldable extends BaseMouseHandle
         workDone = false;
         if (candidates.size() == 1) {
             selectedCandidate = candidates.get(0);
-            return Step.SELECT_DESTINATION;
+            steps.setCurrentStep(Step.SELECT_DESTINATION);
+            return;
         }
-        return Step.SELECT_CANDIDATE;
+        steps.setCurrentStep(Step.SELECT_CANDIDATE);
     }
 
-    private Step action_select_candidate() {
-        if(selectedCandidate == null) return Step.SELECT_CANDIDATE;
+    private void action_select_candidate() {
+        if(selectedCandidate == null) return;
         if (OritaCalc.determineLineSegmentDistance(p, selectedCandidate) >= d.getSelectionDistance()) {
             workDone = false;
-            return Step.SELECT_CANDIDATE;
+            return;
         }
         workDone = false;
-        return Step.SELECT_DESTINATION;
+        steps.setCurrentStep(Step.SELECT_DESTINATION);
     }
 
-    private Step action_select_destination() {
-        if(destinationSegment == null) return Step.SELECT_DESTINATION;
+    private void action_select_destination() {
+        if(destinationSegment == null) return;
         if (OritaCalc.determineLineSegmentDistance(p, destinationSegment) >= d.getSelectionDistance()) {//最寄の既存折線が遠くて選択無効の場合
             destinationSegment = null;
-            return Step.SELECT_DESTINATION;
+            return;
         }
 
         Point kousa_point = OritaCalc.findIntersection(selectedCandidate, destinationSegment);
@@ -231,11 +233,6 @@ public class MouseHandlerVertexMakeAngularlyFlatFoldable extends BaseMouseHandle
             d.record();
             workDone = true;
             reset();
-            return Step.SELECT_INVALID_VERTEX;
         }
-
-        destinationSegment = null;
-        return Step.SELECT_DESTINATION;
     }
-
 }

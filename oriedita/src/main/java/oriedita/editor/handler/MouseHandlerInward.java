@@ -16,7 +16,7 @@ import java.awt.Graphics2D;
 @Handles(MouseMode.INWARD_8)
 public class MouseHandlerInward extends BaseMouseHandlerInputRestricted {
     Point p = new Point();
-    private StepGraph<Step> steps;
+    private StepCollection<Step> steps;
 
     Point p1, p2, p3 = null;
 
@@ -82,26 +82,23 @@ public class MouseHandlerInward extends BaseMouseHandlerInputRestricted {
     }
 
     private void initializeSteps() {
-        steps = new StepGraph<>(Step.POINT_1, this::action_point_1);
+        steps = new StepCollection<>(Step.POINT_1, this::action_point_1);
         steps.addNode(Step.POINT_2, this::action_point_2);
         steps.addNode(Step.POINT_3, this::action_point_3);
-
-        steps.connectNodes(Step.POINT_1, Step.POINT_2);
-        steps.connectNodes(Step.POINT_2, Step.POINT_3);
     }
 
-    private Step action_point_1() {
-        if(p1 == null) return Step.POINT_1;
-        return Step.POINT_2;
+    private void action_point_1() {
+        if(p1 == null) return;
+        steps.setCurrentStep(Step.POINT_2);
     }
 
-    private Step action_point_2() {
-        if(p2 == null) return Step.POINT_2;
-        return Step.POINT_3;
+    private void action_point_2() {
+        if(p2 == null) return;
+        steps.setCurrentStep(Step.POINT_3);
     }
 
-    private Step action_point_3() {
-        if(p3 == null) return Step.POINT_3;
+    private void action_point_3() {
+        if(p3 == null) return;
 
         //三角形の内心を求める	public Ten oc.center(Ten ta,Ten tb,Ten tc)
         Point center = OritaCalc.center(p1, p2, p3);
@@ -121,6 +118,5 @@ public class MouseHandlerInward extends BaseMouseHandlerInputRestricted {
 
         d.record();
         reset();
-        return Step.POINT_1;
     }
 }

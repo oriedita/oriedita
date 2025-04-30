@@ -17,7 +17,7 @@ import java.awt.Graphics2D;
 @Handles(MouseMode.AXIOM_7)
 public class MouseHandlerAxiom7 extends BaseMouseHandlerInputRestricted{
     private Point p = new Point();
-    private StepGraph<Step> steps;
+    private StepCollection<Step> steps;
 
     private Point targetPoint;
     private LineSegment targetSegment;
@@ -146,45 +146,39 @@ public class MouseHandlerAxiom7 extends BaseMouseHandlerInputRestricted{
     }
 
     private void initializeSteps() {
-        steps = new StepGraph<>(Step.SELECT_TARGET_POINT, this::action_select_target_point);
+        steps = new StepCollection<>(Step.SELECT_TARGET_POINT, this::action_select_target_point);
         steps.addNode(Step.SELECT_TARGET_SEGMENT, this::action_select_target_segment);
         steps.addNode(Step.SELECT_PERPENDICULAR_SEGMENT, this::action_select_perpendicular_segment);
         steps.addNode(Step.SELECT_DESTINATION_OR_INDICATOR, this::action_select_destination_or_indicator);
-
-        steps.connectNodes(Step.SELECT_TARGET_POINT, Step.SELECT_TARGET_SEGMENT);
-        steps.connectNodes(Step.SELECT_TARGET_SEGMENT, Step.SELECT_PERPENDICULAR_SEGMENT);
-        steps.connectNodes(Step.SELECT_PERPENDICULAR_SEGMENT, Step.SELECT_DESTINATION_OR_INDICATOR);
     }
 
-    private Step action_select_target_point() {
-        if (targetPoint == null) return null;
-        return Step.SELECT_TARGET_SEGMENT;
+    private void action_select_target_point() {
+        if (targetPoint == null) return;
+        steps.setCurrentStep(Step.SELECT_TARGET_SEGMENT);
     }
 
-    private Step action_select_target_segment() {
-        if (targetSegment == null) return null;
-        return Step.SELECT_PERPENDICULAR_SEGMENT;
+    private void action_select_target_segment() {
+        if (targetSegment == null) return;
+        steps.setCurrentStep(Step.SELECT_PERPENDICULAR_SEGMENT);
     }
 
-    private Step action_select_perpendicular_segment() {
-        if (perpendicularSegment == null) return null;
+    private void action_select_perpendicular_segment() {
+        if (perpendicularSegment == null) return;
         drawAxiom7FoldIndicators();
-        return Step.SELECT_DESTINATION_OR_INDICATOR;
+        steps.setCurrentStep(Step.SELECT_DESTINATION_OR_INDICATOR);
     }
 
-    private Step action_select_destination_or_indicator() {
+    private void action_select_destination_or_indicator() {
         if (OritaCalc.determineLineSegmentDistance(p, indicator) < d.getSelectionDistance()) {
             d.addLineSegment(indicator.withColor(d.getLineColor()));
             d.record();
             reset();
-            return null;
         }
 
-        if (destinationSegment == null) return null;
+        if (destinationSegment == null) return;
         LineSegment result = getExtendedSegment(indicator, destinationSegment, d.getLineColor());
         d.addLineSegment(result);
         d.record();
         reset();
-        return null;
     }
 }

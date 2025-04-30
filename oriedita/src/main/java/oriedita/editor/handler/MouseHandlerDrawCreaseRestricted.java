@@ -15,7 +15,7 @@ import java.awt.Graphics2D;
 @Handles(MouseMode.DRAW_CREASE_RESTRICTED_11)
 public class MouseHandlerDrawCreaseRestricted extends BaseMouseHandlerInputRestricted {
     private Point p = new Point();
-    private StepGraph<Step> steps;
+    private StepCollection<Step> steps;
 
     private Point anchorPoint;
     private Point releasePoint;
@@ -74,27 +74,24 @@ public class MouseHandlerDrawCreaseRestricted extends BaseMouseHandlerInputRestr
     }
 
     private void initializeSteps() {
-        steps = new StepGraph<>(Step.CLICK_DRAG_POINT, this::action_click_drag_point);
+        steps = new StepCollection<>(Step.CLICK_DRAG_POINT, this::action_click_drag_point);
         steps.addNode(Step.RELEASE_POINT, this::action_release_point);
-
-        steps.connectNodes(Step.CLICK_DRAG_POINT, Step.RELEASE_POINT);
     }
 
-    private Step action_click_drag_point() {
-        if (anchorPoint == null) return Step.CLICK_DRAG_POINT;
-        return Step.RELEASE_POINT;
+    private void action_click_drag_point() {
+        if (anchorPoint == null) return;
+        steps.setCurrentStep(Step.RELEASE_POINT);
     }
 
-    private Step action_release_point() {
+    private void action_release_point() {
         if (releasePoint == null
                 || p.distance(d.getClosestPoint(p)) > d.getSelectionDistance()
                 || !Epsilon.high.gt0(dragSegment.determineLength())) {
             reset();
-            return Step.CLICK_DRAG_POINT;
         }
         d.addLineSegment(dragSegment);
         d.record();
         reset();
-        return Step.CLICK_DRAG_POINT;
+        steps.setCurrentStep(Step.CLICK_DRAG_POINT);
     }
 }

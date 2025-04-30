@@ -6,7 +6,6 @@ import oriedita.editor.canvas.FoldLineAdditionalInputMode;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
-import origami.Epsilon;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
@@ -17,7 +16,7 @@ import java.awt.Graphics2D;
 @Handles(MouseMode.DRAW_CREASE_FREE_1)
 public class MouseHandlerDrawCreaseFree extends BaseMouseHandler {
     private Point p = new Point();
-    private StepGraph<Step> steps;
+    private StepCollection<Step> steps;
 
     private LineColor lineColor;
     private Point anchorPoint;
@@ -85,23 +84,16 @@ public class MouseHandlerDrawCreaseFree extends BaseMouseHandler {
     }
 
     private void initializeSteps() {
-        steps = new StepGraph<>(Step.CLICK_DRAG_POINT, this::action_click_drag_point);
+        steps = new StepCollection<>(Step.CLICK_DRAG_POINT, this::action_click_drag_point);
         steps.addNode(Step.RELEASE_POINT, this::action_release_point);
-
-        steps.connectNodes(Step.CLICK_DRAG_POINT, Step.RELEASE_POINT);
     }
 
-    private Step action_click_drag_point() {
-        if (anchorPoint == null) return Step.CLICK_DRAG_POINT;
-        return Step.RELEASE_POINT;
+    private void action_click_drag_point() {
+        if (anchorPoint == null) return;
+        steps.setCurrentStep(Step.RELEASE_POINT);
     }
 
-    private Step action_release_point() {
-        if (releasePoint == null
-                || Epsilon.high.gt0(dragSegment.determineLength())) {
-            reset();
-            return Step.CLICK_DRAG_POINT;
-        }
+    private void action_release_point() {
         if (d.getI_foldLine_additional() == FoldLineAdditionalInputMode.POLY_LINE_0) {
             d.addLineSegment(dragSegment);
             d.record();
@@ -111,6 +103,5 @@ public class MouseHandlerDrawCreaseFree extends BaseMouseHandler {
             d.auxRecord();
         }
         reset();
-        return Step.CLICK_DRAG_POINT;
     }
 }

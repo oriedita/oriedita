@@ -19,7 +19,7 @@ import java.util.List;
 public class MouseHandlerParallelDrawWidth extends BaseMouseHandler {
 
     private Point p = new Point();
-    private StepGraph<Step> steps;
+    private StepCollection<Step> steps;
 
     private LineSegment selectSegment;
     private Point anchorPoint;
@@ -113,39 +113,34 @@ public class MouseHandlerParallelDrawWidth extends BaseMouseHandler {
     }
 
     private void initializeSteps() {
-        steps = new StepGraph<>(Step.SELECT_SEGMENT, this::action_select_segment);
+        steps = new StepCollection<>(Step.SELECT_SEGMENT, this::action_select_segment);
         steps.addNode(Step.CLICK_DRAG_POINT, this::action_click_drag_point);
         steps.addNode(Step.RELEASE_POINT, this::action_release_point);
         steps.addNode(Step.SELECT_INDICATOR, this::action_select_indicator);
-
-        steps.connectNodes(Step.SELECT_SEGMENT, Step.CLICK_DRAG_POINT);
-        steps.connectNodes(Step.CLICK_DRAG_POINT, Step.RELEASE_POINT);
-        steps.connectNodes(Step.RELEASE_POINT, Step.SELECT_INDICATOR);
     }
 
-    private Step action_select_segment() {
-        if (selectSegment == null) return null;
-        return Step.CLICK_DRAG_POINT;
+    private void action_select_segment() {
+        if (selectSegment == null) return;
+        steps.setCurrentStep(Step.CLICK_DRAG_POINT);
     }
 
-    private Step action_click_drag_point() {
-        return Step.RELEASE_POINT;
+    private void action_click_drag_point() {
+        steps.setCurrentStep(Step.RELEASE_POINT);
     }
 
-    private Step action_release_point() {
-        if (releasePoint == null) return null;
+    private void action_release_point() {
+        if (releasePoint == null) return;
         releasePoint = d.getClosestPoint(releasePoint);
         dragSegment = dragSegment.withB(releasePoint);
         indicatorList.set(0, OritaCalc.moveParallel(selectSegment, dragSegment.determineLength()).withColor(LineColor.PURPLE_8));
         indicatorList.set(1, OritaCalc.moveParallel(selectSegment, -dragSegment.determineLength()).withColor(LineColor.PURPLE_8));
-        return Step.SELECT_INDICATOR;
+        steps.setCurrentStep(Step.SELECT_INDICATOR);
     }
 
-    private Step action_select_indicator() {
-        if (selectIndicatorSegment == null) return null;
+    private void action_select_indicator() {
+        if (selectIndicatorSegment == null) return;
         d.addLineSegment(selectIndicatorSegment.withColor(d.getLineColor()));
         d.record();
         reset();
-        return null;
     }
 }

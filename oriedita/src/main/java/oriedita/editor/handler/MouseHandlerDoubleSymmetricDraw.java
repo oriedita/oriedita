@@ -2,13 +2,11 @@ package oriedita.editor.handler;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import org.tinylog.Logger;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
 import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
-import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 
@@ -18,7 +16,7 @@ import java.awt.Graphics2D;
 @Handles(MouseMode.DOUBLE_SYMMETRIC_DRAW_35)
 public class MouseHandlerDoubleSymmetricDraw extends BaseMouseHandlerInputRestricted {
     private Point p = new Point();
-    private StepGraph<Step> steps;
+    private StepCollection<Step> steps;
 
     private Point anchorPoint;
     private Point releasePoint;
@@ -81,33 +79,32 @@ public class MouseHandlerDoubleSymmetricDraw extends BaseMouseHandlerInputRestri
     }
 
     private void initializeSteps() {
-        steps = new StepGraph<>(Step.CLICK_DRAG_POINT, this::action_click_drag_point);
+        steps = new StepCollection<>(Step.CLICK_DRAG_POINT, this::action_click_drag_point);
         steps.addNode(Step.RELEASE_POINT, this::action_release_point);
-
-        steps.connectNodes(Step.CLICK_DRAG_POINT, Step.RELEASE_POINT);
     }
 
-    private Step action_click_drag_point() {
-        if (anchorPoint == null) return null;
-        return Step.RELEASE_POINT;
+    private void action_click_drag_point() {
+        if (anchorPoint == null) return;
+        steps.setCurrentStep(Step.RELEASE_POINT);
     }
 
-    private Step action_release_point() {
+    private void action_release_point() {
         Point closestPoint = d.getClosestPoint(releasePoint);
         dragSegment = new LineSegment(anchorPoint, closestPoint);
 
         if(releasePoint.distance(p) > d.getSelectionDistance()) {
             reset();
-            return null;
+            return;
         }
 
         if (!Epsilon.high.gt0(dragSegment.determineLength())) {
             reset();
-            return null;
+            return;
         }
 
         boolean isChanged = false;
         for (var s : d.getFoldLineSet().getLineSegmentsCollection()) {
+            //TODO: doesnt include lines at the endpoints
             LineSegment.Intersection intersection = OritaCalc.determineLineSegmentIntersectionSweet(s, dragSegment, Epsilon.UNKNOWN_001, Epsilon.UNKNOWN_001);
 
             if (intersection == LineSegment.Intersection.INTERSECTS_TSHAPE_S1_VERTICAL_BAR_25
@@ -131,6 +128,5 @@ public class MouseHandlerDoubleSymmetricDraw extends BaseMouseHandlerInputRestri
 
         if (isChanged) d.record();
         reset();
-        return null;
     }
 }

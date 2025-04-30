@@ -17,7 +17,7 @@ import java.awt.Graphics2D;
 @Handles(MouseMode.CIRCLE_DRAW_42)
 public class MouseHandlerCircleDraw extends BaseMouseHandler {
     private Point p = new Point();
-    private StepGraph<Step> steps;
+    private StepCollection<Step> steps;
 
     private Point anchorPoint;
     private Point releasePoint;
@@ -95,28 +95,25 @@ public class MouseHandlerCircleDraw extends BaseMouseHandler {
     }
 
     private void initializeSteps() {
-        steps = new StepGraph<>(Step.CLICK_DRAG_POINT, this::action_click_drag_point);
+        steps = new StepCollection<>(Step.CLICK_DRAG_POINT, this::action_click_drag_point);
         steps.addNode(Step.RELEASE_POINT, this::action_release_point);
-
-        steps.connectNodes(Step.CLICK_DRAG_POINT, Step.RELEASE_POINT);
     }
 
-    private Step action_click_drag_point() {
-        if (anchorPoint == null) return null;
-        return Step.RELEASE_POINT;
+    private void action_click_drag_point() {
+        if (anchorPoint == null) return;
+        steps.setCurrentStep(Step.RELEASE_POINT);
     }
 
-    private Step action_release_point() {
+    private void action_release_point() {
         if (releasePoint == null
                 || releasePoint.distance(d.getClosestPoint(p)) > d.getSelectionDistance()) {
             reset();
-            return Step.CLICK_DRAG_POINT;
+            return;
         }
         releasePoint = d.getClosestPoint(p);
         previewCircle = new Circle(anchorPoint, OritaCalc.distance(anchorPoint, releasePoint), LineColor.CYAN_3);
         d.addCircle(previewCircle.getX(), previewCircle.getY(), previewCircle.getR(), LineColor.CYAN_3);
         d.record();
         reset();
-        return null;
     }
 }
