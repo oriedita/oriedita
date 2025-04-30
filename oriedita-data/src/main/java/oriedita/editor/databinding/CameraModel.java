@@ -45,6 +45,10 @@ public class CameraModel extends AbstractModel {
         this.pcs.firePropertyChange("scale", oldScale, scale);
     }
 
+    public double getScaleForZoom(double value, double zoomSpeed) {
+        return getScaleForZoomBy(value, zoomSpeed, getScale());
+    }
+
     public double getScaleForZoomBy(double value, double zoomSpeed, double initialScale) {
         double zoomBase = 1 + zoomSpeed/10;
         if (value > 0) {

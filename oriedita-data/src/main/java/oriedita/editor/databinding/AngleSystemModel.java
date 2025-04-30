@@ -59,6 +59,13 @@ public class AngleSystemModel extends AbstractModel {
         return currentAngleSystemDivider;
     }
 
+    public double getAngleStep() {
+        if (getCurrentAngleSystemDivider() == 0) {
+            return 11.25;
+        }
+        return 180.0 / getCurrentAngleSystemDivider();
+    }
+
     public void setCurrentAngleSystemDivider(int currentAngleSystemDivider) {
         int oldCurrentAngleSystemDivider = this.currentAngleSystemDivider;
         this.currentAngleSystemDivider = currentAngleSystemDivider;

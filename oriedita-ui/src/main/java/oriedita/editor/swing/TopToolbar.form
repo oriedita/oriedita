@@ -223,15 +223,6 @@
                           <text value="zoomOut"/>
                         </properties>
                       </component>
-                      <component id="be9b4" class="javax.swing.JTextField" binding="zoomTextField">
-                        <constraints>
-                          <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="3" indent="0" use-parent-layout="false">
-                            <preferred-size width="150" height="-1"/>
-                          </grid>
-                          <gridbag weightx="0.0" weighty="1.0"/>
-                        </constraints>
-                        <properties/>
-                      </component>
                       <component id="2ab5b" class="javax.swing.JButton" binding="zoomInButton">
                         <constraints>
                           <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -241,6 +232,13 @@
                           <actionCommand value="creasePatternZoomInAction"/>
                           <text value="zoomIn"/>
                         </properties>
+                      </component>
+                      <component id="b004f" class="oriedita.editor.swing.component.DraggableTextField" binding="zoomTextField" custom-create="true">
+                        <constraints>
+                          <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                          <gridbag weightx="0.0" weighty="1.0"/>
+                        </constraints>
+                        <properties/>
                       </component>
                     </children>
                   </grid>
@@ -263,15 +261,6 @@
                       <text value="rotateCounterClockwise"/>
                     </properties>
                   </component>
-                  <component id="e497c" class="javax.swing.JTextField" binding="rotationTextField">
-                    <constraints>
-                      <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="3" indent="0" use-parent-layout="false">
-                        <preferred-size width="150" height="-1"/>
-                      </grid>
-                      <gridbag weightx="0.0" weighty="1.0"/>
-                    </constraints>
-                    <properties/>
-                  </component>
                   <component id="8c265" class="javax.swing.JButton" binding="rotateClockwiseButton">
                     <constraints>
                       <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -281,6 +270,13 @@
                       <actionCommand value="rotateClockwiseAction"/>
                       <text value="rotateClockwise"/>
                     </properties>
+                  </component>
+                  <component id="14cb7" class="oriedita.editor.swing.component.DraggableTextField" binding="rotationTextField" custom-create="true">
+                    <constraints>
+                      <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                      <gridbag weightx="0.0" weighty="1.0"/>
+                    </constraints>
+                    <properties/>
                   </component>
                 </children>
               </grid>

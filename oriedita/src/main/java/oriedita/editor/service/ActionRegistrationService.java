@@ -299,14 +299,14 @@ public class ActionRegistrationService {
             animationService.animate(Animations.ROTATE_CP,
                     cameraModel::setRotation,
                     cameraModel::getRotation,
-                    r -> r - 11.25,
+                    r -> r - angleSystemModel.getAngleStep(),
                     AnimationDurations.ZOOM);
         }));
         actionService.registerAction(ActionType.rotateAnticlockwiseAction, new LambdaAction(() -> {
             animationService.animate(Animations.ROTATE_CP,
                     cameraModel::setRotation,
                     cameraModel::getRotation,
-                    r -> r + 11.25,
+                    r -> r + angleSystemModel.getAngleStep(),
                     AnimationDurations.ZOOM);
         }));
 

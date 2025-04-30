@@ -7,6 +7,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import oriedita.common.converter.DoubleConverter;
 import oriedita.editor.Colors;
+import oriedita.editor.databinding.AngleSystemModel;
 import oriedita.editor.databinding.ApplicationModel;
 import oriedita.editor.databinding.CameraModel;
 import oriedita.editor.databinding.CanvasModel;
@@ -45,10 +46,10 @@ public class TopToolbar {
     private JButton moveButton;
     private JButton zoomInButton;
     private JButton zoomOutButton;
-    private JTextField zoomTextField;
+    private DraggableTextField zoomTextField;
     private JButton rotateCounterClockwiseButton;
     private JButton rotateClockwiseButton;
-    private JTextField rotationTextField;
+    private DraggableTextField rotationTextField;
     private JCheckBox foldabilityCheckbox;
     private JScrollPane scrollPane;
     private DraggableTextField gridSizeTextField;
@@ -83,7 +84,12 @@ public class TopToolbar {
         creasePatternCameraModel.bind(zoomTextField, "scale", new DoubleConverter("0.0####"));
         creasePatternCameraModel.bind(rotationTextField, "rotation", new DoubleConverter("0.0####"));
 
-        gridSizeTextField.onDrag(d -> gridModel.setGridSize(gridModel.getGridSize() + d));
+        gridSizeTextField.addTickListener(d -> gridModel.setGridSize(gridModel.getGridSize() + d));
+        zoomTextField.addRawListener((d, fine) ->
+                creasePatternCameraModel.setScale(creasePatternCameraModel.getScaleForZoom(-d, fine ? .05 : .5)));
+        rotationTextField.addRawListener(
+                (d, fine) -> creasePatternCameraModel.setRotation(
+                        creasePatternCameraModel.getRotation() + d * (fine ? .05 : 1)));
     }
 
     private void setData(ApplicationModel applicationModel) {
@@ -125,6 +131,8 @@ public class TopToolbar {
 
     public void createUIComponents() {
         gridSizeTextField = new DraggableTextField(3);
+        rotationTextField = new DraggableTextField();
+        zoomTextField = new DraggableTextField();
     }
 
     {
@@ -330,14 +338,6 @@ public class TopToolbar {
         gbc.fill = GridBagConstraints.BOTH;
         gbc.ipadx = 10;
         panel7.add(zoomOutButton, gbc);
-        zoomTextField = new JTextField();
-        gbc = new GridBagConstraints();
-        gbc.gridx = 2;
-        gbc.gridy = 0;
-        gbc.weighty = 1.0;
-        gbc.anchor = GridBagConstraints.WEST;
-        gbc.fill = GridBagConstraints.BOTH;
-        panel7.add(zoomTextField, gbc);
         zoomInButton = new JButton();
         zoomInButton.setActionCommand("creasePatternZoomInAction");
         zoomInButton.setText("zoomIn");
@@ -349,6 +349,12 @@ public class TopToolbar {
         gbc.fill = GridBagConstraints.BOTH;
         gbc.ipadx = 10;
         panel7.add(zoomInButton, gbc);
+        gbc = new GridBagConstraints();
+        gbc.gridx = 2;
+        gbc.gridy = 0;
+        gbc.weighty = 1.0;
+        gbc.fill = GridBagConstraints.BOTH;
+        panel7.add(zoomTextField, gbc);
         final JPanel panel8 = new JPanel();
         panel8.setLayout(new GridBagLayout());
         panel1.add(panel8, new GridConstraints(0, 5, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
@@ -363,14 +369,6 @@ public class TopToolbar {
         gbc.fill = GridBagConstraints.BOTH;
         gbc.ipadx = 10;
         panel8.add(rotateCounterClockwiseButton, gbc);
-        rotationTextField = new JTextField();
-        gbc = new GridBagConstraints();
-        gbc.gridx = 1;
-        gbc.gridy = 0;
-        gbc.weighty = 1.0;
-        gbc.anchor = GridBagConstraints.WEST;
-        gbc.fill = GridBagConstraints.BOTH;
-        panel8.add(rotationTextField, gbc);
         rotateClockwiseButton = new JButton();
         rotateClockwiseButton.setActionCommand("rotateClockwiseAction");
         rotateClockwiseButton.setText("rotateClockwise");
@@ -382,6 +380,12 @@ public class TopToolbar {
         gbc.fill = GridBagConstraints.BOTH;
         gbc.ipadx = 10;
         panel8.add(rotateClockwiseButton, gbc);
+        gbc = new GridBagConstraints();
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        gbc.weighty = 1.0;
+        gbc.fill = GridBagConstraints.BOTH;
+        panel8.add(rotationTextField, gbc);
         foldabilityCheckbox = new JCheckBox();
         foldabilityCheckbox.setActionCommand("cAMVAction");
         foldabilityCheckbox.setText("Check Foldability");
