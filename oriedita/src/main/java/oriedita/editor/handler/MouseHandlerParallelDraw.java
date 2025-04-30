@@ -18,7 +18,7 @@ import java.awt.Graphics2D;
 public class MouseHandlerParallelDraw extends BaseMouseHandlerInputRestricted {
 
     private Point p = new Point();
-    private StepGraph<Step> steps = new StepGraph<>(Step.SELECT_TARGET_POINT, this::action_select_target_point);
+    private StepGraph<Step> steps;
 
     private Point targetPoint;
     private LineSegment parallelSegment;

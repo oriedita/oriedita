@@ -31,7 +31,7 @@ public class MouseHandlerContinuousSymmetricDraw extends BaseMouseHandlerInputRe
     private Point p = new Point();
     private Point p1, p2;
     private List<LineSegment> resultantSegments = new ArrayList<>();
-    private StepGraph<Step> steps = new StepGraph<>(Step.SELECT_P1, this::action_select_p1);
+    private StepGraph<Step> steps;
 
     private enum Step {
         SELECT_P1,

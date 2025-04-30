@@ -22,7 +22,7 @@ import java.util.Collections;
 @Handles(MouseMode.AXIOM_5)
 public class MouseHandlerAxiom5 extends BaseMouseHandlerInputRestricted{
     private Point p = new Point();
-    private StepGraph<Step> steps = new StepGraph<>(Step.SELECT_TARGET_POINT, this::action_select_target_point);
+    private StepGraph<Step> steps;
 
     private Point targetPoint;
     private LineSegment targetSegment;

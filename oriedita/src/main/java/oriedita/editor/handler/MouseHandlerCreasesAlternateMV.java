@@ -19,7 +19,7 @@ import java.awt.Graphics2D;
 @Handles(MouseMode.CREASES_ALTERNATE_MV_36)
 public class MouseHandlerCreasesAlternateMV extends BaseMouseHandlerInputRestricted {
     private Point p = new Point();
-    private StepGraph<Step> steps = new StepGraph<>(Step.CLICK_DRAG_POINT, this::action_click_drag_point);
+    private StepGraph<Step> steps;
 
     private Point anchorPoint;
     private Point releasePoint;

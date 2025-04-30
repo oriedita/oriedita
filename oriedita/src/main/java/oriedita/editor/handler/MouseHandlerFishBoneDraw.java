@@ -18,7 +18,7 @@ import java.awt.Graphics2D;
 @Handles(MouseMode.FISH_BONE_DRAW_33)
 public class MouseHandlerFishBoneDraw extends BaseMouseHandlerInputRestricted {
     private Point p = new Point();
-    private StepGraph<Step> steps = new StepGraph<>(Step.CLICK_DRAG_POINT, this::action_click_drag_point);
+    private StepGraph<Step> steps;
 
     private Point anchorPoint;
     private Point releasePoint;

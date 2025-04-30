@@ -2,7 +2,6 @@ package oriedita.editor.handler;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
@@ -24,7 +23,6 @@ public class MouseHandlerVertexMakeAngularlyFlatFoldable extends BaseMouseHandle
 
     private boolean workDone = false;
     LineColor icol_temp = LineColor.BLACK_0;
-    CreasePattern_Worker.FourPointStep i_step_for_move_4p = CreasePattern_Worker.FourPointStep.STEP_0;
 
     Point p = new Point();
     StepGraph<Step> steps;
@@ -200,12 +198,6 @@ public class MouseHandlerVertexMakeAngularlyFlatFoldable extends BaseMouseHandle
                     candidates.add(s);
                 }
             }
-            if (d.getLineStep().size() == 1) {
-                i_step_for_move_4p = CreasePattern_Worker.FourPointStep.STEP_2;
-            } else if (d.getLineStep().size() > 1) {
-                i_step_for_move_4p = CreasePattern_Worker.FourPointStep.STEP_1;
-            }
-
         }
         workDone = false;
         if (candidates.size() == 1) {

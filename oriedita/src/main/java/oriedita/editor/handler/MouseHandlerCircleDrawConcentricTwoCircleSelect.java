@@ -17,7 +17,7 @@ import java.awt.Graphics2D;
 @Handles(MouseMode.CIRCLE_DRAW_CONCENTRIC_TWO_CIRCLE_SELECT_50)
 public class MouseHandlerCircleDrawConcentricTwoCircleSelect extends BaseMouseHandler {
     private Point p = new Point();
-    private StepGraph<Step> steps = new StepGraph<>(Step.SELECT_CIRCLE_1, this::action_select_circle_1);
+    private StepGraph<Step> steps;
 
     private Circle circle1;
     private Circle circle2;

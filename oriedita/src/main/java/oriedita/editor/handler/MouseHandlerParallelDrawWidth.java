@@ -19,7 +19,7 @@ import java.util.List;
 public class MouseHandlerParallelDrawWidth extends BaseMouseHandler {
 
     private Point p = new Point();
-    private StepGraph<Step> steps = new StepGraph<>(Step.SELECT_SEGMENT, this::action_select_segment);
+    private StepGraph<Step> steps;
 
     private LineSegment selectSegment;
     private Point anchorPoint;

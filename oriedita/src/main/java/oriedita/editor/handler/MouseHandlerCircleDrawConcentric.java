@@ -17,7 +17,7 @@ import java.awt.Graphics2D;
 @Handles(MouseMode.CIRCLE_DRAW_CONCENTRIC_48)
 public class MouseHandlerCircleDrawConcentric extends BaseMouseHandler {
     private Point p = new Point();
-    private StepGraph<Step> steps = new StepGraph<>(Step.SELECT_CIRCLE, this::action_select_circle);
+    private StepGraph<Step> steps;
 
     private Point anchorPoint;
     private Point releasePoint;

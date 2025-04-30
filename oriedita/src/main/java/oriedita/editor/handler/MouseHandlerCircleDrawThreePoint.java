@@ -18,7 +18,7 @@ import java.awt.Graphics2D;
 @Handles(MouseMode.CIRCLE_DRAW_THREE_POINT_43)
 public class MouseHandlerCircleDrawThreePoint extends BaseMouseHandler {
     private Point p = new Point();
-    private StepGraph<Step> steps = new StepGraph<>(Step.SELECT_POINT_1, this::action_select_point_1);
+    private StepGraph<Step> steps;
 
     private Point p1;
     private Point p2;

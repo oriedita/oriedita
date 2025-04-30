@@ -19,7 +19,7 @@ import java.util.List;
 @Handles(MouseMode.SQUARE_BISECTOR_7)
 public class MouseHandlerSquareBisector extends BaseMouseHandlerInputRestricted {
     private Point p = new Point();
-    private StepGraph<Step> steps = new StepGraph<>(Step.SELECT_2L_OR_3P, this::action_select_2L_or_3P);
+    private StepGraph<Step> steps;
 
     private int counter_3P = 0;
     private int counter_2L = 0;

@@ -17,7 +17,7 @@ import java.awt.Graphics2D;
 @Handles(MouseMode.CIRCLE_DRAW_FREE_47)
 public class MouseHandlerCircleDrawFree extends BaseMouseHandler {
     private Point p = new Point();
-    private StepGraph<Step> steps = new StepGraph<>(Step.CLICK_DRAG_POINT, this::action_click_drag_point);
+    private StepGraph<Step> steps;
 
     private Point anchorPoint;
     private Point releasePoint;
