@@ -55,6 +55,7 @@ public class SettingsTab {
     private JCheckBox selectAnd3ClickCheckbox;
     private JSlider lineThicknessSlider;
     private JSlider errorOpacitySlider;
+    private JSlider pointSizeSlider;
 
     private final ButtonService buttonService;
     private final GridModel gridModel;
@@ -108,6 +109,7 @@ public class SettingsTab {
 
         errorOpacitySlider.addChangeListener(e -> applicationModel.setCheck4ColorTransparency(errorOpacitySlider.getValue()));
         lineThicknessSlider.addChangeListener(e -> applicationModel.setLineWidth(lineThicknessSlider.getValue()));
+        pointSizeSlider.addChangeListener(e -> applicationModel.setPointSize(pointSizeSlider.getValue()));
     }
 
     private void setData(CanvasModel canvasModel) {
@@ -118,6 +120,7 @@ public class SettingsTab {
         persistCheckBox.setSelected(applicationModel.getSelectPersistent());
         errorOpacitySlider.setValue(applicationModel.getCheck4ColorTransparency());
         lineThicknessSlider.setValue(applicationModel.getLineWidth());
+        pointSizeSlider.setValue(applicationModel.getPointSize());
     }
 
     private void setData(BackgroundModel backgroundModel) {
@@ -361,7 +364,7 @@ public class SettingsTab {
         errorOpacitySlider.setValue(1);
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.gridy = 3;
+        gbc.gridy = 5;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -381,10 +384,33 @@ public class SettingsTab {
         label6.setText("Error Opacity:");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.gridy = 2;
+        gbc.gridy = 4;
         gbc.weightx = 1.0;
         gbc.fill = GridBagConstraints.VERTICAL;
         panel4.add(label6, gbc);
+        pointSizeSlider = new JSlider();
+        pointSizeSlider.setMaximum(10);
+        pointSizeSlider.setMaximumSize(new Dimension(3200, 24));
+        pointSizeSlider.setMinimumSize(new Dimension(-1, 24));
+        pointSizeSlider.setPaintTicks(false);
+        pointSizeSlider.setSnapToTicks(true);
+        pointSizeSlider.setValue(1);
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        panel4.add(pointSizeSlider, gbc);
+        final JLabel label7 = new JLabel();
+        label7.setHorizontalAlignment(0);
+        label7.setText("Point Size: ");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.weightx = 1.0;
+        gbc.fill = GridBagConstraints.VERTICAL;
+        panel4.add(label7, gbc);
         final JPanel panel5 = new JPanel();
         panel5.setLayout(new GridBagLayout());
         panel5.setVisible(true);
