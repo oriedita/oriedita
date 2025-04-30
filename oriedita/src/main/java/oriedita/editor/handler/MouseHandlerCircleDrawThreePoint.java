@@ -18,7 +18,7 @@ import java.awt.Graphics2D;
 @Handles(MouseMode.CIRCLE_DRAW_THREE_POINT_43)
 public class MouseHandlerCircleDrawThreePoint extends BaseMouseHandler {
     private Point p = new Point();
-    private StepCollection<Step> steps;
+    private StepGraph<Step> steps;
 
     private Point p1;
     private Point p2;
@@ -89,7 +89,7 @@ public class MouseHandlerCircleDrawThreePoint extends BaseMouseHandler {
     }
 
     private void initializeSteps() {
-        steps = new StepCollection<>(Step.SELECT_POINT_1, this::action_select_point_1);
+        steps = new StepGraph<>(Step.SELECT_POINT_1, this::action_select_point_1);
         steps.addNode(Step.SELECT_POINT_2, this::action_select_point_2);
         steps.addNode(Step.SELECT_POINT_3, this::action_select_point_3);
 
@@ -97,29 +97,26 @@ public class MouseHandlerCircleDrawThreePoint extends BaseMouseHandler {
         steps.connectNodes(Step.SELECT_POINT_2, Step.SELECT_POINT_3);
     }
 
-    private void action_select_point_1() {
-        if (p1 == null) return;
-        steps.setCurrentStep(Step.SELECT_POINT_2);
+    private Step action_select_point_1() {
+        if (p1 == null) return null;
+        return Step.SELECT_POINT_2;
     }
 
-    private void action_select_point_2() {
-        if (p2 == null) return;
-        steps.setCurrentStep(Step.SELECT_POINT_3);
+    private Step action_select_point_2() {
+        if (p2 == null) return null;
+        return Step.SELECT_POINT_3;
     }
 
-    private void action_select_point_3() {
-        if (p3 == null) return;
+    private Step action_select_point_3() {
+        if (p3 == null) return null;
 
         LineSegment sen1 = new LineSegment(p1, p2);
         LineSegment sen2 = new LineSegment(p2, p3);
         LineSegment sen3 = new LineSegment(p3, p1);
 
-        if (checkIfFlatAngle(sen1, sen2)
-                || checkIfFlatAngle(sen2, sen3)
-                || checkIfFlatAngle(sen3, sen1)) {
-            reset();
-            return;
-        }
+        if (checkIfFlatAngle(sen1, sen2)) { reset(); return null; }
+        if (checkIfFlatAngle(sen2, sen3)) { reset(); return null; }
+        if (checkIfFlatAngle(sen3, sen1)) { reset(); return null; }
 
         StraightLine t1 = new StraightLine(sen1)
                 .orthogonalize(OritaCalc.internalDivisionRatio(
@@ -132,6 +129,7 @@ public class MouseHandlerCircleDrawThreePoint extends BaseMouseHandler {
         d.addCircle(OritaCalc.findIntersection(t1, t2), OritaCalc.distance(p1, OritaCalc.findIntersection(t1, t2)), LineColor.CYAN_3);
         d.record();
         reset();
+        return null;
     }
 
     private boolean checkIfFlatAngle(LineSegment s1, LineSegment s2) {

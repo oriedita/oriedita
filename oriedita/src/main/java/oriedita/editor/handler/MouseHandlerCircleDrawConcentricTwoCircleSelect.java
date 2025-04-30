@@ -17,7 +17,7 @@ import java.awt.Graphics2D;
 @Handles(MouseMode.CIRCLE_DRAW_CONCENTRIC_TWO_CIRCLE_SELECT_50)
 public class MouseHandlerCircleDrawConcentricTwoCircleSelect extends BaseMouseHandler {
     private Point p = new Point();
-    private StepCollection<Step> steps;
+    private StepGraph<Step> steps;
 
     private Circle circle1;
     private Circle circle2;
@@ -79,17 +79,19 @@ public class MouseHandlerCircleDrawConcentricTwoCircleSelect extends BaseMouseHa
     }
 
     private void initializeSteps() {
-        steps = new StepCollection<>(Step.SELECT_CIRCLE_1, this::action_select_circle_1);
+        steps = new StepGraph<>(Step.SELECT_CIRCLE_1, this::action_select_circle_1);
         steps.addNode(Step.SELECT_CIRCLE_2, this::action_select_circle_2);
+
+        steps.connectNodes(Step.SELECT_CIRCLE_1, Step.SELECT_CIRCLE_2);
     }
 
-    private void action_select_circle_1() {
-        if (circle1 == null) return;
-        steps.setCurrentStep(Step.SELECT_CIRCLE_2);
+    private Step action_select_circle_1() {
+        if (circle1 == null) return null;
+        return Step.SELECT_CIRCLE_2;
     }
 
-    private void action_select_circle_2() {
-        if (circle2 == null) return;
+    private Step action_select_circle_2() {
+        if (circle2 == null) return null;
 
         double centerLineLength = OritaCalc.distance(circle1.determineCenter(), circle2.determineCenter());
         if (Math.abs(centerLineLength - circle1.getR() - circle2.getR()) > Epsilon.UNKNOWN_1EN6) {
@@ -100,5 +102,6 @@ public class MouseHandlerCircleDrawConcentricTwoCircleSelect extends BaseMouseHa
         }
 
         reset();
+        return null;
     }
 }

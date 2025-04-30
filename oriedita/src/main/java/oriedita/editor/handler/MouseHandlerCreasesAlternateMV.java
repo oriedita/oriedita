@@ -2,6 +2,7 @@ package oriedita.editor.handler;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import org.tinylog.Logger;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
@@ -18,7 +19,7 @@ import java.awt.Graphics2D;
 @Handles(MouseMode.CREASES_ALTERNATE_MV_36)
 public class MouseHandlerCreasesAlternateMV extends BaseMouseHandlerInputRestricted {
     private Point p = new Point();
-    private StepCollection<Step> steps;
+    private StepGraph<Step> steps;
 
     private Point anchorPoint;
     private Point releasePoint;
@@ -75,23 +76,25 @@ public class MouseHandlerCreasesAlternateMV extends BaseMouseHandlerInputRestric
     }
 
     private void initializeSteps() {
-        steps = new StepCollection<>(Step.CLICK_DRAG_POINT, this::action_click_drag_point);
+        steps = new StepGraph<>(Step.CLICK_DRAG_POINT, this::action_click_drag_point);
         steps.addNode(Step.RELEASE_POINT, this::action_release_point);
+
+        steps.connectNodes(Step.CLICK_DRAG_POINT, Step.RELEASE_POINT);
     }
 
-    private void action_click_drag_point() {
-        steps.setCurrentStep(Step.RELEASE_POINT);
+    private Step action_click_drag_point() {
+        return Step.RELEASE_POINT;
     }
 
-    private void action_release_point() {
+    private Step action_release_point() {
         if (dragSegment == null) {
             reset();
-            return;
+            return null;
         }
 
         if (!Epsilon.high.gt0(dragSegment.determineLength())) {
             reset();
-            return;
+            return null;
         }
 
         SortingBox<LineSegment> segmentBox = new SortingBox<>();
@@ -105,7 +108,6 @@ public class MouseHandlerCreasesAlternateMV extends BaseMouseHandlerInputRestric
             segmentBox.addByWeight(s, OritaCalc.distance(dragSegment.getB(), OritaCalc.findIntersection(s, dragSegment)));
         }
 
-        // TODO: weird ah color alternating
         LineColor alternateColor = d.getLineColor();
         for (int i = 1; i <= segmentBox.getTotal(); i++) {
             d.getFoldLineSet().setColor(segmentBox.getValue(i), alternateColor);
@@ -115,6 +117,7 @@ public class MouseHandlerCreasesAlternateMV extends BaseMouseHandlerInputRestric
 
         d.record();
         reset();
+        return null;
     }
 }
 

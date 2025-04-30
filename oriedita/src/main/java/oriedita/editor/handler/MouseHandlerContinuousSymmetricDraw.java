@@ -31,7 +31,7 @@ public class MouseHandlerContinuousSymmetricDraw extends BaseMouseHandlerInputRe
     private Point p = new Point();
     private Point p1, p2;
     private List<LineSegment> resultantSegments = new ArrayList<>();
-    private StepCollection<Step> steps;
+    private StepGraph<Step> steps;
 
     private enum Step {
         SELECT_P1,
@@ -92,15 +92,17 @@ public class MouseHandlerContinuousSymmetricDraw extends BaseMouseHandlerInputRe
     }
 
     private void initializeSteps() {
-        steps = new StepCollection<>(Step.SELECT_P1, this::action_select_p1);
+        steps = new StepGraph<>(Step.SELECT_P1, this::action_select_p1);
         steps.addNode(Step.SELECT_P2, this::action_select_p2);
+
+        steps.connectNodes(Step.SELECT_P1, Step.SELECT_P2);
     }
 
-    private void action_select_p1() {
-        steps.setCurrentStep(Step.SELECT_P2);
+    private Step action_select_p1() {
+        return Step.SELECT_P2;
     }
 
-    private void action_select_p2() {
+    private Step action_select_p2() {
         continuous_folding_new(p1, p2, null);
 
         LineColor lineType = d.getLineColor();
@@ -112,6 +114,7 @@ public class MouseHandlerContinuousSymmetricDraw extends BaseMouseHandlerInputRe
 
         d.record();
         reset();
+        return null;
     }
 
     public void continuous_folding_new(Point a, Point b, Point start) {//An improved version of continuous folding.

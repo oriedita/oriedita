@@ -18,7 +18,7 @@ import java.awt.Graphics2D;
 @Handles(MouseMode.FISH_BONE_DRAW_33)
 public class MouseHandlerFishBoneDraw extends BaseMouseHandlerInputRestricted {
     private Point p = new Point();
-    private StepCollection<Step> steps;
+    private StepGraph<Step> steps;
 
     private Point anchorPoint;
     private Point releasePoint;
@@ -77,26 +77,28 @@ public class MouseHandlerFishBoneDraw extends BaseMouseHandlerInputRestricted {
     }
 
     private void initializeSteps() {
-        steps = new StepCollection<>(Step.CLICK_DRAG_POINT, this::action_click_drag_point);
+        steps = new StepGraph<>(Step.CLICK_DRAG_POINT, this::action_click_drag_point);
         steps.addNode(Step.RELEASE_POINT, this::action_release_point);
+
+        steps.connectNodes(Step.CLICK_DRAG_POINT, Step.RELEASE_POINT);
     }
 
-    private void action_click_drag_point() {
-        if (anchorPoint == null) return;
-        steps.setCurrentStep(Step.RELEASE_POINT);
+    private Step action_click_drag_point() {
+        if (anchorPoint == null) return null;
+        return Step.RELEASE_POINT;
     }
 
-    private void action_release_point() {
+    private Step action_release_point() {
         Point closestPoint = d.getClosestPoint(releasePoint);
         dragSegment = new LineSegment(anchorPoint, closestPoint);
 
         if (releasePoint.distance(closestPoint) > d.getSelectionDistance()) {
             reset();
-            return;
+            return null;
         }
         if (!Epsilon.high.gt0(dragSegment.determineLength())) {
             reset();
-            return;
+            return null;
         }
 
         double dx = (dragSegment.determineAX() - dragSegment.determineBX()) * d.getGrid().getGridWidth() / dragSegment.determineLength();
@@ -136,6 +138,7 @@ public class MouseHandlerFishBoneDraw extends BaseMouseHandlerInputRestricted {
 
         d.record();
         reset();
+        return null;
     }
 
     public int kouten_ari_nasi(LineSegment s0) {//If s0 is extended from the point a to the b direction and intersects with another polygonal line, 0 is returned if it is not 1. The intersecting line segments at the a store have no intersection with this function.

@@ -19,7 +19,7 @@ import java.util.List;
 @Handles(MouseMode.SYMMETRIC_DRAW_10)
 public class MouseHandlerSymmetricDraw extends BaseMouseHandlerInputRestricted {
     private Point p = new Point();
-    private StepCollection<Step> steps = new StepCollection<>(Step.SELECT_2L_OR_3P, this::action_select_2L_or_3P);
+    private StepGraph<Step> steps = new StepGraph<>(Step.SELECT_2L_OR_3P, this::action_select_2L_or_3P);
 
     private int counter_3P = 0;
     private int counter_2L = 0;
@@ -98,36 +98,43 @@ public class MouseHandlerSymmetricDraw extends BaseMouseHandlerInputRestricted {
     }
 
     private void initializeSteps() {
-        steps = new StepCollection<>(Step.SELECT_2L_OR_3P, this::action_select_2L_or_3P);
+        steps = new StepGraph<>(Step.SELECT_2L_OR_3P, this::action_select_2L_or_3P);
         steps.addNode(Step.SELECT_3P, this::action_select_3P);
         steps.addNode(Step.SELECT_2L, this::action_select_2L);
+
+        select_3P: steps.connectNodes(Step.SELECT_2L_OR_3P, Step.SELECT_3P);
+        select_2L: steps.connectNodes(Step.SELECT_2L_OR_3P, Step.SELECT_2L);
+
     }
 
-    private void action_select_2L_or_3P() {
+    private Step action_select_2L_or_3P() {
         if (pointsList_3P.get(counter_3P) != null) {
             counter_3P++;
-            steps.setCurrentStep(Step.SELECT_3P);
+            return Step.SELECT_3P;
         }
         if (segmentsList_2L.get(counter_2L) != null) {
             counter_2L++;
-            steps.setCurrentStep(Step.SELECT_2L);
+            return Step.SELECT_2L;
         }
+        return null;
     }
 
-    private void action_select_3P() {
-        if(pointsList_3P.get(counter_3P) == null) return;
+    private Step action_select_3P() {
+        if(pointsList_3P.get(counter_3P) == null) return null;
         counter_3P++;
-        if (counter_3P < 3) return;
+        if (counter_3P < 3) return null;
         LineSegment s1 = new LineSegment(pointsList_3P.get(0), pointsList_3P.get(1));
         LineSegment s2 = new LineSegment(pointsList_3P.get(1), pointsList_3P.get(2));
         reflectLine(s1, s2);
+        return null;
     }
 
-    private void action_select_2L() {
-        if(segmentsList_2L.get(counter_2L) == null) return;
+    private Step action_select_2L() {
+        if(segmentsList_2L.get(counter_2L) == null) return null;
         counter_2L++;
-        if (counter_2L < 2) return;
+        if (counter_2L < 2) return null;
         reflectLine(segmentsList_2L.get(0), segmentsList_2L.get(1));
+        return null;
     }
 
     private void reflectLine(LineSegment s1, LineSegment s2) {
