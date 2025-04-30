@@ -4,111 +4,113 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import oriedita.editor.canvas.FoldLineAdditionalInputMode;
 import oriedita.editor.canvas.MouseMode;
+import oriedita.editor.drawing.tools.Camera;
+import oriedita.editor.drawing.tools.DrawingUtil;
 import origami.Epsilon;
+import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
+
+import java.awt.Graphics2D;
 
 @ApplicationScoped
 @Handles(MouseMode.DRAW_CREASE_FREE_1)
 public class MouseHandlerDrawCreaseFree extends BaseMouseHandler {
+    private Point p = new Point();
+    private StepGraph<Step> steps;
+
+    private LineColor lineColor;
+    private Point anchorPoint;
+    private Point releasePoint;
+    private LineSegment dragSegment;
+
+    private enum Step {
+        CLICK_DRAG_POINT,
+        RELEASE_POINT,
+    }
+
     @Inject
-    public MouseHandlerDrawCreaseFree() {
-    }
+    public MouseHandlerDrawCreaseFree() { initializeSteps(); }
 
-    public void mouseMoved(Point p0) {
-        if (d.getGridInputAssist()) {
-            d.getLineCandidate().clear();
+    public void mouseMoved(Point p0) { highlightSelection(p0); }
 
-            Point p = d.getCamera().TV2object(p0);
-            Point closestPoint = d.getClosestPoint(p);
+    public void mouseDragged(Point p0) { highlightSelection(p0); }
 
-            if (p.distance(closestPoint) < d.getSelectionDistance()) {
-                p = closestPoint;
-            }
-            LineSegment candidate = new LineSegment(p, p);
+    public void mousePressed(Point p0) { steps.runCurrentAction(); }
 
-            if (d.getI_foldLine_additional() == FoldLineAdditionalInputMode.POLY_LINE_0) {
-                candidate = candidate.withColor(d.getLineColor());
-            }
-            if (d.getI_foldLine_additional() == FoldLineAdditionalInputMode.AUX_LINE_1) {
-                candidate = candidate.withColor(d.getAuxLineColor());
-            }
-            candidate.setActive(LineSegment.ActiveState.ACTIVE_BOTH_3);
+    public void mouseReleased(Point p0) { steps.runCurrentAction(); }
 
-            d.getLineCandidate().add(candidate);
-        }
-    }
-
-    public void mousePressed(Point p0) {
-
-        Point p = d.getCamera().TV2object(p0);
-
-        LineSegment s = new LineSegment(p, p);
-        Point closestPoint = d.getClosestPoint(p);
-
-        if (p.distance(closestPoint) < d.getSelectionDistance()) {
-            s = s.withB(closestPoint);
-        }
+    private void highlightSelection(Point p0) {
+        p = d.getCamera().TV2object(p0);
 
         if (d.getI_foldLine_additional() == FoldLineAdditionalInputMode.POLY_LINE_0) {
-            s = s.withColor(d.getLineColor());
+            lineColor = d.getLineColor();
+        } else if (d.getI_foldLine_additional() == FoldLineAdditionalInputMode.AUX_LINE_1) {
+            lineColor = d.getAuxLineColor();
+        }
+
+        switch (steps.getCurrentStep()) {
+            case CLICK_DRAG_POINT: {
+                anchorPoint = p;
+                if (p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
+                    anchorPoint = d.getClosestPoint(p);
+                }
+                return;
+            }
+            case RELEASE_POINT: {
+                releasePoint = p;
+                if (p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
+                    releasePoint = d.getClosestPoint(p);
+                }
+                dragSegment = new LineSegment(anchorPoint, releasePoint).withColor(lineColor);
+            }
+        }
+    }
+
+    @Override
+    public void drawPreview(Graphics2D g2, Camera camera, DrawingSettings settings) {
+        super.drawPreview(g2, camera, settings);
+        DrawingUtil.drawStepVertex(g2, anchorPoint, lineColor, camera, d.getGridInputAssist());
+        DrawingUtil.drawStepVertex(g2, releasePoint, lineColor, camera, d.getGridInputAssist());
+        DrawingUtil.drawLineStep(g2, dragSegment, camera, settings.getLineWidth(), d.getGridInputAssist());
+        DrawingUtil.drawText(g2, steps.getCurrentStep().name(), p.withX(p.getX() + 20).withY(p.getY() + 20), camera);
+    }
+
+    @Override
+    public void reset() {
+        anchorPoint = null;
+        releasePoint = null;
+        dragSegment = null;
+        initializeSteps();
+    }
+
+    private void initializeSteps() {
+        steps = new StepGraph<>(Step.CLICK_DRAG_POINT, this::action_click_drag_point);
+        steps.addNode(Step.RELEASE_POINT, this::action_release_point);
+
+        steps.connectNodes(Step.CLICK_DRAG_POINT, Step.RELEASE_POINT);
+    }
+
+    private Step action_click_drag_point() {
+        if (anchorPoint == null) return Step.CLICK_DRAG_POINT;
+        return Step.RELEASE_POINT;
+    }
+
+    private Step action_release_point() {
+        if (releasePoint == null
+                || Epsilon.high.gt0(dragSegment.determineLength())) {
+            reset();
+            return Step.CLICK_DRAG_POINT;
+        }
+        if (d.getI_foldLine_additional() == FoldLineAdditionalInputMode.POLY_LINE_0) {
+            d.addLineSegment(dragSegment);
+            d.record();
         }
         if (d.getI_foldLine_additional() == FoldLineAdditionalInputMode.AUX_LINE_1) {
-            s = s.withColor(d.getAuxLineColor());
+            d.addLineSegment_auxiliary(dragSegment);
+            d.auxRecord();
         }
-        s.setActive(LineSegment.ActiveState.ACTIVE_B_2);
-
-        d.lineStepAdd(s);
-    }
-
-    public void mouseDragged(Point p0) {
-        Point p = d.getCamera().TV2object(p0);
-
-        if (!d.getGridInputAssist()) {
-            boolean isAuxInputMode = d.getI_foldLine_additional() == FoldLineAdditionalInputMode.AUX_LINE_1;
-            d.setLineStepColor(d.getLineStep().get(0),isAuxInputMode ? d.getAuxLineColor() : d.getLineColor());
-        }
-
-        if (d.getGridInputAssist()) {
-            d.getLineCandidate().clear();
-
-            Point closestPoint = d.getClosestPoint(p);
-            if (p.distance(closestPoint) < d.getSelectionDistance()) {
-                p = closestPoint;
-            }
-
-            LineSegment candidate = new LineSegment(p, p);
-            if (d.getI_foldLine_additional() == FoldLineAdditionalInputMode.POLY_LINE_0) {
-                candidate = candidate.withColor(d.getLineColor());
-            }
-            if (d.getI_foldLine_additional() == FoldLineAdditionalInputMode.AUX_LINE_1) {
-                candidate = candidate.withColor(d.getAuxLineColor());
-            }
-            candidate.setActive(LineSegment.ActiveState.ACTIVE_BOTH_3);
-            d.getLineCandidate().add(candidate);
-        }
-        d.getLineStep().set(0, d.getLineStep().get(0).withA(p));
-    }
-
-    public void mouseReleased(Point p0) {
-        Point p = d.getCamera().TV2object(p0);
-        d.getLineStep().set(0, d.getLineStep().get(0).withA(p));
-        Point closestPoint = d.getClosestPoint(p);
-
-        if (p.distance(closestPoint) <= d.getSelectionDistance()) {
-            d.getLineStep().set(0, d.getLineStep().get(0).withA(closestPoint));
-        }
-        if (Epsilon.high.gt0(d.getLineStep().get(0).determineLength())) {
-            if (d.getI_foldLine_additional() == FoldLineAdditionalInputMode.POLY_LINE_0) {
-                d.addLineSegment(d.getLineStep().get(0));
-                d.record();
-            }
-            if (d.getI_foldLine_additional() == FoldLineAdditionalInputMode.AUX_LINE_1) {
-                d.addLineSegment_auxiliary(d.getLineStep().get(0));
-                d.auxRecord();
-            }
-        }
-
-        d.getLineStep().clear();
+        reset();
+        return Step.CLICK_DRAG_POINT;
     }
 }

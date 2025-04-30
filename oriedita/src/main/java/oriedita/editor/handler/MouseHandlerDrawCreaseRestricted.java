@@ -3,66 +3,98 @@ package oriedita.editor.handler;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
+import oriedita.editor.drawing.tools.Camera;
+import oriedita.editor.drawing.tools.DrawingUtil;
 import origami.Epsilon;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 
+import java.awt.Graphics2D;
+
 @ApplicationScoped
 @Handles(MouseMode.DRAW_CREASE_RESTRICTED_11)
 public class MouseHandlerDrawCreaseRestricted extends BaseMouseHandlerInputRestricted {
+    private Point p = new Point();
+    private StepGraph<Step> steps;
+
+    private Point anchorPoint;
+    private Point releasePoint;
+    private LineSegment dragSegment;
+
+    private enum Step {
+        CLICK_DRAG_POINT,
+        RELEASE_POINT,
+    }
     @Inject
-    public MouseHandlerDrawCreaseRestricted() {
-    }
+    public MouseHandlerDrawCreaseRestricted() { initializeSteps(); }
 
-    //マウス操作(mouseMode==11線分入力　でボタンを押したとき)時の作業----------------------------------------------------
-    public void mousePressed(Point p0) {
-        Point p = d.getCamera().TV2object(p0);
-        Point closest_point = d.getClosestPoint(p);
-        if (p.distance(closest_point) > d.getSelectionDistance()) {
-            return;
-        }
-        LineSegment s = new LineSegment(p, closest_point, d.getLineColor(), LineSegment.ActiveState.ACTIVE_B_2);
+    public void mouseMoved(Point p0) { highlightSelection(p0); }
 
-        d.lineStepAdd(s);
-    }
+    public void mouseDragged(Point p0) { highlightSelection(p0); }//近い既存点のみ表示
+    @Override
+    public void mousePressed(Point p0) { steps.runCurrentAction(); }
 
-    //マウス操作(mouseMode==11線分入力　でドラッグしたとき)を行う関数----------------------------------------------------
-    public void mouseDragged(Point p0) {
-        //近い既存点のみ表示
+    public void mouseReleased(Point p0) { steps.runCurrentAction(); }
 
-        if (d.getLineStep().size() == 0) {
-            return;
-        }
+    private void highlightSelection(Point p0) {
+        p = d.getCamera().TV2object(p0);
 
-        Point p = d.getCamera().TV2object(p0);
-        d.getLineStep().set(0, d.getLineStep().get(0).withA(p));
-        d.setLineStepColor(d.getLineStep().get(0), d.getLineColor());
-
-        if (d.getGridInputAssist()) {
-            d.getLineCandidate().clear();
-
-            Point closestPoint = d.getClosestPoint(p);
-            if (p.distance(closestPoint) < d.getSelectionDistance()) {
-                d.getLineCandidate().add(new LineSegment(closestPoint, closestPoint, d.getLineColor()));
-                d.getLineStep().set(0, d.getLineStep().get(0).withA(d.getLineCandidate().get(0).getA()));
+        switch (steps.getCurrentStep()) {
+            case CLICK_DRAG_POINT: {
+                if (p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
+                    anchorPoint = d.getClosestPoint(p);
+                } else anchorPoint = null;
+                return;
             }
-        }
-    }//近い既存点のみ表示
-
-    //マウス操作(mouseMode==11線分入力　でボタンを離したとき)を行う関数----------------------------------------------------
-    public void mouseReleased(Point p0) {
-        if (d.getLineStep().size() == 1) {
-            Point p = d.getCamera().TV2object(p0);
-            Point closestPoint = d.getClosestPoint(p);
-            d.getLineStep().set(0, d.getLineStep().get(0).withA(closestPoint));
-            if (p.distance(closestPoint) <= d.getSelectionDistance()) {
-                if (Epsilon.high.gt0(d.getLineStep().get(0).determineLength())) {
-                    d.addLineSegment(d.getLineStep().get(0));
-                    d.record();
+            case RELEASE_POINT: {
+                releasePoint = p;
+                if (p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
+                    releasePoint = d.getClosestPoint(p);
                 }
+                dragSegment = new LineSegment(anchorPoint, releasePoint).withColor(d.getLineColor());
             }
-
-            d.getLineStep().clear();
         }
+    }
+
+    @Override
+    public void drawPreview(Graphics2D g2, Camera camera, DrawingSettings settings) {
+        super.drawPreview(g2, camera, settings);
+        DrawingUtil.drawStepVertex(g2, anchorPoint, d.getLineColor(), camera, d.getGridInputAssist());
+        DrawingUtil.drawStepVertex(g2, releasePoint, d.getLineColor(), camera, d.getGridInputAssist());
+        DrawingUtil.drawLineStep(g2, dragSegment, camera, settings.getLineWidth(), d.getGridInputAssist());
+        DrawingUtil.drawText(g2, steps.getCurrentStep().name(), p.withX(p.getX() + 20).withY(p.getY() + 20), camera);
+    }
+
+    @Override
+    public void reset() {
+        anchorPoint = null;
+        releasePoint = null;
+        dragSegment = null;
+        initializeSteps();
+    }
+
+    private void initializeSteps() {
+        steps = new StepGraph<>(Step.CLICK_DRAG_POINT, this::action_click_drag_point);
+        steps.addNode(Step.RELEASE_POINT, this::action_release_point);
+
+        steps.connectNodes(Step.CLICK_DRAG_POINT, Step.RELEASE_POINT);
+    }
+
+    private Step action_click_drag_point() {
+        if (anchorPoint == null) return Step.CLICK_DRAG_POINT;
+        return Step.RELEASE_POINT;
+    }
+
+    private Step action_release_point() {
+        if (releasePoint == null
+                || p.distance(d.getClosestPoint(p)) > d.getSelectionDistance()
+                || !Epsilon.high.gt0(dragSegment.determineLength())) {
+            reset();
+            return Step.CLICK_DRAG_POINT;
+        }
+        d.addLineSegment(dragSegment);
+        d.record();
+        reset();
+        return Step.CLICK_DRAG_POINT;
     }
 }
