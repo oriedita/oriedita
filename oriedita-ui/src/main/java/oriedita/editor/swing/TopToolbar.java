@@ -7,11 +7,14 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import oriedita.common.converter.DoubleConverter;
 import oriedita.editor.Colors;
+import oriedita.editor.canvas.animation.Interpolation;
+import oriedita.editor.canvas.animation.LinearInterpolation;
 import oriedita.editor.databinding.AngleSystemModel;
 import oriedita.editor.databinding.ApplicationModel;
 import oriedita.editor.databinding.CameraModel;
 import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.databinding.GridModel;
+import oriedita.editor.service.AnimationService;
 import oriedita.editor.service.ButtonService;
 import oriedita.editor.swing.component.DraggableTextField;
 
@@ -85,8 +88,9 @@ public class TopToolbar {
         creasePatternCameraModel.bind(rotationTextField, "rotation", new DoubleConverter("0.0####"));
 
         gridSizeTextField.addTickListener(d -> gridModel.setGridSize(gridModel.getGridSize() + d));
-        zoomTextField.addRawListener((d, fine) ->
-                creasePatternCameraModel.setScale(creasePatternCameraModel.getScaleForZoom(-d, fine ? .05 : .5)));
+        zoomTextField.addRawListener((d, fine) -> {
+            creasePatternCameraModel.setScale(creasePatternCameraModel.getScaleForZoom(-d, fine ? .05 : .5));
+        });
         rotationTextField.addRawListener(
                 (d, fine) -> creasePatternCameraModel.setRotation(
                         creasePatternCameraModel.getRotation() + d * (fine ? .05 : 1)));

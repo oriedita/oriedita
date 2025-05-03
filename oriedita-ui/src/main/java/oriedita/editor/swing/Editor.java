@@ -53,9 +53,12 @@ public class Editor {
         createUIComponents();
         root = new JPanel();
         root.setLayout(new BorderLayout(0, 0));
-        root.add(canvas, BorderLayout.CENTER);
         root.add(toolsPanel.$$$getRootComponent$$$(), BorderLayout.WEST);
-        root.add(topToolbar.$$$getRootComponent$$$(), BorderLayout.NORTH);
+        final JPanel panel1 = new JPanel();
+        panel1.setLayout(new BorderLayout(0, 0));
+        root.add(panel1, BorderLayout.CENTER);
+        panel1.add(topToolbar.$$$getRootComponent$$$(), BorderLayout.NORTH);
+        panel1.add(canvas, BorderLayout.CENTER);
     }
 
     /**

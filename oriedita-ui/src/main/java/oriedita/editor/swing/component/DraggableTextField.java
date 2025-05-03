@@ -1,6 +1,9 @@
 package oriedita.editor.swing.component;
 
 import javax.swing.JTextField;
+import javax.swing.Timer;
+import java.awt.KeyboardFocusManager;
+import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
@@ -16,14 +19,31 @@ public class DraggableTextField extends JTextField {
 
     private Point lastPos;
     private Point startPos;
-    private final int fineMultiplier = 5;
     private final List<Consumer<Integer>> tickListeners = new ArrayList<>();
     private final List<BiConsumer<Integer, Boolean>> rawListeners = new ArrayList<>();
     private boolean fine;
+    private boolean dragged = false;
+    private final Timer timer;
+    private final int tickDistance;
+    private boolean shiftDown = false;
 
     public DraggableTextField() {this(3);}
 
     public DraggableTextField(int tickDistance) {
+        this.tickDistance = tickDistance;
+        KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(e -> {
+            shiftDown = e.isShiftDown();
+            return false;
+        });
+        // when the mouse is outside the component, onDrag events slow down which looks like lagging.
+        // the timer makes sure the mouse position is updated frequently enough.
+        timer = new Timer(20, (e) -> {
+            var mouseLoc = MouseInfo.getPointerInfo().getLocation();
+            var loc = getLocationOnScreen();
+            mouseLoc.translate(-loc.x, -loc.y);
+            mouseDragged(mouseLoc, shiftDown);
+        });
+        timer.setRepeats(true);
         addFocusListener(new FocusAdapter() {
             @Override
             public void focusGained(FocusEvent e) {
@@ -33,37 +53,53 @@ public class DraggableTextField extends JTextField {
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
+                dragged = false;
                 lastPos = e.getPoint();
                 startPos = e.getPoint();
                 e.consume(); // prevents the text field from getting focus at mousedown,
                              // which would override dragging behavior with selecting text
+                timer.start();
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                if (dragged) {
+                    e.consume();
+                }
+                timer.stop();
             }
         });
         addMouseMotionListener(new MouseMotionAdapter() {
             @Override
             public void mouseDragged(MouseEvent e) {
-                if (isFocusOwner()) {
-                    return;
-                }
-                if (e.isShiftDown()) {
-                    fine = true;
-                } else {
-                    fine = false;
-                }
-                var newPos = e.getPoint();
-                var deltaX = newPos.x - startPos.x;
-                var lastDeltaX = lastPos.x - startPos.x;
-                rawListeners.forEach(l -> l.accept(newPos.x - lastPos.x, fine));
-                var valX = deltaX / (tickDistance* (fine? fineMultiplier:1));
-                var lastValX = lastDeltaX / (tickDistance* (fine? fineMultiplier:1));
-                var deltaVal = valX - lastValX;
-                if (deltaVal != 0) {
-                    tickListeners.forEach(l -> l.accept(deltaVal));
-                }
-
-                lastPos = newPos;
+                DraggableTextField.this.mouseDragged(e.getPoint(), e.isShiftDown());
             }
         });
+    }
+
+    private void mouseDragged(Point p, boolean shiftDown) {
+        if (isFocusOwner()) {
+            return;
+        }
+        if (shiftDown) {
+            fine = true;
+        } else {
+            fine = false;
+        }
+        dragged = true;
+        var newPos = p;
+        var deltaX = newPos.x - startPos.x;
+        var lastDeltaX = lastPos.x - startPos.x;
+        rawListeners.forEach(l -> l.accept(newPos.x - lastPos.x, fine));
+        int fineMultiplier = 5;
+        var valX = deltaX / (tickDistance* (fine? fineMultiplier :1));
+        var lastValX = lastDeltaX / (tickDistance* (fine? fineMultiplier :1));
+        var deltaVal = valX - lastValX;
+        if (deltaVal != 0) {
+            tickListeners.forEach(l -> l.accept(deltaVal));
+        }
+
+        lastPos = newPos;
     }
 
     /**
