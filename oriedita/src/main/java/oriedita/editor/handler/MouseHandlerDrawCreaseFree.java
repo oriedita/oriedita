@@ -13,58 +13,19 @@ import origami.crease_pattern.element.Point;
 
 import java.awt.Graphics2D;
 
+enum DrawCreaseFreeStep { CLICK_DRAG_POINT }
+
 @ApplicationScoped
 @Handles(MouseMode.DRAW_CREASE_FREE_1)
-public class MouseHandlerDrawCreaseFree extends BaseMouseHandler {
-    private Point p = new Point();
-    private StepGraph<Step> steps;
-
+public class MouseHandlerDrawCreaseFree extends StepMouseHandler<DrawCreaseFreeStep> {
     private LineColor lineColor;
-    private Point anchorPoint;
-    private Point releasePoint;
+    private Point anchorPoint, releasePoint;
     private LineSegment dragSegment;
 
-    private enum Step {
-        CLICK_DRAG_POINT,
-        RELEASE_POINT,
-    }
-
     @Inject
-    public MouseHandlerDrawCreaseFree() { initializeSteps(); }
-
-    public void mouseMoved(Point p0) { highlightSelection(p0); }
-
-    public void mouseDragged(Point p0) { highlightSelection(p0); }
-
-    public void mousePressed(Point p0) { steps.runCurrentAction(); }
-
-    public void mouseReleased(Point p0) { steps.runCurrentAction(); }
-
-    private void highlightSelection(Point p0) {
-        p = d.getCamera().TV2object(p0);
-
-        if (d.getI_foldLine_additional() == FoldLineAdditionalInputMode.POLY_LINE_0) {
-            lineColor = d.getLineColor();
-        } else if (d.getI_foldLine_additional() == FoldLineAdditionalInputMode.AUX_LINE_1) {
-            lineColor = d.getAuxLineColor();
-        }
-
-        switch (steps.getCurrentStep()) {
-            case CLICK_DRAG_POINT: {
-                anchorPoint = p;
-                if (p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
-                    anchorPoint = d.getClosestPoint(p);
-                }
-                return;
-            }
-            case RELEASE_POINT: {
-                releasePoint = p;
-                if (p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
-                    releasePoint = d.getClosestPoint(p);
-                }
-                dragSegment = new LineSegment(anchorPoint, releasePoint).withColor(lineColor);
-            }
-        }
+    public MouseHandlerDrawCreaseFree() {
+        super(DrawCreaseFreeStep.CLICK_DRAG_POINT);
+        steps.addNode(StepNode.createNode(DrawCreaseFreeStep.CLICK_DRAG_POINT, this::move_click_drag_point, () -> {}, this::drag_click_drag_point, this::release_click_drag_point));
     }
 
     @Override
@@ -73,7 +34,6 @@ public class MouseHandlerDrawCreaseFree extends BaseMouseHandler {
         DrawingUtil.drawStepVertex(g2, anchorPoint, lineColor, camera, d.getGridInputAssist());
         DrawingUtil.drawStepVertex(g2, releasePoint, lineColor, camera, d.getGridInputAssist());
         DrawingUtil.drawLineStep(g2, dragSegment, camera, settings.getLineWidth(), d.getGridInputAssist());
-        DrawingUtil.drawText(g2, steps.getCurrentStep().name(), p.withX(p.getX() + 20).withY(p.getY() + 20), camera);
     }
 
     @Override
@@ -81,26 +41,39 @@ public class MouseHandlerDrawCreaseFree extends BaseMouseHandler {
         anchorPoint = null;
         releasePoint = null;
         dragSegment = null;
-        initializeSteps();
+        steps.setCurrentStep(DrawCreaseFreeStep.CLICK_DRAG_POINT);
     }
 
-    private void initializeSteps() {
-        steps = new StepGraph<>(Step.CLICK_DRAG_POINT, this::action_click_drag_point);
-        steps.addNode(Step.RELEASE_POINT, this::action_release_point);
-
-        steps.connectNodes(Step.CLICK_DRAG_POINT, Step.RELEASE_POINT);
+    // Click drag point
+    private void move_click_drag_point() {
+        anchorPoint = p;
+        if (d.getI_foldLine_additional() == FoldLineAdditionalInputMode.POLY_LINE_0) {
+            lineColor = d.getLineColor();
+        } else if (d.getI_foldLine_additional() == FoldLineAdditionalInputMode.AUX_LINE_1) {
+            lineColor = d.getAuxLineColor();
+        }
+        if (p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
+            anchorPoint = d.getClosestPoint(p);
+        }
     }
-
-    private Step action_click_drag_point() {
-        if (anchorPoint == null) return Step.CLICK_DRAG_POINT;
-        return Step.RELEASE_POINT;
+    private void drag_click_drag_point() {
+        releasePoint = p;
+        if (d.getI_foldLine_additional() == FoldLineAdditionalInputMode.POLY_LINE_0) {
+            lineColor = d.getLineColor();
+        } else if (d.getI_foldLine_additional() == FoldLineAdditionalInputMode.AUX_LINE_1) {
+            lineColor = d.getAuxLineColor();
+        }
+        if (p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
+            releasePoint = d.getClosestPoint(p);
+        }
+        dragSegment = new LineSegment(anchorPoint, releasePoint).withColor(lineColor);
     }
-
-    private Step action_release_point() {
+    private DrawCreaseFreeStep release_click_drag_point() {
+        if (anchorPoint == null) return DrawCreaseFreeStep.CLICK_DRAG_POINT;
         if (releasePoint == null
-                || Epsilon.high.gt0(dragSegment.determineLength())) {
+                || !Epsilon.high.gt0(dragSegment.determineLength())) {
             reset();
-            return Step.CLICK_DRAG_POINT;
+            return DrawCreaseFreeStep.CLICK_DRAG_POINT;
         }
         if (d.getI_foldLine_additional() == FoldLineAdditionalInputMode.POLY_LINE_0) {
             d.addLineSegment(dragSegment);
@@ -111,6 +84,6 @@ public class MouseHandlerDrawCreaseFree extends BaseMouseHandler {
             d.auxRecord();
         }
         reset();
-        return Step.CLICK_DRAG_POINT;
+        return DrawCreaseFreeStep.CLICK_DRAG_POINT;
     }
 }

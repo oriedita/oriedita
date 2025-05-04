@@ -29,9 +29,10 @@ public class MouseHandlerContinuousSymmetricDraw extends BaseMouseHandlerInputRe
     private final CreasePattern_Worker_Toolbox toolbox;
 
     private Point p = new Point();
+    private StepGraph<Step> steps;
+
     private Point p1, p2;
     private List<LineSegment> resultantSegments = new ArrayList<>();
-    private StepGraph<Step> steps;
 
     private enum Step {
         SELECT_P1,
@@ -45,32 +46,19 @@ public class MouseHandlerContinuousSymmetricDraw extends BaseMouseHandlerInputRe
         initializeSteps();
     }
 
-    public void mousePressed(Point p0) { steps.runCurrentAction(); }
+    public void mousePressed(Point p0) {}
 
-    public void mouseMoved(Point p0) { highlightSelection(p0); }
-
-    public void mouseDragged(Point p0) { highlightSelection(p0); }
-
-    public void mouseReleased(Point p0) {}
-
-    private void highlightSelection(Point p0) {
-        p = p0 != null ? d.getCamera().TV2object(p0) : p;
-        switch (steps.getCurrentStep()) {
-            case SELECT_P1: {
-                p1 = p;
-                if (p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
-                    p1 = d.getClosestPoint(p);
-                }
-                return;
-            }
-            case SELECT_P2: {
-                p2 = p;
-                if (p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
-                    p2 = d.getClosestPoint(p);
-                }
-            }
-        }
+    public void mouseMoved(Point p0) {
+        p = d.getCamera().TV2object(p0);
+        steps.runCurrentMoveAction();
     }
+
+    public void mouseDragged(Point p0) {
+        p = d.getCamera().TV2object(p0);
+        steps.runCurrentDragAction();
+    }
+
+    public void mouseReleased(Point p0) { steps.runCurrentReleaseAction(); }
 
     @Override
     public void drawPreview(Graphics2D g2, Camera camera, DrawingSettings settings) {
@@ -92,17 +80,28 @@ public class MouseHandlerContinuousSymmetricDraw extends BaseMouseHandlerInputRe
     }
 
     private void initializeSteps() {
-        steps = new StepGraph<>(Step.SELECT_P1, this::action_select_p1);
-        steps.addNode(Step.SELECT_P2, this::action_select_p2);
-
-        steps.connectNodes(Step.SELECT_P1, Step.SELECT_P2);
+        steps = new StepGraph<>(Step.SELECT_P1);
+        steps.addNode(StepNode.createNode_MD_R(Step.SELECT_P1, this::move_drag_select_p1, this::release_select_p1));
+        steps.addNode(StepNode.createNode_MD_R(Step.SELECT_P2, this::move_drag_select_p2, this::release_select_p2));
     }
 
-    private Step action_select_p1() {
-        return Step.SELECT_P2;
+    // Select point 1
+    private void move_drag_select_p1() {
+        p1 = p;
+        if (p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
+            p1 = d.getClosestPoint(p);
+        }
     }
+    private Step release_select_p1() { return Step.SELECT_P2; }
 
-    private Step action_select_p2() {
+    // Select point 2
+    private void move_drag_select_p2() {
+        p2 = p;
+        if (p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
+            p2 = d.getClosestPoint(p);
+        }
+    }
+    private Step release_select_p2() {
         continuous_folding_new(p1, p2, null);
 
         LineColor lineType = d.getLineColor();
@@ -114,10 +113,10 @@ public class MouseHandlerContinuousSymmetricDraw extends BaseMouseHandlerInputRe
 
         d.record();
         reset();
-        return null;
+        return Step.SELECT_P1;
     }
-
-    public void continuous_folding_new(Point a, Point b, Point start) {//An improved version of continuous folding.
+    //An improved version of continuous folding.
+    public void continuous_folding_new(Point a, Point b, Point start) {
         //ベクトルab(=s0)を点aからb方向に、最初に他の折線(直線に含まれる線分は無視。)と交差するところまで延長する
 
         //与えられたベクトルabを延長して、それと重ならない折線との、最も近い交点までs_stepとする。

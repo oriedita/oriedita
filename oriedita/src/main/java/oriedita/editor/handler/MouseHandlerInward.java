@@ -12,56 +12,23 @@ import origami.crease_pattern.element.Point;
 
 import java.awt.Graphics2D;
 
+enum InwardStep {
+    POINT_1,
+    POINT_2,
+    POINT_3,
+}
+
 @ApplicationScoped
 @Handles(MouseMode.INWARD_8)
-public class MouseHandlerInward extends BaseMouseHandlerInputRestricted {
-    Point p = new Point();
-    private StepGraph<Step> steps;
-
-    Point p1, p2, p3 = null;
-
-    private enum Step {
-        POINT_1,
-        POINT_2,
-        POINT_3,
-    }
+public class MouseHandlerInward extends StepMouseHandler<InwardStep> {
+    Point p1, p2, p3;
 
     @Inject
-    public MouseHandlerInward() { initializeSteps(); }
-
-    public void mousePressed(Point p0) {
-        steps.runCurrentAction();
-    }
-
-    @Override
-    public void mouseMoved(Point p0) { highlightSelection(p0); }
-
-    public void mouseDragged(Point p0) { highlightSelection(p0); }
-
-    public void mouseReleased(Point p0) {}
-
-    private void highlightSelection(Point p0) {
-        p = d.getCamera().TV2object(p0);
-
-        switch (steps.getCurrentStep()) {
-            case POINT_1: {
-                if (p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
-                    p1 = d.getClosestPoint(p);
-                } else p1 = null;
-                return;
-            }
-            case POINT_2: {
-                if (p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
-                    p2 = d.getClosestPoint(p);
-                } else p2 = null;
-                return;
-            }
-            case POINT_3: {
-                if (p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
-                    p3 = d.getClosestPoint(p);
-                } else p3 = null;
-            }
-        }
+    public MouseHandlerInward() {
+        super(InwardStep.POINT_1);
+        steps.addNode(StepNode.createNode_MD_R(InwardStep.POINT_1, this::move_drag_select_point_1, this::release_select_point_1));
+        steps.addNode(StepNode.createNode_MD_R(InwardStep.POINT_2, this::move_drag_select_point_2, this::release_select_point_2));
+        steps.addNode(StepNode.createNode_MD_R(InwardStep.POINT_3, this::move_drag_select_point_3, this::release_select_point_3));
     }
 
     @Override
@@ -70,7 +37,6 @@ public class MouseHandlerInward extends BaseMouseHandlerInputRestricted {
         DrawingUtil.drawStepVertex(g2, p1, d.getLineColor(), camera, d.getGridInputAssist());
         DrawingUtil.drawStepVertex(g2, p2, d.getLineColor(), camera, d.getGridInputAssist());
         DrawingUtil.drawStepVertex(g2, p3, d.getLineColor(), camera, d.getGridInputAssist());
-        DrawingUtil.drawText(g2, steps.getCurrentStep().name(), p.withX(p.getX() + 20).withY(p.getY() + 20), camera);
     }
 
     @Override
@@ -78,30 +44,42 @@ public class MouseHandlerInward extends BaseMouseHandlerInputRestricted {
         p1 = null;
         p2 = null;
         p3 = null;
-        initializeSteps();
+        steps.setCurrentStep(InwardStep.POINT_1);
     }
 
-    private void initializeSteps() {
-        steps = new StepGraph<>(Step.POINT_1, this::action_point_1);
-        steps.addNode(Step.POINT_2, this::action_point_2);
-        steps.addNode(Step.POINT_3, this::action_point_3);
-
-        steps.connectNodes(Step.POINT_1, Step.POINT_2);
-        steps.connectNodes(Step.POINT_2, Step.POINT_3);
+    // Select point 1
+    private void move_drag_select_point_1() {
+        if (p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
+            p1 = d.getClosestPoint(p);
+        } else p1 = null;
+    }
+    private InwardStep release_select_point_1() {
+        if(p1 == null) return InwardStep.POINT_1;
+        return InwardStep.POINT_2;
     }
 
-    private Step action_point_1() {
-        if(p1 == null) return Step.POINT_1;
-        return Step.POINT_2;
+    // Select point 2
+    private void move_drag_select_point_2() {
+        if (p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()
+                && !p1.equals(d.getClosestPoint(p))) {
+            p2 = d.getClosestPoint(p);
+        } else p2 = null;
+    }
+    private InwardStep release_select_point_2() {
+        if(p2 == null) return InwardStep.POINT_2;
+        return InwardStep.POINT_3;
     }
 
-    private Step action_point_2() {
-        if(p2 == null) return Step.POINT_2;
-        return Step.POINT_3;
+    // Select point 3
+    private void move_drag_select_point_3() {
+        if (p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()
+                && !p1.equals(d.getClosestPoint(p))
+                && !p2.equals(d.getClosestPoint(p))) {
+            p3 = d.getClosestPoint(p);
+        } else p3 = null;
     }
-
-    private Step action_point_3() {
-        if(p3 == null) return Step.POINT_3;
+    private InwardStep release_select_point_3() {
+        if(p3 == null) return InwardStep.POINT_3;
 
         //三角形の内心を求める	public Ten oc.center(Ten ta,Ten tb,Ten tc)
         Point center = OritaCalc.center(p1, p2, p3);
@@ -121,6 +99,6 @@ public class MouseHandlerInward extends BaseMouseHandlerInputRestricted {
 
         d.record();
         reset();
-        return Step.POINT_1;
+        return InwardStep.POINT_1;
     }
 }

@@ -16,66 +16,31 @@ import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.List;
 
+enum AngularlyFlatFoldableStep {
+    SELECT_INVALID_VERTEX,
+    SELECT_CANDIDATE,
+    SELECT_DESTINATION
+}
+
 @ApplicationScoped
 @Handles(MouseMode.VERTEX_MAKE_ANGULARLY_FLAT_FOLDABLE_38)
-public class MouseHandlerVertexMakeAngularlyFlatFoldable extends BaseMouseHandlerInputRestricted {
+public class MouseHandlerVertexMakeAngularlyFlatFoldable extends StepMouseHandler<AngularlyFlatFoldableStep> {
     public boolean isWorkDone() { return workDone; }
 
     private boolean workDone = false;
     LineColor icol_temp = LineColor.BLACK_0;
-
-    Point p = new Point();
-    StepGraph<Step> steps;
 
     private Point invalidPoint;
     private List<LineSegment> candidates = new ArrayList<>();
     private LineSegment selectedCandidate;
     private LineSegment destinationSegment;
 
-    private enum Step {
-        SELECT_INVALID_VERTEX,
-        SELECT_CANDIDATE,
-        SELECT_DESTINATION
-    }
-
     @Inject
-    public MouseHandlerVertexMakeAngularlyFlatFoldable() { initializeSteps(); }
-
-    public void mouseMoved(Point p0) { highlightSelection(p0); }
-
-    public void mouseDragged(Point p0) { highlightSelection(p0); }
-
-    //Returns 1 only if all the work is done and a new polygonal line is added. Otherwise, it returns 0.
-    public void mousePressed(Point p0) { steps.runCurrentAction(); }
-
-    public void mouseReleased(Point p0) {}
-
-    private void highlightSelection(Point p0) {
-        p = d.getCamera().TV2object(p0);
-
-        switch (steps.getCurrentStep()) {
-            case SELECT_INVALID_VERTEX: {
-                if (p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
-                    invalidPoint = d.getClosestPoint(p);
-                } else invalidPoint = null;
-                return;
-            }
-            case SELECT_CANDIDATE: {
-                for (LineSegment candidate : candidates) {
-                    if(OritaCalc.determineLineSegmentDistance(p, candidate) < d.getSelectionDistance()) {
-                        selectedCandidate = candidate.withColor(LineColor.GREEN_6);
-                        return;
-                    }
-                }
-                selectedCandidate = null;
-                return;
-            }
-            case SELECT_DESTINATION: {
-                if(OritaCalc.determineLineSegmentDistance(p, d.getClosestLineSegment(p)) < d.getSelectionDistance()) {
-                    destinationSegment = d.getClosestLineSegment(p).withColor(LineColor.ORANGE_4);
-                } else destinationSegment = null;
-            }
-        }
+    public MouseHandlerVertexMakeAngularlyFlatFoldable() {
+        super(AngularlyFlatFoldableStep.SELECT_INVALID_VERTEX);
+        steps.addNode(StepNode.createNode_MD_R(AngularlyFlatFoldableStep.SELECT_INVALID_VERTEX, this::move_drag_select_invalid_vertex, this::release_select_invalid_vertex));
+        steps.addNode(StepNode.createNode_MD_R(AngularlyFlatFoldableStep.SELECT_CANDIDATE, this::move_drag_select_candidate, this::release_select_candidate));
+        steps.addNode(StepNode.createNode_MD_R(AngularlyFlatFoldableStep.SELECT_DESTINATION, this::move_drag_select_destination, this::release_select_destination));
     }
 
     @Override
@@ -87,7 +52,6 @@ public class MouseHandlerVertexMakeAngularlyFlatFoldable extends BaseMouseHandle
         }
         DrawingUtil.drawLineStep(g2, selectedCandidate, camera, settings.getLineWidth(), d.getGridInputAssist());
         DrawingUtil.drawLineStep(g2, destinationSegment, camera, settings.getLineWidth(), d.getGridInputAssist());
-        DrawingUtil.drawText(g2, steps.getCurrentStep().name(), p.withX(p.getX() + 20).withY(p.getY() + 20), camera);
     }
 
     @Override
@@ -96,26 +60,17 @@ public class MouseHandlerVertexMakeAngularlyFlatFoldable extends BaseMouseHandle
         candidates = new ArrayList<>();
         selectedCandidate = null;
         destinationSegment = null;
-        initializeSteps();
+        steps.setCurrentStep(AngularlyFlatFoldableStep.SELECT_INVALID_VERTEX);
     }
 
-    private void initializeSteps() {
-        steps = new StepGraph<>(Step.SELECT_INVALID_VERTEX, this::action_select_invalid_vertex);
-        steps.addNode(Step.SELECT_CANDIDATE, this::action_select_candidate);
-        steps.addNode(Step.SELECT_DESTINATION, this::action_select_destination);
-
-        gt_1_solution: {
-            steps.connectNodes(Step.SELECT_INVALID_VERTEX, Step.SELECT_CANDIDATE);
-            steps.connectNodes(Step.SELECT_CANDIDATE, Step.SELECT_DESTINATION);
-        }
-
-        only_1_solution: {
-            steps.connectNodes(Step.SELECT_INVALID_VERTEX, Step.SELECT_DESTINATION);
-        }
+    // Select invalid vertex
+    private void move_drag_select_invalid_vertex() {
+        if (p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
+            invalidPoint = d.getClosestPoint(p);
+        } else invalidPoint = null;
     }
-
-    private Step action_select_invalid_vertex() {
-        if(invalidPoint == null) return Step.SELECT_INVALID_VERTEX;
+    private AngularlyFlatFoldableStep release_select_invalid_vertex() {
+        if(invalidPoint == null) return AngularlyFlatFoldableStep.SELECT_INVALID_VERTEX;
 
         //t1を端点とする折線をNarabebakoに入れる
         SortingBox<LineSegment> nbox = new SortingBox<>();
@@ -202,26 +157,42 @@ public class MouseHandlerVertexMakeAngularlyFlatFoldable extends BaseMouseHandle
         workDone = false;
         if (candidates.size() == 1) {
             selectedCandidate = candidates.get(0);
-            return Step.SELECT_DESTINATION;
+            return AngularlyFlatFoldableStep.SELECT_DESTINATION;
         }
-        return Step.SELECT_CANDIDATE;
+        return AngularlyFlatFoldableStep.SELECT_CANDIDATE;
     }
 
-    private Step action_select_candidate() {
-        if(selectedCandidate == null) return Step.SELECT_CANDIDATE;
+    // Select candidate
+    private void move_drag_select_candidate() {
+        for (LineSegment candidate : candidates) {
+            if(OritaCalc.determineLineSegmentDistance(p, candidate) < d.getSelectionDistance()) {
+                selectedCandidate = candidate.withColor(LineColor.GREEN_6);
+                return;
+            }
+        }
+        selectedCandidate = null;
+    }
+    private AngularlyFlatFoldableStep release_select_candidate() {
+        if(selectedCandidate == null) return AngularlyFlatFoldableStep.SELECT_CANDIDATE;
         if (OritaCalc.determineLineSegmentDistance(p, selectedCandidate) >= d.getSelectionDistance()) {
             workDone = false;
-            return Step.SELECT_CANDIDATE;
+            return AngularlyFlatFoldableStep.SELECT_CANDIDATE;
         }
         workDone = false;
-        return Step.SELECT_DESTINATION;
+        return AngularlyFlatFoldableStep.SELECT_DESTINATION;
     }
 
-    private Step action_select_destination() {
-        if(destinationSegment == null) return Step.SELECT_DESTINATION;
+    // Select destination
+    private void move_drag_select_destination() {
+        if(OritaCalc.determineLineSegmentDistance(p, d.getClosestLineSegment(p)) < d.getSelectionDistance()) {
+            destinationSegment = d.getClosestLineSegment(p).withColor(LineColor.ORANGE_4);
+        } else destinationSegment = null;
+    }
+    private AngularlyFlatFoldableStep release_select_destination() {
+        if(destinationSegment == null) return AngularlyFlatFoldableStep.SELECT_DESTINATION;
         if (OritaCalc.determineLineSegmentDistance(p, destinationSegment) >= d.getSelectionDistance()) {//最寄の既存折線が遠くて選択無効の場合
             destinationSegment = null;
-            return Step.SELECT_DESTINATION;
+            return AngularlyFlatFoldableStep.SELECT_DESTINATION;
         }
 
         Point kousa_point = OritaCalc.findIntersection(selectedCandidate, destinationSegment);
@@ -231,11 +202,11 @@ public class MouseHandlerVertexMakeAngularlyFlatFoldable extends BaseMouseHandle
             d.record();
             workDone = true;
             reset();
-            return Step.SELECT_INVALID_VERTEX;
+            return AngularlyFlatFoldableStep.SELECT_INVALID_VERTEX;
         }
 
         destinationSegment = null;
-        return Step.SELECT_DESTINATION;
+        return AngularlyFlatFoldableStep.SELECT_DESTINATION;
     }
 
 }

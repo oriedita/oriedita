@@ -18,12 +18,16 @@ import java.awt.Graphics2D;
 import java.util.Arrays;
 import java.util.Collections;
 
+enum Axiom5Step {
+    SELECT_TARGET_POINT,
+    SELECT_TARGET_SEGMENT,
+    SELECT_PIVOT_POINT,
+    SELECT_DESTINATION_OR_INDICATOR,
+}
+
 @ApplicationScoped
 @Handles(MouseMode.AXIOM_5)
-public class MouseHandlerAxiom5 extends BaseMouseHandlerInputRestricted{
-    private Point p = new Point();
-    private StepGraph<Step> steps;
-
+public class MouseHandlerAxiom5 extends StepMouseHandler<Axiom5Step>{
     private Point targetPoint;
     private LineSegment targetSegment;
     private Point pivotPoint;
@@ -31,80 +35,121 @@ public class MouseHandlerAxiom5 extends BaseMouseHandlerInputRestricted{
     private LineSegment indicator2;
     private LineSegment destinationSegment;
 
-    private enum Step {
-        SELECT_TARGET_POINT,
-        SELECT_TARGET_SEGMENT,
-        SELECT_PIVOT_POINT,
-        SELECT_DESTINATION_OR_INDICATOR,
+    @Inject
+    public MouseHandlerAxiom5() {
+        super(Axiom5Step.SELECT_TARGET_POINT);
+        steps.addNode(StepNode.createNode_MD_R(Axiom5Step.SELECT_TARGET_POINT, this::move_drag_select_target_point, this::release_select_target_point));
+        steps.addNode(StepNode.createNode_MD_R(Axiom5Step.SELECT_TARGET_SEGMENT, this::move_drag_select_target_segment , this::release_select_target_segment));
+        steps.addNode(StepNode.createNode_MD_R(Axiom5Step.SELECT_PIVOT_POINT, this::move_drag_select_pivot_point, this::action_select_pivot_point));
+        steps.addNode(StepNode.createNode_MD_R(Axiom5Step.SELECT_DESTINATION_OR_INDICATOR, this::move_drag_select_destination_or_indicator, this::action_select_destination_or_indicator));
     }
 
-    // axiom 5 is a fucking bitch to write
-    // 2.3 metric fucktons of edge cases
-    // coz each segment instance has 2 distinct endpoints
-    // so if say l1 has A and B going left to right, and l2 is right to left
-    // gotta handle that shit
-    // the logic is purely geometric
-
-    @Inject
-    public MouseHandlerAxiom5() { initializeSteps(); }
+    @Override
+    public void drawPreview(Graphics2D g2, Camera camera, DrawingSettings settings) {
+        super.drawPreview(g2, camera, settings);
+        DrawingUtil.drawStepVertex(g2, targetPoint, d.getLineColor(), camera, d.getGridInputAssist());
+        DrawingUtil.drawLineStep(g2, targetSegment, camera, settings.getLineWidth(), d.getGridInputAssist());
+        DrawingUtil.drawStepVertex(g2, pivotPoint, d.getLineColor(), camera, d.getGridInputAssist());
+        DrawingUtil.drawLineStep(g2, indicator1, camera, settings.getLineWidth(), d.getGridInputAssist());
+        DrawingUtil.drawLineStep(g2, indicator2, camera, settings.getLineWidth(), d.getGridInputAssist());
+        DrawingUtil.drawLineStep(g2, destinationSegment, camera, settings.getLineWidth(), d.getGridInputAssist());
+    }
 
     @Override
-    public void mousePressed(Point p0) { steps.runCurrentAction(); }
+    public void reset() {
+        targetPoint = null;
+        targetSegment = null;
+        pivotPoint = null;
+        indicator1 = null;
+        indicator2 = null;
+        destinationSegment = null;
+        steps.setCurrentStep(Axiom5Step.SELECT_TARGET_POINT);
+    }
 
-    public void mouseMoved(Point p0) { highlightSelection(p0); }
+    // Select target point
+    private void move_drag_select_target_point() {
+        if (p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
+            targetPoint = d.getClosestPoint(p);
+        } else targetPoint = null;
+    }
+    private Axiom5Step release_select_target_point() {
+        if (targetPoint == null) return Axiom5Step.SELECT_TARGET_POINT;
+        return Axiom5Step.SELECT_TARGET_SEGMENT;
+    }
 
-    @Override
-    public void mouseDragged(Point p0) { highlightSelection(p0); }
+    // Select target segment
+    private void move_drag_select_target_segment() {
+        if (OritaCalc.determineLineSegmentDistance(p, d.getClosestLineSegment(p)) < d.getSelectionDistance()) {
+            targetSegment = d.getClosestLineSegment(p).withColor(LineColor.GREEN_6);
+        } else targetSegment = null;
+    }
+    private Axiom5Step release_select_target_segment() {
+        if (targetSegment == null) return Axiom5Step.SELECT_TARGET_SEGMENT;
+        return Axiom5Step.SELECT_PIVOT_POINT;
+    }
 
-    @Override
-    public void mouseReleased(Point p0) {}
+    // Select pivot point
+    private void move_drag_select_pivot_point() {
+        if (p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()
+                && OritaCalc.determineLineSegmentDistance(d.getClosestPoint(p), new LineSegment(targetPoint, targetPoint)) > Epsilon.UNKNOWN_1EN7
+                && !(OritaCalc.isPointWithinLineSpan(d.getClosestPoint(p), targetSegment) && OritaCalc.isPointWithinLineSpan(targetPoint, targetSegment))) {
+            pivotPoint = d.getClosestPoint(p);
+        } else pivotPoint = null;
+    }
+    private Axiom5Step action_select_pivot_point() {
+        if (pivotPoint == null) return Axiom5Step.SELECT_PIVOT_POINT;
+        double radius = OritaCalc.distance(targetPoint, pivotPoint);
+        drawAxiom5FoldIndicators(radius);
+        return Axiom5Step.SELECT_DESTINATION_OR_INDICATOR;
+    }
 
-    public void highlightSelection(Point p0) {
-        p = d.getCamera().TV2object(p0);
-        switch (steps.getCurrentStep()) {
-            case SELECT_TARGET_POINT: {
-                if (p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
-                    targetPoint = d.getClosestPoint(p);
-                } else targetPoint = null;
-                return;
-            }
-            case SELECT_TARGET_SEGMENT: {
-                if (OritaCalc.determineLineSegmentDistance(p, d.getClosestLineSegment(p)) < d.getSelectionDistance()) {
-                    targetSegment = d.getClosestLineSegment(p).withColor(LineColor.GREEN_6);
-                } else targetSegment = null;
-                return;
-            }
-            case SELECT_PIVOT_POINT: {
-                if (p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()
-                        && OritaCalc.determineLineSegmentDistance(d.getClosestPoint(p), new LineSegment(targetPoint, targetPoint)) > Epsilon.UNKNOWN_1EN7
-                        && !(OritaCalc.isPointWithinLineSpan(d.getClosestPoint(p), targetSegment) && OritaCalc.isPointWithinLineSpan(targetPoint, targetSegment))) {
-                    pivotPoint = d.getClosestPoint(p);
-                } else pivotPoint = null;
-                return;
-            }
-            case SELECT_DESTINATION_OR_INDICATOR: {
-                double indicator1Distance = OritaCalc.determineLineSegmentDistance(p, indicator1);
-                double indicator2Distance = OritaCalc.determineLineSegmentDistance(p, indicator2);
-                double targetSegmentDistance = OritaCalc.determineLineSegmentDistance(p, targetSegment);
-                double normalDistance = OritaCalc.determineLineSegmentDistance(p, d.getClosestLineSegment(p));
+    // Select destination or indicator
+    private void move_drag_select_destination_or_indicator() {
+        double indicator1Distance = OritaCalc.determineLineSegmentDistance(p, indicator1);
+        double indicator2Distance = OritaCalc.determineLineSegmentDistance(p, indicator2);
+        double targetSegmentDistance = OritaCalc.determineLineSegmentDistance(p, targetSegment);
+        double normalDistance = OritaCalc.determineLineSegmentDistance(p, d.getClosestLineSegment(p));
 
-                double minDistance = Collections.min(Arrays.asList(indicator1Distance, indicator2Distance, targetSegmentDistance, normalDistance));
+        double minDistance = Collections.min(Arrays.asList(indicator1Distance, indicator2Distance, targetSegmentDistance, normalDistance));
 
-                if (Math.abs(minDistance - indicator1Distance) < Epsilon.UNKNOWN_1EN6
-                        && indicator1Distance < d.getSelectionDistance()) {
-                    destinationSegment = indicator1.withColor(LineColor.ORANGE_4);
-                } else if (Math.abs(minDistance - indicator2Distance) < Epsilon.UNKNOWN_1EN6
-                        && indicator2Distance < d.getSelectionDistance()) {
-                    destinationSegment = indicator2.withColor(LineColor.ORANGE_4);
-                } else if (Math.abs(minDistance - targetSegmentDistance) < Epsilon.UNKNOWN_1EN6
-                        && targetSegmentDistance < d.getSelectionDistance()) {
-                    destinationSegment = null;
-                } else if (Math.abs(minDistance - normalDistance) < Epsilon.UNKNOWN_1EN6
-                        && normalDistance < d.getSelectionDistance()) {
-                    destinationSegment = d.getClosestLineSegment(p).withColor(LineColor.ORANGE_4);
-                } else destinationSegment = null;
-            }
+        if (Math.abs(minDistance - indicator1Distance) < Epsilon.UNKNOWN_1EN6
+                && indicator1Distance < d.getSelectionDistance()) {
+            destinationSegment = indicator1.withColor(LineColor.ORANGE_4);
+        } else if (Math.abs(minDistance - indicator2Distance) < Epsilon.UNKNOWN_1EN6
+                && indicator2Distance < d.getSelectionDistance()) {
+            destinationSegment = indicator2.withColor(LineColor.ORANGE_4);
+        } else if (Math.abs(minDistance - targetSegmentDistance) < Epsilon.UNKNOWN_1EN6
+                && targetSegmentDistance < d.getSelectionDistance()) {
+            destinationSegment = null;
+        } else if (Math.abs(minDistance - normalDistance) < Epsilon.UNKNOWN_1EN6
+                && normalDistance < d.getSelectionDistance()) {
+            destinationSegment = d.getClosestLineSegment(p).withColor(LineColor.ORANGE_4);
+        } else destinationSegment = null;
+    }
+    private Axiom5Step action_select_destination_or_indicator() {
+        if (OritaCalc.determineLineSegmentDistance(p, indicator1) < d.getSelectionDistance() ||
+                OritaCalc.determineLineSegmentDistance(p, indicator2) < d.getSelectionDistance()) {
+            LineSegment s = OritaCalc.determineLineSegmentDistance(p, indicator1) < OritaCalc.determineLineSegmentDistance(p, indicator2)
+                    ? indicator1 : indicator2;
+            s = new LineSegment(s.getB(), s.getA(), d.getLineColor());
+            s = (OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), s));
+
+            d.addLineSegment(s);
+            d.record();
+            reset();
+            return Axiom5Step.SELECT_TARGET_POINT;
         }
+
+        if (destinationSegment == null) return Axiom5Step.SELECT_DESTINATION_OR_INDICATOR;
+        Point intersectPoint1 = OritaCalc.findIntersection(indicator1, destinationSegment);
+        Point intersectPoint2 = OritaCalc.findIntersection(indicator2, destinationSegment);
+
+        double d1 = OritaCalc.distance(p, intersectPoint1);
+        double d2 = OritaCalc.distance(p, intersectPoint2);
+        d.addLineSegment(new LineSegment(pivotPoint, d1 < d2 ? intersectPoint1 : intersectPoint2, d.getLineColor()));
+        d.record();
+        reset();
+        return Axiom5Step.SELECT_TARGET_POINT;
     }
 
     public void drawAxiom5FoldIndicators(double radius) {
@@ -254,85 +299,5 @@ public class MouseHandlerAxiom5 extends BaseMouseHandlerInputRestricted{
             indicator1 = OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), new LineSegment(pivot, OritaCalc.findProjection(OritaCalc.moveParallel(l1, 1.0), pivot), LineColor.PURPLE_8));
             indicator2 = OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), new LineSegment(pivot, OritaCalc.findProjection(OritaCalc.moveParallel(l2, -1.0), pivot), LineColor.PURPLE_8));
         }
-    }
-
-    @Override
-    public void drawPreview(Graphics2D g2, Camera camera, DrawingSettings settings) {
-        super.drawPreview(g2, camera, settings);
-        DrawingUtil.drawStepVertex(g2, targetPoint, d.getLineColor(), camera, d.getGridInputAssist());
-        DrawingUtil.drawLineStep(g2, targetSegment, camera, settings.getLineWidth(), d.getGridInputAssist());
-        DrawingUtil.drawStepVertex(g2, pivotPoint, d.getLineColor(), camera, d.getGridInputAssist());
-        DrawingUtil.drawLineStep(g2, indicator1, camera, settings.getLineWidth(), d.getGridInputAssist());
-        DrawingUtil.drawLineStep(g2, indicator2, camera, settings.getLineWidth(), d.getGridInputAssist());
-        DrawingUtil.drawLineStep(g2, destinationSegment, camera, settings.getLineWidth(), d.getGridInputAssist());
-
-        double textPosX = p.getX() + 20 / camera.getCameraZoomX();
-        double textPosY = p.getY() + 20 / camera.getCameraZoomY();
-        DrawingUtil.drawText(g2, steps.getCurrentStep().name(), p.withX(textPosX).withY(textPosY), camera);
-    }
-
-    @Override
-    public void reset() {
-        targetPoint = null;
-        targetSegment = null;
-        pivotPoint = null;
-        indicator1 = null;
-        indicator2 = null;
-        destinationSegment = null;
-        initializeSteps();
-    }
-
-    private void initializeSteps() {
-        steps = new StepGraph<>(Step.SELECT_TARGET_POINT, this::action_select_target_point);
-        steps.addNode(Step.SELECT_TARGET_SEGMENT, this::action_select_target_segment);
-        steps.addNode(Step.SELECT_PIVOT_POINT, this::action_select_pivot_point);
-        steps.addNode(Step.SELECT_DESTINATION_OR_INDICATOR, this::action_select_destination_or_indicator);
-
-        steps.connectNodes(Step.SELECT_TARGET_POINT, Step.SELECT_TARGET_SEGMENT);
-        steps.connectNodes(Step.SELECT_TARGET_SEGMENT, Step.SELECT_PIVOT_POINT);
-        steps.connectNodes(Step.SELECT_PIVOT_POINT, Step.SELECT_DESTINATION_OR_INDICATOR);
-    }
-
-    private Step action_select_target_point() {
-        if (targetPoint == null) return null;
-        return Step.SELECT_TARGET_SEGMENT;
-    }
-
-    private Step action_select_target_segment() {
-        if (targetSegment == null) return null;
-        return Step.SELECT_PIVOT_POINT;
-    }
-
-    private Step action_select_pivot_point() {
-        if (pivotPoint == null) return null;
-        double radius = OritaCalc.distance(targetPoint, pivotPoint);
-        drawAxiom5FoldIndicators(radius);
-        return Step.SELECT_DESTINATION_OR_INDICATOR;
-    }
-
-    private Step action_select_destination_or_indicator() {
-        if (OritaCalc.determineLineSegmentDistance(p, indicator1) < d.getSelectionDistance() ||
-                OritaCalc.determineLineSegmentDistance(p, indicator2) < d.getSelectionDistance()) {
-            LineSegment s = OritaCalc.determineLineSegmentDistance(p, indicator1) < OritaCalc.determineLineSegmentDistance(p, indicator2)
-                    ? indicator1 : indicator2;
-            s = new LineSegment(s.getB(), s.getA(), d.getLineColor());
-            s = (OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), s));
-
-            d.addLineSegment(s);
-            d.record();
-            reset();
-            return null;
-        }
-
-        if (destinationSegment == null) return null;
-        Point intersectPoint1 = OritaCalc.findIntersection(indicator1, destinationSegment);
-        Point intersectPoint2 = OritaCalc.findIntersection(indicator2, destinationSegment);
-
-        double d1 = OritaCalc.distance(p, intersectPoint1);
-        double d2 = OritaCalc.distance(p, intersectPoint2);
-        d.addLineSegment(new LineSegment(pivotPoint, d1 < d2 ? intersectPoint1 : intersectPoint2, d.getLineColor()));
-        d.record();
-        reset();
-        return null;
     }
 }

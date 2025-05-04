@@ -11,49 +11,18 @@ import origami.crease_pattern.element.Point;
 
 import java.awt.Graphics2D;
 
+enum DrawCreaseRestrictedStep { CLICK_DRAG_POINT }
+
 @ApplicationScoped
 @Handles(MouseMode.DRAW_CREASE_RESTRICTED_11)
-public class MouseHandlerDrawCreaseRestricted extends BaseMouseHandlerInputRestricted {
-    private Point p = new Point();
-    private StepGraph<Step> steps;
-
-    private Point anchorPoint;
-    private Point releasePoint;
+public class MouseHandlerDrawCreaseRestricted extends StepMouseHandler<DrawCreaseRestrictedStep> {
+    private Point anchorPoint, releasePoint;
     private LineSegment dragSegment;
 
-    private enum Step {
-        CLICK_DRAG_POINT,
-        RELEASE_POINT,
-    }
     @Inject
-    public MouseHandlerDrawCreaseRestricted() { initializeSteps(); }
-
-    public void mouseMoved(Point p0) { highlightSelection(p0); }
-
-    public void mouseDragged(Point p0) { highlightSelection(p0); }//近い既存点のみ表示
-    @Override
-    public void mousePressed(Point p0) { steps.runCurrentAction(); }
-
-    public void mouseReleased(Point p0) { steps.runCurrentAction(); }
-
-    private void highlightSelection(Point p0) {
-        p = d.getCamera().TV2object(p0);
-
-        switch (steps.getCurrentStep()) {
-            case CLICK_DRAG_POINT: {
-                if (p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
-                    anchorPoint = d.getClosestPoint(p);
-                } else anchorPoint = null;
-                return;
-            }
-            case RELEASE_POINT: {
-                releasePoint = p;
-                if (p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
-                    releasePoint = d.getClosestPoint(p);
-                }
-                dragSegment = new LineSegment(anchorPoint, releasePoint).withColor(d.getLineColor());
-            }
-        }
+    public MouseHandlerDrawCreaseRestricted() {
+        super(DrawCreaseRestrictedStep.CLICK_DRAG_POINT);
+        steps.addNode(StepNode.createNode(DrawCreaseRestrictedStep.CLICK_DRAG_POINT, this::move_click_drag_point, () -> {}, this::drag_click_drag_point, this::release_click_drag_point));
     }
 
     @Override
@@ -70,31 +39,34 @@ public class MouseHandlerDrawCreaseRestricted extends BaseMouseHandlerInputRestr
         anchorPoint = null;
         releasePoint = null;
         dragSegment = null;
-        initializeSteps();
+        steps.setCurrentStep(DrawCreaseRestrictedStep.CLICK_DRAG_POINT);
     }
 
-    private void initializeSteps() {
-        steps = new StepGraph<>(Step.CLICK_DRAG_POINT, this::action_click_drag_point);
-        steps.addNode(Step.RELEASE_POINT, this::action_release_point);
-
-        steps.connectNodes(Step.CLICK_DRAG_POINT, Step.RELEASE_POINT);
+    // Click and drag point
+    private void move_click_drag_point() {
+        if (p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
+            anchorPoint = d.getClosestPoint(p);
+        } else anchorPoint = null;
     }
-
-    private Step action_click_drag_point() {
-        if (anchorPoint == null) return Step.CLICK_DRAG_POINT;
-        return Step.RELEASE_POINT;
+    private void drag_click_drag_point() {
+        if (anchorPoint == null) return;
+        releasePoint = p;
+        if (p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
+            releasePoint = d.getClosestPoint(p);
+        }
+        dragSegment = new LineSegment(anchorPoint, releasePoint).withColor(d.getLineColor());
     }
-
-    private Step action_release_point() {
+    private DrawCreaseRestrictedStep release_click_drag_point() {
+        if (anchorPoint == null) return DrawCreaseRestrictedStep.CLICK_DRAG_POINT;
         if (releasePoint == null
                 || p.distance(d.getClosestPoint(p)) > d.getSelectionDistance()
                 || !Epsilon.high.gt0(dragSegment.determineLength())) {
             reset();
-            return Step.CLICK_DRAG_POINT;
+            return DrawCreaseRestrictedStep.CLICK_DRAG_POINT;
         }
         d.addLineSegment(dragSegment);
         d.record();
         reset();
-        return Step.CLICK_DRAG_POINT;
+        return DrawCreaseRestrictedStep.CLICK_DRAG_POINT;
     }
 }
