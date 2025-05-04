@@ -50,10 +50,6 @@ public class MouseHandlerContinuousSymmetricDraw extends StepMouseHandler<Contin
         super.drawPreview(g2, camera, settings);
         DrawingUtil.drawStepVertex(g2, p1, d.getLineColor(), camera, d.getGridInputAssist());
         DrawingUtil.drawStepVertex(g2, p2, d.getLineColor(), camera, d.getGridInputAssist());
-
-        double textPosX = p.getX() + 20 / camera.getCameraZoomX();
-        double textPosY = p.getY() + 20 / camera.getCameraZoomY();
-        DrawingUtil.drawText(g2, steps.getCurrentStep().name(), p.withX(textPosX).withY(textPosY), camera);
     }
 
     @Override
