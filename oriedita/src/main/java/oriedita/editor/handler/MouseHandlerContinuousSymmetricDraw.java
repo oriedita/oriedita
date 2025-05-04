@@ -21,44 +21,29 @@ import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.List;
 
+enum ContinuousSymmetricDrawStep {
+    SELECT_P1,
+    SELECT_P2,
+}
+
 @ApplicationScoped
 @Handles(MouseMode.CONTINUOUS_SYMMETRIC_DRAW_52)
-public class MouseHandlerContinuousSymmetricDraw extends BaseMouseHandlerInputRestricted {
+public class MouseHandlerContinuousSymmetricDraw extends StepMouseHandler<ContinuousSymmetricDrawStep> {
 
     private final CreasePattern_Worker d;
-    private final CreasePattern_Worker_Toolbox toolbox;
-
-    private Point p = new Point();
-    private StepGraph<Step> steps;
+    private CreasePattern_Worker_Toolbox toolbox;
 
     private Point p1, p2;
     private List<LineSegment> resultantSegments = new ArrayList<>();
 
-    private enum Step {
-        SELECT_P1,
-        SELECT_P2,
-    }
-
     @Inject
     public MouseHandlerContinuousSymmetricDraw(@Named("mainCreasePattern_Worker") CreasePattern_Worker d) {
+        super(ContinuousSymmetricDrawStep.SELECT_P1);
         this.d = d;
-        this.toolbox = new CreasePattern_Worker_Toolbox(d.getFoldLineSet());
-        initializeSteps();
+        toolbox = new CreasePattern_Worker_Toolbox(d.getFoldLineSet());
+        steps.addNode(StepNode.createNode_MD_R(ContinuousSymmetricDrawStep.SELECT_P1, this::move_drag_select_p1, this::release_select_p1));
+        steps.addNode(StepNode.createNode_MD_R(ContinuousSymmetricDrawStep.SELECT_P2, this::move_drag_select_p2, this::release_select_p2));
     }
-
-    public void mousePressed(Point p0) {}
-
-    public void mouseMoved(Point p0) {
-        p = d.getCamera().TV2object(p0);
-        steps.runCurrentMoveAction();
-    }
-
-    public void mouseDragged(Point p0) {
-        p = d.getCamera().TV2object(p0);
-        steps.runCurrentDragAction();
-    }
-
-    public void mouseReleased(Point p0) { steps.runCurrentReleaseAction(); }
 
     @Override
     public void drawPreview(Graphics2D g2, Camera camera, DrawingSettings settings) {
@@ -76,13 +61,7 @@ public class MouseHandlerContinuousSymmetricDraw extends BaseMouseHandlerInputRe
         p1 = null;
         p2 = null;
         resultantSegments = new ArrayList<>();
-        initializeSteps();
-    }
-
-    private void initializeSteps() {
-        steps = new StepGraph<>(Step.SELECT_P1);
-        steps.addNode(StepNode.createNode_MD_R(Step.SELECT_P1, this::move_drag_select_p1, this::release_select_p1));
-        steps.addNode(StepNode.createNode_MD_R(Step.SELECT_P2, this::move_drag_select_p2, this::release_select_p2));
+        this.toolbox = new CreasePattern_Worker_Toolbox(d.getFoldLineSet());
     }
 
     // Select point 1
@@ -92,7 +71,7 @@ public class MouseHandlerContinuousSymmetricDraw extends BaseMouseHandlerInputRe
             p1 = d.getClosestPoint(p);
         }
     }
-    private Step release_select_p1() { return Step.SELECT_P2; }
+    private ContinuousSymmetricDrawStep release_select_p1() { return ContinuousSymmetricDrawStep.SELECT_P2; }
 
     // Select point 2
     private void move_drag_select_p2() {
@@ -101,7 +80,7 @@ public class MouseHandlerContinuousSymmetricDraw extends BaseMouseHandlerInputRe
             p2 = d.getClosestPoint(p);
         }
     }
-    private Step release_select_p2() {
+    private ContinuousSymmetricDrawStep release_select_p2() {
         continuous_folding_new(p1, p2, null);
 
         LineColor lineType = d.getLineColor();
@@ -113,7 +92,7 @@ public class MouseHandlerContinuousSymmetricDraw extends BaseMouseHandlerInputRe
 
         d.record();
         reset();
-        return Step.SELECT_P1;
+        return ContinuousSymmetricDrawStep.SELECT_P1;
     }
     //An improved version of continuous folding.
     public void continuous_folding_new(Point a, Point b, Point start) {
