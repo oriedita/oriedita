@@ -29,7 +29,7 @@ public class MouseHandlerCircleDrawConcentric extends StepMouseHandler<CircleDra
     public MouseHandlerCircleDrawConcentric() {
         super(CircleDrawConcentricStep.SELECT_CIRCLE);
         steps.addNode(StepNode.createNode_MD_R(CircleDrawConcentricStep.SELECT_CIRCLE, this::move_drag_select_circle, this::release_select_circle));
-        steps.addNode(StepNode.createNode(CircleDrawConcentricStep.CLICK_DRAG_POINT, this::move_click_drag_point, () -> {}, this::drag_click_drag_point, this::release_click_drag_point));
+        steps.addNode(StepNode.createNode(CircleDrawConcentricStep.CLICK_DRAG_POINT, this::move_click_drag_point, (p) -> {}, this::drag_click_drag_point, this::release_click_drag_point));
     }
 
     @Override
@@ -53,25 +53,25 @@ public class MouseHandlerCircleDrawConcentric extends StepMouseHandler<CircleDra
     }
 
     // Select circle
-    private void move_drag_select_circle() {
+    private void move_drag_select_circle(Point p) {
         if (OritaCalc.distance_circumference(p, d.getClosestCircleMidpoint(p)) < d.getSelectionDistance()) {
             originalCircle = new Circle(d.getClosestCircleMidpoint(p));
             originalCircle.setColor(LineColor.GREEN_6);
         } else originalCircle = null;
     }
-    private CircleDrawConcentricStep release_select_circle() {
+    private CircleDrawConcentricStep release_select_circle(Point p) {
         if (originalCircle == null) return CircleDrawConcentricStep.SELECT_CIRCLE;
         return CircleDrawConcentricStep.CLICK_DRAG_POINT;
     }
 
     // Click drag point
-    private void move_click_drag_point() {
+    private void move_click_drag_point(Point p) {
         anchorPoint = p;
         if (anchorPoint.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
             anchorPoint = d.getClosestPoint(p);
         } else anchorPoint = null;
     }
-    private void drag_click_drag_point() {
+    private void drag_click_drag_point(Point p) {
         releasePoint = p;
         if (releasePoint.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
             releasePoint = d.getClosestPoint(p);
@@ -87,7 +87,7 @@ public class MouseHandlerCircleDrawConcentric extends StepMouseHandler<CircleDra
         newCircle = new Circle(originalCircle.determineCenter(),
                 originalCircle.getR() + radiusDifference.determineLength(), LineColor.CYAN_3);
     }
-    private CircleDrawConcentricStep release_click_drag_point() {
+    private CircleDrawConcentricStep release_click_drag_point(Point p) {
         if (anchorPoint == null) return CircleDrawConcentricStep.CLICK_DRAG_POINT;
         if (releasePoint == null
                 || releasePoint.distance(d.getClosestPoint(p)) > d.getSelectionDistance()) {

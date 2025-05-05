@@ -25,7 +25,7 @@ public class MouseHandlerCircleDraw extends StepMouseHandler<CircleDrawStep> {
     @Inject
     public MouseHandlerCircleDraw() {
         super(CircleDrawStep.CLICK_DRAG_POINT);
-        steps.addNode(StepNode.createNode(CircleDrawStep.CLICK_DRAG_POINT, this::move_click_drag_point, () -> {}, this::drag_click_drag_point, this::release_click_drag_point));
+        steps.addNode(StepNode.createNode(CircleDrawStep.CLICK_DRAG_POINT, this::move_click_drag_point, (p) -> {}, this::drag_click_drag_point, this::release_click_drag_point));
     }
 
     @Override
@@ -47,13 +47,13 @@ public class MouseHandlerCircleDraw extends StepMouseHandler<CircleDrawStep> {
     }
 
     // Click drag point
-    private void move_click_drag_point() {
+    private void move_click_drag_point(Point p) {
         anchorPoint = p;
         if (anchorPoint.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
             anchorPoint = d.getClosestPoint(p);
         } else anchorPoint = null;
     }
-    private void drag_click_drag_point() {
+    private void drag_click_drag_point(Point p) {
         if(anchorPoint == null) return;
 
         releasePoint = p;
@@ -70,7 +70,7 @@ public class MouseHandlerCircleDraw extends StepMouseHandler<CircleDrawStep> {
         previewCircle = new Circle(anchorPoint, OritaCalc.distance(anchorPoint, releasePoint), LineColor.CYAN_3);
         previewRadiusSegment = new LineSegment(anchorPoint, releasePoint, LineColor.CYAN_3);
     }
-    private CircleDrawStep release_click_drag_point() {
+    private CircleDrawStep release_click_drag_point(Point p) {
         if (anchorPoint == null
                 || (releasePoint == null
                 || releasePoint.distance(d.getClosestPoint(p)) > d.getSelectionDistance())) {

@@ -64,12 +64,12 @@ public class MouseHandlerVertexMakeAngularlyFlatFoldable extends StepMouseHandle
     }
 
     // Select invalid vertex
-    private void move_drag_select_invalid_vertex() {
+    private void move_drag_select_invalid_vertex(Point p) {
         if (p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
             invalidPoint = d.getClosestPoint(p);
         } else invalidPoint = null;
     }
-    private AngularlyFlatFoldableStep release_select_invalid_vertex() {
+    private AngularlyFlatFoldableStep release_select_invalid_vertex(Point p) {
         if(invalidPoint == null) return AngularlyFlatFoldableStep.SELECT_INVALID_VERTEX;
 
         //t1を端点とする折線をNarabebakoに入れる
@@ -163,7 +163,7 @@ public class MouseHandlerVertexMakeAngularlyFlatFoldable extends StepMouseHandle
     }
 
     // Select candidate
-    private void move_drag_select_candidate() {
+    private void move_drag_select_candidate(Point p) {
         for (LineSegment candidate : candidates) {
             if(OritaCalc.determineLineSegmentDistance(p, candidate) < d.getSelectionDistance()) {
                 selectedCandidate = candidate.withColor(LineColor.GREEN_6);
@@ -172,7 +172,7 @@ public class MouseHandlerVertexMakeAngularlyFlatFoldable extends StepMouseHandle
         }
         selectedCandidate = null;
     }
-    private AngularlyFlatFoldableStep release_select_candidate() {
+    private AngularlyFlatFoldableStep release_select_candidate(Point p) {
         if(selectedCandidate == null) return AngularlyFlatFoldableStep.SELECT_CANDIDATE;
         if (OritaCalc.determineLineSegmentDistance(p, selectedCandidate) >= d.getSelectionDistance()) {
             workDone = false;
@@ -183,12 +183,12 @@ public class MouseHandlerVertexMakeAngularlyFlatFoldable extends StepMouseHandle
     }
 
     // Select destination
-    private void move_drag_select_destination() {
+    private void move_drag_select_destination(Point p) {
         if(OritaCalc.determineLineSegmentDistance(p, d.getClosestLineSegment(p)) < d.getSelectionDistance()) {
             destinationSegment = d.getClosestLineSegment(p).withColor(LineColor.ORANGE_4);
         } else destinationSegment = null;
     }
-    private AngularlyFlatFoldableStep release_select_destination() {
+    private AngularlyFlatFoldableStep release_select_destination(Point p) {
         if(destinationSegment == null) return AngularlyFlatFoldableStep.SELECT_DESTINATION;
         if (OritaCalc.determineLineSegmentDistance(p, destinationSegment) >= d.getSelectionDistance()) {//最寄の既存折線が遠くて選択無効の場合
             destinationSegment = null;

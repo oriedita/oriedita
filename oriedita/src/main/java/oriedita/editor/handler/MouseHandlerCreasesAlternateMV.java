@@ -25,7 +25,7 @@ public class MouseHandlerCreasesAlternateMV extends StepMouseHandler<CreasesAlte
     @Inject
     public MouseHandlerCreasesAlternateMV() {
         super(CreasesAlternateMVStep.CLICK_DRAG_POINT);
-        steps.addNode(StepNode.createNode(CreasesAlternateMVStep.CLICK_DRAG_POINT, this::move_click_drag_point, () -> {}, this::drag_click_drag_point, this::release_click_drag_point));
+        steps.addNode(StepNode.createNode(CreasesAlternateMVStep.CLICK_DRAG_POINT, this::move_click_drag_point, (p) -> {}, this::drag_click_drag_point, this::release_click_drag_point));
     }
 
     @Override
@@ -45,12 +45,12 @@ public class MouseHandlerCreasesAlternateMV extends StepMouseHandler<CreasesAlte
     }
 
     // Click drag point
-    private void move_click_drag_point() { anchorPoint = p; }
-    private void drag_click_drag_point() {
+    private void move_click_drag_point(Point p) { anchorPoint = p; }
+    private void drag_click_drag_point(Point p) {
         releasePoint = p;
         dragSegment = new LineSegment(anchorPoint, releasePoint).withColor(d.getLineColor());
     }
-    private CreasesAlternateMVStep release_click_drag_point() {
+    private CreasesAlternateMVStep release_click_drag_point(Point p) {
         if (!Epsilon.high.gt0(dragSegment.determineLength())) {
             reset();
             return CreasesAlternateMVStep.CLICK_DRAG_POINT;

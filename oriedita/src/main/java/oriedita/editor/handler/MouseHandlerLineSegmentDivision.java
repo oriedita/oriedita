@@ -22,7 +22,7 @@ public class MouseHandlerLineSegmentDivision extends StepMouseHandler<LineSegmen
     @Inject
     public MouseHandlerLineSegmentDivision() {
         super(LineSegmentDivisionStep.CLICK_DRAG_POINT);
-        steps.addNode(StepNode.createNode(LineSegmentDivisionStep.CLICK_DRAG_POINT, this::move_click_drag_point, () -> {}, this::drag_click_drag_point, this::release_click_drag_point));
+        steps.addNode(StepNode.createNode(LineSegmentDivisionStep.CLICK_DRAG_POINT, this::move_click_drag_point, (p) -> {}, this::drag_click_drag_point, this::release_click_drag_point));
     }
 
     @Override
@@ -41,20 +41,24 @@ public class MouseHandlerLineSegmentDivision extends StepMouseHandler<LineSegmen
     }
 
     // Click drag point
-    private void move_click_drag_point() {
+    private void move_click_drag_point(Point p) {
         anchorPoint = p;
         if(p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
             anchorPoint = d.getClosestPoint(p);
         }
     }
-    private void drag_click_drag_point() {
+    private void drag_click_drag_point(Point p) {
         releasePoint = p;
         if(p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
             releasePoint = d.getClosestPoint(p);
         }
         dragSegment = new LineSegment(anchorPoint, releasePoint).withColor(d.getLineColor());
     }
-    private LineSegmentDivisionStep release_click_drag_point() {
+    private LineSegmentDivisionStep release_click_drag_point(Point p) {
+        if(releasePoint == null) {
+            reset();
+            return LineSegmentDivisionStep.CLICK_DRAG_POINT;
+        }
         if(!Epsilon.high.gt0(dragSegment.determineLength())) return LineSegmentDivisionStep.CLICK_DRAG_POINT;
         for (int i = 0; i <= d.getFoldLineDividingNumber() - 1; i++) {
             double ax = ((double) (d.getFoldLineDividingNumber() - i) * dragSegment.determineAX() + (double) i * dragSegment.determineBX()) / ((double) d.getFoldLineDividingNumber());

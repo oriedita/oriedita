@@ -9,6 +9,7 @@ import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.Circle;
 import origami.crease_pattern.element.LineColor;
+import origami.crease_pattern.element.Point;
 
 import java.awt.Graphics2D;
 
@@ -45,19 +46,19 @@ public class MouseHandlerCircleDrawConcentricTwoCircleSelect extends StepMouseHa
     }
 
     // Select circle 1
-    private void move_drag_select_circle_1() {
+    private void move_drag_select_circle_1(Point p) {
         if (OritaCalc.distance_circumference(p, d.getClosestCircleMidpoint(p)) < d.getSelectionDistance()) {
             circle1 = new Circle(d.getClosestCircleMidpoint(p));
             circle1.setColor(LineColor.GREEN_6);
         } else circle1 = null;
     }
-    private CircleDrawConcentricTwoCircleSelectStep release_select_circle_1() {
+    private CircleDrawConcentricTwoCircleSelectStep release_select_circle_1(Point p) {
         if (circle1 == null) return CircleDrawConcentricTwoCircleSelectStep.SELECT_CIRCLE_1;
         return CircleDrawConcentricTwoCircleSelectStep.SELECT_CIRCLE_2;
     }
 
     // Select circle 2
-    private void move_drag_select_circle_2() {
+    private void move_drag_select_circle_2(Point p) {
         if (OritaCalc.distance_circumference(p, d.getClosestCircleMidpoint(p)) < d.getSelectionDistance()) {
             if (Math.abs(circle1.getR() - d.getClosestCircleMidpoint(p).getR()) < Epsilon.UNKNOWN_1EN6
                     && circle1.determineCenter().equals(d.getClosestCircleMidpoint(p).determineCenter())) {
@@ -68,7 +69,7 @@ public class MouseHandlerCircleDrawConcentricTwoCircleSelect extends StepMouseHa
             }
         } else circle2 = null;
     }
-    private CircleDrawConcentricTwoCircleSelectStep release_select_circle_2() {
+    private CircleDrawConcentricTwoCircleSelectStep release_select_circle_2(Point p) {
         if (circle2 == null) return CircleDrawConcentricTwoCircleSelectStep.SELECT_CIRCLE_2;
 
         double centerLineLength = OritaCalc.distance(circle1.determineCenter(), circle2.determineCenter());

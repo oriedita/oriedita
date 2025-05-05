@@ -24,7 +24,7 @@ public class MouseHandlerLineSegmentRatioSet extends StepMouseHandler<LineSegmen
     @Inject
     public MouseHandlerLineSegmentRatioSet(InternalDivisionRatioModel internalDivisionRatioModel) {
         super(LineSegmentRatioSetStep.CLICK_DRAG_POINT);
-        steps.addNode(StepNode.createNode(LineSegmentRatioSetStep.CLICK_DRAG_POINT, this::move_click_drag_point, () -> {}, this::drag_click_drag_point, this::release_click_drag_point));
+        steps.addNode(StepNode.createNode(LineSegmentRatioSetStep.CLICK_DRAG_POINT, this::move_click_drag_point, (p) -> {}, this::drag_click_drag_point, this::release_click_drag_point));
         this.internalDivisionRatioModel = internalDivisionRatioModel;
     }
 
@@ -44,20 +44,24 @@ public class MouseHandlerLineSegmentRatioSet extends StepMouseHandler<LineSegmen
     }
 
     // Click drag point
-    private void move_click_drag_point() {
+    private void move_click_drag_point(Point p) {
         anchorPoint = p;
         if(p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
             anchorPoint = d.getClosestPoint(p);
         }
     }
-    private void drag_click_drag_point() {
+    private void drag_click_drag_point(Point p) {
         releasePoint = p;
         if(p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
             releasePoint = d.getClosestPoint(p);
         }
         dragSegment = new LineSegment(anchorPoint, releasePoint).withColor(d.getLineColor());
     }
-    private LineSegmentRatioSetStep release_click_drag_point() {
+    private LineSegmentRatioSetStep release_click_drag_point(Point p) {
+        if (releasePoint == null) {
+            reset();
+            return LineSegmentRatioSetStep.CLICK_DRAG_POINT;
+        }
         if(!Epsilon.high.gt0(dragSegment.determineLength())) return LineSegmentRatioSetStep.CLICK_DRAG_POINT;
         dragSegment = dragSegment.withAB(dragSegment.getB(), dragSegment.getA());
         double internalDivisionRatio_s = internalDivisionRatioModel.getInternalDivisionRatioS();

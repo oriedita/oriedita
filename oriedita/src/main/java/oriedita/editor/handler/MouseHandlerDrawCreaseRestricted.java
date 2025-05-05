@@ -22,7 +22,7 @@ public class MouseHandlerDrawCreaseRestricted extends StepMouseHandler<DrawCreas
     @Inject
     public MouseHandlerDrawCreaseRestricted() {
         super(DrawCreaseRestrictedStep.CLICK_DRAG_POINT);
-        steps.addNode(StepNode.createNode(DrawCreaseRestrictedStep.CLICK_DRAG_POINT, this::move_click_drag_point, () -> {}, this::drag_click_drag_point, this::release_click_drag_point));
+        steps.addNode(StepNode.createNode(DrawCreaseRestrictedStep.CLICK_DRAG_POINT, this::move_click_drag_point, (p) -> {}, this::drag_click_drag_point, this::release_click_drag_point));
     }
 
     @Override
@@ -31,7 +31,6 @@ public class MouseHandlerDrawCreaseRestricted extends StepMouseHandler<DrawCreas
         DrawingUtil.drawStepVertex(g2, anchorPoint, d.getLineColor(), camera, d.getGridInputAssist());
         DrawingUtil.drawStepVertex(g2, releasePoint, d.getLineColor(), camera, d.getGridInputAssist());
         DrawingUtil.drawLineStep(g2, dragSegment, camera, settings.getLineWidth(), d.getGridInputAssist());
-        DrawingUtil.drawText(g2, steps.getCurrentStep().name(), p.withX(p.getX() + 20).withY(p.getY() + 20), camera);
     }
 
     @Override
@@ -43,12 +42,12 @@ public class MouseHandlerDrawCreaseRestricted extends StepMouseHandler<DrawCreas
     }
 
     // Click and drag point
-    private void move_click_drag_point() {
+    private void move_click_drag_point(Point p) {
         if (p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
             anchorPoint = d.getClosestPoint(p);
         } else anchorPoint = null;
     }
-    private void drag_click_drag_point() {
+    private void drag_click_drag_point(Point p) {
         if (anchorPoint == null) return;
         releasePoint = p;
         if (p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
@@ -56,7 +55,7 @@ public class MouseHandlerDrawCreaseRestricted extends StepMouseHandler<DrawCreas
         }
         dragSegment = new LineSegment(anchorPoint, releasePoint).withColor(d.getLineColor());
     }
-    private DrawCreaseRestrictedStep release_click_drag_point() {
+    private DrawCreaseRestrictedStep release_click_drag_point(Point p) {
         if (anchorPoint == null) return DrawCreaseRestrictedStep.CLICK_DRAG_POINT;
         if (releasePoint == null
                 || p.distance(d.getClosestPoint(p)) > d.getSelectionDistance()

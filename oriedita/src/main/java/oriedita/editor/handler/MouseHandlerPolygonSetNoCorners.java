@@ -5,9 +5,7 @@ import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
-import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
-import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 
@@ -45,24 +43,24 @@ public class MouseHandlerPolygonSetNoCorners extends StepMouseHandler<PolygonSet
     }
 
     // Select point 1
-    private void move_drag_select_point_1() {
+    private void move_drag_select_point_1(Point p) {
         if (p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
             p1 = d.getClosestPoint(p);
         } else p1 = null;
     }
-    private PolygonSetNoCorners release_select_point_1() {
+    private PolygonSetNoCorners release_select_point_1(Point p) {
         if (p1 == null) return PolygonSetNoCorners.SELECT_POINT_1;
         return PolygonSetNoCorners.SELECT_POINT_2;
     }
 
     // Select point 2
-    private void move_drag_select_point_2() {
+    private void move_drag_select_point_2(Point p) {
         if (p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()
                 && !p1.equals(d.getClosestPoint(p))) {
             p2 = d.getClosestPoint(p);
         } else p2 = null;
     }
-    private PolygonSetNoCorners release_select_point_2() {
+    private PolygonSetNoCorners release_select_point_2(Point p) {
         if (p2 == null) return PolygonSetNoCorners.SELECT_POINT_2;
         LineSegment s_tane = new LineSegment(p1, p2, d.getLineColor());
         d.addLineSegment(s_tane);

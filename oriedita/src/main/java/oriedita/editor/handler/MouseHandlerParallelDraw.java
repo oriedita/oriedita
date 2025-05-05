@@ -56,35 +56,35 @@ public class MouseHandlerParallelDraw extends StepMouseHandler<ParallelDrawStep>
     }
 
     // Select target point
-    private void move_select_target_point() {
+    private void move_select_target_point(Point p) {
         if (p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
             targetPoint = d.getClosestPoint(p);
         } else targetPoint = null;
     }
-    private ParallelDrawStep release_select_target_point() {
+    private ParallelDrawStep release_select_target_point(Point p) {
         if (targetPoint == null) return ParallelDrawStep.SELECT_TARGET_POINT;
         return ParallelDrawStep.SELECT_PARALLEL_SEGMENT;
     }
 
     // Select target parallel segment
-    private void move_select_parallel_segment() {
+    private void move_select_parallel_segment(Point p) {
         if (OritaCalc.determineLineSegmentDistance(p, d.getClosestLineSegment(p)) < d.getSelectionDistance()) {
             parallelSegment = d.getClosestLineSegment(p).withColor(LineColor.GREEN_6);
         } else parallelSegment = null;
     }
-    private ParallelDrawStep release_select_parallel_segment() {
+    private ParallelDrawStep release_select_parallel_segment(Point p) {
         if (parallelSegment == null) return ParallelDrawStep.SELECT_PARALLEL_SEGMENT;
         return ParallelDrawStep.SELECT_DESTINATION;
     }
 
     // Select destination
-    private void move_select_destination() {
+    private void move_select_destination(Point p) {
         if (OritaCalc.determineLineSegmentDistance(p, d.getClosestLineSegment(p)) < d.getSelectionDistance()
                 && OritaCalc.isLineSegmentParallel(parallelSegment, d.getClosestLineSegment(p)) == OritaCalc.ParallelJudgement.NOT_PARALLEL) {
             destinationSegment = d.getClosestLineSegment(p).withColor(LineColor.ORANGE_4);
         } else destinationSegment = null;
     }
-    private ParallelDrawStep release_select_destination() {
+    private ParallelDrawStep release_select_destination(Point p) {
         if (destinationSegment == null) return ParallelDrawStep.SELECT_DESTINATION;
         LineSegment s = new LineSegment(targetPoint, new Point(
                 targetPoint.getX() + parallelSegment.determineBX() - parallelSegment.determineAX(),

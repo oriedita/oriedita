@@ -26,7 +26,7 @@ public class MouseHandlerFishBoneDraw extends StepMouseHandler<FishBoneDrawStep>
     @Inject
     public MouseHandlerFishBoneDraw() {
         super(FishBoneDrawStep.CLICK_DRAG_POINT);
-        steps.addNode(StepNode.createNode(FishBoneDrawStep.CLICK_DRAG_POINT, this::move_click_drag_point, () -> {}, this::drag_click_drag_point, this::release_click_drag_point));
+        steps.addNode(StepNode.createNode(FishBoneDrawStep.CLICK_DRAG_POINT, this::move_click_drag_point, (p) -> {}, this::drag_click_drag_point, this::release_click_drag_point));
     }
 
     @Override
@@ -46,12 +46,12 @@ public class MouseHandlerFishBoneDraw extends StepMouseHandler<FishBoneDrawStep>
     }
 
     // Click-drag a line
-    private void move_click_drag_point() {
+    private void move_click_drag_point(Point p) {
         if (p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
             anchorPoint = d.getClosestPoint(p);
         } else anchorPoint = null;
     }
-    private void drag_click_drag_point() {
+    private void drag_click_drag_point(Point p) {
         if(anchorPoint == null) return;
         releasePoint = p;
         if (p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
@@ -59,8 +59,8 @@ public class MouseHandlerFishBoneDraw extends StepMouseHandler<FishBoneDrawStep>
         }
         dragSegment = new LineSegment(anchorPoint, releasePoint).withColor(d.getLineColor());
     }
-    private FishBoneDrawStep release_click_drag_point() {
-        if (releasePoint.distance(d.getClosestPoint(releasePoint)) > d.getSelectionDistance()) {
+    private FishBoneDrawStep release_click_drag_point(Point p) {
+        if (releasePoint == null || releasePoint.distance(d.getClosestPoint(releasePoint)) > d.getSelectionDistance()) {
             reset();
             return FishBoneDrawStep.CLICK_DRAG_POINT;
         }

@@ -45,7 +45,6 @@ public class MouseHandlerSymmetricDraw extends StepMouseHandler<SymmetricDrawSte
         DrawingUtil.drawStepVertex(g2, pointsList_3P.get(2), d.getLineColor(), camera, d.getGridInputAssist());
         DrawingUtil.drawLineStep(g2, segmentsList_2L.get(0), camera, settings.getLineWidth(), d.getGridInputAssist());
         DrawingUtil.drawLineStep(g2, segmentsList_2L.get(1), camera, settings.getLineWidth(), d.getGridInputAssist());
-        DrawingUtil.drawText(g2, steps.getCurrentStep().name(), p.withX(p.getX() + 20).withY(p.getY() + 20), camera);
     }
 
     @Override
@@ -58,7 +57,7 @@ public class MouseHandlerSymmetricDraw extends StepMouseHandler<SymmetricDrawSte
     }
 
     // Select 2 lines or 3 points
-    private void move_drag_select_2L_or_3P() {
+    private void move_drag_select_2L_or_3P(Point p) {
         double pointDistance = p.distance(d.getClosestPoint(p));
         double segmentDistance = OritaCalc.determineLineSegmentDistance(p, d.getClosestLineSegment(p));
         boolean isPointInRadius = pointDistance < d.getSelectionDistance();
@@ -72,7 +71,7 @@ public class MouseHandlerSymmetricDraw extends StepMouseHandler<SymmetricDrawSte
             segmentsList_2L.set(counter_2L, d.getClosestLineSegment(p).withColor(LineColor.GREEN_6));
         } else segmentsList_2L.set(counter_2L, null);
     }
-    private SymmetricDrawStep release_select_2L_or_3P() {
+    private SymmetricDrawStep release_select_2L_or_3P(Point p) {
         if (pointsList_3P.get(counter_3P) != null) {
             counter_3P++;
             return SymmetricDrawStep.SELECT_3P;
@@ -85,12 +84,12 @@ public class MouseHandlerSymmetricDraw extends StepMouseHandler<SymmetricDrawSte
     }
 
     // Select 3 points
-    private void move_drag_select_3P() {
+    private void move_drag_select_3P(Point p) {
         if (p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
             pointsList_3P.set(counter_3P, d.getClosestPoint(p));
         } else pointsList_3P.set(counter_3P, null);
     }
-    private SymmetricDrawStep release_select_3P() {
+    private SymmetricDrawStep release_select_3P(Point p) {
         if(pointsList_3P.get(counter_3P) == null) return SymmetricDrawStep.SELECT_3P;
         counter_3P++;
         if (counter_3P < 3) return SymmetricDrawStep.SELECT_3P;
@@ -100,12 +99,12 @@ public class MouseHandlerSymmetricDraw extends StepMouseHandler<SymmetricDrawSte
     }
 
     // Select 2 lines
-    private void move_drag_select_2L() {
+    private void move_drag_select_2L(Point p) {
         if (OritaCalc.determineLineSegmentDistance(p, d.getClosestLineSegment(p)) < d.getSelectionDistance()) {
             segmentsList_2L.set(counter_2L, d.getClosestLineSegment(p).withColor(LineColor.GREEN_6));
         } else segmentsList_2L.set(counter_2L, null);
     }
-    private SymmetricDrawStep release_select_2L() {
+    private SymmetricDrawStep release_select_2L(Point p) {
         if(segmentsList_2L.get(counter_2L) == null) return SymmetricDrawStep.SELECT_2L;
         counter_2L++;
         if (counter_2L < 2) return SymmetricDrawStep.SELECT_2L;

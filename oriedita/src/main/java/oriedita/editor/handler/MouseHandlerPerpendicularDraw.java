@@ -56,23 +56,23 @@ public class MouseHandlerPerpendicularDraw extends StepMouseHandler<Perpendicula
     }
 
     // Select target point
-    private void move_drag_select_target_point() {
+    private void move_drag_select_target_point(Point p) {
         if (p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
             targetPoint = d.getClosestPoint(p);
         } else targetPoint = null;
     }
-    private PerpendicularDrawStep release_select_target_point() {
+    private PerpendicularDrawStep release_select_target_point(Point p) {
         if(targetPoint == null) return PerpendicularDrawStep.SELECT_TARGET_POINT;
         return PerpendicularDrawStep.SELECT_PERPENDICULAR_SEGMENT;
     }
 
     // Select perpendicular segment
-    private void move_drag_select_perpendicular_segment() {
+    private void move_drag_select_perpendicular_segment(Point p) {
         if (OritaCalc.determineLineSegmentDistance(p, d.getClosestLineSegment(p)) < d.getSelectionDistance()) {
             perpendicularSegment = d.getClosestLineSegment(p).withColor(LineColor.GREEN_6);
         } else perpendicularSegment = null;
     }
-    private PerpendicularDrawStep release_select_perpendicular_segment() {
+    private PerpendicularDrawStep release_select_perpendicular_segment(Point p) {
         if(perpendicularSegment == null) return PerpendicularDrawStep.SELECT_PERPENDICULAR_SEGMENT;
 
         if (OritaCalc.isPointWithinLineSpan(targetPoint, perpendicularSegment)) {
@@ -94,7 +94,7 @@ public class MouseHandlerPerpendicularDraw extends StepMouseHandler<Perpendicula
 
 
     // Select destination or indicator
-    private void move_drag_select_destination_or_indicator() {
+    private void move_drag_select_destination_or_indicator(Point p) {
         double indicatorDistance = OritaCalc.determineLineSegmentDistance(p, indicator);
         double normalDistance = OritaCalc.determineLineSegmentDistance(p, d.getClosestLineSegment(p));
         double baseDistance = OritaCalc.determineLineSegmentDistance(p, perpendicularSegment);
@@ -113,7 +113,7 @@ public class MouseHandlerPerpendicularDraw extends StepMouseHandler<Perpendicula
             destinationSegment = d.getClosestLineSegment(p).withColor(LineColor.ORANGE_4);
         } else destinationSegment = null;
     }
-    private PerpendicularDrawStep release_select_destination_or_indicator() {
+    private PerpendicularDrawStep release_select_destination_or_indicator(Point p) {
         if (OritaCalc.determineLineSegmentDistance(p, indicator) < d.getSelectionDistance()) {
             d.addLineSegment(indicator.withColor(d.getLineColor()));
             d.record();

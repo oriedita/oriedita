@@ -78,7 +78,7 @@ public class MouseHandlerSquareBisector extends StepMouseHandler<SquareBisectorS
     }
 
     // Select 2 lines or 3 points
-    private void move_select_2L_or_3P() {
+    private void move_select_2L_or_3P(Point p) {
         double pointDistance = p.distance(d.getClosestPoint(p));
         double segmentDistance = OritaCalc.determineLineSegmentDistance(p, d.getClosestLineSegment(p));
         boolean isPointInRadius = pointDistance < d.getSelectionDistance();
@@ -92,7 +92,7 @@ public class MouseHandlerSquareBisector extends StepMouseHandler<SquareBisectorS
             segmentsList_2L.set(counter_2L, d.getClosestLineSegment(p).withColor(LineColor.GREEN_6));
         } else segmentsList_2L.set(counter_2L, null);
     }
-    private SquareBisectorStep release_select_2L_or_3P() {
+    private SquareBisectorStep release_select_2L_or_3P(Point p) {
         if (pointsList_3P.get(counter_3P) != null) {
             counter_3P++;
             return SquareBisectorStep.SELECT_3P;
@@ -105,12 +105,12 @@ public class MouseHandlerSquareBisector extends StepMouseHandler<SquareBisectorS
     }
 
     // Select 3 points
-    private void move_select_3P() {
+    private void move_select_3P(Point p) {
         if (p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
             pointsList_3P.set(counter_3P, d.getClosestPoint(p));
         } else pointsList_3P.set(counter_3P, null);
     }
-    private SquareBisectorStep release_select_3P() {
+    private SquareBisectorStep release_select_3P(Point p) {
         if(pointsList_3P.get(counter_3P) == null) return SquareBisectorStep.SELECT_3P;
         counter_3P++;
         if (counter_3P < 3) return SquareBisectorStep.SELECT_3P;
@@ -118,12 +118,12 @@ public class MouseHandlerSquareBisector extends StepMouseHandler<SquareBisectorS
     }
 
     // Select destination 3 point
-    private void highlight_destination_3P() {
+    private void highlight_destination_3P(Point p) {
         if (OritaCalc.determineLineSegmentDistance(p, d.getClosestLineSegment(p)) < d.getSelectionDistance()) {
             destinationSegment_3P = d.getClosestLineSegment(p).withColor(LineColor.GREEN_6);
         } else destinationSegment_3P = null;
     }
-    private SquareBisectorStep release_destination_3P() {
+    private SquareBisectorStep release_destination_3P(Point p) {
         if (destinationSegment_3P == null) return SquareBisectorStep.SELECT_DESTINATION_3P;
 
         Point naisin = OritaCalc.center(pointsList_3P.get(0), pointsList_3P.get(1), pointsList_3P.get(2));
@@ -141,12 +141,12 @@ public class MouseHandlerSquareBisector extends StepMouseHandler<SquareBisectorS
     }
 
     // Select 2 lines
-    private void highlight_select_2L() {
+    private void highlight_select_2L(Point p) {
         if (OritaCalc.determineLineSegmentDistance(p, d.getClosestLineSegment(p)) < d.getSelectionDistance()) {
             segmentsList_2L.set(counter_2L, d.getClosestLineSegment(p).withColor(LineColor.GREEN_6));
         } else segmentsList_2L.set(counter_2L, null);
     }
-    private SquareBisectorStep release_select_2L() {
+    private SquareBisectorStep release_select_2L(Point p) {
         if(segmentsList_2L.get(counter_2L) == null) return SquareBisectorStep.SELECT_2L;
         counter_2L++;
         if (counter_2L < 2) return SquareBisectorStep.SELECT_2L;
@@ -154,12 +154,12 @@ public class MouseHandlerSquareBisector extends StepMouseHandler<SquareBisectorS
     }
 
     // Select destination 2 lines not parallel
-    private void highlight_select_destination_2L_NP() {
+    private void highlight_select_destination_2L_NP(Point p) {
         if (OritaCalc.determineLineSegmentDistance(p, d.getClosestLineSegment(p)) < d.getSelectionDistance()) {
             destinationSegment_2L_NP = d.getClosestLineSegment(p).withColor(LineColor.GREEN_6);
         } else destinationSegment_2L_NP = null;
     }
-    private SquareBisectorStep release_select_destination_2L_NP() {
+    private SquareBisectorStep release_select_destination_2L_NP(Point p) {
         if (destinationSegment_2L_NP == null) return SquareBisectorStep.SELECT_DESTINATION_2L_NP;
 
         Point intersection = OritaCalc.findIntersection(segmentsList_2L.get(0), segmentsList_2L.get(1));
@@ -185,12 +185,12 @@ public class MouseHandlerSquareBisector extends StepMouseHandler<SquareBisectorS
     }
 
     // Select destination 2 lines parallel
-    private void highlight_select_destination_2L_P() {
+    private void highlight_select_destination_2L_P(Point p) {
         if (OritaCalc.determineLineSegmentDistance(p, d.getClosestLineSegment(p)) < d.getSelectionDistance()) {
             destinationSegmentsList_2L_P.set(counter_2L_P, d.getClosestLineSegment(p).withColor(LineColor.ORANGE_4));
         } else destinationSegmentsList_2L_P.set(counter_2L_P, null);
     }
-    private SquareBisectorStep release_select_destination_2L_P() {
+    private SquareBisectorStep release_select_destination_2L_P(Point p) {
         if (OritaCalc.determineLineSegmentDistance(p, indicator) < d.getSelectionDistance()) {
             d.addLineSegment(indicator.withColor(d.getLineColor()));
             d.record();

@@ -22,7 +22,7 @@ public class MouseHandlerCreaseDeleteOverlapping extends StepMouseHandler<Crease
     @Inject
     public MouseHandlerCreaseDeleteOverlapping() {
         super(CreaseDeleteOverlapStep.CLICK_DRAG_POINT);
-        steps.addNode(StepNode.createNode(CreaseDeleteOverlapStep.CLICK_DRAG_POINT, this::move_click_drag_point, () -> {}, this::drag_click_drag_point, this::release_click_drag_point));
+        steps.addNode(StepNode.createNode(CreaseDeleteOverlapStep.CLICK_DRAG_POINT, this::move_click_drag_point, (p) -> {}, this::drag_click_drag_point, this::release_click_drag_point));
     }
 
     @Override
@@ -41,12 +41,12 @@ public class MouseHandlerCreaseDeleteOverlapping extends StepMouseHandler<Crease
     }
 
     // Click drag point
-    private void move_click_drag_point() {
+    private void move_click_drag_point(Point p) {
         if (p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
             anchorPoint = d.getClosestPoint(p);
         } else anchorPoint = null;
     }
-    private void drag_click_drag_point() {
+    private void drag_click_drag_point(Point p) {
         if(anchorPoint == null) return;
         releasePoint = p;
         if (p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
@@ -54,9 +54,9 @@ public class MouseHandlerCreaseDeleteOverlapping extends StepMouseHandler<Crease
         }
         dragSegment = new LineSegment(anchorPoint, releasePoint).withColor(d.getLineColor());
     }
-    private CreaseDeleteOverlapStep release_click_drag_point() {
+    private CreaseDeleteOverlapStep release_click_drag_point(Point p) {
         if (anchorPoint == null) return CreaseDeleteOverlapStep.CLICK_DRAG_POINT;
-        if (releasePoint.distance(d.getClosestPoint(releasePoint)) > d.getSelectionDistance()) {
+        if (releasePoint == null || releasePoint.distance(d.getClosestPoint(releasePoint)) > d.getSelectionDistance()) {
             reset();
             return CreaseDeleteOverlapStep.CLICK_DRAG_POINT;
         }

@@ -67,36 +67,36 @@ public class MouseHandlerAxiom5 extends StepMouseHandler<Axiom5Step>{
     }
 
     // Select target point
-    private void move_drag_select_target_point() {
+    private void move_drag_select_target_point(Point p) {
         if (p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
             targetPoint = d.getClosestPoint(p);
         } else targetPoint = null;
     }
-    private Axiom5Step release_select_target_point() {
+    private Axiom5Step release_select_target_point(Point p) {
         if (targetPoint == null) return Axiom5Step.SELECT_TARGET_POINT;
         return Axiom5Step.SELECT_TARGET_SEGMENT;
     }
 
     // Select target segment
-    private void move_drag_select_target_segment() {
+    private void move_drag_select_target_segment(Point p) {
         if (OritaCalc.determineLineSegmentDistance(p, d.getClosestLineSegment(p)) < d.getSelectionDistance()) {
             targetSegment = d.getClosestLineSegment(p).withColor(LineColor.GREEN_6);
         } else targetSegment = null;
     }
-    private Axiom5Step release_select_target_segment() {
+    private Axiom5Step release_select_target_segment(Point p) {
         if (targetSegment == null) return Axiom5Step.SELECT_TARGET_SEGMENT;
         return Axiom5Step.SELECT_PIVOT_POINT;
     }
 
     // Select pivot point
-    private void move_drag_select_pivot_point() {
+    private void move_drag_select_pivot_point(Point p) {
         if (p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()
                 && OritaCalc.determineLineSegmentDistance(d.getClosestPoint(p), new LineSegment(targetPoint, targetPoint)) > Epsilon.UNKNOWN_1EN7
                 && !(OritaCalc.isPointWithinLineSpan(d.getClosestPoint(p), targetSegment) && OritaCalc.isPointWithinLineSpan(targetPoint, targetSegment))) {
             pivotPoint = d.getClosestPoint(p);
         } else pivotPoint = null;
     }
-    private Axiom5Step action_select_pivot_point() {
+    private Axiom5Step action_select_pivot_point(Point p) {
         if (pivotPoint == null) return Axiom5Step.SELECT_PIVOT_POINT;
         double radius = OritaCalc.distance(targetPoint, pivotPoint);
         drawAxiom5FoldIndicators(radius);
@@ -104,7 +104,7 @@ public class MouseHandlerAxiom5 extends StepMouseHandler<Axiom5Step>{
     }
 
     // Select destination or indicator
-    private void move_drag_select_destination_or_indicator() {
+    private void move_drag_select_destination_or_indicator(Point p) {
         double indicator1Distance = OritaCalc.determineLineSegmentDistance(p, indicator1);
         double indicator2Distance = OritaCalc.determineLineSegmentDistance(p, indicator2);
         double targetSegmentDistance = OritaCalc.determineLineSegmentDistance(p, targetSegment);
@@ -126,7 +126,7 @@ public class MouseHandlerAxiom5 extends StepMouseHandler<Axiom5Step>{
             destinationSegment = d.getClosestLineSegment(p).withColor(LineColor.ORANGE_4);
         } else destinationSegment = null;
     }
-    private Axiom5Step action_select_destination_or_indicator() {
+    private Axiom5Step action_select_destination_or_indicator(Point p) {
         if (OritaCalc.determineLineSegmentDistance(p, indicator1) < d.getSelectionDistance() ||
                 OritaCalc.determineLineSegmentDistance(p, indicator2) < d.getSelectionDistance()) {
             LineSegment s = OritaCalc.determineLineSegmentDistance(p, indicator1) < OritaCalc.determineLineSegmentDistance(p, indicator2)

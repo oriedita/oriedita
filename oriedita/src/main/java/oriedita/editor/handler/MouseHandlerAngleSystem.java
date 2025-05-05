@@ -18,104 +18,115 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
+enum AngleSystemStep {
+    CLICK_DRAG_POINT,
+    SELECT_DIRECTION,
+    SELECT_LENGTH
+}
+
 @ApplicationScoped
 @Handles(MouseMode.ANGLE_SYSTEM_16)
-public class MouseHandlerAngleSystem extends BaseMouseHandlerInputRestricted {
+public class MouseHandlerAngleSystem extends StepMouseHandler<AngleSystemStep> {
     private final AngleSystemModel angleSystemModel;
-    Point pStart, pEnd;
-    List<LineSegment> candidates = new ArrayList<>();
-    LineSegment direction;
-    LineSegment previewLine;
-    Step currentStep = Step.SELECT_FIRST_POINT;
     LineColor[] customAngleColors = new LineColor[]{
             LineColor.ORANGE_4,
             LineColor.GREEN_6,
             LineColor.PURPLE_8
     };
 
-    enum Step {
-        SELECT_FIRST_POINT,
-        SELECT_SECOND_POINT,
-        SELECT_DIRECTION,
-        SELECT_LENGTH
-    }
+    private Point anchorPoint, releasePoint;
+    private LineSegment selectedSegment, destinationSegment;
+    List<LineSegment> candidates = new ArrayList<>();
 
     @Inject
     public MouseHandlerAngleSystem(AngleSystemModel angleSystemModel) {
+        super(AngleSystemStep.CLICK_DRAG_POINT);
+        steps.addNode(StepNode.createNode(AngleSystemStep.CLICK_DRAG_POINT, this::move_click_drag_point, (p) -> {}, this::drag_click_drag_point, this::release_click_drag_point));
+        steps.addNode(StepNode.createNode_MD_R(AngleSystemStep.SELECT_DIRECTION, this::move_drag_select_direction, this::release_drag_select_direction));
+        steps.addNode(StepNode.createNode_MD_R(AngleSystemStep.SELECT_LENGTH, this::move_drag_select_length, this::release_select_length));
         this.angleSystemModel = angleSystemModel;
     }
 
-    public void mouseMoved(Point p0) {
-        super.mouseMoved(p0);
-        Point p = d.getCamera().TV2object(p0);
-        switch (currentStep) {
-            case SELECT_FIRST_POINT:
-                pStart = d.getClosestPoint(p);
-                break;
-            case SELECT_SECOND_POINT:
-                pEnd = determinePEnd(p);
-                candidates = makePreviewLines(pStart, pEnd);
-                break;
-            case SELECT_DIRECTION:
-                direction = determineSelectedCandidate(p);
-                break;
-            case SELECT_LENGTH:
-                previewLine = determineLineSegmentForPreview(p);
-                break;
+    @Override
+    public void drawPreview(Graphics2D g2, Camera camera, DrawingSettings settings) {
+        super.drawPreview(g2, camera, settings);
+        DrawingUtil.drawStepVertex(g2, anchorPoint, d.getLineColor(), camera, d.getGridInputAssist());
+        DrawingUtil.drawStepVertex(g2, releasePoint, d.getLineColor(), camera, d.getGridInputAssist());
+        for (LineSegment candidate : candidates) {
+            DrawingUtil.drawLineStep(g2, candidate, camera, settings.getLineWidth(), d.getGridInputAssist());
         }
+        DrawingUtil.drawLineStep(g2, selectedSegment, camera, settings.getLineWidth(), d.getGridInputAssist());
+        DrawingUtil.drawLineStep(g2, destinationSegment, camera, settings.getLineWidth(), d.getGridInputAssist());
     }
 
-    private Point determinePEnd(Point p) {
-        Point previewPEnd = d.getClosestPoint(p);
-        if (previewPEnd.distance(p) >= d.getSelectionDistance()) {
-            previewPEnd = p;
-        }
-        return previewPEnd;
+    @Override
+    public void reset() {
+        anchorPoint = null;
+        releasePoint = null;
+        selectedSegment = null;
+        destinationSegment = null;
+        candidates.clear();
+        steps.setCurrentStep(AngleSystemStep.CLICK_DRAG_POINT);
     }
 
-    //マウス操作(ボタンを押したとき)時の作業
-    public void mousePressed(Point p0) {
-        Point p = d.getCamera().TV2object(p0);
+    // Click drag point
+    private void move_click_drag_point(Point p) {
+        if(p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
+            anchorPoint = d.getClosestPoint(p);
+        } else anchorPoint = null;
+    }
+    private void drag_click_drag_point(Point p) {
+        if(anchorPoint == null) return;
 
-        // Apply values from mouseMoved
-        switch (currentStep) {
-            case SELECT_FIRST_POINT:
-                pStart = d.getClosestPoint(p);
-                currentStep = Step.SELECT_SECOND_POINT;
-                return;
-            case SELECT_SECOND_POINT:
-                pEnd = determinePEnd(p);
-                candidates = makePreviewLines(pStart, pEnd);
-                if (pEnd.distance(p) >= d.getSelectionDistance()) {
-                    return;
-                }
-                currentStep = Step.SELECT_DIRECTION;
-                return;
-            case SELECT_DIRECTION:
-                direction = determineSelectedCandidate(p);
-                currentStep = Step.SELECT_LENGTH;
-                if (direction == null) {
-                    reset();
-                } else {
-                    candidates.clear();
-                }
-                return;
-            case SELECT_LENGTH:
-                LineSegment add_sen = determineLineSegmentToAdd(p);
-
-                if (add_sen != null && Epsilon.high.gt0(add_sen.determineLength())) {
-                    d.addLineSegment(add_sen);
-                    d.record();
-                }
-                reset();
+        releasePoint = p;
+        if(p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
+            releasePoint = d.getClosestPoint(p);
         }
+
+        candidates = makePreviewLines(anchorPoint, releasePoint);
+    }
+    private AngleSystemStep release_click_drag_point(Point p) {
+        if(p == null || anchorPoint == null || releasePoint == null || anchorPoint.equals(releasePoint)) {
+            reset();
+            return AngleSystemStep.CLICK_DRAG_POINT;
+        }
+        return AngleSystemStep.SELECT_DIRECTION;
+    }
+
+    // Select direction
+    private void move_drag_select_direction(Point p) {
+        selectedSegment = determineSelectedCandidate(p);
+    }
+    private AngleSystemStep release_drag_select_direction(Point p) {
+        if (selectedSegment == null) return AngleSystemStep.SELECT_DIRECTION;
+        candidates.clear();
+        return AngleSystemStep.SELECT_LENGTH;
+    }
+
+    // Select length
+    private void move_drag_select_length(Point p) {
+        selectedSegment = determineLineSegmentForPreview(p);
+        if (OritaCalc.determineLineSegmentDistance(p, d.getClosestLineSegment(p)) < d.getSelectionDistance()) {
+            destinationSegment = d.getClosestLineSegment(p).withColor(LineColor.ORANGE_4);
+        } else destinationSegment = null;
+    }
+    private AngleSystemStep release_select_length (Point p) {
+        if(destinationSegment == null) return AngleSystemStep.SELECT_LENGTH;
+        LineSegment add_sen = determineLineSegmentToAdd(p);
+
+        if (add_sen != null && Epsilon.high.gt0(add_sen.determineLength())) {
+            d.addLineSegment(add_sen);
+            d.record();
+        }
+        reset();
+        return AngleSystemStep.CLICK_DRAG_POINT;
     }
 
     private LineSegment determineLineSegmentForPreview(Point p) {
         LineSegment ls = determineLineSegmentToAdd(p);
         if (ls == null) {
-            Point newEndPoint = OritaCalc.findProjection(direction, p);
-            return new LineSegment(newEndPoint, pEnd, d.getLineColor());
+            Point newEndPoint = OritaCalc.findProjection(selectedSegment, p);
+            return new LineSegment(newEndPoint, releasePoint, d.getLineColor());
         }
         return ls;
     }
@@ -124,8 +135,8 @@ public class MouseHandlerAngleSystem extends BaseMouseHandlerInputRestricted {
         LineSegment closestLineSegment = d.getClosestLineSegment(p);
         if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.getSelectionDistance()) {
             LineSegment s = closestLineSegment.withColor(LineColor.GREEN_6);
-            Point startingPoint = OritaCalc.findIntersection(s, direction);
-            return new LineSegment(startingPoint, pEnd, d.getLineColor());
+            Point startingPoint = OritaCalc.findIntersection(s, selectedSegment);
+            return new LineSegment(startingPoint, releasePoint, d.getLineColor());
         }
         return null;
     }
@@ -136,8 +147,7 @@ public class MouseHandlerAngleSystem extends BaseMouseHandlerInputRestricted {
         if (closestLineSegmentO.isPresent()) {
             LineSegment closestLineSegment = closestLineSegmentO.get();
             if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.getSelectionDistance()) {
-                LineSegment s = closestLineSegment.withColor(LineColor.BLUE_2);
-                return s;
+                return closestLineSegment.withColor(d.getLineColor());
             }
         }
         return null;
@@ -183,38 +193,5 @@ public class MouseHandlerAngleSystem extends BaseMouseHandlerInputRestricted {
             }
         }
         return candidates;
-    }
-
-    //マウス操作(ドラッグしたとき)を行う関数
-    public void mouseDragged(Point p0) {
-    }
-
-    //マウス操作(ボタンを離したとき)を行う関数
-    public void mouseReleased(Point p0) {
-    }
-
-    @Override
-    public void drawPreview(Graphics2D g2, Camera camera, DrawingSettings settings) {
-        super.drawPreview(g2, camera, settings);
-        for (LineSegment candidate : candidates) {
-            DrawingUtil.drawLineStep(g2, candidate, camera, settings.getLineWidth(), d.getGridInputAssist());
-        }
-        if (direction != null && currentStep == Step.SELECT_DIRECTION) {
-            DrawingUtil.drawLineStep(g2, direction, camera, settings.getLineWidth(), d.getGridInputAssist());
-        }
-        DrawingUtil.drawStepVertex(g2, pStart, LineColor.RED_1, camera, d.getGridInputAssist());
-        DrawingUtil.drawStepVertex(g2, pEnd, LineColor.BLUE_2, camera, d.getGridInputAssist());
-        DrawingUtil.drawCpLine(g2, previewLine, camera, settings.getLineStyle(),
-                settings.getLineWidth(), d.getPointSize(), settings.getWidth(), settings.getHeight(), settings.useRoundedEnds());
-    }
-
-    @Override
-    public void reset() {
-        candidates.clear();
-        currentStep = Step.SELECT_FIRST_POINT;
-        pStart = null;
-        pEnd = null;
-        direction = null;
-        previewLine = null;
     }
 }

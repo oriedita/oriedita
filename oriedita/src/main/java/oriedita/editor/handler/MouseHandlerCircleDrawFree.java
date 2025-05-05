@@ -25,7 +25,7 @@ public class MouseHandlerCircleDrawFree extends StepMouseHandler<CircleDrawFreeS
     @Inject
     public MouseHandlerCircleDrawFree() {
         super(CircleDrawFreeStep.CLICK_DRAG_POINT);
-        steps.addNode(StepNode.createNode(CircleDrawFreeStep.CLICK_DRAG_POINT, this::move_click_drag_point, () -> {}, this::drag_click_drag_point, this::release_click_drag_point));
+        steps.addNode(StepNode.createNode(CircleDrawFreeStep.CLICK_DRAG_POINT, this::move_click_drag_point, (p) -> {}, this::drag_click_drag_point, this::release_click_drag_point));
     }
 
     @Override
@@ -47,13 +47,13 @@ public class MouseHandlerCircleDrawFree extends StepMouseHandler<CircleDrawFreeS
     }
 
     // Click drag point
-    private void move_click_drag_point() {
+    private void move_click_drag_point(Point p) {
         anchorPoint = p;
         if (anchorPoint.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
             anchorPoint = d.getClosestPoint(p);
         }
     }
-    private void drag_click_drag_point() {
+    private void drag_click_drag_point(Point p) {
         releasePoint = p;
         if(releasePoint.distance(d.getClosestPoint(p)) < d.getSelectionDistance()){
             releasePoint = d.getClosestPoint(p);
@@ -68,8 +68,8 @@ public class MouseHandlerCircleDrawFree extends StepMouseHandler<CircleDrawFreeS
         previewCircle = new Circle(anchorPoint, OritaCalc.distance(anchorPoint, releasePoint), LineColor.CYAN_3);
         previewRadiusSegment = new LineSegment(anchorPoint, releasePoint, LineColor.CYAN_3);
     }
-    private CircleDrawFreeStep release_click_drag_point() {
-        if (anchorPoint.equals(releasePoint)) {
+    private CircleDrawFreeStep release_click_drag_point(Point p) {
+        if (releasePoint == null || anchorPoint.equals(releasePoint)) {
             reset();
             return CircleDrawFreeStep.CLICK_DRAG_POINT;
         }

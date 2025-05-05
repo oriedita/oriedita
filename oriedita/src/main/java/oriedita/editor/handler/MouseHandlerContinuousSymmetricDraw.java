@@ -61,22 +61,22 @@ public class MouseHandlerContinuousSymmetricDraw extends StepMouseHandler<Contin
     }
 
     // Select point 1
-    private void move_drag_select_p1() {
+    private void move_drag_select_p1(Point p) {
         p1 = p;
         if (p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
             p1 = d.getClosestPoint(p);
         }
     }
-    private ContinuousSymmetricDrawStep release_select_p1() { return ContinuousSymmetricDrawStep.SELECT_P2; }
+    private ContinuousSymmetricDrawStep release_select_p1(Point p) { return ContinuousSymmetricDrawStep.SELECT_P2; }
 
     // Select point 2
-    private void move_drag_select_p2() {
+    private void move_drag_select_p2(Point p) {
         p2 = p;
         if (p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
             p2 = d.getClosestPoint(p);
         }
     }
-    private ContinuousSymmetricDrawStep release_select_p2() {
+    private ContinuousSymmetricDrawStep release_select_p2(Point p) {
         continuous_folding_new(p1, p2, null);
 
         LineColor lineType = d.getLineColor();

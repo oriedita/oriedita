@@ -23,7 +23,7 @@ public class MouseHandlerDoubleSymmetricDraw extends StepMouseHandler<DoubleSymm
     @Inject
     public MouseHandlerDoubleSymmetricDraw() {
         super(DoubleSymmetricDrawStep.CLICK_DRAG_POINT);
-        steps.addNode(StepNode.createNode(DoubleSymmetricDrawStep.CLICK_DRAG_POINT, this::move_click_drag_point, () -> {}, this::drag_click_drag_point, this::release_click_drag_point));
+        steps.addNode(StepNode.createNode(DoubleSymmetricDrawStep.CLICK_DRAG_POINT, this::move_click_drag_point, (p) -> {}, this::drag_click_drag_point, this::release_click_drag_point));
     }
 
     @Override
@@ -43,19 +43,19 @@ public class MouseHandlerDoubleSymmetricDraw extends StepMouseHandler<DoubleSymm
     }
 
     // Click drag point
-    private void move_click_drag_point() {
+    private void move_click_drag_point(Point p) {
         if (p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
             anchorPoint = d.getClosestPoint(p);
         } else anchorPoint = null;
     }
-    private void drag_click_drag_point() {
+    private void drag_click_drag_point(Point p) {
         releasePoint = p;
         if(p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
             releasePoint = d.getClosestPoint(p);
         }
         dragSegment = new LineSegment(anchorPoint, releasePoint).withColor(d.getLineColor());
     }
-    private DoubleSymmetricDrawStep release_click_drag_point() {
+    private DoubleSymmetricDrawStep release_click_drag_point(Point p) {
         if(p.distance(d.getClosestPoint(p)) > d.getSelectionDistance()) return DoubleSymmetricDrawStep.CLICK_DRAG_POINT;
         dragSegment = new LineSegment(anchorPoint, releasePoint);
 

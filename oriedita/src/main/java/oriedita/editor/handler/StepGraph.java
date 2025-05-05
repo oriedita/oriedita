@@ -1,20 +1,14 @@
 package oriedita.editor.handler;
 
+import origami.crease_pattern.element.Point;
+
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Supplier;
 
 public class StepGraph<T extends Enum<T>> {
     private final Map<T, StepNode<T>> nodes;
     private StepNode<T> currentNode;
     private T currentStep;
-
-    public StepGraph(T step, Runnable moveAction, Runnable pressAction, Runnable dragAction, Supplier<T> releaseAction) {
-        this.currentNode = new StepNode<>(step, moveAction, pressAction, dragAction, releaseAction);
-        this.currentStep = step;
-        this.nodes = new HashMap<>();
-        nodes.put(currentStep, currentNode);
-    }
 
     public StepGraph(T step) {
         this.nodes = new HashMap<>();
@@ -32,24 +26,24 @@ public class StepGraph<T extends Enum<T>> {
     }
     public T getCurrentStep() { return currentStep; }
 
-    public void runCurrentMoveAction() {
+    public void runCurrentMoveAction(Point mousePos) {
         if (currentNode == null) return;
-        currentNode.runHighlightSelection();
+        currentNode.runHighlightSelection(mousePos);
     }
 
-    public void runCurrentPressAction() {
+    public void runCurrentPressAction(Point mousePos) {
         if (currentNode == null) return;
-        currentNode.runPressAction();
+        currentNode.runPressAction(mousePos);
     }
 
-    public void runCurrentDragAction() {
+    public void runCurrentDragAction(Point mousePos) {
         if (currentNode == null) return;
-        currentNode.runDragAction();
+        currentNode.runDragAction(mousePos);
     }
 
-    public void runCurrentReleaseAction(){
+    public void runCurrentReleaseAction(Point mousePos){
         if (currentNode == null) return;
-        currentStep = currentNode.runReleaseAction();
+        currentStep = currentNode.runReleaseAction(mousePos);
         if(currentStep == null) throw new RuntimeException ("Returned step value is null. Returning...");
         currentNode = nodes.get(currentStep);
     }
