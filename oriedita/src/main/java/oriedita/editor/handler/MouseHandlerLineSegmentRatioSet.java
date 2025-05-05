@@ -4,92 +4,81 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.databinding.InternalDivisionRatioModel;
+import oriedita.editor.drawing.tools.Camera;
+import oriedita.editor.drawing.tools.DrawingUtil;
 import origami.Epsilon;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 
+import java.awt.Graphics2D;
+
+enum LineSegmentRatioSetStep { CLICK_DRAG_POINT }
+
 @ApplicationScoped
 @Handles(MouseMode.LINE_SEGMENT_RATIO_SET_28)
-public class MouseHandlerLineSegmentRatioSet extends BaseMouseHandlerInputRestricted {
+public class MouseHandlerLineSegmentRatioSet extends StepMouseHandler<LineSegmentRatioSetStep> {
+    private Point anchorPoint, releasePoint;
+    private LineSegment dragSegment;
     private final InternalDivisionRatioModel internalDivisionRatioModel;
 
     @Inject
     public MouseHandlerLineSegmentRatioSet(InternalDivisionRatioModel internalDivisionRatioModel) {
+        super(LineSegmentRatioSetStep.CLICK_DRAG_POINT);
+        steps.addNode(StepNode.createNode(LineSegmentRatioSetStep.CLICK_DRAG_POINT, this::move_click_drag_point, () -> {}, this::drag_click_drag_point, this::release_click_drag_point));
         this.internalDivisionRatioModel = internalDivisionRatioModel;
     }
 
-    //マウス操作(mouseMode==28線分内分入力 でボタンを押したとき)時の作業----------------------------------------------------
-    public void mousePressed(Point p0) {
-        d.getLineStep().clear();
-
-        Point p = d.getCamera().TV2object(p0);
-
-        Point closestPoint = d.getClosestPoint(p);
-        if (p.distance(closestPoint) < d.getSelectionDistance()) {
-            LineSegment s = new LineSegment(p, closestPoint, d.getLineColor());
-            s.setActive(LineSegment.ActiveState.ACTIVE_B_2);
-            d.lineStepAdd(s);
-            return;
-        }
-
-        LineSegment s = new LineSegment(p, p, d.getLineColor());
-        s.setActive(LineSegment.ActiveState.ACTIVE_B_2);
-
-        d.lineStepAdd(s);
+    @Override
+    public void drawPreview(Graphics2D g2, Camera camera, DrawingSettings settings) {
+        super.drawPreview(g2, camera, settings);
+        DrawingUtil.drawStepVertex(g2, anchorPoint, d.getLineColor(), camera, d.getGridInputAssist());
+        DrawingUtil.drawStepVertex(g2, releasePoint, d.getLineColor(), camera, d.getGridInputAssist());
+        DrawingUtil.drawLineStep(g2, dragSegment, camera, settings.getLineWidth(), d.getGridInputAssist());
     }
 
-    //マウス操作(mouseMode==28線分入力 でドラッグしたとき)を行う関数----------------------------------------------------
-    public void mouseDragged(Point p0) {
-        Point p = d.getCamera().TV2object(p0);
-        d.getLineStep().set(0, d.getLineStep().get(0).withA(p));
-
-        if (d.getGridInputAssist()) {
-            d.getLineCandidate().clear();
-            Point closestPoint = d.getClosestPoint(p);
-            if (p.distance(closestPoint) < d.getSelectionDistance()) {
-                d.getLineCandidate().add(new LineSegment(closestPoint, closestPoint, d.getLineColor()));
-            } else {
-                d.getLineCandidate().add(new LineSegment(p, p, d.getLineColor()));
-            }
-            d.getLineStep().set(0, d.getLineStep().get(0).withA(d.getLineCandidate().get(0).getA()));
-        }
+    @Override
+    public void reset() {
+        anchorPoint = null;
+        releasePoint = null;
+        dragSegment = null;
     }
 
-    //マウス操作(mouseMode==28線分入力　でボタンを離したとき)を行う関数----------------------------------------------------
-    public void mouseReleased(Point p0) {
-        Point p = d.getCamera().TV2object(p0);
-
-        LineSegment l0 = d.getLineStep().get(0);
-        l0 = l0.withA(p);
-        Point closestPoint = d.getClosestPoint(p);
-
-        if (p.distance(closestPoint) <= d.getSelectionDistance()) {
-            l0 = l0.withA(closestPoint);
+    // Click drag point
+    private void move_click_drag_point() {
+        anchorPoint = p;
+        if(p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
+            anchorPoint = d.getClosestPoint(p);
         }
-        d.getLineStep().set(0, l0);
-        if (Epsilon.high.gt0(l0.determineLength())) {
-            double internalDivisionRatio_s = internalDivisionRatioModel.getInternalDivisionRatioS();
-            double internalDivisionRatio_t = internalDivisionRatioModel.getInternalDivisionRatioT();
-            if ((internalDivisionRatio_s == 0.0) && (internalDivisionRatio_t == 0.0)) {
-            }
-            if ((internalDivisionRatio_s == 0.0) && (internalDivisionRatio_t != 0.0)) {
-                d.addLineSegment(l0);
-            }
-            if ((internalDivisionRatio_s != 0.0) && (internalDivisionRatio_t == 0.0)) {
-                d.addLineSegment(l0);
-            }
-            if ((internalDivisionRatio_s != 0.0) && (internalDivisionRatio_t != 0.0)) {
-                LineSegment s_ad = new LineSegment().withColor(d.getLineColor());
-                double nx = (internalDivisionRatio_t * l0.determineBX() + internalDivisionRatio_s * l0.determineAX())
-                        / (internalDivisionRatio_s + internalDivisionRatio_t);
-                double ny = (internalDivisionRatio_t * l0.determineBY() + internalDivisionRatio_s * l0.determineAY())
-                        / (internalDivisionRatio_s + internalDivisionRatio_t);
-                d.addLineSegment(s_ad.withCoordinates(l0.determineAX(), l0.determineAY(), nx, ny));
-                d.addLineSegment(s_ad.withCoordinates(l0.determineBX(), l0.determineBY(), nx, ny));
-            }
-            d.record();
+    }
+    private void drag_click_drag_point() {
+        releasePoint = p;
+        if(p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
+            releasePoint = d.getClosestPoint(p);
         }
-
-        d.getLineStep().clear();
+        dragSegment = new LineSegment(anchorPoint, releasePoint).withColor(d.getLineColor());
+    }
+    private LineSegmentRatioSetStep release_click_drag_point() {
+        if(!Epsilon.high.gt0(dragSegment.determineLength())) return LineSegmentRatioSetStep.CLICK_DRAG_POINT;
+        dragSegment = dragSegment.withAB(dragSegment.getB(), dragSegment.getA());
+        double internalDivisionRatio_s = internalDivisionRatioModel.getInternalDivisionRatioS();
+        double internalDivisionRatio_t = internalDivisionRatioModel.getInternalDivisionRatioT();
+        if ((internalDivisionRatio_s == 0.0) && (internalDivisionRatio_t != 0.0)) {
+            d.addLineSegment(dragSegment);
+        }
+        if ((internalDivisionRatio_s != 0.0) && (internalDivisionRatio_t == 0.0)) {
+            d.addLineSegment(dragSegment);
+        }
+        if ((internalDivisionRatio_s != 0.0) && (internalDivisionRatio_t != 0.0)) {
+            LineSegment s_ad = new LineSegment().withColor(d.getLineColor());
+            double nx = (internalDivisionRatio_t * dragSegment.determineBX() + internalDivisionRatio_s * dragSegment.determineAX())
+                    / (internalDivisionRatio_s + internalDivisionRatio_t);
+            double ny = (internalDivisionRatio_t * dragSegment.determineBY() + internalDivisionRatio_s * dragSegment.determineAY())
+                    / (internalDivisionRatio_s + internalDivisionRatio_t);
+            d.addLineSegment(s_ad.withCoordinates(dragSegment.determineAX(), dragSegment.determineAY(), nx, ny));
+            d.addLineSegment(s_ad.withCoordinates(dragSegment.determineBX(), dragSegment.determineBY(), nx, ny));
+        }
+        d.record();
+        reset();
+        return LineSegmentRatioSetStep.CLICK_DRAG_POINT;
     }
 }

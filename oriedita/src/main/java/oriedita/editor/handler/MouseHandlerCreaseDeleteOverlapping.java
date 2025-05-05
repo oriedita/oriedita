@@ -11,35 +11,19 @@ import origami.crease_pattern.element.Point;
 
 import java.awt.Graphics2D;
 
+enum CreaseDeleteOverlapStep { CLICK_DRAG_POINT }
+
 @ApplicationScoped
 @Handles(MouseMode.CREASE_DELETE_OVERLAPPING_64)
-public class MouseHandlerCreaseDeleteOverlapping extends BaseMouseHandlerInputRestricted {
-
-    private Point p = new Point();
-    private StepGraph<Step> steps;
-
+public class MouseHandlerCreaseDeleteOverlapping extends StepMouseHandler<CreaseDeleteOverlapStep> {
     private Point anchorPoint, releasePoint;
     private LineSegment dragSegment;
 
-    private enum Step { CLICK_DRAG_POINT }
-
     @Inject
-    public MouseHandlerCreaseDeleteOverlapping() { initializeSteps(); }
-
-    @Override
-    public void mouseMoved(Point p0) {
-        p = d.getCamera().TV2object(p0);
-        steps.runCurrentMoveAction();
+    public MouseHandlerCreaseDeleteOverlapping() {
+        super(CreaseDeleteOverlapStep.CLICK_DRAG_POINT);
+        steps.addNode(StepNode.createNode(CreaseDeleteOverlapStep.CLICK_DRAG_POINT, this::move_click_drag_point, () -> {}, this::drag_click_drag_point, this::release_click_drag_point));
     }
-
-    public void mousePressed(Point p0) {}
-
-    public void mouseDragged(Point p0) {
-        p = d.getCamera().TV2object(p0);
-        steps.runCurrentDragAction();
-    }
-
-    public void mouseReleased(Point p0) { steps.runCurrentReleaseAction(); }
 
     @Override
     public void drawPreview(Graphics2D g2, Camera camera, DrawingSettings settings) {
@@ -47,7 +31,6 @@ public class MouseHandlerCreaseDeleteOverlapping extends BaseMouseHandlerInputRe
         DrawingUtil.drawStepVertex(g2, anchorPoint, d.getLineColor(), camera, d.getGridInputAssist());
         DrawingUtil.drawStepVertex(g2, releasePoint, d.getLineColor(), camera, d.getGridInputAssist());
         DrawingUtil.drawLineStep(g2, dragSegment, camera, settings.getLineWidth(), d.getGridInputAssist());
-        DrawingUtil.drawText(g2, steps.getCurrentStep().name(), p.withX(p.getX() + 20).withY(p.getY() + 20), camera);
     }
 
     @Override
@@ -55,11 +38,6 @@ public class MouseHandlerCreaseDeleteOverlapping extends BaseMouseHandlerInputRe
         anchorPoint = null;
         releasePoint = null;
         dragSegment = null;
-        initializeSteps();
-    }
-
-    private void initializeSteps() {
-        steps = new StepGraph<>(Step.CLICK_DRAG_POINT, this::move_click_drag_point, () -> {}, this::drag_click_drag_point, this::release_click_drag_point);
     }
 
     // Click drag point
@@ -76,17 +54,17 @@ public class MouseHandlerCreaseDeleteOverlapping extends BaseMouseHandlerInputRe
         }
         dragSegment = new LineSegment(anchorPoint, releasePoint).withColor(d.getLineColor());
     }
-    private Step release_click_drag_point() {
-        if (anchorPoint == null) return Step.CLICK_DRAG_POINT;
+    private CreaseDeleteOverlapStep release_click_drag_point() {
+        if (anchorPoint == null) return CreaseDeleteOverlapStep.CLICK_DRAG_POINT;
         if (releasePoint.distance(d.getClosestPoint(releasePoint)) > d.getSelectionDistance()) {
             reset();
-            return Step.CLICK_DRAG_POINT;
+            return CreaseDeleteOverlapStep.CLICK_DRAG_POINT;
         }
         if (Epsilon.high.gt0(dragSegment.determineLength())) {
             d.getFoldLineSet().deleteInsideLine(dragSegment, "l");//lは小文字のエル
             d.record();
         }
         reset();
-        return Step.CLICK_DRAG_POINT;
+        return CreaseDeleteOverlapStep.CLICK_DRAG_POINT;
     }
 }
