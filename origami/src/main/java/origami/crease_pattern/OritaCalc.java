@@ -6,7 +6,7 @@ import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.StraightLine;
 
-import java.awt.geom.GeneralPath;
+import java.awt.geom.Path2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
@@ -793,13 +793,54 @@ public class OritaCalc {
     }
 
     /**
-     * Check if a line segment is fully contained inside a GeneralPath.
-     * @param path a GeneralPath
-     * @param lineSegment a target line segment
+     * Check if a Path2D intersects a Line2D
+     * @param path a Path2D
+     * @param lineSegment a target Line2D
+     * @return if there's an intersection
+     */
+    public static boolean isLineSegmentIntersectingPath(Path2D path, Line2D lineSegment) {
+        boolean isFirst = true;
+        PathIterator pathIterator = path.getPathIterator(null);
+        double[] coords = new double[2];
+        Point2D.Double firstPoint = new Point2D.Double();
+        Point2D.Double currentPoint = new Point2D.Double();
+        Point2D.Double lastPoint;
+
+        while (!pathIterator.isDone()) {
+            int segmentType = pathIterator.currentSegment(coords);
+            switch (segmentType) {
+                case PathIterator.SEG_MOVETO:
+                    currentPoint.setLocation(coords[0], coords[1]);
+                    if(isFirst) {
+                        firstPoint.setLocation(currentPoint);
+                        isFirst = false;
+                    }
+                    break;
+                case PathIterator.SEG_LINETO:
+                    lastPoint = (Point2D.Double) currentPoint.clone();
+                    currentPoint.setLocation(coords[0], coords[1]);
+                    if (lineSegment.intersectsLine(new Line2D.Double(lastPoint, currentPoint))) return true;
+                    break;
+                case PathIterator.SEG_CLOSE:
+                    currentPoint.setLocation(coords[0], coords[1]);
+                    if (lineSegment.intersectsLine(new Line2D.Double(currentPoint, firstPoint))) return true;
+                    break;
+            }
+            pathIterator.next();
+        }
+
+        return false;
+    }
+
+    /**
+     * Check if a Path2D fully contains a Line2D
+     * @param path a Path2D
+     * @param lineSegment a target Line2D
      * @return if the line is fully contained
      */
-    public static boolean isSegmentContainedInGeneralPath(GeneralPath path, Line2D lineSegment) {
-        if (!path.contains(lineSegment.getP1()) || !path.contains(lineSegment.getP2())) return false;
+    public static boolean isLineSegmentContainedInPath(Path2D path, Line2D lineSegment) {
+        if
+        (!path.contains(lineSegment.getP1()) || !path.contains(lineSegment.getP2())) return false;
 
         PathIterator pathIterator = path.getPathIterator(null);
         double[] coords = new double[2];

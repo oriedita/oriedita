@@ -47,7 +47,7 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.geom.GeneralPath;
+import java.awt.geom.Path2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -82,7 +82,7 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     /**
      * Temporary GeneralPath when drawing.
      */
-    private final GeneralPath linePath = new GeneralPath();
+    private final Path2D linePath = new Path2D.Double();
     /**
      * Temporary circles when drawing.
      */
@@ -1096,7 +1096,7 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     }
 
     @Override
-    public GeneralPath getLinePath() {
+    public Path2D getLinePath() {
         return linePath;
     }
 
