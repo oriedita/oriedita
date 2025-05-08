@@ -105,7 +105,8 @@ public class MouseHandlerAngleSystem extends StepMouseHandler<AngleSystemStep> {
 
     // Select length
     private void move_drag_select_length(Point p) {
-        selectedSegment = determineLineSegmentForPreview(p);
+        selectedSegment = new LineSegment(releasePoint, OritaCalc.findProjection(selectedSegment, p), d.getLineColor());
+
         if (OritaCalc.determineLineSegmentDistance(p, d.getClosestLineSegment(p)) < d.getSelectionDistance()) {
             destinationSegment = d.getClosestLineSegment(p).withColor(LineColor.ORANGE_4);
         } else destinationSegment = null;
@@ -120,15 +121,6 @@ public class MouseHandlerAngleSystem extends StepMouseHandler<AngleSystemStep> {
         }
         reset();
         return AngleSystemStep.CLICK_DRAG_POINT;
-    }
-
-    private LineSegment determineLineSegmentForPreview(Point p) {
-        LineSegment ls = determineLineSegmentToAdd(p);
-        if (ls == null) {
-            Point newEndPoint = OritaCalc.findProjection(selectedSegment, p);
-            return new LineSegment(newEndPoint, releasePoint, d.getLineColor());
-        }
-        return ls;
     }
 
     private LineSegment determineLineSegmentToAdd(Point p) {
