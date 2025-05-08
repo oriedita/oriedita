@@ -40,12 +40,12 @@ public class MouseHandlerSquareBisector extends StepMouseHandler<SquareBisectorS
     @Inject
     public MouseHandlerSquareBisector() {
         super(SquareBisectorStep.SELECT_2L_OR_3P);
-        steps.addNode(StepNode.createNode_MD_R(SquareBisectorStep.SELECT_2L_OR_3P, this::move_select_2L_or_3P, this::release_select_2L_or_3P));
-        steps.addNode(StepNode.createNode_MD_R(SquareBisectorStep.SELECT_3P, this::move_select_3P, this::release_select_3P));
-        steps.addNode(StepNode.createNode_MD_R(SquareBisectorStep.SELECT_DESTINATION_3P, this::highlight_destination_3P, this::release_destination_3P));
-        steps.addNode(StepNode.createNode_MD_R(SquareBisectorStep.SELECT_2L, this::highlight_select_2L, this::release_select_2L));
-        steps.addNode(StepNode.createNode_MD_R(SquareBisectorStep.SELECT_DESTINATION_2L_NP, this::highlight_select_destination_2L_NP, this::release_select_destination_2L_NP));
-        steps.addNode(StepNode.createNode_MD_R(SquareBisectorStep.SELECT_DESTINATION_2L_P, this::highlight_select_destination_2L_P, this::release_select_destination_2L_P));
+        steps.addNode(StepNode.createNode_MD_R(SquareBisectorStep.SELECT_2L_OR_3P, this::move_drag_select_2L_or_3P, this::release_select_2L_or_3P));
+        steps.addNode(StepNode.createNode_MD_R(SquareBisectorStep.SELECT_3P, this::move_drag_select_3P, this::release_select_3P));
+        steps.addNode(StepNode.createNode_MD_R(SquareBisectorStep.SELECT_DESTINATION_3P, this::move_drag_destination_3P, this::release_destination_3P));
+        steps.addNode(StepNode.createNode_MD_R(SquareBisectorStep.SELECT_2L, this::move_drag_select_2L, this::release_select_2L));
+        steps.addNode(StepNode.createNode_MD_R(SquareBisectorStep.SELECT_DESTINATION_2L_NP, this::move_drag_select_destination_2L_NP, this::release_select_destination_2L_NP));
+        steps.addNode(StepNode.createNode_MD_R(SquareBisectorStep.SELECT_DESTINATION_2L_P, this::move_drag_select_destination_2L_P, this::release_select_destination_2L_P));
     }
 
     @Override
@@ -78,7 +78,7 @@ public class MouseHandlerSquareBisector extends StepMouseHandler<SquareBisectorS
     }
 
     // Select 2 lines or 3 points
-    private void move_select_2L_or_3P(Point p) {
+    private void move_drag_select_2L_or_3P(Point p) {
         double pointDistance = p.distance(d.getClosestPoint(p));
         double segmentDistance = OritaCalc.determineLineSegmentDistance(p, d.getClosestLineSegment(p));
         boolean isPointInRadius = pointDistance < d.getSelectionDistance();
@@ -105,7 +105,7 @@ public class MouseHandlerSquareBisector extends StepMouseHandler<SquareBisectorS
     }
 
     // Select 3 points
-    private void move_select_3P(Point p) {
+    private void move_drag_select_3P(Point p) {
         if (p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
             pointsList_3P.set(counter_3P, d.getClosestPoint(p));
         } else pointsList_3P.set(counter_3P, null);
@@ -118,7 +118,7 @@ public class MouseHandlerSquareBisector extends StepMouseHandler<SquareBisectorS
     }
 
     // Select destination 3 point
-    private void highlight_destination_3P(Point p) {
+    private void move_drag_destination_3P(Point p) {
         if (OritaCalc.determineLineSegmentDistance(p, d.getClosestLineSegment(p)) < d.getSelectionDistance()) {
             destinationSegment_3P = d.getClosestLineSegment(p).withColor(LineColor.GREEN_6);
         } else destinationSegment_3P = null;
@@ -141,7 +141,7 @@ public class MouseHandlerSquareBisector extends StepMouseHandler<SquareBisectorS
     }
 
     // Select 2 lines
-    private void highlight_select_2L(Point p) {
+    private void move_drag_select_2L(Point p) {
         if (OritaCalc.determineLineSegmentDistance(p, d.getClosestLineSegment(p)) < d.getSelectionDistance()) {
             segmentsList_2L.set(counter_2L, d.getClosestLineSegment(p).withColor(LineColor.GREEN_6));
         } else segmentsList_2L.set(counter_2L, null);
@@ -154,7 +154,7 @@ public class MouseHandlerSquareBisector extends StepMouseHandler<SquareBisectorS
     }
 
     // Select destination 2 lines not parallel
-    private void highlight_select_destination_2L_NP(Point p) {
+    private void move_drag_select_destination_2L_NP(Point p) {
         if (OritaCalc.determineLineSegmentDistance(p, d.getClosestLineSegment(p)) < d.getSelectionDistance()) {
             destinationSegment_2L_NP = d.getClosestLineSegment(p).withColor(LineColor.GREEN_6);
         } else destinationSegment_2L_NP = null;
@@ -185,17 +185,22 @@ public class MouseHandlerSquareBisector extends StepMouseHandler<SquareBisectorS
     }
 
     // Select destination 2 lines parallel
-    private void highlight_select_destination_2L_P(Point p) {
-        if (OritaCalc.determineLineSegmentDistance(p, d.getClosestLineSegment(p)) < d.getSelectionDistance()) {
+    private void move_drag_select_destination_2L_P(Point p) {
+        if ( OritaCalc.determineLineSegmentDistance(p, d.getClosestLineSegment(p)) < d.getSelectionDistance()
+                && OritaCalc.isLineSegmentParallel(d.getClosestLineSegment(p), segmentsList_2L.get(1)) == OritaCalc.ParallelJudgement.NOT_PARALLEL) {
             destinationSegmentsList_2L_P.set(counter_2L_P, d.getClosestLineSegment(p).withColor(LineColor.ORANGE_4));
         } else destinationSegmentsList_2L_P.set(counter_2L_P, null);
+
+        if (OritaCalc.determineLineSegmentDistance(p, indicator) < d.getSelectionDistance()) {
+            destinationSegmentsList_2L_P.set(counter_2L_P, indicator.withColor(LineColor.ORANGE_4));
+        }
     }
     private SquareBisectorStep release_select_destination_2L_P(Point p) {
         if (OritaCalc.determineLineSegmentDistance(p, indicator) < d.getSelectionDistance()) {
             d.addLineSegment(indicator.withColor(d.getLineColor()));
             d.record();
             reset();
-            return SquareBisectorStep.SELECT_DESTINATION_2L_P;
+            return SquareBisectorStep.SELECT_2L_OR_3P;
         }
 
         if(destinationSegmentsList_2L_P.get(counter_2L_P) == null) return SquareBisectorStep.SELECT_DESTINATION_2L_P;
