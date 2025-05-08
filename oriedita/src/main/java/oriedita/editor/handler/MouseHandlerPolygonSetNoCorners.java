@@ -3,81 +3,74 @@ package oriedita.editor.handler;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
-import origami.Epsilon;
+import oriedita.editor.drawing.tools.Camera;
+import oriedita.editor.drawing.tools.DrawingUtil;
 import origami.crease_pattern.OritaCalc;
-import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 
+import java.awt.Graphics2D;
+
+enum PolygonSetNoCorners {
+    SELECT_POINT_1,
+    SELECT_POINT_2
+}
+
 @ApplicationScoped
 @Handles(MouseMode.POLYGON_SET_NO_CORNERS_29)
-public class MouseHandlerPolygonSetNoCorners extends BaseMouseHandler {
+public class MouseHandlerPolygonSetNoCorners extends StepMouseHandler<PolygonSetNoCorners> {
+    private Point p1, p2;
+
     @Inject
     public MouseHandlerPolygonSetNoCorners() {
+        super(PolygonSetNoCorners.SELECT_POINT_1);
+        steps.addNode(StepNode.createNode_MD_R(PolygonSetNoCorners.SELECT_POINT_1, this::move_drag_select_point_1, this::release_select_point_1));
+        steps.addNode(StepNode.createNode_MD_R(PolygonSetNoCorners.SELECT_POINT_2, this::move_drag_select_point_2, this::release_select_point_2));
     }
 
-    //マウス操作(マウスを動かしたとき)を行う関数
-    public void mouseMoved(Point p0) {
-        if (d.getGridInputAssist()) {
-            d.getLineCandidate().clear();
-            Point p = d.getCamera().TV2object(p0);
-            Point closestPoint = d.getClosestPoint(p);
-            if (p.distance(closestPoint) < d.getSelectionDistance()) {
-                LineSegment candidate = new LineSegment(closestPoint, closestPoint,
-                        d.getLineColor(), LineSegment.ActiveState.ACTIVE_BOTH_3);
-                d.getLineCandidate().add(candidate);
-            }
-        }
+    @Override
+    public void drawPreview(Graphics2D g2, Camera camera, DrawingSettings settings) {
+        super.drawPreview(g2, camera, settings);
+        DrawingUtil.drawStepVertex(g2, p1, d.getLineColor(), camera, d.getGridInputAssist());
+        DrawingUtil.drawStepVertex(g2, p2, d.getLineColor(), camera, d.getGridInputAssist());
     }
 
-    //マウス操作(mouseMode==29正多角形入力　でボタンを押したとき)時の作業----------------------------------------------------
-    public void mousePressed(Point p0) {
-
-        Point p = d.getCamera().TV2object(p0);
-
-        Point closestPoint = d.getClosestPoint(p);
-
-        if (d.getLineStep().size() == 0) {    //第1段階として、点を選択
-            if (p.distance(closestPoint) < d.getSelectionDistance()) {
-                d.lineStepAdd(new LineSegment(closestPoint, closestPoint, LineColor.MAGENTA_5));
-                d.getLineStep().get(0).setActive(LineSegment.ActiveState.ACTIVE_BOTH_3);
-            }
-        } else if (d.getLineStep().size() == 1) {    //第2段階として、点を選択
-            if (p.distance(closestPoint) >= d.getSelectionDistance()) {
-                d.getLineStep().clear();
-                return;
-            } else if (p.distance(closestPoint) < d.getSelectionDistance()) {
-
-                d.lineStepAdd(new LineSegment(closestPoint, closestPoint, LineColor.fromNumber(d.getLineStep().size() + 1)));
-                d.getLineStep().set(0, d.getLineStep().get(0).withB(d.getLineStep().get(1).getB()));
-            }
-            if (Epsilon.high.le0(d.getLineStep().get(0).determineLength())) {
-                d.getLineStep().clear();
-            }
-        }
+    @Override
+    public void reset() {
+        p1 = null;
+        p2 = null;
+        steps.setCurrentStep(PolygonSetNoCorners.SELECT_POINT_1);
     }
 
-    //マウス操作(mouseMode==29正多角形入力　でドラッグしたとき)を行う関数----------------------------------------------------
-    public void mouseDragged(Point p0) {
+    // Select point 1
+    private void move_drag_select_point_1(Point p) {
+        if (p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
+            p1 = d.getClosestPoint(p);
+        } else p1 = null;
+    }
+    private PolygonSetNoCorners release_select_point_1(Point p) {
+        if (p1 == null) return PolygonSetNoCorners.SELECT_POINT_1;
+        return PolygonSetNoCorners.SELECT_POINT_2;
     }
 
-    //マウス操作(mouseMode==29正多角形入力　でボタンを離したとき)を行う関数----------------------------------------------------
-    public void mouseReleased(Point p0) {
-        if (d.getLineStep().size() == 2) {
-
-
-            LineSegment s_tane = d.getLineStep().get(0).withColor(d.getLineColor());
+    // Select point 2
+    private void move_drag_select_point_2(Point p) {
+        if (p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()
+                && !p1.equals(d.getClosestPoint(p))) {
+            p2 = d.getClosestPoint(p);
+        } else p2 = null;
+    }
+    private PolygonSetNoCorners release_select_point_2(Point p) {
+        if (p2 == null) return PolygonSetNoCorners.SELECT_POINT_2;
+        LineSegment s_tane = new LineSegment(p1, p2, d.getLineColor());
+        d.addLineSegment(s_tane);
+        for (int i = 2; i <= d.getNumPolygonCorners(); i++) {
+            LineSegment s_deki = OritaCalc.lineSegment_rotate(s_tane, (double) (d.getNumPolygonCorners() - 2) * 180.0 / (double) d.getNumPolygonCorners());
+            s_tane = new LineSegment(s_deki.getB(), s_deki.getA(), d.getLineColor());
             d.addLineSegment(s_tane);
-            for (int i = 2; i <= d.getNumPolygonCorners(); i++) {
-                LineSegment s_deki = OritaCalc.lineSegment_rotate(s_tane, (double) (d.getNumPolygonCorners() - 2) * 180.0 / (double) d.getNumPolygonCorners());
-                s_tane = new LineSegment(s_deki.getB(), s_deki.getA(), d.getLineColor());
-                d.addLineSegment(s_tane);
-
-            }
-            d.getFoldLineSet().unselect_all();
-            d.record();
-
-            d.getLineStep().clear();
         }
+        d.record();
+        reset();
+        return PolygonSetNoCorners.SELECT_POINT_1;
     }
 }

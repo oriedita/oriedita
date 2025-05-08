@@ -2,8 +2,9 @@ package oriedita.editor.handler;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import org.tinylog.Logger;
 import oriedita.editor.canvas.MouseMode;
+import oriedita.editor.drawing.tools.Camera;
+import oriedita.editor.drawing.tools.DrawingUtil;
 import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineColor;
@@ -11,81 +12,71 @@ import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami.folding.util.SortingBox;
 
+import java.awt.Graphics2D;
+
+enum CreasesAlternateMVStep { CLICK_DRAG_POINT }
+
 @ApplicationScoped
 @Handles(MouseMode.CREASES_ALTERNATE_MV_36)
-public class MouseHandlerCreasesAlternateMV extends BaseMouseHandlerInputRestricted {
-    private final MouseHandlerLineSegmentRatioSet mouseHandlerLineSegmentRatioSet;
+public class MouseHandlerCreasesAlternateMV extends StepMouseHandler<CreasesAlternateMVStep> {
+    private Point anchorPoint, releasePoint;
+    private LineSegment dragSegment;
 
     @Inject
-    public MouseHandlerCreasesAlternateMV(@Handles(MouseMode.LINE_SEGMENT_RATIO_SET_28) MouseHandlerLineSegmentRatioSet mouseHandlerLineSegmentRatioSet) {
-        this.mouseHandlerLineSegmentRatioSet = mouseHandlerLineSegmentRatioSet;
+    public MouseHandlerCreasesAlternateMV() {
+        super(CreasesAlternateMVStep.CLICK_DRAG_POINT);
+        steps.addNode(StepNode.createNode(CreasesAlternateMVStep.CLICK_DRAG_POINT, this::move_click_drag_point, (p) -> {}, this::drag_click_drag_point, this::release_click_drag_point));
     }
 
+    @Override
+    public void drawPreview(Graphics2D g2, Camera camera, DrawingSettings settings) {
+        super.drawPreview(g2, camera, settings);
+        DrawingUtil.drawStepVertex(g2, anchorPoint, d.getLineColor(), camera, d.getGridInputAssist());
+        DrawingUtil.drawStepVertex(g2, releasePoint, d.getLineColor(), camera, d.getGridInputAssist());
+        DrawingUtil.drawLineStep(g2, dragSegment, camera, settings.getLineWidth(), d.getGridInputAssist());
+    }
 
-    //マウス操作(mouseMode==36　でボタンを押したとき)時の作業----------------------------------------------------
-    public void mousePressed(Point p0) {
-        Point p = d.getCamera().TV2object(p0);
-        Point closestPoint = d.getClosestPoint(p);
-        if (p.distance(closestPoint) > d.getSelectionDistance()) {
-            closestPoint = p;
+    @Override
+    public void reset() {
+        anchorPoint = null;
+        releasePoint = null;
+        dragSegment = null;
+        steps.setCurrentStep(CreasesAlternateMVStep.CLICK_DRAG_POINT);
+    }
+
+    // Click drag point
+    private void move_click_drag_point(Point p) { anchorPoint = p; }
+    private void drag_click_drag_point(Point p) {
+        releasePoint = p;
+        dragSegment = new LineSegment(anchorPoint, releasePoint).withColor(d.getLineColor());
+    }
+    private CreasesAlternateMVStep release_click_drag_point(Point p) {
+        if (!Epsilon.high.gt0(dragSegment.determineLength())) {
+            reset();
+            return CreasesAlternateMVStep.CLICK_DRAG_POINT;
         }
-        d.lineStepAdd(new LineSegment(p, closestPoint, d.getLineColor()));
-    }
 
-    //マウス操作(mouseMode==36　でドラッグしたとき)を行う関数----------------------------------------------------
-
-    public void mouseDragged(Point p0) {
-        mouseHandlerLineSegmentRatioSet.mouseDragged(p0);
-    }
-
-    //マウス操作(mouseMode==36　でボタンを離したとき)を行う関数----------------------------------------------------
-    public void mouseReleased(Point p0) {
-        SortingBox<LineSegment> nbox = new SortingBox<>();
-
-        if (d.getLineStep().size() == 1) {
-            Point p = d.getCamera().TV2object(p0);
-            Point closestPoint = d.getClosestPoint(p);
-            if (p.distance(closestPoint) > d.getSelectionDistance()) {
-                closestPoint = p;
+        SortingBox<LineSegment> segmentBox = new SortingBox<>();
+        for (var s : d.getFoldLineSet().getLineSegmentsIterable()) {
+            LineSegment.Intersection lineIntersection = OritaCalc.determineLineSegmentIntersection(s, dragSegment, Epsilon.UNKNOWN_1EN4);
+            if (!(lineIntersection == LineSegment.Intersection.INTERSECTS_1
+                    || lineIntersection == LineSegment.Intersection.INTERSECTS_TSHAPE_S2_VERTICAL_BAR_27
+                    || lineIntersection == LineSegment.Intersection.INTERSECTS_TSHAPE_S2_VERTICAL_BAR_28)) {
+                continue;
             }
-            d.getLineStep().set(0, d.getLineStep().get(0).withA(closestPoint));
-            if (Epsilon.high.gt0(d.getLineStep().get(0).determineLength())) {
-                for (var s : d.getFoldLineSet().getLineSegmentsIterable()) {
-                    LineSegment.Intersection i_senbun_kousa_hantei = OritaCalc.determineLineSegmentIntersection(s, d.getLineStep().get(0), Epsilon.UNKNOWN_1EN4);
-                    int i_jikkou = 0;
-                    if (i_senbun_kousa_hantei == LineSegment.Intersection.INTERSECTS_1) {
-                        i_jikkou = 1;
-                    }
-                    if (i_senbun_kousa_hantei == LineSegment.Intersection.INTERSECTS_TSHAPE_S2_VERTICAL_BAR_27) {
-                        i_jikkou = 1;
-                    }
-                    if (i_senbun_kousa_hantei == LineSegment.Intersection.INTERSECTS_TSHAPE_S2_VERTICAL_BAR_28) {
-                        i_jikkou = 1;
-                    }
-
-                    if (i_jikkou == 1) {
-                        nbox.addByWeight(s, OritaCalc.distance(d.getLineStep().get(0).getB(), OritaCalc.findIntersection(s, d.getLineStep().get(0))));
-                    }
-                }
-
-                Logger.info("i_d_sousuu" + nbox.getTotal());
-
-                LineColor icol_temp = d.getLineColor();
-
-                for (int i = 1; i <= nbox.getTotal(); i++) {
-                    d.getFoldLineSet().setColor(nbox.getValue(i), icol_temp);
-
-                    if (icol_temp == LineColor.RED_1) {
-                        icol_temp = LineColor.BLUE_2;
-                    } else if (icol_temp == LineColor.BLUE_2) {
-                        icol_temp = LineColor.RED_1;
-                    }
-                }
-
-                d.record();
-            }
-
-            d.getLineStep().clear();
+            segmentBox.addByWeight(s, OritaCalc.distance(dragSegment.getB(), OritaCalc.findIntersection(s, dragSegment)));
         }
+
+        LineColor alternateColor = d.getLineColor();
+        for (int i = 1; i <= segmentBox.getTotal(); i++) {
+            d.getFoldLineSet().setColor(segmentBox.getValue(i), alternateColor);
+            if (alternateColor == LineColor.RED_1) { alternateColor = LineColor.BLUE_2; }
+            else if (alternateColor == LineColor.BLUE_2) { alternateColor = LineColor.RED_1; }
+        }
+
+        d.record();
+        reset();
+        return CreasesAlternateMVStep.CLICK_DRAG_POINT;
     }
 }
+

@@ -6,7 +6,8 @@ import jakarta.inject.Named;
 import org.tinylog.Logger;
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.canvas.MouseMode;
-import oriedita.editor.databinding.CanvasModel;
+import oriedita.editor.drawing.tools.Camera;
+import oriedita.editor.drawing.tools.DrawingUtil;
 import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineColor;
@@ -16,61 +17,81 @@ import origami.crease_pattern.element.StraightLine;
 import origami.crease_pattern.util.CreasePattern_Worker_Toolbox;
 import origami.folding.util.SortingBox;
 
+import java.awt.Graphics2D;
+import java.util.ArrayList;
+import java.util.List;
+
+enum ContinuousSymmetricDrawStep {
+    SELECT_P1,
+    SELECT_P2,
+}
+
 @ApplicationScoped
 @Handles(MouseMode.CONTINUOUS_SYMMETRIC_DRAW_52)
-public class MouseHandlerContinuousSymmetricDraw extends BaseMouseHandlerInputRestricted {
+public class MouseHandlerContinuousSymmetricDraw extends StepMouseHandler<ContinuousSymmetricDrawStep> {
 
     private final CreasePattern_Worker d;
-    private final CanvasModel canvasModel;
-    private final CreasePattern_Worker_Toolbox toolbox;
+    private CreasePattern_Worker_Toolbox toolbox;
 
-    //マウス操作(ボタンを押したとき)時の作業
-    public void mousePressed(Point p0) {
-        Logger.info("i_egaki_dankai=" + d.getLineStep().size());
-
-        Point p = d.getCamera().TV2object(p0);
-        Point closest_point = d.getClosestPoint(p);
-
-        if (p.distance(closest_point) < d.getSelectionDistance()) {
-            d.lineStepAdd(new LineSegment(closest_point, closest_point, d.getLineColor()));
-        } else {
-            d.lineStepAdd(new LineSegment(p, p, d.getLineColor()));
-        }
-
-        Logger.info("i_egaki_dankai=" + d.getLineStep().size());
-    }
-
-    //マウス操作(ドラッグしたとき)を行う関数
-    public void mouseDragged(Point p0) {
-    }
-
-    //マウス操作(ボタンを離したとき)を行う関数
-    public void mouseReleased(Point p0) {
-        if (d.getLineStep().size() == 2) {
-            continuous_folding_new(d.getLineStep().get(0).getA(), d.getLineStep().get(1).getA(), null);
-
-            LineColor lineType = d.getLineColor();
-            for (int i = 2; i < d.getLineStep().size(); i++) {
-                LineSegment lineSegment = d.getLineStep().get(i).withColor(lineType);
-                lineType = lineType.changeMV();
-                d.addLineSegment(lineSegment);
-            }
-
-            d.record();
-            d.getLineStep().clear();
-        }
-    }
+    private Point p1, p2;
+    private List<LineSegment> resultantSegments = new ArrayList<>();
 
     @Inject
-    public MouseHandlerContinuousSymmetricDraw(@Named("mainCreasePattern_Worker") CreasePattern_Worker d, CanvasModel canvasModel) {
+    public MouseHandlerContinuousSymmetricDraw(@Named("mainCreasePattern_Worker") CreasePattern_Worker d) {
+        super(ContinuousSymmetricDrawStep.SELECT_P1);
         this.d = d;
-        this.canvasModel = canvasModel;
+        toolbox = new CreasePattern_Worker_Toolbox(d.getFoldLineSet());
+        steps.addNode(StepNode.createNode_MD_R(ContinuousSymmetricDrawStep.SELECT_P1, this::move_drag_select_p1, this::release_select_p1));
+        steps.addNode(StepNode.createNode_MD_R(ContinuousSymmetricDrawStep.SELECT_P2, this::move_drag_select_p2, this::release_select_p2));
+    }
+
+    @Override
+    public void drawPreview(Graphics2D g2, Camera camera, DrawingSettings settings) {
+        super.drawPreview(g2, camera, settings);
+        DrawingUtil.drawStepVertex(g2, p1, d.getLineColor(), camera, d.getGridInputAssist());
+        DrawingUtil.drawStepVertex(g2, p2, d.getLineColor(), camera, d.getGridInputAssist());
+    }
+
+    @Override
+    public void reset() {
+        p1 = null;
+        p2 = null;
+        resultantSegments = new ArrayList<>();
         this.toolbox = new CreasePattern_Worker_Toolbox(d.getFoldLineSet());
     }
 
-    public void continuous_folding_new(Point a, Point b, Point start) {//An improved version of continuous folding.
-        canvasModel.markDirty();
+    // Select point 1
+    private void move_drag_select_p1(Point p) {
+        p1 = p;
+        if (p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
+            p1 = d.getClosestPoint(p);
+        }
+    }
+    private ContinuousSymmetricDrawStep release_select_p1(Point p) { return ContinuousSymmetricDrawStep.SELECT_P2; }
 
+    // Select point 2
+    private void move_drag_select_p2(Point p) {
+        p2 = p;
+        if (p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
+            p2 = d.getClosestPoint(p);
+        }
+    }
+    private ContinuousSymmetricDrawStep release_select_p2(Point p) {
+        continuous_folding_new(p1, p2, null);
+
+        LineColor lineType = d.getLineColor();
+        for (LineSegment segment : resultantSegments) {
+            LineSegment lineSegment = segment.withColor(lineType);
+            lineType = lineType.changeMV();
+            d.addLineSegment(lineSegment);
+        }
+
+        d.record();
+        reset();
+        return ContinuousSymmetricDrawStep.SELECT_P1;
+    }
+    //An improved version of continuous folding.
+    public void continuous_folding_new(Point a, Point b, Point start) {
         //ベクトルab(=s0)を点aからb方向に、最初に他の折線(直線に含まれる線分は無視。)と交差するところまで延長する
 
         //与えられたベクトルabを延長して、それと重ならない折線との、最も近い交点までs_stepとする。
@@ -86,7 +107,7 @@ public class MouseHandlerContinuousSymmetricDraw extends BaseMouseHandlerInputRe
         }
 
         LineSegment s = new LineSegment(toolbox.getLengthenUntilIntersectionLineSegment_new());
-        d.lineStepAdd(s);
+        resultantSegments.add(s);
         s.setActive(LineSegment.ActiveState.ACTIVE_BOTH_3);
         if (start != null && Epsilon.high.eq0(start.distance(s.getB()))) {
             return;

@@ -3,72 +3,100 @@ package oriedita.editor.handler;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
+import oriedita.editor.drawing.tools.Camera;
+import oriedita.editor.drawing.tools.DrawingUtil;
 import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 
+import java.awt.Graphics2D;
+
+enum ParallelDrawStep {
+    SELECT_TARGET_POINT,
+    SELECT_PARALLEL_SEGMENT,
+    SELECT_DESTINATION
+}
+
 @ApplicationScoped
 @Handles(MouseMode.PARALLEL_DRAW_40)
-public class MouseHandlerParallelDraw extends BaseMouseHandlerInputRestricted {
+public class MouseHandlerParallelDraw extends StepMouseHandler<ParallelDrawStep> {
+    private Point targetPoint;
+    private LineSegment parallelSegment;
+    private LineSegment destinationSegment;
+    private LineSegment resultSegment;
+
     @Inject
     public MouseHandlerParallelDraw() {
-    }
-
-    //マウス操作(マウスを動かしたとき)を行う関数
-    public void mouseMoved(Point p0) {
-        if (d.getLineStep().isEmpty()) {
-            super.mouseMoved(p0);
-        }
+        super(ParallelDrawStep.SELECT_TARGET_POINT);
+        steps.addNode(StepNode.createNode_MD_R(ParallelDrawStep.SELECT_TARGET_POINT, this::move_select_target_point,this::release_select_target_point));
+        steps.addNode(StepNode.createNode_MD_R(ParallelDrawStep.SELECT_PARALLEL_SEGMENT, this::move_select_parallel_segment, this::release_select_parallel_segment));
+        steps.addNode(StepNode.createNode_MD_R(ParallelDrawStep.SELECT_DESTINATION, this::move_select_destination, this::release_select_destination));
     }
 
     //２つの点t1,t2を通る直線に関して、点pの対照位置にある点を求める public Ten oc.sentaisyou_ten_motome(Ten t1,Ten t2,Ten p){
     //Ten t_taisyou =new Ten(); t_taisyou.set(oc.sentaisyou_ten_motome(lineStep.get(1).geta(),line_step[3].geta(),lineStep.get(0).geta()));
 
-    //マウス操作(ボタンを押したとき)時の作業
-    public void mousePressed(Point p0) {
-        Point p = d.getCamera().TV2object(p0);
-        if (d.getLineStep().isEmpty()) {
-            Point closestPoint = d.getClosestPoint(p);
-
-            if (p.distance(closestPoint) < d.getSelectionDistance()) {
-                d.lineStepAdd(new LineSegment(closestPoint, closestPoint, d.getLineColor()));
-            }
-        } else if (d.getLineStep().size() == 1) {
-            LineSegment closestLineSegment = d.getClosestLineSegment(p).withColor(LineColor.GREEN_6);
-            if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.getSelectionDistance()) {
-                d.lineStepAdd(closestLineSegment);
-            }
-        } else if (d.getLineStep().size() == 2) {
-            LineSegment closestLineSegment = d.getClosestLineSegment(p).withColor(LineColor.GREEN_6);
-            if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.getSelectionDistance()) {
-                d.lineStepAdd(closestLineSegment);
-            }
-        }
+    @Override
+    public void drawPreview(Graphics2D g2, Camera camera, DrawingSettings settings) {
+        super.drawPreview(g2, camera, settings);
+        DrawingUtil.drawStepVertex(g2, targetPoint, d.getLineColor(), camera, d.getGridInputAssist());
+        DrawingUtil.drawLineStep(g2, parallelSegment, camera, settings.getLineWidth(), d.getGridInputAssist());
+        DrawingUtil.drawLineStep(g2, destinationSegment, camera, settings.getLineWidth(), d.getGridInputAssist());
     }
 
-    //マウス操作(ドラッグしたとき)を行う関数
-    public void mouseDragged(Point p0) {
+    @Override
+    public void reset() {
+        targetPoint = null;
+        parallelSegment = null;
+        destinationSegment = null;
+        resultSegment = null;
+        steps.setCurrentStep(ParallelDrawStep.SELECT_TARGET_POINT);
     }
 
-    //マウス操作(ボタンを離したとき)を行う関数
-    public void mouseReleased(Point p0) {
-        if (d.getLineStep().size() == 3) {
-            LineSegment s0 = d.getLineStep().get(0);
-            LineSegment s1 = d.getLineStep().get(1);
+    // Select target point
+    private void move_select_target_point(Point p) {
+        if (p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
+            targetPoint = d.getClosestPoint(p);
+        } else targetPoint = null;
+    }
+    private ParallelDrawStep release_select_target_point(Point p) {
+        if (targetPoint == null) return ParallelDrawStep.SELECT_TARGET_POINT;
+        return ParallelDrawStep.SELECT_PARALLEL_SEGMENT;
+    }
 
-            s0 = s0.withB(new Point(
-                    s0.determineAX() + s1.determineBX() - s1.determineAX(),
-                    s0.determineAY() + s1.determineBY() - s1.determineAY()));
+    // Select target parallel segment
+    private void move_select_parallel_segment(Point p) {
+        if (OritaCalc.determineLineSegmentDistance(p, d.getClosestLineSegment(p)) < d.getSelectionDistance()) {
+            parallelSegment = d.getClosestLineSegment(p).withColor(LineColor.GREEN_6);
+        } else parallelSegment = null;
+    }
+    private ParallelDrawStep release_select_parallel_segment(Point p) {
+        if (parallelSegment == null) return ParallelDrawStep.SELECT_PARALLEL_SEGMENT;
+        return ParallelDrawStep.SELECT_DESTINATION;
+    }
 
-            if (s_step_additional_intersection(2, s0, d.getLineStep().get(2), d.getLineColor()) > 0) {
-                d.addLineSegment(d.getLineStep().get(2));
-                d.record();
-            }
+    // Select destination
+    private void move_select_destination(Point p) {
+        if (OritaCalc.determineLineSegmentDistance(p, d.getClosestLineSegment(p)) < d.getSelectionDistance()
+                && OritaCalc.isLineSegmentParallel(parallelSegment, d.getClosestLineSegment(p)) == OritaCalc.ParallelJudgement.NOT_PARALLEL) {
+            destinationSegment = d.getClosestLineSegment(p).withColor(LineColor.ORANGE_4);
+        } else destinationSegment = null;
+    }
+    private ParallelDrawStep release_select_destination(Point p) {
+        if (destinationSegment == null) return ParallelDrawStep.SELECT_DESTINATION;
+        LineSegment s = new LineSegment(targetPoint, new Point(
+                targetPoint.getX() + parallelSegment.determineBX() - parallelSegment.determineAX(),
+                targetPoint.getY() + parallelSegment.determineBY() - parallelSegment.determineAY()));
 
-            d.getLineStep().clear();
+        if (s_step_additional_intersection(s, destinationSegment, d.getLineColor()) > 0) {
+            d.addLineSegment(resultSegment);
+            d.record();
+            reset();
+            return ParallelDrawStep.SELECT_TARGET_POINT;
         }
+        return ParallelDrawStep.SELECT_DESTINATION;
     }
 
     /**
@@ -76,7 +104,7 @@ public class MouseHandlerParallelDraw extends BaseMouseHandlerInputRestricted {
      * extends the line segment s_o to the intersection of s_k while keeping Point a as it is. Returns 1 on success,
      * -500 on failure to add due to some inconvenience.
      */
-    public int s_step_additional_intersection(int i_e_d, LineSegment s_o, LineSegment s_k, LineColor icolo) {
+    public int s_step_additional_intersection(LineSegment s_o, LineSegment s_k, LineColor icolo) {
 
         Point cross_point = new Point();
 
@@ -98,7 +126,7 @@ public class MouseHandlerParallelDraw extends BaseMouseHandlerInputRestricted {
         LineSegment add_sen = new LineSegment(cross_point, s_o.getA(), icolo);
 
         if (Epsilon.high.gt0(add_sen.determineLength())) {
-            d.getLineStep().set(i_e_d, add_sen);
+            resultSegment = add_sen;
             return 1;
         }
 

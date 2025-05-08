@@ -48,7 +48,7 @@ public class Epsilon {
 
     /**
      * Tsai: This is used only in {@link OritaCalc#isInside_sweet}. For some
-     * Ryujin-type CPs, even {@link ZERO_COMPARISON} is not small enough and would
+     * Ryujin-type CPs, even {@link Epsilon#ZERO_COMPARISON} is not small enough and would
      * lead to false positive result, causing the model to have no solution. But on
      * the other hand, if the value is too small (say factor * 1E-12), then some
      * other CPs may have false negative result, causing invalid solutions to be
