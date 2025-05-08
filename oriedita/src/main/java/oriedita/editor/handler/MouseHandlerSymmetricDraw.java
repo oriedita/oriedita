@@ -101,7 +101,13 @@ public class MouseHandlerSymmetricDraw extends StepMouseHandler<SymmetricDrawSte
     // Select 2 lines
     private void move_drag_select_2L(Point p) {
         if (OritaCalc.determineLineSegmentDistance(p, d.getClosestLineSegment(p)) < d.getSelectionDistance()) {
-            segmentsList_2L.set(counter_2L, d.getClosestLineSegment(p).withColor(LineColor.GREEN_6));
+            if(counter_2L == 0) {
+                segmentsList_2L.set(counter_2L, d.getClosestLineSegment(p).withColor(LineColor.GREEN_6));
+            } else {
+                if(OritaCalc.isLineSegmentParallel(segmentsList_2L.get(0), d.getClosestLineSegment(p)) == OritaCalc.ParallelJudgement.NOT_PARALLEL) {
+                    segmentsList_2L.set(counter_2L, d.getClosestLineSegment(p).withColor(LineColor.GREEN_6));
+                }
+            }
         } else segmentsList_2L.set(counter_2L, null);
     }
     private SymmetricDrawStep release_select_2L(Point p) {
