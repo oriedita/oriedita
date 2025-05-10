@@ -11,10 +11,12 @@ import org.tinylog.Logger;
 import oriedita.editor.FrameProvider;
 import oriedita.editor.action.ActionService;
 import oriedita.editor.action.ActionType;
+import oriedita.editor.action.MouseModeAction;
 import oriedita.editor.action.OrieditaAction;
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.service.ButtonService;
+import oriedita.editor.swing.DropdownMouseWheelAdapter;
 import oriedita.editor.swing.component.DropdownToolButton;
 import oriedita.editor.swing.component.GlyphIcon;
 import oriedita.editor.swing.dialog.HelpDialog;
@@ -28,6 +30,7 @@ import javax.swing.AbstractButton;
 import javax.swing.Action;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -49,6 +52,7 @@ import java.beans.PropertyChangeSupport;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
@@ -81,6 +85,32 @@ public class ButtonServiceImpl implements ButtonService {
         registeredButtons = HashMultimap.create();
         keystrokes = HashBiMap.create();
         buttonKeys = new HashMap<>();
+
+        canvasModel.addPropertyChangeListener(e -> {
+            if (Objects.equals(e.getPropertyName(), "mouseMode")){
+                updateActiveButton();
+            }
+        });
+    }
+
+    private void updateActiveButton() {
+        var m = canvasModel.getMouseMode();
+
+        synchronized (registeredButtons) {
+            for (AbstractButton btn : registeredButtons.values()) {
+                if (btn.getAction() instanceof MouseModeAction action) {
+                    btn.setSelected(m == action.getMouseMode());
+                } else {
+                    btn.setSelected(false);
+                }
+
+                // The new action of the button is only set after the action is executed, so at this point the button
+                // still has the old action and therefore won't be selected in the first if statement.
+                if (btn instanceof DropdownToolButton dtb && dtb.wasDropdownItemJustSelected()) {
+                    btn.setSelected(true);
+                }
+            }
+        }
     }
 
     @Override
@@ -180,6 +210,20 @@ public class ButtonServiceImpl implements ButtonService {
                     }
                 }
             }
+            button.addPropertyChangeListener("activeAction", e -> {
+                String newKey = ((ActionType) e.getNewValue()).action();
+                String oldKey = ((ActionType) e.getOldValue()).action();
+                String newIcon = ResourceUtil.getBundleString("icons", newKey);
+                GlyphIcon glyphIcon = new GlyphIcon(newIcon, button.getForeground());
+                setAction(button, newKey);
+                synchronized (registeredButtons) {
+                    registeredButtons.remove(oldKey, button);
+                    registeredButtons.put(newKey, button);
+                }
+                setTooltip(newKey);
+                addContextMenu(button, newKey);
+                button.setIcon(glyphIcon);
+            });
         }
         KeyStrokeUtil.resetButton(button);
 
@@ -223,6 +267,7 @@ public class ButtonServiceImpl implements ButtonService {
             } else {
                 menuItem.setText(name);
             }
+            menuItem.setActionCommand(key);
         }
 
         if (!StringOp.isEmpty(icon)) {
@@ -258,7 +303,9 @@ public class ButtonServiceImpl implements ButtonService {
     }
 
     private void addButtonToRegisteredButtons(String key, AbstractButton button) {
-        registeredButtons.put(key, button);
+        synchronized (registeredButtons) {
+            registeredButtons.put(key, button);
+        }
         buttonKeys.put(button, key);
     }
 
@@ -275,15 +322,19 @@ public class ButtonServiceImpl implements ButtonService {
 
     @Override
     public Map<KeyStroke, AbstractButton> getHelpInputMap() {
-        //noinspection OptionalGetWithoutIsPresent
-        return registeredButtons.asMap().entrySet().stream()
-                .filter(e -> keystrokes.containsKey(e.getKey()) && keystrokes.get(e.getKey()) != null)
-                .collect(Collectors.toMap(
-                        e -> keystrokes.get(e.getKey()),
-                        e -> e.getValue().stream().findFirst().get() // get is safe because MultiMap only contains
-                                                                     // keys with at least one entry
-                )
-        );
+        synchronized (keystrokes) {
+            synchronized (registeredButtons) {
+                //noinspection OptionalGetWithoutIsPresent
+                return registeredButtons.asMap().entrySet().stream()
+                        .filter(e -> keystrokes.containsKey(e.getKey()) && keystrokes.get(e.getKey()) != null)
+                        .collect(Collectors.toMap(
+                                        e -> keystrokes.get(e.getKey()),
+                                        e -> e.getValue().stream().findFirst().get() // get is safe because MultiMap only contains
+                                        // keys with at least one entry
+                                )
+                        );
+            }
+        }
     }
 
     @Override
@@ -291,16 +342,15 @@ public class ButtonServiceImpl implements ButtonService {
         addDefaultListener(component, true);
     }
 
-    @Override
-    public void addDefaultListener(Container root, boolean replaceUnderscoresInMenus) {
+    private void addDefaultListenerRecursive(Container root, boolean replaceUnderscoresInMenus) {
         Component[] components = root.getComponents();
         if (root instanceof DropdownToolButton tb) {
-            addDefaultListener(tb.getDropdownMenu());
+            addDefaultListenerRecursive(tb.getDropdownMenu(), true);
         }
 
         for (Component component1 : components) {
             if (component1 instanceof Container) {
-                addDefaultListener((Container) component1);
+                addDefaultListenerRecursive((Container) component1, true);
             }
 
             if (component1 instanceof AbstractButton button) {
@@ -311,10 +361,14 @@ public class ButtonServiceImpl implements ButtonService {
                 }
             }
 
+            if (component1 instanceof JComboBox<?> comboBox) {
+                comboBox.addMouseWheelListener(new DropdownMouseWheelAdapter(comboBox));
+            }
+
             if (component1 instanceof JMenu) {
                 for (MenuElement element : ((JMenu) component1).getSubElements()) {
                     if (element instanceof Container) {
-                        addDefaultListener((Container) element);
+                        addDefaultListenerRecursive((Container) element, true);
                     }
                 }
             }
@@ -322,11 +376,22 @@ public class ButtonServiceImpl implements ButtonService {
     }
 
     @Override
+    public void addDefaultListener(Container root, boolean replaceUnderscoresInMenus) {
+        addDefaultListenerRecursive(root, replaceUnderscoresInMenus);
+        updateActiveButton();
+    }
+
+    @Override
     public void setKeyStroke(KeyStroke keyStroke, String key) {
-        KeyStroke oldValue = keystrokes.get(key);
+        KeyStroke oldValue;
+        synchronized (keystrokes) {
+            oldValue = keystrokes.get(key);
+        }
         removeKeyStroke(key);
         if (keyStroke != null){
-            keystrokes.put(key, keyStroke);
+            synchronized (keystrokes) {
+                keystrokes.put(key, keyStroke);
+            }
             if (!GraphicsEnvironment.isHeadless()) {
                 addUIKeystroke(key, keyStroke);
             }
@@ -336,7 +401,9 @@ public class ButtonServiceImpl implements ButtonService {
     }
 
     public String getActionFromKeystroke(KeyStroke stroke) {
-        return keystrokes.inverse().get(stroke);
+        synchronized (keystrokes) {
+            return keystrokes.inverse().get(stroke);
+        }
     }
 
     private void addContextMenu(AbstractButton button, String key) {
@@ -344,14 +411,19 @@ public class ButtonServiceImpl implements ButtonService {
         Action addKeybindAction = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                KeyStroke currentKeyStroke = keystrokes.get(key);
+                KeyStroke currentKeyStroke;
+                synchronized (keystrokes) {
+                    currentKeyStroke = keystrokes.get(key);
+                }
                 new SelectKeyStrokeDialog(owner.get(), key, ButtonServiceImpl.this, currentKeyStroke);
             }
         };
         String actionName = "Change key stroke";
 
-        if (keystrokes.containsKey(key)) {
-            actionName += " (Current: " + KeyStrokeUtil.toString(keystrokes.get(key)) + ")";
+        synchronized (keystrokes) {
+            if (keystrokes.containsKey(key)) {
+                actionName += " (Current: " + KeyStrokeUtil.toString(keystrokes.get(key)) + ")";
+            }
         }
         addKeybindAction.putValue(Action.NAME, actionName);
         popup.add(addKeybindAction);
@@ -394,10 +466,12 @@ public class ButtonServiceImpl implements ButtonService {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     if (!(KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner() instanceof JTextComponent)) {
-                        registeredButtons.get(key).stream().findFirst().ifPresentOrElse(
-                                AbstractButton::doClick,
-                                () -> Logger.error("Unknown action activated: " + key)
-                        );
+                        synchronized (registeredButtons) {
+                            registeredButtons.get(key).stream().findFirst().ifPresentOrElse(
+                                    AbstractButton::doClick,
+                                    () -> Logger.error("Unknown action activated: " + key)
+                            );
+                        }
                     }
                 }
             };
@@ -407,6 +481,22 @@ public class ButtonServiceImpl implements ButtonService {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     if (!(KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner() instanceof JTextComponent)) {
+                        Optional<DropdownToolButton> btn;
+                        synchronized (registeredButtons) {
+                            btn = registeredButtons.values().stream()
+                                    .filter(b -> b instanceof DropdownToolButton)
+                                    .map(b -> (DropdownToolButton) b)
+                                    .filter(b ->
+                                            b.getActions().stream().anyMatch(a -> a.action().equals(key)))
+                                    .findFirst();
+                        }
+                        if (btn.isPresent()) {
+                            var action = btn.get().getActions().stream()
+                                    .filter(a -> a.action().equals(key))
+                                    .findFirst()
+                                    .orElseThrow();
+                            btn.get().setActiveAction(btn.get().getActions().indexOf(action));
+                        }
                         tempAction.actionPerformed(e);
                     }
                 }
@@ -417,9 +507,12 @@ public class ButtonServiceImpl implements ButtonService {
     }
 
     private void removeKeyStroke(String key) {
-        if (!GraphicsEnvironment.isHeadless())
-            owner.get().getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).remove(keystrokes.get(key));
-        keystrokes.remove(key);
+        synchronized (keystrokes) {
+            if (!GraphicsEnvironment.isHeadless()) {
+                owner.get().getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).remove(keystrokes.get(key));
+            }
+            keystrokes.remove(key);
+        }
     }
 
     public void setTooltip(String key) {
@@ -443,7 +536,9 @@ public class ButtonServiceImpl implements ButtonService {
 
         if (!tooltipText.equals("<html>")) {
             String finalTooltipText = tooltipText;
-            registeredButtons.get(key).forEach(b -> b.setToolTipText(finalTooltipText));
+            synchronized (registeredButtons) {
+                registeredButtons.get(key).forEach(b -> b.setToolTipText(finalTooltipText));
+            }
         }
     }
 

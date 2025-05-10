@@ -119,7 +119,7 @@ public class SaveTest {
         FoldedFigureModel foldedFigureModel = new FoldedFigureModel();
         SelectedTextModel textModel = new SelectedTextModel();
         TextWorker textWorker = new TextWorker();
-        mainCreasePatternWorker = new CreasePattern_Worker_Impl(creasePatternCamera, new DequeHistoryState(), new DequeHistoryState(), new FoldLineSet(), new FoldLineSet(), new SingleTaskExecutorServiceImpl(), canvasModel, applicationModel, gridModel, foldedFigureModel, fileModel, textWorker, textModel);
+        mainCreasePatternWorker = new CreasePattern_Worker_Impl(creasePatternCamera, new DequeHistoryState(), new FoldLineSet(), new FoldLineSet(), new SingleTaskExecutorServiceImpl(), canvasModel, applicationModel, gridModel, foldedFigureModel, fileModel, textWorker, textModel);
         ResetService resetService = new ResetService() {
             @Override
             public void developmentView_initialization() {

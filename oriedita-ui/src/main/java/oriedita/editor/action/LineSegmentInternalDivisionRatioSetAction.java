@@ -12,8 +12,6 @@ import java.awt.event.ActionEvent;
 @ActionHandler(ActionType.lineSegmentInternalDivisionRatioSetAction)
 public class LineSegmentInternalDivisionRatioSetAction extends AbstractOrieditaAction{
     @Inject
-    InternalDivisionRatioModel internalDivisionRatioModel;
-    @Inject
     CanvasModel canvasModel;
 
     @Inject
@@ -22,8 +20,6 @@ public class LineSegmentInternalDivisionRatioSetAction extends AbstractOrieditaA
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        internalDivisionRatioModel.commit();
-
         canvasModel.setMouseMode(MouseMode.LINE_SEGMENT_RATIO_SET_28);
         canvasModel.setMouseModeAfterColorSelection(MouseMode.LINE_SEGMENT_RATIO_SET_28);
     }

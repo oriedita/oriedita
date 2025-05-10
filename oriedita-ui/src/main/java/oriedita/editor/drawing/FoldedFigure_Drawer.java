@@ -235,7 +235,6 @@ public class FoldedFigure_Drawer implements Foldable {
         wireFrame_worker_drawer2.setCam_rear(foldedFigureRearCamera);
         wireFrame_worker_drawer2.setCam_transparent_front(transparentFrontCamera);
         wireFrame_worker_drawer2.setCam_transparent_rear(transparentRearCamera);
-
         //Wire diagram display
         if (foldedFigure.displayStyle == FoldedFigure.DisplayStyle.WIRE_2) {
             wireFrame_worker_drawer2.drawing_with_camera(bufferGraphics, foldedFigure.ip4);//The operation of the fold-up diagram moves the wire diagram of this wireFrame_worker2.
