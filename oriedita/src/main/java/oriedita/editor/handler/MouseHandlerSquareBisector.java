@@ -132,9 +132,7 @@ public class MouseHandlerSquareBisector extends StepMouseHandler<SquareBisectorS
         Point cross_point = OritaCalc.findIntersection(add_sen2, destinationSegment_3P);
 
         LineSegment add_sen = new LineSegment(cross_point, pointsList_3P.get(1), d.getLineColor());
-        Logger.info(OritaCalc.isLineSegmentParallel(add_sen, destinationSegment_3P));
-        if(OritaCalc.isLineSegmentParallel(add_sen, destinationSegment_3P) != OritaCalc.ParallelJudgement.NOT_PARALLEL) {
-            Logger.info("is parallel");
+        if(OritaCalc.isLineSegmentParallel(OritaCalc.lineSegmentChangeLength(add_sen, 1000.0), destinationSegment_3P) != OritaCalc.ParallelJudgement.NOT_PARALLEL) {
             return SquareBisectorStep.SELECT_DESTINATION_3P;
         }
         if (Epsilon.high.gt0(add_sen.determineLength())) {
@@ -181,6 +179,10 @@ public class MouseHandlerSquareBisector extends StepMouseHandler<SquareBisectorS
 
         // Draw the bisector
         LineSegment destinationLine = new LineSegment(cross_point, intersection, d.getLineColor());
+        Logger.info(OritaCalc.isLineSegmentParallel(OritaCalc.lineSegmentChangeLength(destinationLine, 1000.0), destinationSegment_2L_NP));
+        if(OritaCalc.isLineSegmentParallel(OritaCalc.lineSegmentChangeLength(destinationLine, 1000.0), destinationSegment_2L_NP) != OritaCalc.ParallelJudgement.NOT_PARALLEL) {
+            return SquareBisectorStep.SELECT_DESTINATION_2L_NP;
+        }
         if (Epsilon.high.gt0(destinationLine.determineLength())) {
             d.addLineSegment(destinationLine);
             d.record();
