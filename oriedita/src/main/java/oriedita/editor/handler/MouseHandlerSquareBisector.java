@@ -2,6 +2,7 @@ package oriedita.editor.handler;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import org.tinylog.Logger;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
@@ -131,6 +132,11 @@ public class MouseHandlerSquareBisector extends StepMouseHandler<SquareBisectorS
         Point cross_point = OritaCalc.findIntersection(add_sen2, destinationSegment_3P);
 
         LineSegment add_sen = new LineSegment(cross_point, pointsList_3P.get(1), d.getLineColor());
+        Logger.info(OritaCalc.isLineSegmentParallel(add_sen, destinationSegment_3P));
+        if(OritaCalc.isLineSegmentParallel(add_sen, destinationSegment_3P) != OritaCalc.ParallelJudgement.NOT_PARALLEL) {
+            Logger.info("is parallel");
+            return SquareBisectorStep.SELECT_DESTINATION_3P;
+        }
         if (Epsilon.high.gt0(add_sen.determineLength())) {
             d.addLineSegment(add_sen);
             d.record();

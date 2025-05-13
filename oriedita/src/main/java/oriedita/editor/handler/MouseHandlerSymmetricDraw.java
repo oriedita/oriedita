@@ -93,6 +93,10 @@ public class MouseHandlerSymmetricDraw extends StepMouseHandler<SymmetricDrawSte
         if(pointsList_3P.get(counter_3P) == null) return SymmetricDrawStep.SELECT_3P;
         counter_3P++;
         if (counter_3P < 3) return SymmetricDrawStep.SELECT_3P;
+        if(OritaCalc.isPointWithinLineSpan(pointsList_3P.get(0), new LineSegment(pointsList_3P.get(1), pointsList_3P.get(2)))) {
+            reset();
+            return SymmetricDrawStep.SELECT_2L_OR_3P;
+        }
         LineSegment s1 = new LineSegment(pointsList_3P.get(0), pointsList_3P.get(1));
         LineSegment s2 = new LineSegment(pointsList_3P.get(1), pointsList_3P.get(2));
         return reflectLine(s1, s2, steps.getCurrentStep());

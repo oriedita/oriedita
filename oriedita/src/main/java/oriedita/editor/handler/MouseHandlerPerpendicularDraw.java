@@ -109,7 +109,8 @@ public class MouseHandlerPerpendicularDraw extends StepMouseHandler<Perpendicula
             destinationSegment = null;
         } else if (Math.abs(minDistance - normalDistance) < Epsilon.UNKNOWN_1EN6
                 && normalDistance < d.getSelectionDistance()
-                && OritaCalc.isLineSegmentParallel(d.getClosestLineSegment(p), indicator) == OritaCalc.ParallelJudgement.NOT_PARALLEL) {
+                && OritaCalc.isLineSegmentParallel(d.getClosestLineSegment(p), indicator) == OritaCalc.ParallelJudgement.NOT_PARALLEL
+                && !OritaCalc.isPointWithinLineSpan(targetPoint, d.getClosestLineSegment(p))) {
             destinationSegment = d.getClosestLineSegment(p).withColor(LineColor.ORANGE_4);
         } else destinationSegment = null;
     }
