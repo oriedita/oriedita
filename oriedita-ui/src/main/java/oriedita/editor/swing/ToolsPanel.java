@@ -4,6 +4,9 @@ import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import oriedita.editor.Colors;
+import oriedita.editor.databinding.CanvasModel;
+import oriedita.editor.service.ButtonService;
 import oriedita.editor.swing.component.GlyphIcon;
 import oriedita.editor.swing.tab.DrawingTab;
 import oriedita.editor.swing.tab.FoldingTab;
@@ -18,7 +21,10 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.border.TitledBorder;
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Insets;
 
 @ApplicationScoped
@@ -29,10 +35,13 @@ public class ToolsPanel {
     private ReferencesTab referencesTab;
     private FoldingTab foldingTab;
     private SettingsTab settingsTab;
+    private final CanvasModel canvasModel;
+    private final ButtonService buttonService;
     private JButton mButton;
     private JButton vButton;
     private JButton eButton;
     private JButton aButton;
+    private JPanel colButtons;
 
 
     @Inject
@@ -40,11 +49,15 @@ public class ToolsPanel {
             DrawingTab drawingTab,
             ReferencesTab referencesTab,
             FoldingTab foldingTab,
-            SettingsTab settingsTab) {
+            SettingsTab settingsTab,
+            CanvasModel canvasModel,
+            ButtonService buttonService) {
         this.drawingTab = drawingTab;
         this.referencesTab = referencesTab;
         this.foldingTab = foldingTab;
         this.settingsTab = settingsTab;
+        this.canvasModel = canvasModel;
+        this.buttonService = buttonService;
         $$$setupUI$$$();
     }
 
@@ -54,6 +67,9 @@ public class ToolsPanel {
         referencesTab.init();
         foldingTab.init();
         settingsTab.init();
+
+        canvasModel.addPropertyChangeListener(p -> setData(canvasModel));
+        buttonService.addDefaultListener(colButtons);
 
         initTab(0, "labelTabDrawing");
         initTab(1, "labelTabReferences");
@@ -67,6 +83,39 @@ public class ToolsPanel {
         tabbedPane1.addPropertyChangeListener("foreground", glyphIcon);
         tabbedPane1.setTitleAt(index, "");
         tabbedPane1.setIconAt(index, glyphIcon);
+    }
+
+    private void setData(CanvasModel data) {
+        Color gray = Colors.get(new Color(150, 150, 150));
+
+        eButton.setBackground(gray);
+        eButton.setForeground(Colors.get(Color.black));
+        mButton.setBackground(gray);
+        mButton.setForeground(Colors.get(Color.black));
+        vButton.setBackground(gray);
+        vButton.setForeground(Colors.get(Color.black));
+        aButton.setBackground(gray);
+        aButton.setForeground(Colors.get(Color.black));
+
+        switch (data.calculateLineColor()) {
+            case BLACK_0:
+                eButton.setBackground(Colors.get(Color.black));
+                eButton.setForeground(Colors.get(Color.white));
+                break;
+            case RED_1:
+                mButton.setBackground(Colors.get(Color.red));
+                mButton.setForeground(Colors.get(Color.black));
+                break;
+            case BLUE_2:
+                vButton.setBackground(Colors.get(Color.blue));
+                vButton.setForeground(Colors.get(Color.black));
+                break;
+            case CYAN_3:
+                aButton.setBackground(Colors.get(Color.cyan));
+                aButton.setForeground(Colors.get(Color.black));
+            default:
+                break;
+        }
     }
 
     /**
@@ -113,21 +162,50 @@ public class ToolsPanel {
         panel5.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
         tabbedPane1.addTab("Settings", null, panel5, "Settings");
         panel5.add(settingsTab.$$$getRootComponent$$$(), new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-        final JPanel panel6 = new JPanel();
-        panel6.setLayout(new GridLayoutManager(1, 4, new Insets(0, 0, 0, 0), -1, -1));
-        panel1.add(panel6, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        colButtons = new JPanel();
+        colButtons.setLayout(new GridBagLayout());
+        panel1.add(colButtons, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, new Dimension(-1, 30), null, null, 0, false));
         mButton = new JButton();
+        mButton.setActionCommand("colRedAction");
         mButton.setText("M");
-        panel6.add(mButton, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        GridBagConstraints gbc;
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        gbc.fill = GridBagConstraints.BOTH;
+        colButtons.add(mButton, gbc);
         vButton = new JButton();
+        vButton.setActionCommand("colBlueAction");
         vButton.setText("V");
-        panel6.add(vButton, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        gbc = new GridBagConstraints();
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        gbc.fill = GridBagConstraints.BOTH;
+        colButtons.add(vButton, gbc);
         eButton = new JButton();
+        eButton.setActionCommand("colBlackAction");
         eButton.setText("E");
-        panel6.add(eButton, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        gbc = new GridBagConstraints();
+        gbc.gridx = 2;
+        gbc.gridy = 0;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        gbc.fill = GridBagConstraints.BOTH;
+        colButtons.add(eButton, gbc);
         aButton = new JButton();
+        aButton.setActionCommand("colCyanAction");
         aButton.setText("A");
-        panel6.add(aButton, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        gbc = new GridBagConstraints();
+        gbc.gridx = 3;
+        gbc.gridy = 0;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        gbc.fill = GridBagConstraints.BOTH;
+        colButtons.add(aButton, gbc);
     }
 
     /**

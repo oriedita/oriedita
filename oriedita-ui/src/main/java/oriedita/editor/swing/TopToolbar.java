@@ -46,10 +46,6 @@ public class TopToolbar {
     private JButton foldButton;
     private JButton stopFoldingButton;
     private JButton trashButton;
-    private JButton mountainButton;
-    private JButton valleyButton;
-    private JButton edgeButton;
-    private JButton auxButton;
     private JButton moveButton;
     private JButton zoomInButton;
     private JButton zoomOutButton;
@@ -61,6 +57,7 @@ public class TopToolbar {
     private JScrollPane scrollPane;
     private DraggableTextField gridSizeTextField;
     private JPanel settingsPanel;
+    private JPanel settingsRoot;
 
     private final ButtonService buttonService;
     private final GridModel gridModel;
@@ -142,42 +139,15 @@ public class TopToolbar {
     }
 
     private void setData(CanvasModel data) {
-        Color gray = Colors.get(new Color(150, 150, 150));
-
-        edgeButton.setBackground(gray);
-        edgeButton.setForeground(Colors.get(Color.black));
-        mountainButton.setBackground(gray);
-        mountainButton.setForeground(Colors.get(Color.black));
-        valleyButton.setBackground(gray);
-        valleyButton.setForeground(Colors.get(Color.black));
-        auxButton.setBackground(gray);
-        auxButton.setForeground(Colors.get(Color.black));
-
-        switch (data.calculateLineColor()) {
-            case BLACK_0:
-                edgeButton.setBackground(Colors.get(Color.black));
-                edgeButton.setForeground(Colors.get(Color.white));
-                break;
-            case RED_1:
-                mountainButton.setBackground(Colors.get(Color.red));
-                mountainButton.setForeground(Colors.get(Color.black));
-                break;
-            case BLUE_2:
-                valleyButton.setBackground(Colors.get(Color.blue));
-                valleyButton.setForeground(Colors.get(Color.black));
-                break;
-            case CYAN_3:
-                auxButton.setBackground(Colors.get(Color.cyan));
-                auxButton.setForeground(Colors.get(Color.black));
-            default:
-                break;
-        }
         mouseHandlerUis.values().forEach(h -> {
             h.$$$getRootComponent$$$().setVisible(false);
         });
+        var anyVisible = false;
         for (MouseHandlerSettingGroup setting : handlers.get(canvasModel.getMouseMode()).getSettings()) {
             mouseHandlerUis.get(setting).$$$getRootComponent$$$().setVisible(true);
+            anyVisible = true;
         }
+        settingsRoot.setVisible(anyVisible);
         $$$getRootComponent$$$().revalidate();
         $$$getRootComponent$$$().validate();
         $$$getRootComponent$$$().repaint();
@@ -204,7 +174,7 @@ public class TopToolbar {
         root.add(scrollPane, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         scrollPane.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
         final JPanel panel1 = new JPanel();
-        panel1.setLayout(new GridLayoutManager(1, 9, new Insets(0, 0, 0, 0), -1, -1));
+        panel1.setLayout(new GridLayoutManager(1, 8, new Insets(0, 0, 0, 0), -1, -1));
         scrollPane.setViewportView(panel1);
         panel1.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
         final JPanel panel2 = new JPanel();
@@ -252,7 +222,7 @@ public class TopToolbar {
         panel2.add(gridSizeTextField, gbc);
         final JPanel panel3 = new JPanel();
         panel3.setLayout(new GridBagLayout());
-        panel1.add(panel3, new GridConstraints(0, 8, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        panel1.add(panel3, new GridConstraints(0, 7, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         resetButton = new JButton();
         resetButton.setActionCommand("resetAction");
         resetButton.setText("reset");
@@ -265,7 +235,7 @@ public class TopToolbar {
         gbc.ipadx = 20;
         panel3.add(resetButton, gbc);
         final Spacer spacer1 = new Spacer();
-        panel1.add(spacer1, new GridConstraints(0, 7, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+        panel1.add(spacer1, new GridConstraints(0, 6, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
         final Spacer spacer2 = new Spacer();
         panel1.add(spacer2, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
         final JPanel panel4 = new JPanel();
@@ -307,62 +277,15 @@ public class TopToolbar {
         final JPanel panel5 = new JPanel();
         panel5.setLayout(new GridBagLayout());
         panel1.add(panel5, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-        mountainButton = new JButton();
-        mountainButton.setActionCommand("colRedAction");
-        mountainButton.setText("M");
-        gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.weightx = 1.0;
-        gbc.weighty = 1.0;
-        gbc.fill = GridBagConstraints.BOTH;
-        gbc.ipadx = 20;
-        panel5.add(mountainButton, gbc);
-        valleyButton = new JButton();
-        valleyButton.setActionCommand("colBlueAction");
-        valleyButton.setText("V");
-        gbc = new GridBagConstraints();
-        gbc.gridx = 1;
-        gbc.gridy = 0;
-        gbc.weightx = 1.0;
-        gbc.weighty = 1.0;
-        gbc.fill = GridBagConstraints.BOTH;
-        gbc.ipadx = 20;
-        panel5.add(valleyButton, gbc);
-        edgeButton = new JButton();
-        edgeButton.setActionCommand("colBlackAction");
-        edgeButton.setText("E");
-        gbc = new GridBagConstraints();
-        gbc.gridx = 2;
-        gbc.gridy = 0;
-        gbc.weightx = 1.0;
-        gbc.weighty = 1.0;
-        gbc.fill = GridBagConstraints.BOTH;
-        gbc.ipadx = 20;
-        panel5.add(edgeButton, gbc);
-        auxButton = new JButton();
-        auxButton.setActionCommand("colCyanAction");
-        auxButton.setText("A");
-        gbc = new GridBagConstraints();
-        gbc.gridx = 3;
-        gbc.gridy = 0;
-        gbc.weightx = 1.0;
-        gbc.weighty = 1.0;
-        gbc.fill = GridBagConstraints.BOTH;
-        gbc.ipadx = 20;
-        panel5.add(auxButton, gbc);
         final JPanel panel6 = new JPanel();
         panel6.setLayout(new GridBagLayout());
-        panel1.add(panel6, new GridConstraints(0, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-        final JPanel panel7 = new JPanel();
-        panel7.setLayout(new GridBagLayout());
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.VERTICAL;
-        panel6.add(panel7, gbc);
+        panel5.add(panel6, gbc);
         moveButton = new JButton();
         moveButton.setActionCommand("moveCreasePatternAction");
         moveButton.setText("move");
@@ -373,7 +296,7 @@ public class TopToolbar {
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
         gbc.ipadx = 10;
-        panel7.add(moveButton, gbc);
+        panel6.add(moveButton, gbc);
         zoomOutButton = new JButton();
         zoomOutButton.setActionCommand("creasePatternZoomOutAction");
         zoomOutButton.setText("zoomOut");
@@ -384,7 +307,7 @@ public class TopToolbar {
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
         gbc.ipadx = 10;
-        panel7.add(zoomOutButton, gbc);
+        panel6.add(zoomOutButton, gbc);
         zoomInButton = new JButton();
         zoomInButton.setActionCommand("creasePatternZoomInAction");
         zoomInButton.setText("zoomIn");
@@ -395,16 +318,16 @@ public class TopToolbar {
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
         gbc.ipadx = 10;
-        panel7.add(zoomInButton, gbc);
+        panel6.add(zoomInButton, gbc);
         gbc = new GridBagConstraints();
         gbc.gridx = 2;
         gbc.gridy = 0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
-        panel7.add(zoomTextField, gbc);
-        final JPanel panel8 = new JPanel();
-        panel8.setLayout(new GridBagLayout());
-        panel1.add(panel8, new GridConstraints(0, 5, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        panel6.add(zoomTextField, gbc);
+        final JPanel panel7 = new JPanel();
+        panel7.setLayout(new GridBagLayout());
+        panel1.add(panel7, new GridConstraints(0, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         rotateCounterClockwiseButton = new JButton();
         rotateCounterClockwiseButton.setActionCommand("rotateAnticlockwiseAction");
         rotateCounterClockwiseButton.setText("rotateCounterClockwise");
@@ -415,7 +338,7 @@ public class TopToolbar {
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
         gbc.ipadx = 10;
-        panel8.add(rotateCounterClockwiseButton, gbc);
+        panel7.add(rotateCounterClockwiseButton, gbc);
         rotateClockwiseButton = new JButton();
         rotateClockwiseButton.setActionCommand("rotateClockwiseAction");
         rotateClockwiseButton.setText("rotateClockwise");
@@ -426,23 +349,23 @@ public class TopToolbar {
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
         gbc.ipadx = 10;
-        panel8.add(rotateClockwiseButton, gbc);
+        panel7.add(rotateClockwiseButton, gbc);
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
         gbc.gridy = 0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
-        panel8.add(rotationTextField, gbc);
+        panel7.add(rotationTextField, gbc);
         foldabilityCheckbox = new JCheckBox();
         foldabilityCheckbox.setActionCommand("cAMVAction");
         foldabilityCheckbox.setText("Check Foldability");
-        panel1.add(foldabilityCheckbox, new GridConstraints(0, 6, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        final JPanel panel9 = new JPanel();
-        panel9.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
-        root.add(panel9, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, new Dimension(-1, 30), null, null, 0, false));
-        panel9.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
+        panel1.add(foldabilityCheckbox, new GridConstraints(0, 5, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        settingsRoot = new JPanel();
+        settingsRoot.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
+        root.add(settingsRoot, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, new Dimension(-1, 30), null, null, 0, false));
+        settingsRoot.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
         final JScrollPane scrollPane1 = new JScrollPane();
-        panel9.add(scrollPane1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        settingsRoot.add(scrollPane1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         scrollPane1.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
         settingsPanel = new JPanel();
         settingsPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));

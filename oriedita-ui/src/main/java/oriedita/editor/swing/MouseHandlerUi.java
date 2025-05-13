@@ -1,7 +1,5 @@
 package oriedita.editor.swing;
 
-import oriedita.editor.canvas.MouseMode;
-import oriedita.editor.handler.Handles;
 import oriedita.editor.handler.MouseHandlerSettingGroup;
 import oriedita.editor.handler.UiFor;
 
