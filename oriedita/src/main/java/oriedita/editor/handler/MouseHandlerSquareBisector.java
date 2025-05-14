@@ -2,7 +2,6 @@ package oriedita.editor.handler;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import org.tinylog.Logger;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
@@ -132,7 +131,7 @@ public class MouseHandlerSquareBisector extends StepMouseHandler<SquareBisectorS
         Point cross_point = OritaCalc.findIntersection(add_sen2, destinationSegment_3P);
 
         LineSegment add_sen = new LineSegment(cross_point, pointsList_3P.get(1), d.getLineColor());
-        if(OritaCalc.isLineSegmentParallel(OritaCalc.lineSegmentChangeLength(add_sen, 1000.0), destinationSegment_3P) != OritaCalc.ParallelJudgement.NOT_PARALLEL) {
+        if(OritaCalc.isLineSegmentParallel(add_sen2, destinationSegment_3P) != OritaCalc.ParallelJudgement.NOT_PARALLEL) {
             return SquareBisectorStep.SELECT_DESTINATION_3P;
         }
         if (Epsilon.high.gt0(add_sen.determineLength())) {
@@ -173,14 +172,14 @@ public class MouseHandlerSquareBisector extends StepMouseHandler<SquareBisectorS
 
         // Make a temporary line to connect intersection and center
         LineSegment tempBisect = new LineSegment(intersection, center);
+        tempBisect = OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), tempBisect);
 
         // Find intersection of temp line to the destination line
         Point cross_point = OritaCalc.findIntersection(tempBisect, destinationSegment_2L_NP);
 
         // Draw the bisector
         LineSegment destinationLine = new LineSegment(cross_point, intersection, d.getLineColor());
-        Logger.info(OritaCalc.isLineSegmentParallel(OritaCalc.lineSegmentChangeLength(destinationLine, 1000.0), destinationSegment_2L_NP));
-        if(OritaCalc.isLineSegmentParallel(OritaCalc.lineSegmentChangeLength(destinationLine, 1000.0), destinationSegment_2L_NP) != OritaCalc.ParallelJudgement.NOT_PARALLEL) {
+        if(OritaCalc.isLineSegmentParallel(tempBisect, destinationSegment_2L_NP) != OritaCalc.ParallelJudgement.NOT_PARALLEL) {
             return SquareBisectorStep.SELECT_DESTINATION_2L_NP;
         }
         if (Epsilon.high.gt0(destinationLine.determineLength())) {
