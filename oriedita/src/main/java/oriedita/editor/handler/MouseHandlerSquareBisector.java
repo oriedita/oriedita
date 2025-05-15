@@ -124,7 +124,11 @@ public class MouseHandlerSquareBisector extends StepMouseHandler<SquareBisectorS
         } else destinationSegment_3P = null;
     }
     private SquareBisectorStep release_destination_3P(Point p) {
-        if (destinationSegment_3P == null) return SquareBisectorStep.SELECT_DESTINATION_3P;
+        if (destinationSegment_3P == null ) return SquareBisectorStep.SELECT_DESTINATION_3P;
+        if (OritaCalc.isPointWithinLineSpan(pointsList_3P.get(0), pointsList_3P.get(1), pointsList_3P.get(2))) {
+            reset();
+            return SquareBisectorStep.SELECT_2L_OR_3P;
+        }
 
         Point naisin = OritaCalc.center(pointsList_3P.get(0), pointsList_3P.get(1), pointsList_3P.get(2));
         LineSegment add_sen2 = new LineSegment(pointsList_3P.get(1), naisin);
@@ -213,6 +217,10 @@ public class MouseHandlerSquareBisector extends StepMouseHandler<SquareBisectorS
         if(destinationSegmentsList_2L_P.get(counter_2L_P) == null) return SquareBisectorStep.SELECT_DESTINATION_2L_P;
         counter_2L_P++;
         if (counter_2L_P != 2) return SquareBisectorStep.SELECT_DESTINATION_2L_P;
+        if (OritaCalc.isLineSegmentParallel(destinationSegmentsList_2L_P.get(0), destinationSegmentsList_2L_P.get(1)) == OritaCalc.ParallelJudgement.PARALLEL_EQUAL) {
+            reset();
+            return SquareBisectorStep.SELECT_2L_OR_3P;
+        }
         Point intersect1 = OritaCalc.findIntersection(indicator, destinationSegmentsList_2L_P.get(0));
         Point intersect2 = OritaCalc.findIntersection(indicator, destinationSegmentsList_2L_P.get(1));
 
