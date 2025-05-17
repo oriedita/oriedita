@@ -3,54 +3,68 @@ package oriedita.editor.handler;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
+import oriedita.editor.drawing.tools.Camera;
+import oriedita.editor.drawing.tools.DrawingUtil;
 import origami.Epsilon;
-import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 
+import java.awt.Graphics2D;
+
+enum CreaseDeleteOverlapStep { CLICK_DRAG_POINT }
+
 @ApplicationScoped
 @Handles(MouseMode.CREASE_DELETE_OVERLAPPING_64)
-public class MouseHandlerCreaseDeleteOverlapping extends BaseMouseHandlerInputRestricted {
-    private final MouseHandlerDrawCreaseRestricted mouseHandlerDrawCreaseRestricted;
+public class MouseHandlerCreaseDeleteOverlapping extends StepMouseHandler<CreaseDeleteOverlapStep> {
+    private Point anchorPoint, releasePoint;
+    private LineSegment dragSegment;
 
     @Inject
-    public MouseHandlerCreaseDeleteOverlapping(@Handles(MouseMode.DRAW_CREASE_RESTRICTED_11) MouseHandlerDrawCreaseRestricted mouseHandlerDrawCreaseRestricted) {
-        this.mouseHandlerDrawCreaseRestricted = mouseHandlerDrawCreaseRestricted;
+    public MouseHandlerCreaseDeleteOverlapping() {
+        super(CreaseDeleteOverlapStep.CLICK_DRAG_POINT);
+        steps.addNode(StepNode.createNode(CreaseDeleteOverlapStep.CLICK_DRAG_POINT, this::move_click_drag_point, (p) -> {}, this::drag_click_drag_point, this::release_click_drag_point));
     }
 
-    //マウス操作(mouseMode==64　でボタンを押したとき)時の作業----------------------------------------------------
-    public void mousePressed(Point p0) {
-        d.getLineStep().clear();
+    @Override
+    public void drawPreview(Graphics2D g2, Camera camera, DrawingSettings settings) {
+        super.drawPreview(g2, camera, settings);
+        DrawingUtil.drawStepVertex(g2, anchorPoint, d.getLineColor(), camera, d.getGridInputAssist());
+        DrawingUtil.drawStepVertex(g2, releasePoint, d.getLineColor(), camera, d.getGridInputAssist());
+        DrawingUtil.drawLineStep(g2, dragSegment, camera, settings.getLineWidth(), d.getGridInputAssist());
+    }
 
-        Point p = d.getCamera().TV2object(p0);
-        Point closest_point = d.getClosestPoint(p);
-        if (p.distance(closest_point) > d.getSelectionDistance()) {
-            return;
+    @Override
+    public void reset() {
+        anchorPoint = null;
+        releasePoint = null;
+        dragSegment = null;
+    }
+
+    // Click drag point
+    private void move_click_drag_point(Point p) {
+        if (p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
+            anchorPoint = d.getClosestPoint(p);
+        } else anchorPoint = null;
+    }
+    private void drag_click_drag_point(Point p) {
+        if(anchorPoint == null) return;
+        releasePoint = p;
+        if (p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
+            releasePoint = d.getClosestPoint(p);
         }
-
-        d.lineStepAdd(new LineSegment(p, closest_point, LineColor.MAGENTA_5));
+        dragSegment = new LineSegment(anchorPoint, releasePoint).withColor(d.getLineColor());
     }
-
-    //マウス操作(mouseMode==64　でドラッグしたとき)を行う関数----------------------------------------------------
-    public void mouseDragged(Point p0) {
-        mouseHandlerDrawCreaseRestricted.mouseDragged(p0);
-    }
-
-    //マウス操作(mouseMode==64　でボタンを離したとき)を行う関数----------------------------------------------------
-    public void mouseReleased(Point p0) {
-        if (d.getLineStep().size() == 1) {
-            Point p = d.getCamera().TV2object(p0);
-            Point closest_point = d.getClosestPoint(p);
-            d.getLineStep().set(0, d.getLineStep().get(0).withA(closest_point));
-            if (p.distance(closest_point) <= d.getSelectionDistance()) {
-                if (Epsilon.high.gt0(d.getLineStep().get(0).determineLength())) {
-                    d.getFoldLineSet().deleteInsideLine(d.getLineStep().get(0), "l");//lは小文字のエル
-
-                    d.record();
-                }
-            }
-            d.getLineStep().clear();
+    private CreaseDeleteOverlapStep release_click_drag_point(Point p) {
+        if (anchorPoint == null) return CreaseDeleteOverlapStep.CLICK_DRAG_POINT;
+        if (releasePoint == null || releasePoint.distance(d.getClosestPoint(releasePoint)) > d.getSelectionDistance()) {
+            reset();
+            return CreaseDeleteOverlapStep.CLICK_DRAG_POINT;
         }
-
+        if (Epsilon.high.gt0(dragSegment.determineLength())) {
+            d.getFoldLineSet().deleteInsideLine(dragSegment, "l");//lは小文字のエル
+            d.record();
+        }
+        reset();
+        return CreaseDeleteOverlapStep.CLICK_DRAG_POINT;
     }
 }

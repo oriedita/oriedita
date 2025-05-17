@@ -290,6 +290,7 @@ public class DrawingUtil {
     }
 
     public static void drawLineStep(Graphics g, LineSegment s, Camera camera, float lineWidth, boolean gridInputAssist) {
+        if (s == null) return;
         Graphics2D g2 = (Graphics2D) g;
         setColor(g, s.getColor());
         g2.setStroke(new BasicStroke(lineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));//基本指定A　　線の太さや線の末端の形状
@@ -322,6 +323,7 @@ public class DrawingUtil {
     }
 
     public static void drawStepVertex(Graphics2D g, Point p, LineColor color, Camera camera, boolean gridInputAssist) {
+        if (p == null) return;
         setColor(g, color);
         Point a = camera.object2TV(p);
         int i_width_nyuiiryokuji = 3;
@@ -365,6 +367,7 @@ public class DrawingUtil {
     }
 
     public static void drawCircleStep(Graphics g, Circle c, Camera camera) {
+        if (c == null) return;
         Graphics2D g2 = (Graphics2D) g;
         setColor(g, c.getColor());
         Point a = camera.object2TV(c.determineCenter());//この場合のs_tvは描画座標系での円の中心の位置
@@ -375,6 +378,16 @@ public class DrawingUtil {
         g2.draw(new Ellipse2D.Double(a.getX() - d_width, a.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
     }
 
+    public static void drawText(Graphics g, String text, Point position, Camera camera) {
+        if (position == null) return;
+        if (text == null || text.isBlank()) return;
+        Point p = camera.object2TV(position);
+        Color tempColor = g.getColor();
+        g.setColor(Colors.get(Color.black));
+        g.drawString(text, (int) p.getX(), (int) p.getY());
+        g.setColor(tempColor);
+    }
+
     private static final float[] dash_M1 = {10.0f, 3.0f, 3.0f, 3.0f};//一点鎖線
     private static final float[] dash_M2 = {10.0f, 3.0f, 3.0f, 3.0f, 3.0f, 3.0f};//二点鎖線
     private static final float[] dash_V = {8.0f, 8.0f};//破線
@@ -382,7 +395,7 @@ public class DrawingUtil {
     private static final Point defaultMove = new Point(Epsilon.UNKNOWN_1EN6, Epsilon.UNKNOWN_1EN6);
 
     public static void drawCpLine(Graphics g, LineSegment s, Camera camera, LineStyle lineStyle, float lineWidth, int pointSize, int clipX, int clipY, boolean useRoundedEnds) {
-
+        if (s == null) return;
         Point a = camera.object2TV(s.getA()).move(defaultMove);
         Point b = camera.object2TV(s.getB()).move(defaultMove);
 
