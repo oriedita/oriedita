@@ -11,6 +11,9 @@ import oriedita.editor.service.BindingService;
 import origami.crease_pattern.CustomLineTypes;
 import origami.crease_pattern.element.LineColor;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.io.Serializable;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -126,7 +129,13 @@ public class CanvasModel extends AbstractModel implements Serializable {
     public void setMouseMode(MouseMode mouseMode) {
         MouseMode oldMouseMode = this.mouseMode;
         this.mouseMode = mouseMode;
-        this.pcs.firePropertyChange("mouseMode", oldMouseMode, mouseMode);
+
+        // let propertyChange fire despite having the same value, otherwise
+        // re-triggering the same MouseHandler won't reset its fields
+        PropertyChangeEvent event = new PropertyChangeEvent( pcs, "mouseMode", oldMouseMode, mouseMode );
+        for( PropertyChangeListener listener : pcs.getPropertyChangeListeners() ) {
+            listener.propertyChange( event );
+        }
     }
 
     public LineColor calculateLineColor() {

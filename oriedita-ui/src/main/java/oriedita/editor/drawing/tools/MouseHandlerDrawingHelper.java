@@ -23,16 +23,10 @@ public class MouseHandlerDrawingHelper {
     }
 
     public void drawLineStep(LineSegment segment) {
-        if (segment == null) {
-            return;
-        }
         DrawingUtil.drawLineStep(g, segment, camera, settings.getLineWidth(), gridInputAssist);
     }
 
     public void drawCircle(Circle circle) {
-        if (circle == null) {
-            return;
-        }
         DrawingUtil.drawCircleStep(g, circle, camera);
     }
 }

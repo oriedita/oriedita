@@ -1,6 +1,5 @@
 package oriedita.editor.canvas;
 
-import oriedita.editor.databinding.AngleSystemModel;
 import oriedita.editor.databinding.ApplicationModel;
 import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.databinding.GridModel;
@@ -17,7 +16,7 @@ import origami.crease_pattern.element.Point;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.geom.GeneralPath;
+import java.awt.geom.Path2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.List;
@@ -204,15 +203,13 @@ public interface CreasePattern_Worker {
 
     void setData(CanvasModel data);
 
-    void setData(AngleSystemModel angleSystemModel);
-
     Point getCameraPosition();
 
     void selectConnected(Point p);
 
     java.util.List<LineSegment> getLineStep();
 
-    GeneralPath getLinePath();
+    Path2D getLinePath();
 
     void setLineStepColor(LineSegment s, LineColor icol);
 

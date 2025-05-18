@@ -3,70 +3,73 @@ package oriedita.editor.handler;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
+import oriedita.editor.drawing.tools.Camera;
+import oriedita.editor.drawing.tools.DrawingUtil;
 import origami.Epsilon;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 
+import java.awt.Graphics2D;
+
+enum LineSegmentDivisionStep { CLICK_DRAG_POINT }
+
 @ApplicationScoped
 @Handles(MouseMode.LINE_SEGMENT_DIVISION_27)
-public class MouseHandlerLineSegmentDivision extends BaseMouseHandlerInputRestricted {
+public class MouseHandlerLineSegmentDivision extends StepMouseHandler<LineSegmentDivisionStep> {
+    private Point anchorPoint, releasePoint;
+    private LineSegment dragSegment;
+
     @Inject
     public MouseHandlerLineSegmentDivision() {
+        super(LineSegmentDivisionStep.CLICK_DRAG_POINT);
+        steps.addNode(StepNode.createNode(LineSegmentDivisionStep.CLICK_DRAG_POINT, this::move_click_drag_point, (p) -> {}, this::drag_click_drag_point, this::release_click_drag_point));
     }
 
-    //マウス操作(mouseMode==27線分入力　でボタンを押したとき)時の作業----------------------------------------------------
-    public void mousePressed(Point p0) {
-        Point p = d.getCamera().TV2object(p0);
-        Point closest_point = d.getClosestPoint(p);
-        if (p.distance(closest_point) < d.getSelectionDistance()) {
-            d.lineStepAdd(new LineSegment(p, closest_point, d.getLineColor()));
-            d.getLineStep().get(0).setActive(LineSegment.ActiveState.ACTIVE_B_2);
-            return;
-        }
-        d.lineStepAdd(new LineSegment(p, p, d.getLineColor()));
-        d.getLineStep().get(0).setActive(LineSegment.ActiveState.ACTIVE_B_2);
+    @Override
+    public void drawPreview(Graphics2D g2, Camera camera, DrawingSettings settings) {
+        super.drawPreview(g2, camera, settings);
+        DrawingUtil.drawStepVertex(g2, anchorPoint, d.getLineColor(), camera, d.getGridInputAssist());
+        DrawingUtil.drawStepVertex(g2, releasePoint, d.getLineColor(), camera, d.getGridInputAssist());
+        DrawingUtil.drawLineStep(g2, dragSegment, camera, settings.getLineWidth(), d.getGridInputAssist());
     }
 
-
-// 19 19 19 19 19 19 19 19 19 select 選択
-
-    //マウス操作(mouseMode==27線分入力　でドラッグしたとき)を行う関数----------------------------------------------------
-    public void mouseDragged(Point p0) {
-        Point p = d.getCamera().TV2object(p0);
-        d.getLineStep().set(0, d.getLineStep().get(0).withA(p));
-        if (d.getGridInputAssist()) {
-            d.getLineCandidate().clear();
-            Point closestPoint = d.getClosestPoint(p);
-            if (p.distance(closestPoint) < d.getSelectionDistance()) {
-                d.getLineCandidate().add(new LineSegment(closestPoint, closestPoint, d.getLineColor()));
-                d.getLineStep().set(0, d.getLineStep().get(0).withA(d.getLineStep().get(0).getA()));
-            }
-        }
+    @Override
+    public void reset() {
+        anchorPoint = null;
+        releasePoint = null;
+        dragSegment = null;
     }
 
-    //マウス操作(mouseMode==27線分入力　でボタンを離したとき)を行う関数----------------------------------------------------
-    public void mouseReleased(Point p0) {
-        Point p = d.getCamera().TV2object(p0);
-
-        d.getLineStep().set(0, d.getLineStep().get(0).withA(p));
-
-        Point closestPoint = d.getClosestPoint(p);
-
-        if (p.distance(closestPoint) <= d.getSelectionDistance()) {
-            d.getLineStep().set(0, d.getLineStep().get(0).withA(closestPoint));
+    // Click drag point
+    private void move_click_drag_point(Point p) {
+        anchorPoint = p;
+        if(p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
+            anchorPoint = d.getClosestPoint(p);
         }
-        if (Epsilon.high.gt0(d.getLineStep().get(0).determineLength())) {
-            for (int i = 0; i <= d.getFoldLineDividingNumber() - 1; i++) {
-                double ax = ((double) (d.getFoldLineDividingNumber() - i) * d.getLineStep().get(0).determineAX() + (double) i * d.getLineStep().get(0).determineBX()) / ((double) d.getFoldLineDividingNumber());
-                double ay = ((double) (d.getFoldLineDividingNumber() - i) * d.getLineStep().get(0).determineAY() + (double) i * d.getLineStep().get(0).determineBY()) / ((double) d.getFoldLineDividingNumber());
-                double bx = ((double) (d.getFoldLineDividingNumber() - i - 1) * d.getLineStep().get(0).determineAX() + (double) (i + 1) * d.getLineStep().get(0).determineBX()) / ((double) d.getFoldLineDividingNumber());
-                double by = ((double) (d.getFoldLineDividingNumber() - i - 1) * d.getLineStep().get(0).determineAY() + (double) (i + 1) * d.getLineStep().get(0).determineBY()) / ((double) d.getFoldLineDividingNumber());
-                LineSegment s_ad = new LineSegment(ax, ay, bx, by).withColor(d.getLineColor());
-                d.addLineSegment(s_ad);
-            }
-            d.record();
+    }
+    private void drag_click_drag_point(Point p) {
+        releasePoint = p;
+        if(p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
+            releasePoint = d.getClosestPoint(p);
         }
-
-        d.getLineStep().clear();
+        dragSegment = new LineSegment(anchorPoint, releasePoint).withColor(d.getLineColor());
+    }
+    private LineSegmentDivisionStep release_click_drag_point(Point p) {
+        if(releasePoint == null) {
+            reset();
+            return LineSegmentDivisionStep.CLICK_DRAG_POINT;
+        }
+        if(!Epsilon.high.gt0(dragSegment.determineLength())) return LineSegmentDivisionStep.CLICK_DRAG_POINT;
+        for (int i = 0; i <= d.getFoldLineDividingNumber() - 1; i++) {
+            double ax = ((double) (d.getFoldLineDividingNumber() - i) * dragSegment.determineAX() + (double) i * dragSegment.determineBX()) / ((double) d.getFoldLineDividingNumber());
+            double ay = ((double) (d.getFoldLineDividingNumber() - i) * dragSegment.determineAY() + (double) i * dragSegment.determineBY()) / ((double) d.getFoldLineDividingNumber());
+            double bx = ((double) (d.getFoldLineDividingNumber() - i - 1) * dragSegment.determineAX() + (double) (i + 1) * dragSegment.determineBX()) / ((double) d.getFoldLineDividingNumber());
+            double by = ((double) (d.getFoldLineDividingNumber() - i - 1) * dragSegment.determineAY() + (double) (i + 1) * dragSegment.determineBY()) / ((double) d.getFoldLineDividingNumber());
+            LineSegment s_ad = new LineSegment(ax, ay, bx, by).withColor(d.getLineColor());
+            d.addLineSegment(s_ad);
+        }
+        d.record();
+        reset();
+        return LineSegmentDivisionStep.CLICK_DRAG_POINT;
     }
 }

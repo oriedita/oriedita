@@ -8,7 +8,6 @@ import jico.ImageReadException;
 import org.tinylog.Logger;
 import oriedita.common.task.MultiStagedExecutor;
 import oriedita.editor.canvas.CreasePattern_Worker;
-import oriedita.editor.databinding.AngleSystemModel;
 import oriedita.editor.databinding.ApplicationModel;
 import oriedita.editor.databinding.BackgroundModel;
 import oriedita.editor.databinding.CameraModel;
@@ -72,7 +71,6 @@ public class App {
     private final AppMenuBar appMenuBar;
     private final GridModel gridModel;
     private final BackgroundModel backgroundModel;
-    private final AngleSystemModel angleSystemModel;
     private final CameraModel cameraModel;
     private final ResetService resetService;
     private final ActionRegistrationService actionRegistrationService;
@@ -103,7 +101,6 @@ public class App {
             AppMenuBar appMenuBar,
             GridModel gridModel,
             BackgroundModel backgroundModel,
-            AngleSystemModel angleSystemModel,
             CameraModel cameraModel,
             ResetService resetService,
             ActionRegistrationService actionRegistrationService
@@ -123,7 +120,6 @@ public class App {
         this.appMenuBar = appMenuBar;
         this.gridModel = gridModel;
         this.backgroundModel = backgroundModel;
-        this.angleSystemModel = angleSystemModel;
         this.cameraModel = cameraModel;
         this.resetService = resetService;
         this.actionRegistrationService = actionRegistrationService;
@@ -283,7 +279,6 @@ public class App {
 
         applicationModel.addPropertyChangeListener(e -> mainCreasePatternWorker.setData(e, applicationModel));
         gridModel.addPropertyChangeListener(e -> mainCreasePatternWorker.setGridConfigurationData(gridModel));
-        angleSystemModel.addPropertyChangeListener(e -> mainCreasePatternWorker.setData(angleSystemModel));
         canvasModel.addPropertyChangeListener(e -> mainCreasePatternWorker.setData(canvasModel));
         fileModel.addPropertyChangeListener(e -> mainCreasePatternWorker.setTitle(fileModel.determineFrameTitle()));
 
@@ -303,6 +298,8 @@ public class App {
 
 
         executor.execute(() -> {
+            resetService.developmentView_initialization();
+
             applicationModel.reload();
 
             fileModel.addPropertyChangeListener(e -> frame.setTitle(fileModel.determineFrameTitle()));
@@ -313,7 +310,6 @@ public class App {
 
             mainCreasePatternWorker.record();
         });
-        executor.execute(resetService::developmentView_initialization);
         executor.execute(() -> {
             buttonService.Button_shared_operation();
             buttonService.loadAllKeyStrokes();

@@ -8,7 +8,6 @@ import oriedita.editor.canvas.LineStyle;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.canvas.OperationFrame;
 import oriedita.editor.canvas.TextWorker;
-import oriedita.editor.databinding.AngleSystemModel;
 import oriedita.editor.databinding.ApplicationModel;
 import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.databinding.FileModel;
@@ -48,7 +47,7 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.geom.GeneralPath;
+import java.awt.geom.Path2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -82,7 +81,7 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     /**
      * Temporary GeneralPath when drawing.
      */
-    private final GeneralPath linePath = new GeneralPath();
+    private final Path2D linePath = new Path2D.Double();
     /**
      * Temporary circles when drawing.
      */
@@ -110,7 +109,7 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     private boolean check2 = false;//=0 check2を実施しない、1=実施する　
     private boolean check3 = false;//=0 check3を実施しない、1=実施する　// TODO: intellij says this field is never written to, double check if check3 can be removed
     private boolean check4 = false;//=0 check4を実施しない、1=実施する　
-    private boolean isSelectionEmpty;
+    private boolean isSelectionEmpty = false;
     //---------------------------------
     // ****************************************************************************************************************************************
     // **************　Variable definition so far　****************************************************************************************************
@@ -1048,11 +1047,6 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     }
 
     @Override
-    public void setData(AngleSystemModel angleSystemModel) {
-        unselect_all();
-    }
-
-    @Override
     public Point getCameraPosition() {
         return this.camera.getCameraPosition();
     }
@@ -1074,7 +1068,7 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     }
 
     @Override
-    public GeneralPath getLinePath() {
+    public Path2D getLinePath() {
         return linePath;
     }
 
