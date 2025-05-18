@@ -44,7 +44,6 @@ import java.util.Map;
 
 @ApplicationScoped
 public class TopToolbar {
-    private final CameraModel cameraModel;
     private JPanel root;
     private JButton cycleGridButton;
     private JButton decreaseGridSizeButton;
@@ -63,7 +62,6 @@ public class TopToolbar {
     private JCheckBox foldabilityCheckbox;
     private JScrollPane scrollPane;
     private DraggableTextField gridSizeTextField;
-    private JPanel settingsPanel;
     private JPanel settingsRoot;
 
     private final ButtonService buttonService;
@@ -71,10 +69,7 @@ public class TopToolbar {
     private final CanvasModel canvasModel;
     private final CameraModel creasePatternCameraModel;
     private final ApplicationModel applicationModel;
-    private final Instance<MouseHandlerUi> mouseHandlerUiInstances;
     private final Camera cpCam;
-    private final Map<MouseHandlerSettingGroup, MouseHandlerUi> mouseHandlerUis = new HashMap<>();
-    private final Map<MouseMode, MouseModeHandler> handlers = new HashMap<>();
 
     @Inject
     public TopToolbar(ButtonService buttonService,
@@ -82,27 +77,21 @@ public class TopToolbar {
                       CanvasModel canvasModel,
                       CameraModel creasePatternCameraModel,
                       ApplicationModel applicationModel,
-                      @Any Instance<MouseHandlerUi> settingsUis,
-                      @Any Instance<MouseModeHandler> mouseModeHandlers,
                       CameraModel cameraModel,
                       @Named("creasePatternCamera") Camera cpCam
-                      ) {
+    ) {
         this.buttonService = buttonService;
         this.gridModel = gridModel;
         this.canvasModel = canvasModel;
         this.creasePatternCameraModel = creasePatternCameraModel;
         this.applicationModel = applicationModel;
-        this.mouseHandlerUiInstances = settingsUis;
         this.cpCam = cpCam;
         $$$setupUI$$$();
-        mouseModeHandlers.forEach(h -> handlers.put(h.getMouseMode(), h));
-        this.cameraModel = cameraModel;
     }
 
     public void init() {
         buttonService.addDefaultListener($$$getRootComponent$$$());
 
-        canvasModel.addPropertyChangeListener(e -> setData(canvasModel));
         applicationModel.addPropertyChangeListener(e -> setData(applicationModel));
 
         scrollPane.getHorizontalScrollBar().addAdjustmentListener(e -> {
@@ -117,6 +106,7 @@ public class TopToolbar {
         });
         root.addComponentListener(new ComponentAdapter() {
             int lastHeight = root.getHeight();
+
             @Override
             public void componentResized(ComponentEvent e) {
                 int heightChange = lastHeight - root.getHeight();
@@ -140,18 +130,6 @@ public class TopToolbar {
         rotationTextField.addRawListener(
                 (d, fine) -> creasePatternCameraModel.setRotation(
                         creasePatternCameraModel.getRotation() + d * (fine ? .05 : 1)));
-        mouseHandlerUiInstances.handlesStream()
-                .filter(h ->
-                        h.getBean().getQualifiers().stream()
-                                .anyMatch(a -> a.annotationType() == UiFor.class))
-                .forEach(h -> {
-                    var ui = h.get();
-                    settingsPanel.add(ui.$$$getRootComponent$$$());
-                    ui.$$$getRootComponent$$$().setVisible(true);
-                    ui.init();
-                    mouseHandlerUis.put(ui.getSettingGroup(), ui);
-                });
-        settingsPanel.revalidate();
         root.revalidate();
         root.validate();
         root.repaint();
@@ -160,21 +138,6 @@ public class TopToolbar {
 
     private void setData(ApplicationModel applicationModel) {
         foldabilityCheckbox.setSelected(applicationModel.getCheck4Enabled());
-    }
-
-    private void setData(CanvasModel data) {
-        mouseHandlerUis.values().forEach(h -> {
-            h.$$$getRootComponent$$$().setVisible(false);
-        });
-        var anyVisible = false;
-        for (MouseHandlerSettingGroup setting : handlers.get(canvasModel.getMouseMode()).getSettings()) {
-            mouseHandlerUis.get(setting).$$$getRootComponent$$$().setVisible(true);
-            anyVisible = true;
-        }
-        settingsRoot.setVisible(anyVisible);
-        $$$getRootComponent$$$().revalidate();
-        $$$getRootComponent$$$().validate();
-        $$$getRootComponent$$$().repaint();
     }
 
     public void createUIComponents() {
@@ -193,7 +156,7 @@ public class TopToolbar {
     private void $$$setupUI$$$() {
         createUIComponents();
         root = new JPanel();
-        root.setLayout(new GridLayoutManager(2, 1, new Insets(0, 0, 0, 0), -1, -1));
+        root.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
         scrollPane = new JScrollPane();
         root.add(scrollPane, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         scrollPane.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
@@ -384,18 +347,6 @@ public class TopToolbar {
         foldabilityCheckbox.setActionCommand("cAMVAction");
         foldabilityCheckbox.setText("Check Foldability");
         panel1.add(foldabilityCheckbox, new GridConstraints(0, 5, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        settingsRoot = new JPanel();
-        settingsRoot.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
-        root.add(settingsRoot, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, new Dimension(-1, 30), null, null, 0, false));
-        settingsRoot.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
-        final JScrollPane scrollPane1 = new JScrollPane();
-        settingsRoot.add(scrollPane1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
-        scrollPane1.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
-        settingsPanel = new JPanel();
-        settingsPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
-        settingsPanel.setMinimumSize(new Dimension(-1, -1));
-        scrollPane1.setViewportView(settingsPanel);
-        settingsPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
     }
 
     /**
