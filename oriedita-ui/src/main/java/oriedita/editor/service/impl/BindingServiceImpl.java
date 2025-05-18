@@ -1,6 +1,7 @@
 package oriedita.editor.service.impl;
 
 import jakarta.enterprise.context.ApplicationScoped;
+import org.apache.commons.logging.Log;
 import org.tinylog.Logger;
 import oriedita.common.converter.DoubleConverter;
 import oriedita.common.converter.IntConverter;
@@ -56,6 +57,7 @@ public class BindingServiceImpl implements BindingService, Serializable {
                         component.setBackground(finalConverter.canConvertBack(component.getText())
                                 ? UIManager.getColor("TextField.background") :
                                 Colors.get(Colors.INVALID_INPUT));
+                        component.requestFocus(); // some fields would lose focus after setting the text, this fixes that
                     }
                 } catch (IllegalAccessException | InvocationTargetException ex) {
                     Logger.error(ex);
@@ -83,7 +85,10 @@ public class BindingServiceImpl implements BindingService, Serializable {
                         //noinspection unchecked
                         T newValue = (T) propertyDescriptor.getReadMethod().invoke(model);
                         if (finalConverter.canConvert(newValue)){
-                            component.setText(finalConverter.convert(newValue));
+                            var value = finalConverter.convert(newValue);
+                            if (!component.getText().equals(value)) {
+                                component.setText(value);
+                            }
                         }
                     } catch (IllegalAccessException | InvocationTargetException ex) {
                         Logger.error(ex);

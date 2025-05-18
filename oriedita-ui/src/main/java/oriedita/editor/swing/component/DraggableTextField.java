@@ -86,9 +86,11 @@ public class DraggableTextField extends JTextField {
         } else {
             fine = false;
         }
-        dragged = true;
         var newPos = p;
         var deltaX = newPos.x - startPos.x;
+        if (deltaX != 0) {
+            dragged = true;
+        }
         var lastDeltaX = lastPos.x - startPos.x;
         rawListeners.forEach(l -> l.accept(newPos.x - lastPos.x, fine));
         int fineMultiplier = 5;
