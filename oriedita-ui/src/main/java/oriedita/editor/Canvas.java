@@ -441,6 +441,7 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
         if (!pressedButtons.contains(e.getButton())) {
             // When pressing this button the meta key was held down.
             pressedButtons.remove(MouseEvent.BUTTON2);
+            return;
         } else {
             pressedButtons.remove(e.getButton());
         }
