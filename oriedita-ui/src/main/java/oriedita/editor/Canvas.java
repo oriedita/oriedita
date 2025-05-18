@@ -239,6 +239,7 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
 
         Point p = e2p(e);
         canvasUI.setMousePosition(p);
+        canvasModel.setToggleLineColor(e.isControlDown());
 
         mainCreasePatternWorker.setCamera(creasePatternCamera);
 
