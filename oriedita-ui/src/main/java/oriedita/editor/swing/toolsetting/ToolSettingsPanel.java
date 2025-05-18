@@ -131,9 +131,11 @@ public class ToolSettingsPanel {
         settingsPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
         toolIcon = new JLabel();
         toolIcon.setAlignmentX(0.5f);
+        toolIcon.setHorizontalAlignment(4);
+        toolIcon.setHorizontalTextPosition(4);
         toolIcon.setOpaque(false);
         toolIcon.setText("toolIcon");
-        root.add(toolIcon, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 1, false));
+        root.add(toolIcon, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, new Dimension(32, -1), null, null, 0, false));
         final Spacer spacer1 = new Spacer();
         root.add(spacer1, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
     }
