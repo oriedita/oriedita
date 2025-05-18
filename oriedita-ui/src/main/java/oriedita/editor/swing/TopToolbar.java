@@ -7,6 +7,8 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Any;
 import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import org.tinylog.Logger;
 import oriedita.common.converter.DoubleConverter;
 import oriedita.editor.Colors;
 import oriedita.editor.canvas.MouseMode;
@@ -14,11 +16,13 @@ import oriedita.editor.databinding.ApplicationModel;
 import oriedita.editor.databinding.CameraModel;
 import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.databinding.GridModel;
+import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.handler.MouseHandlerSettingGroup;
 import oriedita.editor.handler.MouseModeHandler;
 import oriedita.editor.handler.UiFor;
 import oriedita.editor.service.ButtonService;
 import oriedita.editor.swing.component.DraggableTextField;
+import origami.crease_pattern.element.Point;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -33,11 +37,14 @@ import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.util.HashMap;
 import java.util.Map;
 
 @ApplicationScoped
 public class TopToolbar {
+    private final CameraModel cameraModel;
     private JPanel root;
     private JButton cycleGridButton;
     private JButton decreaseGridSizeButton;
@@ -65,6 +72,7 @@ public class TopToolbar {
     private final CameraModel creasePatternCameraModel;
     private final ApplicationModel applicationModel;
     private final Instance<MouseHandlerUi> mouseHandlerUiInstances;
+    private final Camera cpCam;
     private final Map<MouseHandlerSettingGroup, MouseHandlerUi> mouseHandlerUis = new HashMap<>();
     private final Map<MouseMode, MouseModeHandler> handlers = new HashMap<>();
 
@@ -75,16 +83,20 @@ public class TopToolbar {
                       CameraModel creasePatternCameraModel,
                       ApplicationModel applicationModel,
                       @Any Instance<MouseHandlerUi> settingsUis,
-                      @Any Instance<MouseModeHandler> mouseModeHandlers
-    ) {
+                      @Any Instance<MouseModeHandler> mouseModeHandlers,
+                      CameraModel cameraModel,
+                      @Named("creasePatternCamera") Camera cpCam
+                      ) {
         this.buttonService = buttonService;
         this.gridModel = gridModel;
         this.canvasModel = canvasModel;
         this.creasePatternCameraModel = creasePatternCameraModel;
         this.applicationModel = applicationModel;
         this.mouseHandlerUiInstances = settingsUis;
+        this.cpCam = cpCam;
         $$$setupUI$$$();
         mouseModeHandlers.forEach(h -> handlers.put(h.getMouseMode(), h));
+        this.cameraModel = cameraModel;
     }
 
     public void init() {
@@ -102,6 +114,18 @@ public class TopToolbar {
             root.revalidate();
             root.validate();
             root.repaint();
+        });
+        root.addComponentListener(new ComponentAdapter() {
+            int lastHeight = root.getHeight();
+            @Override
+            public void componentResized(ComponentEvent e) {
+                int heightChange = lastHeight - root.getHeight();
+                if (heightChange != 0) {
+                    cpCam.displayPositionMove(new Point(0, heightChange));
+                    canvasModel.markDirty();
+                    lastHeight = root.getHeight();
+                }
+            }
         });
 
         gridModel.bind(gridSizeTextField, "gridSize");
