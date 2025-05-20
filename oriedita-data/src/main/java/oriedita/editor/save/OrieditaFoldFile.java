@@ -2,6 +2,7 @@ package oriedita.editor.save;
 
 import fold.custom.CustomListField;
 import fold.model.FoldFile;
+import oriedita.editor.databinding.GridModel;
 import oriedita.editor.save.fold.MapCircleAdapter;
 import oriedita.editor.save.fold.MapTextAdapter;
 import oriedita.editor.text.Text;
@@ -47,5 +48,20 @@ public class OrieditaFoldFile extends FoldFile {
 
     public void setVersion(String version) {
         setCustomProperty(NS, "version", version);
+    }
+
+    public void setGridSize(int gridSize) {
+        setCustomProperty(NS, "gridSize", gridSize);
+    }
+    public int getGridSize() {
+        var size = (Integer) getCustomProperty(NS, "gridSize");
+        return size == null? 8 : size;
+    }
+    public void setGridStyle(GridModel.State gridStyle) {
+        setCustomProperty(NS, "gridStyle", gridStyle.getState());
+    }
+    public GridModel.State getGridStyle() {
+        var style = (Integer) getCustomProperty(NS, "gridStyle");
+        return style == null? GridModel.State.HIDDEN : GridModel.State.from((int) getCustomProperty(NS, "gridStyle"));
     }
 }

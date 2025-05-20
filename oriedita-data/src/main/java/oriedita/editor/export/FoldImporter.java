@@ -5,6 +5,7 @@ import fold.model.Edge;
 import fold.model.FoldEdgeAssignment;
 import fold.model.FoldFrame;
 import jakarta.enterprise.context.ApplicationScoped;
+import oriedita.editor.databinding.GridModel;
 import oriedita.editor.exception.FileReadingException;
 import oriedita.editor.export.api.FileImporter;
 import oriedita.editor.save.OrieditaFoldFile;
@@ -72,6 +73,10 @@ public class FoldImporter implements FileImporter {
         ori_s_temp.getSave(save1);
 
         save1.setTexts(new ArrayList<>(foldFile.getTexts()));
+        var gridModel = new GridModel();
+        gridModel.setGridSize(foldFile.getGridSize());
+        gridModel.setBaseState(foldFile.getGridStyle());
+        save1.setGridModel(gridModel);
 
         return save1;
     }
