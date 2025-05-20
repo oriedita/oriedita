@@ -167,31 +167,13 @@
                                       <text value="Top panel"/>
                                     </properties>
                                   </component>
-                                  <component id="2b8bb" class="javax.swing.JCheckBox" binding="bottomPanelCB">
+                                  <component id="8a4d2" class="javax.swing.JCheckBox" binding="leftPanelCB">
                                     <constraints>
                                       <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                                       <gridbag weightx="0.0" weighty="0.0"/>
                                     </constraints>
                                     <properties>
-                                      <text value="Bottom panel"/>
-                                    </properties>
-                                  </component>
-                                  <component id="8a4d2" class="javax.swing.JCheckBox" binding="leftPanelCB">
-                                    <constraints>
-                                      <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                                      <gridbag weightx="0.0" weighty="0.0"/>
-                                    </constraints>
-                                    <properties>
                                       <text value="Left panel"/>
-                                    </properties>
-                                  </component>
-                                  <component id="192b5" class="javax.swing.JCheckBox" binding="rightPanelCB">
-                                    <constraints>
-                                      <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                                      <gridbag weightx="0.0" weighty="0.0"/>
-                                    </constraints>
-                                    <properties>
-                                      <text value="Right panel"/>
                                     </properties>
                                   </component>
                                 </children>

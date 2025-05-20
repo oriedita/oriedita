@@ -38,6 +38,10 @@ public interface MouseModeHandler {
         return false;
     }
 
+    default EnumSet<MouseHandlerSettingGroup> getSettings() {
+        return EnumSet.noneOf(MouseHandlerSettingGroup.class);
+    }
+
     default MouseMode getMouseMode() {
         Handles annotation = getClass().getAnnotation(Handles.class);
 

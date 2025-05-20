@@ -2,15 +2,14 @@ package oriedita.editor.databinding;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import oriedita.editor.AbstractModel;
+import oriedita.editor.service.BindingService;
 import origami.Epsilon;
 
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.io.Serializable;
 
 @ApplicationScoped
-public class GridModel implements Serializable {
-    private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+public class GridModel extends AbstractModel implements Serializable {
     private int intervalGridSize;
     private int gridSize;
     private double gridXA;
@@ -26,17 +25,14 @@ public class GridModel implements Serializable {
 
     private boolean drawDiagonalGridlines;
 
-    @Inject
     public GridModel() {
+        this(BindingService.dummy());
+    }
+
+    @Inject
+    public GridModel(BindingService bindingService) {
+        super(bindingService);
         reset();
-    }
-
-    public void addPropertyChangeListener(PropertyChangeListener listener) {
-        this.pcs.addPropertyChangeListener(listener);
-    }
-
-    public void removePropertyChangeListener(PropertyChangeListener listener) {
-        this.pcs.removePropertyChangeListener(listener);
     }
 
     public void reset() {
@@ -55,7 +51,7 @@ public class GridModel implements Serializable {
         resetGridX();
         resetGridY();
 
-        this.pcs.firePropertyChange(null, null, null);
+        notifyAllListeners();
     }
 
     public State getBaseState() {
@@ -308,7 +304,7 @@ public class GridModel implements Serializable {
 
         drawDiagonalGridlines = gridModel.getDrawDiagonalGridlines();
 
-        this.pcs.firePropertyChange(null, null, null);
+        notifyAllListeners();
     }
 
     /**
@@ -319,7 +315,7 @@ public class GridModel implements Serializable {
         WITHIN_PAPER(1),
         FULL(2);
 
-        int state;
+        final int state;
 
         State(int state) {
             this.state = state;

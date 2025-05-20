@@ -11,6 +11,7 @@ import oriedita.editor.AnimationDurations;
 import oriedita.editor.Animations;
 import oriedita.editor.Colors;
 import oriedita.editor.FrameProvider;
+import oriedita.editor.action.ActionType;
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.databinding.ApplicationModel;
@@ -80,9 +81,7 @@ public class AppMenuBar {
     private JCheckBoxMenuItem showSelfIntersectionCheckBox;
     private JCheckBoxMenuItem useAdvancedCheck4Display;
     private JCheckBoxMenuItem displayTopPanel;
-    private JCheckBoxMenuItem displayBottomPanel;
     private JCheckBoxMenuItem displayLeftPanel;
-    private JCheckBoxMenuItem displayRightPanel;
     private JCheckBoxMenuItem moveFoldedModelWithCp;
     private JCheckBoxMenuItem doAnimations;
     private JMenuItem scaleCP;
@@ -107,6 +106,8 @@ public class AppMenuBar {
     private JMenuItem selectAllButton;
     private JMenuItem unselectAllButton;
     private JMenuItem invertMVButton;
+    private JMenuItem undoButton;
+    private JMenuItem redoButton;
     private AppMenuBarUI appMenuBarUI;
     private PreferenceDialog preferenceDialog;
     private final AnimationService animationService;
@@ -202,9 +203,7 @@ public class AppMenuBar {
         buttonService.registerButton(showLiveAuxLinesCheckBox, "displayLiveAuxLinesAction");
         buttonService.registerButton(showStandardFaceMarksCheckBox, "displayStandardFaceMarksAction");
         buttonService.registerButton(displayTopPanel, "displayTopPanel");
-        buttonService.registerButton(displayBottomPanel, "displayBottomPanel");
         buttonService.registerButton(displayLeftPanel, "displayLeftPanel");
-        buttonService.registerButton(displayRightPanel, "displayRightPanel");
         buttonService.registerButton(cpOnTopCheckBox, "cpOnTopAction");
         buttonService.registerButton(toggleHelpMenuItem, "toggleHelpAction");
         buttonService.registerButton(showConfigFolderMenuItem, "showConfigFolderAction");
@@ -223,6 +222,8 @@ public class AppMenuBar {
         buttonService.registerButton(selectAllButton, "selectAllAction");
         buttonService.registerButton(unselectAllButton, "unselectAllAction");
         buttonService.registerButton(invertMVButton, "zen_yama_tani_henkanAction");
+        buttonService.registerButton(undoButton, ActionType.undoAction.action());
+        buttonService.registerButton(redoButton, ActionType.redoAction.action());
 
         newButton.addActionListener(e -> {
             if (!fileModel.isSaved()) {
@@ -247,7 +248,6 @@ public class AppMenuBar {
             canvasModel.setMouseMode(MouseMode.FOLDABLE_LINE_DRAW_71);
 
             mainCreasePatternWorker.record();
-            mainCreasePatternWorker.auxRecord();
 
             revealInFEButton.setEnabled(false);
         });
@@ -351,8 +351,6 @@ public class AppMenuBar {
         showSelfIntersectionCheckBox.addActionListener(e -> applicationModel.toggleDisplaySelfIntersection());
         useAdvancedCheck4Display.addActionListener(e -> applicationModel.toggleUseAdvancedCheck4Display());
         displayTopPanel.addActionListener(e -> getData(applicationModel));
-        displayBottomPanel.addActionListener(e -> getData(applicationModel));
-        displayRightPanel.addActionListener(e -> getData(applicationModel));
         displayLeftPanel.addActionListener(e -> getData(applicationModel));
         doAnimations.addActionListener(e -> getData(applicationModel));
         scaleCP.addActionListener(e -> {
@@ -498,6 +496,11 @@ public class AppMenuBar {
         invertMVButton = new JMenuItem("Invert MV");
         editMenu.add(invertMVButton);
 
+        undoButton = new JMenuItem("Undo");
+        editMenu.add(undoButton);
+        redoButton = new JMenuItem("Redo");
+        editMenu.add(redoButton);
+
         JMenu viewMenu = new JMenu("View");
         viewMenu.setMnemonic('V');
 
@@ -538,12 +541,8 @@ public class AppMenuBar {
         viewMenu.add(displayPanelMenu);
         displayTopPanel = new JCheckBoxMenuItem("Top Panel");
         displayPanelMenu.add(displayTopPanel);
-        displayBottomPanel = new JCheckBoxMenuItem("Bottom Panel");
-        displayPanelMenu.add(displayBottomPanel);
         displayLeftPanel = new JCheckBoxMenuItem("Left Panel");
         displayPanelMenu.add(displayLeftPanel);
-        displayRightPanel = new JCheckBoxMenuItem("Right Panel");
-        displayPanelMenu.add(displayRightPanel);
         moveFoldedModelWithCp = new JCheckBoxMenuItem("Move Folded Model with CP");
         viewMenu.add(moveFoldedModelWithCp);
         doAnimations = new JCheckBoxMenuItem("Animations");
@@ -578,9 +577,7 @@ public class AppMenuBar {
         applicationModel.setDisplaySelfIntersection(showSelfIntersectionCheckBox.isSelected());
         applicationModel.setAdvancedCheck4Display(useAdvancedCheck4Display.isSelected());
         applicationModel.setDisplayTopPanel(displayTopPanel.isSelected());
-        applicationModel.setDisplayBottomPanel(displayBottomPanel.isSelected());
         applicationModel.setDisplayLeftPanel(displayLeftPanel.isSelected());
-        applicationModel.setDisplayRightPanel(displayRightPanel.isSelected());
         applicationModel.setMoveFoldedModelWithCp(moveFoldedModelWithCp.isSelected());
         applicationModel.setAnimations(doAnimations.isSelected());
     }
@@ -600,9 +597,7 @@ public class AppMenuBar {
         showSelfIntersectionCheckBox.setSelected(applicationModel.getDisplaySelfIntersection());
         useAdvancedCheck4Display.setSelected(applicationModel.getAdvancedCheck4Display());
         displayTopPanel.setSelected(applicationModel.getDisplayTopPanel());
-        displayBottomPanel.setSelected(applicationModel.getDisplayBottomPanel());
         displayLeftPanel.setSelected(applicationModel.getDisplayLeftPanel());
-        displayRightPanel.setSelected(applicationModel.getDisplayRightPanel());
         moveFoldedModelWithCp.setSelected(applicationModel.getMoveFoldedModelWithCp());
         doAnimations.setSelected(applicationModel.getAnimations());
 

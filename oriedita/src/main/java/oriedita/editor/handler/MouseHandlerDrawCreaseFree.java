@@ -81,7 +81,7 @@ public class MouseHandlerDrawCreaseFree extends StepMouseHandler<DrawCreaseFreeS
         }
         if (d.getI_foldLine_additional() == FoldLineAdditionalInputMode.AUX_LINE_1) {
             d.addLineSegment_auxiliary(dragSegment);
-            d.auxRecord();
+            d.record();
         }
         reset();
         return DrawCreaseFreeStep.CLICK_DRAG_POINT;
