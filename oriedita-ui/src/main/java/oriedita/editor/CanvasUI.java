@@ -246,7 +246,11 @@ public class CanvasUI extends JPanel {
 
         //展開図表示
         mainCreasePatternWorker.drawWithCamera(bufferGraphics, displayComments, displayCpLines, displayAuxLines, displayLiveAuxLines, lineWidth, lineStyle, auxLineWidth, dim.width, dim.height, displayMarkings, hideOperationFrame);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ,展開図動かし中心の十字の目印の表示
-        DrawingSettings settings = new DrawingSettings(lineWidth, lineStyle, dim.height, dim.width, applicationModel.getRoundedEnds());
+        DrawingSettings settings = new DrawingSettings(
+                lineWidth, lineStyle,
+                dim.height, dim.width,
+                applicationModel.getRoundedEnds(),
+                applicationModel.getDisplayComments());
         if (activeMouseHandler != null) {
             activeMouseHandler.drawPreview(g2, creasePatternCamera, settings);
         }

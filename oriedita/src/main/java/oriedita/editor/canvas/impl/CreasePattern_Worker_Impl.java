@@ -582,8 +582,8 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
 
         if (displayComments) {
             g.drawString(text_cp_setumei, 10, 50 + 55);
-            textWorker.draw(g2, camera);
         }
+        textWorker.draw(g2, camera);
     }
 
     @Override

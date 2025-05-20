@@ -13,7 +13,6 @@ import origami.crease_pattern.element.LineColor;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.io.Serializable;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -170,8 +169,8 @@ public class CanvasModel extends AbstractModel implements Serializable {
         lineColor = LineColor.RED_1;
         auxLiveLineColor = LineColor.ORANGE_4;
 
-        mouseMode = MouseMode.FOLDABLE_LINE_DRAW_71;
-        mouseModeAfterColorSelection = MouseMode.FOLDABLE_LINE_DRAW_71;
+        mouseMode = MouseMode.DRAW_CREASE_RESTRICTED_11;
+        mouseModeAfterColorSelection = MouseMode.DRAW_CREASE_RESTRICTED_11;
 
         foldLineAdditionalInputMode = FoldLineAdditionalInputMode.POLY_LINE_0;
         foldLineAdditionalInputMode_old = FoldLineAdditionalInputMode.POLY_LINE_0;
