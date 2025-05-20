@@ -1,18 +1,14 @@
 package oriedita.editor.swing.toolsetting;
 
-import com.intellij.uiDesigner.core.GridConstraints;
-import com.intellij.uiDesigner.core.GridLayoutManager;
 import jakarta.enterprise.context.ApplicationScoped;
 import oriedita.editor.handler.MouseHandlerSettingGroup;
 import oriedita.editor.handler.UiFor;
-import oriedita.editor.swing.MouseHandlerUi;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Insets;
 
 @ApplicationScoped
 @UiFor(MouseHandlerSettingGroup.LINE_COLOR)

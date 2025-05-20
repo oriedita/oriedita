@@ -12,7 +12,12 @@ import java.awt.event.ActionEvent;
 
 @ApplicationScoped
 @ActionHandler(ActionType.drawLineSegmentInternalDivisionRatioAction)
-public class DrawLineSegmentInternalDivisionRatioAction extends AbstractOrieditaAction{
+public class DrawLineSegmentInternalDivisionRatioAction extends AbstractOrieditaAction implements MouseModeAction {
+    @Override
+    public MouseMode getMouseMode() {
+        return MouseMode.LINE_SEGMENT_RATIO_SET_28;
+    }
+
     @Inject
     CanvasModel canvasModel;
 

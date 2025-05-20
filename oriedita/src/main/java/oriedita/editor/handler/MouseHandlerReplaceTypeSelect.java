@@ -10,6 +10,8 @@ import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 
+import java.util.EnumSet;
+
 @ApplicationScoped
 @Handles(MouseMode.REPLACE_LINE_TYPE_SELECT_72)
 public class MouseHandlerReplaceTypeSelect extends BaseMouseHandlerBoxSelect {
@@ -19,6 +21,11 @@ public class MouseHandlerReplaceTypeSelect extends BaseMouseHandlerBoxSelect {
     @Inject
     public MouseHandlerReplaceTypeSelect(CanvasModel canvasModel) {
         this.canvasModel = canvasModel;
+    }
+
+    @Override
+    public EnumSet<MouseHandlerSettingGroup> getSettings() {
+        return EnumSet.of(MouseHandlerSettingGroup.SWITCH_COLOR);
     }
 
     public void mouseReleased(Point p0){

@@ -49,6 +49,7 @@ public class BindingServiceImpl implements BindingService, Serializable {
 
             component.addCaretListener(e -> {
                 try {
+                    var wasFocused = component.isFocusOwner();
                     if (!value.get().equals(component.getText())) {
                         value.set(component.getText());
                         if (finalConverter.canConvertBack(component.getText())){
@@ -57,7 +58,9 @@ public class BindingServiceImpl implements BindingService, Serializable {
                         component.setBackground(finalConverter.canConvertBack(component.getText())
                                 ? UIManager.getColor("TextField.background") :
                                 Colors.get(Colors.INVALID_INPUT));
-                        component.requestFocus(); // some fields would lose focus after setting the text, this fixes that
+                        if (wasFocused) {
+                            component.requestFocus(); // some fields would lose focus after setting the text, this fixes that
+                        }
                     }
                 } catch (IllegalAccessException | InvocationTargetException ex) {
                     Logger.error(ex);

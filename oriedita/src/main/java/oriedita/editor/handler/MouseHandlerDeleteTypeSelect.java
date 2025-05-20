@@ -10,6 +10,8 @@ import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 
+import java.util.EnumSet;
+
 @ApplicationScoped
 @Handles(MouseMode.DELETE_LINE_TYPE_SELECT_73)
 public class MouseHandlerDeleteTypeSelect extends BaseMouseHandlerBoxSelect {
@@ -19,6 +21,11 @@ public class MouseHandlerDeleteTypeSelect extends BaseMouseHandlerBoxSelect {
     @Inject
     public MouseHandlerDeleteTypeSelect(CanvasModel canvasModel) {
         this.canvasModel = canvasModel;
+    }
+
+    @Override
+    public EnumSet<MouseHandlerSettingGroup> getSettings() {
+        return EnumSet.of(MouseHandlerSettingGroup.ERASER_COLOR);
     }
 
     public void mouseReleased(Point p0){

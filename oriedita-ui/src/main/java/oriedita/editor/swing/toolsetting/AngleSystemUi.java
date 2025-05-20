@@ -10,7 +10,6 @@ import oriedita.editor.databinding.AngleSystemModel;
 import oriedita.editor.handler.MouseHandlerSettingGroup;
 import oriedita.editor.handler.UiFor;
 import oriedita.editor.service.ButtonService;
-import oriedita.editor.swing.MouseHandlerUi;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;

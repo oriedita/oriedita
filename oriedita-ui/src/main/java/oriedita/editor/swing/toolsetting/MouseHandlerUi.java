@@ -1,4 +1,4 @@
-package oriedita.editor.swing;
+package oriedita.editor.swing.toolsetting;
 
 import oriedita.editor.handler.MouseHandlerSettingGroup;
 import oriedita.editor.handler.UiFor;

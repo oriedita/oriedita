@@ -8,17 +8,13 @@ import jakarta.enterprise.inject.Any;
 import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
 import oriedita.editor.action.ActionService;
-import oriedita.editor.action.ActionType;
 import oriedita.editor.action.MouseModeAction;
-import oriedita.editor.action.OrieditaAction;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.databinding.CanvasModel;
-import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.handler.MouseHandlerSettingGroup;
 import oriedita.editor.handler.MouseModeHandler;
 import oriedita.editor.handler.UiFor;
 import oriedita.editor.service.ButtonService;
-import oriedita.editor.swing.MouseHandlerUi;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
@@ -85,6 +81,9 @@ public class ToolSettingsPanel {
         });
         var anyVisible = false;
         for (MouseHandlerSettingGroup setting : handlers.get(canvasModel.getMouseMode()).getSettings()) {
+            if (!mouseHandlerUis.containsKey(setting)) {
+                continue;
+            }
             mouseHandlerUis.get(setting).$$$getRootComponent$$$().setVisible(true);
             anyVisible = true;
         }

@@ -24,7 +24,7 @@ public class DraggableTextField extends JTextField {
     private boolean fine;
     private boolean dragged = false;
     private final Timer timer;
-    private final int tickDistance;
+    private int tickDistance;
     private boolean shiftDown = false;
 
     public DraggableTextField() {this(3);}
@@ -122,5 +122,9 @@ public class DraggableTextField extends JTextField {
      */
     public void addRawListener(BiConsumer<Integer, Boolean> listener) {
         rawListeners.add(listener);
+    }
+
+    public void setTickDistance(int tickDistance) {
+        this.tickDistance = tickDistance;
     }
 }
