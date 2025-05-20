@@ -109,7 +109,7 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     private boolean check2 = false;//=0 check2を実施しない、1=実施する　
     private boolean check3 = false;//=0 check3を実施しない、1=実施する　// TODO: intellij says this field is never written to, double check if check3 can be removed
     private boolean check4 = false;//=0 check4を実施しない、1=実施する　
-    private boolean isSelectionEmpty = false;
+    private boolean isSelectionEmpty = true;
     //---------------------------------
     // ****************************************************************************************************************************************
     // **************　Variable definition so far　****************************************************************************************************

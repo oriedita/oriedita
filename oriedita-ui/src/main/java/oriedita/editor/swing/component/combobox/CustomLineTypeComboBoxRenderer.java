@@ -17,7 +17,7 @@ public class CustomLineTypeComboBoxRenderer implements ListCellRenderer<CustomLi
     public CustomLineTypeComboBoxRenderer() {
         baseRenderer = new CustomTextComboBoxRenderer<>(l -> switch (l) {
             case ANY -> "Any";
-            case EGDE -> "E";
+            case EDGE -> "E";
             case MANDV -> "M & V";
             case MOUNTAIN -> "M";
             case VALLEY -> "V";
@@ -33,7 +33,7 @@ public class CustomLineTypeComboBoxRenderer implements ListCellRenderer<CustomLi
                 case ANY -> new ColorGridIcon(
                         Colors.get(Color.BLACK), Colors.get(Color.RED), Colors.get(Color.CYAN), Colors.get(Color.BLUE)
                 );
-                case EGDE -> new ColorIcon(Colors.get(Color.BLACK), 14, false);
+                case EDGE -> new ColorIcon(Colors.get(Color.BLACK), 14, false);
                 case MANDV -> new ColorGridIcon(
                         Colors.get(Color.RED), Colors.get(Color.BLUE)
                 );

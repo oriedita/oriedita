@@ -122,7 +122,6 @@ public class DrawingTab {
                 updateSelectionTransformButtons();
             }
         });
-
     }
 
     public void setData(CanvasModel data) {

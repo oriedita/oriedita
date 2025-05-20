@@ -184,7 +184,7 @@ public class CanvasModel extends AbstractModel implements Serializable {
         mouseInCpOrFoldedFigure = MouseWheelTarget.CREASE_PATTERN_0;
 
         customFromLineType = CustomLineTypes.ANY;
-        customToLineType = CustomLineTypes.EGDE;
+        customToLineType = CustomLineTypes.EDGE;
 
         delLineType = CustomLineTypes.ANY;
 

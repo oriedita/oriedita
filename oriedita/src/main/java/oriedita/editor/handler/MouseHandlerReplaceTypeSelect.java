@@ -52,7 +52,7 @@ public class MouseHandlerReplaceTypeSelect extends BaseMouseHandlerBoxSelect {
                         d.addLineSegment(s);
                         d.record();
                         break;
-                    case EGDE:
+                    case EDGE:
                         if (s.getColor() == LineColor.BLACK_0) {
                             d.getFoldLineSet().deleteLine(s);
                             s = s.withColor(LineColor.fromNumber(to.getNumberForLineColor()));

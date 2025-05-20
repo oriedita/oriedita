@@ -26,11 +26,12 @@ import java.awt.Insets;
 public class SetLineColorUi implements MouseHandlerUi {
     private final CanvasModel canvasModel;
     private JPanel root;
-    private JComboBox replaceFromComboBox;
+    private JComboBox<CustomLineTypes> replaceFromComboBox;
     private JLabel replaceLabel;
-    private JComboBox replaceToComboBox;
+    private JComboBox<CustomLineTypes> replaceToComboBox;
     private JButton switchReplaceBtn;
-    private ButtonService buttonService;
+
+    private final ButtonService buttonService;
 
     @Inject
     public SetLineColorUi(
@@ -49,7 +50,7 @@ public class SetLineColorUi implements MouseHandlerUi {
         replaceFromComboBox.setModel(new DefaultComboBoxModel<>(CustomLineTypes.values()));
         replaceFromComboBox.setRenderer(new CustomLineTypeComboBoxRenderer());
         replaceToComboBox.setModel(new DefaultComboBoxModel<>(new CustomLineTypes[]{
-                CustomLineTypes.EGDE, CustomLineTypes.MOUNTAIN, CustomLineTypes.VALLEY, CustomLineTypes.AUX
+                CustomLineTypes.EDGE, CustomLineTypes.MOUNTAIN, CustomLineTypes.VALLEY, CustomLineTypes.AUX
         }));
         replaceToComboBox.setRenderer(new CustomLineTypeComboBoxRenderer());
 
