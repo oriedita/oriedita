@@ -251,16 +251,17 @@ public class CanvasUI extends JPanel {
             activeMouseHandler.drawPreview(g2, creasePatternCamera, settings);
         }
         if (displayComments) {
+            int topY = 50;
             //展開図情報の文字表示
             bufferGraphics.setColor(Colors.get(Color.black));
 
-            bufferGraphics.drawString(String.format("mouse= ( %.2f, %.2f )", mousePosition.getX(), mousePosition.getY()), 10, 10); //この表示内容はvoid kekka_syoriで決められる。
+            bufferGraphics.drawString(String.format("mouse= ( %.2f, %.2f )", mousePosition.getX(), mousePosition.getY()), 10, topY + 10); //この表示内容はvoid kekka_syoriで決められる。
 
-            bufferGraphics.drawString("L=" + mainCreasePatternWorker.getTotal(), 10, 25); //この表示内容はvoid kekka_syoriで決められる。
+            bufferGraphics.drawString("L=" + mainCreasePatternWorker.getTotal(), 10, topY + 25); //この表示内容はvoid kekka_syoriで決められる。
 
             if (selectedFigure != null) {
                 //結果の文字表示
-                bufferGraphics.drawString(selectedFigure.getFoldedFigure().text_result, 10, 40); //この表示内容はvoid kekka_syoriで決められる。
+                bufferGraphics.drawString(selectedFigure.getFoldedFigure().text_result, 10, topY + 40); //この表示内容はvoid kekka_syoriで決められる。
             }
 
             if (displayGridInputAssist) {
@@ -276,13 +277,15 @@ public class CanvasUI extends JPanel {
             if (foldingExecutor.isTaskRunning()) {
                 bufferGraphics.setColor(Colors.get(Color.red));
 
-                bufferGraphics.drawString(foldingExecutor.getTaskName() + " Under Calculation. If you want to cancel calculation, uncheck [check A + MV]on right side and press the brake button (bicycle brake icon) on lower side.", 10, 69); //この表示内容はvoid kekka_syoriで決められる。
-                bufferGraphics.drawString("計算中。　なお、計算を取り消し通常状態に戻りたいなら、右辺の[check A+MV]のチェックをはずし、ブレーキボタン（下辺の、自転車のブレーキのアイコン）を押す。 ", 10, 83); //この表示内容はvoid kekka_syoriで決められる。
+                bufferGraphics.drawString(foldingExecutor.getTaskName() + " Under Calculation. If you want to cancel calculation, uncheck [check A + MV]on right side and press the brake button (bicycle brake icon) on lower side.",
+                        10, topY + 69); //この表示内容はvoid kekka_syoriで決められる。
+                bufferGraphics.drawString("計算中。　なお、計算を取り消し通常状態に戻りたいなら、右辺の[check A+MV]のチェックをはずし、ブレーキボタン（下辺の、自転車のブレーキのアイコン）を押す。 ",
+                        10, topY + 83); //この表示内容はvoid kekka_syoriで決められる。
             }
 
             if (canvasModel.getWarningMessage() != null) {
                 bufferGraphics.setColor(Colors.get(Color.yellow));
-                bufferGraphics.drawString(canvasModel.getWarningMessage(), 10, 97);
+                bufferGraphics.drawString(canvasModel.getWarningMessage(), 10, topY + 97);
             }
 
             bulletinBoard.draw(bufferGraphics);//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

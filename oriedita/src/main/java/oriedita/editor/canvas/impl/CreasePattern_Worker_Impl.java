@@ -581,7 +581,7 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
         g.setColor(Colors.get(Color.black));
 
         if (displayComments) {
-            g.drawString(text_cp_setumei, 10, 55);
+            g.drawString(text_cp_setumei, 10, 50 + 55);
             textWorker.draw(g2, camera);
         }
     }

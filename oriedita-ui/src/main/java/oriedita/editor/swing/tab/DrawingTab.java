@@ -10,24 +10,18 @@ import oriedita.editor.action.ActionType;
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.databinding.ApplicationModel;
 import oriedita.editor.databinding.CanvasModel;
-import oriedita.editor.handler.PopupMenuAdapter;
 import oriedita.editor.service.ButtonService;
 import oriedita.editor.swing.component.DropdownToolButton;
-import oriedita.editor.swing.component.combobox.CustomLineTypeComboBoxRenderer;
-import origami.crease_pattern.CustomLineTypes;
 
-import javax.swing.DefaultComboBoxModel;
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
-import javax.swing.event.PopupMenuEvent;
+import javax.swing.border.TitledBorder;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -38,7 +32,6 @@ import java.awt.Insets;
 public class DrawingTab {
     private final ButtonService buttonService;
     private final CanvasModel canvasModel;
-    private final ApplicationModel applicationModel;
     private final CreasePattern_Worker mainCreasePatternWorker;
 
     private JButton drawCreaseFreeBtn;
@@ -57,9 +50,7 @@ public class DrawingTab {
     private JButton voronoiBtn;
     private JButton applyBtn;
     private JButton equallyDividedLineBtn;
-    private JTextField lineDivisionsTextField;
     private JButton polygonBtn;
-    private JTextField polygonTextField;
     private DropdownToolButton addSelectionDropdown;
     private DropdownToolButton removeSelectionDropdown;
     private DropdownToolButton setSelectionDropdown;
@@ -70,27 +61,21 @@ public class DrawingTab {
     private JButton move4pBtn;
     private JPanel root;
     private JButton eraseBtn;
-    private JComboBox<CustomLineTypes> eraserTypeComboBox;
     private DropdownToolButton deleteOnLineDropdown;
     private DropdownToolButton removeVerticesDropdown;
     private JButton addVertexBtn;
     private JButton replaceBtn;
-    private JComboBox<CustomLineTypes> replaceFromComboBox;
-    private JComboBox<CustomLineTypes> replaceToComboBox;
-    private JLabel replaceLabel;
-    private JButton switchReplaceBtn;
     private JButton alternateIntersectedBtn;
     private JButton alternateIncludedBtn;
     private DropdownToolButton mvDropdown;
+    private JButton ratioBtn;
 
     @Inject
     public DrawingTab(ButtonService buttonService,
                       CanvasModel canvasModel,
-                      ApplicationModel applicationModel,
                       @Named("mainCreasePattern_Worker") CreasePattern_Worker mainCreasePatternWorker) {
         this.buttonService = buttonService;
         this.canvasModel = canvasModel;
-        this.applicationModel = applicationModel;
         this.mainCreasePatternWorker = mainCreasePatternWorker;
     }
 
@@ -114,9 +99,6 @@ public class DrawingTab {
                 ActionType.unselectAllAction, ActionType.selectAllAction
         );
 
-        eraserTypeComboBox.setModel(new DefaultComboBoxModel<>(CustomLineTypes.values()));
-        eraserTypeComboBox.setRenderer(new CustomLineTypeComboBoxRenderer());
-
         deleteOnLineDropdown.setActions(
                 ActionType.del_lAction, ActionType.del_l_XAction, ActionType.trimBranchesAction
         );
@@ -124,12 +106,7 @@ public class DrawingTab {
         removeVerticesDropdown.setActions(
                 ActionType.v_del_allAction, ActionType.v_del_all_ccAction, ActionType.v_del_ccAction
         );
-        replaceFromComboBox.setModel(new DefaultComboBoxModel<>(CustomLineTypes.values()));
-        replaceFromComboBox.setRenderer(new CustomLineTypeComboBoxRenderer());
-        replaceToComboBox.setModel(new DefaultComboBoxModel<>(new CustomLineTypes[]{
-                CustomLineTypes.EGDE, CustomLineTypes.MOUNTAIN, CustomLineTypes.VALLEY, CustomLineTypes.AUX
-        }));
-        replaceToComboBox.setRenderer(new CustomLineTypeComboBoxRenderer());
+
         mvDropdown.setActions(
                 ActionType.senbun_henkan2Action,
                 ActionType.senbun_henkanAction,
@@ -141,44 +118,15 @@ public class DrawingTab {
         setData(canvasModel);
         canvasModel.addPropertyChangeListener(event -> setData(canvasModel));
 
-        applicationModel.bind(lineDivisionsTextField, "foldLineDividingNumber");
-        buttonService.registerTextField(lineDivisionsTextField, ActionType.lineSegmentDivisionSetAction.action());
-        applicationModel.bind(polygonTextField, "numPolygonCorners");
-        buttonService.registerTextField(polygonTextField, ActionType.polygonSizeSetAction.action());
-
         mainCreasePatternWorker.addPropertyChangeListener(e -> {
             if (e.getPropertyName().equals("isSelectionEmpty")) {
                 updateSelectionTransformButtons();
             }
         });
 
-        canvasModel.bind(eraserTypeComboBox, "delLineType");
-        canvasModel.bind(replaceFromComboBox, "customFromLineType");
-        canvasModel.bind(replaceToComboBox, "customToLineType");
-        setupComboBox(eraserTypeComboBox, eraseBtn);
-        setupComboBox(replaceFromComboBox, replaceBtn);
-        setupComboBox(replaceToComboBox, replaceBtn);
-
-        buttonService.setIcon(replaceLabel, "labelReplace");
-    }
-
-    private void setupComboBox(JComboBox<?> comboBox, JButton toolButton) {
-        comboBox.addPopupMenuListener(new PopupMenuAdapter() {
-            @Override
-            public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
-                toolButton.doClick();
-            }
-        });
-    }
-
-    private void updateSwitchBtn(CanvasModel canvasModel) {
-        var switchEnabled = canvasModel.getCustomFromLineType() != CustomLineTypes.ANY
-                && canvasModel.getCustomFromLineType() != CustomLineTypes.MANDV;
-        switchReplaceBtn.setEnabled(switchEnabled);
     }
 
     public void setData(CanvasModel data) {
-        updateSwitchBtn(data);
         updateSelectionTransformButtons();
     }
 
@@ -388,33 +336,25 @@ public class DrawingTab {
         gbc.weightx = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
         panel3.add(equallyDividedLineBtn, gbc);
-        lineDivisionsTextField = new JTextField();
-        lineDivisionsTextField.setMinimumSize(new Dimension(-1, 30));
-        lineDivisionsTextField.setPreferredSize(new Dimension(-1, 30));
-        lineDivisionsTextField.setText("2");
-        gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 5;
-        gbc.fill = GridBagConstraints.BOTH;
-        panel3.add(lineDivisionsTextField, gbc);
         polygonBtn = new JButton();
         polygonBtn.setActionCommand("regularPolygonAction");
         polygonBtn.setText("polygon");
         gbc = new GridBagConstraints();
-        gbc.gridx = 1;
-        gbc.gridy = 6;
+        gbc.gridx = 0;
+        gbc.gridy = 5;
         gbc.weightx = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
         panel3.add(polygonBtn, gbc);
-        polygonTextField = new JTextField();
-        polygonTextField.setMinimumSize(new Dimension(-1, 30));
-        polygonTextField.setPreferredSize(new Dimension(-1, 30));
-        polygonTextField.setText("3");
+        ratioBtn = new JButton();
+        ratioBtn.setActionCommand("drawLineSegmentInternalDivisionRatioAction");
+        ratioBtn.setText("ratio");
         gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 6;
-        gbc.fill = GridBagConstraints.BOTH;
-        panel3.add(polygonTextField, gbc);
+        gbc.gridx = 2;
+        gbc.gridy = 5;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        panel3.add(ratioBtn, gbc);
         final JLabel label2 = new JLabel();
         label2.setText("Select");
         panel1.add(label2, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
@@ -550,6 +490,25 @@ public class DrawingTab {
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         panel7.add(addVertexBtn, gbc);
+        final JPanel panel8 = new JPanel();
+        panel8.setLayout(new GridBagLayout());
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridwidth = 3;
+        gbc.fill = GridBagConstraints.BOTH;
+        panel7.add(panel8, gbc);
+        panel8.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
+        replaceBtn = new JButton();
+        replaceBtn.setActionCommand("replace_lineAction");
+        replaceBtn.setText("replace");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        panel8.add(replaceBtn, gbc);
         eraseBtn = new JButton();
         eraseBtn.setActionCommand("del_l_typeAction");
         eraseBtn.setText("erase");
@@ -559,83 +518,25 @@ public class DrawingTab {
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        panel7.add(eraseBtn, gbc);
-        eraserTypeComboBox = new JComboBox();
-        gbc = new GridBagConstraints();
-        gbc.gridx = 1;
-        gbc.gridy = 0;
-        gbc.gridwidth = 2;
-        gbc.weightx = 1.0;
-        gbc.weighty = 1.0;
-        gbc.anchor = GridBagConstraints.WEST;
-        gbc.fill = GridBagConstraints.BOTH;
-        panel7.add(eraserTypeComboBox, gbc);
-        final JPanel panel8 = new JPanel();
-        panel8.setLayout(new GridBagLayout());
-        gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        gbc.weightx = 1.0;
-        gbc.weighty = 1.0;
-        gbc.fill = GridBagConstraints.BOTH;
-        panel6.add(panel8, gbc);
-        replaceFromComboBox = new JComboBox();
-        gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        gbc.weightx = 1.0;
-        gbc.weighty = 1.0;
-        gbc.anchor = GridBagConstraints.WEST;
-        gbc.fill = GridBagConstraints.BOTH;
-        panel8.add(replaceFromComboBox, gbc);
-        replaceLabel = new JLabel();
-        replaceLabel.setHorizontalAlignment(0);
-        replaceLabel.setText("->");
-        gbc = new GridBagConstraints();
-        gbc.gridx = 1;
-        gbc.gridy = 1;
-        gbc.weighty = 1.0;
-        gbc.fill = GridBagConstraints.BOTH;
-        gbc.ipadx = 10;
-        gbc.ipady = 5;
-        panel8.add(replaceLabel, gbc);
-        replaceToComboBox = new JComboBox();
-        gbc = new GridBagConstraints();
-        gbc.gridx = 2;
-        gbc.gridy = 1;
-        gbc.weightx = 1.0;
-        gbc.weighty = 1.0;
-        gbc.anchor = GridBagConstraints.WEST;
-        gbc.fill = GridBagConstraints.BOTH;
-        panel8.add(replaceToComboBox, gbc);
-        replaceBtn = new JButton();
-        replaceBtn.setActionCommand("replace_lineAction");
-        replaceBtn.setText("replace");
-        gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.weightx = 1.0;
-        gbc.weighty = 1.0;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        panel8.add(replaceBtn, gbc);
-        switchReplaceBtn = new JButton();
-        switchReplaceBtn.setActionCommand("switchReplaceAction");
-        switchReplaceBtn.setText("⇆");
-        gbc = new GridBagConstraints();
-        gbc.gridx = 1;
-        gbc.gridy = 0;
-        gbc.gridwidth = 2;
-        gbc.fill = GridBagConstraints.BOTH;
-        panel8.add(switchReplaceBtn, gbc);
+        panel8.add(eraseBtn, gbc);
         final JPanel panel9 = new JPanel();
         panel9.setLayout(new GridBagLayout());
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        gbc.fill = GridBagConstraints.BOTH;
+        panel6.add(panel9, gbc);
+        final JPanel panel10 = new JPanel();
+        panel10.setLayout(new GridBagLayout());
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 2;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
-        panel6.add(panel9, gbc);
+        panel6.add(panel10, gbc);
         alternateIntersectedBtn = new JButton();
         alternateIntersectedBtn.setActionCommand("on_L_col_changeAction");
         alternateIntersectedBtn.setText("alternateIntersected");
@@ -645,7 +546,7 @@ public class DrawingTab {
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        panel9.add(alternateIntersectedBtn, gbc);
+        panel10.add(alternateIntersectedBtn, gbc);
         alternateIncludedBtn = new JButton();
         alternateIncludedBtn.setActionCommand("in_L_col_changeAction");
         alternateIncludedBtn.setText("alternateIncluded");
@@ -655,7 +556,7 @@ public class DrawingTab {
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        panel9.add(alternateIncludedBtn, gbc);
+        panel10.add(alternateIncludedBtn, gbc);
         mvDropdown = new DropdownToolButton();
         mvDropdown.setText("invertMv");
         gbc = new GridBagConstraints();
@@ -664,7 +565,7 @@ public class DrawingTab {
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        panel9.add(mvDropdown, gbc);
+        panel10.add(mvDropdown, gbc);
     }
 
     /**
