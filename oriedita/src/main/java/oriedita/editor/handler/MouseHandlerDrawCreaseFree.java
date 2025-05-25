@@ -4,6 +4,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import oriedita.editor.canvas.FoldLineAdditionalInputMode;
 import oriedita.editor.canvas.MouseMode;
+import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
 import origami.Epsilon;
@@ -21,6 +22,9 @@ public class MouseHandlerDrawCreaseFree extends StepMouseHandler<DrawCreaseFreeS
     private LineColor lineColor;
     private Point anchorPoint, releasePoint;
     private LineSegment dragSegment;
+
+    @Inject
+    private CanvasModel canvasModel;
 
     @Inject
     public MouseHandlerDrawCreaseFree() {
@@ -41,6 +45,7 @@ public class MouseHandlerDrawCreaseFree extends StepMouseHandler<DrawCreaseFreeS
         anchorPoint = null;
         releasePoint = null;
         dragSegment = null;
+        move_click_drag_point(canvasModel.getMouseObjPosition());
         steps.setCurrentStep(DrawCreaseFreeStep.CLICK_DRAG_POINT);
     }
 

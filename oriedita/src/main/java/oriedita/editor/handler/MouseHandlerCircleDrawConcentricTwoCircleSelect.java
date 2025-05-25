@@ -3,6 +3,7 @@ package oriedita.editor.handler;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
+import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
 import origami.Epsilon;
@@ -25,6 +26,9 @@ public class MouseHandlerCircleDrawConcentricTwoCircleSelect extends StepMouseHa
     private Circle circle1, circle2;
 
     @Inject
+    private CanvasModel canvasModel;
+
+    @Inject
     public MouseHandlerCircleDrawConcentricTwoCircleSelect() {
         super(CircleDrawConcentricTwoCircleSelectStep.SELECT_CIRCLE_1);
         steps.addNode(StepNode.createNode_MD_R(CircleDrawConcentricTwoCircleSelectStep.SELECT_CIRCLE_1, this::move_drag_select_circle_1, this::release_select_circle_1));
@@ -42,6 +46,7 @@ public class MouseHandlerCircleDrawConcentricTwoCircleSelect extends StepMouseHa
     public void reset() {
         circle1 = null;
         circle2 = null;
+        move_drag_select_circle_1(canvasModel.getMouseObjPosition());
         steps.setCurrentStep(CircleDrawConcentricTwoCircleSelectStep.SELECT_CIRCLE_1);
     }
 
@@ -54,6 +59,7 @@ public class MouseHandlerCircleDrawConcentricTwoCircleSelect extends StepMouseHa
     }
     private CircleDrawConcentricTwoCircleSelectStep release_select_circle_1(Point p) {
         if (circle1 == null) return CircleDrawConcentricTwoCircleSelectStep.SELECT_CIRCLE_1;
+        move_drag_select_circle_2(p);
         return CircleDrawConcentricTwoCircleSelectStep.SELECT_CIRCLE_2;
     }
 

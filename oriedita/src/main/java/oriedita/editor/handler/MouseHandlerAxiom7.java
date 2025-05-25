@@ -3,6 +3,7 @@ package oriedita.editor.handler;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
+import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
 import origami.Epsilon;
@@ -25,6 +26,9 @@ enum Axiom7Step {
 public class MouseHandlerAxiom7 extends StepMouseHandler<Axiom7Step>{
     private Point targetPoint;
     private LineSegment targetSegment, perpendicularSegment, indicator, destinationSegment;
+
+    @Inject
+    private CanvasModel canvasModel;
 
     @Inject
     public MouseHandlerAxiom7(){
@@ -52,6 +56,7 @@ public class MouseHandlerAxiom7 extends StepMouseHandler<Axiom7Step>{
         perpendicularSegment = null;
         indicator = null;
         destinationSegment = null;
+        move_drag_select_target_point(canvasModel.getMouseObjPosition());
         steps.setCurrentStep(Axiom7Step.SELECT_TARGET_POINT);
     }
 
@@ -63,6 +68,7 @@ public class MouseHandlerAxiom7 extends StepMouseHandler<Axiom7Step>{
     }
     private Axiom7Step release_select_target_point(Point p) {
         if (targetPoint == null) return Axiom7Step.SELECT_TARGET_POINT;
+        move_drag_select_target_segment(p);
         return Axiom7Step.SELECT_TARGET_SEGMENT;
     }
 
@@ -75,6 +81,7 @@ public class MouseHandlerAxiom7 extends StepMouseHandler<Axiom7Step>{
     }
     private Axiom7Step release_select_target_segment(Point p) {
         if (targetSegment == null) return Axiom7Step.SELECT_TARGET_SEGMENT;
+        move_drag_select_perpendicular_segment(p);
         return Axiom7Step.SELECT_PERPENDICULAR_SEGMENT;
     }
 
@@ -88,6 +95,7 @@ public class MouseHandlerAxiom7 extends StepMouseHandler<Axiom7Step>{
     private Axiom7Step release_select_perpendicular_segment(Point p) {
         if (perpendicularSegment == null) return Axiom7Step.SELECT_PERPENDICULAR_SEGMENT;
         drawAxiom7FoldIndicators();
+        move_drag_select_destination_or_indicator(p);
         return Axiom7Step.SELECT_DESTINATION_OR_INDICATOR;
     }
 

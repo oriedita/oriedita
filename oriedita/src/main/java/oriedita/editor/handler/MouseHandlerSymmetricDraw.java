@@ -3,6 +3,7 @@ package oriedita.editor.handler;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
+import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
 import origami.Epsilon;
@@ -30,6 +31,9 @@ public class MouseHandlerSymmetricDraw extends StepMouseHandler<SymmetricDrawSte
     private List<LineSegment> segmentsList_2L = Arrays.asList(null, null);
 
     @Inject
+    private CanvasModel canvasModel;
+
+    @Inject
     public MouseHandlerSymmetricDraw() {
         super(SymmetricDrawStep.SELECT_2L_OR_3P);
         steps.addNode(StepNode.createNode_MD_R(SymmetricDrawStep.SELECT_2L_OR_3P, this::move_drag_select_2L_or_3P, this::release_select_2L_or_3P));
@@ -53,6 +57,7 @@ public class MouseHandlerSymmetricDraw extends StepMouseHandler<SymmetricDrawSte
         counter_2L = 0;
         pointsList_3P = Arrays.asList(null, null, null);
         segmentsList_2L = Arrays.asList(null, null);
+        move_drag_select_2L_or_3P(canvasModel.getMouseObjPosition());
         steps.setCurrentStep(SymmetricDrawStep.SELECT_2L_OR_3P);
     }
 
@@ -74,12 +79,15 @@ public class MouseHandlerSymmetricDraw extends StepMouseHandler<SymmetricDrawSte
     private SymmetricDrawStep release_select_2L_or_3P(Point p) {
         if (pointsList_3P.get(counter_3P) != null) {
             counter_3P++;
+            move_drag_select_3P(p);
             return SymmetricDrawStep.SELECT_3P;
         }
         if (segmentsList_2L.get(counter_2L) != null) {
             counter_2L++;
+            move_drag_select_2L(p);
             return SymmetricDrawStep.SELECT_2L;
         }
+        move_drag_select_2L_or_3P(p);
         return SymmetricDrawStep.SELECT_2L_OR_3P;
     }
 

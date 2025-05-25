@@ -3,6 +3,7 @@ package oriedita.editor.handler;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
+import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
 import origami.Epsilon;
@@ -19,6 +20,9 @@ enum DoubleSymmetricDrawStep { CLICK_DRAG_POINT }
 public class MouseHandlerDoubleSymmetricDraw extends StepMouseHandler<DoubleSymmetricDrawStep> {
     private Point anchorPoint, releasePoint;
     private LineSegment dragSegment;
+
+    @Inject
+    private CanvasModel canvasModel;
 
     @Inject
     public MouseHandlerDoubleSymmetricDraw() {
@@ -39,6 +43,7 @@ public class MouseHandlerDoubleSymmetricDraw extends StepMouseHandler<DoubleSymm
         anchorPoint = null;
         releasePoint = null;
         dragSegment = null;
+        move_click_drag_point(canvasModel.getMouseObjPosition());
         steps.setCurrentStep(DoubleSymmetricDrawStep.CLICK_DRAG_POINT);
     }
 

@@ -3,6 +3,7 @@ package oriedita.editor.handler;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
+import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
 import origami.crease_pattern.OritaCalc;
@@ -29,6 +30,9 @@ public class MouseHandlerParallelDrawWidth extends StepMouseHandler<ParallelDraw
     private LineSegment dragSegment;
     private List<LineSegment> indicatorList = Arrays.asList(null, null);
     private LineSegment selectIndicatorSegment;
+
+    @Inject
+    private CanvasModel canvasModel;
 
     @Inject
     public MouseHandlerParallelDrawWidth() {
@@ -58,6 +62,7 @@ public class MouseHandlerParallelDrawWidth extends StepMouseHandler<ParallelDraw
         dragSegment = null;
         indicatorList = Arrays.asList(null, null);
         selectIndicatorSegment = null;
+        move_drag_select_segment(canvasModel.getMouseObjPosition());
         steps.setCurrentStep(ParallelDrawWidthStep.SELECT_SEGMENT);
     }
 
@@ -69,6 +74,7 @@ public class MouseHandlerParallelDrawWidth extends StepMouseHandler<ParallelDraw
     }
     private ParallelDrawWidthStep release_select_segment(Point p) {
         if (selectSegment == null) return ParallelDrawWidthStep.SELECT_SEGMENT;
+        move_click_drag_point(p);
         return ParallelDrawWidthStep.CLICK_DRAG_POINT;
     }
 
@@ -94,6 +100,7 @@ public class MouseHandlerParallelDrawWidth extends StepMouseHandler<ParallelDraw
         dragSegment = dragSegment.withB(releasePoint);
         indicatorList.set(0, OritaCalc.moveParallel(selectSegment, dragSegment.determineLength()).withColor(LineColor.PURPLE_8));
         indicatorList.set(1, OritaCalc.moveParallel(selectSegment, -dragSegment.determineLength()).withColor(LineColor.PURPLE_8));
+        move_drag_select_indicator(p);
         return ParallelDrawWidthStep.SELECT_INDICATOR;
     }
 

@@ -3,6 +3,7 @@ package oriedita.editor.handler;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
+import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
 import origami.Epsilon;
@@ -23,6 +24,9 @@ public class MouseHandlerCreasesAlternateMV extends StepMouseHandler<CreasesAlte
     private LineSegment dragSegment;
 
     @Inject
+    private CanvasModel canvasModel;
+
+    @Inject
     public MouseHandlerCreasesAlternateMV() {
         super(CreasesAlternateMVStep.CLICK_DRAG_POINT);
         steps.addNode(StepNode.createNode(CreasesAlternateMVStep.CLICK_DRAG_POINT, this::move_click_drag_point, (p) -> {}, this::drag_click_drag_point, this::release_click_drag_point));
@@ -41,6 +45,7 @@ public class MouseHandlerCreasesAlternateMV extends StepMouseHandler<CreasesAlte
         anchorPoint = null;
         releasePoint = null;
         dragSegment = null;
+        move_click_drag_point(canvasModel.getMouseObjPosition());
         steps.setCurrentStep(CreasesAlternateMVStep.CLICK_DRAG_POINT);
     }
 

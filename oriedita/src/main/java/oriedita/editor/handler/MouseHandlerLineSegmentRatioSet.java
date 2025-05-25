@@ -3,6 +3,7 @@ package oriedita.editor.handler;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
+import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.databinding.InternalDivisionRatioModel;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
@@ -20,6 +21,9 @@ public class MouseHandlerLineSegmentRatioSet extends StepMouseHandler<LineSegmen
     private Point anchorPoint, releasePoint;
     private LineSegment dragSegment;
     private final InternalDivisionRatioModel internalDivisionRatioModel;
+
+    @Inject
+    private CanvasModel canvasModel;
 
     @Inject
     public MouseHandlerLineSegmentRatioSet(InternalDivisionRatioModel internalDivisionRatioModel) {
@@ -41,6 +45,7 @@ public class MouseHandlerLineSegmentRatioSet extends StepMouseHandler<LineSegmen
         anchorPoint = null;
         releasePoint = null;
         dragSegment = null;
+        move_click_drag_point(canvasModel.getMouseObjPosition());
     }
 
     // Click drag point

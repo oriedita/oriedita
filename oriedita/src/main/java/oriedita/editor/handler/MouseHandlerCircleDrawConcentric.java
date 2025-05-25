@@ -3,6 +3,7 @@ package oriedita.editor.handler;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
+import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
 import origami.crease_pattern.OritaCalc;
@@ -24,6 +25,9 @@ public class MouseHandlerCircleDrawConcentric extends StepMouseHandler<CircleDra
     private Point anchorPoint, releasePoint;
     private LineSegment radiusDifference;
     private Circle originalCircle, newCircle;
+
+    @Inject
+    private CanvasModel canvasModel;
 
     @Inject
     public MouseHandlerCircleDrawConcentric() {
@@ -49,6 +53,7 @@ public class MouseHandlerCircleDrawConcentric extends StepMouseHandler<CircleDra
         originalCircle = null;
         newCircle = null;
         radiusDifference = null;
+        move_drag_select_circle(canvasModel.getMouseObjPosition());
         steps.setCurrentStep(CircleDrawConcentricStep.SELECT_CIRCLE);
     }
 
@@ -61,6 +66,7 @@ public class MouseHandlerCircleDrawConcentric extends StepMouseHandler<CircleDra
     }
     private CircleDrawConcentricStep release_select_circle(Point p) {
         if (originalCircle == null) return CircleDrawConcentricStep.SELECT_CIRCLE;
+        move_click_drag_point(p);
         return CircleDrawConcentricStep.CLICK_DRAG_POINT;
     }
 

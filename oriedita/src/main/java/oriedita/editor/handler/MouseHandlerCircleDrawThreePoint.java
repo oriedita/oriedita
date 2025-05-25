@@ -3,6 +3,7 @@ package oriedita.editor.handler;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
+import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
 import origami.Epsilon;
@@ -26,6 +27,9 @@ public class MouseHandlerCircleDrawThreePoint extends StepMouseHandler<CircleDra
     private Point p1, p2, p3;
 
     @Inject
+    private CanvasModel canvasModel;
+
+    @Inject
     public MouseHandlerCircleDrawThreePoint() {
         super(CircleDrawThreePointStep.SELECT_POINT_1);
         steps.addNode(StepNode.createNode_MD_R(CircleDrawThreePointStep.SELECT_POINT_1, this::move_drag_select_point_1, this::release_select_point_1));
@@ -46,6 +50,7 @@ public class MouseHandlerCircleDrawThreePoint extends StepMouseHandler<CircleDra
         p1 = null;
         p2 = null;
         p3 = null;
+        move_drag_select_point_1(canvasModel.getMouseObjPosition());
         steps.setCurrentStep(CircleDrawThreePointStep.SELECT_POINT_1);
     }
 
@@ -57,6 +62,7 @@ public class MouseHandlerCircleDrawThreePoint extends StepMouseHandler<CircleDra
     }
     private CircleDrawThreePointStep release_select_point_1(Point p) {
         if (p1 == null) return CircleDrawThreePointStep.SELECT_POINT_1;
+        move_drag_select_point_2(p);
         return CircleDrawThreePointStep.SELECT_POINT_2;
     }
 
@@ -69,6 +75,7 @@ public class MouseHandlerCircleDrawThreePoint extends StepMouseHandler<CircleDra
     }
     private CircleDrawThreePointStep release_select_point_2(Point p) {
         if (p2 == null) return CircleDrawThreePointStep.SELECT_POINT_2;
+        move_drag_select_point_3(p);
         return CircleDrawThreePointStep.SELECT_POINT_3;
     }
 

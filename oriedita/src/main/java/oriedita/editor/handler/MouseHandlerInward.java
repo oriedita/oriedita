@@ -3,6 +3,7 @@ package oriedita.editor.handler;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
+import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
 import origami.Epsilon;
@@ -22,6 +23,9 @@ enum InwardStep {
 @Handles(MouseMode.INWARD_8)
 public class MouseHandlerInward extends StepMouseHandler<InwardStep> {
     Point p1, p2, p3;
+
+    @Inject
+    private CanvasModel canvasModel;
 
     @Inject
     public MouseHandlerInward() {
@@ -44,6 +48,7 @@ public class MouseHandlerInward extends StepMouseHandler<InwardStep> {
         p1 = null;
         p2 = null;
         p3 = null;
+        move_drag_select_point_1(canvasModel.getMouseObjPosition());
         steps.setCurrentStep(InwardStep.POINT_1);
     }
 
@@ -55,6 +60,7 @@ public class MouseHandlerInward extends StepMouseHandler<InwardStep> {
     }
     private InwardStep release_select_point_1(Point p) {
         if(p1 == null) return InwardStep.POINT_1;
+        move_drag_select_point_2(p);
         return InwardStep.POINT_2;
     }
 
@@ -67,6 +73,7 @@ public class MouseHandlerInward extends StepMouseHandler<InwardStep> {
     }
     private InwardStep release_select_point_2(Point p) {
         if(p2 == null) return InwardStep.POINT_2;
+        move_drag_select_point_3(p);
         return InwardStep.POINT_3;
     }
 
