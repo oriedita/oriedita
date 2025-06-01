@@ -51,17 +51,17 @@ public class OrieditaFoldFile extends FoldFile {
     }
 
     public void setGridSize(int gridSize) {
-        setCustomProperty(NS, "gridSize", gridSize);
+        setCustomProperty(NS, "grid_size", gridSize);
     }
     public int getGridSize() {
-        var size = (Integer) getCustomProperty(NS, "gridSize");
+        var size = (Integer) getCustomProperty(NS, "grid_size");
         return size == null? 8 : size;
     }
     public void setGridStyle(GridModel.State gridStyle) {
-        setCustomProperty(NS, "gridStyle", gridStyle.getState());
+        setCustomProperty(NS, "grid_style", gridStyle.getState());
     }
     public GridModel.State getGridStyle() {
-        var style = (Integer) getCustomProperty(NS, "gridStyle");
-        return style == null? GridModel.State.HIDDEN : GridModel.State.from((int) getCustomProperty(NS, "gridStyle"));
+        var style = (Integer) getCustomProperty(NS, "grid_style");
+        return style == null? GridModel.State.HIDDEN : GridModel.State.from((int) getCustomProperty(NS, "grid_style"));
     }
 }

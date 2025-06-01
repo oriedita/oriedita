@@ -359,7 +359,7 @@
                 </constraints>
                 <properties>
                   <actionCommand value="textAction"/>
-                  <text value="Text"/>
+                  <text value="Add Text"/>
                 </properties>
               </component>
             </children>
