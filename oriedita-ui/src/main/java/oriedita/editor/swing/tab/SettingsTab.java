@@ -5,12 +5,14 @@ import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import oriedita.common.converter.DoubleConverter;
 import oriedita.editor.action.ActionType;
 import oriedita.editor.databinding.ApplicationModel;
 import oriedita.editor.databinding.BackgroundModel;
 import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.databinding.GridModel;
 import oriedita.editor.service.ButtonService;
+import oriedita.editor.swing.component.DraggableTextField;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -28,7 +30,7 @@ import java.awt.Insets;
 public class SettingsTab {
     private JPanel root;
     private JButton toggleDiagonalButton;
-    private JTextField gridAngleTextField;
+    private DraggableTextField gridAngleTextField;
     private JButton resetButton;
     private JButton moveVerticallyButton;
     private JButton moveHorizontallyButton;
@@ -42,7 +44,7 @@ public class SettingsTab {
     private JTextField gridYBTextField;
     private JLabel ratioLabel4;
     private JTextField gridYCTextField;
-    private JTextField lineOffsetTextField;
+    private DraggableTextField lineOffsetTextField;
     private JCheckBox showCheckBox;
     private JButton selectButton;
     private JButton transparentButton;
@@ -56,6 +58,10 @@ public class SettingsTab {
     private JSlider lineThicknessSlider;
     private JSlider errorOpacitySlider;
     private JSlider pointSizeSlider;
+    private JButton decreaseGridSizeButton;
+    private JButton increaseGridSizeButton;
+    private DraggableTextField gridSizeTextField;
+    private JButton cycleGridButton;
 
     private final ButtonService buttonService;
     private final GridModel gridModel;
@@ -89,7 +95,7 @@ public class SettingsTab {
         buttonService.setIcon(ratioLabel3, "labelPlus");
         buttonService.setIcon(ratioLabel4, "labelSqrt");
 
-        gridModel.bind(gridAngleTextField, "gridAngle");
+        gridModel.bind(gridAngleTextField, "gridAngle", new DoubleConverter("0.0####"));
         gridModel.bind(lineOffsetTextField, "intervalGridSize");
         gridModel.bind(gridXATextField, "gridXA");
         gridModel.bind(gridXBTextField, "gridXB");
@@ -97,6 +103,13 @@ public class SettingsTab {
         gridModel.bind(gridYATextField, "gridYA");
         gridModel.bind(gridYBTextField, "gridYB");
         gridModel.bind(gridYCTextField, "gridYC");
+
+
+        gridModel.bind(gridSizeTextField, "gridSize");
+
+        gridSizeTextField.addTickListener(d -> gridModel.setGridSize(gridModel.getGridSize() + d));
+        lineOffsetTextField.addTickListener(d -> gridModel.setIntervalGridSize(gridModel.getIntervalGridSize() + d));
+        gridAngleTextField.addRawListener((i, fine) -> gridModel.setGridAngle(gridModel.getGridAngle() + i * (fine ? 0.05 : 1)));
 
         buttonService.registerTextField(gridAngleTextField, ActionType.setGridAngleAction.action());
         buttonService.registerTextField(lineOffsetTextField, ActionType.setIntervalGridSizeAction.action());
@@ -167,44 +180,35 @@ public class SettingsTab {
         GridBagConstraints gbc;
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.gridy = 0;
+        gbc.gridy = 1;
         gbc.weightx = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
         panel1.add(toggleDiagonalButton, gbc);
-        gridAngleTextField = new JTextField();
+        gridAngleTextField = new DraggableTextField();
         gridAngleTextField.setMinimumSize(new Dimension(-1, 30));
         gridAngleTextField.setPreferredSize(new Dimension(-1, 30));
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
-        gbc.gridy = 0;
+        gbc.gridy = 1;
         gbc.weightx = 1.0;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.BOTH;
         panel1.add(gridAngleTextField, gbc);
-        resetButton = new JButton();
-        resetButton.setActionCommand("gridConfigureResetAction");
-        resetButton.setText("Reset");
-        gbc = new GridBagConstraints();
-        gbc.gridx = 2;
-        gbc.gridy = 0;
-        gbc.weightx = 1.0;
-        gbc.fill = GridBagConstraints.BOTH;
-        panel1.add(resetButton, gbc);
         moveVerticallyButton = new JButton();
         moveVerticallyButton.setActionCommand("moveIntervalGridVerticalAction");
         moveVerticallyButton.setText("moveVertically");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.gridy = 1;
+        gbc.gridy = 2;
         gbc.weightx = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
         panel1.add(moveVerticallyButton, gbc);
-        lineOffsetTextField = new JTextField();
+        lineOffsetTextField = new DraggableTextField();
         lineOffsetTextField.setMinimumSize(new Dimension(-1, 30));
         lineOffsetTextField.setPreferredSize(new Dimension(-1, 30));
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
-        gbc.gridy = 1;
+        gbc.gridy = 2;
         gbc.weightx = 1.0;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.BOTH;
@@ -214,10 +218,50 @@ public class SettingsTab {
         moveHorizontallyButton.setText("moveHorizontally");
         gbc = new GridBagConstraints();
         gbc.gridx = 2;
-        gbc.gridy = 1;
+        gbc.gridy = 2;
         gbc.weightx = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
         panel1.add(moveHorizontallyButton, gbc);
+        decreaseGridSizeButton = new JButton();
+        decreaseGridSizeButton.setActionCommand("gridSizeDecreaseAction");
+        decreaseGridSizeButton.setText("decreaseGridSize");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.ipadx = 10;
+        panel1.add(decreaseGridSizeButton, gbc);
+        increaseGridSizeButton = new JButton();
+        increaseGridSizeButton.setActionCommand("gridSizeIncreaseAction");
+        increaseGridSizeButton.setText("increaseGridSize");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 2;
+        gbc.gridy = 0;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.ipadx = 10;
+        panel1.add(increaseGridSizeButton, gbc);
+        gridSizeTextField = new DraggableTextField();
+        gbc = new GridBagConstraints();
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        gbc.weighty = 1.0;
+        gbc.fill = GridBagConstraints.BOTH;
+        panel1.add(gridSizeTextField, gbc);
+        cycleGridButton = new JButton();
+        cycleGridButton.setActionCommand("changeGridStateAction");
+        cycleGridButton.setText("cycleGrid");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 2;
+        gbc.gridy = 1;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.ipadx = 10;
+        panel1.add(cycleGridButton, gbc);
         final JLabel label3 = new JLabel();
         label3.setText("Background");
         root.add(label3, new GridConstraints(8, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
@@ -504,6 +548,16 @@ public class SettingsTab {
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.BOTH;
         panel5.add(gridYCTextField, gbc);
+        resetButton = new JButton();
+        resetButton.setActionCommand("gridConfigureResetAction");
+        resetButton.setText("Reset");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.gridwidth = 5;
+        gbc.weightx = 1.0;
+        gbc.fill = GridBagConstraints.BOTH;
+        panel5.add(resetButton, gbc);
     }
 
     /**

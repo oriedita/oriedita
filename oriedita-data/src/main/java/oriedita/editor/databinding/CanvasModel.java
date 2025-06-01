@@ -169,8 +169,8 @@ public class CanvasModel extends AbstractModel implements Serializable {
         lineColor = LineColor.RED_1;
         auxLiveLineColor = LineColor.ORANGE_4;
 
-        mouseMode = MouseMode.DRAW_CREASE_RESTRICTED_11;
-        mouseModeAfterColorSelection = MouseMode.DRAW_CREASE_RESTRICTED_11;
+        mouseMode = MouseMode.DRAW_CREASE_FREE_1;
+        mouseModeAfterColorSelection = MouseMode.DRAW_CREASE_FREE_1;
 
         foldLineAdditionalInputMode = FoldLineAdditionalInputMode.POLY_LINE_0;
         foldLineAdditionalInputMode_old = FoldLineAdditionalInputMode.POLY_LINE_0;

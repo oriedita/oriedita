@@ -3,7 +3,7 @@
   <grid id="27dc6" binding="root" layout-manager="GridLayoutManager" row-count="14" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
-      <xy x="20" y="20" width="500" height="588"/>
+      <xy x="20" y="20" width="500" height="630"/>
     </constraints>
     <properties>
       <minimumSize width="100" height="516"/>
@@ -54,7 +54,7 @@
         <children>
           <component id="d8401" class="javax.swing.JButton" binding="toggleDiagonalButton" default-binding="true">
             <constraints>
-              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
               <gridbag weightx="1.0" weighty="0.0"/>
             </constraints>
             <properties>
@@ -62,39 +62,7 @@
               <text value="toggleDiagonal"/>
             </properties>
           </component>
-          <component id="f6c1d" class="javax.swing.JTextField" binding="gridAngleTextField">
-            <constraints>
-              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="3" indent="0" use-parent-layout="false">
-                <preferred-size width="10" height="-1"/>
-              </grid>
-              <gridbag weightx="1.0" weighty="0.0"/>
-            </constraints>
-            <properties>
-              <minimumSize width="-1" height="30"/>
-              <preferredSize width="-1" height="30"/>
-            </properties>
-          </component>
-          <component id="29cf" class="javax.swing.JButton" binding="resetButton" default-binding="true">
-            <constraints>
-              <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="1.0" weighty="0.0"/>
-            </constraints>
-            <properties>
-              <actionCommand value="gridConfigureResetAction"/>
-              <text value="Reset"/>
-            </properties>
-          </component>
-          <component id="a236c" class="javax.swing.JButton" binding="moveVerticallyButton" default-binding="true">
-            <constraints>
-              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="1.0" weighty="0.0"/>
-            </constraints>
-            <properties>
-              <actionCommand value="moveIntervalGridVerticalAction"/>
-              <text value="moveVertically"/>
-            </properties>
-          </component>
-          <component id="41e5e" class="javax.swing.JTextField" binding="lineOffsetTextField">
+          <component id="f6c1d" class="oriedita.editor.swing.component.DraggableTextField" binding="gridAngleTextField">
             <constraints>
               <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="3" indent="0" use-parent-layout="false">
                 <preferred-size width="10" height="-1"/>
@@ -106,14 +74,73 @@
               <preferredSize width="-1" height="30"/>
             </properties>
           </component>
+          <component id="a236c" class="javax.swing.JButton" binding="moveVerticallyButton" default-binding="true">
+            <constraints>
+              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="1.0" weighty="0.0"/>
+            </constraints>
+            <properties>
+              <actionCommand value="moveIntervalGridVerticalAction"/>
+              <text value="moveVertically"/>
+            </properties>
+          </component>
+          <component id="41e5e" class="oriedita.editor.swing.component.DraggableTextField" binding="lineOffsetTextField">
+            <constraints>
+              <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="3" indent="0" use-parent-layout="false">
+                <preferred-size width="10" height="-1"/>
+              </grid>
+              <gridbag weightx="1.0" weighty="0.0"/>
+            </constraints>
+            <properties>
+              <minimumSize width="-1" height="30"/>
+              <preferredSize width="-1" height="30"/>
+            </properties>
+          </component>
           <component id="1b343" class="javax.swing.JButton" binding="moveHorizontallyButton" default-binding="true">
             <constraints>
-              <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
               <gridbag weightx="1.0" weighty="0.0"/>
             </constraints>
             <properties>
               <actionCommand value="moveIntervalGridHorizontalAction"/>
               <text value="moveHorizontally"/>
+            </properties>
+          </component>
+          <component id="1025" class="javax.swing.JButton" binding="decreaseGridSizeButton" default-binding="true">
+            <constraints>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="1.0" weighty="1.0" ipadx="10"/>
+            </constraints>
+            <properties>
+              <actionCommand value="gridSizeDecreaseAction"/>
+              <text value="decreaseGridSize"/>
+            </properties>
+          </component>
+          <component id="5af2d" class="javax.swing.JButton" binding="increaseGridSizeButton" default-binding="true">
+            <constraints>
+              <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="1.0" weighty="1.0" ipadx="10"/>
+            </constraints>
+            <properties>
+              <actionCommand value="gridSizeIncreaseAction"/>
+              <text value="increaseGridSize"/>
+            </properties>
+          </component>
+          <component id="9eeec" class="oriedita.editor.swing.component.DraggableTextField" binding="gridSizeTextField">
+            <constraints>
+              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="1.0"/>
+            </constraints>
+            <properties/>
+          </component>
+          <component id="87e3c" class="javax.swing.JButton" binding="cycleGridButton" default-binding="true">
+            <constraints>
+              <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="1.0" weighty="1.0" ipadx="10"/>
+            </constraints>
+            <properties>
+              <actionCommand value="changeGridStateAction"/>
+              <text value="cycleGrid"/>
             </properties>
           </component>
         </children>
@@ -463,6 +490,16 @@
             </constraints>
             <properties>
               <minimumSize width="-1" height="30"/>
+            </properties>
+          </component>
+          <component id="29cf" class="javax.swing.JButton" binding="resetButton" default-binding="true">
+            <constraints>
+              <grid row="2" column="0" row-span="1" col-span="5" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="1.0" weighty="0.0"/>
+            </constraints>
+            <properties>
+              <actionCommand value="gridConfigureResetAction"/>
+              <text value="Reset"/>
             </properties>
           </component>
         </children>
