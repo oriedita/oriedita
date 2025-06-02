@@ -11,6 +11,7 @@ import oriedita.editor.databinding.ApplicationModel;
 import oriedita.editor.databinding.BackgroundModel;
 import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.databinding.GridModel;
+import oriedita.editor.service.BindingService;
 import oriedita.editor.service.ButtonService;
 import oriedita.editor.swing.component.DraggableTextField;
 
@@ -68,17 +69,21 @@ public class SettingsTab {
     private final BackgroundModel backgroundModel;
     private final ApplicationModel applicationModel;
     private final CanvasModel canvasModel;
+    private final BindingService bindingService;
 
     @Inject
     public SettingsTab(ButtonService buttonService,
                        GridModel gridModel,
                        BackgroundModel backgroundModel,
-                       ApplicationModel applicationModel, CanvasModel canvasModel) {
+                       ApplicationModel applicationModel,
+                       CanvasModel canvasModel,
+                       BindingService bindingService) {
         this.buttonService = buttonService;
         this.gridModel = gridModel;
         this.backgroundModel = backgroundModel;
         this.applicationModel = applicationModel;
         this.canvasModel = canvasModel;
+        this.bindingService = bindingService;
     }
 
     public void init() {
@@ -95,17 +100,17 @@ public class SettingsTab {
         buttonService.setIcon(ratioLabel3, "labelPlus");
         buttonService.setIcon(ratioLabel4, "labelSqrt");
 
-        gridModel.bind(gridAngleTextField, "gridAngle", new DoubleConverter("0.0####"));
-        gridModel.bind(lineOffsetTextField, "intervalGridSize");
-        gridModel.bind(gridXATextField, "gridXA");
-        gridModel.bind(gridXBTextField, "gridXB");
-        gridModel.bind(gridXCTextField, "gridXC");
-        gridModel.bind(gridYATextField, "gridYA");
-        gridModel.bind(gridYBTextField, "gridYB");
-        gridModel.bind(gridYCTextField, "gridYC");
+        bindingService.addBinding(gridModel, "gridAngle", gridAngleTextField, new DoubleConverter("0.0####"));
+        bindingService.addBinding(gridModel, "intervalGridSize", lineOffsetTextField);
+        bindingService.addBinding(gridModel, "gridXA", gridXATextField);
+        bindingService.addBinding(gridModel, "gridXB", gridXBTextField);
+        bindingService.addBinding(gridModel, "gridXC", gridXCTextField);
+        bindingService.addBinding(gridModel, "gridYA", gridYATextField);
+        bindingService.addBinding(gridModel, "gridYB", gridYBTextField);
+        bindingService.addBinding(gridModel, "gridYC", gridYCTextField);
 
 
-        gridModel.bind(gridSizeTextField, "gridSize");
+        bindingService.addBinding(gridModel, "gridSize", gridSizeTextField);
 
         gridSizeTextField.addTickListener(d -> gridModel.setGridSize(gridModel.getGridSize() + d));
         lineOffsetTextField.addTickListener(d -> gridModel.setIntervalGridSize(gridModel.getIntervalGridSize() + d));

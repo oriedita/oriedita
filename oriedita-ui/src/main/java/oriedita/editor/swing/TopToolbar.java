@@ -4,22 +4,15 @@ import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.enterprise.inject.Any;
-import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
-import org.tinylog.Logger;
 import oriedita.common.converter.DoubleConverter;
-import oriedita.editor.Colors;
-import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.databinding.ApplicationModel;
 import oriedita.editor.databinding.CameraModel;
 import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.databinding.GridModel;
 import oriedita.editor.drawing.tools.Camera;
-import oriedita.editor.handler.MouseHandlerSettingGroup;
-import oriedita.editor.handler.MouseModeHandler;
-import oriedita.editor.handler.UiFor;
+import oriedita.editor.service.BindingService;
 import oriedita.editor.service.ButtonService;
 import oriedita.editor.swing.component.DraggableTextField;
 import origami.crease_pattern.element.Point;
@@ -31,16 +24,12 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.TitledBorder;
-import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.util.HashMap;
-import java.util.Map;
 
 @ApplicationScoped
 public class TopToolbar {
@@ -69,6 +58,7 @@ public class TopToolbar {
     private final CanvasModel canvasModel;
     private final CameraModel creasePatternCameraModel;
     private final ApplicationModel applicationModel;
+    private final BindingService bindingService;
     private final Camera cpCam;
 
     @Inject
@@ -77,7 +67,7 @@ public class TopToolbar {
                       CanvasModel canvasModel,
                       CameraModel creasePatternCameraModel,
                       ApplicationModel applicationModel,
-                      CameraModel cameraModel,
+                      BindingService bindingService,
                       @Named("creasePatternCamera") Camera cpCam
     ) {
         this.buttonService = buttonService;
@@ -85,6 +75,7 @@ public class TopToolbar {
         this.canvasModel = canvasModel;
         this.creasePatternCameraModel = creasePatternCameraModel;
         this.applicationModel = applicationModel;
+        this.bindingService = bindingService;
         this.cpCam = cpCam;
         $$$setupUI$$$();
     }
@@ -118,10 +109,10 @@ public class TopToolbar {
             }
         });
 
-        gridModel.bind(gridSizeTextField, "gridSize");
+        bindingService.addBinding(gridModel, "gridSize", gridSizeTextField);
 
-        creasePatternCameraModel.bind(zoomTextField, "scale", new DoubleConverter("0.0####"));
-        creasePatternCameraModel.bind(rotationTextField, "rotation", new DoubleConverter("0.0####"));
+        bindingService.addBinding(creasePatternCameraModel, "scale", zoomTextField, new DoubleConverter("0.0####"));
+        bindingService.addBinding(creasePatternCameraModel, "rotation", rotationTextField, new DoubleConverter("0.0####"));
 
         gridSizeTextField.addTickListener(d -> gridModel.setGridSize(gridModel.getGridSize() + d));
         zoomTextField.addRawListener((d, fine) -> {

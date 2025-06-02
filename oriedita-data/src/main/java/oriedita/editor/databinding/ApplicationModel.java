@@ -5,7 +5,6 @@ import jakarta.inject.Inject;
 import oriedita.editor.AbstractModel;
 import oriedita.editor.Colors;
 import oriedita.editor.canvas.LineStyle;
-import oriedita.editor.service.BindingService;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -87,13 +86,8 @@ public class ApplicationModel extends AbstractModel implements Serializable {
      */
 
     @Inject
-    public ApplicationModel(BindingService bindingService) {
-        super(bindingService);
-        reset();
-    }
-
     public ApplicationModel() {
-        this(BindingService.dummy());
+        reset();
     }
 
     public int getDefaultGridSize() { return defaultGridSize; }

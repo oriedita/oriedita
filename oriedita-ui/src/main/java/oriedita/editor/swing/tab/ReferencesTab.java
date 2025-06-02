@@ -7,10 +7,10 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import oriedita.editor.Colors;
 import oriedita.editor.action.ActionType;
-import oriedita.editor.databinding.AngleSystemModel;
 import oriedita.editor.databinding.ApplicationModel;
 import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.databinding.MeasuresModel;
+import oriedita.editor.service.BindingService;
 import oriedita.editor.service.ButtonService;
 import oriedita.editor.swing.TextFieldTempPopupAdapter;
 import oriedita.editor.swing.component.ColorIcon;
@@ -59,16 +59,18 @@ public class ReferencesTab {
     private JTextField measureAngle2TextField;
     private JTextField measureAngle3TextField;
     private JButton textButton;
+    private final BindingService bindingService;
 
     @Inject
     public ReferencesTab(ButtonService buttonService,
                          ApplicationModel applicationModel,
                          CanvasModel canvasModel,
-                         MeasuresModel measuresModel) {
+                         MeasuresModel measuresModel, BindingService bindingService) {
         this.buttonService = buttonService;
         this.applicationModel = applicationModel;
         this.canvasModel = canvasModel;
         this.measuresModel = measuresModel;
+        this.bindingService = bindingService;
     }
 
     public void init() {
@@ -85,11 +87,11 @@ public class ReferencesTab {
 
         circleColorButton.addActionListener(e -> circleColorToolButton.doClick());
 
-        measuresModel.bind(measureLength1TextField, "measuredLength1");
-        measuresModel.bind(measureLength2TextField, "measuredLength2");
-        measuresModel.bind(measureAngle1TextField, "measuredAngle1");
-        measuresModel.bind(measureAngle2TextField, "measuredAngle2");
-        measuresModel.bind(measureAngle3TextField, "measuredAngle3");
+        bindingService.addBinding(measuresModel, "measuredLength1", measureLength1TextField);
+        bindingService.addBinding(measuresModel, "measuredLength2", measureLength2TextField);
+        bindingService.addBinding(measuresModel, "measuredAngle1", measureAngle1TextField);
+        bindingService.addBinding(measuresModel, "measuredAngle2", measureAngle2TextField);
+        bindingService.addBinding(measuresModel, "measuredAngle3", measureAngle3TextField);
         measureLength1TextField.addMouseListener(new TextFieldTempPopupAdapter(measureLength1TextField, "Copied"));
         measureLength2TextField.addMouseListener(new TextFieldTempPopupAdapter(measureLength2TextField, "Copied"));
         measureAngle1TextField.addMouseListener(new TextFieldTempPopupAdapter(measureAngle1TextField, "Copied"));
@@ -388,7 +390,7 @@ public class ReferencesTab {
         panel7.add(measureAngle3TextField, gbc);
         textButton = new JButton();
         textButton.setActionCommand("textAction");
-        textButton.setText("Text");
+        textButton.setText("Add Text");
         panel6.add(textButton, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(-1, 25), null, 0, false));
     }
 

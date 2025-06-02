@@ -3,7 +3,6 @@ package oriedita.editor.databinding;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import oriedita.editor.AbstractModel;
-import oriedita.editor.service.BindingService;
 import origami.crease_pattern.OritaCalc;
 import origami.folding.FoldedFigure;
 
@@ -24,13 +23,8 @@ public class FoldedFigureModel extends AbstractModel implements Serializable {
     private boolean findAnotherOverlapValid;
 
     @Inject
-    public FoldedFigureModel(BindingService bindingService) {
-        super(bindingService);
-        reset();
-    }
-
     public FoldedFigureModel() {
-        this(BindingService.dummy());
+        reset();
     }
 
     public boolean isFindAnotherOverlapValid() {

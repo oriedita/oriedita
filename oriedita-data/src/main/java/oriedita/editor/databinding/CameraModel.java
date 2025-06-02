@@ -2,9 +2,7 @@ package oriedita.editor.databinding;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import org.tinylog.Logger;
 import oriedita.editor.AbstractModel;
-import oriedita.editor.service.BindingService;
 import origami.crease_pattern.OritaCalc;
 
 @ApplicationScoped
@@ -13,8 +11,7 @@ public class CameraModel extends AbstractModel {
     private double scale;
 
     @Inject
-    public CameraModel(BindingService bindingService) {
-        super(bindingService);
+    public CameraModel() {
         reset();
     }
 

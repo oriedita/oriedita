@@ -13,6 +13,7 @@ import oriedita.editor.databinding.FoldedFigureModel;
 import oriedita.editor.databinding.FoldedFiguresList;
 import oriedita.editor.drawing.FoldedFigure_Drawer;
 import oriedita.editor.handler.PopupMenuAdapter;
+import oriedita.editor.service.BindingService;
 import oriedita.editor.service.ButtonService;
 import oriedita.editor.swing.component.ColorIcon;
 import oriedita.editor.swing.component.combobox.CustomTextComboBoxRenderer;
@@ -73,15 +74,17 @@ public class FoldingTab {
     private final ButtonService buttonService;
     private final ApplicationModel applicationModel;
     private final FoldedFiguresList foldedFiguresList;
+    private final BindingService bindingService;
 
     @Inject
     public FoldingTab(ButtonService buttonService,
                       ApplicationModel applicationModel,
-                      FoldedFiguresList foldedFiguresList, FoldedFigureModel foldedFigureModel) {
+                      FoldedFiguresList foldedFiguresList, FoldedFigureModel foldedFigureModel, BindingService bindingService) {
         this.buttonService = buttonService;
         this.applicationModel = applicationModel;
         this.foldedFiguresList = foldedFiguresList;
         this.foldedFigureModel = foldedFigureModel;
+        this.bindingService = bindingService;
     }
 
     public void init() {
@@ -121,14 +124,14 @@ public class FoldingTab {
             }
         });
 
-        foldedFigureModel.bind(foldedFiguresTextField, "foldedCases", new IntConverter() {
+        bindingService.addBinding(foldedFigureModel, "foldedCases", foldedFiguresTextField, new IntConverter() {
             @Override
             public boolean canConvertBack(String s) {
                 return super.canConvertBack(s) && super.convertBack(s) > 0;
             }
         });
-        foldedFigureModel.bind(scaleTextField, "scale", new DoubleConverter("0.0####"));
-        foldedFigureModel.bind(rotationTextField, "rotation", new DoubleConverter("0.0####"));
+        bindingService.addBinding(foldedFigureModel, "scale", scaleTextField, new DoubleConverter("0.0####"));
+        bindingService.addBinding(foldedFigureModel, "rotation", rotationTextField, new DoubleConverter("0.0####"));
         buttonService.registerTextField(foldedFiguresTextField, ActionType.goToFoldedFigureAction.action());
         buttonService.registerTextField(scaleTextField, ActionType.foldedFigureSizeSetAction.action());
         buttonService.registerTextField(rotationTextField, ActionType.foldedFigureRotateSetAction.action());

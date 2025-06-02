@@ -7,7 +7,6 @@ import oriedita.editor.canvas.FoldLineAdditionalInputMode;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.canvas.MouseWheelTarget;
 import oriedita.editor.handler.FoldedFigureOperationMode;
-import oriedita.editor.service.BindingService;
 import origami.crease_pattern.CustomLineTypes;
 import origami.crease_pattern.element.LineColor;
 
@@ -39,13 +38,8 @@ public class CanvasModel extends AbstractModel implements Serializable {
     private boolean ckbox_add_frame_SelectAnd3click_isSelected;
 
     @Inject
-    public CanvasModel(BindingService bindingService) {
-        super(bindingService);
-        reset();
-    }
-
     public CanvasModel() {
-        this(BindingService.dummy());
+        reset();
     }
 
     public AtomicBoolean getW_image_running() {

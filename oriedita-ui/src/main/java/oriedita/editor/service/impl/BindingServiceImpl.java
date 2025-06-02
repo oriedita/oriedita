@@ -1,7 +1,6 @@
 package oriedita.editor.service.impl;
 
 import jakarta.enterprise.context.ApplicationScoped;
-import org.apache.commons.logging.Log;
 import org.tinylog.Logger;
 import oriedita.common.converter.DoubleConverter;
 import oriedita.common.converter.IntConverter;
@@ -25,7 +24,7 @@ import java.util.concurrent.atomic.AtomicReference;
 @ApplicationScoped
 public class BindingServiceImpl implements BindingService, Serializable {
     @Override
-    public <T> void addBinding(AbstractModel model, JTextField component, String property, Converter<T, String> converter) {
+    public <T> void addBinding(AbstractModel model, String property, JTextField component, Converter<T, String> converter) {
 
         try {
             PropertyDescriptor propertyDescriptor = new PropertyDescriptor(property, model.getClass());
@@ -105,7 +104,7 @@ public class BindingServiceImpl implements BindingService, Serializable {
     }
 
     @Override
-    public <T> void addBinding(AbstractModel model, JComboBox<T> component, String property) {
+    public <T> void addBinding(AbstractModel model, String property, JComboBox<T> component) {
         try {
             PropertyDescriptor propertyDescriptor = new PropertyDescriptor(property, model.getClass());
             component.setSelectedItem(propertyDescriptor.getReadMethod().invoke(model));

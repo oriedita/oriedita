@@ -8,6 +8,7 @@ import oriedita.editor.action.ActionType;
 import oriedita.editor.databinding.ApplicationModel;
 import oriedita.editor.handler.MouseHandlerSettingGroup;
 import oriedita.editor.handler.UiFor;
+import oriedita.editor.service.BindingService;
 import oriedita.editor.service.ButtonService;
 import oriedita.editor.swing.component.DraggableTextField;
 
@@ -23,18 +24,20 @@ public class PolygonUi implements MouseHandlerUi {
 
     private final ButtonService buttonService;
     private final ApplicationModel applicationModel;
+    private final BindingService bindingService;
 
     @Inject
     public PolygonUi(ButtonService buttonService,
-                     ApplicationModel applicationModel) {
+                     ApplicationModel applicationModel, BindingService bindingService) {
         this.buttonService = buttonService;
         this.applicationModel = applicationModel;
+        this.bindingService = bindingService;
     }
 
     @Override
     public void init() {
         buttonService.addDefaultListener(root);
-        applicationModel.bind(polygonTextField, "numPolygonCorners");
+        bindingService.addBinding(applicationModel, "numPolygonCorners", polygonTextField);
         buttonService.registerTextField(polygonTextField, ActionType.polygonSizeSetAction.action());
         polygonTextField.setTickDistance(8);
         polygonTextField.addTickListener(i ->

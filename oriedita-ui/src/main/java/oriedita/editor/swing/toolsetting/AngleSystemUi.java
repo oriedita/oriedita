@@ -9,6 +9,7 @@ import oriedita.editor.action.ActionType;
 import oriedita.editor.databinding.AngleSystemModel;
 import oriedita.editor.handler.MouseHandlerSettingGroup;
 import oriedita.editor.handler.UiFor;
+import oriedita.editor.service.BindingService;
 import oriedita.editor.service.ButtonService;
 
 import javax.swing.JButton;
@@ -33,6 +34,7 @@ import java.util.Locale;
 public class AngleSystemUi implements MouseHandlerUi {
     private final AngleSystemModel angleSystemModel;
     private final ButtonService buttonService;
+    private final BindingService bindingService;
     private JPanel root;
     private JPanel angleDividerPanel;
     private JButton angleSystemBtn;
@@ -46,9 +48,11 @@ public class AngleSystemUi implements MouseHandlerUi {
 
     @Inject
     public AngleSystemUi(final AngleSystemModel angleSystemModel,
-                         ButtonService buttonService) {
+                         ButtonService buttonService,
+                         BindingService bindingService) {
         this.angleSystemModel = angleSystemModel;
         this.buttonService = buttonService;
+        this.bindingService = bindingService;
     }
 
     @Override
@@ -63,9 +67,9 @@ public class AngleSystemUi implements MouseHandlerUi {
                 angleSystemModel.setCurrentABC();
             }
         };
-        angleSystemModel.bind(angleATextField, "angleA");
-        angleSystemModel.bind(angleBTextField, "angleB");
-        angleSystemModel.bind(angleCTextField, "angleC");
+        bindingService.addBinding(angleSystemModel, "angleA", angleATextField);
+        bindingService.addBinding(angleSystemModel, "angleB", angleBTextField);
+        bindingService.addBinding(angleSystemModel, "angleC", angleCTextField);
         angleATextField.addFocusListener(customAngleFocusLost);
         angleBTextField.addFocusListener(customAngleFocusLost);
         angleCTextField.addFocusListener(customAngleFocusLost);

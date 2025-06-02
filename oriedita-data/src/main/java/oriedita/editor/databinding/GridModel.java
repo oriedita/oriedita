@@ -25,13 +25,8 @@ public class GridModel extends AbstractModel implements Serializable {
 
     private boolean drawDiagonalGridlines;
 
-    public GridModel() {
-        this(BindingService.dummy());
-    }
-
     @Inject
-    public GridModel(BindingService bindingService) {
-        super(bindingService);
+    public GridModel() {
         reset();
     }
 

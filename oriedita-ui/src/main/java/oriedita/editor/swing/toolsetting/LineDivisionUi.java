@@ -8,14 +8,13 @@ import oriedita.editor.action.ActionType;
 import oriedita.editor.databinding.ApplicationModel;
 import oriedita.editor.handler.MouseHandlerSettingGroup;
 import oriedita.editor.handler.UiFor;
+import oriedita.editor.service.BindingService;
 import oriedita.editor.service.ButtonService;
 import oriedita.editor.swing.component.DraggableTextField;
 
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import java.awt.Insets;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
 
 @ApplicationScoped
 @UiFor(MouseHandlerSettingGroup.LINE_DIVISION_COUNT)
@@ -24,18 +23,22 @@ public class LineDivisionUi implements MouseHandlerUi {
     private DraggableTextField lineDivisionTextField;
     private final ButtonService buttonService;
     private final ApplicationModel applicationModel;
+    private final BindingService bindingService;
 
     @Inject
-    public LineDivisionUi(ButtonService buttonService, ApplicationModel applicationModel) {
+    public LineDivisionUi(ButtonService buttonService,
+                          ApplicationModel applicationModel,
+                          BindingService bindingService) {
         this.buttonService = buttonService;
         this.applicationModel = applicationModel;
+        this.bindingService = bindingService;
     }
 
 
     @Override
     public void init() {
         buttonService.addDefaultListener(root);
-        applicationModel.bind(lineDivisionTextField, "foldLineDividingNumber");
+        bindingService.addBinding(applicationModel, "foldLineDividingNumber", lineDivisionTextField);
         buttonService.registerTextField(lineDivisionTextField, ActionType.lineSegmentDivisionSetAction.action());
         lineDivisionTextField.setTickDistance(8);
         lineDivisionTextField.addTickListener(i ->

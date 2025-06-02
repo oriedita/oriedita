@@ -7,6 +7,7 @@ import jakarta.inject.Inject;
 import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.handler.MouseHandlerSettingGroup;
 import oriedita.editor.handler.UiFor;
+import oriedita.editor.service.BindingService;
 import oriedita.editor.service.ButtonService;
 import oriedita.editor.swing.component.combobox.CustomLineTypeComboBoxRenderer;
 import origami.crease_pattern.CustomLineTypes;
@@ -23,15 +24,17 @@ public class EraserColorUi implements MouseHandlerUi {
     private final CanvasModel canvasModel;
     private final ButtonService buttonService;
     private JPanel root;
-    private JComboBox colorComboBox;
+    private JComboBox<CustomLineTypes> colorComboBox;
+    private final BindingService bindingService;
 
     @Inject
     public EraserColorUi(
             CanvasModel canvasModel,
-            ButtonService buttonService
+            ButtonService buttonService, BindingService bindingService
     ) {
         this.canvasModel = canvasModel;
         this.buttonService = buttonService;
+        this.bindingService = bindingService;
     }
 
     @Override
@@ -40,7 +43,7 @@ public class EraserColorUi implements MouseHandlerUi {
 
         colorComboBox.setModel(new DefaultComboBoxModel<>(CustomLineTypes.values()));
         colorComboBox.setRenderer(new CustomLineTypeComboBoxRenderer());
-        canvasModel.bind(colorComboBox, "delLineType");
+        bindingService.addBinding(canvasModel, "delLineType", colorComboBox);
     }
 
     {

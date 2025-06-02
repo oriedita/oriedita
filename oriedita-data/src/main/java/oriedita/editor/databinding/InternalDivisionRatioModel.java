@@ -4,7 +4,6 @@ package oriedita.editor.databinding;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import oriedita.editor.AbstractModel;
-import oriedita.editor.service.BindingService;
 
 @SuppressWarnings("unused") // model properties are used through reflection
 @ApplicationScoped
@@ -17,8 +16,7 @@ public class InternalDivisionRatioModel extends AbstractModel {
     private double internalDivisionRatioF;
 
     @Inject
-    public InternalDivisionRatioModel(BindingService bindingService) {
-        super(bindingService);
+    public InternalDivisionRatioModel() {
         reset();
     }
 

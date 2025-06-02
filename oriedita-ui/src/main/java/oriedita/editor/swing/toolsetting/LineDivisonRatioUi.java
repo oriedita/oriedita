@@ -8,10 +8,9 @@ import oriedita.editor.action.ActionType;
 import oriedita.editor.databinding.InternalDivisionRatioModel;
 import oriedita.editor.handler.MouseHandlerSettingGroup;
 import oriedita.editor.handler.UiFor;
+import oriedita.editor.service.BindingService;
 import oriedita.editor.service.ButtonService;
-import oriedita.editor.swing.component.DraggableTextField;
 
-import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -20,7 +19,6 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionListener;
 
 @ApplicationScoped
 @UiFor(MouseHandlerSettingGroup.LINE_DIVISION_RATIO)
@@ -39,12 +37,15 @@ public class LineDivisonRatioUi implements MouseHandlerUi {
 
     private final ButtonService buttonService;
     private final InternalDivisionRatioModel internalDivisionRatioModel;
+    private final BindingService bindingService;
 
     @Inject
     public LineDivisonRatioUi(ButtonService buttonService,
-                              InternalDivisionRatioModel internalDivisionRatioModel) {
+                              InternalDivisionRatioModel internalDivisionRatioModel,
+                              BindingService bindingService) {
         this.buttonService = buttonService;
         this.internalDivisionRatioModel = internalDivisionRatioModel;
+        this.bindingService = bindingService;
     }
 
 
@@ -52,12 +53,12 @@ public class LineDivisonRatioUi implements MouseHandlerUi {
     public void init() {
         buttonService.addDefaultListener(root);
 
-        internalDivisionRatioModel.bind(ratio1TextField, "internalDivisionRatioA");
-        internalDivisionRatioModel.bind(ratio2TextField, "internalDivisionRatioB");
-        internalDivisionRatioModel.bind(ratio3TextField, "internalDivisionRatioC");
-        internalDivisionRatioModel.bind(ratio4TextField, "internalDivisionRatioD");
-        internalDivisionRatioModel.bind(ratio5TextField, "internalDivisionRatioE");
-        internalDivisionRatioModel.bind(ratio6TextField, "internalDivisionRatioF");
+        bindingService.addBinding(internalDivisionRatioModel, "internalDivisionRatioA", ratio1TextField);
+        bindingService.addBinding(internalDivisionRatioModel, "internalDivisionRatioB", ratio2TextField);
+        bindingService.addBinding(internalDivisionRatioModel, "internalDivisionRatioC", ratio3TextField);
+        bindingService.addBinding(internalDivisionRatioModel, "internalDivisionRatioD", ratio4TextField);
+        bindingService.addBinding(internalDivisionRatioModel, "internalDivisionRatioE", ratio5TextField);
+        bindingService.addBinding(internalDivisionRatioModel, "internalDivisionRatioF", ratio6TextField);
         buttonService.registerTextField(ratio1TextField, ActionType.lineSegmentInternalDivisionRatioSetAction.action());
         buttonService.registerTextField(ratio2TextField, ActionType.lineSegmentInternalDivisionRatioSetAction.action());
         buttonService.registerTextField(ratio3TextField, ActionType.lineSegmentInternalDivisionRatioSetAction.action());

@@ -3,11 +3,7 @@ package oriedita.editor.databinding;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import oriedita.editor.AbstractModel;
-import oriedita.editor.service.BindingService;
 import oriedita.editor.tools.StringOp;
-
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 
 @ApplicationScoped
 public class MeasuresModel extends AbstractModel {
@@ -19,8 +15,7 @@ public class MeasuresModel extends AbstractModel {
 
 
     @Inject
-    public MeasuresModel(BindingService bindingService) {
-        super(bindingService);
+    public MeasuresModel() {
         reset();
     }
 

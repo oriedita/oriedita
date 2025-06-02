@@ -7,6 +7,7 @@ import jakarta.inject.Inject;
 import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.handler.MouseHandlerSettingGroup;
 import oriedita.editor.handler.UiFor;
+import oriedita.editor.service.BindingService;
 import oriedita.editor.service.ButtonService;
 import oriedita.editor.swing.component.combobox.CustomLineTypeComboBoxRenderer;
 import origami.crease_pattern.CustomLineTypes;
@@ -32,13 +33,15 @@ public class SetLineColorUi implements MouseHandlerUi {
     private JButton switchReplaceBtn;
 
     private final ButtonService buttonService;
+    private final BindingService bindingService;
 
     @Inject
     public SetLineColorUi(
-            CanvasModel canvasModel, ButtonService buttonService
+            CanvasModel canvasModel, ButtonService buttonService, BindingService bindingService
     ) {
         this.canvasModel = canvasModel;
         this.buttonService = buttonService;
+        this.bindingService = bindingService;
     }
 
     @Override
@@ -54,8 +57,8 @@ public class SetLineColorUi implements MouseHandlerUi {
         }));
         replaceToComboBox.setRenderer(new CustomLineTypeComboBoxRenderer());
 
-        canvasModel.bind(replaceFromComboBox, "customFromLineType");
-        canvasModel.bind(replaceToComboBox, "customToLineType");
+        bindingService.addBinding(canvasModel, "customFromLineType", replaceFromComboBox);
+        bindingService.addBinding(canvasModel, "customToLineType", replaceToComboBox);
 
         buttonService.setIcon(replaceLabel, "labelReplace");
     }

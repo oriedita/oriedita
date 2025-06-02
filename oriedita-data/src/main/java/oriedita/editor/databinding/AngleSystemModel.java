@@ -4,7 +4,6 @@ package oriedita.editor.databinding;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import oriedita.editor.AbstractModel;
-import oriedita.editor.service.BindingService;
 
 @ApplicationScoped
 public class AngleSystemModel extends AbstractModel {
@@ -28,8 +27,7 @@ public class AngleSystemModel extends AbstractModel {
     private AngleSystemInputType angleSystemInputType;
 
     @Inject
-    public AngleSystemModel(BindingService bindingService) {
-        super(bindingService);
+    public AngleSystemModel() {
         reset();
     }
 
