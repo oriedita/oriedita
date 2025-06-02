@@ -12,6 +12,7 @@ import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 
 import java.awt.Graphics2D;
+import java.util.Arrays;
 
 enum DoubleSymmetricDrawStep { CLICK_DRAG_POINT }
 
@@ -20,6 +21,15 @@ enum DoubleSymmetricDrawStep { CLICK_DRAG_POINT }
 public class MouseHandlerDoubleSymmetricDraw extends StepMouseHandler<DoubleSymmetricDrawStep> {
     private Point anchorPoint, releasePoint;
     private LineSegment dragSegment;
+
+    private final LineSegment.Intersection[] validIntersections = new LineSegment.Intersection[] {
+            LineSegment.Intersection.INTERSECTS_LSHAPE_S1_START_S2_START_21,
+            LineSegment.Intersection.INTERSECTS_LSHAPE_S1_START_S2_END_22,
+            LineSegment.Intersection.INTERSECTS_LSHAPE_S1_END_S2_START_23,
+            LineSegment.Intersection.INTERSECTs_LSHAPE_S1_END_S2_END_24,
+            LineSegment.Intersection.INTERSECTS_TSHAPE_S1_VERTICAL_BAR_25,
+            LineSegment.Intersection.INTERSECTS_TSHAPE_S1_VERTICAL_BAR_26,
+    };
 
     @Inject
     private CanvasModel canvasModel;
@@ -80,8 +90,7 @@ public class MouseHandlerDoubleSymmetricDraw extends StepMouseHandler<DoubleSymm
         for (var s : d.getFoldLineSet().getLineSegmentsCollection()) {
             LineSegment.Intersection intersection = OritaCalc.determineLineSegmentIntersectionSweet(s, dragSegment, Epsilon.UNKNOWN_001, Epsilon.UNKNOWN_001);
 
-            if (intersection == LineSegment.Intersection.INTERSECTS_TSHAPE_S1_VERTICAL_BAR_25
-                    || intersection == LineSegment.Intersection.INTERSECTS_TSHAPE_S1_VERTICAL_BAR_26) {
+            if (Arrays.stream(validIntersections).anyMatch((value) -> value == intersection)) {
                 Point t_moto = s.getA();
                 if (OritaCalc.determineLineSegmentDistance(t_moto, dragSegment) < OritaCalc.determineLineSegmentDistance(s.getB(), dragSegment)) {
                     t_moto = s.getB();
