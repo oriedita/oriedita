@@ -3,6 +3,7 @@ package oriedita.editor.handler;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
+import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
 import origami.Epsilon;
@@ -30,6 +31,9 @@ public class MouseHandlerPerpendicularDraw extends StepMouseHandler<Perpendicula
     private LineSegment destinationSegment;
 
     @Inject
+    private CanvasModel canvasModel;
+
+    @Inject
     public MouseHandlerPerpendicularDraw() {
         super(PerpendicularDrawStep.SELECT_TARGET_POINT);
         steps.addNode(StepNode.createNode_MD_R(PerpendicularDrawStep.SELECT_TARGET_POINT, this::move_drag_select_target_point, this::release_select_target_point));
@@ -52,6 +56,7 @@ public class MouseHandlerPerpendicularDraw extends StepMouseHandler<Perpendicula
         perpendicularSegment = null;
         indicator = null;
         destinationSegment = null;
+        move_drag_select_target_point(canvasModel.getMouseObjPosition());
         steps.setCurrentStep(PerpendicularDrawStep.SELECT_TARGET_POINT);
     }
 
@@ -63,6 +68,7 @@ public class MouseHandlerPerpendicularDraw extends StepMouseHandler<Perpendicula
     }
     private PerpendicularDrawStep release_select_target_point(Point p) {
         if(targetPoint == null) return PerpendicularDrawStep.SELECT_TARGET_POINT;
+        move_drag_select_perpendicular_segment(p);
         return PerpendicularDrawStep.SELECT_PERPENDICULAR_SEGMENT;
     }
 
@@ -78,6 +84,7 @@ public class MouseHandlerPerpendicularDraw extends StepMouseHandler<Perpendicula
         if (OritaCalc.isPointWithinLineSpan(targetPoint, perpendicularSegment)) {
             indicator = OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), new LineSegment(targetPoint, OritaCalc.findProjection(OritaCalc.moveParallel(perpendicularSegment, 1.0), targetPoint), LineColor.PURPLE_8));
             indicator = OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), indicator.withCoordinates(indicator.getB(), indicator.getA()));
+            move_drag_select_destination_or_indicator(p);
             return PerpendicularDrawStep.SELECT_DESTINATION_OR_INDICATOR;
         }
 
@@ -89,6 +96,8 @@ public class MouseHandlerPerpendicularDraw extends StepMouseHandler<Perpendicula
             reset();
             return PerpendicularDrawStep.SELECT_TARGET_POINT;
         }
+
+        move_drag_select_perpendicular_segment(p);
         return PerpendicularDrawStep.SELECT_PERPENDICULAR_SEGMENT;
     }
 

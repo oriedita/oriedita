@@ -3,6 +3,7 @@ package oriedita.editor.handler;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
+import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
 import origami.Epsilon;
@@ -36,6 +37,9 @@ public class MouseHandlerVertexMakeAngularlyFlatFoldable extends StepMouseHandle
     private LineSegment destinationSegment;
 
     @Inject
+    private CanvasModel canvasModel;
+
+    @Inject
     public MouseHandlerVertexMakeAngularlyFlatFoldable() {
         super(AngularlyFlatFoldableStep.SELECT_INVALID_VERTEX);
         steps.addNode(StepNode.createNode_MD_R(AngularlyFlatFoldableStep.SELECT_INVALID_VERTEX, this::move_drag_select_invalid_vertex, this::release_select_invalid_vertex));
@@ -60,6 +64,7 @@ public class MouseHandlerVertexMakeAngularlyFlatFoldable extends StepMouseHandle
         candidates = new ArrayList<>();
         selectedCandidate = null;
         destinationSegment = null;
+        move_drag_select_invalid_vertex(canvasModel.getMouseObjPosition());
         steps.setCurrentStep(AngularlyFlatFoldableStep.SELECT_INVALID_VERTEX);
     }
 
@@ -159,18 +164,23 @@ public class MouseHandlerVertexMakeAngularlyFlatFoldable extends StepMouseHandle
             selectedCandidate = candidates.get(0);
             return AngularlyFlatFoldableStep.SELECT_DESTINATION;
         }
+        move_drag_select_candidate(p);
         return AngularlyFlatFoldableStep.SELECT_CANDIDATE;
     }
 
     // Select candidate
     private void move_drag_select_candidate(Point p) {
+        LineSegment closestCandidate = null;
+        double minDistance = 9999999.0;
         for (LineSegment candidate : candidates) {
-            if(OritaCalc.determineLineSegmentDistance(p, candidate) < d.getSelectionDistance()) {
-                selectedCandidate = candidate.withColor(LineColor.GREEN_6);
-                return;
+            double distance = OritaCalc.determineLineSegmentDistance(p, candidate);
+            if(distance < d.getSelectionDistance()
+                && distance < minDistance) {
+                    minDistance = distance;
+                    closestCandidate = candidate.withColor(LineColor.GREEN_6);
             }
         }
-        selectedCandidate = null;
+        selectedCandidate = closestCandidate;
     }
     private AngularlyFlatFoldableStep release_select_candidate(Point p) {
         if(selectedCandidate == null) return AngularlyFlatFoldableStep.SELECT_CANDIDATE;

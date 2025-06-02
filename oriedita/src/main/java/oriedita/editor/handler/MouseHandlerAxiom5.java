@@ -5,6 +5,7 @@ import jakarta.inject.Inject;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import oriedita.editor.canvas.MouseMode;
+import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
 import origami.Epsilon;
@@ -36,6 +37,9 @@ public class MouseHandlerAxiom5 extends StepMouseHandler<Axiom5Step>{
     private LineSegment destinationSegment;
 
     @Inject
+    private CanvasModel canvasModel;
+
+    @Inject
     public MouseHandlerAxiom5() {
         super(Axiom5Step.SELECT_TARGET_POINT);
         steps.addNode(StepNode.createNode_MD_R(Axiom5Step.SELECT_TARGET_POINT, this::move_drag_select_target_point, this::release_select_target_point));
@@ -63,6 +67,7 @@ public class MouseHandlerAxiom5 extends StepMouseHandler<Axiom5Step>{
         indicator1 = null;
         indicator2 = null;
         destinationSegment = null;
+        move_drag_select_target_point(canvasModel.getMouseObjPosition());
         steps.setCurrentStep(Axiom5Step.SELECT_TARGET_POINT);
     }
 
@@ -74,6 +79,7 @@ public class MouseHandlerAxiom5 extends StepMouseHandler<Axiom5Step>{
     }
     private Axiom5Step release_select_target_point(Point p) {
         if (targetPoint == null) return Axiom5Step.SELECT_TARGET_POINT;
+        move_drag_select_target_segment(p);
         return Axiom5Step.SELECT_TARGET_SEGMENT;
     }
 
@@ -85,6 +91,7 @@ public class MouseHandlerAxiom5 extends StepMouseHandler<Axiom5Step>{
     }
     private Axiom5Step release_select_target_segment(Point p) {
         if (targetSegment == null) return Axiom5Step.SELECT_TARGET_SEGMENT;
+        move_drag_select_pivot_point(p);
         return Axiom5Step.SELECT_PIVOT_POINT;
     }
 
@@ -100,6 +107,7 @@ public class MouseHandlerAxiom5 extends StepMouseHandler<Axiom5Step>{
         if (pivotPoint == null) return Axiom5Step.SELECT_PIVOT_POINT;
         double radius = OritaCalc.distance(targetPoint, pivotPoint);
         drawAxiom5FoldIndicators(radius);
+        move_drag_select_destination_or_indicator(p);
         return Axiom5Step.SELECT_DESTINATION_OR_INDICATOR;
     }
 

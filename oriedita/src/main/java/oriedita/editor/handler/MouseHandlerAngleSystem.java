@@ -4,6 +4,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.databinding.AngleSystemModel;
+import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
 import origami.Epsilon;
@@ -39,6 +40,9 @@ public class MouseHandlerAngleSystem extends StepMouseHandler<AngleSystemStep> {
     List<LineSegment> candidates = new ArrayList<>();
 
     @Inject
+    private CanvasModel canvasModel;
+
+    @Inject
     public MouseHandlerAngleSystem(AngleSystemModel angleSystemModel) {
         super(AngleSystemStep.CLICK_DRAG_POINT);
         steps.addNode(StepNode.createNode(AngleSystemStep.CLICK_DRAG_POINT, this::move_click_drag_point, (p) -> {}, this::drag_click_drag_point, this::release_click_drag_point));
@@ -66,6 +70,7 @@ public class MouseHandlerAngleSystem extends StepMouseHandler<AngleSystemStep> {
         selectedSegment = null;
         destinationSegment = null;
         candidates.clear();
+        move_click_drag_point(canvasModel.getMouseObjPosition());
         steps.setCurrentStep(AngleSystemStep.CLICK_DRAG_POINT);
     }
 
@@ -90,6 +95,7 @@ public class MouseHandlerAngleSystem extends StepMouseHandler<AngleSystemStep> {
             reset();
             return AngleSystemStep.CLICK_DRAG_POINT;
         }
+        move_drag_select_direction(p);
         return AngleSystemStep.SELECT_DIRECTION;
     }
 
@@ -100,6 +106,7 @@ public class MouseHandlerAngleSystem extends StepMouseHandler<AngleSystemStep> {
     private AngleSystemStep release_drag_select_direction(Point p) {
         if (selectedSegment == null) return AngleSystemStep.SELECT_DIRECTION;
         candidates.clear();
+        move_drag_select_length(p);
         return AngleSystemStep.SELECT_LENGTH;
     }
 
