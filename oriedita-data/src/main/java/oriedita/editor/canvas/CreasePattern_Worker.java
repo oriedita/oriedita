@@ -34,8 +34,6 @@ public interface CreasePattern_Worker {
 
     void setSaveForPaste(Save save1);
 
-    void setAuxMemo(Save memo1);
-
     void setCamera(Camera cam0);
 
     void setSave_for_reading(Save memo);
@@ -70,12 +68,6 @@ public interface CreasePattern_Worker {
     void setTitle(String s_title0);
 
     void record();
-
-    void auxUndo();
-
-    void auxRedo();
-
-    void auxRecord();
 
     //------------------------------------------------------------------------------
     //Drawing the basic branch

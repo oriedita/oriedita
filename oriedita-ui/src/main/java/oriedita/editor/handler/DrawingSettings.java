@@ -8,6 +8,8 @@ public class DrawingSettings {
     private int height;
     private int width;
     private boolean roundedEnds;
+    private boolean showComments;
+
     public int getHeight() {
         return height;
     }
@@ -24,12 +26,18 @@ public class DrawingSettings {
         this.width = width;
     }
 
-    public DrawingSettings(float lineWidth, LineStyle lineStyle, int height, int width, boolean roundedEnds) {
+    public DrawingSettings(float lineWidth,
+                           LineStyle lineStyle,
+                           int height,
+                           int width,
+                           boolean roundedEnds,
+                           boolean showComments) {
         this.lineWidth = lineWidth;
         this.lineStyle = lineStyle;
         this.width = width;
         this.height = height;
         this.roundedEnds = roundedEnds;
+        this.showComments = showComments;
     }
 
     public LineStyle getLineStyle() {
@@ -50,5 +58,13 @@ public class DrawingSettings {
 
     public boolean useRoundedEnds() {
         return roundedEnds;
+    }
+
+    public boolean getShowComments() {
+        return showComments;
+    }
+
+    public void setShowComments(boolean showComments) {
+        this.showComments = showComments;
     }
 }

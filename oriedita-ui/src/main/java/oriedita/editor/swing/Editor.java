@@ -3,12 +3,14 @@ package oriedita.editor.swing;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import org.tinylog.Logger;
 import oriedita.editor.Canvas;
 import oriedita.editor.CanvasUI;
 
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.util.concurrent.Executor;
 
 /**
@@ -19,27 +21,21 @@ public class Editor {
     private final Canvas canvas1;
     private JPanel root;
     private CanvasUI canvas;
-    private RightPanel rightPanel;
-    private BottomPanel bottomPanel;
-    private TopPanel topPanel;
-    private LeftPanel leftPanel;
+    private ToolsPanel toolsPanel;
+    private TopToolbar topToolbar;
 
     @Inject
-    public Editor(Canvas canvas, RightPanel rightPanel, BottomPanel bottomPanel, TopPanel topPanel, LeftPanel leftPanel) {
+    public Editor(Canvas canvas, ToolsPanel toolsPanel, TopToolbar topToolbar) {
         this.canvas1 = canvas;
-        this.rightPanel = rightPanel;
-        this.bottomPanel = bottomPanel;
-        this.topPanel = topPanel;
-        this.leftPanel = leftPanel;
+        this.toolsPanel = toolsPanel;
+        this.topToolbar = topToolbar;
 
         $$$setupUI$$$();
     }
 
     public void init(Executor service) throws InterruptedException {
-        service.execute(leftPanel::init);
-        service.execute(topPanel::init);
-        service.execute(rightPanel::init);
-        service.execute(bottomPanel::init);
+        service.execute(toolsPanel::init);
+        service.execute(topToolbar::init);
     }
 
     private void createUIComponents() {
@@ -57,11 +53,12 @@ public class Editor {
         createUIComponents();
         root = new JPanel();
         root.setLayout(new BorderLayout(0, 0));
-        root.add(bottomPanel.$$$getRootComponent$$$(), BorderLayout.SOUTH);
-        root.add(rightPanel.$$$getRootComponent$$$(), BorderLayout.EAST);
-        root.add(canvas, BorderLayout.CENTER);
-        root.add(topPanel.$$$getRootComponent$$$(), BorderLayout.NORTH);
-        root.add(leftPanel.$$$getRootComponent$$$(), BorderLayout.WEST);
+        root.add(toolsPanel.$$$getRootComponent$$$(), BorderLayout.WEST);
+        final JPanel panel1 = new JPanel();
+        panel1.setLayout(new BorderLayout(0, 0));
+        root.add(panel1, BorderLayout.CENTER);
+        panel1.add(topToolbar.$$$getRootComponent$$$(), BorderLayout.NORTH);
+        panel1.add(canvas, BorderLayout.CENTER);
     }
 
     /**
@@ -71,19 +68,12 @@ public class Editor {
         return root;
     }
 
-    public RightPanel getRightPanel() {
-        return rightPanel;
+    public ToolsPanel getToolsPanel() {
+        return toolsPanel;
     }
 
-    public BottomPanel getBottomPanel() {
-        return bottomPanel;
+    public TopToolbar getTopToolbar() {
+        return topToolbar;
     }
 
-    public TopPanel getTopPanel() {
-        return topPanel;
-    }
-
-    public LeftPanel getLeftPanel() {
-        return leftPanel;
-    }
 }

@@ -10,6 +10,8 @@ import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 
+import java.util.EnumSet;
+
 @ApplicationScoped
 @Handles(MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_3_18)
 public class MouseHandlerDrawCreaseAngleRestricted3_2 extends BaseMouseHandlerInputRestricted {
@@ -19,6 +21,11 @@ public class MouseHandlerDrawCreaseAngleRestricted3_2 extends BaseMouseHandlerIn
     @Inject
     public MouseHandlerDrawCreaseAngleRestricted3_2(AngleSystemModel angleSystemModel) {
         this.angleSystemModel = angleSystemModel;
+    }
+
+    @Override
+    public EnumSet<MouseHandlerSettingGroup> getSettings() {
+        return EnumSet.of(MouseHandlerSettingGroup.ANGLE_SYSTEM);
     }
 
     //マウス操作(マウスを動かしたとき)を行う関数

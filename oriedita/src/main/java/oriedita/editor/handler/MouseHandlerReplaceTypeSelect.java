@@ -3,22 +3,29 @@ package oriedita.editor.handler;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
-import oriedita.editor.databinding.ApplicationModel;
+import oriedita.editor.databinding.CanvasModel;
 import origami.Epsilon;
 import origami.crease_pattern.CustomLineTypes;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 
+import java.util.EnumSet;
+
 @ApplicationScoped
 @Handles(MouseMode.REPLACE_LINE_TYPE_SELECT_72)
 public class MouseHandlerReplaceTypeSelect extends BaseMouseHandlerBoxSelect {
 
-    private final ApplicationModel applicationModel;
+    private final CanvasModel canvasModel;
 
     @Inject
-    public MouseHandlerReplaceTypeSelect(ApplicationModel applicationModel) {
-        this.applicationModel = applicationModel;
+    public MouseHandlerReplaceTypeSelect(CanvasModel canvasModel) {
+        this.canvasModel = canvasModel;
+    }
+
+    @Override
+    public EnumSet<MouseHandlerSettingGroup> getSettings() {
+        return EnumSet.of(MouseHandlerSettingGroup.SWITCH_COLOR);
     }
 
     public void mouseReleased(Point p0){
@@ -27,8 +34,8 @@ public class MouseHandlerReplaceTypeSelect extends BaseMouseHandlerBoxSelect {
 
         Point p = d.getCamera().TV2object(p0);
 
-        CustomLineTypes from = applicationModel.getCustomFromLineType();
-        CustomLineTypes to = applicationModel.getCustomToLineType();
+        CustomLineTypes from = canvasModel.getCustomFromLineType();
+        CustomLineTypes to = canvasModel.getCustomToLineType();
 
         if (selectionStart.distance(p0) > Epsilon.UNKNOWN_1EN6) {//現状では赤を赤に変えたときもUNDO用に記録されてしまう20161218
             if (d.insideToReplaceType(selectionStart, p0, from, to)) {
@@ -45,7 +52,7 @@ public class MouseHandlerReplaceTypeSelect extends BaseMouseHandlerBoxSelect {
                         d.addLineSegment(s);
                         d.record();
                         break;
-                    case EGDE:
+                    case EDGE:
                         if (s.getColor() == LineColor.BLACK_0) {
                             d.getFoldLineSet().deleteLine(s);
                             s = s.withColor(LineColor.fromNumber(to.getNumberForLineColor()));
