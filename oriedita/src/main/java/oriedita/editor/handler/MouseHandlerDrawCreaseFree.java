@@ -33,7 +33,9 @@ public class MouseHandlerDrawCreaseFree extends StepMouseHandler<DrawCreaseFreeS
         super.drawPreview(g2, camera, settings);
         DrawingUtil.drawStepVertex(g2, anchorPoint, lineColor, camera, d.getGridInputAssist());
         DrawingUtil.drawStepVertex(g2, releasePoint, lineColor, camera, d.getGridInputAssist());
-        DrawingUtil.drawLineStep(g2, dragSegment, camera, settings.getLineWidth(), d.getGridInputAssist());
+        if (dragSegment != null) {
+            DrawingUtil.drawLineStep(g2, dragSegment, camera, settings.getLineWidth(), d.getGridInputAssist());
+        }
     }
 
     @Override
@@ -75,7 +77,8 @@ public class MouseHandlerDrawCreaseFree extends StepMouseHandler<DrawCreaseFreeS
             reset();
             return DrawCreaseFreeStep.CLICK_DRAG_POINT;
         }
-        if (d.getI_foldLine_additional() == FoldLineAdditionalInputMode.POLY_LINE_0) {
+        if (d.getI_foldLine_additional() == FoldLineAdditionalInputMode.POLY_LINE_0
+                || d.getI_foldLine_additional() == FoldLineAdditionalInputMode.BOTH_4) {
             d.addLineSegment(dragSegment);
             d.record();
         }
