@@ -225,6 +225,8 @@
     "This is test text",
     "Additional test text"
   ],
+  "oriedita:grid_size": 8,
+  "oriedita:grid_style": 1,
   "oriedita:circles_radii": [
     50.0,
     0.0,

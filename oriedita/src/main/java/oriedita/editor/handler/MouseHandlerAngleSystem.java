@@ -15,6 +15,7 @@ import origami.crease_pattern.element.Point;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -45,6 +46,11 @@ public class MouseHandlerAngleSystem extends StepMouseHandler<AngleSystemStep> {
         steps.addNode(StepNode.createNode_MD_R(AngleSystemStep.SELECT_DIRECTION, this::move_drag_select_direction, this::release_drag_select_direction));
         steps.addNode(StepNode.createNode_MD_R(AngleSystemStep.SELECT_LENGTH, this::move_drag_select_length, this::release_select_length));
         this.angleSystemModel = angleSystemModel;
+    }
+
+    @Override
+    public EnumSet<MouseHandlerSettingGroup> getSettings() {
+        return EnumSet.of(MouseHandlerSettingGroup.ANGLE_SYSTEM);
     }
 
     @Override
@@ -180,8 +186,7 @@ public class MouseHandlerAngleSystem extends StepMouseHandler<AngleSystemStep> {
             for (int i = 0; i < 6; i++) {
                 LineSegment s = OritaCalc.lineSegment_rotate(startingSegment, angles[i], 1.0);
                 s.setActive(LineSegment.ActiveState.ACTIVE_BOTH_3);
-                candidates.add(s);
-                d.getFoldLineSet().setColor(s, customAngleColors[i % 3]);
+                candidates.add(s.withColor(customAngleColors[i % 3]));
             }
         }
         return candidates;

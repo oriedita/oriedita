@@ -10,6 +10,7 @@ import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 
 import java.awt.Graphics2D;
+import java.util.EnumSet;
 
 enum LineSegmentDivisionStep { CLICK_DRAG_POINT }
 
@@ -23,6 +24,11 @@ public class MouseHandlerLineSegmentDivision extends StepMouseHandler<LineSegmen
     public MouseHandlerLineSegmentDivision() {
         super(LineSegmentDivisionStep.CLICK_DRAG_POINT);
         steps.addNode(StepNode.createNode(LineSegmentDivisionStep.CLICK_DRAG_POINT, this::move_click_drag_point, (p) -> {}, this::drag_click_drag_point, this::release_click_drag_point));
+    }
+
+    @Override
+    public EnumSet<MouseHandlerSettingGroup> getSettings() {
+        return EnumSet.of(MouseHandlerSettingGroup.LINE_DIVISION_COUNT);
     }
 
     @Override

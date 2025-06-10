@@ -92,9 +92,7 @@ public class PreferenceDialog extends JDialog {
     private JCheckBox foldingProgressCB;
     private JCheckBox selfIntersectionCB;
     private JCheckBox topPanelCB;
-    private JCheckBox bottomPanelCB;
     private JCheckBox leftPanelCB;
-    private JCheckBox rightPanelCB;
     private JCheckBox preciseZoomCB;
     private JCheckBox antiAliasCB;
     private JCheckBox mousewheelMovesCPCB;
@@ -198,9 +196,7 @@ public class PreferenceDialog extends JDialog {
         detachFigureColorCB.setSelected(applicationModel.getIsFoldedFigureColorDetached());
         lineStyleDropBox.setSelectedIndex(applicationModel.getLineStyle().getType() - 1);
         topPanelCB.setSelected(applicationModel.getDisplayTopPanel());
-        bottomPanelCB.setSelected(applicationModel.getDisplayBottomPanel());
         leftPanelCB.setSelected(applicationModel.getDisplayLeftPanel());
-        rightPanelCB.setSelected(applicationModel.getDisplayRightPanel());
         zoomSpeedSlider.setValue((int) (applicationModel.getZoomSpeed() * 10));
         checkBoxAnimation.setSelected(applicationModel.getAnimations());
         animationSpeedSlider.setValue((int) ((applicationModel.getAnimationSpeed()) * 8));
@@ -410,9 +406,7 @@ public class PreferenceDialog extends JDialog {
         detachFigureColorCB.addActionListener(e -> applicationModel.setIsFoldedFigureColorDetached(detachFigureColorCB.isSelected()));
 
         topPanelCB.addActionListener(e -> applicationModel.setDisplayTopPanel(topPanelCB.isSelected()));
-        bottomPanelCB.addActionListener(e -> applicationModel.setDisplayBottomPanel(bottomPanelCB.isSelected()));
         leftPanelCB.addActionListener(e -> applicationModel.setDisplayLeftPanel(leftPanelCB.isSelected()));
-        rightPanelCB.addActionListener(e -> applicationModel.setDisplayRightPanel(rightPanelCB.isSelected()));
         checkBoxAnimation.addActionListener(e -> {
             applicationModel.setAnimations(checkBoxAnimation.isSelected());
             animationSpeedSlider.setEnabled(applicationModel.getAnimations());
@@ -820,27 +814,13 @@ public class PreferenceDialog extends JDialog {
         gbc.gridy = 0;
         gbc.anchor = GridBagConstraints.WEST;
         panel4.add(topPanelCB, gbc);
-        bottomPanelCB = new JCheckBox();
-        bottomPanelCB.setText("Bottom panel");
-        gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        gbc.anchor = GridBagConstraints.WEST;
-        panel4.add(bottomPanelCB, gbc);
         leftPanelCB = new JCheckBox();
         leftPanelCB.setText("Left panel");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.gridy = 2;
+        gbc.gridy = 1;
         gbc.anchor = GridBagConstraints.WEST;
         panel4.add(leftPanelCB, gbc);
-        rightPanelCB = new JCheckBox();
-        rightPanelCB.setText("Right panel");
-        gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 3;
-        gbc.anchor = GridBagConstraints.WEST;
-        panel4.add(rightPanelCB, gbc);
         display3Panel = new JPanel();
         display3Panel.setLayout(new GridBagLayout());
         panel2.add(display3Panel, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));

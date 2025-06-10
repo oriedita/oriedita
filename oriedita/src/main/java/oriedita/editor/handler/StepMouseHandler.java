@@ -41,6 +41,8 @@ public abstract class StepMouseHandler <T extends Enum<T>> extends BaseMouseHand
     public void drawPreview(Graphics2D g2, Camera camera, DrawingSettings settings) {
         double textPosX = mousePos.getX() + 20 / camera.getCameraZoomX();
         double textPosY = mousePos.getY() + 20 / camera.getCameraZoomY();
-        DrawingUtil.drawText(g2, steps.getCurrentStep().name(), mousePos.withX(textPosX).withY(textPosY), camera);
+        if (settings.getShowComments()) {
+            DrawingUtil.drawText(g2, steps.getCurrentStep().name(), mousePos.withX(textPosX).withY(textPosY), camera);
+        }
     }
 }

@@ -48,7 +48,7 @@ class ApplicationModelTest {
         testValues.put(boolean.class, new Object[]{true, false});
         testValues.put(String.class, new String[]{"abc", "123"});
         testValues.put(Color.class, new Color[]{Color.MAGENTA, Color.YELLOW});
-        testValues.put(CustomLineTypes.class, new CustomLineTypes[]{CustomLineTypes.EGDE, CustomLineTypes.MOUNTAIN});
+        testValues.put(CustomLineTypes.class, new CustomLineTypes[]{CustomLineTypes.EDGE, CustomLineTypes.MOUNTAIN});
         testValues.put(LineStyle.class, new LineStyle[]{LineStyle.BLACK_ONE_DOT, LineStyle.COLOR});
         testValues.put(Point.class, new Point[]{new Point(0, 0), new Point(5, 10)});
         testValues.put(Dimension.class, new Dimension[]{new Dimension(1, 2), new Dimension(5, 10)});

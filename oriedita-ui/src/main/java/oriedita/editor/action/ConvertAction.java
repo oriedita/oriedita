@@ -4,6 +4,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import oriedita.editor.FrameProvider;
 import oriedita.editor.databinding.ApplicationModel;
+import oriedita.editor.databinding.GridModel;
 import oriedita.editor.export.CpExporter;
 import oriedita.editor.export.CpImporter;
 import oriedita.editor.export.FoldExporter;
@@ -40,6 +41,8 @@ public class ConvertAction extends AbstractOrieditaAction{
     private String selectedOption;
     List<String> allowedExtensions = Arrays.asList(".cp", ".ori", ".orh", ".fold");
     String[] options = {"Crease Pattern (.cp)", "Ori (.ori)", "Orihime (.orh)", "FOLD (.fold)"};
+    @Inject
+    private GridModel gridModel;
 
     @Inject
     public ConvertAction(){}
@@ -145,7 +148,7 @@ public class ConvertAction extends AbstractOrieditaAction{
 
         if (selectedOption.endsWith(".cp)")){
             exportFile = exportFile.concat(".cp");
-            new CpExporter(frameProvider, applicationModel).doExport(save, new File(exportFile));
+            new CpExporter(frameProvider, applicationModel, gridModel).doExport(save, new File(exportFile));
         } else if (selectedOption.endsWith(".ori)")) {
             exportFile = exportFile.concat(".ori");
             new OriExporter().doExport(save, new File(exportFile));
@@ -154,7 +157,7 @@ public class ConvertAction extends AbstractOrieditaAction{
             new OrhExporter().doExport(save, new File(exportFile));
         } else if (selectedOption.endsWith(".fold)")) {
             exportFile = exportFile.concat(".fold");
-            new FoldExporter().doExport(save, new File(exportFile));
+            new FoldExporter(gridModel).doExport(save, new File(exportFile));
         }
     }
 
