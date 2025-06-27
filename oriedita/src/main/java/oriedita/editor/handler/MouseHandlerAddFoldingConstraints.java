@@ -47,7 +47,7 @@ public class MouseHandlerAddFoldingConstraints implements MouseModeHandler {
         if (selectedFigure == null) {
             return;
         }
-        PointSet foldedFigureSet = selectedFigure.getFoldedFigure().wireFrame_worker2.get();
+        PointSet foldedFigureSet = selectedFigure.getFoldedFigure().wireFrameWorker_foldedNotSubdivided.get();
         Camera modelCameraFront = selectedFigure.getFoldedFigureFrontCamera();
         Camera modelCameraBack = selectedFigure.getFoldedFigureRearCamera();
         FoldedFigure.State displayState = selectedFigure.getFoldedFigure().ip4;
@@ -95,12 +95,12 @@ public class MouseHandlerAddFoldingConstraints implements MouseModeHandler {
     }
 
     private void addConstraint(Point modelCoords, boolean backside, FoldedFigure foldedFigure) {
-        List<Integer> selectedFaces = findSelectedFaces(modelCoords, foldedFigure.wireFrame_worker2.get());
+        List<Integer> selectedFaces = findSelectedFaces(modelCoords, foldedFigure.wireFrameWorker_foldedNotSubdivided.get());
 
         List<Integer> white = new ArrayList<>();
         List<Integer> colored = new ArrayList<>();
         for (Integer selFaceIndex : selectedFaces) {
-            if (foldedFigure.wireFrame_worker1.getIFacePosition(selFaceIndex) % 2 == 0) {
+            if (foldedFigure.wireFrameWorker_flatCp.getIFacePosition(selFaceIndex) % 2 == 0) {
                 white.add(selFaceIndex);
             } else {
                 colored.add(selFaceIndex);

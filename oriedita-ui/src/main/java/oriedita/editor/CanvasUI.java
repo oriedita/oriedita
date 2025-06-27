@@ -203,18 +203,18 @@ public class CanvasUI extends JPanel {
         }
 
         for (FoldedFigure_Drawer d : foldedFigureDrawers) {
-            d.getWireFrame_worker_drawer1().setCamera(creasePatternCamera);
+            d.getWireFrameWorkerDrawer_flat().setCamera(creasePatternCamera);
         }
 
         FoldedFigure_Drawer selectedFigure = foldedFiguresList.getActiveItem();
 
         if (selectedFigure != null) {
 //VVVVVVVVVVVVVVV以下のts2へのカメラセットはOriagari_zuのoekakiで実施しているので以下の5行はなくてもいいはず　20180225
-            selectedFigure.getWireFrame_worker_drawer2().setCamera(selectedFigure.getFoldedFigureCamera());
-            selectedFigure.getWireFrame_worker_drawer2().setCam_front(selectedFigure.getFoldedFigureFrontCamera());
-            selectedFigure.getWireFrame_worker_drawer2().setCam_rear(selectedFigure.getFoldedFigureRearCamera());
-            selectedFigure.getWireFrame_worker_drawer2().setCam_transparent_front(selectedFigure.getTransparentFrontCamera());
-            selectedFigure.getWireFrame_worker_drawer2().setCam_transparent_rear(selectedFigure.getTransparentRearCamera());
+            selectedFigure.getWireFrameWorkerDrawer_folded().setCamera(selectedFigure.getFoldedFigureCamera());
+            selectedFigure.getWireFrameWorkerDrawer_folded().setCam_front(selectedFigure.getFoldedFigureFrontCamera());
+            selectedFigure.getWireFrameWorkerDrawer_folded().setCam_rear(selectedFigure.getFoldedFigureRearCamera());
+            selectedFigure.getWireFrameWorkerDrawer_folded().setCam_transparent_front(selectedFigure.getTransparentFrontCamera());
+            selectedFigure.getWireFrameWorkerDrawer_folded().setCam_transparent_rear(selectedFigure.getTransparentRearCamera());
             selectedFigure.getData(foldedFigureModel);
 //AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
         }
@@ -237,7 +237,7 @@ public class CanvasUI extends JPanel {
         //基準面の表示
         if (displayMarkings && selectedFigure != null) {
             if (selectedFigure.getFoldedFigure().displayStyle != FoldedFigure.DisplayStyle.NONE_0) {
-                selectedFigure.getWireFrame_worker_drawer1().drawStartingFaceWithCamera(bufferGraphics, selectedFigure.getStartingFaceId());//ts1が折り畳みを行う際の基準面を表示するのに使う。
+                selectedFigure.getWireFrameWorkerDrawer_flat().drawStartingFaceWithCamera(bufferGraphics, selectedFigure.getStartingFaceId());//ts1が折り畳みを行う際の基準面を表示するのに使う。
             }
         }
 

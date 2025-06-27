@@ -96,8 +96,8 @@ public class SvgExporter implements FileExporter {
 
     public static void getMemo_wirediagram_for_svg_export(PrintWriter pw, Camera camera, FoldedFigure_Drawer foldedFigure, boolean i_fill) {
         FoldedFigure_Worker ctworker = foldedFigure.getFoldedFigure().foldedFigure_worker;
-        WireFrame_Worker orite = foldedFigure.getFoldedFigure().wireFrame_worker1;
-        PointSet otta_Men_zu = foldedFigure.getFoldedFigure().wireFrame_worker2.get();
+        WireFrame_Worker orite = foldedFigure.getFoldedFigure().wireFrameWorker_flatCp;
+        PointSet otta_Men_zu = foldedFigure.getFoldedFigure().wireFrameWorker_foldedNotSubdivided.get();
 
         boolean flipped = camera.determineIsCameraMirrored();
 
@@ -180,8 +180,8 @@ public class SvgExporter implements FileExporter {
 
 
     public static void getMemo_for_svg_with_camera(PrintWriter pw, Camera camera, FoldedFigure_Drawer foldedFigure) {//折り上がり図(hyouji_flg==5)
-        WireFrame_Worker orite = foldedFigure.getFoldedFigure().wireFrame_worker1;
-        PointSet subFace_figure = foldedFigure.getFoldedFigure().wireFrame_worker3.get();
+        WireFrame_Worker orite = foldedFigure.getFoldedFigure().wireFrameWorker_flatCp;
+        PointSet subFace_figure = foldedFigure.getFoldedFigure().wireFrameWorker_foldedSubdivided.get();
         boolean front_back = camera.determineIsCameraMirrored();
 
         String str_stroke = "black";

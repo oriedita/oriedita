@@ -97,28 +97,28 @@ public class FoldedFigureCanvasSelectServiceImpl implements FoldedFigureCanvasSe
                 OZ_display_mode = 4;
             }//	omote & ura & omote2 & ura2
 
-            if (drawer.getWireFrame_worker_drawer2().isInsideFront(p) > 0) {
+            if (drawer.getWireFrameWorkerDrawer_folded().isInsideFront(p) > 0) {
                 if (((OZ_display_mode == 1) || (OZ_display_mode == 3)) || (OZ_display_mode == 4)) {
                     temp_i_cp_or_oriagari = MouseWheelTarget.FOLDED_FRONT_1;
                     tempFoldedFigureIndex = i;
                 }
             }
 
-            if (drawer.getWireFrame_worker_drawer2().isInsideRear(p) > 0) {
+            if (drawer.getWireFrameWorkerDrawer_folded().isInsideRear(p) > 0) {
                 if (((OZ_display_mode == 2) || (OZ_display_mode == 3)) || (OZ_display_mode == 4)) {
                     temp_i_cp_or_oriagari = MouseWheelTarget.FOLDED_BACK_2;
                     tempFoldedFigureIndex = i;
                 }
             }
 
-            if (drawer.getWireFrame_worker_drawer2().isInsideTransparentFront(p) > 0) {
+            if (drawer.getWireFrameWorkerDrawer_folded().isInsideTransparentFront(p) > 0) {
                 if (OZ_display_mode == 4) {
                     temp_i_cp_or_oriagari = MouseWheelTarget.TRANSPARENT_FRONT_3;
                     tempFoldedFigureIndex = i;
                 }
             }
 
-            if (drawer.getWireFrame_worker_drawer2().isInsideTransparentRear(p) > 0) {
+            if (drawer.getWireFrameWorkerDrawer_folded().isInsideTransparentRear(p) > 0) {
                 if (OZ_display_mode == 4) {
                     temp_i_cp_or_oriagari = MouseWheelTarget.TRANSPARENT_BACK_4;
                     tempFoldedFigureIndex = i;

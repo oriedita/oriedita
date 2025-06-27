@@ -357,7 +357,7 @@
         <children>
           <component id="d7ee3" class="javax.swing.JTextField" binding="foldedFiguresTextField">
             <constraints>
-              <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="3" indent="0" use-parent-layout="false">
+              <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="3" indent="0" use-parent-layout="false">
                 <preferred-size width="10" height="-1"/>
               </grid>
               <gridbag weightx="0.0" weighty="1.0"/>
@@ -368,7 +368,7 @@
           </component>
           <component id="b9f2b" class="javax.swing.JButton" binding="AS100Button" default-binding="true">
             <constraints>
-              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
               <gridbag weightx="1.0" weighty="1.0"/>
             </constraints>
             <properties>
@@ -378,7 +378,7 @@
           </component>
           <component id="9bd04" class="javax.swing.JButton" binding="a_sButton" default-binding="true">
             <constraints>
-              <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <grid row="3" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
               <gridbag weightx="1.0" weighty="1.0" ipady="5"/>
             </constraints>
             <properties>
@@ -388,7 +388,7 @@
           </component>
           <component id="50b2b" class="javax.swing.JButton" binding="constraintButton">
             <constraints>
-              <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
               <gridbag weightx="1.0" weighty="1.0"/>
             </constraints>
             <properties>
@@ -398,7 +398,7 @@
           </component>
           <component id="c994e" class="javax.swing.JButton" binding="editWireframeButton" default-binding="true">
             <constraints>
-              <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
               <gridbag weightx="1.0" weighty="1.0"/>
             </constraints>
             <properties>
@@ -408,7 +408,7 @@
           </component>
           <component id="a9398" class="javax.swing.JButton" binding="editFoldedModelButton" default-binding="true">
             <constraints>
-              <grid row="3" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <grid row="4" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
               <gridbag weightx="1.0" weighty="1.0"/>
             </constraints>
             <properties>
@@ -418,14 +418,14 @@
           </component>
           <component id="4a8a1" class="javax.swing.JComboBox" binding="foldedFiguresBox">
             <constraints>
-              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="3" indent="0" use-parent-layout="false"/>
+              <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="3" indent="0" use-parent-layout="false"/>
               <gridbag weightx="0.0" weighty="0.0"/>
             </constraints>
             <properties/>
           </component>
           <component id="aa9ea" class="javax.swing.JButton" binding="goButton" default-binding="true">
             <constraints>
-              <grid row="1" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <grid row="2" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
               <gridbag weightx="1.0" weighty="0.0" ipady="5"/>
             </constraints>
             <properties>
@@ -451,6 +451,16 @@
             <properties>
               <actionCommand value="haltAction"/>
               <text value="Stop"/>
+            </properties>
+          </component>
+          <component id="ca9d2" class="javax.swing.JButton" binding="trashButton" default-binding="true">
+            <constraints>
+              <grid row="1" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties>
+              <actionCommand value="foldedFigureTrashAction"/>
+              <text value="Trash"/>
             </properties>
           </component>
         </children>
@@ -501,15 +511,6 @@
           </grid>
         </constraints>
       </vspacer>
-      <component id="ca9d2" class="javax.swing.JButton" binding="trashButton" default-binding="true">
-        <constraints>
-          <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <actionCommand value="foldedFigureTrashAction"/>
-          <text value="Trash"/>
-        </properties>
-      </component>
     </children>
   </grid>
 </form>

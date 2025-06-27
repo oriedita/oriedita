@@ -449,7 +449,7 @@ public class FoldingTab {
         foldedFiguresTextField.setMinimumSize(new Dimension(40, 30));
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
-        gbc.gridy = 2;
+        gbc.gridy = 3;
         gbc.weighty = 1.0;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.BOTH;
@@ -459,7 +459,7 @@ public class FoldingTab {
         AS100Button.setText("AS100");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.gridy = 2;
+        gbc.gridy = 3;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
@@ -469,7 +469,7 @@ public class FoldingTab {
         a_sButton.setText("a_s");
         gbc = new GridBagConstraints();
         gbc.gridx = 2;
-        gbc.gridy = 2;
+        gbc.gridy = 3;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
@@ -480,7 +480,7 @@ public class FoldingTab {
         constraintButton.setText("C");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.gridy = 3;
+        gbc.gridy = 4;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
@@ -490,7 +490,7 @@ public class FoldingTab {
         editWireframeButton.setText("editWireframe");
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
-        gbc.gridy = 3;
+        gbc.gridy = 4;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
@@ -500,7 +500,7 @@ public class FoldingTab {
         editFoldedModelButton.setText("editFoldedModel");
         gbc = new GridBagConstraints();
         gbc.gridx = 2;
-        gbc.gridy = 3;
+        gbc.gridy = 4;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
@@ -508,7 +508,7 @@ public class FoldingTab {
         foldedFiguresBox = new JComboBox();
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.gridy = 1;
+        gbc.gridy = 2;
         gbc.anchor = GridBagConstraints.WEST;
         gbc.fill = GridBagConstraints.BOTH;
         panel7.add(foldedFiguresBox, gbc);
@@ -517,7 +517,7 @@ public class FoldingTab {
         goButton.setText("Go");
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
-        gbc.gridy = 1;
+        gbc.gridy = 2;
         gbc.gridwidth = 2;
         gbc.weightx = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
@@ -540,6 +540,15 @@ public class FoldingTab {
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         panel7.add(stopButton, gbc);
+        trashButton = new JButton();
+        trashButton.setActionCommand("foldedFigureTrashAction");
+        trashButton.setText("Trash");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.gridwidth = 3;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        panel7.add(trashButton, gbc);
         final JPanel panel8 = new JPanel();
         panel8.setLayout(new GridBagLayout());
         root.add(panel8, new GridConstraints(6, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
@@ -575,10 +584,6 @@ public class FoldingTab {
         panel9.add(redoButton, gbc);
         final Spacer spacer5 = new Spacer();
         root.add(spacer5, new GridConstraints(8, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_CAN_GROW, new Dimension(-1, 7), null, null, 0, false));
-        trashButton = new JButton();
-        trashButton.setActionCommand("foldedFigureTrashAction");
-        trashButton.setText("Trash");
-        root.add(trashButton, new GridConstraints(7, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     }
 
     /**
