@@ -82,7 +82,6 @@ public class AppMenuBar {
     private JCheckBoxMenuItem useAdvancedCheck4Display;
     private JCheckBoxMenuItem displayTopPanel;
     private JCheckBoxMenuItem displayLeftPanel;
-    private JCheckBoxMenuItem moveFoldedModelWithCp;
     private JCheckBoxMenuItem doAnimations;
     private JMenuItem scaleCP;
     private JMenuItem newButton;
@@ -212,7 +211,6 @@ public class AppMenuBar {
         buttonService.registerButton(preciseZoomCheckBox, "preciseZoomAction");
         buttonService.registerButton(showSelfIntersectionCheckBox, "displaySelfIntersectionAction");
         buttonService.registerButton(useAdvancedCheck4Display, "useAdvancedCheck4DisplayAction");
-        buttonService.registerButton(moveFoldedModelWithCp, "moveFoldedModelWithCp");
         buttonService.registerButton(doAnimations, "doAnimations");
 
         buttonService.registerButton(copyButton, "copyClipboardAction");
@@ -297,7 +295,6 @@ public class AppMenuBar {
         showLiveAuxLinesCheckBox.addActionListener(e -> getData(applicationModel));
         showStandardFaceMarksCheckBox.addActionListener(e -> getData(applicationModel));
         cpOnTopCheckBox.addActionListener(e -> getData(applicationModel));
-        moveFoldedModelWithCp.addActionListener(e -> getData(applicationModel));
         showAutosaveFolderMenuItem.addActionListener(e -> {
             try {
                 File f = ResourceUtil.getTempDir().toFile();
@@ -543,8 +540,6 @@ public class AppMenuBar {
         displayPanelMenu.add(displayTopPanel);
         displayLeftPanel = new JCheckBoxMenuItem("Left Panel");
         displayPanelMenu.add(displayLeftPanel);
-        moveFoldedModelWithCp = new JCheckBoxMenuItem("Move Folded Model with CP");
-        viewMenu.add(moveFoldedModelWithCp);
         doAnimations = new JCheckBoxMenuItem("Animations");
         viewMenu.add(doAnimations);
         scaleCP = new JMenuItem("Scale back CP");
@@ -578,7 +573,6 @@ public class AppMenuBar {
         applicationModel.setAdvancedCheck4Display(useAdvancedCheck4Display.isSelected());
         applicationModel.setDisplayTopPanel(displayTopPanel.isSelected());
         applicationModel.setDisplayLeftPanel(displayLeftPanel.isSelected());
-        applicationModel.setMoveFoldedModelWithCp(moveFoldedModelWithCp.isSelected());
         applicationModel.setAnimations(doAnimations.isSelected());
     }
 
@@ -598,7 +592,6 @@ public class AppMenuBar {
         useAdvancedCheck4Display.setSelected(applicationModel.getAdvancedCheck4Display());
         displayTopPanel.setSelected(applicationModel.getDisplayTopPanel());
         displayLeftPanel.setSelected(applicationModel.getDisplayLeftPanel());
-        moveFoldedModelWithCp.setSelected(applicationModel.getMoveFoldedModelWithCp());
         doAnimations.setSelected(applicationModel.getAnimations());
 
         openRecentMenu.removeAll();

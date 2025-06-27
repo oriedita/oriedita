@@ -195,8 +195,7 @@ public class CanvasUI extends JPanel {
 
         FoldedFigure_Drawer[] foldedFigureDrawers = foldedFiguresList.getItems();
         for (FoldedFigure_Drawer d : foldedFigureDrawers) {
-            d.setParentCamera(applicationModel.getMoveFoldedModelWithCp() ? creasePatternCamera : null);
-            d.setMoveWithCp(applicationModel.getMoveFoldedModelWithCp());
+            d.setParentCamera(creasePatternCamera);
         }
 
         for (FoldedFigure_Drawer d : foldedFigureDrawers) {

@@ -28,7 +28,6 @@ public class FoldedFigure_Drawer implements Foldable {
     private final Camera transparentFrontCamera = new Camera();
     private final Camera transparentRearCamera = new Camera();
     private Rectangle boundingBox;
-    boolean moveWithCp;
     private Color foldedFigure_F_color = new Color(255, 255, 50);//Folded surface color
     private Color foldedFigure_B_color = new Color(233, 233, 233);//The color of the back side of the folded figure
     private Color foldedFigure_L_color = Color.black;//Folded line color
@@ -51,14 +50,6 @@ public class FoldedFigure_Drawer implements Foldable {
         //Camera settings ------------------------------------------------------------------
         foldedFigure_camera_initialize();
         //This is the end of the camera settings ----------------------------------------------------
-    }
-
-    public boolean getMoveWithCp() {
-        return moveWithCp;
-    }
-
-    public void setMoveWithCp(boolean moveWithCp) {
-        this.moveWithCp = moveWithCp;
     }
 
     public int getStartingFaceId() {
@@ -98,36 +89,17 @@ public class FoldedFigure_Drawer implements Foldable {
     }
 
     void folding_estimation_camera_configure(Camera creasePatternCamera) {
-//        d_foldedFigure_scale_factor = creasePatternCamera.getCameraZoomX();
-//        d_foldedFigure_rotation_correction = creasePatternCamera.getCameraAngle();
 
         foldedFigureModel.setScale(d_foldedFigure_scale_factor);
         foldedFigureModel.setRotation(d_foldedFigure_rotation_correction);
 
         Logger.info("wireFrame_worker1.ten_of_kijyunmen_ob     " + wireFrame_worker_drawer1.getStartingFacePointTV(startingFaceId).getX());
 
-        if(moveWithCp) {
-            foldedFigureCamera.setParent(creasePatternCamera);
-            foldedFigureFrontCamera.setParent(creasePatternCamera);
-            foldedFigureRearCamera.setParent(creasePatternCamera);
-            transparentFrontCamera.setParent(creasePatternCamera);
-            transparentRearCamera.setParent(creasePatternCamera);
-        } else {
-            foldedFigureCamera.setCamera(creasePatternCamera);
-            foldedFigureFrontCamera.setCamera(creasePatternCamera);
-            foldedFigureRearCamera.setCamera(creasePatternCamera);
-            transparentFrontCamera.setCamera(creasePatternCamera);
-            transparentRearCamera.setCamera(creasePatternCamera);
-            double d_camera_mirror = foldedFigureRearCamera.getCameraMirror();
-            foldedFigureRearCamera.setCameraMirror(d_camera_mirror * -1.0);
-            transparentRearCamera.setCameraMirror(d_camera_mirror * -1.0);
-        }
-
-//        foldedFigureCamera.displayPositionMove(new Point(20, 20));
-//        foldedFigureFrontCamera.displayPositionMove(new Point(20, 20));
-//        foldedFigureRearCamera.displayPositionMove(new Point(40, 20));
-//        transparentFrontCamera.displayPositionMove(new Point(20, 0));
-//        transparentRearCamera.displayPositionMove(new Point(40, 0));
+        foldedFigureCamera.setParent(creasePatternCamera);
+        foldedFigureFrontCamera.setParent(creasePatternCamera);
+        foldedFigureRearCamera.setParent(creasePatternCamera);
+        transparentFrontCamera.setParent(creasePatternCamera);
+        transparentRearCamera.setParent(creasePatternCamera);
     }
 
     public origami.crease_pattern.element.Polygon getBoundingBox() {

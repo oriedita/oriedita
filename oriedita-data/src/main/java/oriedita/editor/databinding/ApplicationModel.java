@@ -67,7 +67,6 @@ public class ApplicationModel extends AbstractModel implements Serializable {
     private boolean cpExportWarning;
     private int check4ColorTransparency;
     private double zoomSpeed;
-    private boolean moveFoldedModelWithCp;
     private boolean animations;
     private double animationSpeed;
     private double mouseRadius;
@@ -385,7 +384,6 @@ public class ApplicationModel extends AbstractModel implements Serializable {
         zoomSpeed = 1;
         animations = true;
         animationSpeed = 1;
-        moveFoldedModelWithCp = true;
         mouseRadius = 10;
         minGridUnitSize = 0.5;
 
@@ -394,15 +392,6 @@ public class ApplicationModel extends AbstractModel implements Serializable {
         this.notifyAllListeners();
     }
 
-    public boolean getMoveFoldedModelWithCp() {
-        return moveFoldedModelWithCp;
-    }
-
-    public void setMoveFoldedModelWithCp(boolean moveFoldedModelWithCp) {
-        boolean oldValue = this.moveFoldedModelWithCp;
-        this.moveFoldedModelWithCp = moveFoldedModelWithCp;
-        pcs.firePropertyChange("moveFoldedModelWithCp", oldValue, moveFoldedModelWithCp);
-    }
     public void restorePrefDefaults(){
         //Unsure of displayPointSpotlight, displayPointOffset, and displayGridInputAssist defaults
         displayComments = true;
@@ -805,7 +794,6 @@ public class ApplicationModel extends AbstractModel implements Serializable {
         laf = applicationModel.getLaf();
         recentFileList = applicationModel.getRecentFileList().stream().filter(File::exists).collect(Collectors.toList());
 
-        moveFoldedModelWithCp = applicationModel.getMoveFoldedModelWithCp();
         animationSpeed = applicationModel.getAnimationSpeed();
         animations = applicationModel.getAnimations();
         zoomSpeed = applicationModel.getZoomSpeed();
