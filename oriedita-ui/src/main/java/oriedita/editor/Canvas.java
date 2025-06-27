@@ -291,22 +291,31 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
                 switch (target) {
                     case CREASE_PATTERN_0: // 展開図移動。
                         creasePatternCamera.camera_position_specify_from_TV(p);
+                        canvasModel.deactivateFoldingTab();
                         break;
                     case FOLDED_FRONT_1:
-                        if (selectedFigure != null)
+                        if (selectedFigure != null) {
                             selectedFigure.getFoldedFigureFrontCamera().camera_position_specify_from_TV(p);
+                            canvasModel.activateFoldingTab();
+                        }
                         break;
                     case FOLDED_BACK_2:
-                        if (selectedFigure != null)
+                        if (selectedFigure != null) {
                             selectedFigure.getFoldedFigureRearCamera().camera_position_specify_from_TV(p);
+                            canvasModel.activateFoldingTab();
+                        }
                         break;
                     case TRANSPARENT_FRONT_3:
-                        if (selectedFigure != null)
+                        if (selectedFigure != null) {
                             selectedFigure.getTransparentFrontCamera().camera_position_specify_from_TV(p);
+                            canvasModel.activateFoldingTab();
+                        }
                         break;
                     case TRANSPARENT_BACK_4:
-                        if (selectedFigure != null)
+                        if (selectedFigure != null) {
                             selectedFigure.getTransparentRearCamera().camera_position_specify_from_TV(p);
+                            canvasModel.activateFoldingTab();
+                        }
                         break;
                 }
 

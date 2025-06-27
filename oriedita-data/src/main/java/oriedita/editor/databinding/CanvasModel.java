@@ -3,6 +3,7 @@ package oriedita.editor.databinding;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import oriedita.editor.AbstractModel;
+import oriedita.editor.ToolTab;
 import oriedita.editor.canvas.FoldLineAdditionalInputMode;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.canvas.MouseWheelTarget;
@@ -36,6 +37,9 @@ public class CanvasModel extends AbstractModel implements Serializable {
     private MouseWheelTarget mouseInCpOrFoldedFigure;
     private final AtomicBoolean w_image_running = new AtomicBoolean(false); // Folding together execution. If a single image export is in progress, it will be true.
     private boolean ckbox_add_frame_SelectAnd3click_isSelected;
+
+    private ToolTab selectedToolTab;
+    private ToolTab previouslySelectedToolTab;
 
     @Inject
     public CanvasModel() {
@@ -181,10 +185,10 @@ public class CanvasModel extends AbstractModel implements Serializable {
         customToLineType = CustomLineTypes.EDGE;
 
         delLineType = CustomLineTypes.ANY;
+        selectedToolTab = ToolTab.DRAW;
 
         this.notifyAllListeners();
     }
-
 
     public void set(CanvasModel canvasModel) {
         toggleLineColor = canvasModel.getToggleLineColor();
@@ -247,6 +251,30 @@ public class CanvasModel extends AbstractModel implements Serializable {
 
     public CustomLineTypes getCustomToLineType(){
         return customToLineType;
+    }
+
+    public ToolTab getSelectedToolTab() {
+        return selectedToolTab;
+    }
+
+    public void setSelectedToolTab(ToolTab selectedToolTab) {
+        var oldSelectedToolTab = this.selectedToolTab;
+        this.selectedToolTab = selectedToolTab;
+        previouslySelectedToolTab = null;
+        this.pcs.firePropertyChange("selectedToolTab", oldSelectedToolTab, selectedToolTab);
+    }
+
+    public void activateFoldingTab(){
+        if (previouslySelectedToolTab != null) {return;}
+        var oldToolTab = selectedToolTab;
+        setSelectedToolTab(ToolTab.FOLD);
+        previouslySelectedToolTab = oldToolTab;
+    }
+
+    public void deactivateFoldingTab(){
+        if (previouslySelectedToolTab != null) {
+            setSelectedToolTab(previouslySelectedToolTab);
+        }
     }
 
     public enum SelectionOperationMode {

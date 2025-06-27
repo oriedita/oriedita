@@ -6,6 +6,7 @@ import com.intellij.uiDesigner.core.Spacer;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import oriedita.editor.Colors;
+import oriedita.editor.ToolTab;
 import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.service.ButtonService;
 import oriedita.editor.swing.component.GlyphIcon;
@@ -43,7 +44,6 @@ public class ToolsPanel {
     private JButton eButton;
     private JButton aButton;
     private JPanel colButtons;
-    private JScrollPane scrollPane;
 
 
     @Inject
@@ -77,6 +77,11 @@ public class ToolsPanel {
         initTab(1, "labelTabReferences");
         initTab(2, "labelTabFolding");
         initTab(3, "labelTabSettings");
+
+        tabbedPane1.addChangeListener(l -> {
+            var i = tabbedPane1.getSelectedIndex();
+            canvasModel.setSelectedToolTab(ToolTab.fromIndex(i));
+        });
     }
 
     private void initTab(int index, String key) {
@@ -117,6 +122,10 @@ public class ToolsPanel {
                 aButton.setForeground(Colors.get(Color.black));
             default:
                 break;
+        }
+        var i = canvasModel.getSelectedToolTab().toIndex();
+        if (tabbedPane1.getSelectedIndex() != i) {
+            tabbedPane1.setSelectedIndex(i);
         }
     }
 
