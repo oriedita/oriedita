@@ -117,7 +117,7 @@ public class FoldingServiceImpl implements FoldingService {
         //これより前のOZは古いOZ
         Foldable selectedFigure = initFoldedFigure();//OAZのアレイリストに、新しく折り上がり図をひとつ追加し、それを操作対象に指定し、foldedFigures(0)共通パラメータを引き継がせる。
         //これより後のOZは新しいOZに変わる
-
+        canvasModel.activateFoldingTab();
         foldingExecutor.executeTask(new FoldingEstimateTask(creasePatternCamera, bulletinBoard, canvasModel, lineSegmentsForFolding, selectedFigure, estimationOrder));
     }
 
