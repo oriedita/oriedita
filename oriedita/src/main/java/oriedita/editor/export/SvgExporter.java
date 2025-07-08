@@ -14,6 +14,7 @@ import oriedita.editor.tools.StringOp;
 import oriedita.editor.export.api.FileExporter;
 import origami.Epsilon;
 import origami.crease_pattern.FoldLineSet;
+import origami.crease_pattern.LineSegmentSet;
 import origami.crease_pattern.PointSet;
 import origami.crease_pattern.element.Circle;
 import origami.crease_pattern.element.LineColor;
@@ -21,10 +22,12 @@ import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.worker.FoldedFigure_Worker;
 import origami.crease_pattern.worker.WireFrame_Worker;
+import origami.crease_pattern.worker.linesegmentset.GetBoundingBox;
 import origami.folding.FoldedFigure;
 import origami.folding.element.SubFace;
 import origami.folding.util.SortingBox;
 
+import java.awt.Color;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -53,7 +56,16 @@ public class SvgExporter implements FileExporter {
     public static void exportFile(FoldLineSet foldLineSet, List<Text> texts, boolean showText, Camera camera, boolean i_cp_display, float fCreasePatternLineWidth, int lineWidth, LineStyle lineStyle, int pointSize, FoldedFiguresList foldedFigures, File file) throws IOException {
         try (FileWriter fw = new FileWriter(file); BufferedWriter bw = new BufferedWriter(fw); PrintWriter pw = new PrintWriter(bw)) {
             Locale.setDefault(Locale.ENGLISH);
-            pw.println("<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">");
+            var lineSegmentSet = new LineSegmentSet();
+            for (LineSegment lineSegment : foldLineSet.getLineSegments()) {
+                lineSegmentSet.addLine(lineSegment.getA(), lineSegment.getB(), lineSegment.getColor());
+            }
+            var boundingBox = GetBoundingBox.getBoundingBox(lineSegmentSet);
+            var min = camera.object2TV(boundingBox.getP1());
+            var max = camera.object2TV(boundingBox.getP3());
+            var viewBoxString = min.getX() + " "  + min.getY() + " " + max.getX() + " " + max.getY();
+            pw.println("<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" " +
+                    "viewBox=\""+ viewBoxString + "\">");
 
             if (i_cp_display) {
                 pw.println("<g id=\"crease-pattern\">");
@@ -363,7 +375,8 @@ public class SvgExporter implements FileExporter {
         String str_strokewidth = Integer.toString(lineWidth);
         for (var s : foldLineSet.getLineSegmentsIterable()) {
             LineColor color = s.getColor();
-            str_stroke = getStrokeColor(color);
+
+            str_stroke = getStrokeColor(color, s.getCustomized(), s.getCustomizedColor());
             if (str_stroke == null) continue;
 
             if (lineStyle == LineStyle.BLACK_TWO_DOT || lineStyle == LineStyle.BLACK_ONE_DOT) {
@@ -384,46 +397,25 @@ public class SvgExporter implements FileExporter {
                 }
             }
 
-            String str_stroke_dasharray;
-            switch (lineStyle) {
-                case COLOR:
-                case BLACK_WHITE:
-                    str_stroke_dasharray = "";
-                    break;
-                case COLOR_AND_SHAPE:
-                case BLACK_ONE_DOT:
+            String str_stroke_dasharray = switch (lineStyle) {
+                case COLOR, BLACK_WHITE -> "";
+                case COLOR_AND_SHAPE, BLACK_ONE_DOT ->
                     //基本指定A　　線の太さや線の末端の形状
                     //dash_M1,一点鎖線
-                    switch (color) {
-                        case RED_1:
-                            str_stroke_dasharray = "stroke-dasharray=\"10 3 3 3\"";
-                            break;
-                        case BLUE_2:
-                            str_stroke_dasharray = "stroke-dasharray=\"8 8\"";
-                            break;
-                        default:
-                            str_stroke_dasharray = "";
-                            break;
-                    }
-                    break;
-                case BLACK_TWO_DOT:
+                        switch (color) {
+                            case RED_1 -> "stroke-dasharray=\"10 3 3 3\"";
+                            case BLUE_2 -> "stroke-dasharray=\"8 8\"";
+                            default -> "";
+                        };
+                case BLACK_TWO_DOT ->
                     //基本指定A　　線の太さや線の末端の形状
                     //dash_M2,二点鎖線
-                    switch (color) {
-                        case RED_1:
-                            str_stroke_dasharray = "stroke-dasharray=\"10 3 3 3 3 3\"";
-                            break;
-                        case BLUE_2:
-                            str_stroke_dasharray = "stroke-dasharray=\"8 8\"";
-                            break;
-                        default:
-                            str_stroke_dasharray = "";
-                            break;
-                    }
-                    break;
-                default:
-                    throw new IllegalArgumentException();
-            }
+                        switch (color) {
+                            case RED_1 -> "stroke-dasharray=\"10 3 3 3 3 3\"";
+                            case BLUE_2 -> "stroke-dasharray=\"8 8\"";
+                            default -> "";
+                        };
+            };
 
             LineSegment s_tv = camera.object2TV(s);
             Point a = s_tv.getA();
@@ -453,10 +445,7 @@ public class SvgExporter implements FileExporter {
 
         for (Circle c : foldLineSet.getCircles()) {
             LineColor color = c.getColor();
-            str_stroke = getStrokeColor(color);
-            if (c.getCustomized() == 1) {
-                str_stroke = StringOp.toHtmlColor(c.getCustomizedColor());
-            }
+            str_stroke = getStrokeColor(color, c.getCustomized(), c.getCustomizedColor());
             if (str_stroke == null) continue;
             Circle c_tv = camera.object2TV(c);
             double x1 = c_tv.getX();
@@ -477,23 +466,19 @@ public class SvgExporter implements FileExporter {
         }
     }
 
-    private static String getStrokeColor(LineColor color) {
-        switch (color) {
-            case BLACK_0:
-                return "black";
-            case RED_1:
-                return "red";
-            case BLUE_2:
-                return "blue";
-            case CYAN_3:
-                return "#64c8c8";
-            case YELLOW_7:
-                return "yellow";
-            case ORANGE_4:
-                return "orange";
-            default:
-                return null;
+    private static String getStrokeColor(LineColor color, int customized, Color customizedColor) {
+        if (customized == 1) {
+            return StringOp.toHtmlColor(customizedColor);
         }
+        return switch (color) {
+            case BLACK_0 -> "black";
+            case RED_1 -> "red";
+            case BLUE_2 -> "blue";
+            case CYAN_3 -> "#64c8c8";
+            case YELLOW_7 -> "yellow";
+            case ORANGE_4 -> "orange";
+            default -> null;
+        };
     }
 
     private static void drawVertex(PrintWriter pw, float fCreasePatternLineWidth, int pointSize, double x1, double y1) {

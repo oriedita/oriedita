@@ -37,7 +37,7 @@ public class FoldImporter implements FileImporter {
         double maxY = Double.MIN_VALUE;
 
         FoldFrame rootFrame = foldFile.getRootFrame();
-
+        var lineColors = foldFile.getLineColors();
         for (int i = 0; i < rootFrame.getEdges().size(); i++) {
             Edge edge = rootFrame.getEdges().get(i);
 
@@ -54,6 +54,14 @@ public class FoldImporter implements FileImporter {
             minY = Math.min(Math.min(minY, ay), by);
             maxX = Math.max(Math.max(maxX, ax), bx);
             maxY = Math.max(Math.max(maxY, ay), by);
+
+            if (lineColors.size() > i){
+                var color = lineColors.get(i);
+                if (color.isPresent()) {
+                    ls.setCustomized(1);
+                    ls.setCustomizedColor(color.get());
+                }
+            }
 
             save.addLineSegment(ls);
         }
