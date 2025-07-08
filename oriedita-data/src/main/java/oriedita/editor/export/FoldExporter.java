@@ -85,8 +85,12 @@ public class FoldExporter implements FileExporter {
             edge.setEnd(endVertex);
 
             rootFrame.getEdges().add(edge);
-            var line = lineSegmentSet.get(i-1);
-            lineColors.add(line.getCustomized() == 0? Optional.empty() : Optional.of(line.getCustomizedColor()));
+            if (lineSegmentSet.getNumLineSegments() >= i){
+                var line = lineSegmentSet.get(i-1);
+                lineColors.add(line.getCustomized() == 0? Optional.empty() : Optional.of(line.getCustomizedColor()));
+            } else {
+                lineColors.add(Optional.empty());
+            }
         }
 
         if (includeFaces) {
