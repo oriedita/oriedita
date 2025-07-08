@@ -19,11 +19,13 @@ import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.worker.WireFrame_Worker;
 
+import java.awt.Color;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @ApplicationScoped
 public class FoldExporter implements FileExporter {
@@ -33,11 +35,11 @@ public class FoldExporter implements FileExporter {
 
     private FoldEdgeAssignment getAssignment(LineColor lineColor) {
         return switch (lineColor) {
-            default -> FoldEdgeAssignment.UNASSIGNED;
             case BLACK_0 -> FoldEdgeAssignment.BORDER;
             case RED_1 -> FoldEdgeAssignment.MOUNTAIN_FOLD;
             case BLUE_2 -> FoldEdgeAssignment.VALLEY_FOLD;
             case CYAN_3, ORANGE_4, MAGENTA_5, GREEN_6, YELLOW_7, PURPLE_8, OTHER_9 -> FoldEdgeAssignment.FLAT_FOLD;
+            default -> FoldEdgeAssignment.UNASSIGNED;
         };
     }
 
@@ -63,6 +65,7 @@ public class FoldExporter implements FileExporter {
         OrieditaFoldFile foldFile = new OrieditaFoldFile();
         foldFile.setCreator("oriedita");
         FoldFrame rootFrame = foldFile.getRootFrame();
+        var lineColors = new ArrayList<Optional<Color>>();
 
         for (int i = 1; i <= pointSet.getNumPoints(); i++) {
             Vertex vertex = new Vertex();
@@ -82,6 +85,12 @@ public class FoldExporter implements FileExporter {
             edge.setEnd(endVertex);
 
             rootFrame.getEdges().add(edge);
+            if (lineSegmentSet.getNumLineSegments() >= i){
+                var line = lineSegmentSet.get(i-1);
+                lineColors.add(line.getCustomized() == 0? Optional.empty() : Optional.of(line.getCustomizedColor()));
+            } else {
+                lineColors.add(Optional.empty());
+            }
         }
 
         if (includeFaces) {
@@ -111,6 +120,7 @@ public class FoldExporter implements FileExporter {
         foldFile.setCircles(save.getCircles());
         foldFile.setTexts(save.getTexts());
         foldFile.setVersion(ResourceUtil.getVersionFromManifest());
+        foldFile.setLineColors(lineColors);
 
         return foldFile;
     }

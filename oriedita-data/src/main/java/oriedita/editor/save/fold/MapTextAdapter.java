@@ -18,8 +18,8 @@ public class MapTextAdapter implements Adapter<Map<MapTextAdapter.TextFields, Ob
             return null;
         }
 
-        double x = (double) coord.get(0);
-        double y = (double) coord.get(1);
+        double x = CastUtil.toDouble(coord.get(0));
+        double y = CastUtil.toDouble(coord.get(1));
 
         return new Text(x, y, textVal);
     }
