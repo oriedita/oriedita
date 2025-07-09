@@ -1,14 +1,11 @@
 package oriedita.editor;
 
-import javax.swing.JTextField;
-import java.beans.IntrospectionException;
+import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.beans.PropertyDescriptor;
-import java.lang.reflect.InvocationTargetException;
-import java.util.concurrent.atomic.AtomicReference;
+import java.io.Serializable;
 
-public class AbstractModel {
+public class AbstractModel implements Serializable {
     protected final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
     public void removePropertyChangeListener(PropertyChangeListener listener) {
@@ -23,34 +20,10 @@ public class AbstractModel {
         this.pcs.addPropertyChangeListener(propertyName, listener);
     }
 
-    /**
-     * Bind a textfield component to a field in this model.
-     */
-    public void bind(JTextField component, String property) {
-        try {
-            PropertyDescriptor propertyDescriptor = new PropertyDescriptor(property, getClass());
-            propertyDescriptor.getWriteMethod().invoke(this, component.getText());
-
-            AtomicReference<String> value = new AtomicReference<>(component.getText());
-
-            component.addCaretListener(e -> {
-                try {
-                    if (!value.get().equals(component.getText())) {
-                        value.set(component.getText());
-                        propertyDescriptor.getWriteMethod().invoke(this, component.getText());
-                    }
-                } catch (IllegalAccessException | InvocationTargetException ex) {
-                    ex.printStackTrace();
-                }
-            });
-            addPropertyChangeListener(property, e -> {
-                if (!e.getNewValue().equals(component.getText())) {
-                    component.setText((String) e.getNewValue());
-                }
-            });
-
-        } catch (IntrospectionException | IllegalAccessException | InvocationTargetException e) {
-            throw new RuntimeException(e);
+    // firing a normal propertyChange with name null won't notify named listeners, this method will notify every listener
+    protected void notifyAllListeners() {
+        for (PropertyChangeListener listener : pcs.getPropertyChangeListeners()) {
+            listener.propertyChange(new PropertyChangeEvent(this, null, null, null));
         }
     }
 }

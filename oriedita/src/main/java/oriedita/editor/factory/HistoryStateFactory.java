@@ -13,11 +13,4 @@ public class HistoryStateFactory {
     public HistoryState normalHistoryState() {
         return new DequeHistoryState();
     }
-
-    @Produces
-    @ApplicationScoped
-    @Named("aux")
-    public HistoryState auxHistoryState() {
-        return new DequeHistoryState();
-    }
 }

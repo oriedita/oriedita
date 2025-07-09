@@ -74,7 +74,6 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     private final FoldLineSet foldLineSet;    //Store polygonal lines
     private final Grid grid = new Grid();
     private final HistoryState historyState;
-    private final HistoryState auxHistoryState;
     /**
      * Temporary line segments when drawing.
      */
@@ -110,7 +109,7 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     private boolean check2 = false;//=0 check2を実施しない、1=実施する　
     private boolean check3 = false;//=0 check3を実施しない、1=実施する　// TODO: intellij says this field is never written to, double check if check3 can be removed
     private boolean check4 = false;//=0 check4を実施しない、1=実施する　
-    private boolean isSelectionEmpty = false;
+    private boolean isSelectionEmpty = true;
     //---------------------------------
     // ****************************************************************************************************************************************
     // **************　Variable definition so far　****************************************************************************************************
@@ -124,7 +123,6 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
 
     public CreasePattern_Worker_Impl(Camera creasePatternCamera,
                                      HistoryState normalHistoryState,
-                                     HistoryState auxHistoryState,
                                      FoldLineSet auxLines,
                                      FoldLineSet foldLineSet,
                                      TaskExecutorService camvTaskExecutor,
@@ -137,7 +135,6 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
                                      SelectedTextModel textModel) {
         this.creasePatternCamera = creasePatternCamera;  //コンストラクタ
         this.historyState = normalHistoryState;
-        this.auxHistoryState = auxHistoryState;
         this.camvTaskExecutor = camvTaskExecutor;
         this.canvasModel = canvasModel;
         this.applicationModel = applicationModel;
@@ -189,7 +186,6 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
         auxLines.reset();
 
         historyState.reset();
-        auxHistoryState.reset();
 
         camera.reset();
         lineStep.clear();
@@ -236,6 +232,7 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     public String setMemo_for_redo_undo(Save save) {//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<undo,redoでのkiroku復元用
         textWorker.setSave(save);
         textModel.setSelected(false);
+        auxLines.setAuxSave(save);
         return foldLineSet.setSave(save);
     }
 
@@ -277,11 +274,6 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
 
         foldLineSet.unselect_all();
         record();
-    }
-
-    @Override
-    public void setAuxMemo(Save memo1) {
-        auxLines.setAuxSave(memo1);
     }
 
     @Override
@@ -334,15 +326,10 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     public Save getSave(String title) {
         Save save_temp = SaveProvider.createInstance();
         foldLineSet.getSave(save_temp, title);
+        auxLines.h_getSave(save_temp);
 
         saveAdditionalInformation(save_temp);
         return save_temp;
-    }
-
-    public Save h_getSave() {
-        Save save = SaveProvider.createInstance();
-        auxLines.h_getSave(save);
-        return save;
     }
 
     @Override
@@ -422,21 +409,6 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
         }
 
         historyState.record(getSave(s_title));
-    }
-
-    @Override
-    public void auxUndo() {
-        setAuxMemo(auxHistoryState.undo());
-    }
-
-    @Override
-    public void auxRedo() {
-        setAuxMemo(auxHistoryState.redo());
-    }
-
-    @Override
-    public void auxRecord() {
-        auxHistoryState.record(h_getSave());
     }
 
 
@@ -609,9 +581,9 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
         g.setColor(Colors.get(Color.black));
 
         if (displayComments) {
-            g.drawString(text_cp_setumei, 10, 55);
-            textWorker.draw(g2, camera);
+            g.drawString(text_cp_setumei, 10, 50 + 55);
         }
+        textWorker.draw(g2, camera);
     }
 
     @Override

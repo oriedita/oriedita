@@ -117,7 +117,7 @@ public class TextEditingArea extends JTextArea {
         Rectangle bounds = textModel.getSelectedText().calculateBounds();
         requestFocusInWindow();
         setVisible(true);
-
+        requestFocus();
         Point textPos = camera.object2TV(textModel.getSelectedText().getPos());
         setBounds((int) textPos.getX() - 3, (int) textPos.getY() - 10, bounds.width + 30, bounds.height + 30);
         repaint();

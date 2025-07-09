@@ -5,9 +5,9 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import oriedita.editor.AbstractModel;
 
+@SuppressWarnings("unused") // model properties are used through reflection
 @ApplicationScoped
 public class InternalDivisionRatioModel extends AbstractModel {
-    private final MeasuresModel measuresModel;
     private double internalDivisionRatioA;
     private double internalDivisionRatioB;
     private double internalDivisionRatioC;
@@ -15,33 +15,18 @@ public class InternalDivisionRatioModel extends AbstractModel {
     private double internalDivisionRatioE;
     private double internalDivisionRatioF;
 
-    private String displayInternalDivisionRatioA;
-    private String displayInternalDivisionRatioB;
-    private String displayInternalDivisionRatioC;
-    private String displayInternalDivisionRatioD;
-    private String displayInternalDivisionRatioE;
-    private String displayInternalDivisionRatioF;
-
     @Inject
-    public InternalDivisionRatioModel(MeasuresModel measuresModel) {
-        this.measuresModel = measuresModel;
+    public InternalDivisionRatioModel() {
         reset();
     }
 
     public void reset() {
-        internalDivisionRatioA = 1.0;
+        internalDivisionRatioA = 1;
         internalDivisionRatioB = 0.0;
         internalDivisionRatioC = 0.0;
         internalDivisionRatioD = 0.0;
         internalDivisionRatioE = 1.0;
         internalDivisionRatioF = 2.0;
-
-        displayInternalDivisionRatioA = "1.0";
-        displayInternalDivisionRatioB = "0.0";
-        displayInternalDivisionRatioC = "0.0";
-        displayInternalDivisionRatioD = "0.0";
-        displayInternalDivisionRatioE = "1.0";
-        displayInternalDivisionRatioF = "2.0";
 
         this.pcs.firePropertyChange(null, null, null);
     }
@@ -122,81 +107,5 @@ public class InternalDivisionRatioModel extends AbstractModel {
         double oldInternalDivisionRatioF = this.internalDivisionRatioF;
         this.internalDivisionRatioF = Math.max(internalDivisionRatioF, 0.0);
         this.pcs.firePropertyChange("internalDivisionRatioF", oldInternalDivisionRatioF, this.internalDivisionRatioF);
-    }
-
-    public String getDisplayInternalDivisionRatioA() {
-        return displayInternalDivisionRatioA;
-    }
-
-    public void setDisplayInternalDivisionRatioA(String displayInternalDivisionRatioA) {
-        String oldDisplayInternalDivisionRatioA = this.displayInternalDivisionRatioA;
-        this.displayInternalDivisionRatioA = displayInternalDivisionRatioA;
-        this.pcs.firePropertyChange("displayInternalDivisionRatioA", oldDisplayInternalDivisionRatioA, displayInternalDivisionRatioA);
-    }
-
-    public String getDisplayInternalDivisionRatioB() {
-        return displayInternalDivisionRatioB;
-    }
-
-    public void setDisplayInternalDivisionRatioB(String displayInternalDivisionRatioB) {
-        String oldDisplayInternalDivisionRatioB = this.displayInternalDivisionRatioB;
-        this.displayInternalDivisionRatioB = displayInternalDivisionRatioB;
-        this.pcs.firePropertyChange("displayInternalDivisionRatioB", oldDisplayInternalDivisionRatioB, displayInternalDivisionRatioB);
-    }
-
-    public String getDisplayInternalDivisionRatioC() {
-        return displayInternalDivisionRatioC;
-    }
-
-    public void setDisplayInternalDivisionRatioC(String displayInternalDivisionRatioC) {
-        String oldDisplayInternalDivisionRatioC = this.displayInternalDivisionRatioC;
-        this.displayInternalDivisionRatioC = displayInternalDivisionRatioC;
-        this.pcs.firePropertyChange("displayInternalDivisionRatioC", oldDisplayInternalDivisionRatioC, displayInternalDivisionRatioC);
-    }
-
-    public String getDisplayInternalDivisionRatioD() {
-        return displayInternalDivisionRatioD;
-    }
-
-    public void setDisplayInternalDivisionRatioD(String displayInternalDivisionRatioD) {
-        String oldDisplayInternalDivisionRatioD = this.displayInternalDivisionRatioD;
-        this.displayInternalDivisionRatioD = displayInternalDivisionRatioD;
-        this.pcs.firePropertyChange("displayInternalDivisionRatioD", oldDisplayInternalDivisionRatioD, displayInternalDivisionRatioD);
-    }
-
-    public String getDisplayInternalDivisionRatioE() {
-        return displayInternalDivisionRatioE;
-    }
-
-    public void setDisplayInternalDivisionRatioE(String displayInternalDivisionRatioE) {
-        String oldDisplayInternalDivisionRatioE = this.displayInternalDivisionRatioE;
-        this.displayInternalDivisionRatioE = displayInternalDivisionRatioE;
-        this.pcs.firePropertyChange("displayInternalDivisionRatioE", oldDisplayInternalDivisionRatioE, displayInternalDivisionRatioE);
-    }
-
-    public String getDisplayInternalDivisionRatioF() {
-        return displayInternalDivisionRatioF;
-    }
-
-    public void setDisplayInternalDivisionRatioF(String displayInternalDivisionRatioF) {
-        String oldDisplayInternalDivisionRatioF = this.displayInternalDivisionRatioF;
-        this.displayInternalDivisionRatioF = displayInternalDivisionRatioF;
-        this.pcs.firePropertyChange("displayInternalDivisionRatioF", oldDisplayInternalDivisionRatioF, displayInternalDivisionRatioF);
-    }
-
-    public void commit() {
-        setInternalDivisionRatioA(measuresModel.string2double(getDisplayInternalDivisionRatioA(), getInternalDivisionRatioA()));
-        setInternalDivisionRatioB(measuresModel.string2double(getDisplayInternalDivisionRatioB(), getInternalDivisionRatioB()));
-        setInternalDivisionRatioC(measuresModel.string2double(getDisplayInternalDivisionRatioC(), getInternalDivisionRatioC()));
-        setInternalDivisionRatioD(measuresModel.string2double(getDisplayInternalDivisionRatioD(), getInternalDivisionRatioD()));
-        setInternalDivisionRatioE(measuresModel.string2double(getDisplayInternalDivisionRatioE(), getInternalDivisionRatioE()));
-        setInternalDivisionRatioF(measuresModel.string2double(getDisplayInternalDivisionRatioF(), getInternalDivisionRatioF()));
-
-        setDisplayInternalDivisionRatioA(String.valueOf(getInternalDivisionRatioA()));
-        setDisplayInternalDivisionRatioB(String.valueOf(getInternalDivisionRatioB()));
-        setDisplayInternalDivisionRatioC(String.valueOf(getInternalDivisionRatioC()));
-        setDisplayInternalDivisionRatioD(String.valueOf(getInternalDivisionRatioD()));
-        setDisplayInternalDivisionRatioE(String.valueOf(getInternalDivisionRatioE()));
-        setDisplayInternalDivisionRatioF(String.valueOf(getInternalDivisionRatioF()));
     }
 }

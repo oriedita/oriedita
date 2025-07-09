@@ -12,7 +12,7 @@ import java.awt.event.ActionEvent;
 
 @ApplicationScoped
 @ActionHandler(ActionType.drawCreaseFreeAction)
-public class DrawCreaseFreeAction extends AbstractOrieditaAction {
+public class DrawCreaseFreeAction extends AbstractOrieditaAction implements MouseModeAction {
     @Inject
     CanvasModel canvasModel;
     @Inject @Named("mainCreasePattern_Worker")
@@ -30,5 +30,10 @@ public class DrawCreaseFreeAction extends AbstractOrieditaAction {
         canvasModel.setMouseModeAfterColorSelection(MouseMode.DRAW_CREASE_FREE_1);
 
         mainCreasePatternWorker.unselect_all(false);
+    }
+
+    @Override
+    public MouseMode getMouseMode() {
+        return MouseMode.DRAW_CREASE_FREE_1;
     }
 }

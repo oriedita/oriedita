@@ -449,7 +449,7 @@ public class FoldLineSet {
                         }
                         i_r = true;
                         break;
-                    case EGDE:
+                    case EDGE:
                         if (s.getColor() == LineColor.BLACK_0) {
                             s = s.withColor(LineColor.fromNumber(to.getNumberForLineColor()));
                             i_r = true;
@@ -508,7 +508,7 @@ public class FoldLineSet {
                         save.addLineSegment(s.clone());
                     }
                     break;
-                case EGDE:
+                case EDGE:
                     if ((b.totu_boundary_inside(s)) && s.getColor() == LineColor.BLACK_0) {
                         i_r = true;
                     }//黒赤青線はmemo1に書かれない。つまり削除される。

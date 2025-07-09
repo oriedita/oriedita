@@ -27,7 +27,6 @@ import oriedita.editor.drawing.FoldedFigure_Drawer;
 import oriedita.editor.factory.ActionFactory;
 import oriedita.editor.handler.FoldedFigureOperationMode;
 import origami.crease_pattern.CustomLineTypes;
-import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineColor;
 import origami.folding.FoldedFigure;
 
@@ -228,10 +227,10 @@ public class ActionRegistrationService {
             mainCreasePatternWorker.unselect_all(false);
         }));
         actionService.registerAction(ActionType.switchReplaceAction, new LambdaAction(() -> {
-            CustomLineTypes temp = applicationModel.getCustomFromLineType();
+            CustomLineTypes temp = canvasModel.getCustomFromLineType();
 
-            applicationModel.setCustomFromLineType(applicationModel.getCustomToLineType());
-            applicationModel.setCustomToLineType(temp);
+            canvasModel.setCustomFromLineType(canvasModel.getCustomToLineType());
+            canvasModel.setCustomToLineType(temp);
         }));
 
         // - grid actions
@@ -251,10 +250,19 @@ public class ActionRegistrationService {
             }
             //以上でやりたいことは書き終わり
         }));
+        actionService.registerAction(ActionType.drawDiagonalGridlinesAction, new LambdaAction(() -> {
+            gridModel.setDrawDiagonalGridlines(!gridModel.getDrawDiagonalGridlines());
+        }));
         actionService.registerAction(ActionType.intervalGridColorAction, new LambdaAction(() -> {
             Color color = JColorChooser.showDialog(frameProvider.get(), "Col", FlatLaf.isLafDark() ? Colors.GRID_SCALE_DARK : Colors.GRID_SCALE);
             if (color != null) {
                 applicationModel.setGridScaleColor(color);
+            }
+        }));
+        actionService.registerAction(ActionType.c_colAction, new LambdaAction(() -> {
+            Color color = JColorChooser.showDialog(frameProvider.get(), "color", new Color(100, 200, 200));
+            if (color != null) {
+                applicationModel.setCircleCustomizedColor(color);
             }
         }));
 
@@ -272,12 +280,35 @@ public class ActionRegistrationService {
                 canvasModel.setMouseMode(MouseMode.CHANGE_STANDARD_FACE_103);
             }
         }));
+        actionService.registerAction(ActionType.undoAction, new LambdaAction(() -> {
+            mainCreasePatternWorker.undo();
+            canvasModel.markDirty();
+        }));
+        actionService.registerAction(ActionType.redoAction, new LambdaAction(() -> {
+            mainCreasePatternWorker.redo();
+            canvasModel.markDirty();
+        }));
+        actionService.registerAction(ActionType.selectPersistentAction, new LambdaAction(() -> {
+            applicationModel.setSelectPersistent(!applicationModel.getSelectPersistent());
+        }));
 
         // |---------------------------------------------------------------------------|
         // --- Top Panel ---
         // - transform CP(crease pattern) actions
-        actionService.registerAction(ActionType.rotateClockwiseAction, new LambdaAction(cameraModel::decreaseRotation));
-        actionService.registerAction(ActionType.rotateAnticlockwiseAction, new LambdaAction(cameraModel::increaseRotation));
+        actionService.registerAction(ActionType.rotateClockwiseAction, new LambdaAction(() -> {
+            animationService.animate(Animations.ROTATE_CP,
+                    cameraModel::setRotation,
+                    cameraModel::getRotation,
+                    r -> r - angleSystemModel.getAngleStep(),
+                    AnimationDurations.ZOOM);
+        }));
+        actionService.registerAction(ActionType.rotateAnticlockwiseAction, new LambdaAction(() -> {
+            animationService.animate(Animations.ROTATE_CP,
+                    cameraModel::setRotation,
+                    cameraModel::getRotation,
+                    r -> r + angleSystemModel.getAngleStep(),
+                    AnimationDurations.ZOOM);
+        }));
 
         // - background actions
         actionService.registerAction(ActionType.transparentAction, new LambdaAction(canvas::createTransparentBackground));
@@ -306,6 +337,8 @@ public class ActionRegistrationService {
             mainCreasePatternWorker.unselect_all();
             mainCreasePatternWorker.fix1();
             mainCreasePatternWorker.check1();
+            mainCreasePatternWorker.fix2();
+            mainCreasePatternWorker.check2();
             mainCreasePatternWorker.record();
         }));
         actionService.registerAction(ActionType.fxTAction, new LambdaAction(() -> {
@@ -323,12 +356,20 @@ public class ActionRegistrationService {
             mainCreasePatternWorker.unselect_all();
             boolean isEnabled = applicationModel.getCkOEnabled();
             applicationModel.setCkOEnabled(!isEnabled);
+            applicationModel.setCkTEnabled(!isEnabled);
 
             if (applicationModel.getCkOEnabled()) {
                 mainCreasePatternWorker.check1();//r_hitosiiとr_heikouhanteiは、hitosiiとheikou_hanteiのずれの許容程度
                 mainCreasePatternWorker.set_i_check1(true);
             } else {
                 mainCreasePatternWorker.set_i_check1(false);
+            }
+
+            if (applicationModel.getCkTEnabled()) {
+                mainCreasePatternWorker.check2();//r_hitosiiとr_heikouhanteiは、hitosiiとheikou_hanteiのずれの許容程度
+                mainCreasePatternWorker.setCheck2(true);
+            } else {
+                mainCreasePatternWorker.setCheck2(false);
             }
         });
 
@@ -339,6 +380,7 @@ public class ActionRegistrationService {
         actionService.registerAction(ActionType.angleSystemBDecreaseAction, new LambdaAction(angleSystemModel::decreaseAngleSystemB));
         actionService.registerAction(ActionType.angleSystemBAction, new LambdaAction(() -> angleSystemModel.setCurrentAngleSystemDivider(angleSystemModel.getAngleSystemBDivider())));
         actionService.registerAction(ActionType.angleSystemBIncreaseAction, new LambdaAction(angleSystemModel::increaseAngleSystemB));
+        actionService.registerAction(ActionType.restrictedAngleABCSetAction, new LambdaAction(angleSystemModel::setCurrentABC));
         actionService.registerAction(ActionType.deg1Action, actionFactory.degAction(MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13, AngleSystemModel.AngleSystemInputType.DEG_1));
         actionService.registerAction(ActionType.deg2Action, actionFactory.degAction(MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_5_37, AngleSystemModel.AngleSystemInputType.DEG_5));
         actionService.registerAction(ActionType.deg3Action, actionFactory.degAction(MouseMode.ANGLE_SYSTEM_16, AngleSystemModel.AngleSystemInputType.DEG_2));
@@ -349,14 +391,25 @@ public class ActionRegistrationService {
         actionService.registerAction(ActionType.colYellowAction, new LambdaAction(() -> canvasModel.setAuxLiveLineColor(LineColor.YELLOW_7)));
         actionService.registerAction(ActionType.h_senhaba_sageAction, new LambdaAction(applicationModel::decreaseAuxLineWidth));
         actionService.registerAction(ActionType.h_senhaba_ageAction, new LambdaAction(applicationModel::increaseAuxLineWidth));
-        actionService.registerAction(ActionType.h_undoAction, new LambdaAction(mainCreasePatternWorker::auxUndo));
-        actionService.registerAction(ActionType.h_redoAction, new LambdaAction(mainCreasePatternWorker::auxRedo));
         actionService.registerAction(ActionType.h_senbun_nyuryokuAction, actionFactory.setMouseModeLineTypeDeleteAction(MouseMode.DRAW_CREASE_FREE_1, FoldLineAdditionalInputMode.AUX_LINE_1));
         actionService.registerAction(ActionType.h_senbun_sakujyoAction, actionFactory.setMouseModeLineTypeDeleteAction(MouseMode.LINE_SEGMENT_DELETE_3, FoldLineAdditionalInputMode.AUX_LINE_1));
 
         // |---------------------------------------------------------------------------|
         // --- Bottom Panel ---
         // foldedFigure actions
+        actionService.registerAction(ActionType.foldedFigureUndoAction, new LambdaAction(() -> {
+            FoldedFigure_Drawer selectedFigure = foldedFiguresList.getActiveItem();
+
+            if (selectedFigure != null) {
+                selectedFigure.undo();
+            }
+        }));
+        actionService.registerAction(ActionType.foldedFigureRedoAction, new LambdaAction(() -> {
+            FoldedFigure_Drawer selectedFigure = foldedFiguresList.getActiveItem();
+            if (selectedFigure != null) {
+                selectedFigure.redo();
+            }
+        }));
         actionService.registerAction(ActionType.foldedFigureToggleAntiAliasAction, new LambdaAction(foldedFigureModel::toggleAntiAlias));
         actionService.registerAction(ActionType.foldedFigureToggleShadowAction, new LambdaAction(foldedFigureModel::toggleDisplayShadows));
         actionService.registerAction(ActionType.foldedFigureSizeIncreaseAction, new LambdaAction(() -> {
@@ -374,12 +427,18 @@ public class ActionRegistrationService {
                     AnimationDurations.ZOOM);
         }));
         actionService.registerAction(ActionType.foldedFigureRotateClockwiseAction, new LambdaAction(() -> {
-            double rotation = foldedFigureModel.getState() == FoldedFigure.State.BACK_1 ? foldedFigureModel.getRotation() + 11.25 : foldedFigureModel.getRotation() - 11.25;
-            foldedFigureModel.setRotation(OritaCalc.angle_between_m180_180(rotation));
+            animationService.animate(Animations.ROTATE_FOLDED_MODEL,
+                    foldedFigureModel::setRotation,
+                    foldedFigureModel::getRotation,
+                    r -> foldedFigureModel.getState() == FoldedFigure.State.BACK_1 ? r + 11.25 : r - 11.25,
+                    AnimationDurations.ZOOM);
         }));
         actionService.registerAction(ActionType.foldedFigureRotateAntiClockwiseAction, new LambdaAction(() -> {
-            double rotation = foldedFigureModel.getState() != FoldedFigure.State.BACK_1 ? foldedFigureModel.getRotation() + 11.25 : foldedFigureModel.getRotation() - 11.25;
-            foldedFigureModel.setRotation(OritaCalc.angle_between_m180_180(rotation));
+            animationService.animate(Animations.ROTATE_FOLDED_MODEL,
+                    foldedFigureModel::setRotation,
+                    foldedFigureModel::getRotation,
+                    r -> foldedFigureModel.getState() == FoldedFigure.State.BACK_1 ? r - 11.25 : r + 11.25,
+                    AnimationDurations.ZOOM);
         }));
         actionService.registerAction(ActionType.oriagari_sousaAction, actionFactory.oriagari_sousaAction(FoldedFigureOperationMode.MODE_1));
         actionService.registerAction(ActionType.oriagari_sousa_2Action, actionFactory.oriagari_sousaAction(FoldedFigureOperationMode.MODE_2));

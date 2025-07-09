@@ -10,6 +10,8 @@ import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import org.tinylog.Logger;
 
+import java.util.EnumSet;
+
 @ApplicationScoped
 @Handles(MouseMode.LINE_SEGMENT_DELETE_3)
 public class MouseHandlerLineSegmentDelete extends BaseMouseHandlerBoxSelect {

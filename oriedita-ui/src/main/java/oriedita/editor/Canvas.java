@@ -29,6 +29,7 @@ import oriedita.editor.service.ButtonService;
 import oriedita.editor.service.FoldedFigureCanvasSelectService;
 import oriedita.editor.swing.component.BulletinBoard;
 import oriedita.editor.swing.component.TextEditingArea;
+import oriedita.editor.swing.toolsetting.ToolSettingsPanel;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.Rectangle;
 import origami.folding.FoldedFigure;
@@ -43,6 +44,8 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Robot;
 import java.awt.Window;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -97,18 +100,9 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
     private final FrameProvider frameProvider;
 
     private final ButtonService buttonService;
+    private final ToolSettingsPanel toolSettingsPanel;
 
     private final CanvasUI canvasUI;
-
-    public static String userWarningMessage = null;
-
-    public static void setUserWarningMessage(String uwm) {
-        Canvas.userWarningMessage = uwm;
-    }
-
-    public static void clearUserWarningMessage() {
-        Canvas.userWarningMessage = null;
-    }
 
     public CanvasUI getCanvasImpl() {
         return canvasUI;
@@ -133,7 +127,8 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
                   TextWorker textWorker,
                   SelectedTextModel textModel,
                   AnimationService animationService,
-                  ButtonService buttonService) {
+                  ButtonService buttonService,
+                  ToolSettingsPanel toolSettingsPanel) {
         this.canvasUI = canvasUIProvider.get();
         this.creasePatternCamera = creasePatternCamera;
         this.frameProvider = frameProvider;
@@ -153,6 +148,7 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
         this.textModel = textModel;
         this.animationService = animationService;
         this.buttonService = buttonService;
+        this.toolSettingsPanel = toolSettingsPanel;
     }
 
     public void init() {
@@ -163,6 +159,17 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
         cpTextEditingArea.setBounds(0, 0, 300, 100);
         cpTextEditingArea.setVisible(false);
         canvasUI.add(cpTextEditingArea);
+
+        toolSettingsPanel.init();
+        var tspRoot = toolSettingsPanel.$$$getRootComponent$$$();
+        tspRoot.setVisible(true);
+        canvasUI.add(tspRoot);
+        canvasUI.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                tspRoot.setBounds(0, 0, canvasUI.getWidth(), canvasUI.getHeight());
+            }
+        });
 
         cpTextEditingArea.setupListeners();
 
@@ -232,12 +239,18 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
 
         Point p = e2p(e);
         canvasUI.setMousePosition(p);
-
-        mainCreasePatternWorker.setCamera(creasePatternCamera);
+        canvasModel.setToggleLineColor(e.isControlDown());
 
         if (mouseModeHandlers.containsKey(mouseMode)) {
-            mouseModeHandlers.get(mouseMode).mouseMoved(p, e);
+            MouseModeHandler handler = mouseModeHandlers.get(mouseMode);
+            setActiveMouseHandler(handler);
+            handler.mouseMoved(p, e);
+            mainCreasePatternWorker.setCamera(creasePatternCamera);
+            canvasUI.repaint();
+            return;
         }
+
+        mainCreasePatternWorker.setCamera(creasePatternCamera);
 
         canvasUI.repaint();
     }
@@ -278,22 +291,31 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
                 switch (target) {
                     case CREASE_PATTERN_0: // 展開図移動。
                         creasePatternCamera.camera_position_specify_from_TV(p);
+                        canvasModel.deactivateFoldingTab();
                         break;
                     case FOLDED_FRONT_1:
-                        if (selectedFigure != null)
+                        if (selectedFigure != null) {
                             selectedFigure.getFoldedFigureFrontCamera().camera_position_specify_from_TV(p);
+                            canvasModel.activateFoldingTab();
+                        }
                         break;
                     case FOLDED_BACK_2:
-                        if (selectedFigure != null)
+                        if (selectedFigure != null) {
                             selectedFigure.getFoldedFigureRearCamera().camera_position_specify_from_TV(p);
+                            canvasModel.activateFoldingTab();
+                        }
                         break;
                     case TRANSPARENT_FRONT_3:
-                        if (selectedFigure != null)
+                        if (selectedFigure != null) {
                             selectedFigure.getTransparentFrontCamera().camera_position_specify_from_TV(p);
+                            canvasModel.activateFoldingTab();
+                        }
                         break;
                     case TRANSPARENT_BACK_4:
-                        if (selectedFigure != null)
+                        if (selectedFigure != null) {
                             selectedFigure.getTransparentRearCamera().camera_position_specify_from_TV(p);
+                            canvasModel.activateFoldingTab();
+                        }
                         break;
                 }
 
@@ -433,6 +455,7 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
         if (!pressedButtons.contains(e.getButton())) {
             // When pressing this button the meta key was held down.
             pressedButtons.remove(MouseEvent.BUTTON2);
+            return;
         } else {
             pressedButtons.remove(e.getButton());
         }
@@ -536,7 +559,6 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
     public void setData(ApplicationModel applicationModel) {
         canvasUI.setData(applicationModel);
         mouseWheelMovesCreasePattern = applicationModel.getMouseWheelMovesCreasePattern();
-        Logger.debug("repainting");
         canvasUI.repaint();
     }
 

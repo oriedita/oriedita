@@ -24,7 +24,6 @@ public class BackupCreasePattern_WorkerFactory {
     @Named("backupCreasePattern_Worker")
     public static CreasePattern_Worker backupCreasePattern_Worker(@Named("creasePatternCamera") Camera creasePatternCamera,
                                                                   @Named("normal") HistoryState historyState,
-                                                                  @Named("aux") HistoryState auxHistoryState,
                                                                   @Named("backup_auxlines") FoldLineSet auxLines,
                                                                   @Named("backup_foldlines") FoldLineSet foldLineSet,
                                                                   @Named("camvExecutor") TaskExecutorService camvTaskExecutor,
@@ -35,7 +34,7 @@ public class BackupCreasePattern_WorkerFactory {
                                                                   FileModel fileModel,
                                                                   TextWorker textWorker,
                                                                   SelectedTextModel textModel) {
-        return new CreasePattern_Worker_Impl(creasePatternCamera, historyState, auxHistoryState, auxLines, foldLineSet, camvTaskExecutor, canvasModel, applicationModel, gridModel, foldedFigureModel, fileModel, textWorker, textModel);
+        return new CreasePattern_Worker_Impl(creasePatternCamera, historyState, auxLines, foldLineSet, camvTaskExecutor, canvasModel, applicationModel, gridModel, foldedFigureModel, fileModel, textWorker, textModel);
     }
 
     @Produces
@@ -43,7 +42,6 @@ public class BackupCreasePattern_WorkerFactory {
     @Named("mainCreasePattern_Worker")
     public static CreasePattern_Worker mainCreasePattern_Worker(@Named("creasePatternCamera") Camera creasePatternCamera,
                                                                 @Named("normal") HistoryState historyState,
-                                                                @Named("aux") HistoryState auxHistoryState,
                                                                 @Named("auxlines") FoldLineSet auxLines,
                                                                 @Named("foldlines") FoldLineSet foldLineSet,
                                                                 @Named("camvExecutor") TaskExecutorService camvTaskExecutor,
@@ -55,6 +53,6 @@ public class BackupCreasePattern_WorkerFactory {
                                                                 TextWorker textWorker,
                                                                 SelectedTextModel textModel) {
 
-        return new CreasePattern_Worker_Impl(creasePatternCamera, historyState, auxHistoryState, auxLines, foldLineSet, camvTaskExecutor, canvasModel, applicationModel, gridModel, foldedFigureModel, fileModel, textWorker, textModel);
+        return new CreasePattern_Worker_Impl(creasePatternCamera, historyState, auxLines, foldLineSet, camvTaskExecutor, canvasModel, applicationModel, gridModel, foldedFigureModel, fileModel, textWorker, textModel);
     }
 }

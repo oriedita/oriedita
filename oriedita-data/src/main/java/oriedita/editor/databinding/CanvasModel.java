@@ -2,35 +2,53 @@ package oriedita.editor.databinding;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import oriedita.editor.AbstractModel;
+import oriedita.editor.ToolTab;
 import oriedita.editor.canvas.FoldLineAdditionalInputMode;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.canvas.MouseWheelTarget;
 import oriedita.editor.handler.FoldedFigureOperationMode;
+import origami.crease_pattern.CustomLineTypes;
 import origami.crease_pattern.element.LineColor;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.io.Serializable;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @ApplicationScoped
-public class CanvasModel implements Serializable {
-    private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+public class CanvasModel extends AbstractModel implements Serializable {
     private LineColor lineColor;
     private LineColor auxLiveLineColor;
     private MouseMode mouseMode;
     private MouseMode mouseModeAfterColorSelection;
     private FoldLineAdditionalInputMode foldLineAdditionalInputMode;
     private FoldLineAdditionalInputMode foldLineAdditionalInputMode_old;
+    private String warningMessage;
+    private boolean toggleLineColor;
+    private CustomLineTypes customFromLineType;
+    private CustomLineTypes customToLineType;
+    private CustomLineTypes delLineType;
+    /**
+     * Specify which operation to perform when selecting and operating the mouse. It is used to select a selected point after selection and automatically switch to the mouse operation that is premised on selection.
+     */
+    private SelectionOperationMode selectionOperationMode;
+    private FoldedFigureOperationMode foldedFigureOperationMode;
+    private MouseWheelTarget mouseInCpOrFoldedFigure;
+    private final AtomicBoolean w_image_running = new AtomicBoolean(false); // Folding together execution. If a single image export is in progress, it will be true.
+    private boolean ckbox_add_frame_SelectAnd3click_isSelected;
+
+    private ToolTab selectedToolTab;
+    private ToolTab previouslySelectedToolTab;
+
+    @Inject
+    public CanvasModel() {
+        reset();
+    }
 
     public AtomicBoolean getW_image_running() {
         return w_image_running;
     }
-
-    private final AtomicBoolean w_image_running = new AtomicBoolean(false); // Folding together execution. If a single image export is in progress, it will be true.
-
-    private MouseWheelTarget mouseInCpOrFoldedFigure;
 
     public void markDirty() {
         this.pcs.firePropertyChange("dirty", false, true);
@@ -45,15 +63,6 @@ public class CanvasModel implements Serializable {
         this.toggleLineColor = toggleLineColor;
         this.pcs.firePropertyChange("toggleLineColor", oldToggleLineColor, toggleLineColor);
     }
-
-    private boolean toggleLineColor;
-
-    /**
-     * Specify which operation to perform when selecting and operating the mouse. It is used to select a selected point after selection and automatically switch to the mouse operation that is premised on selection.
-     */
-    private SelectionOperationMode selectionOperationMode;
-
-    private FoldedFigureOperationMode foldedFigureOperationMode;
 
     public FoldedFigureOperationMode getFoldedFigureOperationMode() {
         return foldedFigureOperationMode;
@@ -73,13 +82,6 @@ public class CanvasModel implements Serializable {
         boolean oldCkbox_add_frame_SelectAnd3click_isSelected = this.ckbox_add_frame_SelectAnd3click_isSelected;
         this.ckbox_add_frame_SelectAnd3click_isSelected = ckbox_add_frame_SelectAnd3click_isSelected;
         this.pcs.firePropertyChange("ckbox_add_frame_SelectAnd3click_isSelected", oldCkbox_add_frame_SelectAnd3click_isSelected, ckbox_add_frame_SelectAnd3click_isSelected);
-    }
-
-    private boolean ckbox_add_frame_SelectAnd3click_isSelected;
-
-    @Inject
-    public CanvasModel() {
-        reset();
     }
 
     public SelectionOperationMode getSelectionOperationMode() {
@@ -133,14 +135,6 @@ public class CanvasModel implements Serializable {
         }
     }
 
-    public void addPropertyChangeListener(PropertyChangeListener listener) {
-        this.pcs.addPropertyChangeListener(listener);
-    }
-
-    public void removePropertyChangeListener(PropertyChangeListener listener) {
-        this.pcs.removePropertyChangeListener(listener);
-    }
-
     public LineColor calculateLineColor() {
         return toggleLineColor ? lineColor.changeMV() : lineColor;
     }
@@ -173,8 +167,8 @@ public class CanvasModel implements Serializable {
         lineColor = LineColor.RED_1;
         auxLiveLineColor = LineColor.ORANGE_4;
 
-        mouseMode = MouseMode.FOLDABLE_LINE_DRAW_71;
-        mouseModeAfterColorSelection = MouseMode.FOLDABLE_LINE_DRAW_71;
+        mouseMode = MouseMode.DRAW_CREASE_FREE_1;
+        mouseModeAfterColorSelection = MouseMode.DRAW_CREASE_FREE_1;
 
         foldLineAdditionalInputMode = FoldLineAdditionalInputMode.POLY_LINE_0;
         foldLineAdditionalInputMode_old = FoldLineAdditionalInputMode.POLY_LINE_0;
@@ -187,9 +181,14 @@ public class CanvasModel implements Serializable {
 
         mouseInCpOrFoldedFigure = MouseWheelTarget.CREASE_PATTERN_0;
 
-        this.pcs.firePropertyChange(null, null, null);
-    }
+        customFromLineType = CustomLineTypes.ANY;
+        customToLineType = CustomLineTypes.EDGE;
 
+        delLineType = CustomLineTypes.ANY;
+        selectedToolTab = ToolTab.DRAW;
+
+        this.notifyAllListeners();
+    }
 
     public void set(CanvasModel canvasModel) {
         toggleLineColor = canvasModel.getToggleLineColor();
@@ -200,8 +199,10 @@ public class CanvasModel implements Serializable {
         foldLineAdditionalInputMode = canvasModel.getFoldLineAdditionalInputMode();
 
         selectionOperationMode = canvasModel.getSelectionOperationMode();
-
-        this.pcs.firePropertyChange(null, null, null);
+        customFromLineType = canvasModel.getCustomFromLineType();
+        customToLineType = canvasModel.getCustomToLineType();
+        delLineType = canvasModel.getDelLineType();
+        this.notifyAllListeners();
     }
 
     public MouseWheelTarget getMouseInCpOrFoldedFigure() {
@@ -212,6 +213,68 @@ public class CanvasModel implements Serializable {
         MouseWheelTarget oldMouseInCpOrFoldedFigure = this.mouseInCpOrFoldedFigure;
         this.mouseInCpOrFoldedFigure = mouseInCpOrFoldedFigure;
         this.pcs.firePropertyChange("mouseInCpOrFoldedFigure", oldMouseInCpOrFoldedFigure, mouseInCpOrFoldedFigure);
+    }
+
+    public String getWarningMessage() {
+        return warningMessage;
+    }
+
+    public void setWarningMessage(String warningMessage) {
+        String oldWarningMessage = this.warningMessage;
+        this.warningMessage = warningMessage;
+        this.pcs.firePropertyChange("warningMessage", oldWarningMessage, warningMessage);
+    }
+
+    public void setCustomFromLineType(CustomLineTypes customFromLineType){
+        CustomLineTypes oldCustomFromLineType = this.customFromLineType;
+        this.customFromLineType = customFromLineType;
+        this.pcs.firePropertyChange("customFromLineType", oldCustomFromLineType, customFromLineType);
+    }
+
+    public CustomLineTypes getCustomFromLineType(){
+        return customFromLineType;
+    }
+
+    public void setCustomToLineType(CustomLineTypes customToLineType){
+        CustomLineTypes oldCustomToLineType = this.customToLineType;
+        this.customToLineType = customToLineType;
+        this.pcs.firePropertyChange("customToLineType", oldCustomToLineType, customToLineType);
+    }
+
+    public CustomLineTypes getDelLineType() { return delLineType; }
+
+    public void setDelLineType(CustomLineTypes delLineType) {
+        CustomLineTypes oldDelLineType = this.delLineType;
+        this.delLineType = delLineType;
+        this.pcs.firePropertyChange("delLineType", oldDelLineType, delLineType);
+    }
+
+    public CustomLineTypes getCustomToLineType(){
+        return customToLineType;
+    }
+
+    public ToolTab getSelectedToolTab() {
+        return selectedToolTab;
+    }
+
+    public void setSelectedToolTab(ToolTab selectedToolTab) {
+        var oldSelectedToolTab = this.selectedToolTab;
+        this.selectedToolTab = selectedToolTab;
+        previouslySelectedToolTab = null;
+        this.pcs.firePropertyChange("selectedToolTab", oldSelectedToolTab, selectedToolTab);
+    }
+
+    public void activateFoldingTab(){
+        if (previouslySelectedToolTab != null) {return;}
+        var oldToolTab = selectedToolTab;
+        setSelectedToolTab(ToolTab.FOLD);
+        previouslySelectedToolTab = oldToolTab;
+    }
+
+    public void deactivateFoldingTab(){
+        if (previouslySelectedToolTab != null) {
+            setSelectedToolTab(previouslySelectedToolTab);
+        }
     }
 
     public enum SelectionOperationMode {

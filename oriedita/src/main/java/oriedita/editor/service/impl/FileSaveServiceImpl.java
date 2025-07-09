@@ -10,6 +10,7 @@ import oriedita.editor.FrameProvider;
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.databinding.ApplicationModel;
 import oriedita.editor.databinding.BackgroundModel;
+import oriedita.editor.databinding.CameraModel;
 import oriedita.editor.databinding.FileModel;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.exception.FileReadingException;
@@ -66,6 +67,7 @@ public class FileSaveServiceImpl implements FileSaveService {
     private final ResetService resetService;
     private final ButtonService buttonService;
     private final BackgroundModel backgroundModel;
+    private final CameraModel cameraModel;
     private final SimpleDateFormat df = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss");
     private Path autoSavePath;
     private final Iterable<FileImporter> importers;
@@ -90,7 +92,8 @@ public class FileSaveServiceImpl implements FileSaveService {
             ApplicationModel applicationModel,
             ResetService resetService,
             BackgroundModel backgroundModel,
-            ButtonService buttonService) {
+            ButtonService buttonService,
+            CameraModel cameraModel) {
         this.frame = frame;
         this.importers = importers;
         this.exporters = exporters;
@@ -101,6 +104,7 @@ public class FileSaveServiceImpl implements FileSaveService {
         this.resetService = resetService;
         this.buttonService = buttonService;
         this.backgroundModel = backgroundModel;
+        this.cameraModel = cameraModel;
     }
 
     @Override
@@ -123,6 +127,8 @@ public class FileSaveServiceImpl implements FileSaveService {
 
             mainCreasePatternWorker.setCamera(creasePatternCamera);//20170702この１行を入れると、解凍したjarファイルで実行し、最初にデータ読み込んだ直後はホイールでの展開図拡大縮小ができなくなる。jarのままで実行させた場合はもんだいないようだ。原因不明。
             mainCreasePatternWorker.setSave_for_reading(memo_temp);
+            cameraModel.setScale(creasePatternCamera.getCameraZoomX());
+            cameraModel.setRotation(creasePatternCamera.getCameraAngle());
             mainCreasePatternWorker.record();
         }
 
