@@ -468,7 +468,7 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
 
                 if (camvTaskExecutor.isTaskRunning()) {
                     g.setColor(Colors.get(Color.orange));
-                    g.drawString("... cAMV Errors", p0x_max - 100, 10);
+                    g.drawString("... cAMV Errors", p0x_max - 100, 20);
                 } else {
                     int numErrors = foldLineSet.getViolations().size();
                     if (numErrors == 0) {
@@ -477,7 +477,7 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
                         g.setColor(Colors.get(Color.red));
                     }
 
-                    g.drawString(numErrors + " cAMV Errors", p0x_max - 100, 10);
+                    g.drawString(numErrors + " cAMV Errors", p0x_max - 100, 20);
                 }
             }
         }
@@ -581,7 +581,7 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
         g.setColor(Colors.get(Color.black));
 
         if (displayComments) {
-            g.drawString(text_cp_setumei, 10, 50 + 55);
+            g.drawString(text_cp_setumei, 10, g2.getClipBounds().height - 40);
         }
         textWorker.draw(g2, camera);
     }

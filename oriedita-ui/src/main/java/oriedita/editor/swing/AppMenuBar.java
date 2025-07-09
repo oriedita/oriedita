@@ -168,7 +168,7 @@ public class AppMenuBar {
     }
 
     public void init() {
-
+        Logger.info("init");
         applicationModel.addPropertyChangeListener(e -> setData(applicationModel));
 
         //--------------------------------------------------------------------------------------------------
@@ -408,7 +408,7 @@ public class AppMenuBar {
         });
     }
 
-    public AppMenuBarUI getAppMenuBarUI() {
+    public JMenuBar getAppMenuBarUI() {
         return appMenuBarUI;
     }
 
@@ -555,6 +555,7 @@ public class AppMenuBar {
         helpMenu.add(showConfigFolderMenuItem);
         showAutosaveFolderMenuItem = new JMenuItem("Open Autosave Folder");
         helpMenu.add(showAutosaveFolderMenuItem);
+        Logger.info("aasrgao");
     }
 
     public void getData(ApplicationModel applicationModel) {
@@ -574,9 +575,12 @@ public class AppMenuBar {
         applicationModel.setDisplayTopPanel(displayTopPanel.isSelected());
         applicationModel.setDisplayLeftPanel(displayLeftPanel.isSelected());
         applicationModel.setAnimations(doAnimations.isSelected());
+
+        Logger.info("getdata");
     }
 
     public void setData(ApplicationModel applicationModel) {
+        Logger.info("abc");
         showPointRangeCheckBox.setSelected(applicationModel.getDisplayPointSpotlight());
         pointOffsetCheckBox.setSelected(applicationModel.getDisplayPointOffset());
         gridInputAssistCheckBox.setSelected(applicationModel.getDisplayGridInputAssist());
