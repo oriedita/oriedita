@@ -29,7 +29,7 @@ public class DuplicateFoldedModelAction extends AbstractOrieditaAction {
         if(foldedFiguresList.getActiveItem().getFoldedFigure().estimationStep != FoldedFigure.EstimationStep.STEP_10){
             foldingService.duplicate(foldedFiguresList.getActiveItem().getFoldedFigure());
         } else {
-            LineSegmentSet lines = foldedFiguresList.getActiveItem().getFoldedFigure().wireFrame_worker1.getLineStore();
+            LineSegmentSet lines = foldedFiguresList.getActiveItem().getFoldedFigure().wireFrameWorker_flatCp.getLineStore();
             Foldable newFigure = foldingService.initFoldedFigure();
             try {
                 newFigure.createTwoColorCreasePattern(creasePatternCamera, lines);

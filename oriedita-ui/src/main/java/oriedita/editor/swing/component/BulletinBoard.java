@@ -15,7 +15,7 @@ import java.util.ArrayList;
 public class BulletinBoard implements IBulletinBoard {
 
     int ix0 = 10;//X coordinate of the upper left corner of the bulletin board
-    int iy0 = 135;//Y coordinate at the upper left corner of the bulletin board
+    int iy0 = 50 + 135;//Y coordinate at the upper left corner of the bulletin board
     int i_interval = 20;//Line spacing on the bulletin board
 
     String s01 = "";

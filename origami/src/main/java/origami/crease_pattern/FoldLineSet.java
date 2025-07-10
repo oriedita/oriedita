@@ -8,6 +8,7 @@ import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.Polygon;
 import origami.crease_pattern.element.StraightLine;
+import origami.crease_pattern.worker.SelectMode;
 import origami.data.quadTree.QuadTree;
 import origami.data.quadTree.adapter.DivideAdapter;
 import origami.data.quadTree.adapter.LineSegmentListEndPointAdapter;
@@ -17,7 +18,7 @@ import origami.data.save.LineSegmentSave;
 import origami.folding.util.SortingBox;
 
 import java.awt.Color;
-import java.awt.geom.GeneralPath;
+import java.awt.geom.Path2D;
 import java.awt.geom.Line2D;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -448,7 +449,7 @@ public class FoldLineSet {
                         }
                         i_r = true;
                         break;
-                    case EGDE:
+                    case EDGE:
                         if (s.getColor() == LineColor.BLACK_0) {
                             s = s.withColor(LineColor.fromNumber(to.getNumberForLineColor()));
                             i_r = true;
@@ -507,7 +508,7 @@ public class FoldLineSet {
                         save.addLineSegment(s.clone());
                     }
                     break;
-                case EGDE:
+                case EDGE:
                     if ((b.totu_boundary_inside(s)) && s.getColor() == LineColor.BLACK_0) {
                         i_r = true;
                     }//黒赤青線はmemo1に書かれない。つまり削除される。
@@ -2190,21 +2191,21 @@ public class FoldLineSet {
         }
     }
 
-    public void select_lasso(GeneralPath gp, String selectMode) {
-        boolean isContained;
-
+    public void select_lasso(Path2D path, SelectMode selectMode, LassoInteractionMode mode) {
         for (int i = 1; i <= total; i++){
             LineSegment s = lineSegments.get(i);
-            isContained = OritaCalc.isSegmentContainedInGeneralPath(gp,
-                    new Line2D.Double(s.determineAX(), s.determineAY(), s.determineBX(), s.determineBY()));
+            if(selectMode == SelectMode.SELECT && s.getSelected() == 2) continue;
+            if(selectMode == SelectMode.UNSELECT && s.getSelected() == 0) continue;
 
-            if(isContained) {
-                if(selectMode.equals("select")){
-                    s.setSelected(2);
-                }
-                if(selectMode.equals("unselect")){
-                    s.setSelected(0);
-                }
+            Line2D s2d = new Line2D.Double(s.determineAX(), s.determineAY(), s.determineBX(), s.determineBY());
+
+            boolean isValid = false;
+            if (mode == LassoInteractionMode.INTERSECT) isValid = OritaCalc.isLineSegmentIntersectingPath(path, s2d);
+            if (mode == LassoInteractionMode.CONTAIN) isValid = OritaCalc.isLineSegmentContainedInPath(path, s2d);
+
+            if(isValid) {
+                if(selectMode == SelectMode.SELECT) s.setSelected(2);
+                if(selectMode == SelectMode.UNSELECT) s.setSelected(0);
             }
         }
     }

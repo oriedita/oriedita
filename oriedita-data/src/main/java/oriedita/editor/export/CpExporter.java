@@ -6,6 +6,7 @@ import jakarta.inject.Inject;
 import org.tinylog.Logger;
 import oriedita.editor.FrameProvider;
 import oriedita.editor.databinding.ApplicationModel;
+import oriedita.editor.databinding.GridModel;
 import oriedita.editor.export.api.FileExporter;
 import oriedita.editor.save.Save;
 
@@ -23,11 +24,13 @@ import java.io.PrintWriter;
 public class CpExporter implements FileExporter {
     private final FrameProvider frame;
     private final ApplicationModel applicationModel;
+    private final GridModel gridModel;
 
     @Inject
-    public CpExporter(FrameProvider frame, ApplicationModel applicationModel) {
+    public CpExporter(FrameProvider frame, ApplicationModel applicationModel, GridModel gridModel) {
         this.frame = frame;
         this.applicationModel = applicationModel;
+        this.gridModel = gridModel;
     }
 
     @Override
@@ -42,7 +45,7 @@ public class CpExporter implements FileExporter {
 
         try (FileWriter fw = new FileWriter(file); BufferedWriter bw = new BufferedWriter(fw); PrintWriter pw = new PrintWriter(bw); OutputStream os = new FileOutputStream(file)) {
             CreasePatternWriter creasePatternWriter = new CreasePatternWriter(os);
-            creasePatternWriter.write(new FoldExporter().toFoldSave(save));
+            creasePatternWriter.write(new FoldExporter(gridModel).toFoldSave(save));
         } catch (InterruptedException e) {
             Logger.error(e, "Error exporting cp file");
         }

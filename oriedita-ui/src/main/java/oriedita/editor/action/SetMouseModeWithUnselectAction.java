@@ -1,19 +1,18 @@
 package oriedita.editor.action;
 
-import jakarta.inject.Named;
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.databinding.CanvasModel;
 
 import java.awt.event.ActionEvent;
 
-public class SetMouseModeWithUnselectAction extends AbstractOrieditaAction {
+public class SetMouseModeWithUnselectAction extends AbstractOrieditaAction implements MouseModeAction {
     private final CanvasModel canvasModel;
     private final CreasePattern_Worker mainCreasePatternWorker;
     private final MouseMode mouseMode;
 
     public SetMouseModeWithUnselectAction(CanvasModel canvasModel,
-                                          @Named("mainCreasePattern_Worker") CreasePattern_Worker mainCreasePatternWorker,
+                                          CreasePattern_Worker mainCreasePatternWorker,
                                           MouseMode mouseMode){
         this.canvasModel = canvasModel;
         this.mainCreasePatternWorker = mainCreasePatternWorker;
@@ -24,5 +23,10 @@ public class SetMouseModeWithUnselectAction extends AbstractOrieditaAction {
     public void actionPerformed(ActionEvent e) {
         canvasModel.setMouseMode(mouseMode);
         mainCreasePatternWorker.unselect_all();
+    }
+
+    @Override
+    public MouseMode getMouseMode() {
+        return mouseMode;
     }
 }

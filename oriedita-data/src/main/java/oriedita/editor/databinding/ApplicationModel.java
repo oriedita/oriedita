@@ -2,16 +2,14 @@ package oriedita.editor.databinding;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import oriedita.editor.AbstractModel;
 import oriedita.editor.Colors;
 import oriedita.editor.canvas.LineStyle;
-import origami.crease_pattern.CustomLineTypes;
 
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Point;
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -22,8 +20,7 @@ import java.util.stream.Collectors;
  * This model is saved to disk and restored when the application starts.
  */
 @ApplicationScoped
-public class ApplicationModel implements Serializable {
-    private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+public class ApplicationModel extends AbstractModel implements Serializable {
     private boolean displayPointSpotlight;
     private boolean displayPointOffset;
     private boolean displayGridInputAssist;
@@ -36,9 +33,7 @@ public class ApplicationModel implements Serializable {
     private boolean displayFoldingProgress;
     private boolean displaySelfIntersection;
     private boolean displayTopPanel;
-    private boolean displayBottomPanel;
     private boolean displayLeftPanel;
-    private boolean displayRightPanel;
     private boolean preciseZoom;
     private boolean roundedEnds;
     private int lineWidth;
@@ -70,12 +65,8 @@ public class ApplicationModel implements Serializable {
     private boolean displayNumbers;
     private boolean foldWarning;
     private boolean cpExportWarning;
-    private CustomLineTypes customFromLineType;
-    private CustomLineTypes customToLineType;
-    private CustomLineTypes delLineType;
     private int check4ColorTransparency;
     private double zoomSpeed;
-    private boolean moveFoldedModelWithCp;
     private boolean animations;
     private double animationSpeed;
     private double mouseRadius;
@@ -193,34 +184,6 @@ public class ApplicationModel implements Serializable {
         return check4ColorTransparency;
     }
 
-    public void setCustomFromLineType(CustomLineTypes customFromLineType){
-        CustomLineTypes oldCustomFromLineType = this.customFromLineType;
-        this.customFromLineType = customFromLineType;
-        this.pcs.firePropertyChange("customFromLineType", oldCustomFromLineType, customFromLineType);
-    }
-
-    public CustomLineTypes getCustomFromLineType(){
-        return customFromLineType;
-    }
-
-    public void setCustomToLineType(CustomLineTypes customToLineType){
-        CustomLineTypes oldCustomToLineType = this.customToLineType;
-        this.customToLineType = customToLineType;
-        this.pcs.firePropertyChange("customToLineType", oldCustomToLineType, customToLineType);
-    }
-
-    public CustomLineTypes getDelLineType() { return delLineType; }
-
-    public void setDelLineType(CustomLineTypes delLineType) {
-        CustomLineTypes oldDelLineType = this.delLineType;
-        this.delLineType = delLineType;
-        this.pcs.firePropertyChange("delLineType", oldDelLineType, delLineType);
-    }
-
-    public CustomLineTypes getCustomToLineType(){
-        return customToLineType;
-    }
-
     public boolean getDisplayNumbers() {
         return displayNumbers;
     }
@@ -296,16 +259,6 @@ public class ApplicationModel implements Serializable {
         this.pcs.firePropertyChange("displayTopPanel", oldDisplayTopPanel, displayTopPanel);
     }
 
-    public boolean getDisplayBottomPanel() {
-        return displayBottomPanel;
-    }
-
-    public void setDisplayBottomPanel(boolean displayBottomPanel) {
-        boolean oldDisplayBottomPanel = this.displayBottomPanel;
-        this.displayBottomPanel = displayBottomPanel;
-        this.pcs.firePropertyChange("displayBottomPanel", oldDisplayBottomPanel, displayBottomPanel);
-    }
-
     public boolean getDisplayLeftPanel() {
         return displayLeftPanel;
     }
@@ -314,16 +267,6 @@ public class ApplicationModel implements Serializable {
         boolean oldDisplayLeftPanel = this.displayLeftPanel;
         this.displayLeftPanel = displayLeftPanel;
         this.pcs.firePropertyChange("displayLeftPanel", oldDisplayLeftPanel, displayLeftPanel);
-    }
-
-    public boolean getDisplayRightPanel() {
-        return displayRightPanel;
-    }
-
-    public void setDisplayRightPanel(boolean displayRightPanel) {
-        boolean oldDisplayRightPanel = this.displayRightPanel;
-        this.displayRightPanel = displayRightPanel;
-        this.pcs.firePropertyChange("displayRightPanel", oldDisplayRightPanel, displayRightPanel);
     }
 
     public String getLaf() {
@@ -409,9 +352,7 @@ public class ApplicationModel implements Serializable {
         advancedCheck4Display = true;
 
         displayTopPanel = true;
-        displayBottomPanel = true;
         displayLeftPanel = true;
-        displayRightPanel = true;
 
         circleCustomizedColor = new Color(100, 200, 200);
 
@@ -440,31 +381,17 @@ public class ApplicationModel implements Serializable {
 
         laf = "com.formdev.flatlaf.FlatLightLaf";
 
-        customFromLineType = CustomLineTypes.ANY;
-        customToLineType = CustomLineTypes.EGDE;
-        delLineType = CustomLineTypes.ANY;
-
         zoomSpeed = 1;
         animations = true;
         animationSpeed = 1;
-        moveFoldedModelWithCp = true;
         mouseRadius = 10;
         minGridUnitSize = 0.5;
 
         autoSaveInterval = 5;
 
-        this.pcs.firePropertyChange(null, null, null);
+        this.notifyAllListeners();
     }
 
-    public boolean getMoveFoldedModelWithCp() {
-        return moveFoldedModelWithCp;
-    }
-
-    public void setMoveFoldedModelWithCp(boolean moveFoldedModelWithCp) {
-        boolean oldValue = this.moveFoldedModelWithCp;
-        this.moveFoldedModelWithCp = moveFoldedModelWithCp;
-        pcs.firePropertyChange("moveFoldedModelWithCp", oldValue, moveFoldedModelWithCp);
-    }
     public void restorePrefDefaults(){
         //Unsure of displayPointSpotlight, displayPointOffset, and displayGridInputAssist defaults
         displayComments = true;
@@ -499,19 +426,16 @@ public class ApplicationModel implements Serializable {
         isFoldedFigureColorDetached = false;
 
         displayTopPanel = true;
-        displayBottomPanel = true;
         displayLeftPanel = true;
-        displayRightPanel = true;
 
         zoomSpeed = 1;
         animations = true;
         animationSpeed = 1;
         mouseRadius = 10;
         minGridUnitSize = 0.5;
-
         autoSaveInterval = 5;
 
-        this.pcs.firePropertyChange(null, null, null);
+        this.notifyAllListeners();
     }
 
     public int getAuxLineWidth() {
@@ -582,14 +506,6 @@ public class ApplicationModel implements Serializable {
         boolean oldAdvancedCheck4Display = this.advancedCheck4Display;
         this.advancedCheck4Display = advancedCheck4Display;
         this.pcs.firePropertyChange("advancedCheck4Display", oldAdvancedCheck4Display, advancedCheck4Display);
-    }
-
-    public void addPropertyChangeListener(PropertyChangeListener listener) {
-        this.pcs.addPropertyChangeListener(listener);
-    }
-
-    public void removePropertyChangeListener(PropertyChangeListener listener) {
-        this.pcs.removePropertyChangeListener(listener);
     }
 
     public int getLineWidth() {
@@ -871,8 +787,6 @@ public class ApplicationModel implements Serializable {
         isFoldedFigureColorDetached = applicationModel.getIsFoldedFigureColorDetached();
 
         displayTopPanel = applicationModel.getDisplayTopPanel();
-        displayBottomPanel = applicationModel.getDisplayBottomPanel();
-        displayRightPanel = applicationModel.getDisplayRightPanel();
         displayLeftPanel = applicationModel.getDisplayLeftPanel();
 
         showInvisibleTextWarning = applicationModel.getShowInvisibleTextWarning();
@@ -880,11 +794,6 @@ public class ApplicationModel implements Serializable {
         laf = applicationModel.getLaf();
         recentFileList = applicationModel.getRecentFileList().stream().filter(File::exists).collect(Collectors.toList());
 
-        customFromLineType = applicationModel.getCustomFromLineType();
-        customToLineType = applicationModel.getCustomToLineType();
-        delLineType = applicationModel.getDelLineType();
-
-        moveFoldedModelWithCp = applicationModel.getMoveFoldedModelWithCp();
         animationSpeed = applicationModel.getAnimationSpeed();
         animations = applicationModel.getAnimations();
         zoomSpeed = applicationModel.getZoomSpeed();
@@ -893,7 +802,7 @@ public class ApplicationModel implements Serializable {
         autoSaveInterval = applicationModel.getAutoSaveInterval();
         minGridUnitSize = applicationModel.getMinGridUnitSize();
 
-        this.pcs.firePropertyChange(null, null, null);
+        this.notifyAllListeners();
     }
 
     public void toggleHelpVisible() {

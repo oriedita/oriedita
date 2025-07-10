@@ -8,7 +8,6 @@ import jico.ImageReadException;
 import org.tinylog.Logger;
 import oriedita.common.task.MultiStagedExecutor;
 import oriedita.editor.canvas.CreasePattern_Worker;
-import oriedita.editor.databinding.AngleSystemModel;
 import oriedita.editor.databinding.ApplicationModel;
 import oriedita.editor.databinding.BackgroundModel;
 import oriedita.editor.databinding.CameraModel;
@@ -72,7 +71,6 @@ public class App {
     private final AppMenuBar appMenuBar;
     private final GridModel gridModel;
     private final BackgroundModel backgroundModel;
-    private final AngleSystemModel angleSystemModel;
     private final CameraModel cameraModel;
     private final ResetService resetService;
     private final ActionRegistrationService actionRegistrationService;
@@ -103,7 +101,6 @@ public class App {
             AppMenuBar appMenuBar,
             GridModel gridModel,
             BackgroundModel backgroundModel,
-            AngleSystemModel angleSystemModel,
             CameraModel cameraModel,
             ResetService resetService,
             ActionRegistrationService actionRegistrationService
@@ -123,7 +120,6 @@ public class App {
         this.appMenuBar = appMenuBar;
         this.gridModel = gridModel;
         this.backgroundModel = backgroundModel;
-        this.angleSystemModel = angleSystemModel;
         this.cameraModel = cameraModel;
         this.resetService = resetService;
         this.actionRegistrationService = actionRegistrationService;
@@ -159,13 +155,6 @@ public class App {
         executor.nextStage();
 
         Logger.trace("Init stage finished");
-
-        // ---
-        // Bind model to ui
-        backgroundModel.addPropertyChangeListener(editor.getTopPanel());
-        applicationModel.addPropertyChangeListener(editor.getTopPanel());
-        cameraModel.addPropertyChangeListener(editor.getTopPanel());
-        // ---
 
         JFrame frame = frameProvider.get();
         frame.setTitle("Oriedita " + ResourceUtil.getVersionFromManifest());//Specify the title and execute the constructor
@@ -290,7 +279,6 @@ public class App {
 
         applicationModel.addPropertyChangeListener(e -> mainCreasePatternWorker.setData(e, applicationModel));
         gridModel.addPropertyChangeListener(e -> mainCreasePatternWorker.setGridConfigurationData(gridModel));
-        angleSystemModel.addPropertyChangeListener(e -> mainCreasePatternWorker.setData(angleSystemModel));
         canvasModel.addPropertyChangeListener(e -> mainCreasePatternWorker.setData(canvasModel));
         fileModel.addPropertyChangeListener(e -> mainCreasePatternWorker.setTitle(fileModel.determineFrameTitle()));
 
@@ -310,6 +298,8 @@ public class App {
 
 
         executor.execute(() -> {
+            resetService.developmentView_initialization();
+
             applicationModel.reload();
 
             fileModel.addPropertyChangeListener(e -> frame.setTitle(fileModel.determineFrameTitle()));
@@ -319,9 +309,7 @@ public class App {
             mainCreasePatternWorker.setCamera(canvas.getCreasePatternCamera());
 
             mainCreasePatternWorker.record();
-            mainCreasePatternWorker.auxRecord();
         });
-        executor.execute(resetService::developmentView_initialization);
         executor.execute(() -> {
             buttonService.Button_shared_operation();
             buttonService.loadAllKeyStrokes();
@@ -359,9 +347,7 @@ public class App {
     }
 
     private void setData(ApplicationModel applicationModel) {
-        editor.getBottomPanel().$$$getRootComponent$$$().setVisible(applicationModel.getDisplayBottomPanel());
-        editor.getTopPanel().$$$getRootComponent$$$().setVisible(applicationModel.getDisplayTopPanel());
-        editor.getRightPanel().$$$getRootComponent$$$().setVisible(applicationModel.getDisplayRightPanel());
-        editor.getLeftPanel().$$$getRootComponent$$$().setVisible(applicationModel.getDisplayLeftPanel());
+        editor.getTopToolbar().$$$getRootComponent$$$().setVisible(applicationModel.getDisplayTopPanel());
+        editor.getToolsPanel().$$$getRootComponent$$$().setVisible(applicationModel.getDisplayLeftPanel());
     }
 }

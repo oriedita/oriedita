@@ -11,6 +11,7 @@ import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 
 import java.awt.Graphics2D;
+import java.util.EnumSet;
 
 enum PolygonSetNoCorners {
     SELECT_POINT_1,
@@ -30,6 +31,11 @@ public class MouseHandlerPolygonSetNoCorners extends StepMouseHandler<PolygonSet
         super(PolygonSetNoCorners.SELECT_POINT_1);
         steps.addNode(StepNode.createNode_MD_R(PolygonSetNoCorners.SELECT_POINT_1, this::move_drag_select_point_1, this::release_select_point_1));
         steps.addNode(StepNode.createNode_MD_R(PolygonSetNoCorners.SELECT_POINT_2, this::move_drag_select_point_2, this::release_select_point_2));
+    }
+
+    @Override
+    public EnumSet<MouseHandlerSettingGroup> getSettings() {
+        return EnumSet.of(MouseHandlerSettingGroup.POLYGON_POINT_COUNT);
     }
 
     @Override

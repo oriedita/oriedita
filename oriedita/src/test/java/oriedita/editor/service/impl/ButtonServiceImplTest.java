@@ -4,6 +4,7 @@ import oriedita.editor.FrameProviderImpl;
 import oriedita.editor.action.ActionService;
 import oriedita.editor.action.ActionType;
 import oriedita.editor.action.OrieditaAction;
+import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.service.ButtonService;
 import oriedita.editor.service.ButtonServiceTest;
 
@@ -18,7 +19,7 @@ public class ButtonServiceImplTest extends ButtonServiceTest {
                 new FrameProviderImpl(),
                 null, // these dependencies should only be used once a button
                 null, // is clicked, which doesn't happen in the test
-                null,
+                new CanvasModel(),
                 new TestActionService()
         );
     }

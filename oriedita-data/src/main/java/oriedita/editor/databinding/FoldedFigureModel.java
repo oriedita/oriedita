@@ -2,16 +2,15 @@ package oriedita.editor.databinding;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import oriedita.editor.AbstractModel;
+import origami.crease_pattern.OritaCalc;
 import origami.folding.FoldedFigure;
 
 import java.awt.Color;
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.io.Serializable;
 
 @ApplicationScoped
-public class FoldedFigureModel implements Serializable {
-    private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+public class FoldedFigureModel extends AbstractModel implements Serializable {
     private Color frontColor;
     private Color backColor;
     private Color lineColor;
@@ -22,6 +21,11 @@ public class FoldedFigureModel implements Serializable {
     private FoldedFigure.State state;
     private int foldedCases;
     private boolean findAnotherOverlapValid;
+
+    @Inject
+    public FoldedFigureModel() {
+        reset();
+    }
 
     public boolean isFindAnotherOverlapValid() {
         return findAnotherOverlapValid;
@@ -67,19 +71,6 @@ public class FoldedFigureModel implements Serializable {
         this.pcs.firePropertyChange("transparencyColor", oldTransparencyColor, transparencyColor);
     }
 
-    @Inject
-    public FoldedFigureModel() {
-        reset();
-    }
-
-    public void addPropertyChangeListener(PropertyChangeListener listener) {
-        this.pcs.addPropertyChangeListener(listener);
-    }
-
-    public void removePropertyChangeListener(PropertyChangeListener listener) {
-        this.pcs.removePropertyChangeListener(listener);
-    }
-
     public void reset() {
         scale = 1.0;
         rotation = 0.0;
@@ -97,19 +88,13 @@ public class FoldedFigureModel implements Serializable {
 
         foldedCases = 1;
 
-        this.pcs.firePropertyChange(null, null, null);
+        this.notifyAllListeners();
     }
 
     public void restorePrefDefaults(){
         antiAlias = true;
 
-        this.pcs.firePropertyChange(null, null, null);
-    }
-
-    public boolean isSame (FoldedFigureModel foldedFigureModel){
-        if(antiAlias == foldedFigureModel.getAntiAlias()){
-            return true;
-        } else { return false; }
+        this.notifyAllListeners();
     }
 
     public Color getFrontColor() {
@@ -154,22 +139,6 @@ public class FoldedFigureModel implements Serializable {
         }
     }
 
-    public void zoomIn(double zoomSpeed) {
-        zoomBy(-1, zoomSpeed);
-    }
-
-    public void zoomOut(double zoomSpeed) {
-        zoomBy(1, zoomSpeed);
-    }
-
-    public void zoomBy(double value, double zoomSpeed) {
-        setScale(getScaleForZoomBy(value, zoomSpeed));
-    }
-
-    public double getScaleForZoomBy(double value, double zoomSpeed) {
-        return getScaleForZoomBy(value, zoomSpeed, scale);
-    }
-
     public double getScaleForZoomBy(double value, double zoomSpeed, double initialScale) {
         double zoomBase = 1 + zoomSpeed/10;
         if (value > 0) {
@@ -186,7 +155,7 @@ public class FoldedFigureModel implements Serializable {
 
     public void setRotation(double rotation) {
         double oldRotation = this.rotation;
-        this.rotation = rotation;
+        this.rotation = OritaCalc.angle_between_m180_180(rotation);
         this.pcs.firePropertyChange("rotation", oldRotation, rotation);
     }
 
@@ -237,7 +206,7 @@ public class FoldedFigureModel implements Serializable {
 
         foldedCases = model.getFoldedCases();
 
-        this.pcs.firePropertyChange(null, null, null);
+        this.notifyAllListeners();
     }
 
     public void toggleAntiAlias() {

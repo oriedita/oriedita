@@ -1,10 +1,13 @@
 package oriedita.editor.swing.component;
 
 import oriedita.editor.action.ActionType;
+import oriedita.editor.handler.PopupMenuAdapter;
 
 import javax.swing.JButton;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+import javax.swing.Timer;
+import javax.swing.event.PopupMenuEvent;
 import java.awt.Graphics;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -15,6 +18,9 @@ public class DropdownToolButton extends JButton {
     private JPopupMenu dropdownMenu;
     private List<ActionType> actions = new ArrayList<>();
     private ActionType activeAction;
+    private boolean dropdownOpened = false;
+
+    private Timer timer;
 
     public DropdownToolButton() {
         this.addMouseListener(new MouseAdapter() {
@@ -24,13 +30,27 @@ public class DropdownToolButton extends JButton {
                 return  (diffY + diffX < 15);
             }
             @Override
+            public void mousePressed(MouseEvent e) {
+                timer = new Timer(300, ev -> openDropdown());
+                timer.setRepeats(false);
+                timer.start();
+            }
+            @Override
             public void mouseReleased(MouseEvent e) {
-                if (isInTriangle(e) && e.getButton() == MouseEvent.BUTTON1) {
-                    dropdownMenu.setLocation(e.getLocationOnScreen());
-                    dropdownMenu.setVisible(true);
+                timer.stop();
+                if (e.getButton() == MouseEvent.BUTTON1 && (isInTriangle(e) )) {
+                    e.consume();
+                    openDropdown();
                 }
             }
         });
+    }
+
+    private void openDropdown() {
+        var locOnScreen = getLocationOnScreen();
+        dropdownMenu.setLocation(locOnScreen.x, locOnScreen.y + getHeight());
+        dropdownMenu.setVisible(true);
+        setEnabled(false);
     }
 
     public JPopupMenu getDropdownMenu() {
@@ -64,13 +84,32 @@ public class DropdownToolButton extends JButton {
             item.addActionListener(e -> {
                 setActiveAction(finalI);
                 dropdownMenu.setVisible(false);
+                dropdownOpened = false;
             });
             dropdownMenu.add(item);
         }
+
+        dropdownMenu.addPopupMenuListener(new PopupMenuAdapter() {
+            @Override
+            public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+                setEnabled(true);
+            }
+
+            @Override
+            public void popupMenuCanceled(PopupMenuEvent e) {
+                dropdownOpened = false;
+            }
+
+            @Override
+            public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
+                dropdownOpened = true;
+            }
+        });
         setActiveAction(0);
     }
-
-
+    public List<ActionType> getActions() {
+        return actions;
+    }
 
     public boolean setActiveAction(int index) {
         if (this.actions.size() > index) {
@@ -81,5 +120,9 @@ public class DropdownToolButton extends JButton {
             return true;
         }
         return false;
+    }
+
+    public boolean wasDropdownItemJustSelected() {
+        return dropdownOpened && !dropdownMenu.isVisible();
     }
 }

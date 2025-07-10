@@ -5,7 +5,7 @@ import oriedita.editor.databinding.CanvasModel;
 
 import java.awt.event.ActionEvent;
 
-public class SelectionOperationAction extends AbstractOrieditaAction {
+public class SelectionOperationAction extends AbstractOrieditaAction implements MouseModeAction {
     private final CanvasModel canvasModel;
     private final CanvasModel.SelectionOperationMode selectionOperationMode;
     private final MouseMode mouseMode;
@@ -20,5 +20,10 @@ public class SelectionOperationAction extends AbstractOrieditaAction {
     public void actionPerformed(ActionEvent e) {
         canvasModel.setSelectionOperationMode(selectionOperationMode);
         canvasModel.setMouseMode(mouseMode);
+    }
+
+    @Override
+    public MouseMode getMouseMode() {
+        return mouseMode;
     }
 }

@@ -7,7 +7,6 @@ import org.tinylog.Logger;
 import oriedita.editor.Foldable;
 import oriedita.editor.FrameProvider;
 import oriedita.editor.canvas.CreasePattern_Worker;
-import oriedita.editor.databinding.ApplicationModel;
 import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.databinding.FoldedFigureModel;
 import oriedita.editor.databinding.FoldedFiguresList;
@@ -36,7 +35,6 @@ public class FoldingServiceImpl implements FoldingService {
     @SuppressWarnings("unused")
     private final CreasePattern_Worker backupCreasePatternWorker;
     private final TaskExecutorService foldingExecutor;
-    private final ApplicationModel applicationModel;
     private final FoldedFigureModel foldedFigureModel;
     private final CreasePattern_Worker mainCreasePatternWorker;
     private final FoldedFiguresList foldedFiguresList;
@@ -50,7 +48,6 @@ public class FoldingServiceImpl implements FoldingService {
                               @Named("creasePatternCamera") Camera creasePatternCamera,
                               @Named("backupCreasePattern_Worker") CreasePattern_Worker backupCreasePatternWorker,
                               @Named("foldingExecutor") TaskExecutorService foldingExecutor,
-                              ApplicationModel applicationModel,
                               FoldedFigureModel foldedFigureModel,
                               @Named("mainCreasePattern_Worker") CreasePattern_Worker mainCreasePatternWorker,
                               FoldedFiguresList foldedFiguresList) {
@@ -60,7 +57,6 @@ public class FoldingServiceImpl implements FoldingService {
         this.creasePatternCamera = creasePatternCamera;
         this.backupCreasePatternWorker = backupCreasePatternWorker;
         this.foldingExecutor = foldingExecutor;
-        this.applicationModel = applicationModel;
         this.foldedFigureModel = foldedFigureModel;
 
         this.mainCreasePatternWorker = mainCreasePatternWorker;
@@ -121,7 +117,7 @@ public class FoldingServiceImpl implements FoldingService {
         //これより前のOZは古いOZ
         Foldable selectedFigure = initFoldedFigure();//OAZのアレイリストに、新しく折り上がり図をひとつ追加し、それを操作対象に指定し、foldedFigures(0)共通パラメータを引き継がせる。
         //これより後のOZは新しいOZに変わる
-
+        canvasModel.activateFoldingTab();
         foldingExecutor.executeTask(new FoldingEstimateTask(creasePatternCamera, bulletinBoard, canvasModel, lineSegmentsForFolding, selectedFigure, estimationOrder));
     }
 
@@ -146,7 +142,6 @@ public class FoldingServiceImpl implements FoldingService {
         Logger.info(" oritatami_jyunbi 20180107");
 
         FoldedFigure_Drawer newFoldedFigure = new FoldedFigure_Drawer(new FoldedFigure_01(bulletinBoard));
-        newFoldedFigure.setMoveWithCp(applicationModel.getMoveFoldedModelWithCp());
         foldedFiguresList.addElement(newFoldedFigure);
         foldedFiguresList.setSelectedItem(newFoldedFigure);
 
@@ -190,33 +185,19 @@ public class FoldingServiceImpl implements FoldingService {
     @Override
     public void duplicate(FoldedFigure figureToDuplicate) { //Trox's stuffs
         FoldedFigure figure = figureToDuplicate;
-        LineSegmentSet lines = figure.wireFrame_worker1.getLineStore();
+        LineSegmentSet lines = figure.wireFrameWorker_flatCp.getLineStore();
         Foldable newFigure = initFoldedFigure();
 
         //What the fuck
-        FoldedFigure.EstimationOrder order;
-        switch (figure.displayStyle) {
-            case NONE_0:
-                order = FoldedFigure.EstimationOrder.ORDER_0;
-                break;
-            case DEVELOPMENT_1:
-                order = FoldedFigure.EstimationOrder.ORDER_1;
-                break;
-            case WIRE_2:
-                order = FoldedFigure.EstimationOrder.ORDER_2;
-                break;
-            case TRANSPARENT_3:
-                order = FoldedFigure.EstimationOrder.ORDER_3;
-                break;
-            case DEVELOPMENT_4:
-                order = FoldedFigure.EstimationOrder.ORDER_4;
-                break;
-            case PAPER_5:
-                order = FoldedFigure.EstimationOrder.ORDER_5;
-                break;
-            default:
-                order = FoldedFigure.EstimationOrder.ORDER_5;
-        }
+        FoldedFigure.EstimationOrder order = switch (figure.displayStyle) {
+            case NONE_0 -> FoldedFigure.EstimationOrder.ORDER_0;
+            case DEVELOPMENT_1 -> FoldedFigure.EstimationOrder.ORDER_1;
+            case WIRE_2 -> FoldedFigure.EstimationOrder.ORDER_2;
+            case TRANSPARENT_3 -> FoldedFigure.EstimationOrder.ORDER_3;
+            case DEVELOPMENT_4 -> FoldedFigure.EstimationOrder.ORDER_4;
+            case PAPER_5 -> FoldedFigure.EstimationOrder.ORDER_5;
+            default -> FoldedFigure.EstimationOrder.ORDER_5;
+        };
         foldingExecutor.executeTask(new FoldingEstimateTask(
                 creasePatternCamera, bulletinBoard, canvasModel, lines, newFigure, order));
     }

@@ -12,6 +12,7 @@ import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.canvas.TextWorker;
 import oriedita.editor.canvas.impl.CreasePattern_Worker_Impl;
 import oriedita.editor.databinding.ApplicationModel;
+import oriedita.editor.databinding.CameraModel;
 import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.databinding.FileModel;
 import oriedita.editor.databinding.FoldedFigureModel;
@@ -119,7 +120,7 @@ public class SaveTest {
         FoldedFigureModel foldedFigureModel = new FoldedFigureModel();
         SelectedTextModel textModel = new SelectedTextModel();
         TextWorker textWorker = new TextWorker();
-        mainCreasePatternWorker = new CreasePattern_Worker_Impl(creasePatternCamera, new DequeHistoryState(), new DequeHistoryState(), new FoldLineSet(), new FoldLineSet(), new SingleTaskExecutorServiceImpl(), canvasModel, applicationModel, gridModel, foldedFigureModel, fileModel, textWorker, textModel);
+        mainCreasePatternWorker = new CreasePattern_Worker_Impl(creasePatternCamera, new DequeHistoryState(), new FoldLineSet(), new FoldLineSet(), new SingleTaskExecutorServiceImpl(), canvasModel, applicationModel, gridModel, foldedFigureModel, fileModel, textWorker, textModel);
         ResetService resetService = new ResetService() {
             @Override
             public void developmentView_initialization() {
@@ -132,7 +133,11 @@ public class SaveTest {
             }
         };
         FrameProvider frame = () -> null;
-        fileSaveService = new FileSaveServiceImpl(null, new MockInstance<>(new OriImporter(frame, false)), new MockInstance<>(new OriExporter()), creasePatternCamera, mainCreasePatternWorker, fileModel, applicationModel, resetService, null, null);
+        fileSaveService = new FileSaveServiceImpl(null,
+                new MockInstance<>(new OriImporter(frame, false)),
+                new MockInstance<>(new OriExporter()),
+                creasePatternCamera, mainCreasePatternWorker, fileModel,
+                applicationModel, resetService, null, null, new CameraModel());
     }
 
     @ParameterizedTest

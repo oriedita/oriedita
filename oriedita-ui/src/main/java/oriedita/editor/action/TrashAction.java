@@ -2,6 +2,7 @@ package oriedita.editor.action;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.databinding.FoldedFiguresList;
 
 import java.awt.event.ActionEvent;
@@ -11,6 +12,9 @@ import java.awt.event.ActionEvent;
 public class TrashAction extends AbstractOrieditaAction {
     @Inject
     FoldedFiguresList foldedFiguresList;
+
+    @Inject
+    CanvasModel canvasModel;
 
     @Inject
     public TrashAction() {
@@ -30,5 +34,8 @@ public class TrashAction extends AbstractOrieditaAction {
         }
 
         foldedFiguresList.removeElement(selectedItem);
+        if (foldedFiguresList.getSize() == 0) {
+            canvasModel.deactivateFoldingTab();
+        }
     }
 }

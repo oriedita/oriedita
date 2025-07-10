@@ -2,14 +2,11 @@ package oriedita.editor.databinding;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import oriedita.editor.AbstractModel;
 import oriedita.editor.tools.StringOp;
 
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
-
 @ApplicationScoped
-public class MeasuresModel {
-    private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+public class MeasuresModel extends AbstractModel {
     private double measuredLength1;
     private double measuredLength2;
     private double measuredAngle1;
@@ -22,14 +19,6 @@ public class MeasuresModel {
         reset();
     }
 
-    public void addPropertyChangeListener(PropertyChangeListener listener) {
-        this.pcs.addPropertyChangeListener(listener);
-    }
-
-    public void removePropertyChangeListener(PropertyChangeListener listener) {
-        this.pcs.removePropertyChangeListener(listener);
-    }
-
     public void reset() {
         measuredLength1 = 0.0;
         measuredLength2 = 0.0;
@@ -37,7 +26,7 @@ public class MeasuresModel {
         measuredAngle2 = 0.0;
         measuredAngle3 = 0.0;
 
-        this.pcs.firePropertyChange(null, null, null);
+        this.notifyAllListeners();
     }
 
     public double getMeasuredLength1() {

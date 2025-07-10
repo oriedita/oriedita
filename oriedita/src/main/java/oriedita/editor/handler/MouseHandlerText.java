@@ -10,8 +10,6 @@ import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.text.Text;
 import origami.crease_pattern.element.Point;
 
-import javax.swing.JCheckBox;
-import javax.swing.JOptionPane;
 import java.awt.Cursor;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -24,19 +22,13 @@ public class MouseHandlerText extends BaseMouseHandlerBoxSelect {
     private final SelectedTextModel textModel;
     private final TextWorker textWorker;
 
-    private boolean showWarningThisSession;
-
-    private final ApplicationModel applicationModel;
-
     private int mouseButton;
 
     @Inject
     public MouseHandlerText(SelectedTextModel textModel,
-                            TextWorker textWorker, ApplicationModel applicationModel) {
+                            TextWorker textWorker) {
         this.textModel = textModel;
         this.textWorker = textWorker;
-        this.showWarningThisSession = applicationModel.getShowInvisibleTextWarning();
-        this.applicationModel = applicationModel;
     }
 
     @Override
@@ -61,10 +53,6 @@ public class MouseHandlerText extends BaseMouseHandlerBoxSelect {
                 e.getComponent().setCursor(Cursor.getDefaultCursor());
             }
         }
-    }
-
-    @Override
-    public void mouseMoved(Point p0) {
     }
 
     @Override
@@ -106,21 +94,7 @@ public class MouseHandlerText extends BaseMouseHandlerBoxSelect {
     }
 
     private void selectOrCreateText(Point p0) {
-        if (showWarningThisSession && !applicationModel.getDisplayComments()) {
-            JCheckBox checkBox = new JCheckBox("Don't show again");
-            Object[] message = {
-                    "'display comments' is disabled.\n Without it, text will not be visible. Do you want to enable it?",
-                    checkBox};
 
-            int answer = JOptionPane.showConfirmDialog(null, message, "Enable Show comments?", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-            if (answer == JOptionPane.YES_OPTION) {
-                applicationModel.setDisplayComments(true);
-            }
-            showWarningThisSession = false;
-            if (checkBox.isSelected()) {
-                applicationModel.setShowInvisibleTextWarning(false);
-            }
-        }
         Point p = d.getCamera().TV2object(p0);
         if (!trySelectText(p0)) {
             if (textModel.isSelected() && textModel.isDirty()) {

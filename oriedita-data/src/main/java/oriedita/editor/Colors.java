@@ -20,6 +20,9 @@ public class Colors {
     public static final Color INVALID_INPUT = new Color(255, 153, 153);
     public static final Color INVALID_INPUT_DARK = new Color(160, 60, 80);
 
+    public static final Color SELECTED_ANGLE_SYSTEM = new Color(100, 200, 100);
+    public static final Color SELECTED_ANGLE_SYSTEM_DARK = new Color(17, 75, 10);
+
     private static final Map<Color, Color> colorMap;
     private static final Map<Color, Color> darkColorMap;
 
@@ -41,6 +44,7 @@ public class Colors {
         add(Color.gray, new Color(128,128,128,128), new Color(128,128,128,128));
         add(Color.yellow, Color.magenta, Color.yellow);
         add(INVALID_INPUT, INVALID_INPUT, INVALID_INPUT_DARK);
+        add(SELECTED_ANGLE_SYSTEM, SELECTED_ANGLE_SYSTEM, SELECTED_ANGLE_SYSTEM_DARK);
     }
 
     private static Map<Color, Color> activeColorMap = colorMap;
