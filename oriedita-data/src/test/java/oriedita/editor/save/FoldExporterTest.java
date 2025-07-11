@@ -32,6 +32,20 @@ public class FoldExporterTest {
     Expect expect;
 
     /**
+     * Loading a .fold file missing all but the absolute essential fields should not fail
+     * <p>
+     *     this file contains only file_spec, vertices_coords, edges_vertices and edges_assigment
+     * </p>
+     */
+    @Test
+    public void testLoadMinimalFoldFile() throws Exception {
+        File saveFile = new File(Objects.requireNonNull(getClass().getClassLoader().getResource("fold/oriedita_minimal.fold")).getFile());
+        var importer = new FoldImporter();
+        var save = importer.doImport(saveFile);
+        Assertions.assertEquals(11, save.getLineSegments().size());
+    }
+
+    /**
      * Loading a file and writing it to a new file should result in an equal file.
      * <p>
      * This test makes sure that anything that is read is also written back to the file.
@@ -61,7 +75,7 @@ public class FoldExporterTest {
     }
 
     @Test
-    public void testExportAndImport() throws IOException, JSONException, FileReadingException, InterruptedException {
+    public void testExportAndImport() throws IOException, JSONException, FileReadingException {
         File saveFile = new File(Objects.requireNonNull(getClass().getClassLoader().getResource("fold/oriedita.fold")).getFile());
 
         FoldImporter importer = new FoldImporter();
