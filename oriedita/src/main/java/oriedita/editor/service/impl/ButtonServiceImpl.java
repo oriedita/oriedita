@@ -498,15 +498,19 @@ public class ButtonServiceImpl implements ButtonService {
                                     .filter(a -> a.action().equals(key))
                                     .findFirst()
                                     .orElseThrow();
-                            if (button.isSelected()) {
+                            Logger.info(action + " " + button.getCycleAction());
+
+                            if (button.isSelected() && button.getCycleAction() == null || button.getCycleAction() == action) {
                                 button.setActiveAction(
                                         (button.getActions().indexOf(button.getActiveAction()) + 1)
                                                 % button.getActions().size());
+                                button.setCycleAction(action);
                                 button.doClick();
                                 return;
                                 //tempAction = button.getAction();
                             } else {
                                 button.setActiveAction(button.getActions().indexOf(action));
+                                button.setCycleAction(action);
                             }
                         }
                         tempAction.actionPerformed(e);

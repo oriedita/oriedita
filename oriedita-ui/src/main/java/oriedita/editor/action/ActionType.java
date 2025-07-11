@@ -217,7 +217,9 @@ public enum ActionType {
     drawingTabAction("drawingTabAction"),
     referencesTabAction("referencesTabAction"),
     foldingTabAction("foldingTabAction"),
-    settingsTabAction("settingsTabAction"),;
+    settingsTabAction("settingsTabAction"),
+    none("none"),
+    ;
 
 
     static final Map<String, ActionType> actionMap;
