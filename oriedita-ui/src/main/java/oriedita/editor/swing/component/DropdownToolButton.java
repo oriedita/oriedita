@@ -138,4 +138,16 @@ public class DropdownToolButton extends JButton {
     public void setCycleAction(ActionType cycleAction) {
         this.cycleAction = cycleAction;
     }
+
+    public void cycleOrActivate(ActionType action) {
+        if (isSelected() && (getCycleAction() == null || getCycleAction() == action)) {
+            setActiveAction(
+                    (getActions().indexOf(getActiveAction()) + 1)
+                            % getActions().size());
+            setCycleAction(action);
+        } else {
+            setActiveAction(getActions().indexOf(action));
+            setCycleAction(action);
+        }
+    }
 }
