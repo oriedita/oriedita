@@ -79,7 +79,7 @@ public class FoldExporterTest {
         File saveFile = new File(Objects.requireNonNull(getClass().getClassLoader().getResource("fold/oriedita.fold")).getFile());
 
         FoldImporter importer = new FoldImporter();
-        FoldExporter exporter = new FoldExporter(new GridModel());
+        FoldExporter exporter = new FoldExporter();
         Save foldSave = importer.importFile(saveFile);
 
 
@@ -107,7 +107,9 @@ public class FoldExporterTest {
 
         save.setCircles(circles);
 
-        FoldExporter f = new FoldExporter(new GridModel());
+        save.setGridModel(new GridModel());
+
+        FoldExporter f = new FoldExporter();
 
         LineSegmentSet lineSegmentSet = new LineSegmentSet();
         lineSegmentSet.reset(1);
@@ -137,7 +139,7 @@ public class FoldExporterTest {
 
         save.setCircles(circles);
 
-        FoldExporter f = new FoldExporter(new GridModel());
+        FoldExporter f = new FoldExporter();
 
         File tempFile = File.createTempFile("fold", "fold");
         f.doExport(save, tempFile);
@@ -156,7 +158,7 @@ public class FoldExporterTest {
 
         save.setTexts(texts);
 
-        FoldExporter f = new FoldExporter(new GridModel());
+        FoldExporter f = new FoldExporter();
 
         LineSegmentSet lineSegmentSet = new LineSegmentSet();
         lineSegmentSet.reset(1);
@@ -183,7 +185,7 @@ public class FoldExporterTest {
 
         save.setTexts(texts);
 
-        FoldExporter f = new FoldExporter(new GridModel());
+        FoldExporter f = new FoldExporter();
 
         File tempFile = File.createTempFile("fold", "fold");
         f.doExport(save, tempFile);
