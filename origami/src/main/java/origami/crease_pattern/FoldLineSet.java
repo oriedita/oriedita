@@ -497,6 +497,10 @@ public class FoldLineSet {
 
         FoldLineSave save = new FoldLineSave();
 
+        for (Circle circle : circles) {
+            save.addCircle(circle);
+        }
+
         for (int i = 1; i <= total; i++){
             LineSegment s = lineSegments.get(i);
 
