@@ -20,8 +20,7 @@ enum FishBoneDrawStep { CLICK_DRAG_POINT }
 @ApplicationScoped
 @Handles(MouseMode.FISH_BONE_DRAW_33)
 public class MouseHandlerFishBoneDraw extends StepMouseHandler<FishBoneDrawStep> {
-    private Point anchorPoint;
-    private Point releasePoint;
+    private Point anchorPoint, releasePoint;
     private LineSegment dragSegment;
 
     @Inject
