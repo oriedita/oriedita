@@ -101,7 +101,7 @@ public class ButtonServiceImpl implements ButtonService {
             for (AbstractButton btn : registeredButtons.values()) {
                 if (btn.getAction() instanceof MouseModeAction action) {
                     btn.setSelected(m == action.getMouseMode());
-                } else if (!(btn instanceof JCheckBoxMenuItem)) {
+                } else if (!(btn instanceof JCheckBoxMenuItem) && !(btn instanceof JCheckBox)) {
                     btn.setSelected(false);
                 }
 
