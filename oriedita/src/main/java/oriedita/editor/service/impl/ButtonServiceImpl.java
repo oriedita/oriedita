@@ -224,6 +224,7 @@ public class ButtonServiceImpl implements ButtonService {
                 setTooltip(newKey);
                 addContextMenu(button, newKey);
                 button.setIcon(glyphIcon);
+                buttonKeys.put(button, newKey);
             });
         }
         KeyStrokeUtil.resetButton(button);
