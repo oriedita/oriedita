@@ -493,11 +493,21 @@ public class ButtonServiceImpl implements ButtonService {
                                     .findFirst();
                         }
                         if (btn.isPresent()) {
-                            var action = btn.get().getActions().stream()
+                            var button = btn.get();
+                            var action = button.getActions().stream()
                                     .filter(a -> a.action().equals(key))
                                     .findFirst()
                                     .orElseThrow();
-                            btn.get().setActiveAction(btn.get().getActions().indexOf(action));
+                            if (button.isSelected()) {
+                                button.setActiveAction(
+                                        (button.getActions().indexOf(button.getActiveAction()) + 1)
+                                                % button.getActions().size());
+                                button.doClick();
+                                return;
+                                //tempAction = button.getAction();
+                            } else {
+                                button.setActiveAction(button.getActions().indexOf(action));
+                            }
                         }
                         tempAction.actionPerformed(e);
                     }
