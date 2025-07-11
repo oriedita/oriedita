@@ -11,6 +11,7 @@ import oriedita.editor.AnimationDurations;
 import oriedita.editor.Animations;
 import oriedita.editor.Colors;
 import oriedita.editor.FrameProvider;
+import oriedita.editor.action.ActionService;
 import oriedita.editor.action.ActionType;
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.canvas.MouseMode;
@@ -115,6 +116,8 @@ public class AppMenuBar {
     private final AnimationService animationService;
     private final CameraModel creasePatternCameraModel;
     private final Camera camera;
+    private final ActionService actionService;
+
     @Inject
     public AppMenuBar(
             FrameProvider frameProvider,
@@ -131,7 +134,8 @@ public class AppMenuBar {
             FoldedFiguresList foldedFiguresList,
             AnimationService animationService,
             Camera camera,
-            CameraModel creasePatternCameraModel
+            CameraModel creasePatternCameraModel,
+            ActionService actionService
     ) {
         this.frameProvider = frameProvider;
         this.foldingExecutor = foldingExecutor;
@@ -148,6 +152,7 @@ public class AppMenuBar {
         this.animationService = animationService;
         this.camera = camera;
         this.creasePatternCameraModel = creasePatternCameraModel;
+        this.actionService = actionService;
     }
 
     public void resetCPView(){
@@ -272,7 +277,11 @@ public class AppMenuBar {
         });
         prefButton.addActionListener(e -> {
             if(preferenceDialog == null){
-                preferenceDialog = new PreferenceDialog(applicationModel, lookAndFeelService, frameProvider, foldedFigureModel, "Preferences", frameProvider.get(), buttonService, fileSaveService);
+                preferenceDialog = new PreferenceDialog(
+                        applicationModel,
+                        lookAndFeelService, frameProvider,
+                        foldedFigureModel, "Preferences",
+                        frameProvider.get(), buttonService, fileSaveService, actionService);
             }
             preferenceDialog.setSize(preferenceDialog.getRootPane().getPreferredSize());
             preferenceDialog.setMinimumSize(preferenceDialog.getRootPane().getMinimumSize());

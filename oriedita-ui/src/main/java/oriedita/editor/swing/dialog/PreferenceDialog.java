@@ -12,6 +12,7 @@ import com.opencsv.CSVReaderBuilder;
 import org.tinylog.Logger;
 import oriedita.editor.Colors;
 import oriedita.editor.FrameProvider;
+import oriedita.editor.action.ActionService;
 import oriedita.editor.action.ActionType;
 import oriedita.editor.canvas.LineStyle;
 import oriedita.editor.databinding.ApplicationModel;
@@ -159,6 +160,7 @@ public class PreferenceDialog extends JDialog {
     private int tempTransparency;
     private final ApplicationModel applicationModel;
     private final ButtonService buttonService;
+    private final ActionService actionService;
     private final ApplicationModel tempModel;
     private final FoldedFigureModel foldedFigureModel;
     private final FoldedFigureModel tempfoldedModel;
@@ -233,11 +235,13 @@ public class PreferenceDialog extends JDialog {
             String name,
             Frame owner,
             ButtonService buttonService,
-            FileSaveService fileSaveService
+            FileSaveService fileSaveService,
+            ActionService actionService
     ) {
         super(owner, name);
         this.applicationModel = appModel;
         this.buttonService = buttonService;
+        this.actionService = actionService;
         this.tempModel = new ApplicationModel();
         this.tempModel.set(appModel);
         this.foldedFigureModel = foldedFigureModel;
@@ -1470,6 +1474,15 @@ public class PreferenceDialog extends JDialog {
         hasHotkeyCB = new JCheckBox();
         allData = new ArrayList<>();
         readCSV();
+        var allCategorizedActions = allData.stream()
+                .<String>mapMulti((arr, consumer) -> Arrays.stream(arr).forEach(consumer))
+                .toList();
+        this.actionService.getAllRegisteredActions()
+                .keySet().stream()
+                .map(ActionType::action)
+                .filter(a -> !allCategorizedActions.contains(a))
+                .forEach(a -> Logger.warn("{} is uncategorized, it will not show up in the hotkeys tab", a));
+
         loadHeaders(allData); // Extract headers
         updateList(allData); // Extract Data excluding headers
 
