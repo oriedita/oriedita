@@ -244,17 +244,21 @@ public class CanvasUI extends JPanel {
         double d_width = creasePatternCamera.getCameraZoomX() * mainCreasePatternWorker.getSelectionDistance();
 
         //展開図表示
-        mainCreasePatternWorker.drawWithCamera(bufferGraphics, displayComments, displayCpLines, displayAuxLines, displayLiveAuxLines, lineWidth, lineStyle, auxLineWidth, dim.width, dim.height, displayMarkings, hideOperationFrame);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ,展開図動かし中心の十字の目印の表示
+        mainCreasePatternWorker.drawWithCamera(bufferGraphics,
+                displayComments, displayCpLines, displayAuxLines, displayLiveAuxLines,
+                applicationModel.getDisplayCpText(), lineWidth, lineStyle, auxLineWidth,
+                dim.width, dim.height, displayMarkings, hideOperationFrame);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ,展開図動かし中心の十字の目印の表示
         DrawingSettings settings = new DrawingSettings(
                 lineWidth, lineStyle,
                 dim.height, dim.width,
                 applicationModel.getRoundedEnds(),
-                applicationModel.getDisplayComments());
+                applicationModel.getDisplayComments(),
+                applicationModel.getDisplayCurrentStep());
         if (activeMouseHandler != null) {
             activeMouseHandler.drawPreview(g2, creasePatternCamera, settings);
         }
+        int topY = canvasModel.getToolSettingsPanelHeight();
         if (displayComments) {
-            int topY = canvasModel.getToolSettingsPanelHeight();
             //展開図情報の文字表示
             bufferGraphics.setColor(Colors.get(Color.black));
 
@@ -286,12 +290,15 @@ public class CanvasUI extends JPanel {
                         10, topY + 53); //この表示内容はvoid kekka_syoriで決められる。
             }
 
+
+            bulletinBoard.draw(bufferGraphics);//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+        }
+
+        if (applicationModel.getDisplayWarnings()){
             if (canvasModel.getWarningMessage() != null) {
                 bufferGraphics.setColor(Colors.get(Color.yellow));
                 bufferGraphics.drawString(canvasModel.getWarningMessage(), 10, topY + 67);
             }
-
-            bulletinBoard.draw(bufferGraphics);//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         }
 
 
@@ -304,7 +311,10 @@ public class CanvasUI extends JPanel {
 
         //展開図を折り上がり図の上に描くために、展開図を再表示する
         if (displayCreasePatternOnTop) {
-            mainCreasePatternWorker.drawWithCamera(bufferGraphics, displayComments, displayCpLines, displayAuxLines, displayLiveAuxLines, lineWidth, lineStyle, auxLineWidth, dim.width, dim.height, displayMarkings, hideOperationFrame);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ
+            mainCreasePatternWorker.drawWithCamera(bufferGraphics, displayComments, displayCpLines,
+                    displayAuxLines, displayLiveAuxLines, applicationModel.getDisplayCpText(),
+                    lineWidth, lineStyle, auxLineWidth, dim.width, dim.height,
+                    displayMarkings, hideOperationFrame);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ
         }
 
         //アンチェイリアス

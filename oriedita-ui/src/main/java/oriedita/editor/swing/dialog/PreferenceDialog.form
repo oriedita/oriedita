@@ -2,7 +2,7 @@
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="oriedita.editor.swing.dialog.PreferenceDialog">
   <grid id="cbd77" binding="contentPane" layout-manager="BorderLayout" hgap="0" vgap="0">
     <constraints>
-      <xy x="13" y="12" width="550" height="610"/>
+      <xy x="13" y="12" width="550" height="623"/>
     </constraints>
     <properties>
       <focusTraversalPolicyProvider value="true"/>
@@ -213,18 +213,9 @@
                                       <text value="Grid input assist"/>
                                     </properties>
                                   </component>
-                                  <component id="ef21a" class="javax.swing.JCheckBox" binding="commentCB">
-                                    <constraints>
-                                      <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                                      <gridbag weightx="1.0" weighty="1.0"/>
-                                    </constraints>
-                                    <properties>
-                                      <text value="Comment"/>
-                                    </properties>
-                                  </component>
                                   <component id="540b0" class="javax.swing.JCheckBox" binding="foldingProgressCB">
                                     <constraints>
-                                      <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                                      <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                                       <gridbag weightx="1.0" weighty="1.0"/>
                                     </constraints>
                                     <properties>
@@ -233,7 +224,7 @@
                                   </component>
                                   <component id="a5318" class="javax.swing.JCheckBox" binding="selfIntersectionCB">
                                     <constraints>
-                                      <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                                      <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                                       <gridbag weightx="1.0" weighty="1.0"/>
                                     </constraints>
                                     <properties>
@@ -242,7 +233,7 @@
                                   </component>
                                   <component id="9c138" class="javax.swing.JCheckBox" binding="foldWarningCB">
                                     <constraints>
-                                      <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="2" indent="0" use-parent-layout="false"/>
+                                      <grid row="7" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="2" indent="0" use-parent-layout="false"/>
                                       <gridbag weightx="1.0" weighty="1.0"/>
                                     </constraints>
                                     <properties>
@@ -251,7 +242,7 @@
                                   </component>
                                   <component id="c78a6" class="javax.swing.JCheckBox" binding="toggleHelpCB">
                                     <constraints>
-                                      <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                                      <grid row="9" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                                       <gridbag weightx="1.0" weighty="1.0"/>
                                     </constraints>
                                     <properties>
@@ -260,11 +251,47 @@
                                   </component>
                                   <component id="d7f5c" class="javax.swing.JCheckBox" binding="cpExportWarningCB">
                                     <constraints>
-                                      <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                      <grid row="8" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                                       <gridbag weightx="0.0" weighty="0.0"/>
                                     </constraints>
                                     <properties>
                                       <text value="CP export warning"/>
+                                    </properties>
+                                  </component>
+                                  <component id="d7e8a" class="javax.swing.JCheckBox" binding="textCheckBox">
+                                    <constraints>
+                                      <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                      <gridbag weightx="0.0" weighty="0.0"/>
+                                    </constraints>
+                                    <properties>
+                                      <text value="Text"/>
+                                    </properties>
+                                  </component>
+                                  <component id="a1a4f" class="javax.swing.JCheckBox" binding="warningsCheckBox" default-binding="true">
+                                    <constraints>
+                                      <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                      <gridbag weightx="0.0" weighty="0.0"/>
+                                    </constraints>
+                                    <properties>
+                                      <text value="Warnings"/>
+                                    </properties>
+                                  </component>
+                                  <component id="ddd8a" class="javax.swing.JCheckBox" binding="currentStepCheckBox" default-binding="true">
+                                    <constraints>
+                                      <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                      <gridbag weightx="0.0" weighty="0.0"/>
+                                    </constraints>
+                                    <properties>
+                                      <text value="Current Step"/>
+                                    </properties>
+                                  </component>
+                                  <component id="ef21a" class="javax.swing.JCheckBox" binding="commentCB">
+                                    <constraints>
+                                      <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                                      <gridbag weightx="1.0" weighty="1.0"/>
+                                    </constraints>
+                                    <properties>
+                                      <text value="Comments"/>
                                     </properties>
                                   </component>
                                 </children>

@@ -74,7 +74,12 @@ public interface CreasePattern_Worker {
     //------------------------------------------------------------------------------
     void drawGrid(Graphics g, int p0x_max, int p0y_max);
 
-    void drawWithCamera(Graphics g, boolean displayComments, boolean displayCpLines, boolean displayAuxLines, boolean displayAuxLiveLines, float lineWidth, LineStyle lineStyle, float f_h_WireframeLineWidth, int p0x_max, int p0y_max, boolean i_mejirusi_display, boolean hideOperationFrame);
+    void drawWithCamera(Graphics g, boolean displayComments,
+                        boolean displayCpLines, boolean displayAuxLines,
+                        boolean displayAuxLiveLines, boolean displayCpText,
+                        float lineWidth, LineStyle lineStyle,
+                        float f_h_WireframeLineWidth, int p0x_max, int p0y_max,
+                        boolean i_mejirusi_display, boolean hideOperationFrame);
 
     void resetCircleStep();
 

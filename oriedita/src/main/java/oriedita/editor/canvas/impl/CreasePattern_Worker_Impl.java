@@ -422,7 +422,13 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     }
     
     @Override
-    public void drawWithCamera(Graphics g, boolean displayComments, boolean displayCpLines, boolean displayAuxLines, boolean displayAuxLiveLines, float lineWidth, LineStyle lineStyle, float f_h_WireframeLineWidth, int p0x_max, int p0y_max, boolean i_mejirusi_display, boolean hideOperationFrame) {//引数はカメラ設定、線幅、画面X幅、画面y高さ
+    public void drawWithCamera(Graphics g,
+                               boolean displayComments, boolean displayCpLines,
+                               boolean displayAuxLines, boolean displayAuxLiveLines,
+                               boolean displayCpText,
+                               float lineWidth, LineStyle lineStyle, float f_h_WireframeLineWidth,
+                               int p0x_max, int p0y_max, boolean i_mejirusi_display,
+                               boolean hideOperationFrame) {//引数はカメラ設定、線幅、画面X幅、画面y高さ
         Graphics2D g2 = (Graphics2D) g;
 
         BasicStroke BStroke = new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER);
@@ -581,9 +587,11 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
         g.setColor(Colors.get(Color.black));
 
         if (displayComments) {
-            g.drawString(text_cp_setumei, 10, g2.getClipBounds().height - 40);
+            g.drawString(text_cp_setumei, 10, p0y_max - 40);
         }
-        textWorker.draw(g2, camera);
+        if (displayCpText){
+            textWorker.draw(g2, camera);
+        }
     }
 
     @Override
