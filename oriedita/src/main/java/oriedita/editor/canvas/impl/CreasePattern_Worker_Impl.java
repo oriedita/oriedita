@@ -913,19 +913,6 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     }
 
     @Override
-    public void addPreviewLinesToCp() {//20181014
-        for (LineSegment s : lineStep) {
-            if (Epsilon.high.gt0(s.determineLength())) {
-                LineSegment add_sen = s.withColor(lineColor);
-                addLineSegment(add_sen);
-            } else {
-                addCircle(s.determineAX(), s.determineAY(), 5.0, LineColor.CYAN_3);
-            }
-        }
-        record();
-    }
-
-    @Override
     public boolean insideToMountain(Point p0a, Point p0b) {
         return foldLineSet.insideToMountain(createBox(p0a, p0b));
     }

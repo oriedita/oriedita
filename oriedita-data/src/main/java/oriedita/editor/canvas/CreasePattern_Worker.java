@@ -155,8 +155,6 @@ public interface CreasePattern_Worker {
 
     void v_del_all_cc();
 
-    void addPreviewLinesToCp();
-
     boolean insideToMountain(Point p0a, Point p0b);
 
     boolean insideToValley(Point p0a, Point p0b);
