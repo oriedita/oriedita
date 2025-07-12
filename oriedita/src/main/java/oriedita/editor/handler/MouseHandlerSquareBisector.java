@@ -3,6 +3,7 @@ package oriedita.editor.handler;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
+import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
 import origami.Epsilon;
@@ -36,6 +37,9 @@ public class MouseHandlerSquareBisector extends StepMouseHandler<SquareBisectorS
     private LineSegment indicator;
     private int counter_2L_P = 0;
     private List<LineSegment> destinationSegmentsList_2L_P = Arrays.asList(null, null);
+
+    @Inject
+    private CanvasModel canvasModel;
 
     @Inject
     public MouseHandlerSquareBisector() {
@@ -74,6 +78,7 @@ public class MouseHandlerSquareBisector extends StepMouseHandler<SquareBisectorS
         destinationSegment_2L_NP = null;
         counter_2L_P = 0;
         destinationSegmentsList_2L_P = Arrays.asList(null, null);
+        move_drag_select_2L_or_3P(canvasModel.getMouseObjPosition());
         steps.setCurrentStep(SquareBisectorStep.SELECT_2L_OR_3P);
     }
 

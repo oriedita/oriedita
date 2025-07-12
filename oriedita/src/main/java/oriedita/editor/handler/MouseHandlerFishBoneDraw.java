@@ -3,6 +3,7 @@ package oriedita.editor.handler;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
+import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
 import origami.Epsilon;
@@ -19,9 +20,11 @@ enum FishBoneDrawStep { CLICK_DRAG_POINT }
 @ApplicationScoped
 @Handles(MouseMode.FISH_BONE_DRAW_33)
 public class MouseHandlerFishBoneDraw extends StepMouseHandler<FishBoneDrawStep> {
-    private Point anchorPoint;
-    private Point releasePoint;
+    private Point anchorPoint, releasePoint;
     private LineSegment dragSegment;
+
+    @Inject
+    private CanvasModel canvasModel;
 
     @Inject
     public MouseHandlerFishBoneDraw() {
@@ -42,6 +45,7 @@ public class MouseHandlerFishBoneDraw extends StepMouseHandler<FishBoneDrawStep>
         anchorPoint = null;
         releasePoint = null;
         dragSegment = null;
+        move_click_drag_point(canvasModel.getMouseObjPosition());
         steps.setCurrentStep(FishBoneDrawStep.CLICK_DRAG_POINT);
     }
 

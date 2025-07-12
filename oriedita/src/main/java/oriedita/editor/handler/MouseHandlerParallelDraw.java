@@ -3,6 +3,7 @@ package oriedita.editor.handler;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
+import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
 import origami.Epsilon;
@@ -26,6 +27,9 @@ public class MouseHandlerParallelDraw extends StepMouseHandler<ParallelDrawStep>
     private LineSegment parallelSegment;
     private LineSegment destinationSegment;
     private LineSegment resultSegment;
+
+    @Inject
+    private CanvasModel canvasModel;
 
     @Inject
     public MouseHandlerParallelDraw() {
@@ -52,6 +56,7 @@ public class MouseHandlerParallelDraw extends StepMouseHandler<ParallelDrawStep>
         parallelSegment = null;
         destinationSegment = null;
         resultSegment = null;
+        move_select_target_point(canvasModel.getMouseObjPosition());
         steps.setCurrentStep(ParallelDrawStep.SELECT_TARGET_POINT);
     }
 
@@ -63,6 +68,7 @@ public class MouseHandlerParallelDraw extends StepMouseHandler<ParallelDrawStep>
     }
     private ParallelDrawStep release_select_target_point(Point p) {
         if (targetPoint == null) return ParallelDrawStep.SELECT_TARGET_POINT;
+        move_select_parallel_segment(p);
         return ParallelDrawStep.SELECT_PARALLEL_SEGMENT;
     }
 
@@ -74,6 +80,7 @@ public class MouseHandlerParallelDraw extends StepMouseHandler<ParallelDrawStep>
     }
     private ParallelDrawStep release_select_parallel_segment(Point p) {
         if (parallelSegment == null) return ParallelDrawStep.SELECT_PARALLEL_SEGMENT;
+        move_select_destination(p);
         return ParallelDrawStep.SELECT_DESTINATION;
     }
 

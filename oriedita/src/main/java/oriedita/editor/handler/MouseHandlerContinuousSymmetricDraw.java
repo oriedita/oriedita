@@ -6,6 +6,7 @@ import jakarta.inject.Named;
 import org.tinylog.Logger;
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.canvas.MouseMode;
+import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
 import origami.Epsilon;
@@ -37,6 +38,9 @@ public class MouseHandlerContinuousSymmetricDraw extends StepMouseHandler<Contin
     private List<LineSegment> resultantSegments = new ArrayList<>();
 
     @Inject
+    private CanvasModel canvasModel;
+
+    @Inject
     public MouseHandlerContinuousSymmetricDraw(@Named("mainCreasePattern_Worker") CreasePattern_Worker d) {
         super(ContinuousSymmetricDrawStep.SELECT_P1);
         this.d = d;
@@ -57,6 +61,7 @@ public class MouseHandlerContinuousSymmetricDraw extends StepMouseHandler<Contin
         p1 = null;
         p2 = null;
         resultantSegments = new ArrayList<>();
+        move_drag_select_p1(canvasModel.getMouseObjPosition());
         this.toolbox = new CreasePattern_Worker_Toolbox(d.getFoldLineSet());
     }
 
@@ -67,7 +72,10 @@ public class MouseHandlerContinuousSymmetricDraw extends StepMouseHandler<Contin
             p1 = d.getClosestPoint(p);
         }
     }
-    private ContinuousSymmetricDrawStep release_select_p1(Point p) { return ContinuousSymmetricDrawStep.SELECT_P2; }
+    private ContinuousSymmetricDrawStep release_select_p1(Point p) {
+        move_drag_select_p2(p);
+        return ContinuousSymmetricDrawStep.SELECT_P2;
+    }
 
     // Select point 2
     private void move_drag_select_p2(Point p) {
