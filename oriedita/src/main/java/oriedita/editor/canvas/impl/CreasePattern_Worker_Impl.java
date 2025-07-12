@@ -158,7 +158,6 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     @Override
     public void lineStepAdd(LineSegment s) {
         LineSegment s0 = s.clone();
-        s0.setActive(LineSegment.ActiveState.ACTIVE_BOTH_3);
         lineStep.add(s0);
     }
 
@@ -574,8 +573,10 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
         //候補入力時の候補を描く//Logger.info("_");
         g2.setStroke(new BasicStroke(lineWidth + 0.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));//基本指定A
 
-        for (LineSegment s : lineCandidate) {
-            DrawingUtil.drawLineCandidate(g, s, camera, pointSize);
+        if (gridInputAssist){
+            for (LineSegment s : lineCandidate) {
+                DrawingUtil.drawLineCandidate(g, s, camera, pointSize);
+            }
         }
 
         g.setColor(Colors.get(Color.black));
@@ -1088,12 +1089,6 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     @Override
     public void setGridInputAssist(boolean i) {
         gridInputAssist = i;
-
-        if (!gridInputAssist) {
-            for (LineSegment candidate : lineCandidate) {
-                candidate.deactivate();
-            }
-        }
     }
 
     private origami.crease_pattern.element.Polygon createBox(Point p0a, Point p0b) {

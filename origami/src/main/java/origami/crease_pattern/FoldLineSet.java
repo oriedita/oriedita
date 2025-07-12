@@ -152,26 +152,10 @@ public class FoldLineSet {
         lineSegments.set(index, s.withColor(icol));
     }
 
-    public void setCircleCustomized(int i, int customized) {
-        Circle e = circles.get(i);
-        e.setCustomized(customized);
-    }
-
     public void setCircleCustomizedColor(int i, Color c0) {
         Circle e = circles.get(i);
+        e.setCustomized(1);
         e.setCustomizedColor(c0);
-    }
-
-    //Enter the activity of the i-th line segment
-    public void setActive(int i, LineSegment.ActiveState iactive) {
-        LineSegment s = lineSegments.get(i);
-        s.setActive(iactive);
-    }
-
-    //Output the activity of the i-th line segment
-    public LineSegment.ActiveState getActive(int i) {
-        LineSegment s = lineSegments.get(i);
-        return s.getActive();
     }
 
     public void getSave(LineSegmentSave save) {
@@ -195,19 +179,6 @@ public class FoldLineSet {
             circle1.set(circle);
 
             save.addCircle(circle1);
-        }
-    }
-
-    //Output the information of all line segments of the line segment set as Memo. // Iactive does not write out the fold line of excluding in the memo
-    public void getMemo_active_excluding(LineSegmentSave save, LineSegment.ActiveState excluding) {
-        for (int i = 1; i <= total; i++) {
-            if (getActive(i) != excluding) {
-                save.addLineSegment(lineSegments.get(i).clone());
-            }
-        }
-
-        for (Circle circle : circles) {
-            save.addCircle(circle);
         }
     }
 
@@ -737,8 +708,7 @@ public class FoldLineSet {
 
             if (p.totu_boundary_inside(s) && (s.getColor() == LineColor.CYAN_3)) {
                 i_r = true;
-                s.setCustomized(1);
-                s.setCustomizedColor(sen_tokutyuu_color);
+                lineSegments.set(i, s.withCustomizedColor(sen_tokutyuu_color));
             }
         }
 
@@ -828,9 +798,6 @@ public class FoldLineSet {
      * the original 1 to originalEnd fold lines.
      */
     public void divideLineSegmentWithNewLines(int originalEnd, int addedEnd) {
-        for (int i = 1; i <= total; i++) {
-            setActive(i, LineSegment.ActiveState.INACTIVE_0);
-        }//削除すべき線は iactive=100とする
         //Logger.info("1234567890   kousabunkatu");
         ArrayList<Integer> k_flg = new ArrayList<>();//交差分割の影響があることを示すフラッグ。
 
@@ -846,11 +813,12 @@ public class FoldLineSet {
 
         // This QuadTree only stores the original lines for better performance.
         QuadTree qt = new QuadTree(new DivideAdapter(lineSegments, originalEnd));
+        List<Integer> toDelete = new ArrayList<>();
 
         for (int i = originalEnd + 1; i <= total; i++) {
             if (k_flg.get(i) == 2) {//k_flg.set(i,new Integer(0));
                 for (int j : qt.collect(new LineSegmentCollector(lineSegments.get(i)))) {
-                    LineSegment.Intersection itemp = divideIntersectionsFast(i, j);//i is the one to add (2), j is the original one (1)
+                    LineSegment.Intersection itemp = divideIntersectionsFast(i, j, toDelete);//i is the one to add (2), j is the original one (1)
                     switch (itemp) {
                         case INTERSECTS_1:
                             k_flg.add(2);
@@ -893,14 +861,12 @@ public class FoldLineSet {
                 }
             }
         }
-
-        FoldLineSave memo_temp = new FoldLineSave();
-        getMemo_active_excluding(memo_temp, LineSegment.ActiveState.MARK_FOR_DELETION_100);
-        reset();
-        setSave(memo_temp);
+        for (int i : toDelete) {
+            deleteLine(i);
+        }
     }
 
-    public LineSegment.Intersection divideIntersectionsFast(int i, int j) {//i is the one to add (2), j is the original one (1) // = 0 does not intersect
+    public LineSegment.Intersection divideIntersectionsFast(int i, int j, List<Integer> indicesToDelete) {//i is the one to add (2), j is the original one (1) // = 0 does not intersect
         LineSegment si = lineSegments.get(i);
         LineSegment sj = lineSegments.get(j);
 
@@ -1107,7 +1073,7 @@ public class FoldLineSet {
                         return LineSegment.Intersection.NO_INTERSECTION_0;
                     }//加えるほうiが折線、元からあるほうjが水色線（補助活線）
 
-                    setActive(j, LineSegment.ActiveState.MARK_FOR_DELETION_100);
+                    indicesToDelete.add(j);
                     return LineSegment.Intersection.PARALLEL_EQUAL_31;
 
                 case PARALLEL_START_OF_S1_CONTAINS_START_OF_S2_321: //(p1=p3)_p4_p2、siにsjが含まれる。
@@ -2295,6 +2261,11 @@ public class FoldLineSet {
 
     public Queue<FlatFoldabilityViolation> getViolations() {
         return this.cAMVViolations;
+    }
+
+    public void setCustomized(LineSegment closestLineSegment, Color customCircleColor) {
+        var i = lineSegments.indexOf(closestLineSegment);
+        lineSegments.set(i, closestLineSegment.withCustomizedColor(customCircleColor));
     }
 
     /**

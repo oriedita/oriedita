@@ -58,8 +58,7 @@ public abstract class BaseMouseHandlerBoxSelect extends BaseMouseHandler {
     public void drawPreview(Graphics2D g2, Camera camera, DrawingSettings settings) {
         for (LineSegment line : lines) {
             if (line != null) {
-                line.setActive(LineSegment.ActiveState.ACTIVE_BOTH_3);
-                DrawingUtil.drawLineStep(g2, line, camera, settings.getLineWidth(), d.getGridInputAssist());
+                DrawingUtil.drawLineStep(g2, line, LineSegment.ActiveState.ACTIVE_BOTH_3, camera, settings.getLineWidth(), d.getGridInputAssist());
             }
         }
     }
