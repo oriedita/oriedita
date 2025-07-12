@@ -3,16 +3,20 @@ package oriedita.editor.handler;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.tinylog.Logger;
+import oriedita.editor.action.All_s_step_to_orisenAction;
 import oriedita.editor.canvas.FoldLineAdditionalInputMode;
 import oriedita.editor.canvas.MouseMode;
+import oriedita.editor.drawing.tools.Camera;
+import oriedita.editor.drawing.tools.DrawingUtil;
 import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
+import origami.crease_pattern.element.Circle;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
-import origami.crease_pattern.element.LineSegmentVoronoi;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.StraightLine;
 
+import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
@@ -20,10 +24,11 @@ import java.util.stream.Collectors;
 
 @ApplicationScoped
 @Handles(MouseMode.VORONOI_CREATE_62)
-public class MouseHandlerVoronoiCreate extends BaseMouseHandler {
+public class MouseHandlerVoronoiCreate extends BaseMouseHandler implements All_s_step_to_orisenAction.VoronoiHandler {
 
     private List<LineSegmentVoronoi> voronoiLineSet = new ArrayList<>();
-    List<LineSegmentVoronoi> lineSegment_voronoi_onePoint = new ArrayList<>(); //Line segment around one point in Voronoi diagram
+    private final List<LineSegmentVoronoi> voronoiLinesAroundNewPoint = new ArrayList<>(); //Line segment around one point in Voronoi diagram
+    private final List<Point> seedPoints = new  ArrayList<>();
 
     @Inject
     public MouseHandlerVoronoiCreate() {
@@ -64,46 +69,51 @@ public class MouseHandlerVoronoiCreate extends BaseMouseHandler {
         }
     }
 
-    //マウス操作(mouseMode==62ボロノイ　でボタンを押したとき)時の作業----------------------------------------------------
-    public void mousePressed(Point p0) {
-        if (d.getLineStep().isEmpty()) {
-            reset();
+    @Override
+    public void drawPreview(Graphics2D g2, Camera camera, DrawingSettings settings) {
+        super.drawPreview(g2, camera, settings);
+        for (LineSegmentVoronoi ls : this.voronoiLineSet) {
+            DrawingUtil.drawLineStep(g2, ls.getLineSegment().withColor(LineColor.MAGENTA_5),
+                    camera, settings.getLineWidth(), d.getGridInputAssist());
         }
+        for (Point p : seedPoints) {
+            DrawingUtil.drawStepVertex(g2, p, LineColor.CYAN_3, camera, d.getGridInputAssist());
+        }
+    }
+
+    //マウス操作(mouseMode==62ボロノイ　でボタンを押したとき)時の作業----------------------------------------------------
+    @Override
+    public void mousePressed(Point p0) {
         Point p = d.getCamera().TV2object(p0);
 
         //Arranged i_line_step_size to be only the conventional Voronoi mother point (yet, we have not decided whether to add the point p as line_step to the Voronoi mother point)
-        List<LineSegment> ls = s_step_no_1_top_continue_no_point_no_number();
-        d.getLineStep().clear();
-        d.getLineStep().addAll(ls);
+
 
         //Find the point-like line segment s_temp consisting of the closest points of p newly added at both ends (if there is no nearest point, both ends of s_temp are p)
         Point closest_point = d.getClosestPoint(p);
-        Point p_tmp;
+        Point selectedPoint;
         if (p.distance(closest_point) < d.getSelectionDistance()) {
-            p_tmp = closest_point;
+            selectedPoint = closest_point;
         } else {
-            p_tmp = p;
+            selectedPoint = p;
         }
-        LineSegment s_temp = new LineSegment(p_tmp, p_tmp, LineColor.MAGENTA_5);
 
 
         //Confirm that the newly added p does not overlap with the previously added Ten
-        int i_mouse_modeA_62_point_overlapping = -1;
+        int overlappingSeedPointIndex = -1;
 
-        List<LineSegment> lineStep = d.getLineStep();
-        for (int i = 0; i < lineStep.size(); i++) {
-            LineSegment s = lineStep.get(i);
-            if (OritaCalc.distance(s.getA(), s_temp.getA()) <= d.getSelectionDistance()) {
-                i_mouse_modeA_62_point_overlapping = i;
+        for (int i = 0; i < seedPoints.size(); i++) {
+            Point s = seedPoints.get(i);
+            if (OritaCalc.distance(s, selectedPoint) <= d.getSelectionDistance()) {
+                overlappingSeedPointIndex = i;
             }
         }
 
         //Confirm that the newly added p does not overlap with the previously added Point.
 
-        if (i_mouse_modeA_62_point_overlapping == -1) {
+        if (overlappingSeedPointIndex == -1) {
 
-            d.lineStepAdd(s_temp);
-            s_temp.setActive(LineSegment.ActiveState.INACTIVE_0);
+            seedPoints.add(selectedPoint);
             //(ここでやっと、点pをs_stepとしてボロノイ母点に加えると決まった)
 
             //今までのボロノイ図を元に、１個の新しいボロノイ母点を加えたボロノイ図を作る--------------------------------------
@@ -113,30 +123,29 @@ public class MouseHandlerVoronoiCreate extends BaseMouseHandler {
         } else {//Removed Voronoi mother points with order i_mouse_modeA_62_point_overlapping
             //順番がi_mouse_modeA_62_ten_kasanariのボロノイ母点と順番が最後(=i_egaki_dankai)のボロノイ母点を入れ替える
             //line_step[i]の入れ替え
-            LineSegment S_replace = new LineSegment(d.getLineStep().get(i_mouse_modeA_62_point_overlapping));
-            d.getLineStep().set(i_mouse_modeA_62_point_overlapping,
-                    new LineSegment(d.getLineStep().get(d.getLineStep().size() - 1)));
-            d.getLineStep().set(d.getLineStep().size() - 1, S_replace);
+            Point S_replace = seedPoints.get(overlappingSeedPointIndex);
+            seedPoints.set(overlappingSeedPointIndex, seedPoints.get(seedPoints.size() - 1));
+            seedPoints.set(seedPoints.size() - 1, S_replace);
 
 
             for (LineSegmentVoronoi lsv : voronoiLineSet) {
                 //Swapping the voronoiA of the line segment in voronoiLineSet
-                if (lsv.getVoronoiA() == i_mouse_modeA_62_point_overlapping) {
-                    lsv.setVoronoiA(d.getLineStep().size() - 1);
-                } else if (lsv.getVoronoiA() == d.getLineStep().size() - 1) {
-                    lsv.setVoronoiA(i_mouse_modeA_62_point_overlapping);
+                if (lsv.getVoronoiA() == overlappingSeedPointIndex) {
+                    lsv.setVoronoiA(seedPoints.size() - 1);
+                } else if (lsv.getVoronoiA() == seedPoints.size() - 1) {
+                    lsv.setVoronoiA(overlappingSeedPointIndex);
                 }
 
                 //Replacing the voronoiB of the line segment in voronoiLineSet
-                if (lsv.getVoronoiB() == i_mouse_modeA_62_point_overlapping) {
-                    lsv.setVoronoiB(d.getLineStep().size() - 1);
-                } else if (lsv.getVoronoiB() == d.getLineStep().size() - 1) {
-                    lsv.setVoronoiB(i_mouse_modeA_62_point_overlapping);
+                if (lsv.getVoronoiB() == overlappingSeedPointIndex) {
+                    lsv.setVoronoiB(seedPoints.size() - 1);
+                } else if (lsv.getVoronoiB() == seedPoints.size() - 1) {
+                    lsv.setVoronoiB(overlappingSeedPointIndex);
                 }
             }
 
             //Deleted the Voronoi mother point of the last order (= i_line_step_size)
-            d.getLineStep().remove(d.getLineStep().size() - 1);
+            seedPoints.remove(seedPoints.size() - 1);
 
             List<LineSegmentVoronoi> ori_v_temp2 = new ArrayList<>();
 
@@ -147,7 +156,7 @@ public class MouseHandlerVoronoiCreate extends BaseMouseHandler {
 
             //i_egaki_dankai+1のボロノイ母点からのボロノイ線分を選択状態にする
             for (LineSegmentVoronoi lsv : voronoiLineSet) {
-                if (lsv.getVoronoiA() == d.getLineStep().size()) {//The two Voronoi vertices of the Voronoi line segment are recorded in voronoiA and voronoiB.
+                if (lsv.getVoronoiA() == seedPoints.size()) {//The two Voronoi vertices of the Voronoi line segment are recorded in voronoiA and voronoiB.
                     lsv.setSelected(2);
                     for (LineSegmentVoronoi lsv2 : voronoiLineSet) {
                         if (lsv.getVoronoiB() == lsv2.getVoronoiB()) {
@@ -162,7 +171,7 @@ public class MouseHandlerVoronoiCreate extends BaseMouseHandler {
                     //削除されるi_egaki_dankai+1番目のボロノイ母点と組になる、もう一つのボロノイ母点を取り囲むボロノイ線分のアレイリストを得る。
                     Senb_boro_1p_motome(lsv.getVoronoiB());
 
-                    for (LineSegmentVoronoi add_S : lineSegment_voronoi_onePoint) {
+                    for (LineSegmentVoronoi add_S : voronoiLinesAroundNewPoint) {
                         //Pre-check whether to add add_S to ori_v_temp
                         boolean i_tuika = true;//1なら追加する。0なら追加しない。
 
@@ -177,10 +186,10 @@ public class MouseHandlerVoronoiCreate extends BaseMouseHandler {
                         //ori_v_tempにadd_Sを追加するかどうかの事前チェックはここまで
 
                         if (i_tuika) {
-                            ori_v_temp2.add(add_S.clone());
+                            ori_v_temp2.add(add_S);
                         }
                     }
-                } else if (lsv.getVoronoiB() == d.getLineStep().size()) {//The two Voronoi vertices of the Voronoi line segment are recorded in iactive and color.
+                } else if (lsv.getVoronoiB() == seedPoints.size()) {//The two Voronoi vertices of the Voronoi line segment are recorded in iactive and color.
                     lsv.setSelected(2);
                     for (LineSegmentVoronoi lsv2 : voronoiLineSet) {
                         if (lsv.getVoronoiA() == lsv2.getVoronoiB()) {
@@ -194,7 +203,7 @@ public class MouseHandlerVoronoiCreate extends BaseMouseHandler {
                     //削除されるi_egaki_dankai+1番目のボロノイ母点と組になる、もう一つのボロノイ母点を取り囲むボロノイ線分のアレイリストを得る。
                     Senb_boro_1p_motome(lsv.getVoronoiA());
 
-                    for (LineSegmentVoronoi add_S : lineSegment_voronoi_onePoint) {
+                    for (LineSegmentVoronoi add_S : voronoiLinesAroundNewPoint) {
                         //ori_v_tempにadd_Sを追加するかどうかの事前チェック
                         boolean i_tuika = true;//1なら追加する。0なら追加しない。
                         for (LineSegmentVoronoi add_S2 : ori_v_temp2) {
@@ -208,7 +217,7 @@ public class MouseHandlerVoronoiCreate extends BaseMouseHandler {
                         //This is the end of the pre-check whether to add add_S to ori_v_temp
 
                         if (i_tuika) {
-                            ori_v_temp2.add(add_S.clone());
+                            ori_v_temp2.add(add_S);
                         }
                     }
                 }
@@ -217,44 +226,26 @@ public class MouseHandlerVoronoiCreate extends BaseMouseHandler {
 
             voronoiLineSet = voronoiLineSet.stream().filter(s -> s.getSelected() != 2).collect(Collectors.toList());
 
-            for (LineSegmentVoronoi s_t : ori_v_temp2) {
-                voronoiLineSet.add(s_t.clone());
-            }
+            voronoiLineSet.addAll(ori_v_temp2);
         }
 
 
         //ボロノイ図も表示するようにs_stepの後にボロノイ図の線を入れる
-
-        for (LineSegmentVoronoi lsv : voronoiLineSet) {
-            LineSegment s = lsv.withColor(LineColor.MAGENTA_5);
-            s.setActive(LineSegment.ActiveState.INACTIVE_0);
-            d.getLineStep().add(s);
-        }
     }
 
     @Override
     public void reset() {
         super.reset();
         voronoiLineSet.clear();
-        lineSegment_voronoi_onePoint.clear();
-    }
-
-    List<LineSegment> s_step_no_1_top_continue_no_point_no_number() {//line_step [i] returns the number of Point (length 0) from the beginning. Returns 0 if there are no dots
-        List<LineSegment> lineSegments = new ArrayList<>();
-        for (LineSegment s : d.getLineStep()) {
-            if (Epsilon.high.gt0(s.determineLength())) {
-                break;
-            }
-            lineSegments.add(s);
-        }
-        return lineSegments;
+        voronoiLinesAroundNewPoint.clear();
+        seedPoints.clear();
     }
 
     public void voronoi_02() {
         //i=1からi_egaki_dankaiまでのs_step[i]と、i_egaki_dankai-1までのボロノイ図からi_egaki_dankaiのボロノイ図を作成
 
         //i_egaki_dankai番目のボロノイ頂点を取り囲むボロノイ線分のアレイリストを得る。
-        Senb_boro_1p_motome(d.getLineStep().size() - 1);
+        Senb_boro_1p_motome(seedPoints.size() - 1);
 
         //20181109ここでori_v.の既存のボロノイ線分の整理が必要
 
@@ -263,13 +254,13 @@ public class MouseHandlerVoronoiCreate extends BaseMouseHandler {
 
         //
 
-        for (int ia = 0; ia < lineSegment_voronoi_onePoint.size() - 1; ia++) {
-            for (int ib = ia + 1; ib < lineSegment_voronoi_onePoint.size(); ib++) {
+        for (int ia = 0; ia < voronoiLinesAroundNewPoint.size() - 1; ia++) {
+            for (int ib = ia + 1; ib < voronoiLinesAroundNewPoint.size(); ib++) {
 
-                LineSegmentVoronoi s_begin = new LineSegmentVoronoi(lineSegment_voronoi_onePoint.get(ia));
-                LineSegmentVoronoi s_end = new LineSegmentVoronoi(lineSegment_voronoi_onePoint.get(ib));
+                LineSegmentVoronoi s_begin = new LineSegmentVoronoi(voronoiLinesAroundNewPoint.get(ia));
+                LineSegmentVoronoi s_end = new LineSegmentVoronoi(voronoiLinesAroundNewPoint.get(ib));
 
-                StraightLine t_begin = new StraightLine(s_begin);
+                StraightLine t_begin = new StraightLine(s_begin.getLineSegment());
 
                 int i_begin = s_begin.getVoronoiA();//In this case, voronoiA contains the number of the existing Voronoi mother point when the Voronoi line segment is added.
                 int i_end = s_end.getVoronoiA();//In this case, voronoiA contains the number of the existing Voronoi mother point when the Voronoi line segment is added.
@@ -304,9 +295,9 @@ public class MouseHandlerVoronoiCreate extends BaseMouseHandler {
                             // 0	何もせず	有り得ない	削除
                             // 1	交点まで縮小	削除		削除
                             //
-                            Point kouten = OritaCalc.findIntersection(s_begin, s_kizon);
+                            Point kouten = OritaCalc.findIntersection(s_begin.getLineSegment(), s_kizon.getLineSegment());
 
-                            Point a = d.getLineStep().get(d.getLineStep().size() - 1).getA();
+                            Point a = seedPoints.get(seedPoints.size() - 1);
                             if ((t_begin.sameSide(a, s_kizon.getA()) >= 0) && (t_begin.sameSide(a, s_kizon.getB()) >= 0)) {
                                 s_kizon.setSelected(2);
                             }
@@ -329,59 +320,57 @@ public class MouseHandlerVoronoiCreate extends BaseMouseHandler {
         voronoiLineSet = voronoiLineSet.stream().filter(s -> s.getSelected() != 2).collect(Collectors.toList());
 
         //Add the line segment of Senb_boro_1p to the end of senbun of voronoiLineSet
-        for (LineSegmentVoronoi lineSegment : lineSegment_voronoi_onePoint) {
-            voronoiLineSet.add(lineSegment.clone());
-        }
+        voronoiLineSet.addAll(voronoiLinesAroundNewPoint);
     }
 
-    public void Senb_boro_1p_motome(int center_point_count) {//It can be used when line_step contains only Voronoi mother points. Get Senb_boro_1p as a set of Voronoi line segments around center_point_count
+    public void Senb_boro_1p_motome(int newSeedPointIndex) {//It can be used when line_step contains only Voronoi mother points. Get Senb_boro_1p as a set of Voronoi line segments around newSeedPointIndex
         //i_egaki_dankai Obtain an array list of Voronoi line segments surrounding the third Voronoi vertex. // i_egaki_dankai The third Voronoi apex is line_step [i_egaki_dankai] .geta ()
-        lineSegment_voronoi_onePoint.clear();
+        voronoiLinesAroundNewPoint.clear();
 
-        for (int i_e_d = 0; i_e_d < d.getLineStep().size(); i_e_d++) {
-            if (i_e_d != center_point_count) {
+        for (int i_e_d = 0; i_e_d < seedPoints.size(); i_e_d++) {
+            if (i_e_d != newSeedPointIndex) {
                 //Find the line segment to add
                 LineSegmentVoronoi add_lineSegment = new LineSegmentVoronoi(
-                        OritaCalc.bisection(d.getLineStep().get(i_e_d).getA(), d.getLineStep().get(center_point_count).getA(), 1000.0));
+                        OritaCalc.bisection(seedPoints.get(i_e_d), seedPoints.get(newSeedPointIndex), 1000.0));
 
-                Logger.info("center_point_count= " + center_point_count + " ,i_e_d= " + i_e_d);
+                Logger.info("newSeedPointIndex= " + newSeedPointIndex + " ,i_e_d= " + i_e_d);
 
-                if (i_e_d < center_point_count) {
+                if (i_e_d < newSeedPointIndex) {
                     add_lineSegment.setVoronoiA(i_e_d);
-                    add_lineSegment.setVoronoiB(center_point_count);//Record the two Voronoi vertices of the Voronoi line segment in iactive and color
+                    add_lineSegment.setVoronoiB(newSeedPointIndex);//Record the two Voronoi vertices of the Voronoi line segment in iactive and color
                 } else {
-                    add_lineSegment.setVoronoiA(center_point_count);
+                    add_lineSegment.setVoronoiA(newSeedPointIndex);
                     add_lineSegment.setVoronoiB(i_e_d);//Record the two Voronoi vertices of the Voronoi line segment in iactive and color
                 }
-                voronoi_02_01(center_point_count, add_lineSegment);
+                voronoi_02_01(newSeedPointIndex, add_lineSegment);
             }
         }
     }
 
 
-    public void voronoi_02_01(int center_point_count, LineSegmentVoronoi add_lineSegment) {
+    private void voronoi_02_01(int newSeedPointIndex, LineSegmentVoronoi add_lineSegment) {
         //i_egaki_dankai番目のボロノイ頂点は　　line_step[i_egaki_dankai].geta()　　　
 
         //Organize the line segments to be added
-        StraightLine add_straightLine = new StraightLine(add_lineSegment);
+        StraightLine add_straightLine = new StraightLine(add_lineSegment.getLineSegment());
 
-        int i_saisyo = lineSegment_voronoi_onePoint.size() - 1;
+        int i_saisyo = voronoiLinesAroundNewPoint.size() - 1;
         for (int i = i_saisyo; i >= 0; i--) {
             //Organize existing line segments
-            LineSegmentVoronoi existing_lineSegment = new LineSegmentVoronoi(lineSegment_voronoi_onePoint.get(i));
-            StraightLine existing_straightLine = new StraightLine(existing_lineSegment);
+            LineSegmentVoronoi existing_lineSegment = new LineSegmentVoronoi(voronoiLinesAroundNewPoint.get(i));
+            StraightLine existing_straightLine = new StraightLine(existing_lineSegment.getLineSegment());
 
             //Fight the line segment to be added with the existing line segment
 
             OritaCalc.ParallelJudgement parallel = OritaCalc.isLineSegmentParallel(add_straightLine, existing_straightLine, Epsilon.UNKNOWN_1EN4);//0 = not parallel, 1 = parallel and 2 straight lines do not match, 2 = parallel and 2 straight lines match
 
-            Point a = d.getLineStep().get(center_point_count).getA();
+            Point a = seedPoints.get(newSeedPointIndex);
             if (parallel == OritaCalc.ParallelJudgement.PARALLEL_EQUAL) {
                 return;
             }
             if (parallel == OritaCalc.ParallelJudgement.PARALLEL_NOT_EQUAL) {//When the line segment to be added and the existing line segment are parallel and the two straight lines do not match
                 if (add_straightLine.sameSide(a, existing_lineSegment.getA()) == -1) {
-                    lineSegment_voronoi_onePoint.remove(i);
+                    voronoiLinesAroundNewPoint.remove(i);
                 } else if (existing_straightLine.sameSide(a, add_lineSegment.getA()) == -1) {
                     return;
                 }
@@ -391,22 +380,22 @@ public class MouseHandlerVoronoiCreate extends BaseMouseHandler {
 
                 if ((add_straightLine.sameSide(a, existing_lineSegment.getA()) <= 0) &&
                         (add_straightLine.sameSide(a, existing_lineSegment.getB()) <= 0)) {
-                    lineSegment_voronoi_onePoint.remove(i);
+                    voronoiLinesAroundNewPoint.remove(i);
                 } else if ((add_straightLine.sameSide(a, existing_lineSegment.getA()) == 1) &&
                         (add_straightLine.sameSide(a, existing_lineSegment.getB()) == -1)) {
                     existing_lineSegment = existing_lineSegment.withB(intersection);
-                    if (existing_lineSegment.determineLength() < Epsilon.UNKNOWN_1EN7) {
-                        lineSegment_voronoi_onePoint.remove(i);
+                    if (existing_lineSegment.getLineSegment().determineLength() < Epsilon.UNKNOWN_1EN7) {
+                        voronoiLinesAroundNewPoint.remove(i);
                     } else {
-                        lineSegment_voronoi_onePoint.set(i, existing_lineSegment);
+                        voronoiLinesAroundNewPoint.set(i, existing_lineSegment);
                     }
                 } else if ((add_straightLine.sameSide(a, existing_lineSegment.getA()) == -1) &&
                         (add_straightLine.sameSide(a, existing_lineSegment.getB()) == 1)) {
                     existing_lineSegment = existing_lineSegment.withA(intersection);
-                    if (existing_lineSegment.determineLength() < Epsilon.UNKNOWN_1EN7) {
-                        lineSegment_voronoi_onePoint.remove(i);
+                    if (existing_lineSegment.getLineSegment().determineLength() < Epsilon.UNKNOWN_1EN7) {
+                        voronoiLinesAroundNewPoint.remove(i);
                     } else {
-                        lineSegment_voronoi_onePoint.set(i, existing_lineSegment);
+                        voronoiLinesAroundNewPoint.set(i, existing_lineSegment);
                     }
                 }
 
@@ -416,20 +405,20 @@ public class MouseHandlerVoronoiCreate extends BaseMouseHandler {
                 } else if ((existing_straightLine.sameSide(a, add_lineSegment.getA()) == 1) &&
                         (existing_straightLine.sameSide(a, add_lineSegment.getB()) == -1)) {
                     add_lineSegment = add_lineSegment.withB(intersection);
-                    if (add_lineSegment.determineLength() < Epsilon.UNKNOWN_1EN7) {
+                    if (add_lineSegment.getLineSegment().determineLength() < Epsilon.UNKNOWN_1EN7) {
                         return;
                     }
                 } else if ((existing_straightLine.sameSide(a, add_lineSegment.getA()) == -1) &&
                         (existing_straightLine.sameSide(a, add_lineSegment.getB()) == 1)) {
                     add_lineSegment = add_lineSegment.withA(intersection);
-                    if (add_lineSegment.determineLength() < Epsilon.UNKNOWN_1EN7) {
+                    if (add_lineSegment.getLineSegment().determineLength() < Epsilon.UNKNOWN_1EN7) {
                         return;
                     }
                 }
             }
         }
 
-        lineSegment_voronoi_onePoint.add(add_lineSegment);
+        voronoiLinesAroundNewPoint.add(add_lineSegment);
     }
 
     // -----------------------------------------------------------------------------
@@ -440,5 +429,87 @@ public class MouseHandlerVoronoiCreate extends BaseMouseHandler {
     // -----------------------------------------------------------------------------
     //マウス操作(mouseMode==62ボロノイ　でボタンを離したとき)を行う関数----------------------------------------------------
     public void mouseReleased(Point p0) {
+    }
+
+    @Override
+    public void apply() {
+        for (LineSegmentVoronoi ls : voronoiLineSet) {
+            d.addLineSegment(ls.lineSegment.withColor(d.getLineColor()));
+        }
+        for (Point p : seedPoints){
+            d.addCircle(new Circle(p, 5, LineColor.CYAN_3));
+        }
+
+        reset();
+    }
+}
+
+class LineSegmentVoronoi {
+    int voronoiA;
+    int voronoiB;
+    LineSegment lineSegment;
+    private int selected;
+
+    public LineSegmentVoronoi(LineSegment ls) {
+        lineSegment = ls;
+        voronoiA = 0;
+        voronoiB = 0;
+        selected = 0;
+    }
+
+    public LineSegmentVoronoi(LineSegmentVoronoi s) {
+        lineSegment = s.lineSegment;
+        voronoiA = s.getVoronoiA();
+        voronoiB = s.getVoronoiB();
+        selected = s.getSelected();
+    }
+
+    public LineSegmentVoronoi withB(Point b) {
+        LineSegmentVoronoi v = new LineSegmentVoronoi(this.lineSegment.withB(b));
+
+        v.voronoiA = getVoronoiA();
+        v.voronoiB = getVoronoiB();
+        return v;
+    }
+
+    public LineSegmentVoronoi withA(Point a) {
+        LineSegmentVoronoi v = new LineSegmentVoronoi(this.lineSegment.withA(a));
+        v.voronoiA = getVoronoiA();
+        v.voronoiB = getVoronoiB();
+        return v;
+    }
+
+    public int getVoronoiA() {
+        return voronoiA;
+    }
+
+    public void setVoronoiA(int i) {
+        voronoiA = i;
+    }
+
+    public int getVoronoiB() {
+        return voronoiB;
+    }
+
+    public void setVoronoiB(int i) {
+        voronoiB = i;
+    }
+
+    public void setSelected(int selected){
+        this.selected = selected;
+    }
+    public int getSelected(){
+        return selected;
+    }
+
+    public LineSegment getLineSegment() {
+        return lineSegment;
+    }
+
+    public Point getA() {
+        return lineSegment.getA();
+    }
+    public Point getB() {
+        return lineSegment.getB();
     }
 }
