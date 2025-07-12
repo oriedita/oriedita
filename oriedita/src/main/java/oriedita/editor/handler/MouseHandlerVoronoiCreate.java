@@ -30,6 +30,11 @@ public class MouseHandlerVoronoiCreate extends BaseMouseHandler {
     }
 
     @Override
+    public EnumSet<MouseHandlerSettingGroup>  getSettings() {
+        return EnumSet.of(MouseHandlerSettingGroup.APPLY_LINES);
+    }
+
+    @Override
     public EnumSet<Feature> getSubscribedFeatures() {
         return EnumSet.of(Feature.BUTTON_1, Feature.BUTTON_3);
     }
