@@ -150,6 +150,7 @@ public class App {
         executor.execute(actionRegistrationService::registerActionsInitial);
         executor.execute(canvas::init);
         editor.init(executor);
+        executor.nextStage();
         executor.execute(appMenuBar::init);
 
         executor.nextStage();

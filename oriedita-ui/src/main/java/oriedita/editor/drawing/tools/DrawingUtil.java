@@ -289,7 +289,13 @@ public class DrawingUtil {
         g2.draw(curve);
     }
 
-    public static void drawLineStep(Graphics g, LineSegment s, Camera camera, float lineWidth, boolean gridInputAssist) {
+    public static void drawLineStep(Graphics g, LineSegment s,
+                                    Camera camera, float lineWidth, boolean gridInputAssist) {
+        drawLineStep(g, s, LineSegment.ActiveState.ACTIVE_BOTH_3, camera, lineWidth, gridInputAssist);
+    }
+
+    public static void drawLineStep(Graphics g, LineSegment s, LineSegment.ActiveState activeState,
+                                    Camera camera, float lineWidth, boolean gridInputAssist) {
         if (s == null) return;
         Graphics2D g2 = (Graphics2D) g;
         setColor(g, s.getColor());
@@ -306,7 +312,7 @@ public class DrawingUtil {
             i_width_nyuiiryokuji = 2;
         }
 
-        switch (s.getActive()) {
+        switch (activeState) {
             case ACTIVE_A_1:
                 g.fillOval((int) a.getX() - i_width_nyuiiryokuji, (int) a.getY() - i_width_nyuiiryokuji, 2 * i_width_nyuiiryokuji, 2 * i_width_nyuiiryokuji); //円
                 break;
@@ -337,7 +343,7 @@ public class DrawingUtil {
 
     public static void drawLineCandidate(Graphics g, LineSegment s, Camera camera, int pointSize) {
         setColor(g, s.getColor());
-
+        Logger.info(s.getActive());
         LineSegment s_tv = camera.object2TV(s);
         Point a = new Point(s_tv.determineAX() + Epsilon.UNKNOWN_1EN6, s_tv.determineAY() + Epsilon.UNKNOWN_1EN6);
         Point b = new Point(s_tv.determineBX() + Epsilon.UNKNOWN_1EN6, s_tv.determineBY() + Epsilon.UNKNOWN_1EN6);//なぜEpsilon.UNKNOWN_0000001を足すかというと,ディスプレイに描画するとき元の折線が新しい折線に影響されて動いてしまうのを防ぐため
@@ -545,21 +551,12 @@ public class DrawingUtil {
             g.fillOval((int) p.getX() - 11, (int) p.getY() - 11, 23, 23);
             return;
         }
-        Color c;
-        switch (violation.getColor()) {
-            case NOT_ENOUGH_MOUNTAIN:
-                c = Colors.get(Color.RED);
-                break;
-            case NOT_ENOUGH_VALLEY:
-                c = Colors.get(Color.BLUE);
-                break;
-            case UNKNOWN:
-                c = Colors.get(new Color(255, 0, 147));
-                break;
-            default:
-                c = Colors.get(Color.GRAY);
-                break;
-        }
+        Color c = switch (violation.getColor()) {
+            case NOT_ENOUGH_MOUNTAIN -> Colors.get(Color.RED);
+            case NOT_ENOUGH_VALLEY -> Colors.get(Color.BLUE);
+            case UNKNOWN -> Colors.get(new Color(255, 0, 147));
+            default -> Colors.get(Color.GRAY);
+        };
         Color actualColor = new Color(c.getRed(), c.getGreen(), c.getBlue(), transparency);
         g.setColor(actualColor);
         g.setStroke(new BasicStroke(1.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL));

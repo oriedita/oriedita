@@ -56,7 +56,12 @@ public class ToolSettingsPanel {
     }
 
     public void init() {
-        canvasModel.addPropertyChangeListener(e -> setData(canvasModel));
+        canvasModel.addPropertyChangeListener(e -> {
+            if ("toolSettingsPanelVisible".equals(e.getPropertyName())) {
+                return;
+            }
+            setData(canvasModel);
+        });
 
         mouseHandlerUiInstances.handlesStream()
                 .filter(h ->
@@ -76,9 +81,7 @@ public class ToolSettingsPanel {
     }
 
     private void setData(CanvasModel data) {
-        mouseHandlerUis.values().forEach(h -> {
-            h.$$$getRootComponent$$$().setVisible(false);
-        });
+        mouseHandlerUis.values().forEach(h -> h.$$$getRootComponent$$$().setVisible(false));
         var anyVisible = false;
         for (MouseHandlerSettingGroup setting : handlers.get(canvasModel.getMouseMode()).getSettings()) {
             if (!mouseHandlerUis.containsKey(setting)) {
@@ -102,6 +105,7 @@ public class ToolSettingsPanel {
         $$$getRootComponent$$$().revalidate();
         $$$getRootComponent$$$().validate();
         $$$getRootComponent$$$().repaint();
+        canvasModel.setToolSettingsPanelHeight(anyVisible ? settingsPanel.getHeight() : 0);
     }
 
     {

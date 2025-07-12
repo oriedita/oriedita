@@ -9,6 +9,7 @@ import oriedita.editor.Animations;
 import oriedita.editor.Canvas;
 import oriedita.editor.Colors;
 import oriedita.editor.FrameProvider;
+import oriedita.editor.ToolTab;
 import oriedita.editor.action.ActionService;
 import oriedita.editor.action.ActionType;
 import oriedita.editor.action.LambdaAction;
@@ -187,6 +188,12 @@ public class ActionRegistrationService {
             mainCreasePatternWorker.del_selected_senbun();
             mainCreasePatternWorker.record();
         }));
+
+        // - tab actions
+        actionService.registerAction(ActionType.drawingTabAction, new LambdaAction(() -> canvasModel.setSelectedToolTab(ToolTab.DRAW)));
+        actionService.registerAction(ActionType.foldingTabAction, new LambdaAction(() -> canvasModel.setSelectedToolTab(ToolTab.FOLD)));
+        actionService.registerAction(ActionType.referencesTabAction, new LambdaAction(() -> canvasModel.setSelectedToolTab(ToolTab.REFERENCE)));
+        actionService.registerAction(ActionType.settingsTabAction, new LambdaAction(() -> canvasModel.setSelectedToolTab(ToolTab.SETTINGS)));
 
         // - line edit actions
         actionService.registerAction(ActionType.v_del_allAction, new LambdaAction(mainCreasePatternWorker::v_del_all));

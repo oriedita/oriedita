@@ -7,15 +7,15 @@ import java.util.Objects;
 public class LineSegment implements Serializable, Cloneable {
     private static final Color DEFAULT_COLOR = new Color(100, 200, 200);
 
-    protected final Point a; //Branch a point
-    protected final Point b; //Branch b point
-    protected ActiveState active;//0 is inactive. 1 is active in a. 2 is active in b. 3 is active in both a and b.
-    protected LineColor color;//Color specification 　0=black,1=blue,2=red.
+    private final Point a; //Branch a point
+    private final Point b; //Branch b point
+    private final ActiveState active;//0 is inactive. 1 is active in a. 2 is active in b. 3 is active in both a and b.
+    private final LineColor color;//Color specification 　0=black,1=blue,2=red.
 
-    protected int customized;//Custom property parameters
-    protected Color customizedColor;//Color if custom made
+    private final int customized;//Custom property parameters
+    private final Color customizedColor;//Color if custom made
 
-    protected int selected;//0 is not selected. 1 or more is set appropriately according to the situation
+    private int selected;//0 is not selected. 1 or more is set appropriately according to the situation
 
 
     //コンストラクタ
@@ -50,8 +50,7 @@ public class LineSegment implements Serializable, Cloneable {
     }
 
     public LineSegment(LineSegment s0, LineColor color){
-        this(s0);
-        this.color = color;
+        this(s0.getA(), s0.getB(), color, s0.getActive(), s0.getSelected(), s0.getCustomized(), s0.getCustomizedColor());
     }
 
     public LineSegment(double i1, double i2, double i3, double i4) {
@@ -134,8 +133,18 @@ public class LineSegment implements Serializable, Cloneable {
         return active;
     }
 
-    public void setActive(ActiveState i) {
-        active = i;
+    /**
+     * use withActive or DrawingUtil.drawLineStep with separate activeState input instead
+     * @param activeState ignored
+     */
+    @Deprecated
+    public void setActive(ActiveState activeState) {
+        //active = activeState;
+        // TODO: remove all usages once mousehandlers are updated
+    }
+
+    public LineSegment withActive(ActiveState activeState) {
+        return new LineSegment(getA(), getB(), getColor(), activeState, getSelected(), getCustomized(), getCustomizedColor());
     }
 
     public int getSelected() {
@@ -144,11 +153,6 @@ public class LineSegment implements Serializable, Cloneable {
 
     public void setSelected(int i) {
         selected = i;
-    }
-
-    //Deactivate this line segment
-    public void deactivate() {
-        active = ActiveState.INACTIVE_0;
     }
 
 
@@ -206,16 +210,12 @@ public class LineSegment implements Serializable, Cloneable {
         return customized;
     }
 
-    public void setCustomized(int i) {
-        customized = i;
-    }
-
     public Color getCustomizedColor() {
         return customizedColor;
     }
 
-    public void setCustomizedColor(Color c0) {
-        customizedColor = c0;
+    public LineSegment withCustomizedColor(Color c) {
+        return new LineSegment(getA(), getB(), getColor(), getActive(), getSelected(), 1, c);
     }
 
 
@@ -236,14 +236,8 @@ public class LineSegment implements Serializable, Cloneable {
 
     @Override
     public LineSegment clone() {
-        LineSegment clone = new LineSegment(a, b, color);
-        clone.setActive(active);
-        clone.setSelected(selected);
-        clone.setCustomizedColor(customizedColor);
-        clone.setCustomized(customized);
+        LineSegment clone = new LineSegment(a, b, color, active, selected, customized, customizedColor);
 
-
-        // TODO: copy mutable state here, so the clone can't change the internals of the original
         return clone;
     }
 
@@ -457,28 +451,17 @@ public class LineSegment implements Serializable, Cloneable {
         }
 
         public boolean isSegmentOverlapping() {
-            switch (this) {
-                case PARALLEL_EQUAL_31:
-                case PARALLEL_START_OF_S1_CONTAINS_START_OF_S2_321:
-                case PARALLEL_START_OF_S2_CONTAINS_START_OF_S1_322:
-                case PARALLEL_START_OF_S1_CONTAINS_END_OF_S2_331:
-                case PARALLEL_END_OF_S2_CONTAINS_START_OF_S1_332:
-                case PARALLEL_END_OF_S1_CONTAINS_START_OF_S2_341:
-                case PARALLEL_START_OF_S2_CONTAINS_END_OF_S1_342:
-                case PARALLEL_END_OF_S1_CONTAINS_END_OF_S2_351:
-                case PARALLEL_END_OF_S2_CONTAINS_END_OF_S1_352:
-                case PARALLEL_S1_INCLUDES_S2_361:
-                case PARALLEL_S1_INCLUDES_S2_362:
-                case PARALLEL_S2_INCLUDES_S1_363:
-                case PARALLEL_S2_INCLUDES_S1_364:
-                case PARALLEL_S1_END_OVERLAPS_S2_START_371:
-                case PARALLEL_S1_END_OVERLAPS_S2_END_372:
-                case PARALLEL_S1_START_OVERLAPS_S2_END_373:
-                case PARALLEL_S1_START_OVERLAPS_S2_START_374:
-                    return true;
-                default:
-                    return false;
-            }
+            return switch (this) {
+                case PARALLEL_EQUAL_31, PARALLEL_START_OF_S1_CONTAINS_START_OF_S2_321,
+                     PARALLEL_START_OF_S2_CONTAINS_START_OF_S1_322, PARALLEL_START_OF_S1_CONTAINS_END_OF_S2_331,
+                     PARALLEL_END_OF_S2_CONTAINS_START_OF_S1_332, PARALLEL_END_OF_S1_CONTAINS_START_OF_S2_341,
+                     PARALLEL_START_OF_S2_CONTAINS_END_OF_S1_342, PARALLEL_END_OF_S1_CONTAINS_END_OF_S2_351,
+                     PARALLEL_END_OF_S2_CONTAINS_END_OF_S1_352, PARALLEL_S1_INCLUDES_S2_361,
+                     PARALLEL_S1_INCLUDES_S2_362, PARALLEL_S2_INCLUDES_S1_363, PARALLEL_S2_INCLUDES_S1_364,
+                     PARALLEL_S1_END_OVERLAPS_S2_START_371, PARALLEL_S1_END_OVERLAPS_S2_END_372,
+                     PARALLEL_S1_START_OVERLAPS_S2_END_373, PARALLEL_S1_START_OVERLAPS_S2_START_374 -> true;
+                default -> false;
+            };
         }
 
         @Override
@@ -495,6 +478,6 @@ public class LineSegment implements Serializable, Cloneable {
         ACTIVE_A_1,
         ACTIVE_B_2,
         ACTIVE_BOTH_3,
-        MARK_FOR_DELETION_100,
+        //MARK_FOR_DELETION_100,
     }
 }

@@ -8,5 +8,6 @@ public enum MouseHandlerSettingGroup {
     SWITCH_COLOR,
     POLYGON_POINT_COUNT,
     LINE_DIVISION_COUNT,
-    LINE_DIVISION_RATIO
+    LINE_DIVISION_RATIO,
+    APPLY_LINES,
 }
