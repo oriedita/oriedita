@@ -17,8 +17,8 @@ import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.StraightLine;
 
 enum CircleDrawInvertedStep {
-    SELECT_FIRST_CIRCLE_OR_LINE,
-    SELECT_SECOND_CIRCLE_OR_LINE,
+    SELECT_1ST_CIRCLE_OR_SEGMENT,
+    SELECT_2ND_CIRCLE_OR_SEGMENT,
     SELECT_CIRCLE,
 }
 
@@ -33,11 +33,11 @@ public class MouseHandlerCircleDrawInverted extends StepMouseHandler<CircleDrawI
 
     @Inject
     public MouseHandlerCircleDrawInverted() {
-        super(CircleDrawInvertedStep.SELECT_FIRST_CIRCLE_OR_LINE);
-        steps.addNode(StepNode.createNode_MD_R(CircleDrawInvertedStep.SELECT_FIRST_CIRCLE_OR_LINE,
+        super(CircleDrawInvertedStep.SELECT_1ST_CIRCLE_OR_SEGMENT);
+        steps.addNode(StepNode.createNode_MD_R(CircleDrawInvertedStep.SELECT_1ST_CIRCLE_OR_SEGMENT,
                 this::move_drag_select_first_circle_or_line,
                 this::release_select_first_circle_or_line));
-        steps.addNode(StepNode.createNode_MD_R(CircleDrawInvertedStep.SELECT_SECOND_CIRCLE_OR_LINE,
+        steps.addNode(StepNode.createNode_MD_R(CircleDrawInvertedStep.SELECT_2ND_CIRCLE_OR_SEGMENT,
                 this::move_drag_select_second_circle_or_segment,
                 this::release_select_second_circle_or_segment));
         steps.addNode(StepNode.createNode_MD_R(CircleDrawInvertedStep.SELECT_CIRCLE,
@@ -58,7 +58,7 @@ public class MouseHandlerCircleDrawInverted extends StepMouseHandler<CircleDrawI
         circle2 = null;
         segment = null;
         move_drag_select_first_circle_or_line(canvasModel.getMouseObjPosition());
-        steps.setCurrentStep(CircleDrawInvertedStep.SELECT_FIRST_CIRCLE_OR_LINE);
+        steps.setCurrentStep(CircleDrawInvertedStep.SELECT_1ST_CIRCLE_OR_SEGMENT);
     }
 
     // Select circle or line
@@ -80,9 +80,9 @@ public class MouseHandlerCircleDrawInverted extends StepMouseHandler<CircleDrawI
 
     private CircleDrawInvertedStep release_select_first_circle_or_line(Point p) {
         if (circle1 == null && segment == null)
-            return CircleDrawInvertedStep.SELECT_FIRST_CIRCLE_OR_LINE;
+            return CircleDrawInvertedStep.SELECT_1ST_CIRCLE_OR_SEGMENT;
         if (circle1 != null)
-            return CircleDrawInvertedStep.SELECT_SECOND_CIRCLE_OR_LINE;
+            return CircleDrawInvertedStep.SELECT_2ND_CIRCLE_OR_SEGMENT;
         return CircleDrawInvertedStep.SELECT_CIRCLE;
     }
 
@@ -105,11 +105,11 @@ public class MouseHandlerCircleDrawInverted extends StepMouseHandler<CircleDrawI
 
     private CircleDrawInvertedStep release_select_second_circle_or_segment(Point p) {
         if (circle2 == null && segment == null)
-            return CircleDrawInvertedStep.SELECT_SECOND_CIRCLE_OR_LINE;
+            return CircleDrawInvertedStep.SELECT_2ND_CIRCLE_OR_SEGMENT;
 
         processResultCircle();
         reset();
-        return CircleDrawInvertedStep.SELECT_FIRST_CIRCLE_OR_LINE;
+        return CircleDrawInvertedStep.SELECT_1ST_CIRCLE_OR_SEGMENT;
     }
 
     // If segment selected first, select a circle
@@ -125,12 +125,12 @@ public class MouseHandlerCircleDrawInverted extends StepMouseHandler<CircleDrawI
     private CircleDrawInvertedStep release_select_circle(Point p) {
         if (segment == null && circle1 == null && circle2 == null) {
             reset();
-            return CircleDrawInvertedStep.SELECT_FIRST_CIRCLE_OR_LINE;
+            return CircleDrawInvertedStep.SELECT_1ST_CIRCLE_OR_SEGMENT;
         }
 
         processResultCircle();
         reset();
-        return CircleDrawInvertedStep.SELECT_FIRST_CIRCLE_OR_LINE;
+        return CircleDrawInvertedStep.SELECT_1ST_CIRCLE_OR_SEGMENT;
     }
 
     public void add_hanten(Circle e0, Circle eh) {
@@ -170,6 +170,8 @@ public class MouseHandlerCircleDrawInverted extends StepMouseHandler<CircleDrawI
     private void processResultCircle() {
         if (segment != null) {
             Circle validCircle = circle1 != null ? circle1 : circle2;
+            if (validCircle == null)
+                return;
             add_hanten(segment, validCircle);
         } else {
             add_hanten(circle1, circle2);

@@ -19,8 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 enum CircleDrawTangentLineStep {
-    SELECT_FIRST_POINT_OR_CIRCLE,
-    SELECT_SECOND_POINT_OR_CIRCLE,
+    SELECT_1ST_POINT_OR_CIRCLE,
+    SELECT_2ND_POINT_OR_CIRCLE,
     SELECT_CIRCLE,
     SELECT_INDICATOR
 }
@@ -38,13 +38,16 @@ public class MouseHandlerCircleDrawTangentLine extends StepMouseHandler<CircleDr
 
     @Inject
     public MouseHandlerCircleDrawTangentLine() {
-        super(CircleDrawTangentLineStep.SELECT_FIRST_POINT_OR_CIRCLE);
-        steps.addNode(StepNode.createNode_MD_R(CircleDrawTangentLineStep.SELECT_FIRST_POINT_OR_CIRCLE,
-                this::move_drag_select_first_point_or_circle, this::release_select_first_point_or_circle));
-        steps.addNode(StepNode.createNode_MD_R(CircleDrawTangentLineStep.SELECT_CIRCLE, this::move_drag_select_circle,
+        super(CircleDrawTangentLineStep.SELECT_1ST_POINT_OR_CIRCLE);
+        steps.addNode(StepNode.createNode_MD_R(CircleDrawTangentLineStep.SELECT_1ST_POINT_OR_CIRCLE,
+                this::move_drag_select_first_point_or_circle,
+                this::release_select_first_point_or_circle));
+        steps.addNode(StepNode.createNode_MD_R(CircleDrawTangentLineStep.SELECT_CIRCLE,
+                this::move_drag_select_circle,
                 this::release_select_circle));
-        steps.addNode(StepNode.createNode_MD_R(CircleDrawTangentLineStep.SELECT_SECOND_POINT_OR_CIRCLE,
-                this::move_drag_select_second_point_or_circle, this::release_select_second_point_or_circle));
+        steps.addNode(StepNode.createNode_MD_R(CircleDrawTangentLineStep.SELECT_2ND_POINT_OR_CIRCLE,
+                this::move_drag_select_second_point_or_circle,
+                this::release_select_second_point_or_circle));
         steps.addNode(StepNode.createNode_MD_R(CircleDrawTangentLineStep.SELECT_INDICATOR,
                 this::move_drag_select_indicator, this::release_drag_select_indicator));
     }
@@ -56,7 +59,8 @@ public class MouseHandlerCircleDrawTangentLine extends StepMouseHandler<CircleDr
         DrawingUtil.drawCircleStep(g2, circle1, camera);
         DrawingUtil.drawCircleStep(g2, circle2, camera);
         for (LineSegment indicator : indicators) {
-            DrawingUtil.drawLineStep(g2, indicator, camera, settings.getLineWidth(), d.getGridInputAssist());
+            DrawingUtil.drawLineStep(g2, indicator, camera, settings.getLineWidth(),
+                    d.getGridInputAssist());
         }
         DrawingUtil.drawLineStep(g2, resultSegment, camera, settings.getLineWidth(), d.getGridInputAssist());
     }
@@ -69,7 +73,7 @@ public class MouseHandlerCircleDrawTangentLine extends StepMouseHandler<CircleDr
         indicators = new ArrayList<>();
         resultSegment = null;
         move_drag_select_first_point_or_circle(canvasModel.getMouseObjPosition());
-        steps.setCurrentStep(CircleDrawTangentLineStep.SELECT_FIRST_POINT_OR_CIRCLE);
+        steps.setCurrentStep(CircleDrawTangentLineStep.SELECT_1ST_POINT_OR_CIRCLE);
     }
 
     // Select first point or circle
@@ -90,11 +94,11 @@ public class MouseHandlerCircleDrawTangentLine extends StepMouseHandler<CircleDr
 
     private CircleDrawTangentLineStep release_select_first_point_or_circle(Point p) {
         if (point == null && circle1 == null)
-            return CircleDrawTangentLineStep.SELECT_FIRST_POINT_OR_CIRCLE;
+            return CircleDrawTangentLineStep.SELECT_1ST_POINT_OR_CIRCLE;
         if (point != null && circle1 == null) {
             return CircleDrawTangentLineStep.SELECT_CIRCLE;
         }
-        return CircleDrawTangentLineStep.SELECT_SECOND_POINT_OR_CIRCLE;
+        return CircleDrawTangentLineStep.SELECT_2ND_POINT_OR_CIRCLE;
     }
 
     // If selected point first, select a circle
@@ -132,7 +136,7 @@ public class MouseHandlerCircleDrawTangentLine extends StepMouseHandler<CircleDr
 
     private CircleDrawTangentLineStep release_select_second_point_or_circle(Point p) {
         if (point == null && circle2 == null)
-            return CircleDrawTangentLineStep.SELECT_SECOND_POINT_OR_CIRCLE;
+            return CircleDrawTangentLineStep.SELECT_2ND_POINT_OR_CIRCLE;
         if (point != null) {
             setupIndicator_1P_1C(point, circle1);
         } else {
@@ -166,21 +170,24 @@ public class MouseHandlerCircleDrawTangentLine extends StepMouseHandler<CircleDr
         d.addLineSegment(new LineSegment(resultSegment, d.getLineColor()));
         d.record();
         reset();
-        return CircleDrawTangentLineStep.SELECT_FIRST_POINT_OR_CIRCLE;
+        return CircleDrawTangentLineStep.SELECT_1ST_POINT_OR_CIRCLE;
     }
 
     private void setupIndicator_1P_1C(Point p, Circle c) {
         if (Math.abs(c.getR() - OritaCalc.distance(c.determineCenter(), p)) < Epsilon.UNKNOWN_1EN7) {
             LineSegment projectionLine = new LineSegment(c.determineCenter(), p);
             indicators.add(OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), new LineSegment(p,
-                    OritaCalc.findProjection(OritaCalc.moveParallel(projectionLine, 1), p), LineColor.PURPLE_8)));
+                    OritaCalc.findProjection(OritaCalc.moveParallel(projectionLine, 1), p),
+                    LineColor.PURPLE_8)));
             indicators.add(OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), new LineSegment(p,
-                    OritaCalc.findProjection(OritaCalc.moveParallel(projectionLine, -1), p), LineColor.PURPLE_8)));
+                    OritaCalc.findProjection(OritaCalc.moveParallel(projectionLine, -1), p),
+                    LineColor.PURPLE_8)));
             return;
         }
         LineSegment diameter = new LineSegment(p, c.determineCenter());
         Circle constructCir = new Circle(diameter, LineColor.GREEN_6);
-        LineSegment connectSegment = OritaCalc.circle_to_circle_no_intersection_wo_musubu_lineSegment(constructCir, c);
+        LineSegment connectSegment = OritaCalc
+                .circle_to_circle_no_intersection_wo_musubu_lineSegment(constructCir, c);
         indicators.add(new LineSegment(p, connectSegment.getA(), LineColor.PURPLE_8));
         indicators.add(new LineSegment(p, connectSegment.getB(), LineColor.PURPLE_8));
     }
@@ -210,7 +217,8 @@ public class MouseHandlerCircleDrawTangentLine extends StepMouseHandler<CircleDr
 
             d.lineStepAdd(OritaCalc.circle_to_straightLine_no_intersect_wo_connect_LineSegment(
                     new Circle(kouten, (r1 + r2) / 2.0, LineColor.BLACK_0), ty));
-        } else if (((r1 - r2) * (r1 - r2) < (xp * xp + yp * yp)) && ((xp * xp + yp * yp) < (r1 + r2) * (r1 + r2))) {// 外接線2本の場合
+        } else if (((r1 - r2) * (r1 - r2) < (xp * xp + yp * yp))
+                && ((xp * xp + yp * yp) < (r1 + r2) * (r1 + r2))) {// 外接線2本の場合
             double xq1 = r1 * (xp * (r1 - r2) + yp * Math.sqrt((xp * xp + yp * yp) - (r1 - r2) * (r1 - r2)))
                     / (xp * xp + yp * yp);// 共通外接線
             double yq1 = r1 * (yp * (r1 - r2) - xp * Math.sqrt((xp * xp + yp * yp) - (r1 - r2) * (r1 - r2)))
@@ -228,9 +236,11 @@ public class MouseHandlerCircleDrawTangentLine extends StepMouseHandler<CircleDr
             StraightLine t1 = new StraightLine(x1, y1, xr1, yr1).orthogonalize(new Point(xr1, yr1));
             StraightLine t2 = new StraightLine(x1, y1, xr2, yr2).orthogonalize(new Point(xr2, yr2));
 
-            indicators.add(new LineSegment(new Point(xr1, yr1), OritaCalc.findProjection(t1, new Point(x2, y2)),
+            indicators.add(new LineSegment(new Point(xr1, yr1),
+                    OritaCalc.findProjection(t1, new Point(x2, y2)),
                     LineColor.PURPLE_8));
-            indicators.add(new LineSegment(new Point(xr2, yr2), OritaCalc.findProjection(t2, new Point(x2, y2)),
+            indicators.add(new LineSegment(new Point(xr2, yr2),
+                    OritaCalc.findProjection(t2, new Point(x2, y2)),
                     LineColor.PURPLE_8));
         } else if (Math.abs((xp * xp + yp * yp) - (r1 + r2) * (r1 + r2)) < Epsilon.UNKNOWN_1EN7) {// 外接線2本と内接線1本の場合
             double xq1 = r1 * (xp * (r1 - r2) + yp * Math.sqrt((xp * xp + yp * yp) - (r1 - r2) * (r1 - r2)))
@@ -250,9 +260,11 @@ public class MouseHandlerCircleDrawTangentLine extends StepMouseHandler<CircleDr
             StraightLine t1 = new StraightLine(x1, y1, xr1, yr1).orthogonalize(new Point(xr1, yr1));
             StraightLine t2 = new StraightLine(x1, y1, xr2, yr2).orthogonalize(new Point(xr2, yr2));
 
-            indicators.add(new LineSegment(new Point(xr1, yr1), OritaCalc.findProjection(t1, new Point(x2, y2)),
+            indicators.add(new LineSegment(new Point(xr1, yr1),
+                    OritaCalc.findProjection(t1, new Point(x2, y2)),
                     LineColor.PURPLE_8));
-            indicators.add(new LineSegment(new Point(xr2, yr2), OritaCalc.findProjection(t2, new Point(x2, y2)),
+            indicators.add(new LineSegment(new Point(xr2, yr2),
+                    OritaCalc.findProjection(t2, new Point(x2, y2)),
                     LineColor.PURPLE_8));
 
             Point kouten = OritaCalc.internalDivisionRatio(c1, c2, r1, r2);
@@ -296,13 +308,17 @@ public class MouseHandlerCircleDrawTangentLine extends StepMouseHandler<CircleDr
             StraightLine t3 = new StraightLine(x1, y1, xr3, yr3).orthogonalize(new Point(xr3, yr3));
             StraightLine t4 = new StraightLine(x1, y1, xr4, yr4).orthogonalize(new Point(xr4, yr4));
 
-            indicators.add(new LineSegment(new Point(xr1, yr1), OritaCalc.findProjection(t1, new Point(x2, y2)),
+            indicators.add(new LineSegment(new Point(xr1, yr1),
+                    OritaCalc.findProjection(t1, new Point(x2, y2)),
                     LineColor.PURPLE_8));
-            indicators.add(new LineSegment(new Point(xr2, yr2), OritaCalc.findProjection(t2, new Point(x2, y2)),
+            indicators.add(new LineSegment(new Point(xr2, yr2),
+                    OritaCalc.findProjection(t2, new Point(x2, y2)),
                     LineColor.PURPLE_8));
-            indicators.add(new LineSegment(new Point(xr3, yr3), OritaCalc.findProjection(t3, new Point(x2, y2)),
+            indicators.add(new LineSegment(new Point(xr3, yr3),
+                    OritaCalc.findProjection(t3, new Point(x2, y2)),
                     LineColor.PURPLE_8));
-            indicators.add(new LineSegment(new Point(xr4, yr4), OritaCalc.findProjection(t4, new Point(x2, y2)),
+            indicators.add(new LineSegment(new Point(xr4, yr4),
+                    OritaCalc.findProjection(t4, new Point(x2, y2)),
                     LineColor.PURPLE_8));
         }
     }
