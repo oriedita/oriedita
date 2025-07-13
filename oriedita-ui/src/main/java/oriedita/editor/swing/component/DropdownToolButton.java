@@ -21,6 +21,7 @@ public class DropdownToolButton extends JButton {
     private boolean dropdownOpened = false;
 
     private Timer timer;
+    private ActionType cycleAction = null;
 
     public DropdownToolButton() {
         this.addMouseListener(new MouseAdapter() {
@@ -41,6 +42,9 @@ public class DropdownToolButton extends JButton {
                 if (e.getButton() == MouseEvent.BUTTON1 && (isInTriangle(e) )) {
                     e.consume();
                     openDropdown();
+                }
+                if (!isInTriangle(e)) {
+                    cycleAction = activeAction;
                 }
             }
         });
@@ -113,6 +117,7 @@ public class DropdownToolButton extends JButton {
 
     public boolean setActiveAction(int index) {
         if (this.actions.size() > index) {
+            cycleAction = null;
             ActionType oldActiveAction = activeAction;
             activeAction = actions.get(index);
             this.setActionCommand(activeAction.action());
@@ -124,5 +129,25 @@ public class DropdownToolButton extends JButton {
 
     public boolean wasDropdownItemJustSelected() {
         return dropdownOpened && !dropdownMenu.isVisible();
+    }
+
+    public ActionType getCycleAction() {
+        return cycleAction;
+    }
+
+    public void setCycleAction(ActionType cycleAction) {
+        this.cycleAction = cycleAction;
+    }
+
+    public void cycleOrActivate(ActionType action) {
+        if (isSelected() && (getCycleAction() == null || getCycleAction() == action)) {
+            setActiveAction(
+                    (getActions().indexOf(getActiveAction()) + 1)
+                            % getActions().size());
+            setCycleAction(action);
+        } else {
+            setActiveAction(getActions().indexOf(action));
+            setCycleAction(action);
+        }
     }
 }

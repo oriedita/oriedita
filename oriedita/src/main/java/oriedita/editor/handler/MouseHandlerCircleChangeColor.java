@@ -35,14 +35,12 @@ public class MouseHandlerCircleChangeColor extends BaseMouseHandlerBoxSelect {
                 if (rs_min < d.getSelectionDistance()) {//点pに最も近い線分の番号での、その距離を返す	public double mottomo_tikai_senbun_kyori(Ten p)
                     LineSegment closestLineSegment = d.getFoldLineSet().closestLineSegmentSearchReversedOrder(p);
                     if (closestLineSegment.getColor() == LineColor.CYAN_3) {
-                        closestLineSegment.setCustomized(1);
-                        closestLineSegment.setCustomizedColor(d.getCustomCircleColor());
+                        d.getFoldLineSet().setCustomized(closestLineSegment, d.getCustomCircleColor());
                         //en_seiri();kiroku();
                     }
                 }
             } else {
                 if (re_min < d.getSelectionDistance()) {
-                    d.getFoldLineSet().setCircleCustomized(d.getFoldLineSet().closest_circle_search_reverse_order(p), 1);
                     d.getFoldLineSet().setCircleCustomizedColor(d.getFoldLineSet().closest_circle_search_reverse_order(p), d.getCustomCircleColor());
                 }
             }

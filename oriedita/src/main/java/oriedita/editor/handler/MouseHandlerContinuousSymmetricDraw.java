@@ -108,7 +108,6 @@ public class MouseHandlerContinuousSymmetricDraw extends StepMouseHandler<Contin
 
         LineSegment s = new LineSegment(toolbox.getLengthenUntilIntersectionLineSegment_new());
         resultantSegments.add(s);
-        s.setActive(LineSegment.ActiveState.ACTIVE_BOTH_3);
         if (start != null && Epsilon.high.eq0(start.distance(s.getB()))) {
             return;
         }

@@ -177,7 +177,6 @@ public class MouseHandlerAngleSystem extends StepMouseHandler<AngleSystemStep> {
                 } else {
                     e = e.withColor(LineColor.GREEN_6);
                 }
-                e.setActive(LineSegment.ActiveState.ACTIVE_BOTH_3);
                 candidates.add(e);
             }
         } else {
@@ -185,7 +184,6 @@ public class MouseHandlerAngleSystem extends StepMouseHandler<AngleSystemStep> {
 
             for (int i = 0; i < 6; i++) {
                 LineSegment s = OritaCalc.lineSegment_rotate(startingSegment, angles[i], 1.0);
-                s.setActive(LineSegment.ActiveState.ACTIVE_BOTH_3);
                 candidates.add(s.withColor(customAngleColors[i % 3]));
             }
         }

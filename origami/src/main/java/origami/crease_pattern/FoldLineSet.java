@@ -22,11 +22,13 @@ import java.awt.geom.Path2D;
 import java.awt.geom.Line2D;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.stream.Collectors;
 
 /**
  * Representation of the current drawn crease pattern.
@@ -86,7 +88,7 @@ public class FoldLineSet {
         return cAMVViolations;
     }
 
-    public void addLineSegmentForReplace(LineSegment s0){
+    public void addLineSegmentForReplace(LineSegment s0) {
         addLine(s0);//Just add the information of s0 to the end of senbun of foldLineSet
         int total_old = getTotal();
         divideLineSegmentWithNewLines(total_old - 1, total_old);
@@ -152,26 +154,10 @@ public class FoldLineSet {
         lineSegments.set(index, s.withColor(icol));
     }
 
-    public void setCircleCustomized(int i, int customized) {
-        Circle e = circles.get(i);
-        e.setCustomized(customized);
-    }
-
     public void setCircleCustomizedColor(int i, Color c0) {
         Circle e = circles.get(i);
+        e.setCustomized(1);
         e.setCustomizedColor(c0);
-    }
-
-    //Enter the activity of the i-th line segment
-    public void setActive(int i, LineSegment.ActiveState iactive) {
-        LineSegment s = lineSegments.get(i);
-        s.setActive(iactive);
-    }
-
-    //Output the activity of the i-th line segment
-    public LineSegment.ActiveState getActive(int i) {
-        LineSegment s = lineSegments.get(i);
-        return s.getActive();
     }
 
     public void getSave(LineSegmentSave save) {
@@ -198,19 +184,6 @@ public class FoldLineSet {
         }
     }
 
-    //Output the information of all line segments of the line segment set as Memo. // Iactive does not write out the fold line of excluding in the memo
-    public void getMemo_active_excluding(LineSegmentSave save, LineSegment.ActiveState excluding) {
-        for (int i = 1; i <= total; i++) {
-            if (getActive(i) != excluding) {
-                save.addLineSegment(lineSegments.get(i).clone());
-            }
-        }
-
-        for (Circle circle : circles) {
-            save.addCircle(circle);
-        }
-    }
-
     public void h_getSave(LineSegmentSave save) {
         for (int i = 1; i <= total; i++) {
             save.addAuxLineSegment(lineSegments.get(i));
@@ -227,7 +200,7 @@ public class FoldLineSet {
         }
     }
 
-    public boolean isSelectionEmpty(){
+    public boolean isSelectionEmpty() {
         for (int i = 1; i <= total; i++) {
             LineSegment s = lineSegments.get(i);
             if (s.getSelected() == 2) {
@@ -431,18 +404,18 @@ public class FoldLineSet {
         return i_r;
     }
 
-    public boolean insideToReplaceType(Polygon b, CustomLineTypes from, CustomLineTypes to){
+    public boolean insideToReplaceType(Polygon b, CustomLineTypes from, CustomLineTypes to) {
         boolean i_r = false;
         List<LineSegment> reserveAux = new ArrayList<>();
 
-        for (int i = 1; i <= total; i++){
+        for (int i = 1; i <= total; i++) {
             LineSegment s = lineSegments.get(i);
             LineSegment temp = s.clone();
 
-            if(b.totu_boundary_inside(s) && (from.getNumber() != to.getNumber())){
-                switch (from){
+            if (b.totu_boundary_inside(s) && (from.getNumber() != to.getNumber())) {
+                switch (from) {
                     case ANY:
-                        if(s.getColor() == LineColor.CYAN_3) {
+                        if (s.getColor() == LineColor.CYAN_3) {
                             reserveAux.add(s);
                         } else {
                             s = s.withColor(LineColor.fromNumber(to.getNumberForLineColor()));
@@ -469,7 +442,7 @@ public class FoldLineSet {
                         }
                         break;
                     case AUX:
-                        if(s.getColor() == LineColor.fromNumber(from.getNumber() - 1)) {
+                        if (s.getColor() == LineColor.fromNumber(from.getNumber() - 1)) {
                             reserveAux.add(s);
                             i_r = true;
                         }
@@ -477,11 +450,11 @@ public class FoldLineSet {
                     default:
                         break;
                 }
-                if(from != CustomLineTypes.AUX){ // if replace from is not AUX
-                    if(from != CustomLineTypes.ANY){ // if replace from is not ANY
+                if (from != CustomLineTypes.AUX) { // if replace from is not AUX
+                    if (from != CustomLineTypes.ANY) { // if replace from is not ANY
                         lineSegments.set(i, s);
                     } else { // if replace from is ANY & og linetype is not Aux
-                        if(temp.getColor() != LineColor.CYAN_3){
+                        if (temp.getColor() != LineColor.CYAN_3) {
                             lineSegments.set(i, s);
                         }
                     }
@@ -492,17 +465,21 @@ public class FoldLineSet {
         return i_r;
     }
 
-    public boolean insideToDeleteType(Polygon b, CustomLineTypes del){
+    public boolean insideToDeleteType(Polygon b, CustomLineTypes del) {
         boolean i_r = false;
 
         FoldLineSave save = new FoldLineSave();
 
-        for (int i = 1; i <= total; i++){
+        for (Circle circle : circles) {
+            save.addCircle(circle);
+        }
+
+        for (int i = 1; i <= total; i++) {
             LineSegment s = lineSegments.get(i);
 
-            switch (del){
+            switch (del) {
                 case ANY:
-                    if(b.totu_boundary_inside(s)){
+                    if (b.totu_boundary_inside(s)) {
                         i_r = true;
                     } else {
                         save.addLineSegment(s.clone());
@@ -538,7 +515,7 @@ public class FoldLineSet {
                     break;
             }
         }
-        if(i_r){
+        if (i_r) {
             reset();
             setSave(save);
         }
@@ -733,8 +710,7 @@ public class FoldLineSet {
 
             if (p.totu_boundary_inside(s) && (s.getColor() == LineColor.CYAN_3)) {
                 i_r = true;
-                s.setCustomized(1);
-                s.setCustomizedColor(sen_tokutyuu_color);
+                lineSegments.set(i, s.withCustomizedColor(sen_tokutyuu_color));
             }
         }
 
@@ -824,9 +800,6 @@ public class FoldLineSet {
      * the original 1 to originalEnd fold lines.
      */
     public void divideLineSegmentWithNewLines(int originalEnd, int addedEnd) {
-        for (int i = 1; i <= total; i++) {
-            setActive(i, LineSegment.ActiveState.INACTIVE_0);
-        }//削除すべき線は iactive=100とする
         //Logger.info("1234567890   kousabunkatu");
         ArrayList<Integer> k_flg = new ArrayList<>();//交差分割の影響があることを示すフラッグ。
 
@@ -842,11 +815,12 @@ public class FoldLineSet {
 
         // This QuadTree only stores the original lines for better performance.
         QuadTree qt = new QuadTree(new DivideAdapter(lineSegments, originalEnd));
+        Set<Integer> toDelete = new HashSet<>();
 
         for (int i = originalEnd + 1; i <= total; i++) {
             if (k_flg.get(i) == 2) {//k_flg.set(i,new Integer(0));
                 for (int j : qt.collect(new LineSegmentCollector(lineSegments.get(i)))) {
-                    LineSegment.Intersection itemp = divideIntersectionsFast(i, j);//i is the one to add (2), j is the original one (1)
+                    LineSegment.Intersection itemp = divideIntersectionsFast(i, j, toDelete);//i is the one to add (2), j is the original one (1)
                     switch (itemp) {
                         case INTERSECTS_1:
                             k_flg.add(2);
@@ -889,14 +863,16 @@ public class FoldLineSet {
                 }
             }
         }
+        // sort in reverse order so earlier indices being deleted does not change what later indices refer to
+        var sortedIds = toDelete.stream().sorted().collect(Collectors.toList());
+        Collections.reverse(sortedIds);
+        for (int i : sortedIds) {
+            deleteLine(i);
 
-        FoldLineSave memo_temp = new FoldLineSave();
-        getMemo_active_excluding(memo_temp, LineSegment.ActiveState.MARK_FOR_DELETION_100);
-        reset();
-        setSave(memo_temp);
+        }
     }
 
-    public LineSegment.Intersection divideIntersectionsFast(int i, int j) {//i is the one to add (2), j is the original one (1) // = 0 does not intersect
+    public LineSegment.Intersection divideIntersectionsFast(int i, int j, Set<Integer> indicesToDelete) {//i is the one to add (2), j is the original one (1) // = 0 does not intersect
         LineSegment si = lineSegments.get(i);
         LineSegment sj = lineSegments.get(j);
 
@@ -1103,7 +1079,7 @@ public class FoldLineSet {
                         return LineSegment.Intersection.NO_INTERSECTION_0;
                     }//加えるほうiが折線、元からあるほうjが水色線（補助活線）
 
-                    setActive(j, LineSegment.ActiveState.MARK_FOR_DELETION_100);
+                    indicesToDelete.add(j);
                     return LineSegment.Intersection.PARALLEL_EQUAL_31;
 
                 case PARALLEL_START_OF_S1_CONTAINS_START_OF_S2_321: //(p1=p3)_p4_p2、siにsjが含まれる。
@@ -2192,10 +2168,10 @@ public class FoldLineSet {
     }
 
     public void select_lasso(Path2D path, SelectMode selectMode, LassoInteractionMode mode) {
-        for (int i = 1; i <= total; i++){
+        for (int i = 1; i <= total; i++) {
             LineSegment s = lineSegments.get(i);
-            if(selectMode == SelectMode.SELECT && s.getSelected() == 2) continue;
-            if(selectMode == SelectMode.UNSELECT && s.getSelected() == 0) continue;
+            if (selectMode == SelectMode.SELECT && s.getSelected() == 2) continue;
+            if (selectMode == SelectMode.UNSELECT && s.getSelected() == 0) continue;
 
             Line2D s2d = new Line2D.Double(s.determineAX(), s.determineAY(), s.determineBX(), s.determineBY());
 
@@ -2203,9 +2179,9 @@ public class FoldLineSet {
             if (mode == LassoInteractionMode.INTERSECT) isValid = OritaCalc.isLineSegmentIntersectingPath(path, s2d);
             if (mode == LassoInteractionMode.CONTAIN) isValid = OritaCalc.isLineSegmentContainedInPath(path, s2d);
 
-            if(isValid) {
-                if(selectMode == SelectMode.SELECT) s.setSelected(2);
-                if(selectMode == SelectMode.UNSELECT) s.setSelected(0);
+            if (isValid) {
+                if (selectMode == SelectMode.SELECT) s.setSelected(2);
+                if (selectMode == SelectMode.UNSELECT) s.setSelected(0);
             }
         }
     }
@@ -2291,6 +2267,11 @@ public class FoldLineSet {
 
     public Queue<FlatFoldabilityViolation> getViolations() {
         return this.cAMVViolations;
+    }
+
+    public void setCustomized(LineSegment closestLineSegment, Color customCircleColor) {
+        var i = lineSegments.indexOf(closestLineSegment);
+        lineSegments.set(i, closestLineSegment.withCustomizedColor(customCircleColor));
     }
 
     /**

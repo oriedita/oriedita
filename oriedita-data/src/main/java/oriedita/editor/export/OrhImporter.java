@@ -480,31 +480,31 @@ public class OrhImporter implements FileImporter {
                 if (st_new[0].equals("<tpp")) {
                     String[] s_new = st_new[1].split("<", 2);
                     int i_customized = (Integer.parseInt(s_new[0]));
-                    s.setCustomized(i_customized);
+                    //s.setCustomized(i_customized);
                 }
 
                 if (st_new[0].equals("<tpp_color_R")) {
                     String[] s_new = st_new[1].split("<", 2);
                     i_customized_color_R = (Integer.parseInt(s_new[0]));
-                    s.setCustomizedColor(new Color(i_customized_color_R, i_customized_color_G, i_customized_color_B));
+                    s = s.withCustomizedColor(new Color(i_customized_color_R, i_customized_color_G, i_customized_color_B));
                 }
 
                 if (st_new[0].equals("<tpp_color_G")) {
                     String[] s_new = st_new[1].split("<", 2);
                     i_customized_color_G = (Integer.parseInt(s_new[0]));
-                    s.setCustomizedColor(new Color(i_customized_color_R, i_customized_color_G, i_customized_color_B));
+                    s = s.withCustomizedColor(new Color(i_customized_color_R, i_customized_color_G, i_customized_color_B));
                 }
                 if (st_new[0].equals("<tpp_color_B")) {
                     String[] s_new = st_new[1].split("<", 2);
                     i_customized_color_B = (Integer.parseInt(s_new[0]));
-                    s.setCustomizedColor(new Color(i_customized_color_R, i_customized_color_G, i_customized_color_B));
+                    s = s.withCustomizedColor(new Color(i_customized_color_R, i_customized_color_G, i_customized_color_B));
                 }
             }
 
             if ((reading_flag == 1) && (str.equals("iactive"))) {//20181110追加
                 str = tk.nextToken();
                 is = LineSegment.ActiveState.valueOf(str);
-                s.setActive(is);
+                s = s.withActive(is);
             }
 
             if ((reading_flag == 1) && (str.equals("選択"))) {

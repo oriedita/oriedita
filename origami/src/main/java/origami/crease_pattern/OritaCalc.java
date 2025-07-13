@@ -766,13 +766,6 @@ public class OritaCalc {
         return new Point((b1 * c2 - b2 * c1) / (a1 * b2 - a2 * b1), (a2 * c1 - a1 * c2) / (a1 * b2 - a2 * b1));
     }
 
-    //Function to find the intersection of two straight lines (replication)
-    public static Point findIntersection_01(StraightLine t1, StraightLine t2) {
-        double a1 = t1.getA(), b1 = t1.getB(), c1 = t1.getC();//直線t1, a1*x+b1*y+c1=0の各係数を求める。
-        double a2 = t2.getA(), b2 = t2.getB(), c2 = t2.getC();//直線t2, a2*x+b2*y+c2=0の各係数を求める。
-        return new Point((b1 * c2 - b2 * c1) / (a1 * b2 - a2 * b1), (a2 * c1 - a1 * c2) / (a1 * b2 - a2 * b1));
-    }
-
     public static StraightLine lineSegmentToStraightLine(LineSegment s) {//Get a straight line containing a line segment
         return new StraightLine(s.getA(), s.getB());
     }
@@ -873,7 +866,7 @@ public class OritaCalc {
         StraightLine tb = new StraightLine(s.getA(), s.getB()).orthogonalize(s.getB());
         StraightLine td = new StraightLine(s.getA(), s.getB()).translate(d);
 
-        return new LineSegment(findIntersection_01(ta, td), findIntersection_01(tb, td));
+        return new LineSegment(findIntersection(ta, td), findIntersection(tb, td));
     }
 
     //------------------------------------
@@ -1157,10 +1150,10 @@ public class OritaCalc {
         return min_d;
     }
 
-    public static LineSegment bisection(Point t1, Point t2, double d0) {
+    public static LineSegment bisection(Point t1, Point t2, double length) {
         Point tm = new Point((t1.getX() + t2.getX()) / 2.0, (t1.getY() + t2.getY()) / 2.0);
 
-        double bai = d0 / distance(t1, t2);
+        double bai = length / distance(t1, t2);
 
         LineSegment s1 = lineSegment_rotate(new LineSegment(tm, t1), 90.0, bai);
         LineSegment s2 = lineSegment_rotate(new LineSegment(tm, t2), 90.0, bai);

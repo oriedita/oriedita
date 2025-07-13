@@ -30,6 +30,7 @@ import javax.swing.AbstractButton;
 import javax.swing.Action;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -100,7 +101,7 @@ public class ButtonServiceImpl implements ButtonService {
             for (AbstractButton btn : registeredButtons.values()) {
                 if (btn.getAction() instanceof MouseModeAction action) {
                     btn.setSelected(m == action.getMouseMode());
-                } else {
+                } else if (!(btn instanceof JCheckBoxMenuItem) && !(btn instanceof JCheckBox)) {
                     btn.setSelected(false);
                 }
 
@@ -223,6 +224,7 @@ public class ButtonServiceImpl implements ButtonService {
                 setTooltip(newKey);
                 addContextMenu(button, newKey);
                 button.setIcon(glyphIcon);
+                buttonKeys.put(button, newKey);
             });
         }
         KeyStrokeUtil.resetButton(button);
@@ -491,13 +493,16 @@ public class ButtonServiceImpl implements ButtonService {
                                     .findFirst();
                         }
                         if (btn.isPresent()) {
-                            var action = btn.get().getActions().stream()
+                            var button = btn.get();
+                            var action = button.getActions().stream()
                                     .filter(a -> a.action().equals(key))
                                     .findFirst()
                                     .orElseThrow();
-                            btn.get().setActiveAction(btn.get().getActions().indexOf(action));
+                            button.cycleOrActivate(action);
+                            button.doClick();
+                        } else {
+                            tempAction.actionPerformed(e);
                         }
-                        tempAction.actionPerformed(e);
                     }
                 }
             };

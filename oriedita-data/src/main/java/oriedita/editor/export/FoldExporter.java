@@ -9,7 +9,6 @@ import fold.model.FoldFrame;
 import fold.model.Vertex;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import oriedita.editor.databinding.GridModel;
 import oriedita.editor.export.api.FileExporter;
 import oriedita.editor.save.OrieditaFoldFile;
 import oriedita.editor.save.Save;
@@ -30,11 +29,9 @@ import java.util.Optional;
 
 @ApplicationScoped
 public class FoldExporter implements FileExporter {
-    private final GridModel gridModel;
 
     @Inject
-    public FoldExporter(GridModel gridModel) {
-        this.gridModel = gridModel;
+    public FoldExporter() {
     }
 
     private FoldEdgeAssignment getAssignment(LineColor lineColor) {
@@ -125,9 +122,11 @@ public class FoldExporter implements FileExporter {
         foldFile.setTexts(save.getTexts());
         foldFile.setVersion(ResourceUtil.getVersionFromManifest());
         foldFile.setLineColors(lineColors);
-
-        foldFile.setGridStyle(gridModel.getBaseState());
-        foldFile.setGridSize(gridModel.getGridSize());
+        var gridModel = save.getGridModel();
+        if (gridModel != null) {
+            foldFile.setGridStyle(save.getGridModel().getBaseState());
+            foldFile.setGridSize(save.getGridModel().getGridSize());
+        }
         return foldFile;
     }
 

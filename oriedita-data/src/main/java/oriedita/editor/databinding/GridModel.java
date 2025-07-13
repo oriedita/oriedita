@@ -3,7 +3,6 @@ package oriedita.editor.databinding;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import oriedita.editor.AbstractModel;
-import oriedita.editor.service.BindingService;
 import origami.Epsilon;
 
 import java.io.Serializable;
@@ -39,7 +38,7 @@ public class GridModel extends AbstractModel implements Serializable {
         horizontalScalePosition = 0;
         verticalScalePosition = 0;
 
-        intervalGridSize = 5;
+        intervalGridSize = 4;
 
         drawDiagonalGridlines = false;
 
@@ -238,11 +237,7 @@ public class GridModel extends AbstractModel implements Serializable {
             return false;
         }
 
-        if (Math.abs(gridLength) < Epsilon.UNKNOWN_1EN4) {
-            return false;
-        }
-
-        return true;
+        return !(Math.abs(gridLength) < Epsilon.UNKNOWN_1EN4);
     }
 
     public double determineGridXLength() {
