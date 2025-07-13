@@ -73,7 +73,6 @@ public class MouseHandlerContinuousSymmetricDraw extends StepMouseHandler<Contin
         }
     }
     private ContinuousSymmetricDrawStep release_select_p1(Point p) {
-        move_drag_select_p2(p);
         return ContinuousSymmetricDrawStep.SELECT_P2;
     }
 

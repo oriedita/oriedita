@@ -60,7 +60,6 @@ public class MouseHandlerInward extends StepMouseHandler<InwardStep> {
     }
     private InwardStep release_select_point_1(Point p) {
         if(p1 == null) return InwardStep.POINT_1;
-        move_drag_select_point_2(p);
         return InwardStep.POINT_2;
     }
 
@@ -73,7 +72,6 @@ public class MouseHandlerInward extends StepMouseHandler<InwardStep> {
     }
     private InwardStep release_select_point_2(Point p) {
         if(p2 == null) return InwardStep.POINT_2;
-        move_drag_select_point_3(p);
         return InwardStep.POINT_3;
     }
 

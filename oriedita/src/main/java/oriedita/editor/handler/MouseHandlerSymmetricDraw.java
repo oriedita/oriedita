@@ -79,15 +79,12 @@ public class MouseHandlerSymmetricDraw extends StepMouseHandler<SymmetricDrawSte
     private SymmetricDrawStep release_select_2L_or_3P(Point p) {
         if (pointsList_3P.get(counter_3P) != null) {
             counter_3P++;
-            move_drag_select_3P(p);
             return SymmetricDrawStep.SELECT_3P;
         }
         if (segmentsList_2L.get(counter_2L) != null) {
             counter_2L++;
-            move_drag_select_2L(p);
             return SymmetricDrawStep.SELECT_2L;
         }
-        move_drag_select_2L_or_3P(p);
         return SymmetricDrawStep.SELECT_2L_OR_3P;
     }
 

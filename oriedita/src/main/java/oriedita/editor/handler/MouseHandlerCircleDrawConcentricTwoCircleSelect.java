@@ -59,7 +59,6 @@ public class MouseHandlerCircleDrawConcentricTwoCircleSelect extends StepMouseHa
     }
     private CircleDrawConcentricTwoCircleSelectStep release_select_circle_1(Point p) {
         if (circle1 == null) return CircleDrawConcentricTwoCircleSelectStep.SELECT_CIRCLE_1;
-        move_drag_select_circle_2(p);
         return CircleDrawConcentricTwoCircleSelectStep.SELECT_CIRCLE_2;
     }
 

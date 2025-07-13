@@ -68,7 +68,6 @@ public class MouseHandlerAxiom7 extends StepMouseHandler<Axiom7Step>{
     }
     private Axiom7Step release_select_target_point(Point p) {
         if (targetPoint == null) return Axiom7Step.SELECT_TARGET_POINT;
-        move_drag_select_target_segment(p);
         return Axiom7Step.SELECT_TARGET_SEGMENT;
     }
 
@@ -81,7 +80,6 @@ public class MouseHandlerAxiom7 extends StepMouseHandler<Axiom7Step>{
     }
     private Axiom7Step release_select_target_segment(Point p) {
         if (targetSegment == null) return Axiom7Step.SELECT_TARGET_SEGMENT;
-        move_drag_select_perpendicular_segment(p);
         return Axiom7Step.SELECT_PERPENDICULAR_SEGMENT;
     }
 
@@ -95,7 +93,6 @@ public class MouseHandlerAxiom7 extends StepMouseHandler<Axiom7Step>{
     private Axiom7Step release_select_perpendicular_segment(Point p) {
         if (perpendicularSegment == null) return Axiom7Step.SELECT_PERPENDICULAR_SEGMENT;
         drawAxiom7FoldIndicators();
-        move_drag_select_destination_or_indicator(p);
         return Axiom7Step.SELECT_DESTINATION_OR_INDICATOR;
     }
 

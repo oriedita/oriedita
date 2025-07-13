@@ -101,7 +101,6 @@ public class MouseHandlerAngleSystem extends StepMouseHandler<AngleSystemStep> {
             reset();
             return AngleSystemStep.CLICK_DRAG_POINT;
         }
-        move_drag_select_direction(p);
         return AngleSystemStep.SELECT_DIRECTION;
     }
 
@@ -112,7 +111,6 @@ public class MouseHandlerAngleSystem extends StepMouseHandler<AngleSystemStep> {
     private AngleSystemStep release_drag_select_direction(Point p) {
         if (selectedSegment == null) return AngleSystemStep.SELECT_DIRECTION;
         candidates.clear();
-        move_drag_select_length(p);
         return AngleSystemStep.SELECT_LENGTH;
     }
 

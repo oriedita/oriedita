@@ -66,7 +66,6 @@ public class MouseHandlerCircleDrawConcentric extends StepMouseHandler<CircleDra
     }
     private CircleDrawConcentricStep release_select_circle(Point p) {
         if (originalCircle == null) return CircleDrawConcentricStep.SELECT_CIRCLE;
-        move_click_drag_point(p);
         return CircleDrawConcentricStep.CLICK_DRAG_POINT;
     }
 

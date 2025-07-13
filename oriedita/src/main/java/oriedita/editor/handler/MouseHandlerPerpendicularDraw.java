@@ -68,7 +68,6 @@ public class MouseHandlerPerpendicularDraw extends StepMouseHandler<Perpendicula
     }
     private PerpendicularDrawStep release_select_target_point(Point p) {
         if(targetPoint == null) return PerpendicularDrawStep.SELECT_TARGET_POINT;
-        move_drag_select_perpendicular_segment(p);
         return PerpendicularDrawStep.SELECT_PERPENDICULAR_SEGMENT;
     }
 

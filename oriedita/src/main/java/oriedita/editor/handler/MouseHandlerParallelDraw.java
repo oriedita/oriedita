@@ -68,7 +68,6 @@ public class MouseHandlerParallelDraw extends StepMouseHandler<ParallelDrawStep>
     }
     private ParallelDrawStep release_select_target_point(Point p) {
         if (targetPoint == null) return ParallelDrawStep.SELECT_TARGET_POINT;
-        move_select_parallel_segment(p);
         return ParallelDrawStep.SELECT_PARALLEL_SEGMENT;
     }
 
@@ -80,7 +79,6 @@ public class MouseHandlerParallelDraw extends StepMouseHandler<ParallelDrawStep>
     }
     private ParallelDrawStep release_select_parallel_segment(Point p) {
         if (parallelSegment == null) return ParallelDrawStep.SELECT_PARALLEL_SEGMENT;
-        move_select_destination(p);
         return ParallelDrawStep.SELECT_DESTINATION;
     }
 

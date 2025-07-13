@@ -62,7 +62,6 @@ public class MouseHandlerCircleDrawThreePoint extends StepMouseHandler<CircleDra
     }
     private CircleDrawThreePointStep release_select_point_1(Point p) {
         if (p1 == null) return CircleDrawThreePointStep.SELECT_POINT_1;
-        move_drag_select_point_2(p);
         return CircleDrawThreePointStep.SELECT_POINT_2;
     }
 
@@ -75,7 +74,6 @@ public class MouseHandlerCircleDrawThreePoint extends StepMouseHandler<CircleDra
     }
     private CircleDrawThreePointStep release_select_point_2(Point p) {
         if (p2 == null) return CircleDrawThreePointStep.SELECT_POINT_2;
-        move_drag_select_point_3(p);
         return CircleDrawThreePointStep.SELECT_POINT_3;
     }
 

@@ -74,7 +74,6 @@ public class MouseHandlerParallelDrawWidth extends StepMouseHandler<ParallelDraw
     }
     private ParallelDrawWidthStep release_select_segment(Point p) {
         if (selectSegment == null) return ParallelDrawWidthStep.SELECT_SEGMENT;
-        move_click_drag_point(p);
         return ParallelDrawWidthStep.CLICK_DRAG_POINT;
     }
 
@@ -100,7 +99,6 @@ public class MouseHandlerParallelDrawWidth extends StepMouseHandler<ParallelDraw
         dragSegment = dragSegment.withB(releasePoint);
         indicatorList.set(0, OritaCalc.moveParallel(selectSegment, dragSegment.determineLength()).withColor(LineColor.PURPLE_8));
         indicatorList.set(1, OritaCalc.moveParallel(selectSegment, -dragSegment.determineLength()).withColor(LineColor.PURPLE_8));
-        move_drag_select_indicator(p);
         return ParallelDrawWidthStep.SELECT_INDICATOR;
     }
 

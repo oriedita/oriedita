@@ -44,8 +44,8 @@ public class MouseHandlerAxiom5 extends StepMouseHandler<Axiom5Step>{
         super(Axiom5Step.SELECT_TARGET_POINT);
         steps.addNode(StepNode.createNode_MD_R(Axiom5Step.SELECT_TARGET_POINT, this::move_drag_select_target_point, this::release_select_target_point));
         steps.addNode(StepNode.createNode_MD_R(Axiom5Step.SELECT_TARGET_SEGMENT, this::move_drag_select_target_segment , this::release_select_target_segment));
-        steps.addNode(StepNode.createNode_MD_R(Axiom5Step.SELECT_PIVOT_POINT, this::move_drag_select_pivot_point, this::action_select_pivot_point));
-        steps.addNode(StepNode.createNode_MD_R(Axiom5Step.SELECT_DESTINATION_OR_INDICATOR, this::move_drag_select_destination_or_indicator, this::action_select_destination_or_indicator));
+        steps.addNode(StepNode.createNode_MD_R(Axiom5Step.SELECT_PIVOT_POINT, this::move_drag_select_pivot_point, this::release_select_pivot_point));
+        steps.addNode(StepNode.createNode_MD_R(Axiom5Step.SELECT_DESTINATION_OR_INDICATOR, this::move_drag_select_destination_or_indicator, this::release_select_destination_or_indicator));
     }
 
     @Override
@@ -79,7 +79,6 @@ public class MouseHandlerAxiom5 extends StepMouseHandler<Axiom5Step>{
     }
     private Axiom5Step release_select_target_point(Point p) {
         if (targetPoint == null) return Axiom5Step.SELECT_TARGET_POINT;
-        move_drag_select_target_segment(p);
         return Axiom5Step.SELECT_TARGET_SEGMENT;
     }
 
@@ -91,7 +90,6 @@ public class MouseHandlerAxiom5 extends StepMouseHandler<Axiom5Step>{
     }
     private Axiom5Step release_select_target_segment(Point p) {
         if (targetSegment == null) return Axiom5Step.SELECT_TARGET_SEGMENT;
-        move_drag_select_pivot_point(p);
         return Axiom5Step.SELECT_PIVOT_POINT;
     }
 
@@ -103,11 +101,10 @@ public class MouseHandlerAxiom5 extends StepMouseHandler<Axiom5Step>{
             pivotPoint = d.getClosestPoint(p);
         } else pivotPoint = null;
     }
-    private Axiom5Step action_select_pivot_point(Point p) {
+    private Axiom5Step release_select_pivot_point(Point p) {
         if (pivotPoint == null) return Axiom5Step.SELECT_PIVOT_POINT;
         double radius = OritaCalc.distance(targetPoint, pivotPoint);
         drawAxiom5FoldIndicators(radius);
-        move_drag_select_destination_or_indicator(p);
         return Axiom5Step.SELECT_DESTINATION_OR_INDICATOR;
     }
 
@@ -134,7 +131,7 @@ public class MouseHandlerAxiom5 extends StepMouseHandler<Axiom5Step>{
             destinationSegment = d.getClosestLineSegment(p).withColor(LineColor.ORANGE_4);
         } else destinationSegment = null;
     }
-    private Axiom5Step action_select_destination_or_indicator(Point p) {
+    private Axiom5Step release_select_destination_or_indicator(Point p) {
         if (OritaCalc.determineLineSegmentDistance(p, indicator1) < d.getSelectionDistance() ||
                 OritaCalc.determineLineSegmentDistance(p, indicator2) < d.getSelectionDistance()) {
             LineSegment s = OritaCalc.determineLineSegmentDistance(p, indicator1) < OritaCalc.determineLineSegmentDistance(p, indicator2)
