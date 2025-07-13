@@ -14,99 +14,99 @@ import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 
 enum CircleDrawSeparateStep {
-	SELECT_POINT,
-	CLICK_DRAG_POINT,
+    SELECT_POINT,
+    CLICK_DRAG_POINT,
 }
 
 @ApplicationScoped
 @Handles(MouseMode.CIRCLE_DRAW_SEPARATE_44)
 public class MouseHandlerCircleDrawSeparate extends StepMouseHandler<CircleDrawSeparateStep> {
-	@Inject
-	private CanvasModel canvasModel;
+    @Inject
+    private CanvasModel canvasModel;
 
-	private Point centerPoint, anchorPoint, releasePoint;
-	private LineSegment previewSegment;
-	private Circle previewCircle;
+    private Point centerPoint, anchorPoint, releasePoint;
+    private LineSegment previewSegment;
+    private Circle previewCircle;
 
-	@Inject
-	public MouseHandlerCircleDrawSeparate() {
-		super(CircleDrawSeparateStep.SELECT_POINT);
-		steps.addNode(StepNode.createNode_MD_R(CircleDrawSeparateStep.SELECT_POINT,
-				this::move_drag_select_point, this::release_select_point));
-		steps.addNode(StepNode.createNode(CircleDrawSeparateStep.CLICK_DRAG_POINT, this::move_click_drag_point,
-				(p) -> {
-				}, this::drag_click_drag_point, this::release_click_drag_point));
-	}
+    @Inject
+    public MouseHandlerCircleDrawSeparate() {
+        super(CircleDrawSeparateStep.SELECT_POINT);
+        steps.addNode(StepNode.createNode_MD_R(CircleDrawSeparateStep.SELECT_POINT,
+                this::move_drag_select_point, this::release_select_point));
+        steps.addNode(StepNode.createNode(CircleDrawSeparateStep.CLICK_DRAG_POINT, this::move_click_drag_point,
+                (p) -> {
+                }, this::drag_click_drag_point, this::release_click_drag_point));
+    }
 
-	@Override
-	public void drawPreview(Graphics2D g2, Camera camera, DrawingSettings settings) {
-		super.drawPreview(g2, camera, settings);
-		DrawingUtil.drawStepVertex(g2, centerPoint, LineColor.CYAN_3, camera, d.getGridInputAssist());
-		DrawingUtil.drawStepVertex(g2, anchorPoint, LineColor.CYAN_3, camera, d.getGridInputAssist());
-		DrawingUtil.drawStepVertex(g2, releasePoint, LineColor.CYAN_3, camera, d.getGridInputAssist());
-		DrawingUtil.drawLineStep(g2, previewSegment, camera, settings.getLineWidth(), d.getGridInputAssist());
-		DrawingUtil.drawCircleStep(g2, previewCircle, camera);
-	}
+    @Override
+    public void drawPreview(Graphics2D g2, Camera camera, DrawingSettings settings) {
+        super.drawPreview(g2, camera, settings);
+        DrawingUtil.drawStepVertex(g2, centerPoint, LineColor.CYAN_3, camera, d.getGridInputAssist());
+        DrawingUtil.drawStepVertex(g2, anchorPoint, LineColor.CYAN_3, camera, d.getGridInputAssist());
+        DrawingUtil.drawStepVertex(g2, releasePoint, LineColor.CYAN_3, camera, d.getGridInputAssist());
+        DrawingUtil.drawLineStep(g2, previewSegment, camera, settings.getLineWidth(), d.getGridInputAssist());
+        DrawingUtil.drawCircleStep(g2, previewCircle, camera);
+    }
 
-	@Override
-	public void reset() {
-		centerPoint = null;
-		anchorPoint = null;
-		releasePoint = null;
-		previewSegment = null;
-		previewCircle = null;
-		move_drag_select_point(canvasModel.getMouseObjPosition());
-		steps.setCurrentStep(CircleDrawSeparateStep.SELECT_POINT);
-	}
+    @Override
+    public void reset() {
+        centerPoint = null;
+        anchorPoint = null;
+        releasePoint = null;
+        previewSegment = null;
+        previewCircle = null;
+        move_drag_select_point(canvasModel.getMouseObjPosition());
+        steps.setCurrentStep(CircleDrawSeparateStep.SELECT_POINT);
+    }
 
-	// Select point for new circle center
-	private void move_drag_select_point(Point p) {
-		Point tmpPoint = d.getClosestPoint(p);
-		if (p.distance(tmpPoint) < d.getSelectionDistance()) {
-			centerPoint = new Point(tmpPoint);
-		} else
-			centerPoint = null;
-	}
+    // Select point for new circle center
+    private void move_drag_select_point(Point p) {
+        Point tmpPoint = d.getClosestPoint(p);
+        if (p.distance(tmpPoint) < d.getSelectionDistance()) {
+            centerPoint = new Point(tmpPoint);
+        } else
+            centerPoint = null;
+    }
 
-	private CircleDrawSeparateStep release_select_point(Point p) {
-		if (centerPoint == null)
-			return CircleDrawSeparateStep.SELECT_POINT;
-		return CircleDrawSeparateStep.CLICK_DRAG_POINT;
-	}
+    private CircleDrawSeparateStep release_select_point(Point p) {
+        if (centerPoint == null)
+            return CircleDrawSeparateStep.SELECT_POINT;
+        return CircleDrawSeparateStep.CLICK_DRAG_POINT;
+    }
 
-	// Click drag point to draw the offset line
-	private void move_click_drag_point(Point p) {
-		Point tmpPoint = d.getClosestPoint(p);
-		if (p.distance(tmpPoint) < d.getSelectionDistance()) {
-			anchorPoint = new Point(tmpPoint);
-		} else
-			anchorPoint = null;
-	}
+    // Click drag point to draw the offset line
+    private void move_click_drag_point(Point p) {
+        Point tmpPoint = d.getClosestPoint(p);
+        if (p.distance(tmpPoint) < d.getSelectionDistance()) {
+            anchorPoint = new Point(tmpPoint);
+        } else
+            anchorPoint = null;
+    }
 
-	private void drag_click_drag_point(Point p) {
-		if (anchorPoint == null)
-			return;
+    private void drag_click_drag_point(Point p) {
+        if (anchorPoint == null)
+            return;
 
-		Point tmpPoint = d.getClosestPoint(p);
-		releasePoint = p;
-		if (p.distance(tmpPoint) < d.getSelectionDistance()) {
-			releasePoint = new Point(tmpPoint);
-		}
+        Point tmpPoint = d.getClosestPoint(p);
+        releasePoint = p;
+        if (p.distance(tmpPoint) < d.getSelectionDistance()) {
+            releasePoint = new Point(tmpPoint);
+        }
 
-		if (releasePoint == null)
-			return;
+        if (releasePoint == null)
+            return;
 
-		previewSegment = new LineSegment(anchorPoint, releasePoint, LineColor.CYAN_3);
-		previewCircle = new Circle(centerPoint, anchorPoint.distance(releasePoint), LineColor.CYAN_3);
-	}
+        previewSegment = new LineSegment(anchorPoint, releasePoint, LineColor.CYAN_3);
+        previewCircle = new Circle(centerPoint, anchorPoint.distance(releasePoint), LineColor.CYAN_3);
+    }
 
-	private CircleDrawSeparateStep release_click_drag_point(Point p) {
-		if (anchorPoint == null || releasePoint == null)
-			return CircleDrawSeparateStep.CLICK_DRAG_POINT;
+    private CircleDrawSeparateStep release_click_drag_point(Point p) {
+        if (anchorPoint == null || releasePoint == null)
+            return CircleDrawSeparateStep.CLICK_DRAG_POINT;
 
-		d.addCircle(previewCircle);
-		d.record();
-		reset();
-		return CircleDrawSeparateStep.SELECT_POINT;
-	}
+        d.addCircle(previewCircle);
+        d.record();
+        reset();
+        return CircleDrawSeparateStep.SELECT_POINT;
+    }
 }
