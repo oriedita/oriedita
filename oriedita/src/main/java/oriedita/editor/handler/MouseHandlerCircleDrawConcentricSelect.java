@@ -34,9 +34,12 @@ public class MouseHandlerCircleDrawConcentricSelect extends StepMouseHandler<Cir
     @Inject
     public MouseHandlerCircleDrawConcentricSelect() {
         super(CircleDrawConcentricSelect.SELECT_TARGET_CIRCLE);
-        steps.addNode(StepNode.createNode_MD_R(CircleDrawConcentricSelect.SELECT_TARGET_CIRCLE, this::move_drag_select_target_circle, this::release_select_target_circle));
-        steps.addNode(StepNode.createNode_MD_R(CircleDrawConcentricSelect.SELECT_TWO_CIRCLES, this::move_drag_select_two_circles, this::release_select_two_circle));
-        steps.addNode(StepNode.createNode_MD_R(CircleDrawConcentricSelect.SELECT_INDICATOR, this::move_drag_select_indicator, this::release_select_indicator));
+        steps.addNode(StepNode.createNode_MD_R(CircleDrawConcentricSelect.SELECT_TARGET_CIRCLE,
+                this::move_drag_select_target_circle, this::release_select_target_circle));
+        steps.addNode(StepNode.createNode_MD_R(CircleDrawConcentricSelect.SELECT_TWO_CIRCLES,
+                this::move_drag_select_two_circles, this::release_select_two_circle));
+        steps.addNode(StepNode.createNode_MD_R(CircleDrawConcentricSelect.SELECT_INDICATOR,
+                this::move_drag_select_indicator, this::release_select_indicator));
     }
 
     @Override
@@ -68,10 +71,13 @@ public class MouseHandlerCircleDrawConcentricSelect extends StepMouseHandler<Cir
         Circle tmpCircle = d.getClosestCircleMidpoint(p);
         if (OritaCalc.distance_circumference(p, tmpCircle) < d.getSelectionDistance()) {
             targetCircle = new Circle(tmpCircle.determineCenter(), tmpCircle.getR(), LineColor.GREEN_6);
-        } else targetCircle = null;
+        } else
+            targetCircle = null;
     }
-    private CircleDrawConcentricSelect release_select_target_circle (Point p) {
-        if (targetCircle == null) return CircleDrawConcentricSelect.SELECT_TARGET_CIRCLE;
+
+    private CircleDrawConcentricSelect release_select_target_circle(Point p) {
+        if (targetCircle == null)
+            return CircleDrawConcentricSelect.SELECT_TARGET_CIRCLE;
         return CircleDrawConcentricSelect.SELECT_TWO_CIRCLES;
     }
 
@@ -81,22 +87,28 @@ public class MouseHandlerCircleDrawConcentricSelect extends StepMouseHandler<Cir
         if (!tmpCircle.equals(targetCircle) && refCount == 0) {
             if (OritaCalc.distance_circumference(p, tmpCircle) < d.getSelectionDistance()) {
                 circle1 = new Circle(tmpCircle.determineCenter(), tmpCircle.getR(), LineColor.GREEN_6);
-            } else circle1 = null;
+            } else
+                circle1 = null;
         }
-        if (refCount != 1) return;
+        if (refCount != 1)
+            return;
         if (OritaCalc.distance_circumference(p, tmpCircle) < d.getSelectionDistance()
                 && !tmpCircle.equals(circle1)
                 && !tmpCircle.equals(targetCircle)) {
             circle2 = new Circle(tmpCircle.determineCenter(), tmpCircle.getR(), LineColor.GREEN_6);
-        } else circle2 = null;
+        } else
+            circle2 = null;
     }
+
     private CircleDrawConcentricSelect release_select_two_circle(Point p) {
-        if (circle1 == null) return CircleDrawConcentricSelect.SELECT_TWO_CIRCLES;
+        if (circle1 == null)
+            return CircleDrawConcentricSelect.SELECT_TWO_CIRCLES;
         if (refCount == 0) {
             refCount++;
             return CircleDrawConcentricSelect.SELECT_TWO_CIRCLES;
         }
-        if (circle2 == null) return CircleDrawConcentricSelect.SELECT_TWO_CIRCLES;
+        if (circle2 == null)
+            return CircleDrawConcentricSelect.SELECT_TWO_CIRCLES;
 
         double delta_r = Math.abs(circle2.getR() - circle1.getR());
         if (!Epsilon.high.eq0(delta_r)) {
@@ -115,13 +127,16 @@ public class MouseHandlerCircleDrawConcentricSelect extends StepMouseHandler<Cir
     }
 
     // Select indicator
-    private void move_drag_select_indicator (Point p) {
+    private void move_drag_select_indicator(Point p) {
         resultCircle = getValidClosestIndicator(p, Arrays.asList(indicator1, indicator2));
-        if (resultCircle == null) return;
+        if (resultCircle == null)
+            return;
         resultCircle.setColor(LineColor.ORANGE_4);
     }
+
     private CircleDrawConcentricSelect release_select_indicator(Point p) {
-        if (resultCircle == null) return CircleDrawConcentricSelect.SELECT_INDICATOR;
+        if (resultCircle == null)
+            return CircleDrawConcentricSelect.SELECT_INDICATOR;
         resultCircle.setColor(LineColor.CYAN_3);
         d.addCircle(resultCircle);
         d.record();
@@ -138,7 +153,8 @@ public class MouseHandlerCircleDrawConcentricSelect extends StepMouseHandler<Cir
             double sumRadii = d.getSelectionDistance() + circle.getR();
             double diffRadii = Math.abs(d.getSelectionDistance() - circle.getR());
 
-            if (!(dist <= sumRadii && dist >= diffRadii)) continue;
+            if (!(dist <= sumRadii && dist >= diffRadii))
+                continue;
 
             double edgeToCenter = Math.abs(dist - circle.getR());
             if (edgeToCenter < minEdgeToCenter) {
