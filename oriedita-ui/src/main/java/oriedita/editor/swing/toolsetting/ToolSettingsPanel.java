@@ -62,18 +62,19 @@ public class ToolSettingsPanel {
             }
             setData(canvasModel);
         });
-
-        mouseHandlerUiInstances.handlesStream()
-                .filter(h ->
-                        h.getBean().getQualifiers().stream()
-                                .anyMatch(a -> a.annotationType() == UiFor.class))
-                .forEach(h -> {
-                    var ui = h.get();
-                    settingsPanel.add(ui.$$$getRootComponent$$$());
-                    ui.$$$getRootComponent$$$().setVisible(true);
-                    ui.init();
-                    mouseHandlerUis.put(ui.getSettingGroup(), ui);
-                });
+        synchronized (mouseHandlerUis) {
+            mouseHandlerUiInstances.handlesStream()
+                    .filter(h ->
+                            h.getBean().getQualifiers().stream()
+                                    .anyMatch(a -> a.annotationType() == UiFor.class))
+                    .forEach(h -> {
+                        var ui = h.get();
+                        settingsPanel.add(ui.$$$getRootComponent$$$());
+                        ui.$$$getRootComponent$$$().setVisible(true);
+                        ui.init();
+                        mouseHandlerUis.put(ui.getSettingGroup(), ui);
+                    });
+        }
         settingsPanel.revalidate();
         root.revalidate();
         root.validate();
@@ -81,9 +82,11 @@ public class ToolSettingsPanel {
     }
 
     private void setData(CanvasModel data) {
-        mouseHandlerUis.values().forEach(h -> h.$$$getRootComponent$$$().setVisible(false));
+        synchronized (mouseHandlerUis) {
+            mouseHandlerUis.values().forEach(h -> h.$$$getRootComponent$$$().setVisible(false));
+        }
         var anyVisible = false;
-        for (MouseHandlerSettingGroup setting : handlers.get(canvasModel.getMouseMode()).getSettings()) {
+        for (MouseHandlerSettingGroup setting : handlers.get(data.getMouseMode()).getSettings()) {
             if (!mouseHandlerUis.containsKey(setting)) {
                 continue;
             }
@@ -94,7 +97,7 @@ public class ToolSettingsPanel {
                 .stream()
                 .filter(a -> a.getValue() instanceof MouseModeAction)
                 .map(a -> Map.entry(a.getKey(), (MouseModeAction) a.getValue()))
-                .filter(a -> a.getValue().getMouseMode() == canvasModel.getMouseMode())
+                .filter(a -> a.getValue().getMouseMode() == data.getMouseMode())
                 .findFirst();
         if (action.isPresent()) {
             buttonService.setIcon(toolIcon, action.get().getKey().action());
@@ -105,7 +108,7 @@ public class ToolSettingsPanel {
         $$$getRootComponent$$$().revalidate();
         $$$getRootComponent$$$().validate();
         $$$getRootComponent$$$().repaint();
-        canvasModel.setToolSettingsPanelHeight(anyVisible ? settingsPanel.getHeight() : 0);
+        data.setToolSettingsPanelHeight(anyVisible ? settingsPanel.getHeight() : 0);
     }
 
     {
