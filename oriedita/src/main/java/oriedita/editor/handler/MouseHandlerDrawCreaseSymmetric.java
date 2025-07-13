@@ -2,80 +2,120 @@ package oriedita.editor.handler;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.inject.Named;
-import oriedita.editor.canvas.CreasePattern_Worker;
+
+import java.awt.Graphics2D;
+
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.databinding.CanvasModel;
-import origami.Epsilon;
+import oriedita.editor.drawing.tools.Camera;
+import oriedita.editor.drawing.tools.DrawingUtil;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 
+enum DrawCreaseSymmetricStep {
+	SELECT_2P_OR_LINE,
+	SELECT_2P,
+}
+
 @ApplicationScoped
 @Handles(MouseMode.DRAW_CREASE_SYMMETRIC_12)
-public class MouseHandlerDrawCreaseSymmetric extends BaseMouseHandlerInputRestricted {
-    private final CreasePattern_Worker d;
-    private final CanvasModel canvasModel;
+public class MouseHandlerDrawCreaseSymmetric extends StepMouseHandler<DrawCreaseSymmetricStep> {
+	@Inject
+	private CanvasModel canvasModel;
 
-    @Inject
-    public MouseHandlerDrawCreaseSymmetric(@Named("mainCreasePattern_Worker") CreasePattern_Worker d, CanvasModel canvasModel) {
-        this.d = d;
-        this.canvasModel = canvasModel;
-    }
+	Point point1, point2;
+	LineSegment segment;
 
-    //マウス操作(mouseMode==12鏡映モード　でボタンを押したとき)時の作業----------------------------------------------------
-    public void mousePressed(Point p0) {
-        Point p = d.getCamera().TV2object(p0);
+	@Inject
+	public MouseHandlerDrawCreaseSymmetric() {
+		super(DrawCreaseSymmetricStep.SELECT_2P_OR_LINE);
+		steps.addNode(StepNode.createNode_MD_R(DrawCreaseSymmetricStep.SELECT_2P_OR_LINE,
+				this::move_drag_select_2p_or_line, this::release_select_2p_or_line));
+		steps.addNode(StepNode.createNode_MD_R(DrawCreaseSymmetricStep.SELECT_2P,
+				this::move_drag_select_2p, this::release_select_2p));
+	}
 
-        if (d.getLineStep().isEmpty()) {    //第1段階として、点を選択
-            Point closest_point = d.getClosestPoint(p);
-            if (p.distance(closest_point) < d.getSelectionDistance()) {
-                d.lineStepAdd(new LineSegment(closest_point, closest_point, LineColor.MAGENTA_5));
-            }
-        } else if (d.getLineStep().size() == 1) {    //第2段階として、点を選択
-            Point closest_point = d.getClosestPoint(p);
-            if (p.distance(closest_point) < d.getSelectionDistance()) {
-                d.lineStepAdd(new LineSegment(closest_point, closest_point, LineColor.fromNumber(d.getLineStep().size() + 1)));
-                d.getLineStep().set(0, d.getLineStep().get(0).withB(d.getLineStep().get(1).getB()));
-            } else {
-                d.getLineStep().clear();
-                canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.NORMAL_0);//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
-                return;
-            }
+	@Override
+	public void drawPreview(Graphics2D g2, Camera camera, DrawingSettings settings) {
+		DrawingUtil.drawStepVertex(g2, point1, d.getLineColor(), camera, d.getGridInputAssist());
+		DrawingUtil.drawStepVertex(g2, point2, d.getLineColor(), camera, d.getGridInputAssist());
+		DrawingUtil.drawLineStep(g2, segment, camera, settings.getLineWidth(), d.getGridInputAssist());
+	}
 
-            if (Epsilon.high.le0(d.getLineStep().get(0).determineLength())) {
-                d.getLineStep().clear();
-                canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.NORMAL_0);//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
-            }
-        }
-    }
+	@Override
+	public void reset() {
+		point1 = null;
+		point2 = null;
+		segment = null;
+		move_drag_select_2p_or_line(canvasModel.getMouseObjPosition());
+		steps.setCurrentStep(DrawCreaseSymmetricStep.SELECT_2P_OR_LINE);
+	}
 
-    //マウス操作(mouseMode==12鏡映モード　でドラッグしたとき)を行う関数----------------------------------------------------
-    public void mouseDragged(Point p0) {
-    }
+	// Select 2 points of a line or line segment itself
+	private void move_drag_select_2p_or_line(Point p) {
+		LineSegment tmpSegment = d.getClosestLineSegment(p);
+		if (OritaCalc.determineLineSegmentDistance(p, tmpSegment) < d.getSelectionDistance()) {
+			segment = new LineSegment(tmpSegment, LineColor.GREEN_6);
+		} else
+			segment = null;
 
-    //マウス操作(mouseMode==12鏡映モード　でボタンを離したとき)を行う関数----------------------------------------------------
-    public void mouseReleased(Point p0) {
-        if (d.getLineStep().size() == 2) {
-            canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.NORMAL_0);//  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
-            int old_sousuu = d.getFoldLineSet().getTotal();
+		Point tmpPoint = d.getClosestPoint(p);
+		if (p.distance(tmpPoint) < d.getSelectionDistance()) {
+			segment = null;
+			point1 = new Point(tmpPoint);
+		} else
+			point1 = null;
+	}
 
-            for (var s : d.getFoldLineSet().getLineSegmentsCollection()) {
-                if (s.getSelected() == 2) {
-                    LineSegment adds = OritaCalc.findLineSymmetryLineSegment(s, d.getLineStep().get(0))
-                            .withColor(s.getColor());
-                    d.getFoldLineSet().addLine(adds);
-                }
-            }
+	private DrawCreaseSymmetricStep release_select_2p_or_line(Point p) {
+		if (point1 == null && segment == null)
+			return DrawCreaseSymmetricStep.SELECT_2P_OR_LINE;
+		if (point1 != null)
+			return DrawCreaseSymmetricStep.SELECT_2P;
 
-            int new_sousuu = d.getFoldLineSet().getTotal();
+		mirrorSelections(segment);
+		reset();
+		return DrawCreaseSymmetricStep.SELECT_2P_OR_LINE;
+	}
 
-            d.getFoldLineSet().divideLineSegmentWithNewLines(old_sousuu, new_sousuu);
+	// Select another point
+	private void move_drag_select_2p(Point p) {
+		Point tmpPoint = d.getClosestPoint(p);
+		if (p.distance(tmpPoint) < d.getSelectionDistance()) {
+			segment = null;
+			point2 = new Point(tmpPoint);
+		} else
+			point2 = null;
+	}
 
-            d.record();
-            d.unselect_all(false);
-            d.getLineStep().clear();
-        }
-    }
+	private DrawCreaseSymmetricStep release_select_2p(Point p) {
+		if (point2 == null)
+			return DrawCreaseSymmetricStep.SELECT_2P;
+		mirrorSelections(new LineSegment(point1, point2));
+		reset();
+		return DrawCreaseSymmetricStep.SELECT_2P_OR_LINE;
+	}
+
+	private void mirrorSelections(LineSegment segment) {
+		canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.NORMAL_0);
+		int old_sousuu = d.getFoldLineSet().getTotal();
+
+		for (var s : d.getFoldLineSet().getLineSegmentsCollection()) {
+			if (s.getSelected() == 2) {
+				LineSegment adds = OritaCalc
+						.findLineSymmetryLineSegment(s, segment)
+						.withColor(s.getColor());
+				d.getFoldLineSet().addLine(adds);
+			}
+		}
+
+		int new_sousuu = d.getFoldLineSet().getTotal();
+
+		d.getFoldLineSet().divideLineSegmentWithNewLines(old_sousuu, new_sousuu);
+
+		d.record();
+		d.unselect_all(false);
+	}
 }
