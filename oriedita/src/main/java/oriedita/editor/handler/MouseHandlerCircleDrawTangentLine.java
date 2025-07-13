@@ -164,9 +164,6 @@ public class MouseHandlerCircleDrawTangentLine extends StepMouseHandler<CircleDr
         if (resultSegment == null)
             return CircleDrawTangentLineStep.SELECT_INDICATOR;
 
-        resultSegment = OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), resultSegment);
-        resultSegment = new LineSegment(resultSegment.getB(), resultSegment.getA());
-        resultSegment = OritaCalc.fullExtendUntilHit(d.getFoldLineSet(), resultSegment);
         d.addLineSegment(new LineSegment(resultSegment, d.getLineColor()));
         d.record();
         reset();
