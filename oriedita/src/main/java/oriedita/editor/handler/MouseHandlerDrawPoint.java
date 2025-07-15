@@ -3,7 +3,6 @@ package oriedita.editor.handler;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
-import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
 import origami.crease_pattern.OritaCalc;
@@ -22,9 +21,6 @@ public class MouseHandlerDrawPoint extends StepMouseHandler<DrawPointStep> {
     private Point targetPoint;
 
     @Inject
-    private CanvasModel canvasModel;
-
-    @Inject
     public MouseHandlerDrawPoint() {
         super(DrawPointStep.SELECT_POINT);
         steps.addNode(StepNode.createNode_MD_R(DrawPointStep.SELECT_POINT, this::move_drag_select_point,
@@ -39,9 +35,8 @@ public class MouseHandlerDrawPoint extends StepMouseHandler<DrawPointStep> {
 
     @Override
     public void reset() {
+        resetStep();
         targetPoint = null;
-        move_drag_select_point(canvasModel.getMouseObjPosition());
-        steps.setCurrentStep(DrawPointStep.SELECT_POINT);
     }
 
     // Click drag point

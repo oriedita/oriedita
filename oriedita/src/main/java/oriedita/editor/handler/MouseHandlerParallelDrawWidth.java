@@ -3,7 +3,6 @@ package oriedita.editor.handler;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
-import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
 import origami.crease_pattern.OritaCalc;
@@ -32,14 +31,14 @@ public class MouseHandlerParallelDrawWidth extends StepMouseHandler<ParallelDraw
     private LineSegment selectIndicatorSegment;
 
     @Inject
-    private CanvasModel canvasModel;
-
-    @Inject
     public MouseHandlerParallelDrawWidth() {
         super(ParallelDrawWidthStep.SELECT_SEGMENT);
-        steps.addNode(StepNode.createNode_MD_R(ParallelDrawWidthStep.SELECT_SEGMENT, this::move_drag_select_segment, this::release_select_segment));
-        steps.addNode(StepNode.createNode(ParallelDrawWidthStep.CLICK_DRAG_POINT, this::move_click_drag_point, (p) -> {}, this::drag_click_drag_point, this::release_click_drag_point));
-        steps.addNode(StepNode.createNode_MD_R(ParallelDrawWidthStep.SELECT_INDICATOR, this::move_drag_select_indicator, this::release_select_indicator));
+        steps.addNode(StepNode.createNode_MD_R(ParallelDrawWidthStep.SELECT_SEGMENT, this::move_drag_select_segment,
+                this::release_select_segment));
+        steps.addNode(StepNode.createNode(ParallelDrawWidthStep.CLICK_DRAG_POINT, this::move_click_drag_point, (p) -> {
+        }, this::drag_click_drag_point, this::release_click_drag_point));
+        steps.addNode(StepNode.createNode_MD_R(ParallelDrawWidthStep.SELECT_INDICATOR, this::move_drag_select_indicator,
+                this::release_select_indicator));
     }
 
     @Override
@@ -51,29 +50,31 @@ public class MouseHandlerParallelDrawWidth extends StepMouseHandler<ParallelDraw
         DrawingUtil.drawLineStep(g2, dragSegment, camera, settings.getLineWidth(), d.getGridInputAssist());
         DrawingUtil.drawLineStep(g2, indicatorList.get(0), camera, settings.getLineWidth(), d.getGridInputAssist());
         DrawingUtil.drawLineStep(g2, indicatorList.get(1), camera, settings.getLineWidth(), d.getGridInputAssist());
-        DrawingUtil.drawLineStep(g2,selectIndicatorSegment, camera, settings.getLineWidth(), d.getGridInputAssist());
+        DrawingUtil.drawLineStep(g2, selectIndicatorSegment, camera, settings.getLineWidth(), d.getGridInputAssist());
     }
 
     @Override
     public void reset() {
+        resetStep();
         selectSegment = null;
         anchorPoint = null;
         releasePoint = null;
         dragSegment = null;
         indicatorList = Arrays.asList(null, null);
         selectIndicatorSegment = null;
-        move_drag_select_segment(canvasModel.getMouseObjPosition());
-        steps.setCurrentStep(ParallelDrawWidthStep.SELECT_SEGMENT);
     }
 
     // Select segment
     private void move_drag_select_segment(Point p) {
         if (OritaCalc.determineLineSegmentDistance(p, d.getClosestLineSegment(p)) < d.getSelectionDistance()) {
             selectSegment = d.getClosestLineSegment(p).withColor(LineColor.GREEN_6);
-        } else selectSegment = null;
+        } else
+            selectSegment = null;
     }
+
     private ParallelDrawWidthStep release_select_segment(Point p) {
-        if (selectSegment == null) return ParallelDrawWidthStep.SELECT_SEGMENT;
+        if (selectSegment == null)
+            return ParallelDrawWidthStep.SELECT_SEGMENT;
         return ParallelDrawWidthStep.CLICK_DRAG_POINT;
     }
 
@@ -81,24 +82,32 @@ public class MouseHandlerParallelDrawWidth extends StepMouseHandler<ParallelDraw
     private void move_click_drag_point(Point p) {
         if (p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
             anchorPoint = d.getClosestPoint(p);
-        } else anchorPoint = null;
+        } else
+            anchorPoint = null;
     }
+
     private void drag_click_drag_point(Point p) {
-        if(anchorPoint == null) return;
+        if (anchorPoint == null)
+            return;
         releasePoint = p;
-        if(p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
+        if (p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
             releasePoint = d.getClosestPoint(p);
         }
         dragSegment = new LineSegment(anchorPoint, releasePoint).withColor(LineColor.CYAN_3);
-        indicatorList.set(0, OritaCalc.moveParallel(selectSegment, dragSegment.determineLength()).withColor(LineColor.PURPLE_8));
-        indicatorList.set(1, OritaCalc.moveParallel(selectSegment, -dragSegment.determineLength()).withColor(LineColor.PURPLE_8));
+        indicatorList.set(0,
+                OritaCalc.moveParallel(selectSegment, dragSegment.determineLength()).withColor(LineColor.PURPLE_8));
+        indicatorList.set(1,
+                OritaCalc.moveParallel(selectSegment, -dragSegment.determineLength()).withColor(LineColor.PURPLE_8));
     }
+
     private ParallelDrawWidthStep release_click_drag_point(Point p) {
-        if(anchorPoint == null || releasePoint == null) return ParallelDrawWidthStep.CLICK_DRAG_POINT;
-        if(releasePoint.distance(d.getClosestPoint(releasePoint)) > d.getSelectionDistance()) return ParallelDrawWidthStep.CLICK_DRAG_POINT;
+        if (anchorPoint == null || releasePoint == null)
+            return ParallelDrawWidthStep.CLICK_DRAG_POINT;
         dragSegment = dragSegment.withB(releasePoint);
-        indicatorList.set(0, OritaCalc.moveParallel(selectSegment, dragSegment.determineLength()).withColor(LineColor.PURPLE_8));
-        indicatorList.set(1, OritaCalc.moveParallel(selectSegment, -dragSegment.determineLength()).withColor(LineColor.PURPLE_8));
+        indicatorList.set(0,
+                OritaCalc.moveParallel(selectSegment, dragSegment.determineLength()).withColor(LineColor.PURPLE_8));
+        indicatorList.set(1,
+                OritaCalc.moveParallel(selectSegment, -dragSegment.determineLength()).withColor(LineColor.PURPLE_8));
         return ParallelDrawWidthStep.SELECT_INDICATOR;
     }
 
@@ -111,10 +120,13 @@ public class MouseHandlerParallelDrawWidth extends StepMouseHandler<ParallelDraw
             selectIndicatorSegment = indicatorList.get(0).withColor(LineColor.ORANGE_4);
         } else if (indicator2Distance < indicator1Distance && indicator2Distance < d.getSelectionDistance()) {
             selectIndicatorSegment = indicatorList.get(1).withColor(LineColor.ORANGE_4);
-        } else selectIndicatorSegment = null;
+        } else
+            selectIndicatorSegment = null;
     }
+
     private ParallelDrawWidthStep release_select_indicator(Point p) {
-        if (selectIndicatorSegment == null) return ParallelDrawWidthStep.SELECT_INDICATOR;
+        if (selectIndicatorSegment == null)
+            return ParallelDrawWidthStep.SELECT_INDICATOR;
         d.addLineSegment(selectIndicatorSegment.withColor(d.getLineColor()));
         d.record();
         reset();

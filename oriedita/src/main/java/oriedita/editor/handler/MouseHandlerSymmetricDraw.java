@@ -3,7 +3,6 @@ package oriedita.editor.handler;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
-import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
 import origami.Epsilon;
@@ -31,34 +30,34 @@ public class MouseHandlerSymmetricDraw extends StepMouseHandler<SymmetricDrawSte
     private List<LineSegment> segmentsList_2L = Arrays.asList(null, null);
 
     @Inject
-    private CanvasModel canvasModel;
-
-    @Inject
     public MouseHandlerSymmetricDraw() {
         super(SymmetricDrawStep.SELECT_2L_OR_3P);
-        steps.addNode(StepNode.createNode_MD_R(SymmetricDrawStep.SELECT_2L_OR_3P, this::move_drag_select_2L_or_3P, this::release_select_2L_or_3P));
-        steps.addNode(StepNode.createNode_MD_R(SymmetricDrawStep.SELECT_3P, this::move_drag_select_3P, this::release_select_3P));
-        steps.addNode(StepNode.createNode_MD_R(SymmetricDrawStep.SELECT_2L, this::move_drag_select_2L, this::release_select_2L));
+        steps.addNode(StepNode.createNode_MD_R(SymmetricDrawStep.SELECT_2L_OR_3P, this::move_drag_select_2L_or_3P,
+                this::release_select_2L_or_3P));
+        steps.addNode(StepNode.createNode_MD_R(SymmetricDrawStep.SELECT_3P, this::move_drag_select_3P,
+                this::release_select_3P));
+        steps.addNode(StepNode.createNode_MD_R(SymmetricDrawStep.SELECT_2L, this::move_drag_select_2L,
+                this::release_select_2L));
     }
 
     @Override
     public void drawPreview(Graphics2D g2, Camera camera, DrawingSettings settings) {
         super.drawPreview(g2, camera, settings);
-        DrawingUtil.drawStepVertex(g2, pointsList_3P.get(0), d.getLineColor(), camera, d.getGridInputAssist());
-        DrawingUtil.drawStepVertex(g2, pointsList_3P.get(1), d.getLineColor(), camera, d.getGridInputAssist());
-        DrawingUtil.drawStepVertex(g2, pointsList_3P.get(2), d.getLineColor(), camera, d.getGridInputAssist());
-        DrawingUtil.drawLineStep(g2, segmentsList_2L.get(0), camera, settings.getLineWidth(), d.getGridInputAssist());
-        DrawingUtil.drawLineStep(g2, segmentsList_2L.get(1), camera, settings.getLineWidth(), d.getGridInputAssist());
+        for (Point p : pointsList_3P) {
+            DrawingUtil.drawStepVertex(g2, p, d.getLineColor(), camera, d.getGridInputAssist());
+        }
+        for (LineSegment segment : segmentsList_2L) {
+            DrawingUtil.drawLineStep(g2, segment, camera, settings.getLineWidth(), d.getGridInputAssist());
+        }
     }
 
     @Override
     public void reset() {
+        resetStep();
         counter_3P = 0;
         counter_2L = 0;
         pointsList_3P = Arrays.asList(null, null, null);
         segmentsList_2L = Arrays.asList(null, null);
-        move_drag_select_2L_or_3P(canvasModel.getMouseObjPosition());
-        steps.setCurrentStep(SymmetricDrawStep.SELECT_2L_OR_3P);
     }
 
     // Select 2 lines or 3 points
@@ -70,12 +69,15 @@ public class MouseHandlerSymmetricDraw extends StepMouseHandler<SymmetricDrawSte
 
         if (isPointInRadius) {
             pointsList_3P.set(counter_3P, d.getClosestPoint(p));
-        } else pointsList_3P.set(counter_3P, null);
+        } else
+            pointsList_3P.set(counter_3P, null);
 
         if (!isPointInRadius && isSegmentInRadius) {
             segmentsList_2L.set(counter_2L, d.getClosestLineSegment(p).withColor(LineColor.GREEN_6));
-        } else segmentsList_2L.set(counter_2L, null);
+        } else
+            segmentsList_2L.set(counter_2L, null);
     }
+
     private SymmetricDrawStep release_select_2L_or_3P(Point p) {
         if (pointsList_3P.get(counter_3P) != null) {
             counter_3P++;
@@ -92,13 +94,18 @@ public class MouseHandlerSymmetricDraw extends StepMouseHandler<SymmetricDrawSte
     private void move_drag_select_3P(Point p) {
         if (p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
             pointsList_3P.set(counter_3P, d.getClosestPoint(p));
-        } else pointsList_3P.set(counter_3P, null);
+        } else
+            pointsList_3P.set(counter_3P, null);
     }
+
     private SymmetricDrawStep release_select_3P(Point p) {
-        if(pointsList_3P.get(counter_3P) == null) return SymmetricDrawStep.SELECT_3P;
+        if (pointsList_3P.get(counter_3P) == null)
+            return SymmetricDrawStep.SELECT_3P;
         counter_3P++;
-        if (counter_3P < 3) return SymmetricDrawStep.SELECT_3P;
-        if(OritaCalc.isPointWithinLineSpan(pointsList_3P.get(0), new LineSegment(pointsList_3P.get(1), pointsList_3P.get(2)))) {
+        if (counter_3P < 3)
+            return SymmetricDrawStep.SELECT_3P;
+        if (OritaCalc.isPointWithinLineSpan(pointsList_3P.get(0),
+                new LineSegment(pointsList_3P.get(1), pointsList_3P.get(2)))) {
             reset();
             return SymmetricDrawStep.SELECT_2L_OR_3P;
         }
@@ -110,25 +117,31 @@ public class MouseHandlerSymmetricDraw extends StepMouseHandler<SymmetricDrawSte
     // Select 2 lines
     private void move_drag_select_2L(Point p) {
         if (OritaCalc.determineLineSegmentDistance(p, d.getClosestLineSegment(p)) < d.getSelectionDistance()) {
-            if(counter_2L == 0) {
+            if (counter_2L == 0) {
                 segmentsList_2L.set(counter_2L, d.getClosestLineSegment(p).withColor(LineColor.GREEN_6));
             } else {
-                if(OritaCalc.isLineSegmentParallel(segmentsList_2L.get(0), d.getClosestLineSegment(p)) == OritaCalc.ParallelJudgement.NOT_PARALLEL) {
+                if (OritaCalc.isLineSegmentParallel(segmentsList_2L.get(0),
+                        d.getClosestLineSegment(p)) == OritaCalc.ParallelJudgement.NOT_PARALLEL) {
                     segmentsList_2L.set(counter_2L, d.getClosestLineSegment(p).withColor(LineColor.GREEN_6));
                 }
             }
-        } else segmentsList_2L.set(counter_2L, null);
+        } else
+            segmentsList_2L.set(counter_2L, null);
     }
+
     private SymmetricDrawStep release_select_2L(Point p) {
-        if(segmentsList_2L.get(counter_2L) == null) return SymmetricDrawStep.SELECT_2L;
+        if (segmentsList_2L.get(counter_2L) == null)
+            return SymmetricDrawStep.SELECT_2L;
         counter_2L++;
-        if (counter_2L < 2) return SymmetricDrawStep.SELECT_2L;
+        if (counter_2L < 2)
+            return SymmetricDrawStep.SELECT_2L;
         return reflectLine(segmentsList_2L.get(0), segmentsList_2L.get(1), steps.getCurrentStep());
     }
 
     private SymmetricDrawStep reflectLine(LineSegment s1, LineSegment s2, SymmetricDrawStep step) {
         Point cross = OritaCalc.findIntersection(s1, s2);
-        Point t_taisyou = OritaCalc.findLineSymmetryPoint(cross, s2.determineFurthestEndpoint(cross), s1.determineFurthestEndpoint(cross));
+        Point t_taisyou = OritaCalc.findLineSymmetryPoint(cross, s2.determineFurthestEndpoint(cross),
+                s1.determineFurthestEndpoint(cross));
         LineSegment add_sen = new LineSegment(cross, t_taisyou);
         add_sen = d.extendToIntersectionPoint(add_sen);
         add_sen = add_sen.withColor(d.getLineColor());

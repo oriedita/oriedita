@@ -4,7 +4,6 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.databinding.AngleSystemModel;
-import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
 import origami.Epsilon;
@@ -30,7 +29,7 @@ enum AngleSystemStep {
 @Handles(MouseMode.ANGLE_SYSTEM_16)
 public class MouseHandlerAngleSystem extends StepMouseHandler<AngleSystemStep> {
     private final AngleSystemModel angleSystemModel;
-    LineColor[] customAngleColors = new LineColor[]{
+    LineColor[] customAngleColors = new LineColor[] {
             LineColor.ORANGE_4,
             LineColor.GREEN_6,
             LineColor.PURPLE_8
@@ -41,14 +40,14 @@ public class MouseHandlerAngleSystem extends StepMouseHandler<AngleSystemStep> {
     List<LineSegment> candidates = new ArrayList<>();
 
     @Inject
-    private CanvasModel canvasModel;
-
-    @Inject
     public MouseHandlerAngleSystem(AngleSystemModel angleSystemModel) {
         super(AngleSystemStep.CLICK_DRAG_POINT);
-        steps.addNode(StepNode.createNode(AngleSystemStep.CLICK_DRAG_POINT, this::move_click_drag_point, (p) -> {}, this::drag_click_drag_point, this::release_click_drag_point));
-        steps.addNode(StepNode.createNode_MD_R(AngleSystemStep.SELECT_DIRECTION, this::move_drag_select_direction, this::release_drag_select_direction));
-        steps.addNode(StepNode.createNode_MD_R(AngleSystemStep.SELECT_LENGTH, this::move_drag_select_length, this::release_select_length));
+        steps.addNode(StepNode.createNode(AngleSystemStep.CLICK_DRAG_POINT, this::move_click_drag_point, (p) -> {
+        }, this::drag_click_drag_point, this::release_click_drag_point));
+        steps.addNode(StepNode.createNode_MD_R(AngleSystemStep.SELECT_DIRECTION, this::move_drag_select_direction,
+                this::release_drag_select_direction));
+        steps.addNode(StepNode.createNode_MD_R(AngleSystemStep.SELECT_LENGTH, this::move_drag_select_length,
+                this::release_select_length));
         this.angleSystemModel = angleSystemModel;
     }
 
@@ -71,33 +70,36 @@ public class MouseHandlerAngleSystem extends StepMouseHandler<AngleSystemStep> {
 
     @Override
     public void reset() {
+        resetStep();
         anchorPoint = null;
         releasePoint = null;
         selectedSegment = null;
         destinationSegment = null;
         candidates.clear();
-        move_click_drag_point(canvasModel.getMouseObjPosition());
-        steps.setCurrentStep(AngleSystemStep.CLICK_DRAG_POINT);
     }
 
     // Click drag point
     private void move_click_drag_point(Point p) {
-        if(p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
+        if (p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
             anchorPoint = d.getClosestPoint(p);
-        } else anchorPoint = null;
+        } else
+            anchorPoint = null;
     }
+
     private void drag_click_drag_point(Point p) {
-        if(anchorPoint == null) return;
+        if (anchorPoint == null)
+            return;
 
         releasePoint = p;
-        if(p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
+        if (p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
             releasePoint = d.getClosestPoint(p);
         }
 
         candidates = makePreviewLines(anchorPoint, releasePoint);
     }
+
     private AngleSystemStep release_click_drag_point(Point p) {
-        if(p == null || anchorPoint == null || releasePoint == null || anchorPoint.equals(releasePoint)) {
+        if (p == null || anchorPoint == null || releasePoint == null || anchorPoint.equals(releasePoint)) {
             reset();
             return AngleSystemStep.CLICK_DRAG_POINT;
         }
@@ -108,8 +110,10 @@ public class MouseHandlerAngleSystem extends StepMouseHandler<AngleSystemStep> {
     private void move_drag_select_direction(Point p) {
         selectedSegment = determineSelectedCandidate(p);
     }
+
     private AngleSystemStep release_drag_select_direction(Point p) {
-        if (selectedSegment == null) return AngleSystemStep.SELECT_DIRECTION;
+        if (selectedSegment == null)
+            return AngleSystemStep.SELECT_DIRECTION;
         candidates.clear();
         return AngleSystemStep.SELECT_LENGTH;
     }
@@ -120,10 +124,13 @@ public class MouseHandlerAngleSystem extends StepMouseHandler<AngleSystemStep> {
 
         if (OritaCalc.determineLineSegmentDistance(p, d.getClosestLineSegment(p)) < d.getSelectionDistance()) {
             destinationSegment = d.getClosestLineSegment(p).withColor(LineColor.ORANGE_4);
-        } else destinationSegment = null;
+        } else
+            destinationSegment = null;
     }
-    private AngleSystemStep release_select_length (Point p) {
-        if(destinationSegment == null) return AngleSystemStep.SELECT_LENGTH;
+
+    private AngleSystemStep release_select_length(Point p) {
+        if (destinationSegment == null)
+            return AngleSystemStep.SELECT_LENGTH;
         LineSegment add_sen = determineLineSegmentToAdd(p);
 
         if (add_sen != null && Epsilon.high.gt0(add_sen.determineLength())) {
@@ -158,14 +165,15 @@ public class MouseHandlerAngleSystem extends StepMouseHandler<AngleSystemStep> {
 
     private List<LineSegment> makePreviewLines(Point pStart, Point pEnd) {
         List<LineSegment> candidates = new ArrayList<>();
-        int numPreviewLines;//1つの端点周りに描く線の本数
+        int numPreviewLines;// 1つの端点周りに描く線の本数
         if (angleSystemModel.getCurrentAngleSystemDivider() != 0) {
             numPreviewLines = angleSystemModel.getCurrentAngleSystemDivider() * 2 - 1;
         } else {
             numPreviewLines = 6;
         }
 
-        //線分abをaを中心にd度回転した線分を返す関数（元の線分は変えずに新しい線分を返す）public oc.Senbun_kaiten(Senbun s0,double d)
+        // 線分abをaを中心にd度回転した線分を返す関数（元の線分は変えずに新しい線分を返す）public oc.Senbun_kaiten(Senbun
+        // s0,double d)
 
         LineSegment startingSegment = new LineSegment(pEnd, pStart, LineColor.GREEN_6);
         candidates.add(startingSegment);

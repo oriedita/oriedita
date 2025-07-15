@@ -3,7 +3,6 @@ package oriedita.editor.handler;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
-import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
 import origami.Epsilon;
@@ -25,9 +24,6 @@ enum CircleDrawConcentricSelect {
 @ApplicationScoped
 @Handles(MouseMode.CIRCLE_DRAW_CONCENTRIC_SELECT_49)
 public class MouseHandlerCircleDrawConcentricSelect extends StepMouseHandler<CircleDrawConcentricSelect> {
-    @Inject
-    private CanvasModel canvasModel;
-
     private Circle targetCircle, circle1, circle2, indicator1, indicator2, resultCircle;
     private int refCount = 0;
 
@@ -55,6 +51,7 @@ public class MouseHandlerCircleDrawConcentricSelect extends StepMouseHandler<Cir
 
     @Override
     public void reset() {
+        resetStep();
         targetCircle = null;
         circle1 = null;
         circle2 = null;
@@ -62,8 +59,6 @@ public class MouseHandlerCircleDrawConcentricSelect extends StepMouseHandler<Cir
         indicator2 = null;
         resultCircle = null;
         refCount = 0;
-        move_drag_select_target_circle(canvasModel.getMouseObjPosition());
-        steps.setCurrentStep(CircleDrawConcentricSelect.SELECT_TARGET_CIRCLE);
     }
 
     // Select target circle

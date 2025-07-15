@@ -4,7 +4,6 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.databinding.AngleSystemModel;
-import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
 import oriedita.editor.tools.SnappingUtil;
@@ -16,7 +15,9 @@ import origami.crease_pattern.element.Point;
 import java.awt.Graphics2D;
 import java.util.EnumSet;
 
-enum DrawDeg5ActionStep { CLICK_DRAG_POINT }
+enum DrawDeg5ActionStep {
+    CLICK_DRAG_POINT
+}
 
 @ApplicationScoped
 @Handles(MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_5_37)
@@ -28,8 +29,6 @@ public class MouseHandlerDrawCreaseAngleRestricted5 extends StepMouseHandler<Dra
 
     @Inject
     private AngleSystemModel angleSystemModel;
-    @Inject
-    private CanvasModel canvasModel;
 
     private Point anchorPoint, releasePoint;
     private LineSegment dragSegment;
@@ -37,7 +36,8 @@ public class MouseHandlerDrawCreaseAngleRestricted5 extends StepMouseHandler<Dra
     @Inject
     public MouseHandlerDrawCreaseAngleRestricted5() {
         super(DrawDeg5ActionStep.CLICK_DRAG_POINT);
-        steps.addNode(StepNode.createNode(DrawDeg5ActionStep.CLICK_DRAG_POINT, this::move_click_drag_point, (p) -> {}, this::drag_click_drag_point, this::release_click_drag_point));
+        steps.addNode(StepNode.createNode(DrawDeg5ActionStep.CLICK_DRAG_POINT, this::move_click_drag_point, (p) -> {
+        }, this::drag_click_drag_point, this::release_click_drag_point));
     }
 
     @Override
@@ -50,25 +50,27 @@ public class MouseHandlerDrawCreaseAngleRestricted5 extends StepMouseHandler<Dra
 
     @Override
     public void reset() {
+        resetStep();
         anchorPoint = null;
         releasePoint = null;
         dragSegment = null;
-        move_click_drag_point(canvasModel.getMouseObjPosition());
-        steps.setCurrentStep(DrawDeg5ActionStep.CLICK_DRAG_POINT);
     }
 
     // Click drag point
     private void move_click_drag_point(Point p) {
         anchorPoint = p;
-        if(p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
+        if (p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
             anchorPoint = d.getClosestPoint(p);
         }
     }
+
     private void drag_click_drag_point(Point p) {
-        if (anchorPoint == null) return;
+        if (anchorPoint == null)
+            return;
         releasePoint = kouho_point_A_37(syuusei_point_A_37(p));
         dragSegment = new LineSegment(anchorPoint, releasePoint).withColor(d.getLineColor());
     }
+
     private DrawDeg5ActionStep release_click_drag_point(Point p) {
         if (anchorPoint == null
                 || dragSegment == null
@@ -82,7 +84,8 @@ public class MouseHandlerDrawCreaseAngleRestricted5 extends StepMouseHandler<Dra
     }
 
     public Point syuusei_point_A_37(Point p) {
-        return SnappingUtil.snapToActiveAngleSystem(d, anchorPoint, p, angleSystemModel.getCurrentAngleSystemDivider(), angleSystemModel.getAngles());
+        return SnappingUtil.snapToActiveAngleSystem(d, anchorPoint, p, angleSystemModel.getCurrentAngleSystemDivider(),
+                angleSystemModel.getAngles());
     }
 
     // ---
@@ -92,7 +95,7 @@ public class MouseHandlerDrawCreaseAngleRestricted5 extends StepMouseHandler<Dra
         boolean zure_flg = (Epsilon.UNKNOWN_1EN5 < zure_kakudo) && (zure_kakudo <= 360.0 - Epsilon.UNKNOWN_1EN5);
         if (zure_flg || (syuusei_point.distance(closestPoint) > d.getSelectionDistance())) {
             return syuusei_point;
-        } else {//最寄点が角度系にのっていて、修正点とも近い場合
+        } else {// 最寄点が角度系にのっていて、修正点とも近い場合
             return closestPoint;
         }
     }

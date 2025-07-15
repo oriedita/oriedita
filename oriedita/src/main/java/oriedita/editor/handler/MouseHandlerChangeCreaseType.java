@@ -5,7 +5,6 @@ import java.awt.Graphics2D;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
-import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
 import origami.crease_pattern.OritaCalc;
@@ -20,9 +19,6 @@ enum ChangeCreaseTypeStep {
 @ApplicationScoped
 @Handles(MouseMode.CHANGE_CREASE_TYPE_4)
 public class MouseHandlerChangeCreaseType extends StepMouseHandler<ChangeCreaseTypeStep> {
-    @Inject
-    private CanvasModel canvasModel;
-
     private LineSegment segment;
 
     @Inject
@@ -40,9 +36,8 @@ public class MouseHandlerChangeCreaseType extends StepMouseHandler<ChangeCreaseT
 
     @Override
     public void reset() {
+        resetStep();
         segment = null;
-        move_drag_select_segment(canvasModel.getMouseObjPosition());
-        steps.setCurrentStep(ChangeCreaseTypeStep.SELECT_SEGMENT);
     }
 
     // Select a segment

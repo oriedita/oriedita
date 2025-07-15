@@ -6,7 +6,6 @@ import jakarta.inject.Named;
 import org.tinylog.Logger;
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.canvas.MouseMode;
-import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
 import origami.Epsilon;
@@ -38,15 +37,14 @@ public class MouseHandlerContinuousSymmetricDraw extends StepMouseHandler<Contin
     private List<LineSegment> resultantSegments = new ArrayList<>();
 
     @Inject
-    private CanvasModel canvasModel;
-
-    @Inject
     public MouseHandlerContinuousSymmetricDraw(@Named("mainCreasePattern_Worker") CreasePattern_Worker d) {
         super(ContinuousSymmetricDrawStep.SELECT_P1);
         this.d = d;
         toolbox = new CreasePattern_Worker_Toolbox(d.getFoldLineSet());
-        steps.addNode(StepNode.createNode_MD_R(ContinuousSymmetricDrawStep.SELECT_P1, this::move_drag_select_p1, this::release_select_p1));
-        steps.addNode(StepNode.createNode_MD_R(ContinuousSymmetricDrawStep.SELECT_P2, this::move_drag_select_p2, this::release_select_p2));
+        steps.addNode(StepNode.createNode_MD_R(ContinuousSymmetricDrawStep.SELECT_P1, this::move_drag_select_p1,
+                this::release_select_p1));
+        steps.addNode(StepNode.createNode_MD_R(ContinuousSymmetricDrawStep.SELECT_P2, this::move_drag_select_p2,
+                this::release_select_p2));
     }
 
     @Override
@@ -58,10 +56,10 @@ public class MouseHandlerContinuousSymmetricDraw extends StepMouseHandler<Contin
 
     @Override
     public void reset() {
+        resetStep();
         p1 = null;
         p2 = null;
         resultantSegments = new ArrayList<>();
-        move_drag_select_p1(canvasModel.getMouseObjPosition());
         this.toolbox = new CreasePattern_Worker_Toolbox(d.getFoldLineSet());
     }
 
@@ -72,6 +70,7 @@ public class MouseHandlerContinuousSymmetricDraw extends StepMouseHandler<Contin
             p1 = d.getClosestPoint(p);
         }
     }
+
     private ContinuousSymmetricDrawStep release_select_p1(Point p) {
         return ContinuousSymmetricDrawStep.SELECT_P2;
     }
@@ -83,6 +82,7 @@ public class MouseHandlerContinuousSymmetricDraw extends StepMouseHandler<Contin
             p2 = d.getClosestPoint(p);
         }
     }
+
     private ContinuousSymmetricDrawStep release_select_p2(Point p) {
         continuous_folding_new(p1, p2, null);
 
@@ -97,18 +97,18 @@ public class MouseHandlerContinuousSymmetricDraw extends StepMouseHandler<Contin
         reset();
         return ContinuousSymmetricDrawStep.SELECT_P1;
     }
-    //An improved version of continuous folding.
+
+    // An improved version of continuous folding.
     public void continuous_folding_new(Point a, Point b, Point start) {
-        //ベクトルab(=s0)を点aからb方向に、最初に他の折線(直線に含まれる線分は無視。)と交差するところまで延長する
+        // ベクトルab(=s0)を点aからb方向に、最初に他の折線(直線に含まれる線分は無視。)と交差するところまで延長する
 
-        //与えられたベクトルabを延長して、それと重ならない折線との、最も近い交点までs_stepとする。
-        //補助活線は無視する
-        //与えられたベクトルabを延長して、それと重ならない折線との、最も近い交点までs_stepとする
+        // 与えられたベクトルabを延長して、それと重ならない折線との、最も近い交点までs_stepとする。
+        // 補助活線は無視する
+        // 与えられたベクトルabを延長して、それと重ならない折線との、最も近い交点までs_stepとする
 
+        // 「再帰関数における、種の発芽」交点がない場合「種」が成長せずリターン。
 
-        //「再帰関数における、種の発芽」交点がない場合「種」が成長せずリターン。
-
-        toolbox.lengthenUntilIntersectionCalculateDisregardIncludedLineSegment_new(a, b);//一番近い交差点を見つけて各種情報を記録
+        toolbox.lengthenUntilIntersectionCalculateDisregardIncludedLineSegment_new(a, b);// 一番近い交差点を見つけて各種情報を記録
         if (toolbox.getLengthenUntilIntersectionFlg_new() == StraightLine.Intersection.NONE_0) {
             return;
         }
@@ -128,37 +128,45 @@ public class MouseHandlerContinuousSymmetricDraw extends StepMouseHandler<Contin
 
         Logger.info("20201129 saiki repaint ");
 
-        //「再帰関数における、種の生成」求めた最も近い交点から次のベクトル（＝次の再帰関数に渡す「種」）を発生する。最も近い交点が折線とＸ字型に交差している点か頂点かで、種のでき方が異なる。
+        // 「再帰関数における、種の生成」求めた最も近い交点から次のベクトル（＝次の再帰関数に渡す「種」）を発生する。最も近い交点が折線とＸ字型に交差している点か頂点かで、種のでき方が異なる。
 
-        //最も近い交点が折線とＸ字型の場合無条件に種を生成し、散布。
+        // 最も近い交点が折線とＸ字型の場合無条件に種を生成し、散布。
         if (toolbox.getLengthenUntilIntersectionFlg_new() == StraightLine.Intersection.INTERSECT_X_1) {
             LineSegment kousaten_made_nobasi_saisyono_lineSegment = new LineSegment(
                     toolbox.getLengthenUntilIntersectionFirstLineSegment_new());
-            Point new_a = toolbox.getLengthenUntilIntersectionPoint_new();//Ten new_aは最も近い交点
-            Point new_b = OritaCalc.findLineSymmetryPoint(kousaten_made_nobasi_saisyono_lineSegment.getA(), kousaten_made_nobasi_saisyono_lineSegment.getB(), a);//２つの点t1,t2を通る直線に関して、点pの対照位置にある点を求める public Ten oc.sentaisyou_ten_motome(Ten t1,Ten t2,Ten p){
+            Point new_a = toolbox.getLengthenUntilIntersectionPoint_new();// Ten new_aは最も近い交点
+            Point new_b = OritaCalc.findLineSymmetryPoint(kousaten_made_nobasi_saisyono_lineSegment.getA(),
+                    kousaten_made_nobasi_saisyono_lineSegment.getB(), a);// ２つの点t1,t2を通る直線に関して、点pの対照位置にある点を求める public
+                                                                         // Ten oc.sentaisyou_ten_motome(Ten t1,Ten
+                                                                         // t2,Ten p){
 
-            continuous_folding_new(new_a, new_b, start);//種の散布
+            continuous_folding_new(new_a, new_b, start);// 種の散布
             return;
         }
 
-        //最も近い交点が頂点（折線端末）の場合、頂点に集まる折線の数で条件分けして、種を生成し散布、
+        // 最も近い交点が頂点（折線端末）の場合、頂点に集まる折線の数で条件分けして、種を生成し散布、
         if ((toolbox.getLengthenUntilIntersectionFlg_new() == StraightLine.Intersection.INTERSECT_T_A_21)
-                || (toolbox.getLengthenUntilIntersectionFlg_new() == StraightLine.Intersection.INTERSECT_T_B_22)) {//Logger.info("20201129 21 or 22");
+                || (toolbox.getLengthenUntilIntersectionFlg_new() == StraightLine.Intersection.INTERSECT_T_B_22)) {// Logger.info("20201129
+                                                                                                                   // 21
+                                                                                                                   // or
+                                                                                                                   // 22");
 
             StraightLine tyoku1 = new StraightLine(a, b);
             StraightLine.Intersection intersection;
 
             SortingBox<LineSegment> t_m_s_nbox = new SortingBox<>();
 
-            t_m_s_nbox.set(d.getFoldLineSet().get_SortingBox_of_vertex_b_surrounding_foldLine(toolbox.getLengthenUntilIntersectionLineSegment_new().getA(), toolbox.getLengthenUntilIntersectionLineSegment_new().getB()));
+            t_m_s_nbox.set(d.getFoldLineSet().get_SortingBox_of_vertex_b_surrounding_foldLine(
+                    toolbox.getLengthenUntilIntersectionLineSegment_new().getA(),
+                    toolbox.getLengthenUntilIntersectionLineSegment_new().getB()));
 
             if (t_m_s_nbox.getTotal() == 2) {
-                intersection = tyoku1.lineSegment_intersect_reverse_detail(t_m_s_nbox.getValue(1));//0=この直線は与えられた線分と交差しない、1=X型で交差する、2=T型で交差する、3=線分は直線に含まれる。
+                intersection = tyoku1.lineSegment_intersect_reverse_detail(t_m_s_nbox.getValue(1));// 0=この直線は与えられた線分と交差しない、1=X型で交差する、2=T型で交差する、3=線分は直線に含まれる。
                 if (intersection == StraightLine.Intersection.INCLUDED_3) {
                     return;
                 }
 
-                intersection = tyoku1.lineSegment_intersect_reverse_detail(t_m_s_nbox.getValue(2));//0=この直線は与えられた線分と交差しない、1=X型で交差する、2=T型で交差する、3=線分は直線に含まれる。
+                intersection = tyoku1.lineSegment_intersect_reverse_detail(t_m_s_nbox.getValue(2));// 0=この直線は与えられた線分と交差しない、1=X型で交差する、2=T型で交差する、3=線分は直線に含まれる。
                 if (intersection == StraightLine.Intersection.INCLUDED_3) {
                     return;
                 }
@@ -169,18 +177,21 @@ public class MouseHandlerContinuousSymmetricDraw extends StepMouseHandler<Contin
                     LineSegment kousaten_made_nobasi_saisyono_lineSegment = new LineSegment(
                             toolbox.getLengthenUntilIntersectionFirstLineSegment_new());
 
-                    Point new_a = toolbox.getLengthenUntilIntersectionPoint_new();//Ten new_aは最も近い交点
-                    Point new_b = OritaCalc.findLineSymmetryPoint(kousaten_made_nobasi_saisyono_lineSegment.getA(), kousaten_made_nobasi_saisyono_lineSegment.getB(), a);//２つの点t1,t2を通る直線に関して、点pの対照位置にある点を求める public Ten oc.sentaisyou_ten_motome(Ten t1,Ten t2,Ten p){
+                    Point new_a = toolbox.getLengthenUntilIntersectionPoint_new();// Ten new_aは最も近い交点
+                    Point new_b = OritaCalc.findLineSymmetryPoint(kousaten_made_nobasi_saisyono_lineSegment.getA(),
+                            kousaten_made_nobasi_saisyono_lineSegment.getB(), a);// ２つの点t1,t2を通る直線に関して、点pの対照位置にある点を求める
+                                                                                 // public Ten
+                                                                                 // oc.sentaisyou_ten_motome(Ten t1,Ten
+                                                                                 // t2,Ten p){
 
-                    continuous_folding_new(new_a, new_b, start);//種の散布
+                    continuous_folding_new(new_a, new_b, start);// 種の散布
                     return;
                 }
                 return;
             }
 
-
             if (t_m_s_nbox.getTotal() == 3) {
-                intersection = tyoku1.lineSegment_intersect_reverse_detail(t_m_s_nbox.getValue(1));//0=この直線は与えられた線分と交差しない、1=X型で交差する、2=T型で交差する、3=線分は直線に含まれる。
+                intersection = tyoku1.lineSegment_intersect_reverse_detail(t_m_s_nbox.getValue(1));// 0=この直線は与えられた線分と交差しない、1=X型で交差する、2=T型で交差する、3=線分は直線に含まれる。
                 if (intersection == StraightLine.Intersection.INCLUDED_3) {
                     StraightLine tyoku2 = new StraightLine(t_m_s_nbox.getValue(2));
                     intersection = tyoku2.lineSegment_intersect_reverse_detail(t_m_s_nbox.getValue(3));
@@ -188,15 +199,19 @@ public class MouseHandlerContinuousSymmetricDraw extends StepMouseHandler<Contin
                         LineSegment kousaten_made_nobasi_saisyono_lineSegment = new LineSegment(
                                 toolbox.getLengthenUntilIntersectionFirstLineSegment_new());
 
-                        Point new_a = toolbox.getLengthenUntilIntersectionPoint_new();//Ten new_aは最も近い交点
-                        Point new_b = OritaCalc.findLineSymmetryPoint(kousaten_made_nobasi_saisyono_lineSegment.getA(), kousaten_made_nobasi_saisyono_lineSegment.getB(), a);//２つの点t1,t2を通る直線に関して、点pの対照位置にある点を求める public Ten oc.sentaisyou_ten_motome(Ten t1,Ten t2,Ten p){
+                        Point new_a = toolbox.getLengthenUntilIntersectionPoint_new();// Ten new_aは最も近い交点
+                        Point new_b = OritaCalc.findLineSymmetryPoint(kousaten_made_nobasi_saisyono_lineSegment.getA(),
+                                kousaten_made_nobasi_saisyono_lineSegment.getB(), a);// ２つの点t1,t2を通る直線に関して、点pの対照位置にある点を求める
+                                                                                     // public Ten
+                                                                                     // oc.sentaisyou_ten_motome(Ten
+                                                                                     // t1,Ten t2,Ten p){
 
-                        continuous_folding_new(new_a, new_b, start);//種の散布
+                        continuous_folding_new(new_a, new_b, start);// 種の散布
                         return;
                     }
                 }
-                //------------------------------------------------
-                intersection = tyoku1.lineSegment_intersect_reverse_detail(t_m_s_nbox.getValue(2));//0=この直線は与えられた線分と交差しない、1=X型で交差する、2=T型で交差する、3=線分は直線に含まれる。
+                // ------------------------------------------------
+                intersection = tyoku1.lineSegment_intersect_reverse_detail(t_m_s_nbox.getValue(2));// 0=この直線は与えられた線分と交差しない、1=X型で交差する、2=T型で交差する、3=線分は直線に含まれる。
                 if (intersection == StraightLine.Intersection.INCLUDED_3) {
                     StraightLine tyoku2 = new StraightLine(t_m_s_nbox.getValue(3));
                     intersection = tyoku2.lineSegment_intersect_reverse_detail(t_m_s_nbox.getValue(1));
@@ -204,15 +219,19 @@ public class MouseHandlerContinuousSymmetricDraw extends StepMouseHandler<Contin
                         LineSegment kousaten_made_nobasi_saisyono_lineSegment = new LineSegment(
                                 toolbox.getLengthenUntilIntersectionFirstLineSegment_new());
 
-                        Point new_a = toolbox.getLengthenUntilIntersectionPoint_new();//Ten new_aは最も近い交点
-                        Point new_b = OritaCalc.findLineSymmetryPoint(kousaten_made_nobasi_saisyono_lineSegment.getA(), kousaten_made_nobasi_saisyono_lineSegment.getB(), a);//２つの点t1,t2を通る直線に関して、点pの対照位置にある点を求める public Ten oc.sentaisyou_ten_motome(Ten t1,Ten t2,Ten p){
+                        Point new_a = toolbox.getLengthenUntilIntersectionPoint_new();// Ten new_aは最も近い交点
+                        Point new_b = OritaCalc.findLineSymmetryPoint(kousaten_made_nobasi_saisyono_lineSegment.getA(),
+                                kousaten_made_nobasi_saisyono_lineSegment.getB(), a);// ２つの点t1,t2を通る直線に関して、点pの対照位置にある点を求める
+                                                                                     // public Ten
+                                                                                     // oc.sentaisyou_ten_motome(Ten
+                                                                                     // t1,Ten t2,Ten p){
 
-                        continuous_folding_new(new_a, new_b, start);//種の散布
+                        continuous_folding_new(new_a, new_b, start);// 種の散布
                         return;
                     }
                 }
-                //------------------------------------------------
-                intersection = tyoku1.lineSegment_intersect_reverse_detail(t_m_s_nbox.getValue(3));//0=この直線は与えられた線分と交差しない、1=X型で交差する、2=T型で交差する、3=線分は直線に含まれる。
+                // ------------------------------------------------
+                intersection = tyoku1.lineSegment_intersect_reverse_detail(t_m_s_nbox.getValue(3));// 0=この直線は与えられた線分と交差しない、1=X型で交差する、2=T型で交差する、3=線分は直線に含まれる。
                 if (intersection == StraightLine.Intersection.INCLUDED_3) {
                     StraightLine tyoku2 = new StraightLine(t_m_s_nbox.getValue(1));
                     intersection = tyoku2.lineSegment_intersect_reverse_detail(t_m_s_nbox.getValue(2));
@@ -220,10 +239,14 @@ public class MouseHandlerContinuousSymmetricDraw extends StepMouseHandler<Contin
                         LineSegment kousaten_made_nobasi_saisyono_lineSegment = new LineSegment(
                                 toolbox.getLengthenUntilIntersectionFirstLineSegment_new());
 
-                        Point new_a = toolbox.getLengthenUntilIntersectionPoint_new();//Ten new_aは最も近い交点
-                        Point new_b = OritaCalc.findLineSymmetryPoint(kousaten_made_nobasi_saisyono_lineSegment.getA(), kousaten_made_nobasi_saisyono_lineSegment.getB(), a);//２つの点t1,t2を通る直線に関して、点pの対照位置にある点を求める public Ten oc.sentaisyou_ten_motome(Ten t1,Ten t2,Ten p){
+                        Point new_a = toolbox.getLengthenUntilIntersectionPoint_new();// Ten new_aは最も近い交点
+                        Point new_b = OritaCalc.findLineSymmetryPoint(kousaten_made_nobasi_saisyono_lineSegment.getA(),
+                                kousaten_made_nobasi_saisyono_lineSegment.getB(), a);// ２つの点t1,t2を通る直線に関して、点pの対照位置にある点を求める
+                                                                                     // public Ten
+                                                                                     // oc.sentaisyou_ten_motome(Ten
+                                                                                     // t1,Ten t2,Ten p){
 
-                        continuous_folding_new(new_a, new_b, start);//種の散布
+                        continuous_folding_new(new_a, new_b, start);// 種の散布
                     }
                 }
             }

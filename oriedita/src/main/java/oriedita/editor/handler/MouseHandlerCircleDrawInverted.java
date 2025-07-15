@@ -5,7 +5,6 @@ import java.awt.Graphics2D;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
-import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
 import origami.Epsilon;
@@ -25,9 +24,6 @@ enum CircleDrawInvertedStep {
 @ApplicationScoped
 @Handles(MouseMode.CIRCLE_DRAW_INVERTED_46)
 public class MouseHandlerCircleDrawInverted extends StepMouseHandler<CircleDrawInvertedStep> {
-    @Inject
-    private CanvasModel canvasModel;
-
     private Circle circle1, circle2;
     private LineSegment segment;
 
@@ -54,11 +50,10 @@ public class MouseHandlerCircleDrawInverted extends StepMouseHandler<CircleDrawI
 
     @Override
     public void reset() {
+        resetStep();
         circle1 = null;
         circle2 = null;
         segment = null;
-        move_drag_select_first_circle_or_line(canvasModel.getMouseObjPosition());
-        steps.setCurrentStep(CircleDrawInvertedStep.SELECT_1ST_CIRCLE_OR_SEGMENT);
     }
 
     // Select circle or line
@@ -90,15 +85,15 @@ public class MouseHandlerCircleDrawInverted extends StepMouseHandler<CircleDrawI
     private void move_drag_select_second_circle_or_segment(Point p) {
         LineSegment tmpSegment = d.getClosestLineSegment(p);
         if (OritaCalc.determineLineSegmentDistance(p, tmpSegment) < d.getSelectionDistance()) {
-            segment = new LineSegment(tmpSegment, LineColor.GREEN_6);
+            segment = new LineSegment(tmpSegment, LineColor.ORANGE_4);
         } else
             segment = null;
 
         Circle tmpCircle = d.getClosestCircleMidpoint(p);
-        if (OritaCalc.distance_circumference(p, tmpCircle) < d.getSelectionDistance()) {
+        if (!circle1.equals(tmpCircle) && OritaCalc.distance_circumference(p, tmpCircle) < d.getSelectionDistance()) {
             segment = null;
             circle2 = new Circle(tmpCircle);
-            circle2.setColor(LineColor.GREEN_6);
+            circle2.setColor(LineColor.ORANGE_4);
         } else
             circle2 = null;
     }

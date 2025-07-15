@@ -39,6 +39,7 @@ public class MouseHandlerDrawCreaseSymmetric extends StepMouseHandler<DrawCrease
 
     @Override
     public void drawPreview(Graphics2D g2, Camera camera, DrawingSettings settings) {
+        super.drawPreview(g2, camera, settings);
         DrawingUtil.drawStepVertex(g2, point1, d.getLineColor(), camera, d.getGridInputAssist());
         DrawingUtil.drawStepVertex(g2, point2, d.getLineColor(), camera, d.getGridInputAssist());
         DrawingUtil.drawLineStep(g2, segment, camera, settings.getLineWidth(), d.getGridInputAssist());
@@ -46,11 +47,10 @@ public class MouseHandlerDrawCreaseSymmetric extends StepMouseHandler<DrawCrease
 
     @Override
     public void reset() {
+        resetStep();
         point1 = null;
         point2 = null;
         segment = null;
-        move_drag_select_2p_or_line(canvasModel.getMouseObjPosition());
-        steps.setCurrentStep(DrawCreaseSymmetricStep.SELECT_2P_OR_LINE);
     }
 
     // Select 2 points of a line or line segment itself

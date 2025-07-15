@@ -3,7 +3,6 @@ package oriedita.editor.handler;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
-import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
 import origami.Epsilon;
@@ -12,7 +11,9 @@ import origami.crease_pattern.element.Point;
 
 import java.awt.Graphics2D;
 
-enum DrawCreaseRestrictedStep { CLICK_DRAG_POINT }
+enum DrawCreaseRestrictedStep {
+    CLICK_DRAG_POINT
+}
 
 @ApplicationScoped
 @Handles(MouseMode.DRAW_CREASE_RESTRICTED_11)
@@ -21,12 +22,11 @@ public class MouseHandlerDrawCreaseRestricted extends StepMouseHandler<DrawCreas
     private LineSegment dragSegment;
 
     @Inject
-    private CanvasModel canvasModel;
-
-    @Inject
     public MouseHandlerDrawCreaseRestricted() {
         super(DrawCreaseRestrictedStep.CLICK_DRAG_POINT);
-        steps.addNode(StepNode.createNode(DrawCreaseRestrictedStep.CLICK_DRAG_POINT, this::move_click_drag_point, (p) -> {}, this::drag_click_drag_point, this::release_click_drag_point));
+        steps.addNode(
+                StepNode.createNode(DrawCreaseRestrictedStep.CLICK_DRAG_POINT, this::move_click_drag_point, (p) -> {
+                }, this::drag_click_drag_point, this::release_click_drag_point));
     }
 
     @Override
@@ -39,29 +39,33 @@ public class MouseHandlerDrawCreaseRestricted extends StepMouseHandler<DrawCreas
 
     @Override
     public void reset() {
+        resetStep();
         anchorPoint = null;
         releasePoint = null;
         dragSegment = null;
-        move_click_drag_point(canvasModel.getMouseObjPosition());
-        steps.setCurrentStep(DrawCreaseRestrictedStep.CLICK_DRAG_POINT);
     }
 
     // Click and drag point
     private void move_click_drag_point(Point p) {
         if (p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
             anchorPoint = d.getClosestPoint(p);
-        } else anchorPoint = null;
+        } else
+            anchorPoint = null;
     }
+
     private void drag_click_drag_point(Point p) {
-        if (anchorPoint == null) return;
+        if (anchorPoint == null)
+            return;
         releasePoint = p;
         if (p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
             releasePoint = d.getClosestPoint(p);
         }
         dragSegment = new LineSegment(anchorPoint, releasePoint).withColor(d.getLineColor());
     }
+
     private DrawCreaseRestrictedStep release_click_drag_point(Point p) {
-        if (anchorPoint == null) return DrawCreaseRestrictedStep.CLICK_DRAG_POINT;
+        if (anchorPoint == null)
+            return DrawCreaseRestrictedStep.CLICK_DRAG_POINT;
         if (releasePoint == null
                 || p.distance(d.getClosestPoint(p)) > d.getSelectionDistance()
                 || !Epsilon.high.gt0(dragSegment.determineLength())) {

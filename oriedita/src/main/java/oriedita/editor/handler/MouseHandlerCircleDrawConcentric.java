@@ -3,7 +3,6 @@ package oriedita.editor.handler;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
-import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
 import origami.crease_pattern.OritaCalc;
@@ -27,13 +26,13 @@ public class MouseHandlerCircleDrawConcentric extends StepMouseHandler<CircleDra
     private Circle originalCircle, newCircle;
 
     @Inject
-    private CanvasModel canvasModel;
-
-    @Inject
     public MouseHandlerCircleDrawConcentric() {
         super(CircleDrawConcentricStep.SELECT_CIRCLE);
-        steps.addNode(StepNode.createNode_MD_R(CircleDrawConcentricStep.SELECT_CIRCLE, this::move_drag_select_circle, this::release_select_circle));
-        steps.addNode(StepNode.createNode(CircleDrawConcentricStep.CLICK_DRAG_POINT, this::move_click_drag_point, (p) -> {}, this::drag_click_drag_point, this::release_click_drag_point));
+        steps.addNode(StepNode.createNode_MD_R(CircleDrawConcentricStep.SELECT_CIRCLE, this::move_drag_select_circle,
+                this::release_select_circle));
+        steps.addNode(
+                StepNode.createNode(CircleDrawConcentricStep.CLICK_DRAG_POINT, this::move_click_drag_point, (p) -> {
+                }, this::drag_click_drag_point, this::release_click_drag_point));
     }
 
     @Override
@@ -48,13 +47,12 @@ public class MouseHandlerCircleDrawConcentric extends StepMouseHandler<CircleDra
 
     @Override
     public void reset() {
+        resetStep();
         anchorPoint = null;
         releasePoint = null;
         originalCircle = null;
         newCircle = null;
         radiusDifference = null;
-        move_drag_select_circle(canvasModel.getMouseObjPosition());
-        steps.setCurrentStep(CircleDrawConcentricStep.SELECT_CIRCLE);
     }
 
     // Select circle
@@ -62,10 +60,13 @@ public class MouseHandlerCircleDrawConcentric extends StepMouseHandler<CircleDra
         if (OritaCalc.distance_circumference(p, d.getClosestCircleMidpoint(p)) < d.getSelectionDistance()) {
             originalCircle = new Circle(d.getClosestCircleMidpoint(p));
             originalCircle.setColor(LineColor.GREEN_6);
-        } else originalCircle = null;
+        } else
+            originalCircle = null;
     }
+
     private CircleDrawConcentricStep release_select_circle(Point p) {
-        if (originalCircle == null) return CircleDrawConcentricStep.SELECT_CIRCLE;
+        if (originalCircle == null)
+            return CircleDrawConcentricStep.SELECT_CIRCLE;
         return CircleDrawConcentricStep.CLICK_DRAG_POINT;
     }
 
@@ -74,9 +75,13 @@ public class MouseHandlerCircleDrawConcentric extends StepMouseHandler<CircleDra
         anchorPoint = p;
         if (anchorPoint.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
             anchorPoint = d.getClosestPoint(p);
-        } else anchorPoint = null;
+        } else
+            anchorPoint = null;
     }
+
     private void drag_click_drag_point(Point p) {
+        if (anchorPoint == null)
+            return;
         releasePoint = p;
         if (releasePoint.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
             releasePoint = d.getClosestPoint(p);
@@ -92,8 +97,10 @@ public class MouseHandlerCircleDrawConcentric extends StepMouseHandler<CircleDra
         newCircle = new Circle(originalCircle.determineCenter(),
                 originalCircle.getR() + radiusDifference.determineLength(), LineColor.CYAN_3);
     }
+
     private CircleDrawConcentricStep release_click_drag_point(Point p) {
-        if (anchorPoint == null) return CircleDrawConcentricStep.CLICK_DRAG_POINT;
+        if (anchorPoint == null)
+            return CircleDrawConcentricStep.CLICK_DRAG_POINT;
         if (releasePoint == null
                 || releasePoint.distance(d.getClosestPoint(p)) > d.getSelectionDistance()) {
             anchorPoint = null;
@@ -113,5 +120,3 @@ public class MouseHandlerCircleDrawConcentric extends StepMouseHandler<CircleDra
         return CircleDrawConcentricStep.SELECT_CIRCLE;
     }
 }
-
-

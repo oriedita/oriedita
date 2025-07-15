@@ -3,7 +3,6 @@ package oriedita.editor.handler;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
-import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
 import origami.Epsilon;
@@ -28,8 +27,6 @@ enum CircleDrawTangentLineStep {
 @ApplicationScoped
 @Handles(MouseMode.CIRCLE_DRAW_TANGENT_LINE_45)
 public class MouseHandlerCircleDrawTangentLine extends StepMouseHandler<CircleDrawTangentLineStep> {
-    @Inject
-    private CanvasModel canvasModel;
 
     private Circle circle1, circle2;
     private Point point;
@@ -67,13 +64,12 @@ public class MouseHandlerCircleDrawTangentLine extends StepMouseHandler<CircleDr
 
     @Override
     public void reset() {
+        resetStep();
         circle1 = null;
         circle2 = null;
         point = null;
         indicators = new ArrayList<>();
         resultSegment = null;
-        move_drag_select_first_point_or_circle(canvasModel.getMouseObjPosition());
-        steps.setCurrentStep(CircleDrawTangentLineStep.SELECT_1ST_POINT_OR_CIRCLE);
     }
 
     // Select first point or circle
@@ -104,7 +100,8 @@ public class MouseHandlerCircleDrawTangentLine extends StepMouseHandler<CircleDr
     // If selected point first, select a circle
     private void move_drag_select_circle(Point p) {
         Circle tmpCircle = d.getClosestCircleMidpoint(p);
-        if (OritaCalc.distance_circumference(p, tmpCircle) < d.getSelectionDistance()) {
+        if (OritaCalc.distance_circumference(p, tmpCircle) < d.getSelectionDistance()
+                && point.distance(tmpCircle.determineCenter()) > tmpCircle.getR()) {
             circle2 = new Circle(tmpCircle);
             circle2.setColor(LineColor.GREEN_6);
         } else
@@ -127,7 +124,9 @@ public class MouseHandlerCircleDrawTangentLine extends StepMouseHandler<CircleDr
         } else
             circle2 = null;
 
-        if (p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
+        Point tmpPoint = d.getClosestPoint(p);
+        if (p.distance(tmpPoint) < d.getSelectionDistance()
+                && tmpPoint.distance(circle1.determineCenter()) > circle1.getR()) {
             circle2 = null;
             point = d.getClosestPoint(p);
         } else

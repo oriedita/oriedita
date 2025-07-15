@@ -5,7 +5,6 @@ import java.awt.Graphics2D;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
-import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
 import origami.crease_pattern.element.Circle;
@@ -21,9 +20,6 @@ enum CircleDrawSeparateStep {
 @ApplicationScoped
 @Handles(MouseMode.CIRCLE_DRAW_SEPARATE_44)
 public class MouseHandlerCircleDrawSeparate extends StepMouseHandler<CircleDrawSeparateStep> {
-    @Inject
-    private CanvasModel canvasModel;
-
     private Point centerPoint, anchorPoint, releasePoint;
     private LineSegment previewSegment;
     private Circle previewCircle;
@@ -50,13 +46,12 @@ public class MouseHandlerCircleDrawSeparate extends StepMouseHandler<CircleDrawS
 
     @Override
     public void reset() {
+        resetStep();
         centerPoint = null;
         anchorPoint = null;
         releasePoint = null;
         previewSegment = null;
         previewCircle = null;
-        move_drag_select_point(canvasModel.getMouseObjPosition());
-        steps.setCurrentStep(CircleDrawSeparateStep.SELECT_POINT);
     }
 
     // Select point for new circle center
@@ -101,8 +96,16 @@ public class MouseHandlerCircleDrawSeparate extends StepMouseHandler<CircleDrawS
     }
 
     private CircleDrawSeparateStep release_click_drag_point(Point p) {
-        if (anchorPoint == null || releasePoint == null)
+        if (anchorPoint == null) {
             return CircleDrawSeparateStep.CLICK_DRAG_POINT;
+        }
+        if (releasePoint == null || releasePoint.distance(d.getClosestPoint(p)) > d.getSelectionDistance()) {
+            anchorPoint = null;
+            releasePoint = null;
+            previewSegment = null;
+            previewCircle = null;
+            return CircleDrawSeparateStep.CLICK_DRAG_POINT;
+        }
 
         d.addCircle(previewCircle);
         d.record();
