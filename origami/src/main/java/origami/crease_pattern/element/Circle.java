@@ -231,16 +231,6 @@ public class Circle implements Serializable {// Used to represent point coordina
         setY(point.getY());
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
-        Circle that = (Circle) o;
-        return x == that.x && y == that.y && r == that.r;
-    }
-
     public enum Intersection {
         NO_INTERSECTION,
         TANGENT,

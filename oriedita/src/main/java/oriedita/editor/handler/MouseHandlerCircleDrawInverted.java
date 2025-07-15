@@ -90,7 +90,9 @@ public class MouseHandlerCircleDrawInverted extends StepMouseHandler<CircleDrawI
             segment = null;
 
         Circle tmpCircle = d.getClosestCircleMidpoint(p);
-        if (!circle1.equals(tmpCircle) && OritaCalc.distance_circumference(p, tmpCircle) < d.getSelectionDistance()) {
+        if ((!circle1.determineCenter().equals(tmpCircle.determineCenter())
+                || Math.abs(circle1.getR() - tmpCircle.getR()) > Epsilon.UNKNOWN_1EN6)
+                && OritaCalc.distance_circumference(p, tmpCircle) < d.getSelectionDistance()) {
             segment = null;
             circle2 = new Circle(tmpCircle);
             circle2.setColor(LineColor.ORANGE_4);
