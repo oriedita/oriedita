@@ -15,7 +15,7 @@ import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 
 enum DrawCreaseSymmetricStep {
-    SELECT_2P_OR_LINE,
+    SELECT_2P_OR_SEGMENT,
     SELECT_2P,
 }
 
@@ -30,8 +30,8 @@ public class MouseHandlerDrawCreaseSymmetric extends StepMouseHandler<DrawCrease
 
     @Inject
     public MouseHandlerDrawCreaseSymmetric() {
-        super(DrawCreaseSymmetricStep.SELECT_2P_OR_LINE);
-        steps.addNode(StepNode.createNode_MD_R(DrawCreaseSymmetricStep.SELECT_2P_OR_LINE,
+        super(DrawCreaseSymmetricStep.SELECT_2P_OR_SEGMENT);
+        steps.addNode(StepNode.createNode_MD_R(DrawCreaseSymmetricStep.SELECT_2P_OR_SEGMENT,
                 this::move_drag_select_2p_or_line, this::release_select_2p_or_line));
         steps.addNode(StepNode.createNode_MD_R(DrawCreaseSymmetricStep.SELECT_2P,
                 this::move_drag_select_2p, this::release_select_2p));
@@ -71,13 +71,13 @@ public class MouseHandlerDrawCreaseSymmetric extends StepMouseHandler<DrawCrease
 
     private DrawCreaseSymmetricStep release_select_2p_or_line(Point p) {
         if (point1 == null && segment == null)
-            return DrawCreaseSymmetricStep.SELECT_2P_OR_LINE;
+            return DrawCreaseSymmetricStep.SELECT_2P_OR_SEGMENT;
         if (point1 != null)
             return DrawCreaseSymmetricStep.SELECT_2P;
 
         mirrorSelections(segment);
         reset();
-        return DrawCreaseSymmetricStep.SELECT_2P_OR_LINE;
+        return DrawCreaseSymmetricStep.SELECT_2P_OR_SEGMENT;
     }
 
     // Select another point
@@ -95,7 +95,7 @@ public class MouseHandlerDrawCreaseSymmetric extends StepMouseHandler<DrawCrease
             return DrawCreaseSymmetricStep.SELECT_2P;
         mirrorSelections(new LineSegment(point1, point2));
         reset();
-        return DrawCreaseSymmetricStep.SELECT_2P_OR_LINE;
+        return DrawCreaseSymmetricStep.SELECT_2P_OR_SEGMENT;
     }
 
     private void mirrorSelections(LineSegment segment) {

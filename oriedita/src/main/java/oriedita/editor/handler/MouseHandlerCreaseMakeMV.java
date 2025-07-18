@@ -1,8 +1,12 @@
 package oriedita.editor.handler;
 
+import java.awt.Graphics2D;
+
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
+import oriedita.editor.drawing.tools.Camera;
+import oriedita.editor.drawing.tools.DrawingUtil;
 import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineColor;
@@ -10,66 +14,99 @@ import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami.folding.util.SortingBox;
 
+enum CreaseMakeMVStep {
+    CLICK_DRAG_POINT
+}
+
 @ApplicationScoped
 @Handles(MouseMode.CREASE_MAKE_MV_34)
-public class MouseHandlerCreaseMakeMV extends BaseMouseHandlerInputRestricted {
-    private final MouseHandlerDrawCreaseRestricted mouseHandlerDrawCreaseRestricted;
-
+public class MouseHandlerCreaseMakeMV extends StepMouseHandler<CreaseMakeMVStep> {
     @Inject
-    public MouseHandlerCreaseMakeMV(@Handles(MouseMode.DRAW_CREASE_RESTRICTED_11) MouseHandlerDrawCreaseRestricted mouseHandlerDrawCreaseRestricted) {
-        this.mouseHandlerDrawCreaseRestricted = mouseHandlerDrawCreaseRestricted;
+    public MouseHandlerCreaseMakeMV() {
+        super(CreaseMakeMVStep.CLICK_DRAG_POINT);
+        steps.addNode(StepNode.createNode(CreaseMakeMVStep.CLICK_DRAG_POINT, this::move_click_drag_point, (p) -> {
+        }, this::drag_click_drag_point, this::release_click_drag_point));
     }
 
-    //マウス操作(mouseMode==34　でボタンを押したとき)時の作業----------------------------------------------------
-    public void mousePressed(Point p0) {
-        Point p = d.getCamera().TV2object(p0);
-        Point closest_point = d.getClosestPoint(p);
-        if (p.distance(closest_point) > d.getSelectionDistance()) {
-            d.getLineStep().clear();
+    private Point anchorPoint, releasePoint;
+    private LineSegment previewSegment;
+
+    @Override
+    public void drawPreview(Graphics2D g2, Camera camera, DrawingSettings settings) {
+        super.drawPreview(g2, camera, settings);
+        DrawingUtil.drawStepVertex(g2, anchorPoint, d.getLineColor(), camera, d.getGridInputAssist());
+        DrawingUtil.drawStepVertex(g2, releasePoint, d.getLineColor(), camera, d.getGridInputAssist());
+        DrawingUtil.drawLineStep(g2, previewSegment, camera, settings.getLineWidth(), d.getGridInputAssist());
+    }
+
+    @Override
+    public void reset() {
+        resetStep();
+        anchorPoint = null;
+        releasePoint = null;
+        previewSegment = null;
+    }
+
+    // Click drag point
+    private void move_click_drag_point(Point p) {
+        Point tmpPoint = d.getClosestPoint(p);
+        anchorPoint = p;
+        if (anchorPoint.distance(tmpPoint) < d.getSelectionDistance()) {
+            anchorPoint = tmpPoint;
+        }
+    }
+
+    private void drag_click_drag_point(Point p) {
+        if (anchorPoint == null)
+            return;
+        if (anchorPoint.distance(d.getClosestPoint(anchorPoint)) > d.getSelectionDistance()) {
+            anchorPoint = null;
             return;
         }
-        d.lineStepAdd(new LineSegment(p, closest_point, d.getLineColor()));
+
+        Point tmpPoint = d.getClosestPoint(p);
+        releasePoint = p;
+        if (releasePoint.distance(tmpPoint) < d.getSelectionDistance()) {
+            releasePoint = tmpPoint;
+        }
+
+        previewSegment = new LineSegment(anchorPoint, releasePoint, d.getLineColor());
     }
 
-    //マウス操作(mouseMode==34　でドラッグしたとき)を行う関数----------------------------------------------------
-    public void mouseDragged(Point p0) {
-        mouseHandlerDrawCreaseRestricted.mouseDragged(p0);
-    }
+    private CreaseMakeMVStep release_click_drag_point(Point p) {
+        if (anchorPoint == null) {
+            return CreaseMakeMVStep.CLICK_DRAG_POINT;
+        }
+        if (releasePoint.distance(d.getClosestPoint(releasePoint)) > d.getSelectionDistance()) {
+            reset();
+            return CreaseMakeMVStep.CLICK_DRAG_POINT;
+        }
 
-
-//64 64 64 64 64 64 64 64 64 64 64 64 64入力した線分に重複している折線を削除する
-
-    //マウス操作(mouseMode==34　でボタンを離したとき)を行う関数----------------------------------------------------
-    public void mouseReleased(Point p0) {
         SortingBox<LineSegment> nbox = new SortingBox<>();
 
-        if (d.getLineStep().size() == 1) {
-            Point p = d.getCamera().TV2object(p0);
-            Point closest_point = d.getClosestPoint(p);
-            d.getLineStep().set(0, d.getLineStep().get(0).withA(closest_point));
-            if (p.distance(closest_point) <= d.getSelectionDistance()) {
-                if (Epsilon.high.gt0(d.getLineStep().get(0).determineLength())) {
-                    for (var s : d.getFoldLineSet().getLineSegmentsIterable()) {
-                        if (OritaCalc.isLineSegmentOverlapping(s, d.getLineStep().get(0))) {
-                            nbox.addByWeight(s, OritaCalc.determineLineSegmentDistance(d.getLineStep().get(0).getB(), s));
-                        }
-                    }
-
-                    LineColor icol_temp = d.getLineColor();
-
-                    for (int i = 1; i <= nbox.getTotal(); i++) {
-                        d.getFoldLineSet().setColor(nbox.getValue(i), icol_temp);
-
-                        if (icol_temp == LineColor.RED_1) {
-                            icol_temp = LineColor.BLUE_2;
-                        } else if (icol_temp == LineColor.BLUE_2) {
-                            icol_temp = LineColor.RED_1;
-                        }
-                    }
-                    d.record();
+        if (Epsilon.high.gt0(previewSegment.determineLength())) {
+            for (var s : d.getFoldLineSet().getLineSegmentsIterable()) {
+                if (OritaCalc.isLineSegmentOverlapping(s, previewSegment)) {
+                    nbox.addByWeight(s,
+                            OritaCalc.determineLineSegmentDistance(previewSegment.getA(), s));
                 }
             }
-            d.getLineStep().clear();
+
+            LineColor icol_temp = d.getLineColor();
+
+            for (int i = 1; i <= nbox.getTotal(); i++) {
+                d.getFoldLineSet().setColor(nbox.getValue(i), icol_temp);
+
+                if (icol_temp == LineColor.RED_1) {
+                    icol_temp = LineColor.BLUE_2;
+                } else if (icol_temp == LineColor.BLUE_2) {
+                    icol_temp = LineColor.RED_1;
+                }
+            }
+            d.record();
         }
+
+        reset();
+        return CreaseMakeMVStep.CLICK_DRAG_POINT;
     }
 }

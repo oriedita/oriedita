@@ -4,23 +4,47 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.databinding.AngleSystemModel;
-import origami.Epsilon;
+import oriedita.editor.drawing.tools.Camera;
+import oriedita.editor.drawing.tools.DrawingUtil;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
+import origami.crease_pattern.element.Point_p;
+import origami.crease_pattern.element.LineSegment.Intersection;
 
+import java.awt.Graphics2D;
+import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.List;
+
+enum DrawAngleConvergingLinesStep {
+    SELECT_2P_OR_SEGMENT,
+    SELECT_2P,
+    SELECT_CONVERGING_POINT
+}
 
 @ApplicationScoped
 @Handles(MouseMode.DRAW_CREASE_ANGLE_RESTRICTED_13)
-public class MouseHandlerDrawCreaseAngleRestricted extends BaseMouseHandler {
-    private final AngleSystemModel angleSystemModel;
-    double d_angle_system;
+public class MouseHandlerDrawCreaseAngleRestricted extends StepMouseHandler<DrawAngleConvergingLinesStep> {
+    @Inject
+    private AngleSystemModel angleSystemModel;
+
+    private Point point1, point2, convergePoint;
+    private LineSegment segment, resultSegment1, resultSegment2;
+    private List<LineSegment> indicators;
+    private List<Point> intersections;
+    int honsuu;
 
     @Inject
-    public MouseHandlerDrawCreaseAngleRestricted(AngleSystemModel angleSystemModel) {
-        this.angleSystemModel = angleSystemModel;
+    public MouseHandlerDrawCreaseAngleRestricted() {
+        super(DrawAngleConvergingLinesStep.SELECT_2P_OR_SEGMENT);
+        steps.addNode(StepNode.createNode_MD_R(DrawAngleConvergingLinesStep.SELECT_2P_OR_SEGMENT,
+                this::move_drag_select_2p_or_segment, this::release_select_2p_or_segment));
+        steps.addNode(StepNode.createNode_MD_R(DrawAngleConvergingLinesStep.SELECT_2P, this::move_drag_select_2p,
+                this::release_select_2p));
+        steps.addNode(StepNode.createNode_MD_R(DrawAngleConvergingLinesStep.SELECT_CONVERGING_POINT,
+                this::move_drag_select_converging_point, this::release_select_converging_point));
     }
 
     @Override
@@ -29,196 +53,194 @@ public class MouseHandlerDrawCreaseAngleRestricted extends BaseMouseHandler {
     }
 
     @Override
-    public void mouseMoved(Point p0) {
-
-    }
-
-    //マウス操作(ボタンを押したとき)時の作業
-    public void mousePressed(Point p0) {
-        Point p = d.getCamera().TV2object(p0);
-
-        // select a line
-        if(d.getLineStep().isEmpty() && d.getClosestPoint(p).distance(p) > d.getSelectionDistance()){
-            LineSegment closestLineSegment = d.getClosestLineSegment(p).withColor(LineColor.MAGENTA_5);
-            if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.getSelectionDistance()) {
-                d.lineStepAdd(closestLineSegment);
-            }
-            return;
+    public void drawPreview(Graphics2D g2, Camera camera, DrawingSettings settings) {
+        super.drawPreview(g2, camera, settings);
+        DrawingUtil.drawStepVertex(g2, point1, d.getLineColor(), camera, d.getGridInputAssist());
+        DrawingUtil.drawStepVertex(g2, point2, d.getLineColor(), camera, d.getGridInputAssist());
+        DrawingUtil.drawLineStep(g2, segment, camera, settings.getLineWidth(), d.getGridInputAssist());
+        for (LineSegment indicator : indicators) {
+            DrawingUtil.drawLineStep(g2, indicator, camera, settings.getLineWidth(), d.getGridInputAssist());
         }
-
-        //select 2 points
-        if(d.getLineStep().isEmpty() || d.getLineStep().get(0).determineLength() <= 0.0){
-            Point closestPoint = d.getClosestPoint(p);
-            if (p.distance(closestPoint) < d.getSelectionDistance()) {
-                d.lineStepAdd(new LineSegment(closestPoint, closestPoint, d.getLineColor()));
-            }
-
-            if(d.getLineStep().size() == 2){
-                Point p1 = new Point(d.getLineStep().get(0).getA());
-                Point p2 = new Point(d.getLineStep().get(1).getA());
-                LineSegment selectedSegment = new LineSegment(p1, p2, LineColor.MAGENTA_5);
-
-                d.getLineStep().clear();
-                d.lineStepAdd(selectedSegment);
-            }
-        }
+        // for (Point intersection : intersections) {
+        // DrawingUtil.drawStepVertex(g2, intersection, d.getLineColor(), camera,
+        // d.getGridInputAssist());
+        // }
+        DrawingUtil.drawLineStep(g2, resultSegment1, camera, 3.0f, d.getGridInputAssist());
+        DrawingUtil.drawLineStep(g2, resultSegment2, camera, 3.0f, d.getGridInputAssist());
+        DrawingUtil.drawStepVertex(g2, convergePoint, d.getLineColor(), camera, d.getGridInputAssist());
     }
 
-    //マウス操作(ドラッグしたとき)を行う関数
-    public void mouseDragged(Point p0) {
-    }
-
-    //マウス操作(ボタンを離したとき)を行う関数
-    public void mouseReleased(Point p0) {
-        Point p = d.getCamera().TV2object(p0);
-
-        int honsuu;//1つの端点周りに描く線の本数
+    @Override
+    public void reset() {
+        resetStep();
+        point1 = null;
+        point2 = null;
+        convergePoint = null;
+        segment = null;
+        resultSegment1 = null;
+        resultSegment2 = null;
+        indicators = new ArrayList<>();
+        intersections = new ArrayList<>();
         if (angleSystemModel.getCurrentAngleSystemDivider() != 0) {
             honsuu = angleSystemModel.getCurrentAngleSystemDivider() * 2 - 1;
-        } else {
+        } else
             honsuu = 6;
+    }
+
+    // Select 2 points or segment
+    private void move_drag_select_2p_or_segment(Point p) {
+        LineSegment tmpSegment = d.getClosestLineSegment(p);
+        if (OritaCalc.determineLineSegmentDistance(p, tmpSegment) < d.getSelectionDistance()) {
+            segment = new LineSegment(tmpSegment, LineColor.PURPLE_8);
+        } else
+            segment = null;
+
+        Point tmpPoint = d.getClosestPoint(p);
+        if (p.distance(tmpPoint) < d.getSelectionDistance()) {
+            segment = null;
+            point1 = tmpPoint;
+        } else
+            point1 = null;
+    }
+
+    private DrawAngleConvergingLinesStep release_select_2p_or_segment(Point p) {
+        if (point1 == null && segment == null)
+            return DrawAngleConvergingLinesStep.SELECT_2P_OR_SEGMENT;
+        if (point1 != null)
+            return DrawAngleConvergingLinesStep.SELECT_2P;
+
+        setupIndicators();
+        return DrawAngleConvergingLinesStep.SELECT_CONVERGING_POINT;
+    }
+
+    // Select another point
+    private void move_drag_select_2p(Point p) {
+        Point tmpPoint = d.getClosestPoint(p);
+        if (p.distance(tmpPoint) < d.getSelectionDistance()) {
+            segment = null;
+            point2 = new Point(tmpPoint);
+        } else
+            point2 = null;
+    }
+
+    private DrawAngleConvergingLinesStep release_select_2p(Point p) {
+        if (point2 == null)
+            return DrawAngleConvergingLinesStep.SELECT_2P;
+
+        segment = new LineSegment(point1, point2, LineColor.PURPLE_8);
+        setupIndicators();
+        return DrawAngleConvergingLinesStep.SELECT_CONVERGING_POINT;
+    }
+
+    // Select converging point of any 2 indicators
+    private void move_drag_select_converging_point(Point p) {
+        Point tmpPoint = getClosestIntersection(intersections, p);
+        if (tmpPoint != null) {
+            convergePoint = new Point_p(tmpPoint);
+        } else
+            convergePoint = null;
+
+        if (convergePoint != null) {
+            resultSegment1 = new LineSegment(segment.getA(), convergePoint, d.getLineColor());
+            resultSegment2 = new LineSegment(segment.getB(), convergePoint, d.getLineColor());
+        } else {
+            resultSegment1 = null;
+            resultSegment2 = null;
+        }
+    }
+
+    private DrawAngleConvergingLinesStep release_select_converging_point(Point p) {
+        if (convergePoint == null)
+            return DrawAngleConvergingLinesStep.SELECT_CONVERGING_POINT;
+
+        d.addLineSegment(resultSegment1);
+        d.addLineSegment(resultSegment2);
+        d.record();
+        reset();
+        return DrawAngleConvergingLinesStep.SELECT_2P_OR_SEGMENT;
+    }
+
+    private void setupIndicators() {
+        int divider = angleSystemModel.getCurrentAngleSystemDivider();
+        double denominator = divider != 0 ? (double) divider : 4.0;
+        double d_angle_system = 180.0 / denominator;
+
+        if (divider != 0) {
+            drawIndicators(d_angle_system, segment);
+            drawIndicators(d_angle_system, segment.withSwappedCoordinates());
+        } else {
+            double[] jk = angleSystemModel.getAngles();
+            drawIndicators(jk, segment);
+            drawIndicators(jk, segment.withSwappedCoordinates());
         }
 
-        if (d.getLineStep().size() == 1 && d.getLineStep().get(0).determineLength() > 0.0) {    //if(i_egaki_dankai==1){        //動作の準備として人間が選択するステップ数が終わった状態で実行
-            boolean i_jyun;//i_jyunは線を描くとき順番に色を変えたいとき使う
-            //線分abをaを中心にd度回転した線分を返す関数（元の線分は変えずに新しい線分を返す）public oc.Senbun_kaiten(Senbun s0,double d) //    double d_angle_system;double angle;
+        setupIntersections();
+    }
 
-            if (angleSystemModel.getCurrentAngleSystemDivider() != 0) {
-                d_angle_system = 180.0 / (double) angleSystemModel.getCurrentAngleSystemDivider();
-            } else {
-                d_angle_system = 180.0 / 4.0;
-            }
+    private void drawIndicators(double d_angle_system, LineSegment s_kiso) {
+        double angle = 0.0;
+        boolean i_jyun = false;
+        for (int i = 1; i <= honsuu; i++) {
+            i_jyun = !i_jyun;
+            LineColor i_jyun_color = i_jyun ? LineColor.ORANGE_4 : LineColor.GREEN_6;
 
-            if (angleSystemModel.getCurrentAngleSystemDivider() != 0) {
-                LineSegment s_kiso = new LineSegment(d.getLineStep().get(0).getA(), d.getLineStep().get(0).getB());
-                double angle = 0.0;
-                i_jyun = false;
-                for (int i = 1; i <= honsuu; i++) {
-                    i_jyun = !i_jyun;
-
-                    angle = angle + d_angle_system;
-                    LineColor i_jyun_color = i_jyun ? LineColor.ORANGE_4 : LineColor.GREEN_6;
-                    LineSegment s = OritaCalc.lineSegment_rotate(s_kiso, angle, 10.0).withColor(i_jyun_color);
-                    d.lineStepAdd(s);
-                }
-
-                s_kiso = new LineSegment(d.getLineStep().get(0).getB(), d.getLineStep().get(0).getA());
-                angle = 0.0;
-                i_jyun = false;
-                for (int i = 1; i <= honsuu; i++) {
-                    i_jyun = !i_jyun;
-                    angle = angle + d_angle_system;
-                    LineColor i_jyun_color = i_jyun ? LineColor.ORANGE_4 : LineColor.GREEN_6;
-                    LineSegment s = OritaCalc.lineSegment_rotate(s_kiso, angle, 10.0).withColor(i_jyun_color);
-
-                    d.lineStepAdd(s);
-                }
-            }
-            if (angleSystemModel.getCurrentAngleSystemDivider() == 0) {
-                double[] jk = angleSystemModel.getAngles();
-
-                LineSegment s_kiso = new LineSegment(d.getLineStep().get(0).getA(), d.getLineStep().get(0).getB());
-                double angle;
-                i_jyun = false;
-                for (int i = 0; i < 6; i++) {
-                    i_jyun = !i_jyun;
-
-                    angle = jk[i];
-                    LineSegment s = OritaCalc.lineSegment_rotate(s_kiso, angle, 10.0);
-                    if (i == 0) {
-                        s = s.withColor(LineColor.GREEN_6);
-                    }
-                    if (i == 1) {
-                        s = s.withColor(LineColor.PURPLE_8);
-                    }
-                    if (i == 2) {
-                        s = s.withColor(LineColor.ORANGE_4);
-                    }
-                    if (i == 3) {
-                        s = s.withColor(LineColor.ORANGE_4);
-                    }
-                    if (i == 4) {
-                        s = s.withColor(LineColor.GREEN_6);
-                    }
-                    if (i == 5) {
-                        s = s.withColor(LineColor.PURPLE_8);
-                    }
-                    d.lineStepAdd(s);
-                }
-
-                s_kiso = new LineSegment(d.getLineStep().get(0).getB(), d.getLineStep().get(0).getA());
-                i_jyun = false;
-                for (int i = 1; i <= 6; i++) {
-                    i_jyun = !i_jyun;
-
-                    angle = jk[i];
-                    LineSegment s = OritaCalc.lineSegment_rotate(s_kiso, angle, 10.0);
-                    if (i == 1) {
-                        s = s.withColor(LineColor.GREEN_6);
-                    }
-                    if (i == 2) {
-                        s = s.withColor(LineColor.PURPLE_8);
-                    }
-                    if (i == 3) {
-                        s = s.withColor(LineColor.ORANGE_4);
-                    }
-                    if (i == 4) {
-                        s = s.withColor(LineColor.ORANGE_4);
-                    }
-                    if (i == 5) {
-                        s = s.withColor(LineColor.GREEN_6);
-                    }
-                    if (i == 6) {
-                        s = s.withColor(LineColor.PURPLE_8);
-                    }
-                    d.lineStepAdd(s);
-                }
-            }
-        } else if (d.getLineStep().size() == 1 + (honsuu) + (honsuu)) {//19     //動作の準備としてソフトが返答するステップ数が終わった状態で実行
-            int i_tikai_s_step_suu = 0;
-
-            //line_step[2から10]までとs_step[11から19]まで
-            LineSegment closestLineSegment = new LineSegment(d.getClosestLineStepSegment(p, 2, 1 + (honsuu)));
-            if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.getSelectionDistance()) {
-                i_tikai_s_step_suu++;
-                d.lineStepAdd(closestLineSegment);
-            }
-
-            //line_step[2から10]までとs_step[11から19]まで
-            closestLineSegment = new LineSegment(d.getClosestLineStepSegment(p, 1 + (honsuu) + 1, 1 + (honsuu) + (honsuu)));
-            if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.getSelectionDistance()) {
-                i_tikai_s_step_suu++;
-                d.lineStepAdd(closestLineSegment);    //line_step[i_egaki_dankai].setcolor(lineColor);
-            }
-
-            if (i_tikai_s_step_suu == 2) { //この段階でs_stepが[21]までうまってたら、line_step[20]とs_step[21]は共に加える折線なので、ここで処理を終えてしまう。
-                //=     1+ (honsuu) +(honsuu) +  2 ){i_egaki_dankai=0; //この段階でs_stepが[21]までうまってたら、line_step[20]とs_step[21]は共に加える折線なので、ここで処理を終えてしまう。
-                //例外処理としてs_step[20]とs_step[21]が平行の場合、より近いほうをs_stepが[20]とし、s_stepを[20]としてリターン（この場合はまだ処理は終われない）。
-                //２つの線分が平行かどうかを判定する関数。oc.heikou_hantei(Tyokusen t1,Tyokusen t2)//0=平行でない、1=平行で２直線が一致しない、2=平行で２直線が一致する
-                //0=平行でない、1=平行で２直線が一致しない、2=平行で２直線が一致する
-
-                if (OritaCalc.isLineSegmentParallel(d.getLineStep().get(d.getLineStep().size() - 1 - 1), d.getLineStep().get(d.getLineStep().size() - 1)) != OritaCalc.ParallelJudgement.NOT_PARALLEL) {//ここは安全を見て閾値を0.1と大目にとっておこのがよさそう
-                    d.getLineStep().clear();
-                    return;
-                }
-
-                //line_step[20]とs_step[21]の交点はoc.kouten_motome(Senbun s1,Senbun s2)で求める//２つの線分を直線とみなして交点を求める関数。線分としては交差しなくても、直線として交差している場合の交点を返す
-                Point kousa_point = OritaCalc.findIntersection(d.getLineStep().get(1 + honsuu + honsuu), d.getLineStep().get(1 + honsuu + honsuu + 1));
-
-                LineSegment add_sen = new LineSegment(kousa_point, d.getLineStep().get(1 + (honsuu) + (honsuu)).getA(), d.getLineColor());
-                if (Epsilon.high.gt0(add_sen.determineLength())) {
-                    d.addLineSegment(add_sen);
-                }
-
-                LineSegment add_sen2 = new LineSegment(kousa_point, d.getLineStep().get(1 + (honsuu) + (honsuu) + 1).getA(), d.getLineColor());
-                if (Epsilon.high.gt0(add_sen.determineLength())) {
-                    d.addLineSegment(add_sen2);
-                }
-                d.record();
-                d.getLineStep().clear();
-            }
-
-            d.getLineStep().clear();
+            angle += d_angle_system;
+            LineSegment s = OritaCalc.lineSegment_rotate(s_kiso, angle, 10.0).withColor(i_jyun_color);
+            indicators.add(s);
         }
+    }
+
+    private void drawIndicators(double[] jk, LineSegment s_kiso) {
+        for (int i = 1; i <= 6; i++) {
+            LineSegment s = OritaCalc.lineSegment_rotate(s_kiso, jk[i], 10.0);
+            if (i == 1 || i == 5) {
+                s = s.withColor(LineColor.GREEN_6);
+            }
+            if (i == 2 || i == 6) {
+                s = s.withColor(LineColor.PURPLE_8);
+            }
+            if (i == 3 || i == 4) {
+                s = s.withColor(LineColor.ORANGE_4);
+            }
+            indicators.add(s);
+        }
+    }
+
+    private void setupIntersections() {
+        for (int i = 0; i < indicators.size(); i++) {
+            for (int j = i + 1; j < indicators.size(); j++) {
+                LineSegment s1 = indicators.get(i);
+                LineSegment s2 = indicators.get(j);
+                LineSegment.Intersection intersection = OritaCalc.determineLineSegmentIntersection(s1, s2);
+                if (intersection == Intersection.NO_INTERSECTION_0)
+                    continue;
+                if (intersection.isSegmentOverlapping())
+                    continue;
+
+                Point intPoint = OritaCalc.findIntersection(s1, s2);
+                if (intersections.stream().anyMatch(point -> point.equals(intPoint)))
+                    continue;
+                intersections.add(intPoint);
+            }
+        }
+    }
+
+    private Point getClosestIntersection(List<Point> list, Point p) {
+        double minDist = 100000.0;
+        Point closestPoint = null;
+
+        for (Point intersection : list) {
+            double dist = p.distance(intersection);
+            if (dist > minDist)
+                continue;
+
+            minDist = dist;
+            if (p.distance(intersection) > d.getSelectionDistance())
+                continue;
+
+            closestPoint = new Point(intersection);
+        }
+
+        return closestPoint;
     }
 }
