@@ -11,7 +11,6 @@ import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.Point_p;
-import origami.crease_pattern.element.LineSegment.Intersection;
 
 import java.awt.Graphics2D;
 import java.util.ArrayList;
@@ -37,7 +36,7 @@ public class MouseHandlerDrawCreaseAngleRestricted extends StepMouseHandler<Draw
     int honsuu;
 
     @Inject
-    public MouseHandlerDrawCreaseAngleRestricted() {
+    public MouseHandlerDrawCreaseAngleRestricted(AngleSystemModel angleSystemModel) {
         super(DrawAngleConvergingLinesStep.SELECT_2P_OR_SEGMENT);
         steps.addNode(StepNode.createNode_MD_R(DrawAngleConvergingLinesStep.SELECT_2P_OR_SEGMENT,
                 this::move_drag_select_2p_or_segment, this::release_select_2p_or_segment));
@@ -45,6 +44,12 @@ public class MouseHandlerDrawCreaseAngleRestricted extends StepMouseHandler<Draw
                 this::release_select_2p));
         steps.addNode(StepNode.createNode_MD_R(DrawAngleConvergingLinesStep.SELECT_CONVERGING_POINT,
                 this::move_drag_select_converging_point, this::release_select_converging_point));
+        angleSystemModel.addPropertyChangeListener(e -> {
+            indicators = new ArrayList<>();
+            intersections = new ArrayList<>();
+            setHonsuu();
+            setupIndicators();
+        });
     }
 
     @Override
@@ -61,13 +66,16 @@ public class MouseHandlerDrawCreaseAngleRestricted extends StepMouseHandler<Draw
         for (LineSegment indicator : indicators) {
             DrawingUtil.drawLineStep(g2, indicator, camera, settings.getLineWidth(), d.getGridInputAssist());
         }
-        // for (Point intersection : intersections) {
-        // DrawingUtil.drawStepVertex(g2, intersection, d.getLineColor(), camera,
-        // d.getGridInputAssist());
-        // }
-        DrawingUtil.drawLineStep(g2, resultSegment1, camera, 3.0f, d.getGridInputAssist());
-        DrawingUtil.drawLineStep(g2, resultSegment2, camera, 3.0f, d.getGridInputAssist());
-        DrawingUtil.drawStepVertex(g2, convergePoint, d.getLineColor(), camera, d.getGridInputAssist());
+        for (Point intersection : intersections) {
+            DrawingUtil.drawStepVertex(g2, intersection, d.getLineColor(), camera,
+                    d.getGridInputAssist());
+        }
+        if (resultSegment1 != null)
+            DrawingUtil.drawLineStep(g2, resultSegment1.withColor(d.getLineColor()), camera, 3.0f,
+                    d.getGridInputAssist());
+        if (resultSegment2 != null)
+            DrawingUtil.drawLineStep(g2, resultSegment2.withColor(d.getLineColor()), camera, 3.0f,
+                    d.getGridInputAssist());
     }
 
     @Override
@@ -81,10 +89,8 @@ public class MouseHandlerDrawCreaseAngleRestricted extends StepMouseHandler<Draw
         resultSegment2 = null;
         indicators = new ArrayList<>();
         intersections = new ArrayList<>();
-        if (angleSystemModel.getCurrentAngleSystemDivider() != 0) {
-            honsuu = angleSystemModel.getCurrentAngleSystemDivider() * 2 - 1;
-        } else
-            honsuu = 6;
+        setHonsuu();
+
     }
 
     // Select 2 points or segment
@@ -110,6 +116,8 @@ public class MouseHandlerDrawCreaseAngleRestricted extends StepMouseHandler<Draw
             return DrawAngleConvergingLinesStep.SELECT_2P;
 
         setupIndicators();
+        if (indicators.isEmpty())
+            return DrawAngleConvergingLinesStep.SELECT_2P_OR_SEGMENT;
         return DrawAngleConvergingLinesStep.SELECT_CONVERGING_POINT;
     }
 
@@ -129,6 +137,8 @@ public class MouseHandlerDrawCreaseAngleRestricted extends StepMouseHandler<Draw
 
         segment = new LineSegment(point1, point2, LineColor.PURPLE_8);
         setupIndicators();
+        if (indicators.isEmpty())
+            return DrawAngleConvergingLinesStep.SELECT_2P;
         return DrawAngleConvergingLinesStep.SELECT_CONVERGING_POINT;
     }
 
@@ -161,6 +171,8 @@ public class MouseHandlerDrawCreaseAngleRestricted extends StepMouseHandler<Draw
     }
 
     private void setupIndicators() {
+        if (segment == null)
+            return;
         int divider = angleSystemModel.getCurrentAngleSystemDivider();
         double denominator = divider != 0 ? (double) divider : 4.0;
         double d_angle_system = 180.0 / denominator;
@@ -179,10 +191,8 @@ public class MouseHandlerDrawCreaseAngleRestricted extends StepMouseHandler<Draw
 
     private void drawIndicators(double d_angle_system, LineSegment s_kiso) {
         double angle = 0.0;
-        boolean i_jyun = false;
-        for (int i = 1; i <= honsuu; i++) {
-            i_jyun = !i_jyun;
-            LineColor i_jyun_color = i_jyun ? LineColor.ORANGE_4 : LineColor.GREEN_6;
+        for (int i = 0; i < honsuu; i++) {
+            LineColor i_jyun_color = i % 2 == 0 ? LineColor.ORANGE_4 : LineColor.GREEN_6;
 
             angle += d_angle_system;
             LineSegment s = OritaCalc.lineSegment_rotate(s_kiso, angle, 10.0).withColor(i_jyun_color);
@@ -193,15 +203,13 @@ public class MouseHandlerDrawCreaseAngleRestricted extends StepMouseHandler<Draw
     private void drawIndicators(double[] jk, LineSegment s_kiso) {
         for (int i = 1; i <= 6; i++) {
             LineSegment s = OritaCalc.lineSegment_rotate(s_kiso, jk[i], 10.0);
-            if (i == 1 || i == 5) {
+            if (i == 1 || i == 5)
                 s = s.withColor(LineColor.GREEN_6);
-            }
-            if (i == 2 || i == 6) {
+            if (i == 2 || i == 6)
                 s = s.withColor(LineColor.PURPLE_8);
-            }
-            if (i == 3 || i == 4) {
+            if (i == 3 || i == 4)
                 s = s.withColor(LineColor.ORANGE_4);
-            }
+
             indicators.add(s);
         }
     }
@@ -211,18 +219,27 @@ public class MouseHandlerDrawCreaseAngleRestricted extends StepMouseHandler<Draw
             for (int j = i + 1; j < indicators.size(); j++) {
                 LineSegment s1 = indicators.get(i);
                 LineSegment s2 = indicators.get(j);
+
                 LineSegment.Intersection intersection = OritaCalc.determineLineSegmentIntersection(s1, s2);
-                if (intersection == Intersection.NO_INTERSECTION_0)
-                    continue;
-                if (intersection.isSegmentOverlapping())
+                if (!intersection.isIntersection() || intersection.isOverlapping())
                     continue;
 
                 Point intPoint = OritaCalc.findIntersection(s1, s2);
+                if (intPoint.equals(segment.getA()) || intPoint.equals(segment.getB()))
+                    continue;
                 if (intersections.stream().anyMatch(point -> point.equals(intPoint)))
                     continue;
+
                 intersections.add(intPoint);
             }
         }
+    }
+
+    private void setHonsuu() {
+        if (angleSystemModel.getCurrentAngleSystemDivider() != 0) {
+            honsuu = angleSystemModel.getCurrentAngleSystemDivider() * 2 - 1;
+        } else
+            honsuu = 6;
     }
 
     private Point getClosestIntersection(List<Point> list, Point p) {
