@@ -564,14 +564,14 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
 
     public void setData(PropertyChangeEvent e, CanvasModel canvasModel) {
 
+        mouseMode = canvasModel.getMouseMode();
+        if (mouseModeHandlers.containsKey(mouseMode)) {
+            setActiveMouseHandler(mouseModeHandlers.get(mouseMode));
+        }
         if (Objects.equals(e.getPropertyName(), "mouseMode")) {
             if (activeMouseHandler != null) {
                 activeMouseHandler.reset();
             }
-        }
-        mouseMode = canvasModel.getMouseMode();
-        if (mouseModeHandlers.containsKey(mouseMode)) {
-            setActiveMouseHandler(mouseModeHandlers.get(mouseMode));
         }
 
         canvasUI.repaint();

@@ -46,6 +46,7 @@ public class StepGraph<T extends Enum<T>> {
         currentStep = currentNode.runReleaseAction(mousePos);
         if(currentStep == null) throw new RuntimeException ("Returned step value is null. Returning...");
         currentNode = nodes.get(currentStep);
+        currentNode.runHighlightSelection(mousePos);
     }
 
     @Override

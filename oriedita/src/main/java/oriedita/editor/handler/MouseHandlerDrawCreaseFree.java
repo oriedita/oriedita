@@ -13,7 +13,9 @@ import origami.crease_pattern.element.Point;
 
 import java.awt.Graphics2D;
 
-enum DrawCreaseFreeStep { CLICK_DRAG_POINT }
+enum DrawCreaseFreeStep {
+    CLICK_DRAG_POINT
+}
 
 @ApplicationScoped
 @Handles(MouseMode.DRAW_CREASE_FREE_1)
@@ -25,7 +27,8 @@ public class MouseHandlerDrawCreaseFree extends StepMouseHandler<DrawCreaseFreeS
     @Inject
     public MouseHandlerDrawCreaseFree() {
         super(DrawCreaseFreeStep.CLICK_DRAG_POINT);
-        steps.addNode(StepNode.createNode(DrawCreaseFreeStep.CLICK_DRAG_POINT, this::move_click_drag_point, (p) -> {}, this::drag_click_drag_point, this::release_click_drag_point));
+        steps.addNode(StepNode.createNode(DrawCreaseFreeStep.CLICK_DRAG_POINT, this::move_click_drag_point, (p) -> {
+        }, this::drag_click_drag_point, this::release_click_drag_point));
     }
 
     @Override
@@ -40,10 +43,10 @@ public class MouseHandlerDrawCreaseFree extends StepMouseHandler<DrawCreaseFreeS
 
     @Override
     public void reset() {
+        resetStep();
         anchorPoint = null;
         releasePoint = null;
         dragSegment = null;
-        steps.setCurrentStep(DrawCreaseFreeStep.CLICK_DRAG_POINT);
     }
 
     // Click drag point
@@ -58,6 +61,7 @@ public class MouseHandlerDrawCreaseFree extends StepMouseHandler<DrawCreaseFreeS
             anchorPoint = d.getClosestPoint(p);
         }
     }
+
     private void drag_click_drag_point(Point p) {
         releasePoint = p;
         if (d.getI_foldLine_additional() == FoldLineAdditionalInputMode.POLY_LINE_0) {
@@ -70,8 +74,10 @@ public class MouseHandlerDrawCreaseFree extends StepMouseHandler<DrawCreaseFreeS
         }
         dragSegment = new LineSegment(anchorPoint, releasePoint).withColor(lineColor);
     }
+
     private DrawCreaseFreeStep release_click_drag_point(Point p) {
-        if (anchorPoint == null) return DrawCreaseFreeStep.CLICK_DRAG_POINT;
+        if (anchorPoint == null)
+            return DrawCreaseFreeStep.CLICK_DRAG_POINT;
         if (releasePoint == null
                 || !Epsilon.high.gt0(dragSegment.determineLength())) {
             reset();

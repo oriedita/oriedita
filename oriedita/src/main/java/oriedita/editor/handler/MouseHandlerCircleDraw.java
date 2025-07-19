@@ -13,7 +13,9 @@ import origami.crease_pattern.element.Point;
 
 import java.awt.Graphics2D;
 
-enum CircleDrawStep { CLICK_DRAG_POINT }
+enum CircleDrawStep {
+    CLICK_DRAG_POINT
+}
 
 @ApplicationScoped
 @Handles(MouseMode.CIRCLE_DRAW_42)
@@ -25,7 +27,8 @@ public class MouseHandlerCircleDraw extends StepMouseHandler<CircleDrawStep> {
     @Inject
     public MouseHandlerCircleDraw() {
         super(CircleDrawStep.CLICK_DRAG_POINT);
-        steps.addNode(StepNode.createNode(CircleDrawStep.CLICK_DRAG_POINT, this::move_click_drag_point, (p) -> {}, this::drag_click_drag_point, this::release_click_drag_point));
+        steps.addNode(StepNode.createNode(CircleDrawStep.CLICK_DRAG_POINT, this::move_click_drag_point, (p) -> {
+        }, this::drag_click_drag_point, this::release_click_drag_point));
     }
 
     @Override
@@ -39,11 +42,11 @@ public class MouseHandlerCircleDraw extends StepMouseHandler<CircleDrawStep> {
 
     @Override
     public void reset() {
+        resetStep();
         anchorPoint = null;
         releasePoint = null;
         previewCircle = null;
         previewRadiusSegment = null;
-        steps.setCurrentStep(CircleDrawStep.CLICK_DRAG_POINT);
     }
 
     // Click drag point
@@ -51,10 +54,13 @@ public class MouseHandlerCircleDraw extends StepMouseHandler<CircleDrawStep> {
         anchorPoint = p;
         if (anchorPoint.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
             anchorPoint = d.getClosestPoint(p);
-        } else anchorPoint = null;
+        } else
+            anchorPoint = null;
     }
+
     private void drag_click_drag_point(Point p) {
-        if(anchorPoint == null) return;
+        if (anchorPoint == null)
+            return;
 
         releasePoint = p;
         if (releasePoint.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
@@ -70,10 +76,11 @@ public class MouseHandlerCircleDraw extends StepMouseHandler<CircleDrawStep> {
         previewCircle = new Circle(anchorPoint, OritaCalc.distance(anchorPoint, releasePoint), LineColor.CYAN_3);
         previewRadiusSegment = new LineSegment(anchorPoint, releasePoint, LineColor.CYAN_3);
     }
+
     private CircleDrawStep release_click_drag_point(Point p) {
         if (anchorPoint == null
                 || (releasePoint == null
-                || releasePoint.distance(d.getClosestPoint(p)) > d.getSelectionDistance())) {
+                        || releasePoint.distance(d.getClosestPoint(p)) > d.getSelectionDistance())) {
             reset();
             return CircleDrawStep.CLICK_DRAG_POINT;
         }
