@@ -329,7 +329,7 @@ public class ApplicationModel extends AbstractModel implements Serializable {
         displayComments = true;
         displayCpText = true;
         displayWarnings = true;
-        displayCurrentStep = false;
+        displayCurrentStep = true;
         displayCpLines = true;
         displayAuxLines = true;
         displayLiveAuxLines = true;
@@ -404,7 +404,7 @@ public class ApplicationModel extends AbstractModel implements Serializable {
         displayComments = true;
         displayWarnings = true;
         displayCpText = true;
-        displayCurrentStep = false;
+        displayCurrentStep = true;
 
         displayCpLines = true;
         displayAuxLines = true;
