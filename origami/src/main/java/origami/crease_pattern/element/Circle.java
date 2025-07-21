@@ -5,13 +5,13 @@ import origami.Epsilon;
 import java.awt.Color;
 import java.io.Serializable;
 
-public class Circle implements Serializable {//Used to represent point coordinates, direction vectors, etc.
+public class Circle implements Serializable {// Used to represent point coordinates, direction vectors, etc.
 
-    double x, y, r;//Center coordinates and radius
+    double x, y, r;// Center coordinates and radius
 
-    LineColor color;//Color specification 　0=black,1=blue,2=red.
-    int customized = 0;//Custom property parameters
-    Color customizedColor = new Color(100, 200, 200);//Color if custom made
+    LineColor color;// Color specification 0=black,1=blue,2=red.
+    int customized = 0;// Custom property parameters
+    Color customizedColor = new Color(100, 200, 200);// Color if custom made
 
     public Circle() {
         x = 0.0;
@@ -145,8 +145,9 @@ public class Circle implements Serializable {//Used to represent point coordinat
         return new Point(getX(), getY());
     }
 
-    //Function that inverts other points ----------------------------------------------------
-    public Point turnAround(Point t0) {//An error occurs when t0 and (x, y) are in the same position.
+    // Function that inverts other points
+    // ----------------------------------------------------
+    public Point turnAround(Point t0) {// An error occurs when t0 and (x, y) are in the same position.
         double x1 = t0.getX() - x;
         double y1 = t0.getY() - y;
         double d1 = Math.sqrt(x1 * x1 + y1 * y1);
@@ -163,8 +164,12 @@ public class Circle implements Serializable {//Used to represent point coordinat
         return new Point(x3, y3);
     }
 
-    //A function that inverts another circle to a circle ----------------------------------------------------
-    public Circle turnAround(Circle e0) {// For when the circumference of e0 does not pass through (x, y) // When the circumference of e0 passes through (x, y), an error occurs. Also, when (x, y) comes inside the circumference of e0, it seems that the result is strange.
+    // A function that inverts another circle to a circle
+    // ----------------------------------------------------
+    public Circle turnAround(Circle e0) {// For when the circumference of e0 does not pass through (x, y) // When the
+                                         // circumference of e0 passes through (x, y), an error occurs. Also, when (x,
+                                         // y) comes inside the circumference of e0, it seems that the result is
+                                         // strange.
         double x1 = e0.getX() - x;
         double y1 = e0.getY() - y;
         double d1 = Math.sqrt(x1 * x1 + y1 * y1);
@@ -201,8 +206,11 @@ public class Circle implements Serializable {//Used to represent point coordinat
         return new Circle(new LineSegment(turnAround(new Point(xa0, ya0)), turnAround(new Point(xb0, yb0))), ic);
     }
 
-    //A function that inverts another circle passing through (x, y) into a line segment----------------------------------------------------
-    public LineSegment turnAround_CircleToLineSegment(Circle e0) {//For when the circumference of e0 passes through (x, y) // If the circumference of e0 does not pass through (x, y), the result will be strange.
+    // A function that inverts another circle passing through (x, y) into a line
+    // segment----------------------------------------------------
+    public LineSegment turnAround_CircleToLineSegment(Circle e0) {// For when the circumference of e0 passes through (x,
+                                                                  // y) // If the circumference of e0 does not pass
+                                                                  // through (x, y), the result will be strange.
         double x1 = e0.getX() - x, y1 = e0.getY() - y;
         Point th = turnAround(new Point(x1 * 2.0 + x, y1 * 2.0 + y));
         Point tha = new Point(th.getX() + 3.0 * y1, th.getY() - 3.0 * x1);
@@ -210,9 +218,9 @@ public class Circle implements Serializable {//Used to represent point coordinat
         return new LineSegment(tha, thb, LineColor.CYAN_3);
     }
 
-
-    //A function that inverts a line segment that does not pass through (x, y) to another circle----------------------------------------------------
-    public Circle turnAround_LineSegmentToCircle(LineSegment s0) {//Weird results when s0 passes through (x, y).
+    // A function that inverts a line segment that does not pass through (x, y) to
+    // another circle----------------------------------------------------
+    public Circle turnAround_LineSegmentToCircle(LineSegment s0) {// Weird results when s0 passes through (x, y).
         StraightLine ty = new StraightLine(s0);
         Point t0 = ty.findProjection(determineCenter());
         return new Circle(new LineSegment(turnAround(t0), determineCenter()), LineColor.MAGENTA_5);
@@ -221,5 +229,11 @@ public class Circle implements Serializable {//Used to represent point coordinat
     public void setCenter(Point point) {
         setX(point.getX());
         setY(point.getY());
+    }
+
+    public enum Intersection {
+        NO_INTERSECTION,
+        TANGENT,
+        INTERSECT
     }
 }

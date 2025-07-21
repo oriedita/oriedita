@@ -35,6 +35,8 @@ import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
 import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -114,6 +116,19 @@ public class CanvasUI extends JPanel {
             @Override
             public void componentResized(ComponentEvent e) {
                 onResize();
+            }
+        });
+        addMouseMotionListener(new MouseMotionAdapter() {
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                Point p = new Point(e.getPoint().getX(), e.getPoint().getY());
+                canvasModel.setMouseObjPosition(mainCreasePatternWorker.getCamera().TV2object(p));
+            }
+
+            @Override
+                public void mouseDragged(MouseEvent e) {
+                Point p = new Point(e.getPoint().getX(), e.getPoint().getY());
+                canvasModel.setMouseObjPosition(mainCreasePatternWorker.getCamera().TV2object(p));
             }
         });
     }

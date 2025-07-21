@@ -11,7 +11,9 @@ import origami.crease_pattern.element.Point;
 
 import java.awt.Graphics2D;
 
-enum CreaseDeleteOverlapStep { CLICK_DRAG_POINT }
+enum CreaseDeleteOverlapStep {
+    CLICK_DRAG_POINT
+}
 
 @ApplicationScoped
 @Handles(MouseMode.CREASE_DELETE_OVERLAPPING_64)
@@ -22,7 +24,9 @@ public class MouseHandlerCreaseDeleteOverlapping extends StepMouseHandler<Crease
     @Inject
     public MouseHandlerCreaseDeleteOverlapping() {
         super(CreaseDeleteOverlapStep.CLICK_DRAG_POINT);
-        steps.addNode(StepNode.createNode(CreaseDeleteOverlapStep.CLICK_DRAG_POINT, this::move_click_drag_point, (p) -> {}, this::drag_click_drag_point, this::release_click_drag_point));
+        steps.addNode(
+                StepNode.createNode(CreaseDeleteOverlapStep.CLICK_DRAG_POINT, this::move_click_drag_point, (p) -> {
+                }, this::drag_click_drag_point, this::release_click_drag_point));
     }
 
     @Override
@@ -35,6 +39,7 @@ public class MouseHandlerCreaseDeleteOverlapping extends StepMouseHandler<Crease
 
     @Override
     public void reset() {
+        resetStep();
         anchorPoint = null;
         releasePoint = null;
         dragSegment = null;
@@ -44,24 +49,29 @@ public class MouseHandlerCreaseDeleteOverlapping extends StepMouseHandler<Crease
     private void move_click_drag_point(Point p) {
         if (p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
             anchorPoint = d.getClosestPoint(p);
-        } else anchorPoint = null;
+        } else
+            anchorPoint = null;
     }
+
     private void drag_click_drag_point(Point p) {
-        if(anchorPoint == null) return;
+        if (anchorPoint == null)
+            return;
         releasePoint = p;
         if (p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
             releasePoint = d.getClosestPoint(p);
         }
         dragSegment = new LineSegment(anchorPoint, releasePoint).withColor(d.getLineColor());
     }
+
     private CreaseDeleteOverlapStep release_click_drag_point(Point p) {
-        if (anchorPoint == null) return CreaseDeleteOverlapStep.CLICK_DRAG_POINT;
+        if (anchorPoint == null)
+            return CreaseDeleteOverlapStep.CLICK_DRAG_POINT;
         if (releasePoint == null || releasePoint.distance(d.getClosestPoint(releasePoint)) > d.getSelectionDistance()) {
             reset();
             return CreaseDeleteOverlapStep.CLICK_DRAG_POINT;
         }
         if (Epsilon.high.gt0(dragSegment.determineLength())) {
-            d.getFoldLineSet().deleteInsideLine(dragSegment, "l");//lは小文字のエル
+            d.getFoldLineSet().deleteInsideLine(dragSegment, "l");// lは小文字のエル
             d.record();
         }
         reset();

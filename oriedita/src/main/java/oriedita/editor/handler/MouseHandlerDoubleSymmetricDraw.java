@@ -11,8 +11,11 @@ import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 
 import java.awt.Graphics2D;
+import java.util.Arrays;
 
-enum DoubleSymmetricDrawStep { CLICK_DRAG_POINT }
+enum DoubleSymmetricDrawStep {
+    CLICK_DRAG_POINT
+}
 
 @ApplicationScoped
 @Handles(MouseMode.DOUBLE_SYMMETRIC_DRAW_35)
@@ -20,10 +23,21 @@ public class MouseHandlerDoubleSymmetricDraw extends StepMouseHandler<DoubleSymm
     private Point anchorPoint, releasePoint;
     private LineSegment dragSegment;
 
+    private final LineSegment.Intersection[] validIntersections = new LineSegment.Intersection[] {
+            LineSegment.Intersection.INTERSECTS_LSHAPE_S1_START_S2_START_21,
+            LineSegment.Intersection.INTERSECTS_LSHAPE_S1_START_S2_END_22,
+            LineSegment.Intersection.INTERSECTS_LSHAPE_S1_END_S2_START_23,
+            LineSegment.Intersection.INTERSECTs_LSHAPE_S1_END_S2_END_24,
+            LineSegment.Intersection.INTERSECTS_TSHAPE_S1_VERTICAL_BAR_25,
+            LineSegment.Intersection.INTERSECTS_TSHAPE_S1_VERTICAL_BAR_26,
+    };
+
     @Inject
     public MouseHandlerDoubleSymmetricDraw() {
         super(DoubleSymmetricDrawStep.CLICK_DRAG_POINT);
-        steps.addNode(StepNode.createNode(DoubleSymmetricDrawStep.CLICK_DRAG_POINT, this::move_click_drag_point, (p) -> {}, this::drag_click_drag_point, this::release_click_drag_point));
+        steps.addNode(
+                StepNode.createNode(DoubleSymmetricDrawStep.CLICK_DRAG_POINT, this::move_click_drag_point, (p) -> {
+                }, this::drag_click_drag_point, this::release_click_drag_point));
     }
 
     @Override
@@ -36,32 +50,38 @@ public class MouseHandlerDoubleSymmetricDraw extends StepMouseHandler<DoubleSymm
 
     @Override
     public void reset() {
+        resetStep();
         anchorPoint = null;
         releasePoint = null;
         dragSegment = null;
-        steps.setCurrentStep(DoubleSymmetricDrawStep.CLICK_DRAG_POINT);
     }
 
     // Click drag point
     private void move_click_drag_point(Point p) {
         if (p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
             anchorPoint = d.getClosestPoint(p);
-        } else anchorPoint = null;
+        } else
+            anchorPoint = null;
     }
+
     private void drag_click_drag_point(Point p) {
-        if(anchorPoint == null) return;
+        if (anchorPoint == null)
+            return;
         releasePoint = p;
-        if(p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
+        if (p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
             releasePoint = d.getClosestPoint(p);
         }
         dragSegment = new LineSegment(anchorPoint, releasePoint).withColor(d.getLineColor());
     }
+
     private DoubleSymmetricDrawStep release_click_drag_point(Point p) {
-        if(anchorPoint == null) return DoubleSymmetricDrawStep.CLICK_DRAG_POINT;
-        if(p.distance(d.getClosestPoint(p)) > d.getSelectionDistance()) return DoubleSymmetricDrawStep.CLICK_DRAG_POINT;
+        if (anchorPoint == null)
+            return DoubleSymmetricDrawStep.CLICK_DRAG_POINT;
+        if (p.distance(d.getClosestPoint(p)) > d.getSelectionDistance())
+            return DoubleSymmetricDrawStep.CLICK_DRAG_POINT;
         dragSegment = new LineSegment(anchorPoint, releasePoint);
 
-        if(releasePoint.distance(p) > d.getSelectionDistance()) {
+        if (releasePoint.distance(p) > d.getSelectionDistance()) {
             reset();
             return DoubleSymmetricDrawStep.CLICK_DRAG_POINT;
         }
@@ -73,16 +93,18 @@ public class MouseHandlerDoubleSymmetricDraw extends StepMouseHandler<DoubleSymm
 
         boolean isChanged = false;
         for (var s : d.getFoldLineSet().getLineSegmentsCollection()) {
-            LineSegment.Intersection intersection = OritaCalc.determineLineSegmentIntersectionSweet(s, dragSegment, Epsilon.UNKNOWN_001, Epsilon.UNKNOWN_001);
+            LineSegment.Intersection intersection = OritaCalc.determineLineSegmentIntersectionSweet(s, dragSegment,
+                    Epsilon.UNKNOWN_001, Epsilon.UNKNOWN_001);
 
-            if (intersection == LineSegment.Intersection.INTERSECTS_TSHAPE_S1_VERTICAL_BAR_25
-                    || intersection == LineSegment.Intersection.INTERSECTS_TSHAPE_S1_VERTICAL_BAR_26) {
+            if (Arrays.stream(validIntersections).anyMatch((value) -> value == intersection)) {
                 Point t_moto = s.getA();
-                if (OritaCalc.determineLineSegmentDistance(t_moto, dragSegment) < OritaCalc.determineLineSegmentDistance(s.getB(), dragSegment)) {
+                if (OritaCalc.determineLineSegmentDistance(t_moto, dragSegment) < OritaCalc
+                        .determineLineSegmentDistance(s.getB(), dragSegment)) {
                     t_moto = s.getB();
                 }
 
-                //２つの点t1,t2を通る直線に関して、点pの対照位置にある点を求める public Ten oc.sentaisyou_ten_motome(Ten t1,Ten t2,Ten p){
+                // ２つの点t1,t2を通る直線に関して、点pの対照位置にある点を求める public Ten oc.sentaisyou_ten_motome(Ten
+                // t1,Ten t2,Ten p){
                 Point t_taisyou = OritaCalc.findLineSymmetryPoint(dragSegment.getA(), dragSegment.getB(), t_moto);
                 LineSegment add_sen = new LineSegment(OritaCalc.findIntersection(s, dragSegment), t_taisyou);
                 add_sen = d.extendToIntersectionPoint(add_sen).withColor(s.getColor());
@@ -94,7 +116,8 @@ public class MouseHandlerDoubleSymmetricDraw extends StepMouseHandler<DoubleSymm
             }
         }
 
-        if (isChanged) d.record();
+        if (isChanged)
+            d.record();
         reset();
         return DoubleSymmetricDrawStep.CLICK_DRAG_POINT;
     }
