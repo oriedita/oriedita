@@ -6,31 +6,25 @@ import jakarta.inject.Inject;
 import org.tinylog.Logger;
 import oriedita.editor.FrameProvider;
 import oriedita.editor.databinding.ApplicationModel;
-import oriedita.editor.databinding.GridModel;
 import oriedita.editor.export.api.FileExporter;
 import oriedita.editor.save.Save;
 
 import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.PrintWriter;
 
 @ApplicationScoped
 public class CpExporter implements FileExporter {
     private final FrameProvider frame;
     private final ApplicationModel applicationModel;
-    private final GridModel gridModel;
 
     @Inject
-    public CpExporter(FrameProvider frame, ApplicationModel applicationModel, GridModel gridModel) {
+    public CpExporter(FrameProvider frame, ApplicationModel applicationModel) {
         this.frame = frame;
         this.applicationModel = applicationModel;
-        this.gridModel = gridModel;
     }
 
     @Override
@@ -43,9 +37,9 @@ public class CpExporter implements FileExporter {
             applicationModel.setCpExportWarning(checkbox.isSelected());
         }
 
-        try (FileWriter fw = new FileWriter(file); BufferedWriter bw = new BufferedWriter(fw); PrintWriter pw = new PrintWriter(bw); OutputStream os = new FileOutputStream(file)) {
+        try (OutputStream os = new FileOutputStream(file)) {
             CreasePatternWriter creasePatternWriter = new CreasePatternWriter(os);
-            creasePatternWriter.write(new FoldExporter(gridModel).toFoldSave(save));
+            creasePatternWriter.write(new FoldExporter().toFoldSave(save));
         } catch (InterruptedException e) {
             Logger.error(e, "Error exporting cp file");
         }

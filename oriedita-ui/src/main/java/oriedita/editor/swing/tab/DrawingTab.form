@@ -176,49 +176,9 @@
                   <text value="axioms"/>
                 </properties>
               </component>
-              <component id="cd6a4" class="javax.swing.JButton" binding="voronoiBtn">
-                <constraints>
-                  <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                  <gridbag weightx="1.0" weighty="1.0"/>
-                </constraints>
-                <properties>
-                  <actionCommand value="voronoiAction"/>
-                  <text value="voronoi"/>
-                </properties>
-              </component>
-              <component id="ec143" class="javax.swing.JButton" binding="applyBtn">
-                <constraints>
-                  <grid row="4" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                  <gridbag weightx="1.0" weighty="1.0"/>
-                </constraints>
-                <properties>
-                  <actionCommand value="all_s_step_to_orisenAction"/>
-                  <text value="apply"/>
-                </properties>
-              </component>
-              <component id="399e" class="javax.swing.JButton" binding="equallyDividedLineBtn">
-                <constraints>
-                  <grid row="5" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-                  <gridbag weightx="1.0" weighty="0.0"/>
-                </constraints>
-                <properties>
-                  <actionCommand value="senbun_b_nyuryokuAction"/>
-                  <text value="equallyDividedLine"/>
-                </properties>
-              </component>
-              <component id="3b3c" class="javax.swing.JButton" binding="polygonBtn">
-                <constraints>
-                  <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-                  <gridbag weightx="1.0" weighty="0.0"/>
-                </constraints>
-                <properties>
-                  <actionCommand value="regularPolygonAction"/>
-                  <text value="polygon"/>
-                </properties>
-              </component>
               <component id="4383a" class="javax.swing.JButton" binding="ratioBtn">
                 <constraints>
-                  <grid row="5" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <grid row="4" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                   <gridbag weightx="1.0" weighty="1.0"/>
                 </constraints>
                 <properties>
@@ -226,6 +186,46 @@
                   <text value="ratio"/>
                 </properties>
               </component>
+              <component id="399e" class="javax.swing.JButton" binding="equallyDividedLineBtn">
+                <constraints>
+                  <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                  <gridbag weightx="1.0" weighty="0.0"/>
+                </constraints>
+                <properties>
+                  <actionCommand value="senbun_b_nyuryokuAction"/>
+                  <text value="equallyDividedLine"/>
+                </properties>
+              </component>
+              <grid id="baeb" layout-manager="GridBagLayout">
+                <constraints>
+                  <grid row="5" column="0" row-span="1" col-span="3" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                  <gridbag weightx="0.0" weighty="0.0"/>
+                </constraints>
+                <properties/>
+                <border type="none"/>
+                <children>
+                  <component id="3b3c" class="javax.swing.JButton" binding="polygonBtn">
+                    <constraints>
+                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                      <gridbag weightx="1.0" weighty="1.0"/>
+                    </constraints>
+                    <properties>
+                      <actionCommand value="regularPolygonAction"/>
+                      <text value="polygon"/>
+                    </properties>
+                  </component>
+                  <component id="cd6a4" class="javax.swing.JButton" binding="voronoiBtn">
+                    <constraints>
+                      <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                      <gridbag weightx="1.0" weighty="1.0"/>
+                    </constraints>
+                    <properties>
+                      <actionCommand value="voronoiAction"/>
+                      <text value="voronoi"/>
+                    </properties>
+                  </component>
+                </children>
+              </grid>
             </children>
           </grid>
           <component id="e5343" class="javax.swing.JLabel">

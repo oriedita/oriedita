@@ -2,6 +2,7 @@ package oriedita.editor.handler;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import org.tinylog.Logger;
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.canvas.OperationFrame;
@@ -74,6 +75,7 @@ public class MouseHandlerOperationFrameCreate extends BaseMouseHandler {
         Point p_ob3 = cam.TV2object(frame.getP3());
         Point p_ob4 = cam.TV2object(frame.getP4());
         lastMousePos = p;
+        Logger.info(p_ob1);
 
         double distance_min = 100000.0;
         operationFrameMode = CreasePattern_Worker.OperationFrameMode.NONE_0;
@@ -98,30 +100,30 @@ public class MouseHandlerOperationFrameCreate extends BaseMouseHandler {
 
             if (p.distance(p_ob1) < d.getSelectionDistance()) {
                 p_new = frame.getP1();
-                frame.setFramePoint(1, frame.getP3());
-                frame.setFramePoint(3, p_new);
+                frame.setFramePoint(0, frame.getP3());
+                frame.setFramePoint(2, p_new);
                 operationFrameMode = CreasePattern_Worker.OperationFrameMode.MOVE_POINTS_2;
             }
             if (p.distance(p_ob2) < d.getSelectionDistance()) {
                 p_new = frame.getP2();
-                frame.setFramePoint(2, frame.getP1());
-                frame.setFramePoint(1, frame.getP4());
-                frame.setFramePoint(4, frame.getP3());
-                frame.setFramePoint(3, p_new);
+                frame.setFramePoint(1, frame.getP1());
+                frame.setFramePoint(0, frame.getP4());
+                frame.setFramePoint(3, frame.getP3());
+                frame.setFramePoint(2, p_new);
                 operationFrameMode = CreasePattern_Worker.OperationFrameMode.MOVE_POINTS_2;
             }
             if (p.distance(p_ob3) < d.getSelectionDistance()) {
                 p_new = frame.getP3();
-                frame.setFramePoint(1, frame.getP1());
-                frame.setFramePoint(3, p_new);
+                frame.setFramePoint(0, frame.getP1());
+                frame.setFramePoint(2, p_new);
                 operationFrameMode = CreasePattern_Worker.OperationFrameMode.MOVE_POINTS_2;
             }
             if (p.distance(p_ob4) < d.getSelectionDistance()) {
                 p_new = frame.getP4();
-                frame.setFramePoint(4, frame.getP1());
-                frame.setFramePoint(1, frame.getP2());
-                frame.setFramePoint(2, frame.getP3());
-                frame.setFramePoint(3, p_new);
+                frame.setFramePoint(3, frame.getP1());
+                frame.setFramePoint(0, frame.getP2());
+                frame.setFramePoint(1, frame.getP3());
+                frame.setFramePoint(2, p_new);
                 operationFrameMode = CreasePattern_Worker.OperationFrameMode.MOVE_POINTS_2;
             }
 
@@ -129,10 +131,10 @@ public class MouseHandlerOperationFrameCreate extends BaseMouseHandler {
         if (operationFrameMode == CreasePattern_Worker.OperationFrameMode.MOVE_SIDES_3) {
             while (OritaCalc.determineLineSegmentDistance(p, p_ob1, p_ob2) != distance_min) {
                 p_new = frame.getP1();
-                frame.setFramePoint(1, frame.getP2());
-                frame.setFramePoint(2, frame.getP3());
-                frame.setFramePoint(3, frame.getP4());
-                frame.setFramePoint(4, p_new);
+                frame.setFramePoint(0, frame.getP2());
+                frame.setFramePoint(1, frame.getP3());
+                frame.setFramePoint(2, frame.getP4());
+                frame.setFramePoint(3, p_new);
                 p_new = p_ob1;
                 p_ob1 = p_ob2;
                 p_ob2 = p_ob3;
@@ -152,10 +154,10 @@ public class MouseHandlerOperationFrameCreate extends BaseMouseHandler {
                 p_new = closest_point;
             }
 
+            frame.setFramePoint(0, cam.object2TV(p_new));
             frame.setFramePoint(1, cam.object2TV(p_new));
             frame.setFramePoint(2, cam.object2TV(p_new));
             frame.setFramePoint(3, cam.object2TV(p_new));
-            frame.setFramePoint(4, cam.object2TV(p_new));
         }
     }
 
@@ -226,31 +228,31 @@ public class MouseHandlerOperationFrameCreate extends BaseMouseHandler {
                     <
                     Math.abs(frame.getP1().getY() - frame.getP2().getY())
             ) {
+                frame.setFramePointX(0, cam.object2TV(p_new).getX());
                 frame.setFramePointX(1, cam.object2TV(p_new).getX());
-                frame.setFramePointX(2, cam.object2TV(p_new).getX());
             }
 
             if (Math.abs(frame.getP1().getX() - frame.getP2().getX())
                     >
                     Math.abs(frame.getP1().getY() - frame.getP2().getY())
             ) {
+                frame.setFramePointY(0, cam.object2TV(p_new).getY());
                 frame.setFramePointY(1, cam.object2TV(p_new).getY());
-                frame.setFramePointY(2, cam.object2TV(p_new).getY());
             }
         }
 
         if (operationFrameMode == CreasePattern_Worker.OperationFrameMode.MOVE_BOX_4) {
             for (int i = 0; i < 4; i++) {
-                frame.setFramePoint(i+1,
-                        frame.getFramePoint(i+1).move(
+                frame.setFramePoint(i,
+                        frame.getFramePoint(i).move(
                                 cam.object2TV(lastMousePos).delta(cam.object2TV(p_new))));
             }
         }
 
         if (operationFrameMode == CreasePattern_Worker.OperationFrameMode.CREATE_1) {
-            frame.setFramePoint(3, d.getCamera().object2TV(p_new));
-            frame.setFramePoint(2, new Point(frame.getP1().getX(), frame.getP3().getY()));
-            frame.setFramePoint(4, new Point(frame.getP3().getX(), frame.getP1().getY()));
+            frame.setFramePoint(2, d.getCamera().object2TV(p_new));
+            frame.setFramePoint(1, new Point(frame.getP1().getX(), frame.getP3().getY()));
+            frame.setFramePoint(3, new Point(frame.getP3().getX(), frame.getP1().getY()));
         }
     }
 }

@@ -25,6 +25,10 @@ public class ApplicationModel extends AbstractModel implements Serializable {
     private boolean displayPointOffset;
     private boolean displayGridInputAssist;
     private boolean displayComments;
+    private boolean displayCpText;
+    private boolean displayWarnings;
+    private boolean displayCurrentStep;
+
     private boolean displayCpLines;
     private boolean displayAuxLines;
     private boolean displayLiveAuxLines;
@@ -323,6 +327,9 @@ public class ApplicationModel extends AbstractModel implements Serializable {
 
     public void reset() {
         displayComments = true;
+        displayCpText = true;
+        displayWarnings = true;
+        displayCurrentStep = true;
         displayCpLines = true;
         displayAuxLines = true;
         displayLiveAuxLines = true;
@@ -395,6 +402,10 @@ public class ApplicationModel extends AbstractModel implements Serializable {
     public void restorePrefDefaults(){
         //Unsure of displayPointSpotlight, displayPointOffset, and displayGridInputAssist defaults
         displayComments = true;
+        displayWarnings = true;
+        displayCpText = true;
+        displayCurrentStep = true;
+
         displayCpLines = true;
         displayAuxLines = true;
         displayLiveAuxLines = true;
@@ -744,7 +755,12 @@ public class ApplicationModel extends AbstractModel implements Serializable {
         displayPointSpotlight = applicationModel.getDisplayPointSpotlight();
         displayPointOffset = applicationModel.getDisplayPointOffset();
         displayGridInputAssist = applicationModel.getDisplayGridInputAssist();
+
         displayComments = applicationModel.getDisplayComments();
+        displayCurrentStep = applicationModel.getDisplayCurrentStep();
+        displayWarnings = applicationModel.getDisplayWarnings();
+        displayCpText = applicationModel.getDisplayCpText();
+
         displayCpLines = applicationModel.getDisplayCpLines();
         displayAuxLines = applicationModel.getDisplayAuxLines();
         displayLiveAuxLines = applicationModel.getDisplayLiveAuxLines();
@@ -884,5 +900,36 @@ public class ApplicationModel extends AbstractModel implements Serializable {
         boolean oldRoundedEnds = this.roundedEnds;
         this.roundedEnds = roundedEnds;
         this.pcs.firePropertyChange("roundedEnds", oldRoundedEnds, roundedEnds);
+    }
+
+    public boolean getDisplayCpText() {
+        return displayCpText;
+    }
+
+    public void setDisplayCpText(boolean displayCpText) {
+        boolean oldDisplayCpText = this.displayCpText;
+        this.displayCpText = displayCpText;
+        this.pcs.firePropertyChange("displayCpText", oldDisplayCpText, displayCpText);
+    }
+
+    public boolean getDisplayWarnings() {
+        return displayWarnings;
+    }
+
+    public void setDisplayWarnings(boolean displayWarnings) {
+
+        boolean oldDisplayWarnings = this.displayWarnings;
+        this.displayWarnings = displayWarnings;
+        this.pcs.firePropertyChange("displayWarnings", oldDisplayWarnings, displayWarnings);
+    }
+
+    public boolean getDisplayCurrentStep() {
+        return displayCurrentStep;
+    }
+
+    public void setDisplayCurrentStep(boolean displayCurrentStep) {
+        boolean oldDisplayCurrentStep = this.displayCurrentStep;
+        this.displayCurrentStep = displayCurrentStep;
+        this.pcs.firePropertyChange("displayCurrentStep", oldDisplayCurrentStep, displayCurrentStep);
     }
 }

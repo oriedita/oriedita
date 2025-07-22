@@ -12,6 +12,7 @@ import com.opencsv.CSVReaderBuilder;
 import org.tinylog.Logger;
 import oriedita.editor.Colors;
 import oriedita.editor.FrameProvider;
+import oriedita.editor.action.ActionService;
 import oriedita.editor.action.ActionType;
 import oriedita.editor.canvas.LineStyle;
 import oriedita.editor.databinding.ApplicationModel;
@@ -73,6 +74,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+
+import static java.nio.charset.StandardCharsets.*;
 
 public class PreferenceDialog extends JDialog {
     private JPanel contentPane;
@@ -151,9 +154,13 @@ public class PreferenceDialog extends JDialog {
     private JCheckBox detachGridColorCB;
     private JCheckBox detachFigureColorCB;
     private JCheckBox cpExportWarningCB;
+    private JCheckBox textCheckBox;
+    private JCheckBox warningsCheckBox;
+    private JCheckBox currentStepCheckBox;
     private int tempTransparency;
     private final ApplicationModel applicationModel;
     private final ButtonService buttonService;
+    private final ActionService actionService;
     private final ApplicationModel tempModel;
     private final FoldedFigureModel foldedFigureModel;
     private final FoldedFigureModel tempfoldedModel;
@@ -169,6 +176,9 @@ public class PreferenceDialog extends JDialog {
         offsetCB.setSelected(applicationModel.getDisplayPointOffset());
         inputAssistCB.setSelected(applicationModel.getDisplayGridInputAssist());
         commentCB.setSelected(applicationModel.getDisplayComments());
+        textCheckBox.setSelected(applicationModel.getDisplayCpText());
+        warningsCheckBox.setSelected(applicationModel.getDisplayWarnings());
+        currentStepCheckBox.setSelected(applicationModel.getDisplayCurrentStep());
         cpLinesCB.setSelected(applicationModel.getDisplayCpLines());
         auxLinesCB.setSelected(applicationModel.getDisplayAuxLines());
         liveAuxCB.setSelected(applicationModel.getDisplayLiveAuxLines());
@@ -225,11 +235,13 @@ public class PreferenceDialog extends JDialog {
             String name,
             Frame owner,
             ButtonService buttonService,
-            FileSaveService fileSaveService
+            FileSaveService fileSaveService,
+            ActionService actionService
     ) {
         super(owner, name);
         this.applicationModel = appModel;
         this.buttonService = buttonService;
+        this.actionService = actionService;
         this.tempModel = new ApplicationModel();
         this.tempModel.set(appModel);
         this.foldedFigureModel = foldedFigureModel;
@@ -252,6 +264,9 @@ public class PreferenceDialog extends JDialog {
         offsetCB.addActionListener(e -> applicationModel.setDisplayPointOffset(offsetCB.isSelected()));
         inputAssistCB.addActionListener(e -> applicationModel.setDisplayGridInputAssist(inputAssistCB.isSelected()));
         commentCB.addActionListener(e -> applicationModel.setDisplayComments(commentCB.isSelected()));
+        textCheckBox.addActionListener(e -> applicationModel.setDisplayCpText(textCheckBox.isSelected()));
+        currentStepCheckBox.addActionListener(e -> applicationModel.setDisplayCurrentStep(currentStepCheckBox.isSelected()));
+        warningsCheckBox.addActionListener(e -> applicationModel.setDisplayWarnings(warningsCheckBox.isSelected()));
         cpLinesCB.addActionListener(e -> applicationModel.setDisplayCpLines(cpLinesCB.isSelected()));
         auxLinesCB.addActionListener(e -> applicationModel.setDisplayAuxLines(auxLinesCB.isSelected()));
         liveAuxCB.addActionListener(e -> applicationModel.setDisplayLiveAuxLines(liveAuxCB.isSelected()));
@@ -653,7 +668,7 @@ public class PreferenceDialog extends JDialog {
 
             assert is != null;
             PushbackInputStream pushbackInputStream = new PushbackInputStream(is, 3);
-            InputStreamReader inputStreamReader = new InputStreamReader(pushbackInputStream, "UTF-8");
+            InputStreamReader inputStreamReader = new InputStreamReader(pushbackInputStream, UTF_8);
 
             // Check for BOM
             byte[] bom = new byte[3];
@@ -848,20 +863,11 @@ public class PreferenceDialog extends JDialog {
         gbc.gridy = 0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         panel5.add(inputAssistCB, gbc);
-        commentCB = new JCheckBox();
-        commentCB.setText("Comment");
-        gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        gbc.weightx = 1.0;
-        gbc.weighty = 1.0;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        panel5.add(commentCB, gbc);
         foldingProgressCB = new JCheckBox();
         foldingProgressCB.setText("Folding progress");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.gridy = 2;
+        gbc.gridy = 5;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -870,7 +876,7 @@ public class PreferenceDialog extends JDialog {
         selfIntersectionCB.setText("Self intersection");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.gridy = 3;
+        gbc.gridy = 6;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -879,7 +885,7 @@ public class PreferenceDialog extends JDialog {
         foldWarningCB.setText("Fold warning");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.gridy = 4;
+        gbc.gridy = 7;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.anchor = GridBagConstraints.WEST;
@@ -889,7 +895,7 @@ public class PreferenceDialog extends JDialog {
         toggleHelpCB.setText("Help dialog");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.gridy = 6;
+        gbc.gridy = 9;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -898,9 +904,39 @@ public class PreferenceDialog extends JDialog {
         cpExportWarningCB.setText("CP export warning");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
-        gbc.gridy = 5;
+        gbc.gridy = 8;
         gbc.anchor = GridBagConstraints.WEST;
         panel5.add(cpExportWarningCB, gbc);
+        textCheckBox = new JCheckBox();
+        textCheckBox.setText("Text");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.anchor = GridBagConstraints.WEST;
+        panel5.add(textCheckBox, gbc);
+        warningsCheckBox = new JCheckBox();
+        warningsCheckBox.setText("Warnings");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.anchor = GridBagConstraints.WEST;
+        panel5.add(warningsCheckBox, gbc);
+        currentStepCheckBox = new JCheckBox();
+        currentStepCheckBox.setText("Current Step");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        gbc.anchor = GridBagConstraints.WEST;
+        panel5.add(currentStepCheckBox, gbc);
+        commentCB = new JCheckBox();
+        commentCB.setText("Comments");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 4;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        panel5.add(commentCB, gbc);
         final JPanel panel6 = new JPanel();
         panel6.setLayout(new FlowLayout(FlowLayout.LEFT, 14, 14));
         panel6.setMinimumSize(new Dimension(354, 403));
@@ -1438,6 +1474,15 @@ public class PreferenceDialog extends JDialog {
         hasHotkeyCB = new JCheckBox();
         allData = new ArrayList<>();
         readCSV();
+        var allCategorizedActions = allData.stream()
+                .<String>mapMulti((arr, consumer) -> Arrays.stream(arr).forEach(consumer))
+                .toList();
+        this.actionService.getAllRegisteredActions()
+                .keySet().stream()
+                .map(ActionType::action)
+                .filter(a -> !allCategorizedActions.contains(a))
+                .forEach(a -> Logger.warn("{} is uncategorized, it will not show up in the hotkeys tab", a));
+
         loadHeaders(allData); // Extract headers
         updateList(allData); // Extract Data excluding headers
 

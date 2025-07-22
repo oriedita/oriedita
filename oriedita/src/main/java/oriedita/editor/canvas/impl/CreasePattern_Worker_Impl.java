@@ -158,7 +158,6 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     @Override
     public void lineStepAdd(LineSegment s) {
         LineSegment s0 = s.clone();
-        s0.setActive(LineSegment.ActiveState.ACTIVE_BOTH_3);
         lineStep.add(s0);
     }
 
@@ -422,7 +421,13 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     }
     
     @Override
-    public void drawWithCamera(Graphics g, boolean displayComments, boolean displayCpLines, boolean displayAuxLines, boolean displayAuxLiveLines, float lineWidth, LineStyle lineStyle, float f_h_WireframeLineWidth, int p0x_max, int p0y_max, boolean i_mejirusi_display, boolean hideOperationFrame) {//引数はカメラ設定、線幅、画面X幅、画面y高さ
+    public void drawWithCamera(Graphics g,
+                               boolean displayComments, boolean displayCpLines,
+                               boolean displayAuxLines, boolean displayAuxLiveLines,
+                               boolean displayCpText,
+                               float lineWidth, LineStyle lineStyle, float f_h_WireframeLineWidth,
+                               int p0x_max, int p0y_max, boolean i_mejirusi_display,
+                               boolean hideOperationFrame) {//引数はカメラ設定、線幅、画面X幅、画面y高さ
         Graphics2D g2 = (Graphics2D) g;
 
         BasicStroke BStroke = new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER);
@@ -468,7 +473,7 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
 
                 if (camvTaskExecutor.isTaskRunning()) {
                     g.setColor(Colors.get(Color.orange));
-                    g.drawString("... cAMV Errors", p0x_max - 100, 10);
+                    g.drawString("... cAMV Errors", p0x_max - 100, 20);
                 } else {
                     int numErrors = foldLineSet.getViolations().size();
                     if (numErrors == 0) {
@@ -477,7 +482,7 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
                         g.setColor(Colors.get(Color.red));
                     }
 
-                    g.drawString(numErrors + " cAMV Errors", p0x_max - 100, 10);
+                    g.drawString(numErrors + " cAMV Errors", p0x_max - 100, 20);
                 }
             }
         }
@@ -568,8 +573,10 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
         //候補入力時の候補を描く//Logger.info("_");
         g2.setStroke(new BasicStroke(lineWidth + 0.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));//基本指定A
 
-        for (LineSegment s : lineCandidate) {
-            DrawingUtil.drawLineCandidate(g, s, camera, pointSize);
+        if (gridInputAssist){
+            for (LineSegment s : lineCandidate) {
+                DrawingUtil.drawLineCandidate(g, s, camera, pointSize);
+            }
         }
 
         g.setColor(Colors.get(Color.black));
@@ -581,9 +588,11 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
         g.setColor(Colors.get(Color.black));
 
         if (displayComments) {
-            g.drawString(text_cp_setumei, 10, 50 + 55);
+            g.drawString(text_cp_setumei, 10, p0y_max - 40);
         }
-        textWorker.draw(g2, camera);
+        if (displayCpText){
+            textWorker.draw(g2, camera);
+        }
     }
 
     @Override
@@ -905,19 +914,6 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     }
 
     @Override
-    public void addPreviewLinesToCp() {//20181014
-        for (LineSegment s : lineStep) {
-            if (Epsilon.high.gt0(s.determineLength())) {
-                LineSegment add_sen = s.withColor(lineColor);
-                addLineSegment(add_sen);
-            } else {
-                addCircle(s.determineAX(), s.determineAY(), 5.0, LineColor.CYAN_3);
-            }
-        }
-        record();
-    }
-
-    @Override
     public boolean insideToMountain(Point p0a, Point p0b) {
         return foldLineSet.insideToMountain(createBox(p0a, p0b));
     }
@@ -1093,12 +1089,6 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     @Override
     public void setGridInputAssist(boolean i) {
         gridInputAssist = i;
-
-        if (!gridInputAssist) {
-            for (LineSegment candidate : lineCandidate) {
-                candidate.deactivate();
-            }
-        }
     }
 
     private origami.crease_pattern.element.Polygon createBox(Point p0a, Point p0b) {
