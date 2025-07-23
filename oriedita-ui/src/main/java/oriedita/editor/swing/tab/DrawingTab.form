@@ -87,17 +87,6 @@
                   <text value="lengthenCrease"/>
                 </properties>
               </component>
-              <component id="f85c6" class="javax.swing.JButton" binding="rabbitEarBtn">
-                <constraints>
-                  <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                  <gridbag weightx="1.0" weighty="0.0"/>
-                </constraints>
-                <properties>
-                  <actionCommand value="rabbitEarAction"/>
-                  <selected value="false"/>
-                  <text value="rabbitEar"/>
-                </properties>
-              </component>
               <component id="cd6c0" class="javax.swing.JButton" binding="flatfoldVertexBtn">
                 <constraints>
                   <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
@@ -224,6 +213,15 @@
                 <properties>
                   <actionCommand value="drawLineSegmentInternalDivisionRatioAction"/>
                   <text value="ratio"/>
+                </properties>
+              </component>
+              <component id="8d7ce" class="oriedita.editor.swing.component.DropdownToolButton" binding="rabbitEarDropdownToolButton" default-binding="true">
+                <constraints>
+                  <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <gridbag weightx="0.0" weighty="0.0"/>
+                </constraints>
+                <properties>
+                  <text value="rabbitEar"/>
                 </properties>
               </component>
             </children>
