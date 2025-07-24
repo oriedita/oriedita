@@ -489,7 +489,7 @@ public class ActionRegistrationService {
                 new LambdaAction(foldedFigureModel::toggleAntiAlias));
         actionService.registerAction(ActionType.foldedFigureToggleShadowAction,
                 new LambdaAction(foldedFigureModel::toggleDisplayShadows));
-        actionService.registerAction(ActionType.foldedFigureSizeIncreaseAction, new LambdaAction(() -> {
+        actionService.registerAction(ActionType.foldedFigureSizeIncreaseAction, new LambdaAction(() ->
             animationService.animate(Animations.ZOOM_FOLDED_MODEL,
                 foldedFigureModel::setScale,
                 foldedFigureModel::getScale,
@@ -512,8 +512,8 @@ public class ActionRegistrationService {
                     foldedFigureModel::setRotation,
                     foldedFigureModel::getRotation,
                     r -> foldedFigureModel.getState() == FoldedFigure.State.BACK_1 ? r - 11.25 : r + 11.25,
-                    AnimationDurations.ZOOM);
-        }));
+                    AnimationDurations.ZOOM)
+        ));
         actionService.registerAction(ActionType.oriagari_sousaAction,
                 actionFactory.oriagari_sousaAction(FoldedFigureOperationMode.MODE_1));
         actionService.registerAction(ActionType.oriagari_sousa_2Action,
@@ -531,8 +531,8 @@ public class ActionRegistrationService {
                     foldedFigureModel::setScale,
                     foldedFigureModel::getScale,
                     1.0,
-                    AnimationDurations.SCALE_SPEED);
-        }));
+                    AnimationDurations.SCALE_SPEED)
+        ));
         actionService.registerAction(ActionType.selectAnd3ClickAction, new LambdaAction(() -> {
             canvasModel.setCkbox_add_frame_SelectAnd3click_isSelected(
                     canvasModel.isCkbox_add_frame_SelectAnd3click_isSelected());

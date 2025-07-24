@@ -336,7 +336,7 @@ public class DrawingTab {
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        panel3.add(ratioBtn, gbc);
+        panel4.add(voronoiBtn, gbc);
         rabbitEarDropdownToolButton = new DropdownToolButton();
         rabbitEarDropdownToolButton.setText("rabbitEar");
         gbc = new GridBagConstraints();
@@ -344,7 +344,6 @@ public class DrawingTab {
         gbc.gridy = 1;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         panel3.add(rabbitEarDropdownToolButton, gbc);
-        panel4.add(voronoiBtn, gbc);
         final JLabel label2 = new JLabel();
         label2.setText("Select");
         panel1.add(label2, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
