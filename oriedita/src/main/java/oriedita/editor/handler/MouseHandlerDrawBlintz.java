@@ -96,7 +96,8 @@ public class MouseHandlerDrawBlintz extends StepMouseHandler<DrawBlintzStep> {
 
         templateSet.setSave(originalSave);
         templateSet.move(startingCircles.get(0).determineCenter(), startingCircles.get(1).determineCenter(), p1, p2);
-        previewSegments = templateSet.getLineSegments();
+        previewSegments = templateSet.getLineSegments().stream()
+                .filter((segment) -> segment.determineLength() > Epsilon.UNKNOWN_1EN6).toList();
     }
 
     private DrawBlintzStep release_select_p2(Point p) {
