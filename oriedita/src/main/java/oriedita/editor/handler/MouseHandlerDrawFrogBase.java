@@ -45,7 +45,7 @@ public class MouseHandlerDrawFrogBase extends StepMouseHandler<DrawFrogBaseStep>
         try {
             originalSave = new FoldImporter()
                     .doImport(
-                            getClass().getClassLoader().getResourceAsStream("default-molecules/bird_base.fold"));
+                            getClass().getClassLoader().getResourceAsStream("default-molecules/frog_base.fold"));
             templateSet.setSave(originalSave);
             startingCircles = originalSave.getCircles().stream()
                     .filter((circle) -> circle.getR() > Epsilon.UNKNOWN_1EN6).toList();
