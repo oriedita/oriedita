@@ -43,10 +43,9 @@ public class MouseHandlerDrawBirdBase extends StepMouseHandler<DrawBirdBaseStep>
                 this::release_select_p2));
 
         try {
-            originalSave = foldImporter
+            originalSave = new FoldImporter()
                     .doImport(
-                            new File(getClass().getClassLoader().getResource("default-molecules/bird_base.fold")
-                                    .toURI()));
+                            getClass().getClassLoader().getResourceAsStream("default-molecules/bird_base.fold"));
             templateSet.setSave(originalSave);
             startingCircles = originalSave.getCircles().stream()
                     .filter((circle) -> circle.getR() > Epsilon.UNKNOWN_1EN6).toList();

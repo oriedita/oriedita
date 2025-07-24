@@ -35,7 +35,7 @@ public class MouseHandlerDrawBlintz extends StepMouseHandler<DrawBlintzStep> {
     private List<Circle> startingCircles = new ArrayList<>();
 
     @Inject
-    public MouseHandlerDrawBlintz(FoldImporter foldImporter) {
+    public MouseHandlerDrawBlintz() {
         super(DrawBlintzStep.SELECT_P1);
         steps.addNode(StepNode.createNode_MD_R(DrawBlintzStep.SELECT_P1, this::move_drag_select_p1,
                 this::release_select_p1));
@@ -43,9 +43,9 @@ public class MouseHandlerDrawBlintz extends StepMouseHandler<DrawBlintzStep> {
                 this::release_select_p2));
 
         try {
-            originalSave = foldImporter
+            originalSave = new FoldImporter()
                     .doImport(
-                            new File(getClass().getClassLoader().getResource("default-molecules/blintz.fold").toURI()));
+                            getClass().getClassLoader().getResourceAsStream("default-molecules/blintz.fold"));
             templateSet.setSave(originalSave);
             startingCircles = originalSave.getCircles().stream()
                     .filter((circle) -> circle.getR() > Epsilon.UNKNOWN_1EN6).toList();

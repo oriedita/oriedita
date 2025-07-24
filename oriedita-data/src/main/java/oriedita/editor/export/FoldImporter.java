@@ -19,6 +19,7 @@ import origami.crease_pattern.element.Point;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 
 @ApplicationScoped
@@ -55,7 +56,7 @@ public class FoldImporter implements FileImporter {
             maxX = Math.max(Math.max(maxX, ax), bx);
             maxY = Math.max(Math.max(maxY, ay), by);
 
-            if (lineColors.size() > i){
+            if (lineColors.size() > i) {
                 var color = lineColors.get(i);
                 if (color.isPresent()) {
                     ls = ls.withCustomizedColor(color.get());
@@ -67,14 +68,13 @@ public class FoldImporter implements FileImporter {
 
         save.setCircles(new ArrayList<>(foldFile.getCircles()));
 
-        FoldLineSet ori_s_temp = new FoldLineSet();    //セレクトされた折線だけ取り出すために使う
-        ori_s_temp.setSave(save);//セレクトされた折線だけ取り出してori_s_tempを作る
+        FoldLineSet ori_s_temp = new FoldLineSet(); // セレクトされた折線だけ取り出すために使う
+        ori_s_temp.setSave(save);// セレクトされた折線だけ取り出してori_s_tempを作る
         ori_s_temp.move(
                 new Point(minX, minY),
                 new Point(minX, maxY),
                 new Point(-200, -200),
-                new Point(-200, 200)
-        );
+                new Point(-200, 200));
 
         Save save1 = SaveProvider.createInstance();
         ori_s_temp.getSave(save1);
@@ -99,7 +99,8 @@ public class FoldImporter implements FileImporter {
 
     public Save importFile(File file) throws FileReadingException, IOException {
         try (FileInputStream fileInputStream = new FileInputStream(file)) {
-            CustomFoldReader<OrieditaFoldFile> orieditaFoldFileCustomFoldReader = new CustomFoldReader<>(OrieditaFoldFile.class, fileInputStream);
+            CustomFoldReader<OrieditaFoldFile> orieditaFoldFileCustomFoldReader = new CustomFoldReader<>(
+                    OrieditaFoldFile.class, fileInputStream);
             return toSave(orieditaFoldFileCustomFoldReader.read());
         }
     }
@@ -111,5 +112,12 @@ public class FoldImporter implements FileImporter {
         } catch (FileReadingException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public Save doImport(InputStream is) throws FileReadingException, IOException {
+        CustomFoldReader<OrieditaFoldFile> orieditaFoldFileCustomFoldReader = new CustomFoldReader<>(
+                OrieditaFoldFile.class,
+                is);
+        return toSave(orieditaFoldFileCustomFoldReader.read());
     }
 }
