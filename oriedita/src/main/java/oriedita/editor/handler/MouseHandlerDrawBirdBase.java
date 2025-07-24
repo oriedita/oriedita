@@ -87,7 +87,7 @@ public class MouseHandlerDrawBirdBase extends StepMouseHandler<DrawBirdBaseStep>
         return DrawBirdBaseStep.SELECT_P2;
     }
 
-    // Select point 1
+    // Select point 2
     private void move_drag_select_p2(Point p) {
         Point tmpPoint = d.getClosestPoint(p);
         p2 = p;
