@@ -82,7 +82,7 @@ public class DrawingTab {
                 ActionType.deg2Action, ActionType.deg3Action, ActionType.deg1Action);
         rabbitEarDropdownToolButton.setActions(
                 ActionType.rabbitEarAction, ActionType.drawBlintzAction, ActionType.drawFishBaseAction,
-                ActionType.drawLilBirdBaseAction, ActionType.drawBirdBaseAction, ActionType.drawFrogBaseAction);
+                ActionType.drawDoveBaseAction, ActionType.drawBirdBaseAction, ActionType.drawFrogBaseAction);
         perpendicularDropdown.setActions(
                 ActionType.perpendicularDrawAction, ActionType.parallelDrawAction);
         axiomDropdown.setActions(

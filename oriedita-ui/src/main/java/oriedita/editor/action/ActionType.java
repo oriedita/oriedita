@@ -197,7 +197,7 @@ public enum ActionType {
     textAction("textAction"),
     drawBlintzAction("drawBlintzAction"),
     drawFishBaseAction("drawFishBaseAction"),
-    drawLilBirdBaseAction("drawLilBirdBaseAction"),
+    drawDoveBaseAction("drawDoveBaseAction"),
     drawBirdBaseAction("drawBirdBaseAction"),
     drawFrogBaseAction("drawFrogBaseAction"),
     toggleHelpAction("toggleHelpAction"),

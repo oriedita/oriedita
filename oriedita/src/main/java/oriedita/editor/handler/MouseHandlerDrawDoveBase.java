@@ -20,14 +20,14 @@ import origami.crease_pattern.element.Circle;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 
-enum DrawLilBirdBaseStep {
+enum DrawDoveBaseStep {
     SELECT_P1,
     SELECT_P2
 }
 
 @ApplicationScoped
-@Handles(MouseMode.DRAW_LIL_BIRD_BASE)
-public class MouseHandlerDrawLilBirdBase extends StepMouseHandler<DrawLilBirdBaseStep> {
+@Handles(MouseMode.DRAW_DOVE_BASE)
+public class MouseHandlerDrawDoveBase extends StepMouseHandler<DrawDoveBaseStep> {
     private Point p1, p2;
     private Save originalSave;
     private FoldLineSet templateSet = new FoldLineSet();
@@ -35,11 +35,11 @@ public class MouseHandlerDrawLilBirdBase extends StepMouseHandler<DrawLilBirdBas
     private List<Circle> startingCircles = new ArrayList<>();
 
     @Inject
-    public MouseHandlerDrawLilBirdBase(FoldImporter foldImporter) {
-        super(DrawLilBirdBaseStep.SELECT_P1);
-        steps.addNode(StepNode.createNode_MD_R(DrawLilBirdBaseStep.SELECT_P1, this::move_drag_select_p1,
+    public MouseHandlerDrawDoveBase(FoldImporter foldImporter) {
+        super(DrawDoveBaseStep.SELECT_P1);
+        steps.addNode(StepNode.createNode_MD_R(DrawDoveBaseStep.SELECT_P1, this::move_drag_select_p1,
                 this::release_select_p1));
-        steps.addNode(StepNode.createNode_MD_R(DrawLilBirdBaseStep.SELECT_P2, this::move_drag_select_p2,
+        steps.addNode(StepNode.createNode_MD_R(DrawDoveBaseStep.SELECT_P2, this::move_drag_select_p2,
                 this::release_select_p2));
 
         try {
@@ -51,7 +51,7 @@ public class MouseHandlerDrawLilBirdBase extends StepMouseHandler<DrawLilBirdBas
             startingCircles = originalSave.getCircles().stream()
                     .filter((circle) -> circle.getR() > Epsilon.UNKNOWN_1EN6).toList();
         } catch (Exception e) {
-            Logger.error(DrawLilBirdBaseStep.class.getSimpleName() + ": " + e);
+            Logger.error(DrawDoveBaseStep.class.getSimpleName() + ": " + e);
         }
     }
 
@@ -83,8 +83,8 @@ public class MouseHandlerDrawLilBirdBase extends StepMouseHandler<DrawLilBirdBas
         }
     }
 
-    private DrawLilBirdBaseStep release_select_p1(Point p) {
-        return DrawLilBirdBaseStep.SELECT_P2;
+    private DrawDoveBaseStep release_select_p1(Point p) {
+        return DrawDoveBaseStep.SELECT_P2;
     }
 
     // Select point 2
@@ -101,14 +101,14 @@ public class MouseHandlerDrawLilBirdBase extends StepMouseHandler<DrawLilBirdBas
                 .filter((segment) -> segment.determineLength() > Epsilon.UNKNOWN_1EN6).toList();
     }
 
-    private DrawLilBirdBaseStep release_select_p2(Point p) {
+    private DrawDoveBaseStep release_select_p2(Point p) {
         if (p2.distance(p1) < Epsilon.UNKNOWN_1EN6)
-            return DrawLilBirdBaseStep.SELECT_P2;
+            return DrawDoveBaseStep.SELECT_P2;
         for (LineSegment segment : previewSegments) {
             d.addLineSegment(segment.withColor(d.getLineColor()));
         }
         d.record();
         reset();
-        return DrawLilBirdBaseStep.SELECT_P1;
+        return DrawDoveBaseStep.SELECT_P1;
     }
 }
