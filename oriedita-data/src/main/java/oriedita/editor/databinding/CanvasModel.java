@@ -39,6 +39,7 @@ public class CanvasModel extends AbstractModel implements Serializable {
     private MouseWheelTarget mouseInCpOrFoldedFigure;
     private final AtomicBoolean w_image_running = new AtomicBoolean(false); // Folding together execution. If a single image export is in progress, it will be true.
     private boolean ckbox_add_frame_SelectAnd3click_isSelected;
+    private int toolSettingsPanelHeight;
 
     private ToolTab selectedToolTab;
     private ToolTab previouslySelectedToolTab;
@@ -288,6 +289,16 @@ public class CanvasModel extends AbstractModel implements Serializable {
         if (previouslySelectedToolTab != null) {
             setSelectedToolTab(previouslySelectedToolTab);
         }
+    }
+
+    public int getToolSettingsPanelHeight() {
+        return toolSettingsPanelHeight;
+    }
+
+    public void setToolSettingsPanelHeight(int toolSettingsPanelHeight) {
+        var oldToolSettingsPanelVisible = this.toolSettingsPanelHeight;
+        this.toolSettingsPanelHeight = toolSettingsPanelHeight;
+        pcs.firePropertyChange("toolSettingsPanelHeight", oldToolSettingsPanelVisible, toolSettingsPanelHeight);
     }
 
     public enum SelectionOperationMode {

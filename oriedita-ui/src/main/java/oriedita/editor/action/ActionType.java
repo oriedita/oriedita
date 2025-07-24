@@ -218,7 +218,13 @@ public enum ActionType {
     setGridAngleAction("setGridAngleAction"),
     setGridXAction("setGridXAction"),
     setGridYAction("setGridYAction"),
-    selectPersistentAction("selectPersistentAction");
+    selectPersistentAction("selectPersistentAction"),
+    drawingTabAction("drawingTabAction"),
+    referencesTabAction("referencesTabAction"),
+    foldingTabAction("foldingTabAction"),
+    settingsTabAction("settingsTabAction"),
+    none("none"),
+    ;
 
     static final Map<String, ActionType> actionMap;
 

@@ -11,6 +11,7 @@ import oriedita.editor.AnimationDurations;
 import oriedita.editor.Animations;
 import oriedita.editor.Colors;
 import oriedita.editor.FrameProvider;
+import oriedita.editor.action.ActionService;
 import oriedita.editor.action.ActionType;
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.canvas.MouseMode;
@@ -71,6 +72,9 @@ public class AppMenuBar {
     private JCheckBoxMenuItem pointOffsetCheckBox;//点を離すかどうか
     private JCheckBoxMenuItem gridInputAssistCheckBox;//高密度用入力をするかどうか
     private JCheckBoxMenuItem showCommentsCheckbox;//文章
+    private JCheckBoxMenuItem showCpTextCheckbox;
+    private JCheckBoxMenuItem showWarningsCheckbox;
+    private JCheckBoxMenuItem showCurrentStepCheckbox;
     private JCheckBoxMenuItem showCpLinesCheckBox;//折線
     private JCheckBoxMenuItem showAuxLinesCheckBox;//補助活線cyan
     private JCheckBoxMenuItem showLiveAuxLinesCheckBox;//補助画線
@@ -112,6 +116,8 @@ public class AppMenuBar {
     private final AnimationService animationService;
     private final CameraModel creasePatternCameraModel;
     private final Camera camera;
+    private final ActionService actionService;
+
     @Inject
     public AppMenuBar(
             FrameProvider frameProvider,
@@ -128,7 +134,8 @@ public class AppMenuBar {
             FoldedFiguresList foldedFiguresList,
             AnimationService animationService,
             Camera camera,
-            CameraModel creasePatternCameraModel
+            CameraModel creasePatternCameraModel,
+            ActionService actionService
     ) {
         this.frameProvider = frameProvider;
         this.foldingExecutor = foldingExecutor;
@@ -145,6 +152,7 @@ public class AppMenuBar {
         this.animationService = animationService;
         this.camera = camera;
         this.creasePatternCameraModel = creasePatternCameraModel;
+        this.actionService = actionService;
     }
 
     public void resetCPView(){
@@ -168,7 +176,6 @@ public class AppMenuBar {
     }
 
     public void init() {
-
         applicationModel.addPropertyChangeListener(e -> setData(applicationModel));
 
         //--------------------------------------------------------------------------------------------------
@@ -197,6 +204,9 @@ public class AppMenuBar {
         buttonService.registerButton(pointOffsetCheckBox, "pointOffsetAction");
         buttonService.registerButton(gridInputAssistCheckBox, "gridInputAssistAction");
         buttonService.registerButton(showCommentsCheckbox, "displayCommentsAction");
+        buttonService.registerButton(showCpTextCheckbox, "displayCpTextAction");
+        buttonService.registerButton(showCurrentStepCheckbox, "displayCurrentStepAction");
+        buttonService.registerButton(showWarningsCheckbox, "displayWarningsAction");
         buttonService.registerButton(showCpLinesCheckBox, "displayCpLinesAction");
         buttonService.registerButton(showAuxLinesCheckBox, "displayAuxLinesAction");
         buttonService.registerButton(showLiveAuxLinesCheckBox, "displayLiveAuxLinesAction");
@@ -267,7 +277,11 @@ public class AppMenuBar {
         });
         prefButton.addActionListener(e -> {
             if(preferenceDialog == null){
-                preferenceDialog = new PreferenceDialog(applicationModel, lookAndFeelService, frameProvider, foldedFigureModel, "Preferences", frameProvider.get(), buttonService, fileSaveService);
+                preferenceDialog = new PreferenceDialog(
+                        applicationModel,
+                        lookAndFeelService, frameProvider,
+                        foldedFigureModel, "Preferences",
+                        frameProvider.get(), buttonService, fileSaveService, actionService);
             }
             preferenceDialog.setSize(preferenceDialog.getRootPane().getPreferredSize());
             preferenceDialog.setMinimumSize(preferenceDialog.getRootPane().getMinimumSize());
@@ -290,6 +304,9 @@ public class AppMenuBar {
             getData(applicationModel);
         });
         showCommentsCheckbox.addActionListener(e -> getData(applicationModel));
+        showCpTextCheckbox.addActionListener(e -> getData(applicationModel));
+        showCurrentStepCheckbox.addActionListener(e -> getData(applicationModel));
+        showWarningsCheckbox.addActionListener(e -> getData(applicationModel));
         showCpLinesCheckBox.addActionListener(e -> getData(applicationModel));
         showAuxLinesCheckBox.addActionListener(e -> getData(applicationModel));
         showLiveAuxLinesCheckBox.addActionListener(e -> getData(applicationModel));
@@ -408,7 +425,7 @@ public class AppMenuBar {
         });
     }
 
-    public AppMenuBarUI getAppMenuBarUI() {
+    public JMenuBar getAppMenuBarUI() {
         return appMenuBarUI;
     }
 
@@ -516,8 +533,15 @@ public class AppMenuBar {
         viewMenu.add(showMenuGroup);
         showPointRangeCheckBox = new JCheckBoxMenuItem("Mouse range");
         showMenuGroup.add(showPointRangeCheckBox);
+        showCpTextCheckbox = new JCheckBoxMenuItem("Text");
+        showMenuGroup.add(showCpTextCheckbox);
+        showWarningsCheckbox = new JCheckBoxMenuItem("Warnings");
+        showMenuGroup.add(showWarningsCheckbox);
         showCommentsCheckbox = new JCheckBoxMenuItem("Comments");
         showMenuGroup.add(showCommentsCheckbox);
+        showCurrentStepCheckbox = new JCheckBoxMenuItem("Current Step");
+        showMenuGroup.add(showCurrentStepCheckbox);
+
         showCpLinesCheckBox = new JCheckBoxMenuItem("Cp lines");
         showMenuGroup.add(showCpLinesCheckBox);
         showAuxLinesCheckBox = new JCheckBoxMenuItem("Aux lines");
@@ -555,6 +579,7 @@ public class AppMenuBar {
         helpMenu.add(showConfigFolderMenuItem);
         showAutosaveFolderMenuItem = new JMenuItem("Open Autosave Folder");
         helpMenu.add(showAutosaveFolderMenuItem);
+        Logger.info("aasrgao");
     }
 
     public void getData(ApplicationModel applicationModel) {
@@ -562,6 +587,9 @@ public class AppMenuBar {
         applicationModel.setDisplayPointOffset(pointOffsetCheckBox.isSelected());
         applicationModel.setDisplayGridInputAssist(gridInputAssistCheckBox.isSelected());
         applicationModel.setDisplayComments(showCommentsCheckbox.isSelected());
+        applicationModel.setDisplayCpText(showCpTextCheckbox.isSelected());
+        applicationModel.setDisplayCurrentStep(showCurrentStepCheckbox.isSelected());
+        applicationModel.setDisplayWarnings(showWarningsCheckbox.isSelected());
         applicationModel.setDisplayCpLines(showCpLinesCheckBox.isSelected());
         applicationModel.setDisplayAuxLines(showAuxLinesCheckBox.isSelected());
         applicationModel.setDisplayLiveAuxLines(showLiveAuxLinesCheckBox.isSelected());
@@ -581,6 +609,9 @@ public class AppMenuBar {
         pointOffsetCheckBox.setSelected(applicationModel.getDisplayPointOffset());
         gridInputAssistCheckBox.setSelected(applicationModel.getDisplayGridInputAssist());
         showCommentsCheckbox.setSelected(applicationModel.getDisplayComments());
+        showCpTextCheckbox.setSelected(applicationModel.getDisplayCpText());
+        showWarningsCheckbox.setSelected(applicationModel.getDisplayWarnings());
+        showCurrentStepCheckbox.setSelected(applicationModel.getDisplayCurrentStep());
         showCpLinesCheckBox.setSelected(applicationModel.getDisplayCpLines());
         showAuxLinesCheckBox.setSelected(applicationModel.getDisplayAuxLines());
         showLiveAuxLinesCheckBox.setSelected(applicationModel.getDisplayLiveAuxLines());

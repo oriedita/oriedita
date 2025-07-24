@@ -758,7 +758,7 @@ public class OritaCalc {
     /**
      * Return a lineSegment with a certain length (assuming A is the starting
      * point).
-     * 
+     *
      * @param s0     a LineSegment
      * @param length a double value for desired length. Use negative value to flip
      *               the segment.
@@ -880,7 +880,7 @@ public class OritaCalc {
 
     /**
      * Check if a Path2D intersects a Line2D
-     * 
+     *
      * @param path        a Path2D
      * @param lineSegment a target Line2D
      * @return if there's an intersection
@@ -923,7 +923,7 @@ public class OritaCalc {
 
     /**
      * Check if a Path2D fully contains a Line2D
-     * 
+     *
      * @param path        a Path2D
      * @param lineSegment a target Line2D
      * @return if the line is fully contained
@@ -966,7 +966,7 @@ public class OritaCalc {
         StraightLine tb = new StraightLine(s.getA(), s.getB()).orthogonalize(s.getB());
         StraightLine td = new StraightLine(s.getA(), s.getB()).translate(d);
 
-        return new LineSegment(findIntersection_01(ta, td), findIntersection_01(tb, td));
+        return new LineSegment(findIntersection(ta, td), findIntersection(tb, td));
     }
 
     // ------------------------------------
@@ -1289,10 +1289,10 @@ public class OritaCalc {
         return min_d;
     }
 
-    public static LineSegment bisection(Point t1, Point t2, double d0) {
+    public static LineSegment bisection(Point t1, Point t2, double length) {
         Point tm = new Point((t1.getX() + t2.getX()) / 2.0, (t1.getY() + t2.getY()) / 2.0);
 
-        double bai = d0 / distance(t1, t2);
+        double bai = length / distance(t1, t2);
 
         LineSegment s1 = lineSegment_rotate(new LineSegment(tm, t1), 90.0, bai);
         LineSegment s2 = lineSegment_rotate(new LineSegment(tm, t2), 90.0, bai);
@@ -1324,7 +1324,7 @@ public class OritaCalc {
     /**
      * Check if a Point is within the span of a LineSegment. The span is an
      * imaginary line infinitely expanded from the LineSegment
-     * 
+     *
      * @param p0 a target Point
      * @param s0 a LineSegment
      * @return true if the target point is within the span, false if otherwise
@@ -1342,7 +1342,7 @@ public class OritaCalc {
     /**
      * Check if a Point is within the span of a LineSegment (formed by 2 Points).
      * The span is an imaginary line infinitely expanded from the LineSegment
-     * 
+     *
      * @param p0 a target Point
      * @param p1 an endpoint of the LineSegment
      * @param p2 other endpoint of the LineSegment

@@ -259,27 +259,31 @@ public class CanvasUI extends JPanel {
         double d_width = creasePatternCamera.getCameraZoomX() * mainCreasePatternWorker.getSelectionDistance();
 
         //展開図表示
-        mainCreasePatternWorker.drawWithCamera(bufferGraphics, displayComments, displayCpLines, displayAuxLines, displayLiveAuxLines, lineWidth, lineStyle, auxLineWidth, dim.width, dim.height, displayMarkings, hideOperationFrame);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ,展開図動かし中心の十字の目印の表示
+        mainCreasePatternWorker.drawWithCamera(bufferGraphics,
+                displayComments, displayCpLines, displayAuxLines, displayLiveAuxLines,
+                applicationModel.getDisplayCpText(), lineWidth, lineStyle, auxLineWidth,
+                dim.width, dim.height, displayMarkings, hideOperationFrame);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ,展開図動かし中心の十字の目印の表示
         DrawingSettings settings = new DrawingSettings(
                 lineWidth, lineStyle,
                 dim.height, dim.width,
                 applicationModel.getRoundedEnds(),
-                applicationModel.getDisplayComments());
+                applicationModel.getDisplayComments(),
+                applicationModel.getDisplayCurrentStep());
         if (activeMouseHandler != null) {
             activeMouseHandler.drawPreview(g2, creasePatternCamera, settings);
         }
+        int topY = canvasModel.getToolSettingsPanelHeight();
         if (displayComments) {
-            int topY = 50;
             //展開図情報の文字表示
             bufferGraphics.setColor(Colors.get(Color.black));
 
-            bufferGraphics.drawString(String.format("mouse= ( %.2f, %.2f )", mousePosition.getX(), mousePosition.getY()), 10, topY + 10); //この表示内容はvoid kekka_syoriで決められる。
+            bufferGraphics.drawString(String.format("mouse= ( %.2f, %.2f )", mousePosition.getX(), mousePosition.getY()), 10, getHeight()- 10); //この表示内容はvoid kekka_syoriで決められる。
 
-            bufferGraphics.drawString("L=" + mainCreasePatternWorker.getTotal(), 10, topY + 25); //この表示内容はvoid kekka_syoriで決められる。
+            bufferGraphics.drawString("L=" + mainCreasePatternWorker.getTotal(), 10, getHeight() - 25); //この表示内容はvoid kekka_syoriで決められる。
 
             if (selectedFigure != null) {
                 //結果の文字表示
-                bufferGraphics.drawString(selectedFigure.getFoldedFigure().text_result, 10, topY + 40); //この表示内容はvoid kekka_syoriで決められる。
+                bufferGraphics.drawString(selectedFigure.getFoldedFigure().text_result, 10, topY + 20); //この表示内容はvoid kekka_syoriで決められる。
             }
 
             if (displayGridInputAssist) {
@@ -296,17 +300,20 @@ public class CanvasUI extends JPanel {
                 bufferGraphics.setColor(Colors.get(Color.red));
 
                 bufferGraphics.drawString(foldingExecutor.getTaskName() + " Under Calculation. If you want to cancel calculation, uncheck [check A + MV]on right side and press the brake button (bicycle brake icon) on lower side.",
-                        10, topY + 69); //この表示内容はvoid kekka_syoriで決められる。
+                        10, topY + 39); //この表示内容はvoid kekka_syoriで決められる。
                 bufferGraphics.drawString("計算中。　なお、計算を取り消し通常状態に戻りたいなら、右辺の[check A+MV]のチェックをはずし、ブレーキボタン（下辺の、自転車のブレーキのアイコン）を押す。 ",
-                        10, topY + 83); //この表示内容はvoid kekka_syoriで決められる。
+                        10, topY + 53); //この表示内容はvoid kekka_syoriで決められる。
             }
 
-            if (canvasModel.getWarningMessage() != null) {
-                bufferGraphics.setColor(Colors.get(Color.yellow));
-                bufferGraphics.drawString(canvasModel.getWarningMessage(), 10, topY + 97);
-            }
 
             bulletinBoard.draw(bufferGraphics);//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+        }
+
+        if (applicationModel.getDisplayWarnings()){
+            if (canvasModel.getWarningMessage() != null) {
+                bufferGraphics.setColor(Colors.get(Color.yellow));
+                bufferGraphics.drawString(canvasModel.getWarningMessage(), 10, topY + 67);
+            }
         }
 
 
@@ -319,7 +326,10 @@ public class CanvasUI extends JPanel {
 
         //展開図を折り上がり図の上に描くために、展開図を再表示する
         if (displayCreasePatternOnTop) {
-            mainCreasePatternWorker.drawWithCamera(bufferGraphics, displayComments, displayCpLines, displayAuxLines, displayLiveAuxLines, lineWidth, lineStyle, auxLineWidth, dim.width, dim.height, displayMarkings, hideOperationFrame);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ
+            mainCreasePatternWorker.drawWithCamera(bufferGraphics, displayComments, displayCpLines,
+                    displayAuxLines, displayLiveAuxLines, applicationModel.getDisplayCpText(),
+                    lineWidth, lineStyle, auxLineWidth, dim.width, dim.height,
+                    displayMarkings, hideOperationFrame);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ
         }
 
         //アンチェイリアス

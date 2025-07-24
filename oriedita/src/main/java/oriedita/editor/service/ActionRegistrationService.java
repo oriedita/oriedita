@@ -9,6 +9,7 @@ import oriedita.editor.Animations;
 import oriedita.editor.Canvas;
 import oriedita.editor.Colors;
 import oriedita.editor.FrameProvider;
+import oriedita.editor.ToolTab;
 import oriedita.editor.action.ActionService;
 import oriedita.editor.action.ActionType;
 import oriedita.editor.action.LambdaAction;
@@ -102,6 +103,7 @@ public class ActionRegistrationService {
                 put(ActionType.select_lXAction, MouseMode.SELECT_LINE_INTERSECTING_68);
                 put(ActionType.unselect_lXAction, MouseMode.UNSELECT_LINE_INTERSECTING_69);
                 put(ActionType.addColorConstraintAction, MouseMode.ADD_FOLDING_CONSTRAINT);
+              put(ActionType.foldableLinePlusGridInputAction, MouseMode.FOLDABLE_LINE_INPUT_39);
             }
         };
 
@@ -216,6 +218,12 @@ public class ActionRegistrationService {
             mainCreasePatternWorker.record();
         }));
 
+        // - tab actions
+        actionService.registerAction(ActionType.drawingTabAction, new LambdaAction(() -> canvasModel.setSelectedToolTab(ToolTab.DRAW)));
+        actionService.registerAction(ActionType.foldingTabAction, new LambdaAction(() -> canvasModel.setSelectedToolTab(ToolTab.FOLD)));
+        actionService.registerAction(ActionType.referencesTabAction, new LambdaAction(() -> canvasModel.setSelectedToolTab(ToolTab.REFERENCE)));
+        actionService.registerAction(ActionType.settingsTabAction, new LambdaAction(() -> canvasModel.setSelectedToolTab(ToolTab.SETTINGS)));
+
         // - line edit actions
         actionService.registerAction(ActionType.v_del_allAction, new LambdaAction(mainCreasePatternWorker::v_del_all));
         actionService.registerAction(ActionType.v_del_all_ccAction,
@@ -291,9 +299,8 @@ public class ActionRegistrationService {
             }
             // 以上でやりたいことは書き終わり
         }));
-        actionService.registerAction(ActionType.drawDiagonalGridlinesAction, new LambdaAction(() -> {
-            gridModel.setDrawDiagonalGridlines(!gridModel.getDrawDiagonalGridlines());
-        }));
+        actionService.registerAction(ActionType.drawDiagonalGridlinesAction, new LambdaAction(() ->
+                gridModel.setDrawDiagonalGridlines(!gridModel.getDrawDiagonalGridlines())));
         actionService.registerAction(ActionType.intervalGridColorAction, new LambdaAction(() -> {
             Color color = JColorChooser.showDialog(frameProvider.get(), "Col",
                     FlatLaf.isLafDark() ? Colors.GRID_SCALE_DARK : Colors.GRID_SCALE);
@@ -337,27 +344,24 @@ public class ActionRegistrationService {
             mainCreasePatternWorker.redo();
             canvasModel.markDirty();
         }));
-        actionService.registerAction(ActionType.selectPersistentAction, new LambdaAction(() -> {
-            applicationModel.setSelectPersistent(!applicationModel.getSelectPersistent());
-        }));
+        actionService.registerAction(ActionType.selectPersistentAction, new LambdaAction(() ->
+                applicationModel.setSelectPersistent(!applicationModel.getSelectPersistent())));
 
         // |---------------------------------------------------------------------------|
         // --- Top Panel ---
         // - transform CP(crease pattern) actions
-        actionService.registerAction(ActionType.rotateClockwiseAction, new LambdaAction(() -> {
+        actionService.registerAction(ActionType.rotateClockwiseAction, new LambdaAction(() ->
             animationService.animate(Animations.ROTATE_CP,
-                    cameraModel::setRotation,
-                    cameraModel::getRotation,
-                    r -> r - angleSystemModel.getAngleStep(),
-                    AnimationDurations.ZOOM);
-        }));
-        actionService.registerAction(ActionType.rotateAnticlockwiseAction, new LambdaAction(() -> {
+                cameraModel::setRotation,
+                cameraModel::getRotation,
+                r -> r - angleSystemModel.getAngleStep(),
+                AnimationDurations.ZOOM)));
+        actionService.registerAction(ActionType.rotateAnticlockwiseAction, new LambdaAction(() ->
             animationService.animate(Animations.ROTATE_CP,
-                    cameraModel::setRotation,
-                    cameraModel::getRotation,
-                    r -> r + angleSystemModel.getAngleStep(),
-                    AnimationDurations.ZOOM);
-        }));
+                cameraModel::setRotation,
+                cameraModel::getRotation,
+                r -> r + angleSystemModel.getAngleStep(),
+                AnimationDurations.ZOOM)));
 
         // - background actions
         actionService.registerAction(ActionType.transparentAction,
@@ -487,26 +491,23 @@ public class ActionRegistrationService {
                 new LambdaAction(foldedFigureModel::toggleDisplayShadows));
         actionService.registerAction(ActionType.foldedFigureSizeIncreaseAction, new LambdaAction(() -> {
             animationService.animate(Animations.ZOOM_FOLDED_MODEL,
-                    foldedFigureModel::setScale,
-                    foldedFigureModel::getScale,
-                    scale -> foldedFigureModel.getScaleForZoomBy(-1, applicationModel.getZoomSpeed(), scale),
-                    AnimationDurations.ZOOM);
-        }));
-        actionService.registerAction(ActionType.foldedFigureSizeDecreaseAction, new LambdaAction(() -> {
+                foldedFigureModel::setScale,
+                foldedFigureModel::getScale,
+                scale -> foldedFigureModel.getScaleForZoomBy(-1, applicationModel.getZoomSpeed(), scale),
+                AnimationDurations.ZOOM)));
+        actionService.registerAction(ActionType.foldedFigureSizeDecreaseAction, new LambdaAction(() ->
             animationService.animate(Animations.ZOOM_FOLDED_MODEL,
-                    foldedFigureModel::setScale,
-                    foldedFigureModel::getScale,
-                    scale -> foldedFigureModel.getScaleForZoomBy(1, applicationModel.getZoomSpeed(), scale),
-                    AnimationDurations.ZOOM);
-        }));
-        actionService.registerAction(ActionType.foldedFigureRotateClockwiseAction, new LambdaAction(() -> {
+                foldedFigureModel::setScale,
+                foldedFigureModel::getScale,
+                scale -> foldedFigureModel.getScaleForZoomBy(1, applicationModel.getZoomSpeed(), scale),
+                AnimationDurations.ZOOM)));
+        actionService.registerAction(ActionType.foldedFigureRotateClockwiseAction, new LambdaAction(() ->
             animationService.animate(Animations.ROTATE_FOLDED_MODEL,
-                    foldedFigureModel::setRotation,
-                    foldedFigureModel::getRotation,
-                    r -> foldedFigureModel.getState() == FoldedFigure.State.BACK_1 ? r + 11.25 : r - 11.25,
-                    AnimationDurations.ZOOM);
-        }));
-        actionService.registerAction(ActionType.foldedFigureRotateAntiClockwiseAction, new LambdaAction(() -> {
+                foldedFigureModel::setRotation,
+                foldedFigureModel::getRotation,
+                r -> foldedFigureModel.getState() == FoldedFigure.State.BACK_1 ? r + 11.25 : r - 11.25,
+                AnimationDurations.ZOOM)));
+        actionService.registerAction(ActionType.foldedFigureRotateAntiClockwiseAction, new LambdaAction(() ->
             animationService.animate(Animations.ROTATE_FOLDED_MODEL,
                     foldedFigureModel::setRotation,
                     foldedFigureModel::getRotation,
@@ -525,7 +526,7 @@ public class ActionRegistrationService {
                 new LambdaAction(applicationModel::toggleHelpVisible));
 
         // --- others ---
-        actionService.registerAction(ActionType.scaleAction, new LambdaAction(() -> {
+        actionService.registerAction(ActionType.scaleAction, new LambdaAction(() ->
             animationService.animate(Animations.ZOOM_FOLDED_MODEL,
                     foldedFigureModel::setScale,
                     foldedFigureModel::getScale,
@@ -537,5 +538,4 @@ public class ActionRegistrationService {
                     canvasModel.isCkbox_add_frame_SelectAnd3click_isSelected());
         }));
     }
-
 }

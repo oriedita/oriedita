@@ -58,8 +58,7 @@ public class FoldImporter implements FileImporter {
             if (lineColors.size() > i){
                 var color = lineColors.get(i);
                 if (color.isPresent()) {
-                    ls.setCustomized(1);
-                    ls.setCustomizedColor(color.get());
+                    ls = ls.withCustomizedColor(color.get());
                 }
             }
 
