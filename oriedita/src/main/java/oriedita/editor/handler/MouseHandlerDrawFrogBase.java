@@ -1,12 +1,23 @@
 package oriedita.editor.handler;
 
 import java.awt.Graphics2D;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.tinylog.Logger;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
+import oriedita.editor.export.FoldImporter;
+import oriedita.editor.save.Save;
+import origami.Epsilon;
+import origami.crease_pattern.FoldLineSet;
+import origami.crease_pattern.element.Circle;
+import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 
 enum DrawFrogBaseStep {
@@ -18,14 +29,30 @@ enum DrawFrogBaseStep {
 @Handles(MouseMode.DRAW_FROG_BASE)
 public class MouseHandlerDrawFrogBase extends StepMouseHandler<DrawFrogBaseStep> {
     private Point p1, p2;
+    private Save originalSave;
+    private FoldLineSet templateSet = new FoldLineSet();
+    private List<LineSegment> previewSegments = new ArrayList<>();
+    private List<Circle> startingCircles = new ArrayList<>();
 
     @Inject
-    public MouseHandlerDrawFrogBase() {
+    public MouseHandlerDrawFrogBase(FoldImporter foldImporter) {
         super(DrawFrogBaseStep.SELECT_P1);
         steps.addNode(StepNode.createNode_MD_R(DrawFrogBaseStep.SELECT_P1, this::move_drag_select_p1,
                 this::release_select_p1));
         steps.addNode(StepNode.createNode_MD_R(DrawFrogBaseStep.SELECT_P2, this::move_drag_select_p2,
                 this::release_select_p2));
+
+        try {
+            originalSave = foldImporter
+                    .doImport(
+                            new File(getClass().getClassLoader().getResource("default-molecules/frog_base.fold")
+                                    .toURI()));
+            templateSet.setSave(originalSave);
+            startingCircles = originalSave.getCircles().stream()
+                    .filter((circle) -> circle.getR() > Epsilon.UNKNOWN_1EN6).toList();
+        } catch (Exception e) {
+            Logger.error(DrawFrogBaseStep.class.getSimpleName() + ": " + e);
+        }
     }
 
     @Override
@@ -33,6 +60,10 @@ public class MouseHandlerDrawFrogBase extends StepMouseHandler<DrawFrogBaseStep>
         super.drawPreview(g2, camera, settings);
         DrawingUtil.drawStepVertex(g2, p1, d.getLineColor(), camera, d.getGridInputAssist());
         DrawingUtil.drawStepVertex(g2, p2, d.getLineColor(), camera, d.getGridInputAssist());
+        for (LineSegment segment : previewSegments) {
+            DrawingUtil.drawLineStep(g2, segment.withColor(d.getLineColor()), camera, settings.getLineWidth(),
+                    d.getGridInputAssist());
+        }
     }
 
     @Override
@@ -40,6 +71,7 @@ public class MouseHandlerDrawFrogBase extends StepMouseHandler<DrawFrogBaseStep>
         resetStep();
         p1 = null;
         p2 = null;
+        previewSegments = new ArrayList<>();
     }
 
     // Select point 1
@@ -52,8 +84,6 @@ public class MouseHandlerDrawFrogBase extends StepMouseHandler<DrawFrogBaseStep>
     }
 
     private DrawFrogBaseStep release_select_p1(Point p) {
-        if (p.distance(d.getClosestPoint(p)) > d.getSelectionDistance())
-            return DrawFrogBaseStep.SELECT_P1;
         return DrawFrogBaseStep.SELECT_P2;
     }
 
@@ -64,11 +94,19 @@ public class MouseHandlerDrawFrogBase extends StepMouseHandler<DrawFrogBaseStep>
         if (p.distance(tmpPoint) < d.getSelectionDistance()) {
             p2 = tmpPoint;
         }
+
+        templateSet.setSave(originalSave);
+        templateSet.move(startingCircles.get(0).determineCenter(), startingCircles.get(1).determineCenter(), p1, p2);
+        previewSegments = templateSet.getLineSegments();
     }
 
     private DrawFrogBaseStep release_select_p2(Point p) {
-        if (p.distance(d.getClosestPoint(p)) > d.getSelectionDistance())
+        if (p2.distance(p1) < Epsilon.UNKNOWN_1EN6)
             return DrawFrogBaseStep.SELECT_P2;
+        for (LineSegment segment : previewSegments) {
+            d.addLineSegment(segment.withColor(d.getLineColor()));
+        }
+        d.record();
         reset();
         return DrawFrogBaseStep.SELECT_P1;
     }
