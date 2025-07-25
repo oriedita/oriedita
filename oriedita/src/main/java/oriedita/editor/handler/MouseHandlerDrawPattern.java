@@ -36,7 +36,8 @@ public abstract class MouseHandlerDrawPattern extends StepMouseHandler<DrawPatte
                 this::release_select_p2));
 
         try {
-            originalSave = new FoldImporter().doImport(getClass().getClassLoader().getResourceAsStream(resourceString));
+            originalSave = new FoldImporter()
+                    .importFile(getClass().getClassLoader().getResourceAsStream(resourceString));
             templateSet.setSave(originalSave);
             startingCircles = originalSave.getCircles().stream()
                     .filter((circle) -> circle.getR() > Epsilon.UNKNOWN_1EN6).toList();

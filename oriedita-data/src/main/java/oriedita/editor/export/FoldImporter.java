@@ -99,10 +99,15 @@ public class FoldImporter implements FileImporter {
 
     public Save importFile(File file) throws FileReadingException, IOException {
         try (FileInputStream fileInputStream = new FileInputStream(file)) {
-            CustomFoldReader<OrieditaFoldFile> orieditaFoldFileCustomFoldReader = new CustomFoldReader<>(
-                    OrieditaFoldFile.class, fileInputStream);
-            return toSave(orieditaFoldFileCustomFoldReader.read());
+            return importFile(fileInputStream);
         }
+    }
+
+    public Save importFile(InputStream is) throws FileReadingException, IOException {
+        CustomFoldReader<OrieditaFoldFile> orieditaFoldFileCustomFoldReader = new CustomFoldReader<>(
+                OrieditaFoldFile.class,
+                is);
+        return toSave(orieditaFoldFileCustomFoldReader.read());
     }
 
     @Override
@@ -112,12 +117,5 @@ public class FoldImporter implements FileImporter {
         } catch (FileReadingException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    public Save doImport(InputStream is) throws FileReadingException, IOException {
-        CustomFoldReader<OrieditaFoldFile> orieditaFoldFileCustomFoldReader = new CustomFoldReader<>(
-                OrieditaFoldFile.class,
-                is);
-        return toSave(orieditaFoldFileCustomFoldReader.read());
     }
 }
