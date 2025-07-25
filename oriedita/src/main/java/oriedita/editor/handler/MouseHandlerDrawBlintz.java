@@ -1,7 +1,6 @@
 package oriedita.editor.handler;
 
 import java.awt.Graphics2D;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 

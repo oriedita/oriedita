@@ -1,7 +1,6 @@
 package oriedita.editor.handler;
 
 import java.awt.Graphics2D;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,7 +34,7 @@ public class MouseHandlerDrawFrogBase extends StepMouseHandler<DrawFrogBaseStep>
     private List<Circle> startingCircles = new ArrayList<>();
 
     @Inject
-    public MouseHandlerDrawFrogBase(FoldImporter foldImporter) {
+    public MouseHandlerDrawFrogBase() {
         super(DrawFrogBaseStep.SELECT_P1);
         steps.addNode(StepNode.createNode_MD_R(DrawFrogBaseStep.SELECT_P1, this::move_drag_select_p1,
                 this::release_select_p1));
