@@ -37,7 +37,6 @@ public class DrawingTab {
     private JButton drawCreaseRestrictedBtn;
     private DropdownToolButton angleRestrictedToolsDropdown;
     private JButton lengthenCreaseBtn;
-    private JButton rabbitEarBtn;
     private JButton flatfoldVertexBtn;
     private DropdownToolButton perpendicularDropdown;
     private JButton mirroLineBtn;
@@ -67,6 +66,7 @@ public class DrawingTab {
     private JButton alternateIncludedBtn;
     private DropdownToolButton mvDropdown;
     private JButton ratioBtn;
+    private DropdownToolButton rabbitEarDropdownToolButton;
 
     @Inject
     public DrawingTab(ButtonService buttonService,
@@ -79,37 +79,33 @@ public class DrawingTab {
 
     public void init() {
         angleRestrictedToolsDropdown.setActions(
-                ActionType.deg2Action, ActionType.deg3Action, ActionType.deg1Action
-        );
+                ActionType.deg2Action, ActionType.deg3Action, ActionType.deg1Action);
+        rabbitEarDropdownToolButton.setActions(
+                ActionType.rabbitEarAction, ActionType.drawBlintzAction, ActionType.drawFishBaseAction,
+                ActionType.drawDoveBaseAction, ActionType.drawBirdBaseAction, ActionType.drawFrogBaseAction);
         perpendicularDropdown.setActions(
-                ActionType.perpendicularDrawAction, ActionType.parallelDrawAction
-        );
+                ActionType.perpendicularDrawAction, ActionType.parallelDrawAction);
         axiomDropdown.setActions(
-                ActionType.axiom5Action, ActionType.axiom7Action
-        );
+                ActionType.axiom5Action, ActionType.axiom7Action);
         addSelectionDropdown.setActions(
-                ActionType.selectAction, ActionType.select_lXAction, ActionType.select_polygonAction, ActionType.selectLassoAction
-        );
+                ActionType.selectAction, ActionType.select_lXAction, ActionType.select_polygonAction,
+                ActionType.selectLassoAction);
         removeSelectionDropdown.setActions(
-                ActionType.unselectAction, ActionType.unselect_lXAction, ActionType.unselect_polygonAction, ActionType.unselectLassoAction
-        );
+                ActionType.unselectAction, ActionType.unselect_lXAction, ActionType.unselect_polygonAction,
+                ActionType.unselectLassoAction);
         setSelectionDropdown.setActions(
-                ActionType.unselectAllAction, ActionType.selectAllAction
-        );
+                ActionType.unselectAllAction, ActionType.selectAllAction);
 
         deleteOnLineDropdown.setActions(
-                ActionType.del_lAction, ActionType.del_l_XAction, ActionType.trimBranchesAction
-        );
+                ActionType.del_lAction, ActionType.del_l_XAction, ActionType.trimBranchesAction);
 
         removeVerticesDropdown.setActions(
-                ActionType.v_del_allAction, ActionType.v_del_all_ccAction, ActionType.v_del_ccAction
-        );
+                ActionType.v_del_allAction, ActionType.v_del_all_ccAction, ActionType.v_del_ccAction);
 
         mvDropdown.setActions(
                 ActionType.senbun_henkan2Action,
                 ActionType.senbun_henkanAction,
-                ActionType.zen_yama_tani_henkanAction
-        );
+                ActionType.zen_yama_tani_henkanAction);
 
         buttonService.addDefaultListener($$$getRootComponent$$$());
 
@@ -222,16 +218,6 @@ public class DrawingTab {
         gbc.gridy = 1;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         panel3.add(lengthenCreaseBtn, gbc);
-        rabbitEarBtn = new JButton();
-        rabbitEarBtn.setActionCommand("rabbitEarAction");
-        rabbitEarBtn.setSelected(false);
-        rabbitEarBtn.setText("rabbitEar");
-        gbc = new GridBagConstraints();
-        gbc.gridx = 1;
-        gbc.gridy = 1;
-        gbc.weightx = 1.0;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        panel3.add(rabbitEarBtn, gbc);
         flatfoldVertexBtn = new JButton();
         flatfoldVertexBtn.setActionCommand("makeFlatFoldableAction");
         flatfoldVertexBtn.setText("flatfoldVertex");
@@ -351,6 +337,13 @@ public class DrawingTab {
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         panel4.add(voronoiBtn, gbc);
+        rabbitEarDropdownToolButton = new DropdownToolButton();
+        rabbitEarDropdownToolButton.setText("rabbitEar");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 1;
+        gbc.gridy = 1;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        panel3.add(rabbitEarDropdownToolButton, gbc);
         final JLabel label2 = new JLabel();
         label2.setText("Select");
         panel1.add(label2, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));

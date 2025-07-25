@@ -195,6 +195,11 @@ public enum ActionType {
     select_lXAction("select_lXAction"),
     sen_tokutyuu_color_henkouAction("sen_tokutyuu_color_henkouAction"),
     textAction("textAction"),
+    drawBlintzAction("drawBlintzAction"),
+    drawFishBaseAction("drawFishBaseAction"),
+    drawDoveBaseAction("drawDoveBaseAction"),
+    drawBirdBaseAction("drawBirdBaseAction"),
+    drawFrogBaseAction("drawFrogBaseAction"),
     toggleHelpAction("toggleHelpAction"),
     unselect_polygonAction("unselect_polygonAction"),
     unselect_lXAction("unselect_lXAction"),
@@ -220,7 +225,6 @@ public enum ActionType {
     settingsTabAction("settingsTabAction"),
     none("none"),
     ;
-
 
     static final Map<String, ActionType> actionMap;
 
