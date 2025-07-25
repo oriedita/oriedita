@@ -81,6 +81,8 @@ public interface MouseModeHandler {
     default void reset() {
     }
 
+    default void init() {}
+
     default void drawPreview(Graphics2D g2, Camera camera, DrawingSettings settings) {
     }
 }

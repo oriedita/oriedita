@@ -5,6 +5,8 @@ import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
+import oriedita.editor.handler.step.StepMouseHandler;
+import oriedita.editor.handler.step.ObjCoordStepNode;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
@@ -25,9 +27,9 @@ public class MouseHandlerPolygonSetNoCorners extends StepMouseHandler<PolygonSet
     @Inject
     public MouseHandlerPolygonSetNoCorners() {
         super(PolygonSetNoCornersStep.SELECT_POINT_1);
-        steps.addNode(StepNode.createNode_MD_R(PolygonSetNoCornersStep.SELECT_POINT_1, this::move_drag_select_point_1,
+        steps.addNode(ObjCoordStepNode.createNode_MD_R(PolygonSetNoCornersStep.SELECT_POINT_1, this::move_drag_select_point_1,
                 this::release_select_point_1));
-        steps.addNode(StepNode.createNode_MD_R(PolygonSetNoCornersStep.SELECT_POINT_2, this::move_drag_select_point_2,
+        steps.addNode(ObjCoordStepNode.createNode_MD_R(PolygonSetNoCornersStep.SELECT_POINT_2, this::move_drag_select_point_2,
                 this::release_select_point_2));
     }
 

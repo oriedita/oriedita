@@ -5,6 +5,8 @@ import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
+import oriedita.editor.handler.step.StepMouseHandler;
+import oriedita.editor.handler.step.ObjCoordStepNode;
 import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineColor;
@@ -30,11 +32,11 @@ public class MouseHandlerParallelDraw extends StepMouseHandler<ParallelDrawStep>
     @Inject
     public MouseHandlerParallelDraw() {
         super(ParallelDrawStep.SELECT_TARGET_POINT);
-        steps.addNode(StepNode.createNode_MD_R(ParallelDrawStep.SELECT_TARGET_POINT, this::move_select_target_point,
+        steps.addNode(ObjCoordStepNode.createNode_MD_R(ParallelDrawStep.SELECT_TARGET_POINT, this::move_select_target_point,
                 this::release_select_target_point));
-        steps.addNode(StepNode.createNode_MD_R(ParallelDrawStep.SELECT_PARALLEL_SEGMENT,
+        steps.addNode(ObjCoordStepNode.createNode_MD_R(ParallelDrawStep.SELECT_PARALLEL_SEGMENT,
                 this::move_select_parallel_segment, this::release_select_parallel_segment));
-        steps.addNode(StepNode.createNode_MD_R(ParallelDrawStep.SELECT_DESTINATION, this::move_select_destination,
+        steps.addNode(ObjCoordStepNode.createNode_MD_R(ParallelDrawStep.SELECT_DESTINATION, this::move_select_destination,
                 this::release_select_destination));
     }
 

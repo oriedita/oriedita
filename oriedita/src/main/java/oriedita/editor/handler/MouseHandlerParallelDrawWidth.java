@@ -5,6 +5,8 @@ import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
+import oriedita.editor.handler.step.StepMouseHandler;
+import oriedita.editor.handler.step.ObjCoordStepNode;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
@@ -33,11 +35,11 @@ public class MouseHandlerParallelDrawWidth extends StepMouseHandler<ParallelDraw
     @Inject
     public MouseHandlerParallelDrawWidth() {
         super(ParallelDrawWidthStep.SELECT_SEGMENT);
-        steps.addNode(StepNode.createNode_MD_R(ParallelDrawWidthStep.SELECT_SEGMENT, this::move_drag_select_segment,
+        steps.addNode(ObjCoordStepNode.createNode_MD_R(ParallelDrawWidthStep.SELECT_SEGMENT, this::move_drag_select_segment,
                 this::release_select_segment));
-        steps.addNode(StepNode.createNode(ParallelDrawWidthStep.CLICK_DRAG_POINT, this::move_click_drag_point, (p) -> {
+        steps.addNode(ObjCoordStepNode.createNode(ParallelDrawWidthStep.CLICK_DRAG_POINT, this::move_click_drag_point, (p) -> {
         }, this::drag_click_drag_point, this::release_click_drag_point));
-        steps.addNode(StepNode.createNode_MD_R(ParallelDrawWidthStep.SELECT_INDICATOR, this::move_drag_select_indicator,
+        steps.addNode(ObjCoordStepNode.createNode_MD_R(ParallelDrawWidthStep.SELECT_INDICATOR, this::move_drag_select_indicator,
                 this::release_select_indicator));
     }
 

@@ -5,6 +5,8 @@ import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
+import oriedita.editor.handler.step.StepMouseHandler;
+import oriedita.editor.handler.step.ObjCoordStepNode;
 import origami.Epsilon;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
@@ -25,7 +27,7 @@ public class MouseHandlerDrawCreaseRestricted extends StepMouseHandler<DrawCreas
     public MouseHandlerDrawCreaseRestricted() {
         super(DrawCreaseRestrictedStep.CLICK_DRAG_POINT);
         steps.addNode(
-                StepNode.createNode(DrawCreaseRestrictedStep.CLICK_DRAG_POINT, this::move_click_drag_point, (p) -> {
+                ObjCoordStepNode.createNode(DrawCreaseRestrictedStep.CLICK_DRAG_POINT, this::move_click_drag_point, (p) -> {
                 }, this::drag_click_drag_point, this::release_click_drag_point));
     }
 

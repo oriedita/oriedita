@@ -122,13 +122,13 @@ public class CanvasUI extends JPanel {
             @Override
             public void mouseMoved(MouseEvent e) {
                 Point p = new Point(e.getPoint().getX(), e.getPoint().getY());
-                canvasModel.setMouseObjPosition(mainCreasePatternWorker.getCamera().TV2object(p));
+                canvasModel.setMousePosition(p);
             }
 
             @Override
                 public void mouseDragged(MouseEvent e) {
                 Point p = new Point(e.getPoint().getX(), e.getPoint().getY());
-                canvasModel.setMouseObjPosition(mainCreasePatternWorker.getCamera().TV2object(p));
+                canvasModel.setMousePosition(p);
             }
         });
     }
@@ -268,7 +268,8 @@ public class CanvasUI extends JPanel {
                 dim.height, dim.width,
                 applicationModel.getRoundedEnds(),
                 applicationModel.getDisplayComments(),
-                applicationModel.getDisplayCurrentStep());
+                applicationModel.getDisplayCurrentStep(),
+                applicationModel.getDisplayGridInputAssist());
         if (activeMouseHandler != null) {
             activeMouseHandler.drawPreview(g2, creasePatternCamera, settings);
         }

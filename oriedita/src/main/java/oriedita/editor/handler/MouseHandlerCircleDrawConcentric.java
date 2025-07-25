@@ -5,6 +5,8 @@ import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
+import oriedita.editor.handler.step.StepMouseHandler;
+import oriedita.editor.handler.step.ObjCoordStepNode;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.Circle;
 import origami.crease_pattern.element.LineColor;
@@ -28,10 +30,10 @@ public class MouseHandlerCircleDrawConcentric extends StepMouseHandler<CircleDra
     @Inject
     public MouseHandlerCircleDrawConcentric() {
         super(CircleDrawConcentricStep.SELECT_CIRCLE);
-        steps.addNode(StepNode.createNode_MD_R(CircleDrawConcentricStep.SELECT_CIRCLE, this::move_drag_select_circle,
+        steps.addNode(ObjCoordStepNode.createNode_MD_R(CircleDrawConcentricStep.SELECT_CIRCLE, this::move_drag_select_circle,
                 this::release_select_circle));
         steps.addNode(
-                StepNode.createNode(CircleDrawConcentricStep.CLICK_DRAG_POINT, this::move_click_drag_point, (p) -> {
+                ObjCoordStepNode.createNode(CircleDrawConcentricStep.CLICK_DRAG_POINT, this::move_click_drag_point, (p) -> {
                 }, this::drag_click_drag_point, this::release_click_drag_point));
     }
 

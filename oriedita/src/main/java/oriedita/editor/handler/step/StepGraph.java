@@ -1,21 +1,27 @@
-package oriedita.editor.handler;
+package oriedita.editor.handler.step;
 
+import oriedita.editor.handler.MouseModeHandler;
 import origami.crease_pattern.element.Point;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 public class StepGraph<T extends Enum<T>> {
-    private final Map<T, StepNode<T>> nodes;
-    private StepNode<T> currentNode;
+    private final Map<T, IStepNode<T>> nodes;
+    private IStepNode<T> currentNode;
     private T currentStep;
 
-    public StepGraph(T step) {
+    public StepGraph(T startingStep) {
         this.nodes = new HashMap<>();
-        this.currentStep = step;
+        this.currentStep = startingStep;
     }
 
-    public void addNode(StepNode<T> node) {
+    public Collection<IStepNode<T>> getNodes() {
+        return nodes.values();
+    }
+
+    public void addNode(IStepNode<T> node) {
         if(currentNode == null) currentNode = node;
         nodes.put(node.getStep(), node);
     }
@@ -31,9 +37,15 @@ public class StepGraph<T extends Enum<T>> {
         currentNode.runHighlightSelection(mousePos);
     }
 
-    public void runCurrentPressAction(Point mousePos) {
+    public void runCurrentPressAction(Point mousePos, MouseModeHandler.Feature mouseButton) {
         if (currentNode == null) return;
-        currentNode.runPressAction(mousePos);
+        T nextStep = currentNode.runPressAction(mousePos, mouseButton);
+        if (nextStep == null) throw new RuntimeException ("Returned step value is null. Returning...");
+        if (nextStep == currentStep) return;
+        currentStep = nextStep;
+        currentNode = nodes.get(currentStep);
+        currentNode.runHighlightSelection(mousePos);
+        currentNode.runPressAction(mousePos, mouseButton);
     }
 
     public void runCurrentDragAction(Point mousePos) {
@@ -52,7 +64,7 @@ public class StepGraph<T extends Enum<T>> {
     @Override
     public String toString() {
         StringBuilder str = new StringBuilder("\n{\n");
-        for (Map.Entry<T, StepNode<T>> entry : nodes.entrySet()) {
+        for (Map.Entry<T, IStepNode<T>> entry : nodes.entrySet()) {
             str.append("\t").append(entry.getKey()).append(": ").append(entry.getValue().toString()).append(",\n");
         }
         str.append("}");
