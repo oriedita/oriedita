@@ -1,6 +1,5 @@
 package oriedita.editor.handler.step;
 
-import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.handler.MouseModeHandler;
 import origami.crease_pattern.element.Point;
 
@@ -8,38 +7,28 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class ObjCoordStepNode<T extends Enum<T>> implements IStepNode<T>, ICameraStepNode {
-    private final T step;
+public class ObjCoordStepNode<T extends Enum<T>> extends AbstractCameraStepNode<T> implements IStepNode<T>, ICameraStepNode {
     private final Consumer<Point> moveAction;
     private final BiFunction<Point, MouseModeHandler.Feature, T> pressAction;
     private final Consumer<Point> dragAction;
     private final Function<Point, T> releaseAction;
-    protected Camera camera;
 
-    @Override
-    public T getStep() { return step; }
-
-    // TODO: maybe make a stepFactory or sth so this isnt needed?
-    @Override
-    public void setCamera(Camera camera) { this.camera = camera; }
-
-    public ObjCoordStepNode(T step,
+    protected ObjCoordStepNode(T step,
                             Consumer<Point> moveAction,
                             BiFunction<Point, MouseModeHandler.Feature, T> pressAction,
                             Consumer<Point> dragAction,
                             Function<Point, T> releaseAction) {
-        this.step = step;
+        super(step);
         this.moveAction = moveAction;
         this.pressAction = pressAction;
         this.dragAction = dragAction;
         this.releaseAction = releaseAction;
     }
 
-    public static <T extends Enum<T>> ObjCoordStepNode<T> createNode_M_P(T step,
-                                                                         Consumer<Point> moveAction,
-                                                                         BiFunction<Point, MouseModeHandler.Feature, T> pressAction) {
+    public static <T extends Enum<T>> ObjCoordStepNode<T> createSwitchNode(
+            T step, Consumer<Point> moveAction, Function<MouseModeHandler.Feature, T> pressAction) {
         return new ObjCoordStepNode<>(step,
-                moveAction, pressAction, p -> {}, p -> step);
+                moveAction, (p, f) -> pressAction.apply(f), p -> {}, p -> step);
     }
 
     public static <T extends Enum<T>> ObjCoordStepNode<T> createNode(T step, Consumer<Point> moveAction, Consumer<Point> pressAction, Consumer<Point> dragAction, Function<Point, T> releaseAction) {
@@ -68,7 +57,7 @@ public class ObjCoordStepNode<T extends Enum<T>> implements IStepNode<T>, ICamer
     @Override
     public String toString() {
         return "StepNode{" +
-                "\nstep=" + step +
+                "\nstep=" + getStep() +
                 ",\nmoveAction=" + moveAction.toString() +
                 ",\npressAction=" + pressAction.toString() +
                 ",\ndragAction=" + dragAction.toString() +

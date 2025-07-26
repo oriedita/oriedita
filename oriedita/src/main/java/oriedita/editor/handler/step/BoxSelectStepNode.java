@@ -11,37 +11,24 @@ import origami.crease_pattern.element.Polygon;
 import origami.crease_pattern.element.Rectangle;
 
 import java.awt.Graphics2D;
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class BoxSelectStepNode<T extends Enum<T>> extends ObjCoordStepNode<T> implements IStepNode<T>, ICameraStepNode, IPreviewStepNode {
+public class BoxSelectStepNode<T extends Enum<T>> extends AbstractCameraStepNode<T> implements IStepNode<T>, ICameraStepNode, IPreviewStepNode {
 
     Point selectionStart = new Point();
     private LineSegment[] lines = new LineSegment[4];
+    private final Function<Polygon, T> releaseAction;
 
     public BoxSelectStepNode(T step,
-                             Consumer<Point> moveAction,
-                             BiFunction<Point, MouseModeHandler.Feature, T> pressAction,
-                             Consumer<Point> dragAction,
-                             Function<Point, T> releaseAction) {
-        super(step, moveAction, pressAction, dragAction, releaseAction);
+                             Function<Polygon, T> releaseAction) {
+        super(step);
+        this.releaseAction = releaseAction;
     }
 
     public static <T extends Enum<T>> BoxSelectStepNode<T> createNode(T step, Function<Polygon, T> releaseAction){
         return new BoxSelectStepNode<>(step,
-                p -> {},
-                (p, b) -> step,
-                p -> {},
-                p -> null  // this is never actually returned since runReleaseAction is overridden
-        ){
-            @Override
-            public T runReleaseAction(Point p) {
-                var ret = releaseAction.apply(getBox());
-                super.runReleaseAction(p); // return value (null) of this is ignored
-                return ret;
-            }
-        };
+                releaseAction
+        );
     }
 
     @Override
@@ -54,7 +41,11 @@ public class BoxSelectStepNode<T extends Enum<T>> extends ObjCoordStepNode<T> im
         lines[1] = new LineSegment(p, p, LineColor.MAGENTA_5);
         lines[2] = new LineSegment(p, p, LineColor.MAGENTA_5);
         lines[3] = new LineSegment(p, p, LineColor.MAGENTA_5);
-        super.runHighlightSelection(mousePos);
+    }
+
+    @Override
+    public T runPressAction(Point mousePos, MouseModeHandler.Feature mouseButton) {
+        return getStep();
     }
 
     @Override
@@ -71,12 +62,11 @@ public class BoxSelectStepNode<T extends Enum<T>> extends ObjCoordStepNode<T> im
         lines[1] = lines[1].withCoordinates(p19_b, p19_c);
         lines[2] = lines[2].withCoordinates(p19_c, p19_d);
         lines[3] = lines[3].withCoordinates(p19_d, p19_a);
-        super.runDragAction(mousePos);
     }
 
     @Override
     public T runReleaseAction(Point mousePos) {
-        var ret = super.runReleaseAction(mousePos);
+        var ret = releaseAction.apply(getBox());
         lines = new  LineSegment[4];
         return ret;
     }

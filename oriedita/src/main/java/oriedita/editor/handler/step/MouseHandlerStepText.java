@@ -35,9 +35,9 @@ public class MouseHandlerStepText extends StepMouseHandler<MouseHandlerStepText.
 
     protected StepGraph<Step> initStepGraph() {
         var steps = new StepGraph<>(Step.CHOOSE);
-        steps.addNode(ObjCoordStepNode.createNode_M_P(Step.CHOOSE,
+        steps.addNode(ObjCoordStepNode.createSwitchNode(Step.CHOOSE,
                 (p) -> {},
-                (p, b) -> b == Feature.BUTTON_1? Step.CREATE_OR_MOVE : Step.DELETE));
+                (b) -> b == Feature.BUTTON_1? Step.CREATE_OR_MOVE : Step.DELETE));
         steps.addNode(ObjCoordStepNode.createNode(Step.CREATE_OR_MOVE,
                 p -> {},
                 this::createPressed,

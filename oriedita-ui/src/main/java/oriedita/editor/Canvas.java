@@ -677,6 +677,7 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
     public void setActiveMouseHandler(MouseModeHandler activeMouseHandler) {
         this.activeMouseHandler = activeMouseHandler;
         canvasUI.setActiveMouseHandler(activeMouseHandler);
+        activeMouseHandler.mouseMoved(canvasModel.getMousePosition());
     }
 
     public Point e2p(MouseEvent e) {
