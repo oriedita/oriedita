@@ -20,15 +20,10 @@ public class BoxSelectStepNode<T extends Enum<T>> extends AbstractCameraStepNode
     private final Function<Polygon, T> releaseAction;
 
     public BoxSelectStepNode(T step,
-                             Function<Polygon, T> releaseAction) {
+                             Function<Polygon, T> releaseAction, Camera camera) {
         super(step);
         this.releaseAction = releaseAction;
-    }
-
-    public static <T extends Enum<T>> BoxSelectStepNode<T> createNode(T step, Function<Polygon, T> releaseAction){
-        return new BoxSelectStepNode<>(step,
-                releaseAction
-        );
+        this.camera = camera;
     }
 
     @Override

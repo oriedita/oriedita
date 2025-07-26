@@ -1,5 +1,6 @@
 package oriedita.editor.handler.step;
 
+import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.handler.MouseModeHandler;
 import origami.crease_pattern.element.Point;
 
@@ -17,18 +18,20 @@ public class ObjCoordStepNode<T extends Enum<T>> extends AbstractCameraStepNode<
                             Consumer<Point> moveAction,
                             BiFunction<Point, MouseModeHandler.Feature, T> pressAction,
                             Consumer<Point> dragAction,
-                            Function<Point, T> releaseAction) {
+                            Function<Point, T> releaseAction,
+                               Camera camera) {
         super(step);
         this.moveAction = moveAction;
         this.pressAction = pressAction;
         this.dragAction = dragAction;
         this.releaseAction = releaseAction;
+        this.camera = camera;
     }
 
     public static <T extends Enum<T>> ObjCoordStepNode<T> createSwitchNode(
             T step, Consumer<Point> moveAction, Function<MouseModeHandler.Feature, T> pressAction) {
         return new ObjCoordStepNode<>(step,
-                moveAction, (p, f) -> pressAction.apply(f), p -> {}, p -> step);
+                moveAction, (p, f) -> pressAction.apply(f), p -> {}, p -> step, null);
     }
 
     public static <T extends Enum<T>> ObjCoordStepNode<T> createNode(T step, Consumer<Point> moveAction, Consumer<Point> pressAction, Consumer<Point> dragAction, Function<Point, T> releaseAction) {
@@ -37,11 +40,11 @@ public class ObjCoordStepNode<T extends Enum<T>> extends AbstractCameraStepNode<
                     pressAction.accept(p);
                     return step;
                 },
-                dragAction, releaseAction);
+                dragAction, releaseAction, null);
     }
 
     public static <T extends Enum<T>> ObjCoordStepNode<T> createNode_MD_R(T step, Consumer<Point> moveDragAction, Function<Point, T> releaseAction) {
-        return new ObjCoordStepNode<>(step, moveDragAction, (p, b) -> step, moveDragAction, releaseAction);
+        return new ObjCoordStepNode<>(step, moveDragAction, (p, b) -> step, moveDragAction, releaseAction, null);
     }
 
     // Only release or press action decides which step to change to

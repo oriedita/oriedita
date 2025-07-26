@@ -15,6 +15,8 @@ import java.awt.event.MouseEvent;
 public abstract class StepMouseHandler<T extends Enum<T>> extends BaseMouseHandler {
     @Inject
     private CanvasModel canvasModel;
+    @Inject
+    private StepFactory stepFactory;
 
     protected StepGraph<T> steps;
     private T startingStep;
@@ -32,7 +34,7 @@ public abstract class StepMouseHandler<T extends Enum<T>> extends BaseMouseHandl
     @Override
     public void init() {
         super.init();
-        this.steps = initStepGraph();
+        this.steps = initStepGraph(stepFactory);
         startingStep = steps.getCurrentStep();
         label = getStepLabel();
         for (IStepNode<T> node : steps.getNodes()) {
@@ -43,7 +45,7 @@ public abstract class StepMouseHandler<T extends Enum<T>> extends BaseMouseHandl
     }
 
     // TODO: make abstract after moving step initialization in all subclasses
-    protected StepGraph<T> initStepGraph() {
+    protected StepGraph<T> initStepGraph(StepFactory stepFactory) {
         return this.steps;
     }
 
@@ -90,16 +92,16 @@ public abstract class StepMouseHandler<T extends Enum<T>> extends BaseMouseHandl
 
     @Override
     public void drawPreview(Graphics2D g2, Camera camera, DrawingSettings settings) {
+        for (IStepNode<T> node : steps.getNodes()) {
+            if (node instanceof IPreviewStepNode) {
+                ((IPreviewStepNode) node).drawPreview(g2, camera, settings);
+            }
+        }
         double textPosX = canvasModel.getMousePosition().getX() + 20;
         double textPosY = canvasModel.getMousePosition().getY() + 20;
         if (settings.getShowCurrentStep()) {
             DrawingUtil.drawText(g2, label,
                     canvasModel.getMousePosition().withX(textPosX).withY(textPosY), Camera.defaultCamera);
-        }
-        for (IStepNode<T> node : steps.getNodes()) {
-            if (node instanceof IPreviewStepNode) {
-                ((IPreviewStepNode) node).drawPreview(g2, camera, settings);
-            }
         }
     }
 }

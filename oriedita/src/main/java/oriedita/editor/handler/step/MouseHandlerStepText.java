@@ -33,17 +33,17 @@ public class MouseHandlerStepText extends StepMouseHandler<MouseHandlerStepText.
         return EnumSet.of(Feature.BUTTON_1, Feature.BUTTON_3);
     }
 
-    protected StepGraph<Step> initStepGraph() {
+    protected StepGraph<Step> initStepGraph(StepFactory sf) {
         var steps = new StepGraph<>(Step.CHOOSE);
-        steps.addNode(ObjCoordStepNode.createSwitchNode(Step.CHOOSE,
+        steps.addNode(sf.createSwitchNode(Step.CHOOSE,
                 (p) -> {},
                 (b) -> b == Feature.BUTTON_1? Step.CREATE_OR_MOVE : Step.DELETE));
-        steps.addNode(ObjCoordStepNode.createNode(Step.CREATE_OR_MOVE,
+        steps.addNode(sf.createNode(Step.CREATE_OR_MOVE,
                 p -> {},
                 this::createPressed,
                 this::createDragged,
                 p -> Step.CHOOSE));
-        steps.addNode(BoxSelectStepNode.createNode(Step.DELETE, this::deleteReleased));
+        steps.addNode(sf.createBoxSelectNode(Step.DELETE, this::deleteReleased));
         return steps;
     }
 
