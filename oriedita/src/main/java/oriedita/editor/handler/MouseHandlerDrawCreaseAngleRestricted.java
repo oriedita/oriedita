@@ -6,6 +6,8 @@ import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.databinding.AngleSystemModel;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
+import oriedita.editor.handler.step.StepMouseHandler;
+import oriedita.editor.handler.step.ObjCoordStepNode;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
@@ -38,11 +40,11 @@ public class MouseHandlerDrawCreaseAngleRestricted extends StepMouseHandler<Draw
     @Inject
     public MouseHandlerDrawCreaseAngleRestricted(AngleSystemModel angleSystemModel) {
         super(DrawAngleConvergingLinesStep.SELECT_2P_OR_SEGMENT);
-        steps.addNode(StepNode.createNode_MD_R(DrawAngleConvergingLinesStep.SELECT_2P_OR_SEGMENT,
+        steps.addNode(ObjCoordStepNode.createNode_MD_R(DrawAngleConvergingLinesStep.SELECT_2P_OR_SEGMENT,
                 this::move_drag_select_2p_or_segment, this::release_select_2p_or_segment));
-        steps.addNode(StepNode.createNode_MD_R(DrawAngleConvergingLinesStep.SELECT_2P, this::move_drag_select_2p,
+        steps.addNode(ObjCoordStepNode.createNode_MD_R(DrawAngleConvergingLinesStep.SELECT_2P, this::move_drag_select_2p,
                 this::release_select_2p));
-        steps.addNode(StepNode.createNode_MD_R(DrawAngleConvergingLinesStep.SELECT_CONVERGING_POINT,
+        steps.addNode(ObjCoordStepNode.createNode_MD_R(DrawAngleConvergingLinesStep.SELECT_CONVERGING_POINT,
                 this::move_drag_select_converging_point, this::release_select_converging_point));
         angleSystemModel.addPropertyChangeListener(e -> {
             indicators = new ArrayList<>();

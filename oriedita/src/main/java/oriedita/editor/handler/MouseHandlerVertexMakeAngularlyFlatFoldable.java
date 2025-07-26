@@ -5,6 +5,8 @@ import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
+import oriedita.editor.handler.step.StepMouseHandler;
+import oriedita.editor.handler.step.ObjCoordStepNode;
 import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineColor;
@@ -40,11 +42,11 @@ public class MouseHandlerVertexMakeAngularlyFlatFoldable extends StepMouseHandle
     @Inject
     public MouseHandlerVertexMakeAngularlyFlatFoldable() {
         super(AngularlyFlatFoldableStep.SELECT_INVALID_VERTEX);
-        steps.addNode(StepNode.createNode_MD_R(AngularlyFlatFoldableStep.SELECT_INVALID_VERTEX,
+        steps.addNode(ObjCoordStepNode.createNode_MD_R(AngularlyFlatFoldableStep.SELECT_INVALID_VERTEX,
                 this::move_drag_select_invalid_vertex, this::release_select_invalid_vertex));
-        steps.addNode(StepNode.createNode_MD_R(AngularlyFlatFoldableStep.SELECT_CANDIDATE,
+        steps.addNode(ObjCoordStepNode.createNode_MD_R(AngularlyFlatFoldableStep.SELECT_CANDIDATE,
                 this::move_drag_select_candidate, this::release_select_candidate));
-        steps.addNode(StepNode.createNode_MD_R(AngularlyFlatFoldableStep.SELECT_DESTINATION,
+        steps.addNode(ObjCoordStepNode.createNode_MD_R(AngularlyFlatFoldableStep.SELECT_DESTINATION,
                 this::move_drag_select_destination, this::release_select_destination));
     }
 

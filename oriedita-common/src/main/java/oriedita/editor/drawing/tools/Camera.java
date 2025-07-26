@@ -9,6 +9,12 @@ import java.awt.geom.Path2D;
 import java.io.Serializable;
 
 public class Camera implements Serializable { // Mediation between actual coordinates and display coordinates
+    public static Camera defaultCamera;
+
+    static {
+        defaultCamera = new Camera();
+        defaultCamera.setDisplayPosition(new Point(0, 0));
+    }
 
     double camera_position_x, camera_position_y;
     double camera_angle;
@@ -35,8 +41,8 @@ public class Camera implements Serializable { // Mediation between actual coordi
         camera_zoom_x = 1.0;
         camera_zoom_y = 1.0;
 
-        display_position_x = 350.0;
-        display_position_y = 350.0;
+        display_position_x = 0;
+        display_position_y = 0;
     }
 
     public void reset() {
@@ -51,8 +57,8 @@ public class Camera implements Serializable { // Mediation between actual coordi
         camera_zoom_y = 1.0;
         parent = null;
 
-        display_position_x = 350.0;
-        display_position_y = 350.0;
+        display_position_x = 0;
+        display_position_y = 0;
     }
 
     public Camera getParent() {

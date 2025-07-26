@@ -19,7 +19,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 @ApplicationScoped
 public class CanvasModel extends AbstractModel implements Serializable {
-    private Point mouseObjPosition;
+    private Point mousePosition;
     private LineColor lineColor;
     private LineColor auxLiveLineColor;
     private MouseMode mouseMode;
@@ -57,14 +57,14 @@ public class CanvasModel extends AbstractModel implements Serializable {
         this.pcs.firePropertyChange("dirty", false, true);
     }
 
-    public Point getMouseObjPosition() {
-        return mouseObjPosition;
+    public Point getMousePosition() {
+        return mousePosition;
     }
 
-    public void setMouseObjPosition(Point mouseObjPosition) {
-        Point oldMouseObjPosition = this.mouseObjPosition;
-        this.mouseObjPosition = mouseObjPosition;
-        this.pcs.firePropertyChange("mouseObjPosition", oldMouseObjPosition, mouseObjPosition);
+    public void setMousePosition(Point mousePosition) {
+        Point oldMouseObjPosition = this.mousePosition;
+        this.mousePosition = mousePosition;
+        this.pcs.firePropertyChange("mousePosition", oldMouseObjPosition, mousePosition);
     }
 
     public boolean getToggleLineColor() {
@@ -177,7 +177,7 @@ public class CanvasModel extends AbstractModel implements Serializable {
     }
 
     public void reset() {
-        mouseObjPosition = new Point();
+        mousePosition = new Point();
         lineColor = LineColor.RED_1;
         auxLiveLineColor = LineColor.ORANGE_4;
 

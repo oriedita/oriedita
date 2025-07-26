@@ -210,7 +210,9 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
 
         for (MouseModeHandler handler : handlerList) {
             mouseModeHandlers.put(handler.getMouseMode(), handler);
+            handler.init();
         }
+        Logger.info("handlers initialized");
     }
 
     public void writeImageFile(File file) {

@@ -5,6 +5,8 @@ import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
+import oriedita.editor.handler.step.StepMouseHandler;
+import oriedita.editor.handler.step.ObjCoordStepNode;
 import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineColor;
@@ -32,11 +34,11 @@ public class MouseHandlerSymmetricDraw extends StepMouseHandler<SymmetricDrawSte
     @Inject
     public MouseHandlerSymmetricDraw() {
         super(SymmetricDrawStep.SELECT_2L_OR_3P);
-        steps.addNode(StepNode.createNode_MD_R(SymmetricDrawStep.SELECT_2L_OR_3P, this::move_drag_select_2L_or_3P,
+        steps.addNode(ObjCoordStepNode.createNode_MD_R(SymmetricDrawStep.SELECT_2L_OR_3P, this::move_drag_select_2L_or_3P,
                 this::release_select_2L_or_3P));
-        steps.addNode(StepNode.createNode_MD_R(SymmetricDrawStep.SELECT_3P, this::move_drag_select_3P,
+        steps.addNode(ObjCoordStepNode.createNode_MD_R(SymmetricDrawStep.SELECT_3P, this::move_drag_select_3P,
                 this::release_select_3P));
-        steps.addNode(StepNode.createNode_MD_R(SymmetricDrawStep.SELECT_2L, this::move_drag_select_2L,
+        steps.addNode(ObjCoordStepNode.createNode_MD_R(SymmetricDrawStep.SELECT_2L, this::move_drag_select_2L,
                 this::release_select_2L));
     }
 

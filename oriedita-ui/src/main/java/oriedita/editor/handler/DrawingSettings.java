@@ -10,6 +10,7 @@ public class DrawingSettings {
     private final boolean roundedEnds;
     private final boolean showComments;
     private final boolean showCurrentStep;
+    private boolean gridInputAssist;
 
     public int getHeight() {
         return height;
@@ -25,7 +26,8 @@ public class DrawingSettings {
                            int width,
                            boolean roundedEnds,
                            boolean showComments,
-                           boolean showCurrentStep) {
+                           boolean showCurrentStep,
+                           boolean gridInputAssist) {
         this.lineWidth = lineWidth;
         this.lineStyle = lineStyle;
         this.width = width;
@@ -33,6 +35,7 @@ public class DrawingSettings {
         this.roundedEnds = roundedEnds;
         this.showComments = showComments;
         this.showCurrentStep = showCurrentStep;
+        this.gridInputAssist = gridInputAssist;
     }
 
     public LineStyle getLineStyle() {
@@ -53,5 +56,13 @@ public class DrawingSettings {
 
     public boolean getShowCurrentStep() {
         return showCurrentStep;
+    }
+
+    public boolean getGridInputAssist() {
+        return gridInputAssist;
+    }
+
+    public void setGridInputAssist(boolean gridInputAssist) {
+        this.gridInputAssist = gridInputAssist;
     }
 }

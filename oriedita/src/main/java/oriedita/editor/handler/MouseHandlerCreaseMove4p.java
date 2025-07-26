@@ -8,6 +8,8 @@ import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
+import oriedita.editor.handler.step.StepMouseHandler;
+import oriedita.editor.handler.step.ObjCoordStepNode;
 import oriedita.editor.save.Save;
 import oriedita.editor.save.SaveProvider;
 import origami.crease_pattern.FoldLineSet;
@@ -31,9 +33,9 @@ public class MouseHandlerCreaseMove4p extends StepMouseHandler<CreaseMove4pStep>
     @Inject
     public MouseHandlerCreaseMove4p() {
         super(CreaseMove4pStep.SELECT_2_ORIGINAL_POINTS);
-        steps.addNode(StepNode.createNode_MD_R(CreaseMove4pStep.SELECT_2_ORIGINAL_POINTS,
+        steps.addNode(ObjCoordStepNode.createNode_MD_R(CreaseMove4pStep.SELECT_2_ORIGINAL_POINTS,
                 this::move_drag_select_2_original_points, this::release_select_2_original_points));
-        steps.addNode(StepNode.createNode_MD_R(CreaseMove4pStep.SELECT_2_TARGET_POINTS,
+        steps.addNode(ObjCoordStepNode.createNode_MD_R(CreaseMove4pStep.SELECT_2_TARGET_POINTS,
                 this::move_drag_select_2_target_points, this::release_select_2_target_points));
     }
 

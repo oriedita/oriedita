@@ -579,7 +579,6 @@ public class AppMenuBar {
         helpMenu.add(showConfigFolderMenuItem);
         showAutosaveFolderMenuItem = new JMenuItem("Open Autosave Folder");
         helpMenu.add(showAutosaveFolderMenuItem);
-        Logger.info("aasrgao");
     }
 
     public void getData(ApplicationModel applicationModel) {

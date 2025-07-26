@@ -7,6 +7,8 @@ import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.databinding.InternalDivisionRatioModel;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
+import oriedita.editor.handler.step.StepMouseHandler;
+import oriedita.editor.handler.step.ObjCoordStepNode;
 import origami.Epsilon;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
@@ -32,7 +34,7 @@ public class MouseHandlerLineSegmentRatioSet extends StepMouseHandler<LineSegmen
     public MouseHandlerLineSegmentRatioSet(InternalDivisionRatioModel internalDivisionRatioModel) {
         super(LineSegmentRatioSetStep.CLICK_DRAG_POINT);
         steps.addNode(
-                StepNode.createNode(LineSegmentRatioSetStep.CLICK_DRAG_POINT, this::move_click_drag_point, (p) -> {
+                ObjCoordStepNode.createNode(LineSegmentRatioSetStep.CLICK_DRAG_POINT, this::move_click_drag_point, (p) -> {
                 }, this::drag_click_drag_point, this::release_click_drag_point));
         this.internalDivisionRatioModel = internalDivisionRatioModel;
     }
@@ -55,7 +57,7 @@ public class MouseHandlerLineSegmentRatioSet extends StepMouseHandler<LineSegmen
         anchorPoint = null;
         releasePoint = null;
         dragSegment = null;
-        move_click_drag_point(canvasModel.getMouseObjPosition());
+        move_click_drag_point(canvasModel.getMousePosition());
     }
 
     // Click drag point
