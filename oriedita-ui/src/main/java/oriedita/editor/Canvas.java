@@ -575,6 +575,7 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
                 activeMouseHandler.reset();
             }
         }
+        canvasUI.setCursor(canvasModel.getCursor());
 
         canvasUI.repaint();
     }

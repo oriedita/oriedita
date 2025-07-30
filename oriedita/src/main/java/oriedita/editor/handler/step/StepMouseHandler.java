@@ -34,14 +34,16 @@ public abstract class StepMouseHandler<T extends Enum<T>> extends BaseMouseHandl
     @Override
     public void init() {
         super.init();
+        if (steps != null) {
+            for (IStepNode<T> node : steps.getNodes()) {
+                if (node instanceof ICameraStepNode cameraStepNode) {
+                    cameraStepNode.setCamera(d.getCamera());
+                }
+            }
+        }
         this.steps = initStepGraph(stepFactory);
         startingStep = steps.getCurrentStep();
         label = getStepLabel();
-        for (IStepNode<T> node : steps.getNodes()) {
-            if (node instanceof ICameraStepNode cameraStepNode) {
-                cameraStepNode.setCamera(d.getCamera());
-            }
-        }
     }
 
     // TODO: make abstract after moving step initialization in all subclasses

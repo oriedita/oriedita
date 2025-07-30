@@ -12,6 +12,7 @@ import origami.crease_pattern.CustomLineTypes;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.Point;
 
+import java.awt.Cursor;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.Serializable;
@@ -31,6 +32,7 @@ public class CanvasModel extends AbstractModel implements Serializable {
     private CustomLineTypes customFromLineType;
     private CustomLineTypes customToLineType;
     private CustomLineTypes delLineType;
+    private Cursor cursor;
     /**
      * Specify which operation to perform when selecting and operating the mouse. It is used to select a selected point after selection and automatically switch to the mouse operation that is premised on selection.
      */
@@ -201,6 +203,8 @@ public class CanvasModel extends AbstractModel implements Serializable {
         delLineType = CustomLineTypes.ANY;
         selectedToolTab = ToolTab.DRAW;
 
+        cursor = Cursor.getDefaultCursor();
+
         this.notifyAllListeners();
     }
 
@@ -299,6 +303,16 @@ public class CanvasModel extends AbstractModel implements Serializable {
         var oldToolSettingsPanelVisible = this.toolSettingsPanelHeight;
         this.toolSettingsPanelHeight = toolSettingsPanelHeight;
         pcs.firePropertyChange("toolSettingsPanelHeight", oldToolSettingsPanelVisible, toolSettingsPanelHeight);
+    }
+
+    public Cursor getCursor() {
+        return cursor;
+    }
+
+    public void setCursor(Cursor cursor) {
+        var oldCursor = this.cursor;
+        this.cursor = cursor;
+        pcs.firePropertyChange("cursor", oldCursor, cursor);
     }
 
     public enum SelectionOperationMode {

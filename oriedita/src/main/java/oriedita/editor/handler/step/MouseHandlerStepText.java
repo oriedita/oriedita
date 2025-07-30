@@ -4,12 +4,14 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.canvas.TextWorker;
+import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.databinding.SelectedTextModel;
 import oriedita.editor.handler.Handles;
 import oriedita.editor.text.Text;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.Polygon;
 
+import java.awt.Cursor;
 import java.awt.Rectangle;
 import java.util.EnumSet;
 
@@ -21,6 +23,8 @@ public class MouseHandlerStepText extends StepMouseHandler<MouseHandlerStepText.
     private SelectedTextModel textModel;
     @Inject
     private TextWorker textWorker;
+    @Inject
+    private CanvasModel canvasModel;
 
     private Point selectionStart;
 
@@ -36,7 +40,7 @@ public class MouseHandlerStepText extends StepMouseHandler<MouseHandlerStepText.
     protected StepGraph<Step> initStepGraph(StepFactory sf) {
         var steps = new StepGraph<>(Step.CHOOSE);
         steps.addNode(sf.createSwitchNode(Step.CHOOSE,
-                (p) -> {},
+                this::updateCursor,
                 (b) -> b == Feature.BUTTON_1? Step.CREATE_OR_MOVE : Step.DELETE));
         steps.addNode(sf.createNode(Step.CREATE_OR_MOVE,
                 p -> {},
@@ -45,6 +49,25 @@ public class MouseHandlerStepText extends StepMouseHandler<MouseHandlerStepText.
                 p -> Step.CHOOSE));
         steps.addNode(sf.createBoxSelectNode(Step.DELETE, this::deleteReleased));
         return steps;
+    }
+
+    private void updateCursor(Point p){
+        var p0 = d.getCamera().object2TV(p);
+        var pp = new java.awt.Point((int) p0.getX(), (int) p0.getY());
+        if (textModel.isSelected() && calculateBounds(textModel.getSelectedText()).contains(pp)) {
+            canvasModel.setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
+        } else {
+            boolean textCursor = false;
+            for (Text text : textWorker.getTexts()) {
+                if (calculateBounds(text).contains(pp)) {
+                    canvasModel.setCursor(Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR));
+                    textCursor = true;
+                }
+            }
+            if (!textCursor) {
+                canvasModel.setCursor(Cursor.getDefaultCursor());
+            }
+        }
     }
 
     private void createPressed(Point p) {
