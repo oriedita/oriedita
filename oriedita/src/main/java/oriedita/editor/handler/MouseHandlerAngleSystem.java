@@ -6,8 +6,9 @@ import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.databinding.AngleSystemModel;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
+import oriedita.editor.handler.step.StepFactory;
+import oriedita.editor.handler.step.StepGraph;
 import oriedita.editor.handler.step.StepMouseHandler;
-import oriedita.editor.handler.step.ObjCoordStepNode;
 import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineColor;
@@ -43,14 +44,19 @@ public class MouseHandlerAngleSystem extends StepMouseHandler<AngleSystemStep> {
 
     @Inject
     public MouseHandlerAngleSystem(AngleSystemModel angleSystemModel) {
-        super(AngleSystemStep.CLICK_DRAG_POINT);
-        steps.addNode(ObjCoordStepNode.createNode(AngleSystemStep.CLICK_DRAG_POINT, this::move_click_drag_point, (p) -> {
-        }, this::drag_click_drag_point, this::release_click_drag_point));
-        steps.addNode(ObjCoordStepNode.createNode_MD_R(AngleSystemStep.SELECT_DIRECTION, this::move_drag_select_direction,
-                this::release_drag_select_direction));
-        steps.addNode(ObjCoordStepNode.createNode_MD_R(AngleSystemStep.SELECT_LENGTH, this::move_drag_select_length,
-                this::release_select_length));
         this.angleSystemModel = angleSystemModel;
+    }
+
+    @Override
+    protected StepGraph<AngleSystemStep> initStepGraph(StepFactory sf) {
+        var steps = new StepGraph<>(AngleSystemStep.CLICK_DRAG_POINT);
+        steps.addNode(sf.createNode(AngleSystemStep.CLICK_DRAG_POINT, this::move_click_drag_point, (p) -> {
+        }, this::drag_click_drag_point, this::release_click_drag_point));
+        steps.addNode(sf.createNode_MD_R(AngleSystemStep.SELECT_DIRECTION, this::move_drag_select_direction,
+                this::release_drag_select_direction));
+        steps.addNode(sf.createNode_MD_R(AngleSystemStep.SELECT_LENGTH, this::move_drag_select_length,
+                this::release_select_length));
+        return steps;
     }
 
     @Override

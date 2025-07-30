@@ -126,7 +126,7 @@ public class CanvasUI extends JPanel {
             }
 
             @Override
-                public void mouseDragged(MouseEvent e) {
+            public void mouseDragged(MouseEvent e) {
                 Point p = new Point(e.getPoint().getX(), e.getPoint().getY());
                 canvasModel.setMousePosition(p);
             }

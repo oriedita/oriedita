@@ -260,6 +260,7 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
     //マウス操作(ボタンを押したとき)を行う関数----------------------------------------------------
     public void mousePressed(MouseEvent e) {
         Point p = e2p(e);
+
         canvasUI.requestFocus();
 
         int pressedButton = e.getButton();
@@ -676,9 +677,12 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
     }
 
     public void setActiveMouseHandler(MouseModeHandler activeMouseHandler) {
+        var oldMouseHandler = this.activeMouseHandler;
         this.activeMouseHandler = activeMouseHandler;
         canvasUI.setActiveMouseHandler(activeMouseHandler);
-        activeMouseHandler.mouseMoved(canvasModel.getMousePosition());
+        if (oldMouseHandler != activeMouseHandler) {
+            activeMouseHandler.mouseMoved(canvasModel.getMousePosition());
+        }
     }
 
     public Point e2p(MouseEvent e) {

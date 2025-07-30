@@ -8,11 +8,12 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class ObjCoordStepNode<T extends Enum<T>> extends AbstractCameraStepNode<T> implements IStepNode<T>, ICameraStepNode {
+public class ObjCoordStepNode<T extends Enum<T>> extends AbstractStepNode<T> implements IStepNode<T>, ICameraStepNode {
     private final Consumer<Point> moveAction;
     private final BiFunction<Point, MouseModeHandler.Feature, T> pressAction;
     private final Consumer<Point> dragAction;
     private final Function<Point, T> releaseAction;
+    private Camera camera;
 
     protected ObjCoordStepNode(T step,
                             Consumer<Point> moveAction,
@@ -28,12 +29,12 @@ public class ObjCoordStepNode<T extends Enum<T>> extends AbstractCameraStepNode<
         this.camera = camera;
     }
 
-    public static <T extends Enum<T>> ObjCoordStepNode<T> createSwitchNode(
-            T step, Consumer<Point> moveAction, Function<MouseModeHandler.Feature, T> pressAction) {
-        return new ObjCoordStepNode<>(step,
-                moveAction, (p, f) -> pressAction.apply(f), p -> {}, p -> step, null);
-    }
+    // TODO: use stepFactory everywhere so this isnt needed
+    @Deprecated
+    @Override
+    public void setCamera(Camera camera) { this.camera = camera; }
 
+    @Deprecated
     public static <T extends Enum<T>> ObjCoordStepNode<T> createNode(T step, Consumer<Point> moveAction, Consumer<Point> pressAction, Consumer<Point> dragAction, Function<Point, T> releaseAction) {
         return new ObjCoordStepNode<>(step, moveAction,
                 (p, b) -> {
@@ -43,6 +44,7 @@ public class ObjCoordStepNode<T extends Enum<T>> extends AbstractCameraStepNode<
                 dragAction, releaseAction, null);
     }
 
+    @Deprecated
     public static <T extends Enum<T>> ObjCoordStepNode<T> createNode_MD_R(T step, Consumer<Point> moveDragAction, Function<Point, T> releaseAction) {
         return new ObjCoordStepNode<>(step, moveDragAction, (p, b) -> step, moveDragAction, releaseAction, null);
     }

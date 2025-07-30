@@ -13,8 +13,9 @@ import origami.crease_pattern.element.Rectangle;
 import java.awt.Graphics2D;
 import java.util.function.Function;
 
-public class BoxSelectStepNode<T extends Enum<T>> extends AbstractCameraStepNode<T> implements IStepNode<T>, ICameraStepNode, IPreviewStepNode {
+public class BoxSelectStepNode<T extends Enum<T>> extends AbstractStepNode<T> implements IStepNode<T>, IPreviewStepNode {
 
+    private final Camera camera;
     Point selectionStart = new Point();
     private LineSegment[] lines = new LineSegment[4];
     private final Function<Polygon, T> releaseAction;
