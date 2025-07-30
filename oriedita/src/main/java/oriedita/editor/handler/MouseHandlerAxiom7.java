@@ -5,6 +5,8 @@ import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
+import oriedita.editor.handler.step.StepMouseHandler;
+import oriedita.editor.handler.step.ObjCoordStepNode;
 import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineColor;
@@ -29,13 +31,13 @@ public class MouseHandlerAxiom7 extends StepMouseHandler<Axiom7Step> {
     @Inject
     public MouseHandlerAxiom7() {
         super(Axiom7Step.SELECT_TARGET_POINT);
-        steps.addNode(StepNode.createNode_MD_R(Axiom7Step.SELECT_TARGET_POINT, this::move_drag_select_target_point,
+        steps.addNode(ObjCoordStepNode.createNode_MD_R(Axiom7Step.SELECT_TARGET_POINT, this::move_drag_select_target_point,
                 this::release_select_target_point));
-        steps.addNode(StepNode.createNode_MD_R(Axiom7Step.SELECT_TARGET_SEGMENT, this::move_drag_select_target_segment,
+        steps.addNode(ObjCoordStepNode.createNode_MD_R(Axiom7Step.SELECT_TARGET_SEGMENT, this::move_drag_select_target_segment,
                 this::release_select_target_segment));
-        steps.addNode(StepNode.createNode_MD_R(Axiom7Step.SELECT_PERPENDICULAR_SEGMENT,
+        steps.addNode(ObjCoordStepNode.createNode_MD_R(Axiom7Step.SELECT_PERPENDICULAR_SEGMENT,
                 this::move_drag_select_perpendicular_segment, this::release_select_perpendicular_segment));
-        steps.addNode(StepNode.createNode_MD_R(Axiom7Step.SELECT_DESTINATION_OR_INDICATOR,
+        steps.addNode(ObjCoordStepNode.createNode_MD_R(Axiom7Step.SELECT_DESTINATION_OR_INDICATOR,
                 this::move_drag_select_destination_or_indicator, this::release_select_destination_or_indicator));
     }
 

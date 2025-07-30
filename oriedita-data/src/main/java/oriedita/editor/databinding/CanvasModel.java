@@ -12,6 +12,7 @@ import origami.crease_pattern.CustomLineTypes;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.Point;
 
+import java.awt.Cursor;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.Serializable;
@@ -19,7 +20,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 @ApplicationScoped
 public class CanvasModel extends AbstractModel implements Serializable {
-    private Point mouseObjPosition;
+    private Point mousePosition;
     private LineColor lineColor;
     private LineColor auxLiveLineColor;
     private MouseMode mouseMode;
@@ -31,6 +32,7 @@ public class CanvasModel extends AbstractModel implements Serializable {
     private CustomLineTypes customFromLineType;
     private CustomLineTypes customToLineType;
     private CustomLineTypes delLineType;
+    private Cursor cursor;
     /**
      * Specify which operation to perform when selecting and operating the mouse. It is used to select a selected point after selection and automatically switch to the mouse operation that is premised on selection.
      */
@@ -57,14 +59,14 @@ public class CanvasModel extends AbstractModel implements Serializable {
         this.pcs.firePropertyChange("dirty", false, true);
     }
 
-    public Point getMouseObjPosition() {
-        return mouseObjPosition;
+    public Point getMousePosition() {
+        return mousePosition;
     }
 
-    public void setMouseObjPosition(Point mouseObjPosition) {
-        Point oldMouseObjPosition = this.mouseObjPosition;
-        this.mouseObjPosition = mouseObjPosition;
-        this.pcs.firePropertyChange("mouseObjPosition", oldMouseObjPosition, mouseObjPosition);
+    public void setMousePosition(Point mousePosition) {
+        Point oldMouseObjPosition = this.mousePosition;
+        this.mousePosition = mousePosition;
+        this.pcs.firePropertyChange("mousePosition", oldMouseObjPosition, mousePosition);
     }
 
     public boolean getToggleLineColor() {
@@ -177,7 +179,7 @@ public class CanvasModel extends AbstractModel implements Serializable {
     }
 
     public void reset() {
-        mouseObjPosition = new Point();
+        mousePosition = new Point();
         lineColor = LineColor.RED_1;
         auxLiveLineColor = LineColor.ORANGE_4;
 
@@ -200,6 +202,8 @@ public class CanvasModel extends AbstractModel implements Serializable {
 
         delLineType = CustomLineTypes.ANY;
         selectedToolTab = ToolTab.DRAW;
+
+        cursor = Cursor.getDefaultCursor();
 
         this.notifyAllListeners();
     }
@@ -299,6 +303,16 @@ public class CanvasModel extends AbstractModel implements Serializable {
         var oldToolSettingsPanelVisible = this.toolSettingsPanelHeight;
         this.toolSettingsPanelHeight = toolSettingsPanelHeight;
         pcs.firePropertyChange("toolSettingsPanelHeight", oldToolSettingsPanelVisible, toolSettingsPanelHeight);
+    }
+
+    public Cursor getCursor() {
+        return cursor;
+    }
+
+    public void setCursor(Cursor cursor) {
+        var oldCursor = this.cursor;
+        this.cursor = cursor;
+        pcs.firePropertyChange("cursor", oldCursor, cursor);
     }
 
     public enum SelectionOperationMode {

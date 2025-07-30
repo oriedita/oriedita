@@ -82,6 +82,8 @@ public class TextEditingArea extends JTextArea {
             public void focusLost(FocusEvent e) {
                 updateSelectedText(textModel);
                 if (textModel.isDirty()) {
+                    var emptyTexts = textWorker.getTexts().stream().filter(t -> t.getText().isBlank()).toList();
+                    emptyTexts.forEach(textWorker::removeText);
                     cpWorker.record();
                     textModel.markClean();
                 }

@@ -5,6 +5,8 @@ import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
+import oriedita.editor.handler.step.StepMouseHandler;
+import oriedita.editor.handler.step.ObjCoordStepNode;
 import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.Circle;
@@ -30,11 +32,11 @@ public class MouseHandlerCircleDrawConcentricSelect extends StepMouseHandler<Cir
     @Inject
     public MouseHandlerCircleDrawConcentricSelect() {
         super(CircleDrawConcentricSelect.SELECT_TARGET_CIRCLE);
-        steps.addNode(StepNode.createNode_MD_R(CircleDrawConcentricSelect.SELECT_TARGET_CIRCLE,
+        steps.addNode(ObjCoordStepNode.createNode_MD_R(CircleDrawConcentricSelect.SELECT_TARGET_CIRCLE,
                 this::move_drag_select_target_circle, this::release_select_target_circle));
-        steps.addNode(StepNode.createNode_MD_R(CircleDrawConcentricSelect.SELECT_TWO_CIRCLES,
+        steps.addNode(ObjCoordStepNode.createNode_MD_R(CircleDrawConcentricSelect.SELECT_TWO_CIRCLES,
                 this::move_drag_select_two_circles, this::release_select_two_circle));
-        steps.addNode(StepNode.createNode_MD_R(CircleDrawConcentricSelect.SELECT_INDICATOR,
+        steps.addNode(ObjCoordStepNode.createNode_MD_R(CircleDrawConcentricSelect.SELECT_INDICATOR,
                 this::move_drag_select_indicator, this::release_select_indicator));
     }
 

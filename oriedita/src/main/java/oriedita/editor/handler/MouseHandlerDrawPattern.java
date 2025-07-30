@@ -9,6 +9,8 @@ import org.tinylog.Logger;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
 import oriedita.editor.export.FoldImporter;
+import oriedita.editor.handler.step.StepMouseHandler;
+import oriedita.editor.handler.step.ObjCoordStepNode;
 import oriedita.editor.save.Save;
 import origami.Epsilon;
 import origami.crease_pattern.FoldLineSet;
@@ -30,9 +32,9 @@ public abstract class MouseHandlerDrawPattern extends StepMouseHandler<DrawPatte
 
     public MouseHandlerDrawPattern(String resourceString) {
         super(DrawPatternStep.SELECT_P1);
-        steps.addNode(StepNode.createNode_MD_R(DrawPatternStep.SELECT_P1, this::move_drag_select_p1,
+        steps.addNode(ObjCoordStepNode.createNode_MD_R(DrawPatternStep.SELECT_P1, this::move_drag_select_p1,
                 this::release_select_p1));
-        steps.addNode(StepNode.createNode_MD_R(DrawPatternStep.SELECT_P2, this::move_drag_select_p2,
+        steps.addNode(ObjCoordStepNode.createNode_MD_R(DrawPatternStep.SELECT_P2, this::move_drag_select_p2,
                 this::release_select_p2));
 
         try {

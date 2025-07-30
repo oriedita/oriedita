@@ -7,6 +7,8 @@ import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
+import oriedita.editor.handler.step.StepMouseHandler;
+import oriedita.editor.handler.step.ObjCoordStepNode;
 import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.Circle;
@@ -30,13 +32,13 @@ public class MouseHandlerCircleDrawInverted extends StepMouseHandler<CircleDrawI
     @Inject
     public MouseHandlerCircleDrawInverted() {
         super(CircleDrawInvertedStep.SELECT_1ST_CIRCLE_OR_SEGMENT);
-        steps.addNode(StepNode.createNode_MD_R(CircleDrawInvertedStep.SELECT_1ST_CIRCLE_OR_SEGMENT,
+        steps.addNode(ObjCoordStepNode.createNode_MD_R(CircleDrawInvertedStep.SELECT_1ST_CIRCLE_OR_SEGMENT,
                 this::move_drag_select_first_circle_or_line,
                 this::release_select_first_circle_or_line));
-        steps.addNode(StepNode.createNode_MD_R(CircleDrawInvertedStep.SELECT_2ND_CIRCLE_OR_SEGMENT,
+        steps.addNode(ObjCoordStepNode.createNode_MD_R(CircleDrawInvertedStep.SELECT_2ND_CIRCLE_OR_SEGMENT,
                 this::move_drag_select_second_circle_or_segment,
                 this::release_select_second_circle_or_segment));
-        steps.addNode(StepNode.createNode_MD_R(CircleDrawInvertedStep.SELECT_CIRCLE,
+        steps.addNode(ObjCoordStepNode.createNode_MD_R(CircleDrawInvertedStep.SELECT_CIRCLE,
                 this::move_drag_select_circle, this::release_select_circle));
     }
 

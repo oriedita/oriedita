@@ -5,6 +5,8 @@ import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
+import oriedita.editor.handler.step.StepMouseHandler;
+import oriedita.editor.handler.step.ObjCoordStepNode;
 import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.Circle;
@@ -28,9 +30,9 @@ public class MouseHandlerCircleDrawConcentricTwoCircleSelect
     @Inject
     public MouseHandlerCircleDrawConcentricTwoCircleSelect() {
         super(CircleDrawConcentricTwoCircleSelectStep.SELECT_CIRCLE_1);
-        steps.addNode(StepNode.createNode_MD_R(CircleDrawConcentricTwoCircleSelectStep.SELECT_CIRCLE_1,
+        steps.addNode(ObjCoordStepNode.createNode_MD_R(CircleDrawConcentricTwoCircleSelectStep.SELECT_CIRCLE_1,
                 this::move_drag_select_circle_1, this::release_select_circle_1));
-        steps.addNode(StepNode.createNode_MD_R(CircleDrawConcentricTwoCircleSelectStep.SELECT_CIRCLE_2,
+        steps.addNode(ObjCoordStepNode.createNode_MD_R(CircleDrawConcentricTwoCircleSelectStep.SELECT_CIRCLE_2,
                 this::move_drag_select_circle_2, this::release_select_circle_2));
     }
 
