@@ -55,17 +55,17 @@ public class MouseHandlerStepText extends StepMouseHandler<MouseHandlerStepText.
         var p0 = d.getCamera().object2TV(p);
         var pp = new java.awt.Point((int) p0.getX(), (int) p0.getY());
         if (textModel.isSelected() && calculateBounds(textModel.getSelectedText()).contains(pp)) {
-            canvasModel.setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
+            canvasModel.setCursor(Cursor.MOVE_CURSOR);
         } else {
             boolean textCursor = false;
             for (Text text : textWorker.getTexts()) {
                 if (calculateBounds(text).contains(pp)) {
-                    canvasModel.setCursor(Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR));
+                    canvasModel.setCursor(Cursor.TEXT_CURSOR);
                     textCursor = true;
                 }
             }
             if (!textCursor) {
-                canvasModel.setCursor(Cursor.getDefaultCursor());
+                canvasModel.setCursor(Cursor.getDefaultCursor().getType());
             }
         }
     }

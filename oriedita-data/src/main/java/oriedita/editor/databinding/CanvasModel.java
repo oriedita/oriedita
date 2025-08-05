@@ -32,7 +32,7 @@ public class CanvasModel extends AbstractModel implements Serializable {
     private CustomLineTypes customFromLineType;
     private CustomLineTypes customToLineType;
     private CustomLineTypes delLineType;
-    private Cursor cursor;
+    private int cursor;
     /**
      * Specify which operation to perform when selecting and operating the mouse. It is used to select a selected point after selection and automatically switch to the mouse operation that is premised on selection.
      */
@@ -203,7 +203,7 @@ public class CanvasModel extends AbstractModel implements Serializable {
         delLineType = CustomLineTypes.ANY;
         selectedToolTab = ToolTab.DRAW;
 
-        cursor = Cursor.getDefaultCursor();
+        cursor = Cursor.getDefaultCursor().getType();
 
         this.notifyAllListeners();
     }
@@ -305,11 +305,12 @@ public class CanvasModel extends AbstractModel implements Serializable {
         pcs.firePropertyChange("toolSettingsPanelHeight", oldToolSettingsPanelVisible, toolSettingsPanelHeight);
     }
 
-    public Cursor getCursor() {
+    public int getCursor() {
         return cursor;
     }
 
-    public void setCursor(Cursor cursor) {
+
+    public void setCursor(int cursor) {
         var oldCursor = this.cursor;
         this.cursor = cursor;
         pcs.firePropertyChange("cursor", oldCursor, cursor);

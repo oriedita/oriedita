@@ -39,6 +39,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 import java.awt.AWTException;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -576,7 +577,7 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
                 activeMouseHandler.reset();
             }
         }
-        canvasUI.setCursor(canvasModel.getCursor());
+        canvasUI.setCursor(Cursor.getPredefinedCursor(canvasModel.getCursor()));
 
         canvasUI.repaint();
     }
