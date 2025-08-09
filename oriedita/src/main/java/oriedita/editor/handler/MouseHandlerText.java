@@ -1,31 +1,37 @@
 package oriedita.editor.handler;
 
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.canvas.TextWorker;
+import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.databinding.SelectedTextModel;
-import oriedita.editor.drawing.tools.Camera;
+import oriedita.editor.handler.step.StepFactory;
+import oriedita.editor.handler.step.StepGraph;
+import oriedita.editor.handler.step.StepMouseHandler;
 import oriedita.editor.text.Text;
 import origami.crease_pattern.element.Point;
+import origami.crease_pattern.element.Polygon;
 
 import java.awt.Cursor;
-import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.awt.event.MouseEvent;
 import java.util.EnumSet;
 
-//@ApplicationScoped
-//@Handles(MouseMode.TEXT)
-public class MouseHandlerText extends BaseMouseHandlerBoxSelect {
-    private final SelectedTextModel textModel;
-    private final TextWorker textWorker;
-
-    private int mouseButton;
+@ApplicationScoped
+@Handles(MouseMode.TEXT)
+public class MouseHandlerText extends StepMouseHandler<MouseHandlerText.Step> {
 
     @Inject
-    public MouseHandlerText(SelectedTextModel textModel,
-                            TextWorker textWorker) {
-        this.textModel = textModel;
-        this.textWorker = textWorker;
+    private SelectedTextModel textModel;
+    @Inject
+    private TextWorker textWorker;
+    @Inject
+    private CanvasModel canvasModel;
+
+    private Point selectionStart;
+
+    public MouseHandlerText() {
+        super();
     }
 
     @Override
@@ -33,36 +39,41 @@ public class MouseHandlerText extends BaseMouseHandlerBoxSelect {
         return EnumSet.of(Feature.BUTTON_1, Feature.BUTTON_3);
     }
 
-    @Override
-    public void mouseMoved(Point p0, MouseEvent e) {
+    protected StepGraph<Step> initStepGraph(StepFactory sf) {
+        var steps = new StepGraph<>(Step.CHOOSE);
+        steps.addNode(sf.createSwitchNode(Step.CHOOSE,
+                this::updateCursor,
+                (b) -> b == Feature.BUTTON_1? Step.CREATE_OR_MOVE : Step.DELETE));
+        steps.addNode(sf.createNode(Step.CREATE_OR_MOVE,
+                p -> {},
+                this::createPressed,
+                this::createDragged,
+                p -> Step.CHOOSE));
+        steps.addNode(sf.createBoxSelectNode(Step.DELETE, this::deleteReleased));
+        return steps;
+    }
 
-        if (textModel.isSelected() && calculateBounds(textModel.getSelectedText()).contains(e.getPoint())) {
-            e.getComponent().setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
+    private void updateCursor(Point p){
+        var p0 = d.getCamera().object2TV(p);
+        var pp = new java.awt.Point((int) p0.getX(), (int) p0.getY());
+        if (textModel.isSelected() && calculateBounds(textModel.getSelectedText()).contains(pp)) {
+            canvasModel.setCursor(Cursor.MOVE_CURSOR);
         } else {
-            boolean changed = false;
+            boolean textCursor = false;
             for (Text text : textWorker.getTexts()) {
-                if (calculateBounds(text).contains(e.getPoint())) {
-                    e.getComponent().setCursor(Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR));
-                    changed = true;
+                if (calculateBounds(text).contains(pp)) {
+                    canvasModel.setCursor(Cursor.TEXT_CURSOR);
+                    textCursor = true;
                 }
             }
-            if (!changed) {
-                e.getComponent().setCursor(Cursor.getDefaultCursor());
+            if (!textCursor) {
+                canvasModel.setCursor(Cursor.getDefaultCursor().getType());
             }
         }
     }
 
-    @Override
-    public void mousePressed(Point p0, MouseEvent e, int pressedButton) {
-        super.mousePressed(p0);  // initializes box for dragging
-        mouseButton = pressedButton;  // so we know which button it was in mouseReleased
-        if (pressedButton == MouseEvent.BUTTON1) {
-            mousePressed(p0);
-        }
-    }
-
-    @Override
-    public void mousePressed(Point p0) {
+    private void createPressed(Point p) {
+        var p0 = d.getCamera().object2TV(p);
         if (textModel.isSelected()) {
             if (!trySelectText(p0)) {
                 textModel.setSelected(false);
@@ -74,9 +85,44 @@ public class MouseHandlerText extends BaseMouseHandlerBoxSelect {
         } else {
             selectOrCreateText(p0);
         }
+        selectionStart = p;
     }
 
-    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
+    private void createDragged(Point p) {
+        if (textModel.isSelected()) {
+            Text t = textModel.getSelectedText();
+            t.setY(t.getY() + p.getY() - selectionStart.getY());
+            t.setX(t.getX() + p.getX() - selectionStart.getX());
+            textModel.markDirty();
+            selectionStart = p;
+        }
+    }
+
+    private Step deleteReleased(Polygon p) {
+        Point p0 = d.getCamera().object2TV(p.get(0));
+        Point p1 = d.getCamera().object2TV(p.get(2));
+        if (p0.distance(p1) > 2) {
+            if (d.deleteInside_text(p0, p1)) {
+                if (!d.getTextWorker().getTexts().contains(textModel.getSelectedText())) {
+                    textModel.setSelected(false);
+                }
+                d.record();
+                textModel.markClean();
+            }
+        } else {
+            Text nearest = findNearest(p1);
+            if (nearest != null) {
+                textWorker.removeText(nearest);
+                if (textModel.getSelectedText() == nearest) {
+                    textModel.setSelected(false);
+                }
+                d.record();
+                textModel.markClean();
+            }
+        }
+        return Step.CHOOSE;
+    }
+
     private boolean trySelectText(Point p0) {
         Text nearest = findNearest(p0);
         if (nearest != null) {
@@ -91,7 +137,6 @@ public class MouseHandlerText extends BaseMouseHandlerBoxSelect {
     }
 
     private void selectOrCreateText(Point p0) {
-
         Point p = d.getCamera().TV2object(p0);
         if (!trySelectText(p0)) {
             if (textModel.isSelected() && textModel.isDirty()) {
@@ -122,80 +167,6 @@ public class MouseHandlerText extends BaseMouseHandlerBoxSelect {
         return nearest;
     }
 
-    @Override
-    public void mouseDragged(Point p0, MouseEvent event) {
-        if (mouseButton == MouseEvent.BUTTON1) {
-            this.mouseDragged(p0);
-        } else if (mouseButton == MouseEvent.BUTTON3) {
-            super.mouseDragged(p0);
-        }
-    }
-
-    @Override
-    public void mouseDragged(Point p0) {
-        Point p = d.getCamera().TV2object(p0);
-        if (textModel.isSelected()) {
-            if (selectionStart == null) {
-                selectionStart = p0;
-            } else {
-                Point selStart = d.getCamera().TV2object(selectionStart);
-                Text t = textModel.getSelectedText();
-                t.setY(t.getY() + p.getY() - selStart.getY());
-                t.setX(t.getX() + p.getX() - selStart.getX());
-                textModel.markDirty();
-                selectionStart = p0;
-            }
-        }
-    }
-
-    @Override
-    public void mouseReleased(Point p0, MouseEvent e) {
-        if (e.getButton() == MouseEvent.BUTTON1) {
-            mouseReleased(p0);
-        } else {
-            if (selectionStart.distance(p0) > 2) {
-                if (d.deleteInside_text(selectionStart, p0)) {
-                    if (!d.getTextWorker().getTexts().contains(textModel.getSelectedText())) {
-                        textModel.setSelected(false);
-                    }
-                    d.record();
-                    textModel.markClean();
-                }
-            } else {
-                Text nearest = findNearest(p0);
-                if (nearest != null) {
-                    textWorker.removeText(nearest);
-                    if (textModel.getSelectedText() == nearest) {
-                        textModel.setSelected(false);
-                    }
-                    d.record();
-                    textModel.markClean();
-                }
-            }
-        }
-        mouseButton = 0;
-        super.mouseReleased(p0);
-    }
-
-    @Override
-    public void mouseReleased(Point p0) {
-        if (selectionStart != null
-                && selectionStart.distance(p0) > 2
-                && !textModel.getSelectedText().getText().isEmpty()
-        ) {
-            d.record();
-            textModel.markClean();
-        }
-        super.mouseReleased(p0);
-    }
-
-    @Override
-    public void drawPreview(Graphics2D g2, Camera camera, DrawingSettings settings) {
-        if (mouseButton == MouseEvent.BUTTON3) {
-            super.drawPreview(g2, camera, settings);
-        }
-    }
-
     private Rectangle calculateBounds(Text text) {
         Point posCam = d.getCamera().object2TV(text.getPos());
         Rectangle bounds = text.calculateBounds();
@@ -203,5 +174,16 @@ public class MouseHandlerText extends BaseMouseHandlerBoxSelect {
         bounds.setLocation((int) posCam.getX() - 3 - selectionRadius, (int) posCam.getY() - 10 - selectionRadius);
         bounds.setSize(bounds.width + 8 + selectionRadius * 5, bounds.height + 10 + selectionRadius * 5);
         return bounds;
+    }
+
+    @Override
+    public void reset(){
+        selectionStart = null;
+    }
+
+    public enum Step{
+        CHOOSE,
+        CREATE_OR_MOVE,
+        DELETE,
     }
 }
