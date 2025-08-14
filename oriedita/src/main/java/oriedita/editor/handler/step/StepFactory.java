@@ -42,9 +42,19 @@ public class StepFactory {
         return new ObjCoordStepNode<>(step, moveDragAction, (p, b) -> step, moveDragAction, releaseAction, cpCamera);
     }
 
-    public <T extends Enum<T>> BoxSelectStepNode<T> createBoxSelectNode(T step, Function<Polygon, T> releaseAction) {
+    public <T extends Enum<T>> BoxSelectStepNode<T> createBoxSelectNode(T step, Function<Polygon, T> releaseAction,
+                                                                        Function<Point, T> releasePointAction) {
         return new BoxSelectStepNode<>(step,
-                releaseAction, cpCamera
+                releaseAction, releasePointAction, p -> {}, p -> {}, cpCamera
+        );
+    }
+
+    public <T extends Enum<T>> BoxSelectStepNode<T> createBoxSelectNode_M_D_R(T step,
+                                                                              Consumer<Point> moveAction, Consumer<Polygon> dragAction,
+                                                                              Function<Polygon, T> releaseAction,
+                                                                              Function<Point, T> releasePointAction) {
+        return new BoxSelectStepNode<>(step,
+                releaseAction, releasePointAction, moveAction, dragAction, cpCamera
         );
     }
 }

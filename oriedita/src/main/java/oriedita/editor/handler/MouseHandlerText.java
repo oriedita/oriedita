@@ -49,7 +49,7 @@ public class MouseHandlerText extends StepMouseHandler<MouseHandlerText.Step> {
                 this::createPressed,
                 this::createDragged,
                 p -> Step.CHOOSE));
-        steps.addNode(sf.createBoxSelectNode(Step.DELETE, this::deleteReleased));
+        steps.addNode(sf.createBoxSelectNode(Step.DELETE, this::deleteReleasedBox, this::deleteReleased));
         return steps;
     }
 
@@ -98,27 +98,29 @@ public class MouseHandlerText extends StepMouseHandler<MouseHandlerText.Step> {
         }
     }
 
-    private Step deleteReleased(Polygon p) {
+    private Step deleteReleasedBox(Polygon p) {
         Point p0 = d.getCamera().object2TV(p.get(0));
         Point p1 = d.getCamera().object2TV(p.get(2));
-        if (p0.distance(p1) > 2) {
-            if (d.deleteInside_text(p0, p1)) {
-                if (!d.getTextWorker().getTexts().contains(textModel.getSelectedText())) {
-                    textModel.setSelected(false);
-                }
-                d.record();
-                textModel.markClean();
+        if (d.deleteInside_text(p0, p1)) {
+            if (!d.getTextWorker().getTexts().contains(textModel.getSelectedText())) {
+                textModel.setSelected(false);
             }
-        } else {
-            Text nearest = findNearest(p1);
-            if (nearest != null) {
-                textWorker.removeText(nearest);
-                if (textModel.getSelectedText() == nearest) {
-                    textModel.setSelected(false);
-                }
-                d.record();
-                textModel.markClean();
+            d.record();
+            textModel.markClean();
+        }
+        return Step.CHOOSE;
+    }
+
+    private Step deleteReleased(Point p) {
+        Point p1 = d.getCamera().object2TV(p);
+        Text nearest = findNearest(p1);
+        if (nearest != null) {
+            textWorker.removeText(nearest);
+            if (textModel.getSelectedText() == nearest) {
+                textModel.setSelected(false);
             }
+            d.record();
+            textModel.markClean();
         }
         return Step.CHOOSE;
     }

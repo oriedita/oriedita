@@ -11,9 +11,11 @@ import origami.crease_pattern.element.StraightLine;
 import origami.crease_pattern.worker.SelectMode;
 import origami.data.quadTree.QuadTree;
 import origami.data.quadTree.adapter.DivideAdapter;
+import origami.data.quadTree.adapter.LineSegmentListAdapter;
 import origami.data.quadTree.adapter.LineSegmentListEndPointAdapter;
 import origami.data.quadTree.collector.LineSegmentCollector;
 import origami.data.quadTree.collector.PointCollector;
+import origami.data.quadTree.collector.RectangleCollector;
 import origami.data.save.LineSegmentSave;
 import origami.folding.util.SortingBox;
 
@@ -25,6 +27,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -34,13 +37,16 @@ import java.util.stream.Collectors;
  * Representation of the current drawn crease pattern.
  */
 public class FoldLineSet {
-    int total;               //Total number of line segments actually used
-    List<LineSegment> lineSegments = new ArrayList<>(); //折線とする線分のインスタンス化
+    private int total;               //Total number of line segments actually used
+    private final List<LineSegment> lineSegments = new ArrayList<>(); //折線とする線分のインスタンス化
 
     private final Queue<LineSegment> Check1LineSegment = new ConcurrentLinkedQueue<>(); //Instantiation of line segments to store check information
     private final Queue<LineSegment> Check2LineSegment = new ConcurrentLinkedQueue<>(); //Instantiation of line segments to store check information
     private final Queue<LineSegment> Check3LineSegment = new ConcurrentLinkedQueue<>(); //Instantiation of line segments to store check information
     private final Queue<FlatFoldabilityViolation> cAMVViolations = new ConcurrentLinkedQueue<>();
+
+    private QuadTree quadTree;
+
     List<Circle> circles = new ArrayList<>(); //円のインスタンス化
 
     // Specify the point Q, delete the line segments AQ and QC, and add the line segment AC (however, only two line segments have Q as the end point) // When implemented, 1 when nothing is done Returns 0.
@@ -62,6 +68,7 @@ public class FoldLineSet {
         Check3LineSegment.clear();
         cAMVViolations.clear();
         circles.clear();
+        quadTree = null;
     }
 
     public void set(FoldLineSet foldLineSet) {
@@ -69,6 +76,7 @@ public class FoldLineSet {
         for (int i = 0; i <= total; i++) {
             lineSegments.set(i, foldLineSet.get(i));
         }
+        invalidateQuadTree();
     }
 
 
@@ -92,6 +100,11 @@ public class FoldLineSet {
         addLine(s0);//Just add the information of s0 to the end of senbun of foldLineSet
         int total_old = getTotal();
         divideLineSegmentWithNewLines(total_old - 1, total_old);
+        invalidateQuadTree();
+    }
+
+    private void invalidateQuadTree() {
+        quadTree = null;
     }
 
     public void replaceAux(CustomLineTypes to, List<LineSegment> reserveAux) {
@@ -101,6 +114,7 @@ public class FoldLineSet {
             addLineSegmentForReplace(auxChange);
         }
         reserveAux.clear();
+        invalidateQuadTree();
     }
 
     //Get the total number of line segments
@@ -114,10 +128,11 @@ public class FoldLineSet {
         while (lineSegments.size() < total + 1) {
             lineSegments.add(new LineSegment());
         }
+        invalidateQuadTree();
     }
 
     public List<LineSegment> getLineSegments() {
-        return lineSegments;
+        return Collections.unmodifiableList(lineSegments);
     }
 
     /**
@@ -234,6 +249,7 @@ public class FoldLineSet {
 
         total = lineSegments.size() - 1;
 
+        invalidateQuadTree();
         return save.getTitle();
     }
 
@@ -242,6 +258,7 @@ public class FoldLineSet {
         lineSegments.add(new LineSegment());
         lineSegments.addAll(save.getAuxLineSegments());
         total = lineSegments.size() - 1;
+        invalidateQuadTree();
     }
 
     public void addSave(LineSegmentSave memo1) {
@@ -258,6 +275,7 @@ public class FoldLineSet {
 
             circles.add(c0);
         }
+        invalidateQuadTree();
     }
 
     //Replace the mountains and valleys of all lines. There is no change in line types other than mountains and valleys such as boundaries.
@@ -329,6 +347,20 @@ public class FoldLineSet {
             }
         }
         return anyLinesSelected;
+    }
+
+    public Collection<LineSegment> lineSegmentsInside(Polygon p) {
+        QuadTree t = getQuadTree();
+        List<LineSegment> ret = new ArrayList<>();
+        var min = new Point(p.getXMin(), p.getYMin());
+        var max = new Point(p.getXMax(), p.getYMax());
+        for (var index : t.collect(new RectangleCollector(min, max))) {
+            var s = lineSegments.get(index);
+            if (p.totu_boundary_inside(s)){
+                ret.add(s);
+            }
+        }
+        return ret;
     }
 
     public void unselect(Polygon p) {
@@ -462,6 +494,7 @@ public class FoldLineSet {
             }
         }
         replaceAux(to, reserveAux);
+        invalidateQuadTree();
         return i_r;
     }
 
@@ -520,6 +553,7 @@ public class FoldLineSet {
             setSave(save);
         }
 
+        invalidateQuadTree();
         return i_r;
     }
 
@@ -569,6 +603,7 @@ public class FoldLineSet {
         reset();
         setSave(save);
 
+        invalidateQuadTree();
         return i_r;
     }
 
@@ -601,6 +636,7 @@ public class FoldLineSet {
         reset();
         setSave(save);
 
+        invalidateQuadTree();
         return i_r;
     }
 
@@ -633,6 +669,7 @@ public class FoldLineSet {
 
         setSave(save);
 
+        invalidateQuadTree();
         return i_r;
     }
 
@@ -666,6 +703,7 @@ public class FoldLineSet {
         reset();
         setSave(save);
 
+        invalidateQuadTree();
         return i_r;
     }
 
@@ -698,6 +736,7 @@ public class FoldLineSet {
         reset();
         setSave(save);
 
+        invalidateQuadTree();
         return i_r;
     }
 
@@ -733,6 +772,7 @@ public class FoldLineSet {
         getMemoExceptSelected(memo_temp, 2);
         reset();
         setSave(memo_temp);
+        invalidateQuadTree();
     }
 
     //Remove dotted line segments
@@ -744,6 +784,7 @@ public class FoldLineSet {
                 i = i - 1;
             }
         }
+        invalidateQuadTree();
     }
 
     // When there are two completely overlapping line segments, the one with the later number is deleted.
@@ -870,11 +911,15 @@ public class FoldLineSet {
             deleteLine(i);
 
         }
+
+        invalidateQuadTree();
     }
 
     public LineSegment.Intersection divideIntersectionsFast(int i, int j, Set<Integer> indicesToDelete) {//i is the one to add (2), j is the original one (1) // = 0 does not intersect
         LineSegment si = lineSegments.get(i);
         LineSegment sj = lineSegments.get(j);
+
+        invalidateQuadTree();
 
         if (si.determineMaxX() < sj.determineMinX()) {
             return LineSegment.Intersection.NO_INTERSECTION_0;
@@ -1407,17 +1452,20 @@ public class FoldLineSet {
     private void addLineInternal(LineSegment s0) {
         total++;
         lineSegments.add(s0);
+        invalidateQuadTree();
     }
 
     //線分の削除-----------------------------------------
     public void deleteLine(int j) {   //j番目の線分を削除する  このsi= sen(i)は大丈夫なのだろうか????????si= sen(i)　20161106
         lineSegments.remove(j);
         total--;
+        invalidateQuadTree();
     }
 
     public void deleteLine(LineSegment s) {
         if (lineSegments.remove(s)) {
             total--;
+            invalidateQuadTree();
         } else {
             throw new IllegalStateException("LineSegment not contained in FoldLineSet");
         }
@@ -1430,6 +1478,7 @@ public class FoldLineSet {
         deleteLine(s0);
         addLine(s1);
         addLine(s2);
+        invalidateQuadTree();
     }
 
     public void deleteLineSegment_vertex(LineSegment s) {//When erasing the i-th fold line, if the end point of the fold line can also be erased, erase it.
@@ -1439,6 +1488,7 @@ public class FoldLineSet {
 
         del_V(pa, Epsilon.UNKNOWN_1EN6, Epsilon.UNKNOWN_1EN6);
         del_V(pb, Epsilon.UNKNOWN_1EN6, Epsilon.UNKNOWN_1EN6);
+        invalidateQuadTree();
     }
 
     //Find and return the number of the circle closest to the point p in reverse order (the higher the number means priority)
@@ -1503,6 +1553,25 @@ public class FoldLineSet {
 
         }
         return sClosest;
+    }
+
+    public Optional<LineSegment> closestLineSegmentInRange(Point p, double range){
+        var qt = getQuadTree();
+        var lines = qt.collect(new RectangleCollector(p.move(new Point(-range, -range)), p.move(new Point(range, range))));
+        double minr = 100000;
+        LineSegment sClosest = null;
+        for (int lineId : lines) {
+            LineSegment s = lineSegments.get(lineId);
+            double sk = OritaCalc.determineLineSegmentDistance(p, s);
+            if (minr > sk) {
+                minr = sk;
+                sClosest = s;
+            }
+        }
+        if (sClosest != null && OritaCalc.determineLineSegmentDistance(p, sClosest) < range) {
+            return Optional.of(sClosest);
+        }
+        return Optional.empty();
     }
 
     //Find and return the number of the line segment closest to the point p from the opposite (meaning from the larger number to the smaller number)
@@ -1723,6 +1792,7 @@ public class FoldLineSet {
         deleteLine(sj);
         addLine = addLine.withColor(i_c);
         addLine(addLine);
+        invalidateQuadTree();
         //p2,p1,p4 ixb_ixa,iya_iyb
         return addLine;
     }
@@ -1743,6 +1813,7 @@ public class FoldLineSet {
                 }
             }
         }
+        invalidateQuadTree();
     }
 
     public void del_V_all_cc() throws InterruptedException {
@@ -1759,6 +1830,7 @@ public class FoldLineSet {
                 }
             }
         }
+        invalidateQuadTree();
     }
 
     public boolean del_V(Point p, double hikiyose_hankei, double r) {
@@ -1833,6 +1905,7 @@ public class FoldLineSet {
             }//p1,p2,p3 ixa_ixb,iyb_iya
         }
 
+        invalidateQuadTree();
         return false;
     }
 
@@ -1967,6 +2040,7 @@ public class FoldLineSet {
             }
         }
 
+        invalidateQuadTree();
         return false;
     }
 
@@ -1991,6 +2065,7 @@ public class FoldLineSet {
 
         }
 
+        invalidateQuadTree();
         return i_return;
     }
 
@@ -2004,6 +2079,7 @@ public class FoldLineSet {
         for (Circle circle : circles) {
             circle.setCenter(circle.determineCenter().move(delta));
         }
+        invalidateQuadTree();
     }
 
     public void move(Point ta, Point tb, Point tc, Point td) {//Move the position of the entire set of polygonal lines.
@@ -2021,6 +2097,7 @@ public class FoldLineSet {
 
             lineSegments.set(i, s.withAB(newA, newB));
         }
+        invalidateQuadTree();
     }
 
     // ***********************************ppppppppppppqqqqqq
@@ -2263,6 +2340,14 @@ public class FoldLineSet {
         for (LineSegment connectedLine : connectedLines) {
             connectedLine.setSelected(2);
         }
+    }
+
+    protected QuadTree getQuadTree() {
+        if (quadTree == null) {
+            quadTree = new QuadTree(new LineSegmentListAdapter(lineSegments));
+            Logger.info("Quadtree regenerated");
+        }
+        return quadTree;
     }
 
     public Queue<FlatFoldabilityViolation> getViolations() {

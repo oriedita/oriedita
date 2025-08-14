@@ -34,6 +34,11 @@ public class QuadTreeItem {
         return x > l - EPSILON && x < r + EPSILON && y > b - EPSILON && y < t + EPSILON;
     }
 
+    public boolean mightContain(Point p, double radius){
+        double x = p.getX(), y = p.getY();
+        return x > l - radius && x < r + radius && y > b - radius && y < t + radius;
+    }
+
     public boolean mightOverlap(QuadTreeItem item) {
         return item.r >= l - EPSILON && item.l <= r + EPSILON && item.t >= b - EPSILON && item.b <= t + EPSILON;
     }

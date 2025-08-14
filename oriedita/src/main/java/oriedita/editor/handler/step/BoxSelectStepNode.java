@@ -11,6 +11,7 @@ import origami.crease_pattern.element.Polygon;
 import origami.crease_pattern.element.Rectangle;
 
 import java.awt.Graphics2D;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class BoxSelectStepNode<T extends Enum<T>> extends AbstractStepNode<T> implements IStepNode<T>, IPreviewStepNode {
@@ -18,13 +19,20 @@ public class BoxSelectStepNode<T extends Enum<T>> extends AbstractStepNode<T> im
     private final Camera camera;
     Point selectionStart = new Point();
     private LineSegment[] lines = new LineSegment[4];
-    private final Function<Polygon, T> releaseAction;
+    private final Function<Polygon, T> releaseBoxAction;
+    private final Function<Point, T> releasePointAction;
+    private final Consumer<Point> moveAction;
+    private final Consumer<Polygon> dragAction;
+    private boolean showPreview = false;
 
-    public BoxSelectStepNode(T step,
-                             Function<Polygon, T> releaseAction, Camera camera) {
+    public BoxSelectStepNode(T step, Function<Polygon, T> releaseBoxAction, Function<Point, T> releasePointAction,
+                             Consumer<Point> moveAction, Consumer<Polygon> dragAction, Camera camera) {
         super(step);
-        this.releaseAction = releaseAction;
+        this.releaseBoxAction = releaseBoxAction;
         this.camera = camera;
+        this.releasePointAction = releasePointAction;
+        this.moveAction = moveAction;
+        this.dragAction = dragAction;
     }
 
     @Override
@@ -37,10 +45,12 @@ public class BoxSelectStepNode<T extends Enum<T>> extends AbstractStepNode<T> im
         lines[1] = new LineSegment(p, p, LineColor.MAGENTA_5);
         lines[2] = new LineSegment(p, p, LineColor.MAGENTA_5);
         lines[3] = new LineSegment(p, p, LineColor.MAGENTA_5);
+        moveAction.accept(p);
     }
 
     @Override
     public T runPressAction(Point mousePos, MouseModeHandler.Feature mouseButton) {
+        showPreview = true;
         return getStep();
     }
 
@@ -58,11 +68,18 @@ public class BoxSelectStepNode<T extends Enum<T>> extends AbstractStepNode<T> im
         lines[1] = lines[1].withCoordinates(p19_b, p19_c);
         lines[2] = lines[2].withCoordinates(p19_c, p19_d);
         lines[3] = lines[3].withCoordinates(p19_d, p19_a);
+        dragAction.accept(getBox());
     }
 
     @Override
     public T runReleaseAction(Point mousePos) {
-        var ret = releaseAction.apply(getBox());
+        T ret;
+        if (selectionStart.distance(mousePos) > 0){
+            ret = releaseBoxAction.apply(getBox());
+        } else {
+            ret = releasePointAction.apply(camera.TV2object(mousePos));
+        }
+        showPreview = false;
         lines = new  LineSegment[4];
         return ret;
     }
@@ -72,6 +89,7 @@ public class BoxSelectStepNode<T extends Enum<T>> extends AbstractStepNode<T> im
     }
 
     public void drawPreview(Graphics2D g, Camera camera, DrawingSettings settings) {
+        if (!showPreview) {return;}
         for (LineSegment line : lines) {
             if (line != null) {
                 DrawingUtil.drawLineStep(g, line, LineSegment.ActiveState.ACTIVE_BOTH_3, camera, settings.getLineWidth(), settings.getGridInputAssist());
