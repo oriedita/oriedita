@@ -5,7 +5,6 @@ import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.canvas.MouseMode;
-import oriedita.editor.databinding.CanvasModel;
 import origami.Epsilon;
 import origami.crease_pattern.element.Point;
 
@@ -16,7 +15,7 @@ public class MouseHandlerCreaseSelect extends BaseMouseHandlerBoxSelect {
 
     @Inject
     public MouseHandlerCreaseSelect(
-            @Named("mainCreasePattern_Worker") CreasePattern_Worker d,) {
+            @Named("mainCreasePattern_Worker") CreasePattern_Worker d) {
         this.d = d;
     }
 

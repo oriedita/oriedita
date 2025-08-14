@@ -126,7 +126,6 @@ public enum ActionType {
     deg2Action("deg2Action"),
     deg3Action("deg3Action"),
     deg4Action("deg4Action"),
-    ad_fncAction("ad_fncAction"),
     angleSystemADecreaseAction("angleSystemADecreaseAction"),
     angleSystemAAction("angleSystemAAction"),
     angleSystemAIncreaseAction("angleSystemAIncreaseAction"),
