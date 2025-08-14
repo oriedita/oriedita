@@ -33,14 +33,9 @@ public class CanvasModel extends AbstractModel implements Serializable {
     private CustomLineTypes customToLineType;
     private CustomLineTypes delLineType;
     private int cursor;
-    /**
-     * Specify which operation to perform when selecting and operating the mouse. It is used to select a selected point after selection and automatically switch to the mouse operation that is premised on selection.
-     */
-    private SelectionOperationMode selectionOperationMode;
     private FoldedFigureOperationMode foldedFigureOperationMode;
     private MouseWheelTarget mouseInCpOrFoldedFigure;
     private final AtomicBoolean w_image_running = new AtomicBoolean(false); // Folding together execution. If a single image export is in progress, it will be true.
-    private boolean ckbox_add_frame_SelectAnd3click_isSelected;
     private int toolSettingsPanelHeight;
 
     private ToolTab selectedToolTab;
@@ -87,26 +82,6 @@ public class CanvasModel extends AbstractModel implements Serializable {
         FoldedFigureOperationMode oldI_foldedFigure_operation_mode = this.foldedFigureOperationMode;
         this.foldedFigureOperationMode = foldedFigureOperationMode;
         this.pcs.firePropertyChange("foldedFigureOperationMode", oldI_foldedFigure_operation_mode, foldedFigureOperationMode);
-    }
-
-    public boolean isCkbox_add_frame_SelectAnd3click_isSelected() {
-        return ckbox_add_frame_SelectAnd3click_isSelected;
-    }
-
-    public void setCkbox_add_frame_SelectAnd3click_isSelected(boolean ckbox_add_frame_SelectAnd3click_isSelected) {
-        boolean oldCkbox_add_frame_SelectAnd3click_isSelected = this.ckbox_add_frame_SelectAnd3click_isSelected;
-        this.ckbox_add_frame_SelectAnd3click_isSelected = ckbox_add_frame_SelectAnd3click_isSelected;
-        this.pcs.firePropertyChange("ckbox_add_frame_SelectAnd3click_isSelected", oldCkbox_add_frame_SelectAnd3click_isSelected, ckbox_add_frame_SelectAnd3click_isSelected);
-    }
-
-    public SelectionOperationMode getSelectionOperationMode() {
-        return selectionOperationMode;
-    }
-
-    public void setSelectionOperationMode(SelectionOperationMode selectionOperationMode) {
-        SelectionOperationMode oldSelectionOperationMode = this.selectionOperationMode;
-        this.selectionOperationMode = selectionOperationMode;
-        this.pcs.firePropertyChange("selectionOperationMode", oldSelectionOperationMode, selectionOperationMode);
     }
 
     public void restoreFoldLineAdditionalInputMode() {
@@ -189,10 +164,6 @@ public class CanvasModel extends AbstractModel implements Serializable {
         foldLineAdditionalInputMode = FoldLineAdditionalInputMode.POLY_LINE_0;
         foldLineAdditionalInputMode_old = FoldLineAdditionalInputMode.POLY_LINE_0;
 
-        selectionOperationMode = SelectionOperationMode.NORMAL_0;
-
-        ckbox_add_frame_SelectAnd3click_isSelected = false;
-
         toggleLineColor = false;
 
         mouseInCpOrFoldedFigure = MouseWheelTarget.CREASE_PATTERN_0;
@@ -216,7 +187,6 @@ public class CanvasModel extends AbstractModel implements Serializable {
         mouseModeAfterColorSelection = canvasModel.getMouseModeAfterColorSelection();
         foldLineAdditionalInputMode = canvasModel.getFoldLineAdditionalInputMode();
 
-        selectionOperationMode = canvasModel.getSelectionOperationMode();
         customFromLineType = canvasModel.getCustomFromLineType();
         customToLineType = canvasModel.getCustomToLineType();
         delLineType = canvasModel.getDelLineType();
@@ -314,14 +284,5 @@ public class CanvasModel extends AbstractModel implements Serializable {
         var oldCursor = this.cursor;
         this.cursor = cursor;
         pcs.firePropertyChange("cursor", oldCursor, cursor);
-    }
-
-    public enum SelectionOperationMode {
-        NORMAL_0,
-        MOVE_1,
-        MOVE4P_2,
-        COPY_3,
-        COPY4P_4,
-        MIRROR_5,
     }
 }

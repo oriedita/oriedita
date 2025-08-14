@@ -24,8 +24,6 @@ enum DrawCreaseSymmetricStep {
 @ApplicationScoped
 @Handles(MouseMode.DRAW_CREASE_SYMMETRIC_12)
 public class MouseHandlerDrawCreaseSymmetric extends StepMouseHandler<DrawCreaseSymmetricStep> {
-    @Inject
-    private CanvasModel canvasModel;
 
     Point point1, point2;
     LineSegment segment;
@@ -101,7 +99,6 @@ public class MouseHandlerDrawCreaseSymmetric extends StepMouseHandler<DrawCrease
     }
 
     private void mirrorSelections(LineSegment segment) {
-        canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.NORMAL_0);
         int old_sousuu = d.getFoldLineSet().getTotal();
 
         for (var s : d.getFoldLineSet().getLineSegmentsCollection()) {

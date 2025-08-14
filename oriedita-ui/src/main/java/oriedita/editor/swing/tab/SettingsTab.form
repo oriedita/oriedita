@@ -284,17 +284,6 @@
               <text value="frame"/>
             </properties>
           </component>
-          <component id="99cfb" class="javax.swing.JCheckBox" binding="selectAnd3ClickCheckbox">
-            <constraints>
-              <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
-              <gridbag weightx="1.0" weighty="1.0"/>
-            </constraints>
-            <properties>
-              <actionCommand value="selectAnd3ClickAction"/>
-              <horizontalAlignment value="0"/>
-              <text value="sel mcm"/>
-            </properties>
-          </component>
         </children>
       </grid>
       <grid id="65e16" layout-manager="GridBagLayout">

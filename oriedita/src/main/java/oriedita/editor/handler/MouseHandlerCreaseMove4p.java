@@ -24,8 +24,6 @@ enum CreaseMove4pStep {
 @ApplicationScoped
 @Handles(MouseMode.CREASE_MOVE_4P_31)
 public class MouseHandlerCreaseMove4p extends StepMouseHandler<CreaseMove4pStep> {
-    @Inject
-    private CanvasModel canvasModel;
 
     private Point originalPoint1, originalPoint2, targetPoint1, targetPoint2;
     private boolean isFirstSelected;
@@ -122,8 +120,6 @@ public class MouseHandlerCreaseMove4p extends StepMouseHandler<CreaseMove4pStep>
             targetPoint2 = null;
             return CreaseMove4pStep.SELECT_2_TARGET_POINTS;
         }
-
-        canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.NORMAL_0);// <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
 
         FoldLineSet ori_s_temp = new FoldLineSet(); // セレクトされた折線だけ取り出すために使う
         Save save = SaveProvider.createInstance();

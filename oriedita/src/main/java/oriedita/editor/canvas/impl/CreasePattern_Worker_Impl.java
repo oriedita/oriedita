@@ -117,7 +117,6 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     // ------------------------------------------------------------------------------------------------------------
     // Sub-operation mode for MouseMode.FOLDABLE_LINE_DRAW_71, either DRAW_CREASE_FREE_1, or VERTEX_MAKE_ANGULARLY_FLAT_FOLDABLE_38
     //--------------------------------------------
-    private CanvasModel.SelectionOperationMode i_select_mode = CanvasModel.SelectionOperationMode.NORMAL_0;//=0は通常のセレクト操作
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     private final OperationFrame operationFrame;
 
@@ -1039,7 +1038,6 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
         setColor(data.calculateLineColor());
         setAuxLineColor(data.calculateAuxColor());
         setFoldLineAdditional(data.getFoldLineAdditionalInputMode());
-        i_select_mode = data.getSelectionOperationMode();
     }
 
     @Override
@@ -1205,11 +1203,6 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
 
     public void setCustomCircleColor(Color c0) {
         customCircleColor = c0;
-    }
-
-    @Override
-    public CanvasModel.SelectionOperationMode getI_select_mode() {
-        return i_select_mode;
     }
 
     @Override

@@ -252,8 +252,6 @@ public interface CreasePattern_Worker {
 
     Color getCustomCircleColor();
 
-    CanvasModel.SelectionOperationMode getI_select_mode();
-
     int getFoldLineDividingNumber();
 
     TextWorker getTextWorker();

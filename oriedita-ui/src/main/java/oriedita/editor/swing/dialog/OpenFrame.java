@@ -7,7 +7,6 @@ import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.service.ButtonService;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
@@ -19,7 +18,6 @@ import java.awt.Insets;
 import java.beans.PropertyChangeEvent;
 
 public class OpenFrame extends JDialog {
-    private JCheckBox selectAnd3ClickCheckBox;
     private JButton o_F_checkButton;
     private JButton foldableLinePlusGridInputButton;
     private JButton select_polygonButton;
@@ -51,7 +49,6 @@ public class OpenFrame extends JDialog {
         buttonService.registerButton(unselect_lXButton, "unselect_lXAction");
         buttonService.registerButton(del_lButton, "del_lAction");
         buttonService.registerButton(del_l_XButton, "del_l_XAction");
-        buttonService.registerButton(selectAnd3ClickCheckBox, "selectAnd3ClickAction");
         buttonService.registerButton(axiom5Button, "axiom5Action");
         buttonService.registerButton(axiom7Button, "axiom7Action");
 
@@ -76,7 +73,6 @@ public class OpenFrame extends JDialog {
             del_l_XButton.setSelected(m == MouseMode.CREASE_DELETE_INTERSECTING_65);
         }
 
-        selectAnd3ClickCheckBox.setSelected(data.isCkbox_add_frame_SelectAnd3click_isSelected());
     }
 
     {
@@ -99,16 +95,9 @@ public class OpenFrame extends JDialog {
         final JPanel panel1 = new JPanel();
         panel1.setLayout(new GridBagLayout());
         panel.add(panel1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-        selectAnd3ClickCheckBox = new JCheckBox();
-        selectAnd3ClickCheckBox.setText("sel<=>mcm");
-        GridBagConstraints gbc;
-        gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.anchor = GridBagConstraints.WEST;
-        panel1.add(selectAnd3ClickCheckBox, gbc);
         o_F_checkButton = new JButton();
         o_F_checkButton.setText("O_F_check");
+        GridBagConstraints gbc;
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
         gbc.gridy = 0;

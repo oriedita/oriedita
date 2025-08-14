@@ -204,15 +204,15 @@ public class ActionRegistrationService {
         actionService.registerAction(ActionType.unselectAllAction,
                 new LambdaAction(mainCreasePatternWorker::unselect_all));
         actionService.registerAction(ActionType.moveAction, actionFactory
-                .selectionOperationAction(CanvasModel.SelectionOperationMode.MOVE_1, MouseMode.CREASE_MOVE_21));
+                .setMouseModeAction(MouseMode.CREASE_MOVE_21));
         actionService.registerAction(ActionType.move2p2pAction, actionFactory
-                .selectionOperationAction(CanvasModel.SelectionOperationMode.MOVE4P_2, MouseMode.CREASE_MOVE_4P_31));
+                .setMouseModeAction(MouseMode.CREASE_MOVE_4P_31));
         actionService.registerAction(ActionType.copyAction, actionFactory
-                .selectionOperationAction(CanvasModel.SelectionOperationMode.COPY_3, MouseMode.CREASE_COPY_22));
+                .setMouseModeAction(MouseMode.CREASE_COPY_22));
         actionService.registerAction(ActionType.copy2p2pAction, actionFactory
-                .selectionOperationAction(CanvasModel.SelectionOperationMode.COPY4P_4, MouseMode.CREASE_COPY_4P_32));
-        actionService.registerAction(ActionType.reflectAction, actionFactory.selectionOperationAction(
-                CanvasModel.SelectionOperationMode.MIRROR_5, MouseMode.DRAW_CREASE_SYMMETRIC_12));
+                .setMouseModeAction(MouseMode.CREASE_COPY_4P_32));
+        actionService.registerAction(ActionType.reflectAction, actionFactory.setMouseModeAction(
+                MouseMode.DRAW_CREASE_SYMMETRIC_12));
         actionService.registerAction(ActionType.deleteSelectedLineSegmentAction, new LambdaAction(() -> {
             mainCreasePatternWorker.del_selected_senbun();
             mainCreasePatternWorker.record();
@@ -535,9 +535,5 @@ public class ActionRegistrationService {
                         foldedFigureModel::getScale,
                         1.0,
                         AnimationDurations.SCALE_SPEED)));
-        actionService.registerAction(ActionType.selectAnd3ClickAction, new LambdaAction(() -> {
-            canvasModel.setCkbox_add_frame_SelectAnd3click_isSelected(
-                    canvasModel.isCkbox_add_frame_SelectAnd3click_isSelected());
-        }));
     }
 }
