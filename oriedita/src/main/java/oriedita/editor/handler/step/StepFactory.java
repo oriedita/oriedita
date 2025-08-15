@@ -3,24 +3,32 @@ package oriedita.editor.handler.step;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
+import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.handler.MouseModeHandler;
+import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.Polygon;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 @ApplicationScoped
 public class StepFactory {
 
     private final Camera cpCamera;
+    private final CreasePattern_Worker d;
 
     @Inject
     public StepFactory(
-            @Named("creasePatternCamera") Camera cpCamera
+            @Named("creasePatternCamera") Camera cpCamera,
+            @Named("mainCreasePattern_Worker") CreasePattern_Worker d
     ) {
         this.cpCamera = cpCamera;
+        this.d = d;
     }
 
     public <T extends Enum<T>> ObjCoordStepNode<T> createSwitchNode(
@@ -49,12 +57,10 @@ public class StepFactory {
         );
     }
 
-    public <T extends Enum<T>> BoxSelectStepNode<T> createBoxSelectNode_M_D_R(T step,
-                                                                              Consumer<Point> moveAction, Consumer<Polygon> dragAction,
-                                                                              Function<Polygon, T> releaseAction,
-                                                                              Function<Point, T> releasePointAction) {
-        return new BoxSelectStepNode<>(step,
-                releaseAction, releasePointAction, moveAction, dragAction, cpCamera
-        );
+    public <T extends Enum<T>> BoxSelectStepNode<T> createBoxSelectLinesNode(T step,
+                                                                             Function<Collection<LineSegment>, T> lineAction,
+                                                                             Predicate<LineSegment> lineFilter){
+        return new BoxSelectLinesStepNode<>(step,
+                lineAction, l -> lineAction.apply(List.of(l)), p -> {}, p -> {}, lineFilter, cpCamera, d);
     }
 }

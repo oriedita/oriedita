@@ -5,12 +5,20 @@ import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.canvas.MouseMode;
-import origami.Epsilon;
-import origami.crease_pattern.element.Point;
+import oriedita.editor.handler.step.StepFactory;
+import oriedita.editor.handler.step.StepGraph;
+import oriedita.editor.handler.step.StepMouseHandler;
+import origami.crease_pattern.element.LineSegment;
+
+import java.util.Collection;
 
 @ApplicationScoped
 @Handles(MouseMode.CREASE_SELECT_19)
-public class MouseHandlerCreaseSelect extends BaseMouseHandlerBoxSelect {
+public class MouseHandlerCreaseSelect extends StepMouseHandler<MouseHandlerCreaseSelect.Step> {
+    public enum Step {
+        SELECT_LINE
+    }
+
     private final CreasePattern_Worker d;
 
     @Inject
@@ -23,28 +31,30 @@ public class MouseHandlerCreaseSelect extends BaseMouseHandlerBoxSelect {
     public void reset() {
         super.reset();
     }
-    //マウス操作(mouseMode==19 select　でボタンを離したとき)を行う関数----------------------------------------------------
+
     @Override
-    public void mouseReleased(Point p0) {
-        mReleased_A_box_select(p0);
+    protected StepGraph<Step> initStepGraph(StepFactory stepFactory) {
+        var st = new StepGraph<>(Step.SELECT_LINE);
+        st.addNode(stepFactory.createBoxSelectLinesNode(Step.SELECT_LINE,
+                lines -> {
+                    selectLines(lines);
+                    return Step.SELECT_LINE;
+                }, l -> true));
+        return st;
     }
 
-    public void mReleased_A_box_select(Point p0) {
-        super.mouseReleased(p0);
-        d.getLineStep().clear();
-
+    private void selectLines(Collection<LineSegment> lines) {
         int beforeSelectNum = d.getFoldLineTotalForSelectFolding();
 
-        d.select(selectionStart, p0);
-        if (selectionStart.distance(p0) <= Epsilon.UNKNOWN_1EN6) {
-            Point p = d.getCamera().TV2object(p0);
-            if (d.getFoldLineSet().closestLineSegmentDistance(p) < d.getSelectionDistance()) {//点pに最も近い線分の番号での、その距離を返す	public double mottomo_tikai_senbun_kyori(Ten p)
-                d.getFoldLineSet().closestLineSegmentSearch(p).setSelected(2);
-                d.setIsSelectionEmpty(false);
-            }
+        for (LineSegment line : lines) {
+            line.setSelected(2);
+        }
+        if (!lines.isEmpty()) {
+            d.setIsSelectionEmpty(false);
         }
         int afterSelectNum = d.getFoldLineTotalForSelectFolding();
-
-        if(beforeSelectNum != afterSelectNum) d.record();
+        if (afterSelectNum != beforeSelectNum) {
+            d.record();
+        }
     }
 }

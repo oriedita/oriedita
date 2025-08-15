@@ -16,7 +16,7 @@ import java.util.function.Function;
 
 public class BoxSelectStepNode<T extends Enum<T>> extends AbstractStepNode<T> implements IStepNode<T>, IPreviewStepNode {
 
-    private final Camera camera;
+    protected final Camera camera;
     Point selectionStart = new Point();
     private LineSegment[] lines = new LineSegment[4];
     private final Function<Polygon, T> releaseBoxAction;
