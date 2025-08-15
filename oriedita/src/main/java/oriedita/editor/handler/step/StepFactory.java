@@ -50,6 +50,16 @@ public class StepFactory {
         return new ObjCoordStepNode<>(step, moveDragAction, (p, b) -> step, moveDragAction, releaseAction, cpCamera);
     }
 
+    /**
+     * creates a step for box selection. The box is automatically drawn, and on mouseReleased, either releaseAction
+     * (in case a box was drawn) or releasePointAction (in case of simple clicks without drawing a box) is called with
+     * the object coordinates of the box/clicked point.
+     * @param step enum value corresponding to this step
+     * @param releaseAction action to be called when a box was drawn
+     * @param releasePointAction action to be called when no box was drawn
+     * @return new Step for Box Selection
+     * @param <T> step enum type
+     */
     public <T extends Enum<T>> BoxSelectStepNode<T> createBoxSelectNode(T step, Function<Polygon, T> releaseAction,
                                                                         Function<Point, T> releasePointAction) {
         return new BoxSelectStepNode<>(step,
@@ -57,6 +67,16 @@ public class StepFactory {
         );
     }
 
+    /**
+     * creates a step that selects lines, either by clicking near it or by dragging a box. The lines are highlighted
+     * on mouseMove/drag by drawing them thicker. Lines for which the lineFilter returns false will be ignored during
+     * selection. On mouseReleased, lineAction will be executed with the selected line(s) as the argument.
+     * @param step enum value corresponding to this step
+     * @param lineAction action to be executed on mouseReleased with the selected lines
+     * @param lineFilter filter for selecting lines, all lines where this returns false will be ignored
+     * @return new Step for Box Selection of lines
+     * @param <T> step enum type
+     */
     public <T extends Enum<T>> BoxSelectStepNode<T> createBoxSelectLinesNode(T step,
                                                                              Function<Collection<LineSegment>, T> lineAction,
                                                                              Predicate<LineSegment> lineFilter){
