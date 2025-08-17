@@ -16,7 +16,7 @@ import java.util.Collection;
 @Handles(MouseMode.CREASE_SELECT_19)
 public class MouseHandlerCreaseSelect extends StepMouseHandler<MouseHandlerCreaseSelect.Step> {
     public enum Step {
-        SELECT_LINE
+        SELECT_LINES
     }
 
     private final CreasePattern_Worker d;
@@ -34,27 +34,21 @@ public class MouseHandlerCreaseSelect extends StepMouseHandler<MouseHandlerCreas
 
     @Override
     protected StepGraph<Step> initStepGraph(StepFactory stepFactory) {
-        var st = new StepGraph<>(Step.SELECT_LINE);
-        st.addNode(stepFactory.createBoxSelectLinesNode(Step.SELECT_LINE,
+        var st = new StepGraph<>(Step.SELECT_LINES);
+        st.addNode(stepFactory.createBoxSelectLinesNode(Step.SELECT_LINES,
                 lines -> {
                     selectLines(lines);
-                    return Step.SELECT_LINE;
-                }, l -> true));
+                    return Step.SELECT_LINES;
+                }, l -> l.getSelected() != 2));
         return st;
     }
 
     private void selectLines(Collection<LineSegment> lines) {
-        int beforeSelectNum = d.getFoldLineTotalForSelectFolding();
-
+        if (lines.isEmpty()) {return;}
         for (LineSegment line : lines) {
             line.setSelected(2);
         }
-        if (!lines.isEmpty()) {
-            d.setIsSelectionEmpty(false);
-        }
-        int afterSelectNum = d.getFoldLineTotalForSelectFolding();
-        if (afterSelectNum != beforeSelectNum) {
-            d.record();
-        }
+        d.setIsSelectionEmpty(false);
+        d.record();
     }
 }

@@ -2,34 +2,53 @@ package oriedita.editor.handler;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.canvas.MouseMode;
-import origami.Epsilon;
-import origami.crease_pattern.element.Point;
+import oriedita.editor.handler.step.StepFactory;
+import oriedita.editor.handler.step.StepGraph;
+import oriedita.editor.handler.step.StepMouseHandler;
+import origami.crease_pattern.element.LineSegment;
+
+import java.util.Collection;
 
 @ApplicationScoped
 @Handles(MouseMode.CREASE_UNSELECT_20)
-public class MouseHandlerCreaseUnselect extends BaseMouseHandlerBoxSelect {
-    @Inject
-    public MouseHandlerCreaseUnselect() {
+public class MouseHandlerCreaseUnselect extends StepMouseHandler<MouseHandlerCreaseUnselect.Step> {
+    public enum Step {
+        SELECT_LINES
     }
 
-    //マウス操作(mouseMode==20 select　でボタンを離したとき)を行う関数----------------------------------------------------
-    public void mouseReleased(Point p0) {
-        super.mouseReleased(p0);
-        d.getLineStep().clear();
+    private final CreasePattern_Worker d;
 
-        int beforeSelectNum = d.getFoldLineTotalForSelectFolding();
+    @Inject
+    public MouseHandlerCreaseUnselect(
+            @Named("mainCreasePattern_Worker") CreasePattern_Worker d) {
+        this.d = d;
+    }
 
-        d.unselect(selectionStart, p0);
-        if (selectionStart.distance(p0) <= Epsilon.UNKNOWN_1EN6) {
-            Point p = d.getCamera().TV2object(p0);
-            if (d.getFoldLineSet().closestLineSegmentDistance(p) < d.getSelectionDistance()) {//点pに最も近い線分の番号での、その距離を返す	public double mottomo_tikai_senbun_kyori(Ten p)
-                d.getFoldLineSet().closestLineSegmentSearch(p).setSelected(0);
-            }
+    @Override
+    public void reset() {
+        super.reset();
+    }
+
+    @Override
+    protected StepGraph<Step> initStepGraph(StepFactory stepFactory) {
+        var st = new StepGraph<>(Step.SELECT_LINES);
+        st.addNode(stepFactory.createBoxSelectLinesNode(Step.SELECT_LINES,
+                lines -> {
+                    unselectLines(lines);
+                    return Step.SELECT_LINES;
+                }, l -> l.getSelected() != 0));
+        return st;
+    }
+
+    private void unselectLines(Collection<LineSegment> lines) {
+        if (lines.isEmpty()) {return;}
+        for (LineSegment line : lines) {
+            line.setSelected(0);
         }
-
-        int afterSelectNum = d.getFoldLineTotalForSelectFolding();
-
-        if(beforeSelectNum != afterSelectNum) d.record();
+        d.refreshIsSelectionEmpty();
+        d.record();
     }
 }

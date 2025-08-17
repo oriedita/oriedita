@@ -54,6 +54,9 @@ public abstract class StepMouseHandler<T extends Enum<T>> extends BaseMouseHandl
     private String getStepLabel() {
         T enumInst = steps.getCurrentStep();
         String enumClass = enumInst.getClass().getSimpleName();
+        if (enumInst.getClass().isMemberClass()){
+            enumClass = enumInst.getClass().getEnclosingClass().getSimpleName() + "." + enumClass;
+        }
         String key = enumInst.name();
         String value = ResourceUtil.getBundleString("step_label", enumClass + "." + key);
         return value != null ? value : key;

@@ -96,7 +96,7 @@ public class FoldLineSet {
         return cAMVViolations;
     }
 
-    public void addLineSegmentForReplace(LineSegment s0) {
+    private void addLineSegmentForReplace(LineSegment s0) {
         addLine(s0);//Just add the information of s0 to the end of senbun of foldLineSet
         int total_old = getTotal();
         divideLineSegmentWithNewLines(total_old - 1, total_old);
@@ -107,13 +107,12 @@ public class FoldLineSet {
         quadTree = null;
     }
 
-    public void replaceAux(CustomLineTypes to, List<LineSegment> reserveAux) {
+    private void replaceAux(LineColor to, List<LineSegment> reserveAux) {
         for (LineSegment s : reserveAux) {
-            LineSegment auxChange = s.withColor(LineColor.fromNumber(to.getNumberForLineColor()));
+            LineSegment auxChange = s.withColor(to);
             deleteLine(s);
             addLineSegmentForReplace(auxChange);
         }
-        reserveAux.clear();
         invalidateQuadTree();
     }
 
@@ -167,6 +166,35 @@ public class FoldLineSet {
     public void setColor(LineSegment s, LineColor icol) {
         int index = lineSegments.indexOf(s);
         lineSegments.set(index, s.withColor(icol));
+    }
+
+    /**
+     * sets the color of all lineSegments in a collection to col, taking care to fix potential overlaps
+     * caused by converting aux lines to non-aux lines. returns the amount of lines that were changed.
+     * @param ls collection of lines to change the color of
+     * @param col color to change the lines to
+     * @return number of lines that were changed
+     */
+    public int setColor(Collection<LineSegment> ls, LineColor col) {
+        var lines = new HashSet<>(ls);
+        var aux = new ArrayList<LineSegment>();
+        int changed = 0;
+        for (int i = 1; i <= total; i++) {
+            LineSegment s = lineSegments.get(i);
+            if (lines.contains(s)) {
+                if (s.getColor() == col) {
+                    continue;
+                }
+                changed++;
+                if (s.getColor() == LineColor.CYAN_3){
+                    aux.add(s);
+                } else {
+                    setColor(i, col);
+                }
+            }
+        }
+        replaceAux(col, aux);
+        return changed;
     }
 
     public void setCircleCustomizedColor(int i, Color c0) {
@@ -361,141 +389,6 @@ public class FoldLineSet {
             }
         }
         return ret;
-    }
-
-    public void unselect(Polygon p) {
-        for (int i = 1; i <= total; i++) {
-            LineSegment s = lineSegments.get(i);
-            if (p.totu_boundary_inside(s)) {
-                s.setSelected(0);
-            }
-        }
-    }
-
-    //--------------------------------
-    public int MV_change(Polygon p) {
-        int i_r = 0;
-
-        for (int i = 1; i <= total; i++) {
-            LineSegment s = lineSegments.get(i);
-            if (p.totu_boundary_inside(s)) {
-                LineColor ic_temp = s.getColor();/**/
-                if (ic_temp == LineColor.RED_1) {
-                    setColor(s, LineColor.BLUE_2);
-                } else if (ic_temp == LineColor.BLUE_2) {
-                    setColor(s, LineColor.RED_1);
-                }
-                i_r = 1;
-            }
-        }
-        return i_r;
-    }
-
-    //--------------------------------
-    public boolean insideToMountain(Polygon p) {
-        boolean i_r = false;
-
-        for (int i = 1; i <= total; i++) {
-            LineSegment s;
-            s = lineSegments.get(i);
-            if (p.totu_boundary_inside(s)) {
-                setColor(s, LineColor.RED_1);
-                i_r = true;
-            }
-        }
-        return i_r;
-    }
-
-    //--------------------------------
-    public boolean insideToValley(Polygon b) {
-        boolean i_r = false;
-
-        for (int i = 1; i <= total; i++) {
-            LineSegment s;
-            s = lineSegments.get(i);
-            if (b.totu_boundary_inside(s)) {
-                setColor(s, LineColor.BLUE_2);
-                i_r = true;
-            }
-        }
-        return i_r;
-    }
-
-
-    public boolean insideToEdge(Polygon b) {
-        boolean i_r = false;
-
-        for (int i = 1; i <= total; i++) {
-            LineSegment s;
-            s = lineSegments.get(i);
-            if (b.totu_boundary_inside(s)) {
-                setColor(s, LineColor.BLACK_0);
-                i_r = true;
-            }
-        }
-        return i_r;
-    }
-
-    public boolean insideToReplaceType(Polygon b, CustomLineTypes from, CustomLineTypes to) {
-        boolean i_r = false;
-        List<LineSegment> reserveAux = new ArrayList<>();
-
-        for (int i = 1; i <= total; i++) {
-            LineSegment s = lineSegments.get(i);
-            LineSegment temp = s.clone();
-
-            if (b.totu_boundary_inside(s) && (from.getNumber() != to.getNumber())) {
-                switch (from) {
-                    case ANY:
-                        if (s.getColor() == LineColor.CYAN_3) {
-                            reserveAux.add(s);
-                        } else {
-                            s = s.withColor(LineColor.fromNumber(to.getNumberForLineColor()));
-                        }
-                        i_r = true;
-                        break;
-                    case EDGE:
-                        if (s.getColor() == LineColor.BLACK_0) {
-                            s = s.withColor(LineColor.fromNumber(to.getNumberForLineColor()));
-                            i_r = true;
-                        }
-                        break;
-                    case MANDV:
-                        if (s.getColor() == LineColor.RED_1 || s.getColor() == LineColor.BLUE_2) {
-                            s = s.withColor(LineColor.fromNumber(to.getNumberForLineColor()));
-                            i_r = true;
-                        }
-                        break;
-                    case MOUNTAIN:
-                    case VALLEY:
-                        if (s.getColor() == LineColor.fromNumber(from.getNumber() - 1)) {
-                            s = s.withColor(LineColor.fromNumber(to.getNumberForLineColor()));
-                            i_r = true;
-                        }
-                        break;
-                    case AUX:
-                        if (s.getColor() == LineColor.fromNumber(from.getNumber() - 1)) {
-                            reserveAux.add(s);
-                            i_r = true;
-                        }
-                        break;
-                    default:
-                        break;
-                }
-                if (from != CustomLineTypes.AUX) { // if replace from is not AUX
-                    if (from != CustomLineTypes.ANY) { // if replace from is not ANY
-                        lineSegments.set(i, s);
-                    } else { // if replace from is ANY & og linetype is not Aux
-                        if (temp.getColor() != LineColor.CYAN_3) {
-                            lineSegments.set(i, s);
-                        }
-                    }
-                }
-            }
-        }
-        replaceAux(to, reserveAux);
-        invalidateQuadTree();
-        return i_r;
     }
 
     public boolean insideToDeleteType(Polygon b, CustomLineTypes del) {

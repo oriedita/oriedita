@@ -38,17 +38,9 @@ public class MouseHandlerReplaceTypeSelect extends StepMouseHandler<MouseHandler
 
     private void changeColor(Collection<LineSegment> lines) {
         CustomLineTypes to = canvasModel.getCustomToLineType();
-        boolean changed = false;
-        var fls = d.getFoldLineSet();
         var lc = to.getLineColor();
-        for (LineSegment line : lines) {
-            if (line.getColor() == lc) {
-                continue;
-            }
-            fls.setColor(line, lc);
-            changed = true;
-        }
-        if (changed) {
+        var changed = d.getFoldLineSet().setColor(lines, lc);
+        if (changed > 0) {
             d.record();
         }
     }

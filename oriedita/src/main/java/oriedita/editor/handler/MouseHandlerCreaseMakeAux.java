@@ -3,41 +3,51 @@ package oriedita.editor.handler;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
-import origami.Epsilon;
+import oriedita.editor.handler.step.StepFactory;
+import oriedita.editor.handler.step.StepGraph;
+import oriedita.editor.handler.step.StepMouseHandler;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
-import origami.crease_pattern.element.Point;
+
+import java.util.Collection;
 
 @ApplicationScoped
 @Handles(MouseMode.CREASE_MAKE_AUX_60)
-public class MouseHandlerCreaseMakeAux extends BaseMouseHandlerBoxSelect {
+public class MouseHandlerCreaseMakeAux extends StepMouseHandler<MouseHandlerCreaseMakeAux.Step> {
     @Inject
     public MouseHandlerCreaseMakeAux() {
     }
 
-    //マウス操作(mouseMode==60 でボタンを離したとき)を行う関数----------------------------------------------------
-    public void mouseReleased(Point p0) {
-        super.mouseReleased(p0);
-        d.getLineStep().clear();
+    public enum Step {
+        SELECT_LINES
+    }
 
-        if (selectionStart.distance(p0) > Epsilon.UNKNOWN_1EN6) {
-            if (d.insideToAux(selectionStart, p0)) {
-                d.record();
-            }//この関数は不完全なのでまだ未公開20171126
-        } else {
-            Point p = d.getCamera().TV2object(p0);
-            if (d.getFoldLineSet().closestLineSegmentDistance(p) < d.getSelectionDistance()) {//点pに最も近い線分の番号での、その距離を返す	public double closestLineSegmentDistance(Ten p)
-                LineSegment closestLineSegment = d.getFoldLineSet().closestLineSegmentSearchReversedOrder(p);
-                if (closestLineSegment.getColor().getNumber() < 3) {
-                    LineSegment add_sen = closestLineSegment.withColor(LineColor.CYAN_3);
+    @Override
+    public void reset() {
+        super.reset();
+    }
 
-                    d.getFoldLineSet().deleteLineSegment_vertex(closestLineSegment);
-                    d.addLineSegment(add_sen);
+    @Override
+    protected StepGraph<Step> initStepGraph(StepFactory stepFactory) {
+        var st = new StepGraph<>(Step.SELECT_LINES);
+        st.addNode(stepFactory.createBoxSelectLinesNode(Step.SELECT_LINES,
+                lines -> {
+                    makeAux(lines);
+                    return Step.SELECT_LINES;
+                }, l -> l.getColor().isFoldingLine()));
+        return st;
+    }
 
-                    d.organizeCircles();
-                    d.record();
-                }
-            }
+    private void makeAux(Collection<LineSegment> lines) {
+        if (lines.isEmpty()) {return;}
+        var fls = d.getFoldLineSet();
+        for (var s : lines) {
+            LineSegment add_sen = s.withColor(LineColor.CYAN_3);
+            fls.deleteLine(s);
+            fls.addLine(add_sen);
         }
+        fls.divideLineSegmentWithNewLines(fls.getTotal() - lines.size(), fls.getTotal());
+        d.organizeCircles();
+        d.record();
     }
 }
