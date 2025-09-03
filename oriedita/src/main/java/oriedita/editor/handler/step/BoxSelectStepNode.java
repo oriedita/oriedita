@@ -56,6 +56,7 @@ public class BoxSelectStepNode<T extends Enum<T>> extends AbstractStepNode<T> im
 
     @Override
     public void runDragAction(Point mousePos) {
+
         Point p19_2 = new Point(selectionStart.getX(), mousePos.getY());
         Point p19_4 = new Point(mousePos.getX(), selectionStart.getY());
 

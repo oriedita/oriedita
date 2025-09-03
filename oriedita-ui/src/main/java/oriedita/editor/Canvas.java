@@ -334,8 +334,9 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
                 switch (rightCLickTarget) {
                     case CREASE_PATTERN_0:
                         if (activeMouseHandler.getMouseMode() != MouseMode.LINE_SEGMENT_DELETE_3) {
-                            mainCreasePatternWorker.setFoldLineAdditional(FoldLineAdditionalInputMode.BOTH_4);
+                            canvasModel.setFoldLineAdditionalInputMode(FoldLineAdditionalInputMode.BOTH_4);
                         }
+                        mouseModeHandlers.get(MouseMode.LINE_SEGMENT_DELETE_3).mouseMoved(p, e);
                         mouseModeHandlers.get(MouseMode.LINE_SEGMENT_DELETE_3).mousePressed(p, e, pressedButton);
                         setActiveMouseHandler(mouseModeHandlers.get(MouseMode.LINE_SEGMENT_DELETE_3));
                         break;
@@ -569,24 +570,19 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
     public void setData(PropertyChangeEvent e, CanvasModel canvasModel) {
 
         mouseMode = canvasModel.getMouseMode();
-        if (mouseModeHandlers.containsKey(mouseMode)) {
-            setActiveMouseHandler(mouseModeHandlers.get(mouseMode));
-        }
-        if (Objects.equals(e.getPropertyName(), "mouseMode")) {
+
+        if (Objects.equals(e.getPropertyName(), "mouseMode") || e.getPropertyName() == null){
+            if (mouseModeHandlers.containsKey(mouseMode)) {
+                setActiveMouseHandler(mouseModeHandlers.get(mouseMode));
+            }
             if (activeMouseHandler != null) {
                 activeMouseHandler.reset();
             }
         }
+        //noinspection MagicConstant
         canvasUI.setCursor(Cursor.getPredefinedCursor(canvasModel.getCursor()));
 
         canvasUI.repaint();
-    }
-
-    //=============================================================================
-    //Method called when the mouse wheel rotates
-    //=============================================================================
-    public void mouse_object_position(Point p) {//この関数はmouseMoved等と違ってマウスイベントが起きても自動では認識されない
-        canvasUI.setMousePosition(p);
     }
 
     public void setData(PropertyChangeEvent e, BackgroundModel backgroundModel) {

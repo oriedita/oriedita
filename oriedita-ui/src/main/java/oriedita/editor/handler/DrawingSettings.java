@@ -4,6 +4,8 @@ import oriedita.editor.canvas.LineStyle;
 
 public class DrawingSettings {
     private final float lineWidth;
+    private final float auxLineWidth;
+    private final int pointSize;
     private final LineStyle lineStyle;
     private final int height;
     private final int width;
@@ -21,6 +23,8 @@ public class DrawingSettings {
     }
 
     public DrawingSettings(float lineWidth,
+                           float auxLineWidth,
+                           int pointSize,
                            LineStyle lineStyle,
                            int height,
                            int width,
@@ -29,6 +33,8 @@ public class DrawingSettings {
                            boolean showCurrentStep,
                            boolean gridInputAssist) {
         this.lineWidth = lineWidth;
+        this.auxLineWidth = auxLineWidth;
+        this.pointSize = pointSize;
         this.lineStyle = lineStyle;
         this.width = width;
         this.height = height;
@@ -64,5 +70,13 @@ public class DrawingSettings {
 
     public void setGridInputAssist(boolean gridInputAssist) {
         this.gridInputAssist = gridInputAssist;
+    }
+
+    public float getAuxLineWidth() {
+        return auxLineWidth;
+    }
+
+    public int getPointSize() {
+        return pointSize;
     }
 }

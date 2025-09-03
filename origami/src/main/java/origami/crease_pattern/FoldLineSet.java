@@ -378,6 +378,9 @@ public class FoldLineSet {
     }
 
     public Collection<LineSegment> lineSegmentsInside(Polygon p) {
+        if (lineSegments.size() <= 1){
+            return List.of();
+        }
         QuadTree t = getQuadTree();
         List<LineSegment> ret = new ArrayList<>();
         var min = new Point(p.getXMin(), p.getYMin());
@@ -491,139 +494,6 @@ public class FoldLineSet {
 
         for (Circle circle : circles) {
             save.addCircle(circle);
-        }
-
-        reset();
-        setSave(save);
-
-        invalidateQuadTree();
-        return i_r;
-    }
-
-    public boolean deleteInside(Polygon p) {
-        boolean i_r = false;
-
-        FoldLineSave save = new FoldLineSave();
-
-        for (int i = 1; i <= total; i++) {
-            LineSegment s = lineSegments.get(i);
-
-            if (p.totu_boundary_inside(s)) {
-                i_r = true;
-            } else {
-                save.addLineSegment(s.clone());
-            }
-        }
-
-        for (Circle circle : circles) {
-            Circle e_temp = new Circle();
-            e_temp.set(circle);
-
-            if (p.totu_boundary_inside(e_temp)) {
-                i_r = true;
-            } else {
-                save.addCircle(e_temp);
-            }
-        }
-
-        reset();
-        setSave(save);
-
-        invalidateQuadTree();
-        return i_r;
-    }
-
-    public boolean deleteInside_foldingLine(Polygon p) {//Delete only the polygonal line
-        boolean i_r = false;
-
-        FoldLineSave save = new FoldLineSave();
-
-        for (int i = 1; i <= total; i++) {
-            LineSegment s = lineSegments.get(i);
-
-            if ((p.totu_boundary_inside(s)) && s.getColor().isFoldingLine()) {
-                i_r = true;
-            }//黒赤青線はmemo1に書かれない。つまり削除される。
-            else if ((!p.totu_boundary_inside(s)) || !s.getColor().isFoldingLine()) {
-                save.addLineSegment(s.clone());
-            }
-        }
-
-        int ii = 0;
-        for (Circle circle : circles) {
-            Circle e_temp = new Circle();
-            e_temp.set(circle);//ec.set(e_temp.get_tyuusin());er=e_temp.getr();
-
-            ii = ii + 1;
-            save.addCircle(e_temp);
-        }
-
-        reset();
-
-        setSave(save);
-
-        invalidateQuadTree();
-        return i_r;
-    }
-
-    public boolean deleteInside_edge(Polygon p) {//Delete only the polygonal line
-        boolean i_r = false;
-
-        FoldLineSave save = new FoldLineSave();
-        int ibangou = 0;
-
-        for (int i = 1; i <= total; i++) {
-            LineSegment s;
-            s = lineSegments.get(i);
-
-            if ((p.totu_boundary_inside(s)) && (s.getColor() == LineColor.BLACK_0)) {
-                i_r = true;
-            }//黒線はmemo1に書かれない。つまり削除される。
-            else if ((!p.totu_boundary_inside(s)) || (s.getColor() != LineColor.BLACK_0)) {
-                ibangou = ibangou + 1;
-                save.addLineSegment(s.clone());
-            }
-        }
-
-        int ii = 0;
-        for (Circle circle : circles) {
-            Circle e_temp = new Circle();
-            e_temp.set(circle);//ec.set(e_temp.get_tyuusin());er=e_temp.getr();
-            ii = ii + 1;
-            save.addCircle(e_temp);
-        }
-
-        reset();
-        setSave(save);
-
-        invalidateQuadTree();
-        return i_r;
-    }
-
-    public boolean deleteInside_aux(Polygon p) {//Delete only auxiliary live line
-        boolean i_r = false;
-
-        FoldLineSave save = new FoldLineSave();
-
-        for (int i = 1; i <= total; i++) {
-            LineSegment s = lineSegments.get(i);
-
-            if ((p.totu_boundary_inside(s)) && (s.getColor() == LineColor.CYAN_3)) {
-                i_r = true;
-            } else if ((!p.totu_boundary_inside(s)) || (s.getColor() != LineColor.CYAN_3)) {
-                save.addLineSegment(s.clone());
-            }
-        }
-
-        for (Circle circle : circles) {
-            Circle e_temp = new Circle();
-            e_temp.set(circle);
-
-            if (p.totu_boundary_inside(e_temp)) {
-                i_r = true;
-            } else {
-                save.addCircle(e_temp);
-            }
         }
 
         reset();
@@ -1307,9 +1177,8 @@ public class FoldLineSet {
         }
     }
 
-    //Delete circle-----------------------------------------
-    public void deleteCircle(int j) {   //Delete the jth circle
-        circles.remove(j);
+    public void deleteCircle(Circle c){
+        circles.remove(c);
     }
 
     //線分の追加-------------------------------
@@ -1449,6 +1318,7 @@ public class FoldLineSet {
     }
 
     public Optional<LineSegment> closestLineSegmentInRange(Point p, double range){
+        if (lineSegments.size() <= 1) return Optional.empty();
         var qt = getQuadTree();
         var lines = qt.collect(new RectangleCollector(p.move(new Point(-range, -range)), p.move(new Point(range, range))));
         double minr = 100000;
@@ -2250,6 +2120,19 @@ public class FoldLineSet {
     public void setCustomized(LineSegment closestLineSegment, Color customCircleColor) {
         var i = lineSegments.indexOf(closestLineSegment);
         lineSegments.set(i, closestLineSegment.withCustomizedColor(customCircleColor));
+    }
+
+    public Optional<Circle> closestCircleInRange(Point p, double selectionDistance) {
+        if (circles.isEmpty()){
+            return Optional.empty();
+        }
+        var c = closest_circle_search_reverse_order(p);
+        var circle = circles.get(c);
+        if (OritaCalc.distance_circumference(p, circle) < selectionDistance
+                || OritaCalc.distance(p, circle.determineCenter()) < selectionDistance) {
+            return Optional.of(circle);
+        }
+        return Optional.empty();
     }
 
     /**

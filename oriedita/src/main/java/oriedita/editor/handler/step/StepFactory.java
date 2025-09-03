@@ -67,6 +67,14 @@ public class StepFactory {
         );
     }
 
+    public <T extends Enum<T>> BoxSelectStepNode<T> createBoxSelectNode(T step,
+                                                                        Function<Polygon, T> releaseAction,
+                                                                        Function<Point, T> releasePointAction,
+                                                                        Consumer<Point> moveAction,
+                                                                        Consumer<Polygon> dragAction){
+        return new BoxSelectStepNode<>(step, releaseAction, releasePointAction, moveAction, dragAction, cpCamera);
+    }
+
     /**
      * creates a step that selects lines, either by clicking near it or by dragging a box. The lines are highlighted
      * on mouseMove/drag by drawing them thicker. Lines for which the lineFilter returns false will be ignored during

@@ -128,17 +128,9 @@ public interface CreasePattern_Worker {
 
     void unselect_all(boolean ignorePersistent);
 
-    boolean deleteInside_foldingLine(Point p0a, Point p0b);
-
-    boolean deleteInside_edge(Point p0a, Point p0b);
-
-    boolean deleteInside_aux(Point p0a, Point p0b);
-
     boolean deleteInside_text(Point p1, Point p2);
 
     boolean change_property_in_4kakukei(Point p0a, Point p0b);
-
-    boolean deleteInside(Point p0a, Point p0b);
 
     LineSegment extendToIntersectionPoint(LineSegment s0);
 

@@ -793,21 +793,6 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     }
 
     @Override
-    public boolean deleteInside_foldingLine(Point p0a, Point p0b) {
-        return foldLineSet.deleteInside_foldingLine(createBox(p0a, p0b));
-    }
-
-    @Override
-    public boolean deleteInside_edge(Point p0a, Point p0b) {
-        return foldLineSet.deleteInside_edge(createBox(p0a, p0b));
-    }
-
-    @Override
-    public boolean deleteInside_aux(Point p0a, Point p0b) {
-        return foldLineSet.deleteInside_aux(createBox(p0a, p0b));
-    }
-
-    @Override
     public boolean insideToDeleteType(Point p0a, Point p0b, CustomLineTypes del){
         return foldLineSet.insideToDeleteType(createBox(p0a, p0b), del);
     }
@@ -824,11 +809,6 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     @Override
     public boolean change_property_in_4kakukei(Point p0a, Point p0b) {
         return foldLineSet.change_property_in_4kakukei(createBox(p0a, p0b), customCircleColor);
-    }
-
-    @Override
-    public boolean deleteInside(Point p0a, Point p0b) {
-        return auxLines.deleteInside(createBox(p0a, p0b));
     }
 
     @Override
