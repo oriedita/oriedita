@@ -10,4 +10,5 @@ public enum MouseHandlerSettingGroup {
     LINE_DIVISION_COUNT,
     LINE_DIVISION_RATIO,
     APPLY_LINES,
+    LINE_SELECT_HELP_TEXT
 }

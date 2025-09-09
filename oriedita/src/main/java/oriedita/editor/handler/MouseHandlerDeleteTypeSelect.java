@@ -29,6 +29,7 @@ public class MouseHandlerDeleteTypeSelect extends StepMouseHandler<MouseHandlerD
                     for (LineSegment lineSegment : lineSegments) {
                         d.getFoldLineSet().deleteLine(lineSegment);
                     }
+                    d.record();
                     return Step.SELECT_LINES;
                 }, lineSegment -> canvasModel.getDelLineType().matches(lineSegment.getColor())));
         return sg;

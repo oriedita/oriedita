@@ -7,6 +7,7 @@ import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 
 import java.awt.event.MouseEvent;
+import java.util.EnumSet;
 
 /**
  * Mouse handler for modes which perform some action based on a drawn (magenta) line.
@@ -18,6 +19,11 @@ public abstract class BaseMouseHandlerLineSelect extends BaseMouseHandler {
 
     public BaseMouseHandlerLineSelect(AngleSystemModel angleSystemModel) {
         this.angleSystemModel = angleSystemModel;
+    }
+
+    @Override
+    public EnumSet<MouseHandlerSettingGroup> getSettings() {
+        return EnumSet.of(MouseHandlerSettingGroup.ANGLE_SYSTEM, MouseHandlerSettingGroup.LINE_SELECT_HELP_TEXT);
     }
 
     @Override

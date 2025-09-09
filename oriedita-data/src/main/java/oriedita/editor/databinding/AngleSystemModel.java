@@ -78,8 +78,8 @@ public class AngleSystemModel extends AbstractModel {
         angleE = 50.0;
         angleF = 100.0;
 
-        angleSystemADivider = 12;
-        angleSystemBDivider = 8;
+        angleSystemADivider = 8;
+        angleSystemBDivider = 12;
 
         angleSystemInputType = AngleSystemInputType.NONE_0;
 
