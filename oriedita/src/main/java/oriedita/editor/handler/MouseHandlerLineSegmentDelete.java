@@ -30,6 +30,7 @@ public class MouseHandlerLineSegmentDelete extends StepMouseHandler<MouseHandler
 
     private final List<Circle> closestCircles = new ArrayList<>();
     private final List<LineSegment> closestLines = new ArrayList<>();
+    // TODO: split yellow aux deletion off into own handler, or find way to generalize
     private final List<LineSegment> closestAuxLines = new ArrayList<>();
 
     @Override
@@ -46,8 +47,7 @@ public class MouseHandlerLineSegmentDelete extends StepMouseHandler<MouseHandler
         closestLines.clear();
         closestAuxLines.clear();
         var lines = d.getFoldLineSet().lineSegmentsInside(p);
-        var circles = d.getFoldLineSet().getCircles().stream()
-                .filter(p::totu_boundary_inside).toList();
+        var circles = d.getFoldLineSet().circlesInside(p);
         var auxLines = d.getAuxLines().lineSegmentsInside(p);
 
         var mode = d.getI_foldLine_additional();

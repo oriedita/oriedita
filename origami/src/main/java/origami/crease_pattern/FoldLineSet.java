@@ -197,10 +197,9 @@ public class FoldLineSet {
         return changed;
     }
 
-    public void setCircleCustomizedColor(int i, Color c0) {
-        Circle e = circles.get(i);
-        e.setCustomized(1);
-        e.setCustomizedColor(c0);
+    public void setCircleCustomizedColor(Circle c0, Color c1) {
+        c0.setCustomized(1);
+        c0.setCustomizedColor(c1);
     }
 
     public void getSave(LineSegmentSave save) {
@@ -1872,6 +1871,11 @@ public class FoldLineSet {
 
     public List<Circle> getCircles() {
         return circles;
+    }
+
+    public Collection<Circle> circlesInside(Polygon p) {
+        return getCircles().stream()
+                .filter(p::totu_boundary_inside).toList();
     }
 
     public Iterable<LineSegment> getCheck1LineSegments() {

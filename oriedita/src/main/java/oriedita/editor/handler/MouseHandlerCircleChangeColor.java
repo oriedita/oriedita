@@ -3,47 +3,103 @@ package oriedita.editor.handler;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
-import origami.Epsilon;
+import oriedita.editor.drawing.tools.Camera;
+import oriedita.editor.drawing.tools.DrawingUtil;
+import oriedita.editor.handler.step.StepFactory;
+import oriedita.editor.handler.step.StepGraph;
+import oriedita.editor.handler.step.StepMouseHandler;
+import origami.crease_pattern.OritaCalc;
+import origami.crease_pattern.element.Circle;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
-import origami.crease_pattern.element.Point;
+
+import java.awt.Graphics2D;
+import java.util.ArrayList;
+import java.util.List;
 
 @ApplicationScoped
 @Handles(MouseMode.CIRCLE_CHANGE_COLOR_59)
-public class MouseHandlerCircleChangeColor extends BaseMouseHandlerBoxSelect {
-    @Inject
-    public MouseHandlerCircleChangeColor() {
+public class MouseHandlerCircleChangeColor extends StepMouseHandler<MouseHandlerCircleChangeColor.Step> {
+
+    public enum Step {
+        SELECT_CIRCLES
     }
 
-    //マウス操作(mouseMode==59 "特注プロパティ指定" でボタンを離したとき)を行う関数----------------------------------------------------
-    public void mouseReleased(Point p0) {//補助活線と円
-        super.mouseReleased(p0);
-        d.getLineStep().clear();
-        if (selectionStart.distance(p0) > Epsilon.UNKNOWN_1EN6) {//現状では削除しないときもUNDO用に記録されてしまう20161218
+    private final List<Circle> closestCircles = new ArrayList<>();
+    private final List<LineSegment> closestAuxLines = new ArrayList<>();
 
-            d.change_property_in_4kakukei(selectionStart, p0);
-        }
+    @Override
+    public void reset() {
+        super.reset();
+        closestCircles.clear();
+        closestAuxLines.clear();
+    }
 
-        if (selectionStart.distance(p0) <= Epsilon.UNKNOWN_1EN6) {
-            Point p = d.getCamera().TV2object(p0);
-            double rs_min;
-            rs_min = d.getFoldLineSet().closestLineSegmentDistance(p);//点pに最も近い補助活線の番号での、その距離を返す
-            double re_min;
-            re_min = d.getFoldLineSet().closestCircleDistance(p);//点pに最も近い円の番号での、その距離を返す	public double mottomo_tikai_en_kyori(Ten p)
-
-            if (rs_min <= re_min) {
-                if (rs_min < d.getSelectionDistance()) {//点pに最も近い線分の番号での、その距離を返す	public double mottomo_tikai_senbun_kyori(Ten p)
-                    LineSegment closestLineSegment = d.getFoldLineSet().closestLineSegmentSearchReversedOrder(p);
-                    if (closestLineSegment.getColor() == LineColor.CYAN_3) {
-                        d.getFoldLineSet().setCustomized(closestLineSegment, d.getCustomCircleColor());
-                        //en_seiri();kiroku();
+    @Override
+    protected StepGraph<Step> initStepGraph(StepFactory stepFactory) {
+        var graph = new StepGraph<>(Step.SELECT_CIRCLES);
+        graph.addNode(stepFactory.createBoxSelectNode(Step.SELECT_CIRCLES,
+                polygon -> {
+                    for (Circle circle : closestCircles) {
+                        d.getFoldLineSet().setCircleCustomizedColor(circle, d.getCustomCircleColor());
                     }
-                }
-            } else {
-                if (re_min < d.getSelectionDistance()) {
-                    d.getFoldLineSet().setCircleCustomizedColor(d.getFoldLineSet().closest_circle_search_reverse_order(p), d.getCustomCircleColor());
-                }
-            }
+                    for (LineSegment ls : closestAuxLines) {
+                        d.getFoldLineSet().setCustomized(ls, d.getCustomCircleColor());
+                    }
+                    if (!closestCircles.isEmpty() || !closestAuxLines.isEmpty()) {
+                        d.record();
+                    }
+                    return Step.SELECT_CIRCLES;
+                },
+                p -> {
+                    if (!closestCircles.isEmpty()) {
+                        d.getFoldLineSet().setCircleCustomizedColor(closestCircles.get(0), d.getCustomCircleColor());
+                        d.record();
+                    } else if (!closestAuxLines.isEmpty()) {
+                        d.getFoldLineSet().setCustomized(closestAuxLines.get(0), d.getCustomCircleColor());
+                    }
+                    return Step.SELECT_CIRCLES;
+                }, p -> {
+                    closestAuxLines.clear();
+                    closestCircles.clear();
+                    var line = d.getFoldLineSet().closestLineSegmentInRange(p, d.getSelectionDistance())
+                            .filter(l -> l.getColor() == LineColor.CYAN_3);
+                    var circle = d.getFoldLineSet().closestCircleInRange(p, d.getSelectionDistance());
+                    if (line.isPresent() && circle.isPresent()) {
+                        if (OritaCalc.determineLineSegmentDistance(p, line.get()) > OritaCalc.distance_circumference(p, circle.get())) {
+                            closestCircles.add(circle.get());
+                        } else {
+                            closestAuxLines.add(line.get());
+                        }
+                    } else if (line.isPresent()) {
+                        closestAuxLines.add(line.get());
+                    } else if (circle.isPresent()) {
+                        closestCircles.add(circle.get());
+                    }
+                }, p -> {
+                    closestAuxLines.clear();
+                    closestAuxLines.addAll(d.getFoldLineSet().lineSegmentsInside(p)
+                            .stream()
+                            .filter(l -> l.getColor() == LineColor.CYAN_3)
+                            .toList());
+                    closestCircles.clear();
+                    closestCircles.addAll(d.getFoldLineSet().circlesInside(p));
+                }));
+        return graph;
+    }
+
+    @Override
+    public void drawPreview(Graphics2D g2, Camera camera, DrawingSettings settings) {
+        super.drawPreview(g2, camera, settings);
+        for (Circle circle : closestCircles) {
+            DrawingUtil.drawCircle(g2, circle, camera, settings.getLineWidth() + 1, settings.getPointSize());
         }
+        for (LineSegment line : closestAuxLines) {
+            DrawingUtil.drawAuxLine(g2, line, camera, settings.getLineWidth() + 1, settings.getPointSize(), settings.useRoundedEnds());
+        }
+    }
+
+    @Inject
+    public MouseHandlerCircleChangeColor() {
     }
 }
