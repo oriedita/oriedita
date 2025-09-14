@@ -90,6 +90,10 @@ public abstract class StepMouseHandler<T extends Enum<T>> extends BaseMouseHandl
         mouseMoved(canvasModel.getMousePosition());
     }
 
+    public void reset() {
+        resetStep();
+    }
+
     protected void resetStep() {
         steps.setCurrentStep(startingStep);
         mousePressed(canvasModel.getMousePosition());

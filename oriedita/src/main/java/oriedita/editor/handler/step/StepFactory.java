@@ -6,6 +6,7 @@ import jakarta.inject.Named;
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.handler.MouseModeHandler;
+import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.Polygon;
@@ -31,13 +32,13 @@ public class StepFactory {
         this.d = d;
     }
 
-    public <T extends Enum<T>> ObjCoordStepNode<T> createSwitchNode(
+    public <T extends Enum<T>> IStepNode<T> createSwitchNode(
             T step, Consumer<Point> moveAction, Function<MouseModeHandler.Feature, T> pressAction) {
         return new ObjCoordStepNode<>(step,
                 moveAction, (p, f) -> pressAction.apply(f), p -> {}, p -> step, cpCamera);
     }
 
-    public <T extends Enum<T>> ObjCoordStepNode<T> createNode(T step, Consumer<Point> moveAction, Consumer<Point> pressAction, Consumer<Point> dragAction, Function<Point, T> releaseAction) {
+    public <T extends Enum<T>> IStepNode<T> createNode(T step, Consumer<Point> moveAction, Consumer<Point> pressAction, Consumer<Point> dragAction, Function<Point, T> releaseAction) {
         return new ObjCoordStepNode<>(step, moveAction,
                 (p, b) -> {
                     pressAction.accept(p);
@@ -46,7 +47,7 @@ public class StepFactory {
                 dragAction, releaseAction, cpCamera);
     }
 
-    public <T extends Enum<T>> ObjCoordStepNode<T> createNode_MD_R(T step, Consumer<Point> moveDragAction, Function<Point, T> releaseAction) {
+    public <T extends Enum<T>> IStepNode<T> createNode_MD_R(T step, Consumer<Point> moveDragAction, Function<Point, T> releaseAction) {
         return new ObjCoordStepNode<>(step, moveDragAction, (p, b) -> step, moveDragAction, releaseAction, cpCamera);
     }
 
@@ -60,14 +61,14 @@ public class StepFactory {
      * @return new Step for Box Selection
      * @param <T> step enum type
      */
-    public <T extends Enum<T>> BoxSelectStepNode<T> createBoxSelectNode(T step, Function<Polygon, T> releaseAction,
+    public <T extends Enum<T>> IStepNode<T> createBoxSelectNode(T step, Function<Polygon, T> releaseAction,
                                                                         Function<Point, T> releasePointAction) {
         return new BoxSelectStepNode<>(step,
                 releaseAction, releasePointAction, p -> {}, p -> {}, cpCamera
         );
     }
 
-    public <T extends Enum<T>> BoxSelectStepNode<T> createBoxSelectNode(T step,
+    public <T extends Enum<T>> IStepNode<T> createBoxSelectNode(T step,
                                                                         Function<Polygon, T> releaseAction,
                                                                         Function<Point, T> releasePointAction,
                                                                         Consumer<Point> moveAction,
@@ -85,10 +86,16 @@ public class StepFactory {
      * @return new Step for Box Selection of lines
      * @param <T> step enum type
      */
-    public <T extends Enum<T>> BoxSelectStepNode<T> createBoxSelectLinesNode(T step,
+    public <T extends Enum<T>> IStepNode<T> createBoxSelectLinesNode(T step,
                                                                              Function<Collection<LineSegment>, T> lineAction,
                                                                              Predicate<LineSegment> lineFilter){
         return new BoxSelectLinesStepNode<>(step,
                 lineAction, l -> lineAction.apply(List.of(l)), p -> {}, p -> {}, lineFilter, cpCamera, d);
+    }
+
+    public <T extends Enum<T>> IStepNode<T> createSelectPointNode(T step, LineColor previewColor, boolean free,
+                                                                  Consumer<Point> onHighlight,
+                                                                  Function<Point, T> onSelected){
+        return new SelectPointStepNode<>(step, previewColor, cpCamera, d, free, onHighlight, onSelected);
     }
 }
