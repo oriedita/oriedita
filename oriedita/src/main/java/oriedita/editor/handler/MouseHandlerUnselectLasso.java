@@ -21,6 +21,7 @@ public class MouseHandlerUnselectLasso extends BaseMouseHandlerLasso{
     protected void performAction() {
         int beforeSelectNum = mainCreasePatternWorker.getFoldLineTotalForSelectFolding();
         d.getFoldLineSet().select_lasso(d.getLinePath(), SelectMode.UNSELECT, LassoInteractionMode.INTERSECT);
+        d.refreshIsSelectionEmpty();
         int afterSelectNum = mainCreasePatternWorker.getFoldLineTotalForSelectFolding();
         if(beforeSelectNum != afterSelectNum) d.record();
     }

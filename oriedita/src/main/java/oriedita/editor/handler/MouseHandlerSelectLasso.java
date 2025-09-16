@@ -25,6 +25,7 @@ public class MouseHandlerSelectLasso extends BaseMouseHandlerLasso{
         SelectMode selectMode = !canvasModel.getToggleLineColor() ? SelectMode.SELECT : SelectMode.UNSELECT;
         int beforeSelectNum = mainCreasePatternWorker.getFoldLineTotalForSelectFolding();
         d.getFoldLineSet().select_lasso(d.getLinePath(), selectMode, LassoInteractionMode.INTERSECT);
+        d.refreshIsSelectionEmpty();
         int afterSelectNum = mainCreasePatternWorker.getFoldLineTotalForSelectFolding();
         if(beforeSelectNum != afterSelectNum) d.record();
     }

@@ -16,5 +16,6 @@ public class MouseHandlerUnselectPolygon extends BaseMouseHandlerPolygon {
     protected void performAction() {
         Polygon polygon = new Polygon(d.getLineStep().stream().map(LineSegment::getA).toList());
         d.getFoldLineSet().select_Takakukei(polygon, "unselectAction");
+        d.refreshIsSelectionEmpty();
     }
 }
