@@ -39,10 +39,10 @@ public class MouseHandlerCircleDrawSeparate extends StepMouseHandler<CircleDrawS
     @Override
     public void drawPreview(Graphics2D g2, Camera camera, DrawingSettings settings) {
         super.drawPreview(g2, camera, settings);
-        DrawingUtil.drawStepVertex(g2, centerPoint, LineColor.CYAN_3, camera, d.getGridInputAssist());
-        DrawingUtil.drawStepVertex(g2, anchorPoint, LineColor.CYAN_3, camera, d.getGridInputAssist());
-        DrawingUtil.drawStepVertex(g2, releasePoint, LineColor.CYAN_3, camera, d.getGridInputAssist());
-        DrawingUtil.drawLineStep(g2, previewSegment, camera, settings.getLineWidth(), d.getGridInputAssist());
+        DrawingUtil.drawStepVertex(g2, centerPoint, LineColor.CYAN_3, camera);
+        DrawingUtil.drawStepVertex(g2, anchorPoint, LineColor.CYAN_3, camera);
+        DrawingUtil.drawStepVertex(g2, releasePoint, LineColor.CYAN_3, camera);
+        DrawingUtil.drawLineStep(g2, previewSegment, camera, settings.getLineWidth());
         DrawingUtil.drawCircleStep(g2, previewCircle, camera);
     }
 

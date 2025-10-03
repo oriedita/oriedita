@@ -53,12 +53,12 @@ public class MouseHandlerVertexMakeAngularlyFlatFoldable extends StepMouseHandle
     @Override
     public void drawPreview(Graphics2D g2, Camera camera, DrawingSettings settings) {
         super.drawPreview(g2, camera, settings);
-        DrawingUtil.drawStepVertex(g2, invalidPoint, LineColor.PURPLE_8, camera, d.getGridInputAssist());
+        DrawingUtil.drawStepVertex(g2, invalidPoint, LineColor.PURPLE_8, camera);
         for (LineSegment candidate : candidates) {
-            DrawingUtil.drawLineStep(g2, candidate, camera, settings.getLineWidth(), d.getGridInputAssist());
+            DrawingUtil.drawLineStep(g2, candidate, camera, settings.getLineWidth());
         }
-        DrawingUtil.drawLineStep(g2, selectedCandidate, camera, settings.getLineWidth(), d.getGridInputAssist());
-        DrawingUtil.drawLineStep(g2, destinationSegment, camera, settings.getLineWidth(), d.getGridInputAssist());
+        DrawingUtil.drawLineStep(g2, selectedCandidate, camera, settings.getLineWidth());
+        DrawingUtil.drawLineStep(g2, destinationSegment, camera, settings.getLineWidth());
     }
 
     @Override

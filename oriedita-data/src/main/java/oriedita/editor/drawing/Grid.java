@@ -282,7 +282,7 @@ public class Grid {
     }
 
     //描画-----------------------------------------------------------------
-    public void draw(Graphics g, Camera camera, int p0x_max, int p0y_max, boolean colorChange, double minGridUnitSize) {    //colorChange=1なら一定数ごとに格子線の色を変える
+    public void draw(Graphics g, Camera camera, int p0x_max, int p0y_max, boolean subGrid, double minGridUnitSize) {    //subGrid=1なら一定数ごとに格子線の色を変える
         //入力規定が1か2（正方格子）の場合の格子線の描画
         Graphics2D g2 = (Graphics2D) g;
 
@@ -434,7 +434,7 @@ public class Grid {
         }
 
         //Change the color of the grid line for each constant -----------------------------------------------
-        if (colorChange) {
+        if (subGrid) {
             g.setColor(gridScaleColor);
             Color gsc= new Color(gridScaleColor.getRed(), gridScaleColor.getGreen(), gridScaleColor.getBlue(), alpha);
 

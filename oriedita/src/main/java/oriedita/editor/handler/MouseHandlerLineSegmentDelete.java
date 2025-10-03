@@ -158,7 +158,7 @@ public class MouseHandlerLineSegmentDelete extends StepMouseHandler<MouseHandler
             DrawingUtil.drawCircle(g2, circle, camera, settings.getLineWidth() + 1, settings.getPointSize());
         }
         for (LineSegment line : closestLines) {
-            DrawingUtil.drawLineStep(g2, line, camera, settings.getLineWidth() + 1, settings.getGridInputAssist());
+            DrawingUtil.drawLineStep(g2, line, camera, settings.getLineWidth() + 1);
         }
         for (LineSegment line : closestAuxLines) {
             g2.setStroke(new BasicStroke(settings.getAuxLineWidth() + 1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));

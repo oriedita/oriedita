@@ -37,7 +37,6 @@ public class All_s_step_to_orisenAction extends AbstractOrieditaAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         Logger.info("lineStep_Size = " + mainCreasePatternWorker.getLineStep().size());
-        Logger.info("candidate_size = " + mainCreasePatternWorker.getCandidateSize());
         if (canvasModel.getMouseMode() == MouseMode.VORONOI_CREATE_62) {
             voronoiHandler.apply();
             mainCreasePatternWorker.record();

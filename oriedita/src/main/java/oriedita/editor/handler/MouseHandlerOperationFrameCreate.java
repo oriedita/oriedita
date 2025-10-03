@@ -30,20 +30,7 @@ public class MouseHandlerOperationFrameCreate extends BaseMouseHandler {
 
     //マウス操作(マウスを動かしたとき)を行う関数
     public void mouseMoved(Point p0) {
-        if (d.getGridInputAssist()) {
-            d.getLineCandidate().clear();
 
-            Point p = d.getCamera().TV2object(p0);
-            Point closest_point = d.getClosestPoint(p);
-
-            if (p.distance(closest_point) < d.getSelectionDistance()) {
-                d.getLineCandidate().add(new LineSegment(closest_point, closest_point, LineColor.GREEN_6));
-            } else {
-                d.getLineCandidate().add(new LineSegment(p, p, LineColor.GREEN_6));
-            }
-
-            d.getLineCandidate().get(0).setActive(LineSegment.ActiveState.ACTIVE_BOTH_3);
-        }
     }
 
     @Override
@@ -57,11 +44,10 @@ public class MouseHandlerOperationFrameCreate extends BaseMouseHandler {
         ls.add(new LineSegment(frame.getP3(), frame.getP4()));
         ls.add(new LineSegment(frame.getP4(), frame.getP1()));
         for (LineSegment l : ls) {
-            l = l.withColor(LineColor.GREEN_6);
-            l.setActive(LineSegment.ActiveState.ACTIVE_BOTH_3);
+            l = l.withColor(LineColor.GREEN_6).withActive(LineSegment.ActiveState.ACTIVE_BOTH_3);
             DrawingUtil.drawLineStep(g2,
                     cam.TV2object(l),
-                    camera, settings.getLineWidth(), d.getGridInputAssist());
+                    camera, settings.getLineWidth());
         }
     }
 
@@ -170,26 +156,14 @@ public class MouseHandlerOperationFrameCreate extends BaseMouseHandler {
             operationFrameMode = CreasePattern_Worker.OperationFrameMode.CREATE_1;
         }
 
-        Point p_new = new Point();
+        Point p_new;
 
-        if (!d.getGridInputAssist()) {
+        Point closest_point = d.getClosestPoint(p);
+        if (p.distance(closest_point) < d.getSelectionDistance()) {
+            p_new = closest_point;
+        } else {
             p_new = p;
         }
-
-        if (d.getGridInputAssist()) {
-            d.getLineCandidate().clear();
-
-            Point closest_point = d.getClosestPoint(p);
-            if (p.distance(closest_point) < d.getSelectionDistance()) {
-                d.getLineCandidate().add(new LineSegment(closest_point, closest_point, LineColor.GREEN_6));
-            } else {
-                d.getLineCandidate().add(new LineSegment(p, p, LineColor.GREEN_6));
-            }
-            d.getLineCandidate().get(0).setActive(LineSegment.ActiveState.ACTIVE_BOTH_3);
-
-            p_new = d.getLineCandidate().get(0).getA();
-        }
-
 
         updateFrame(frame, p_new);
         lastMousePos = p_new;

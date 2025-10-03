@@ -316,7 +316,6 @@ public class ButtonServiceImpl implements ButtonService {
         if (resetLineStep) {
             mainCreasePatternWorker.resetLineStep(0);
         }
-        mainCreasePatternWorker.resetCircleStep();
         // TODO RESET VORONOI mouseHandlerVoronoiCreate.getVoronoiLineSet().clear();
 
         canvasModel.markDirty();

@@ -40,11 +40,11 @@ public class MouseHandlerCircleDrawConcentric extends StepMouseHandler<CircleDra
     @Override
     public void drawPreview(Graphics2D g2, Camera camera, DrawingSettings settings) {
         super.drawPreview(g2, camera, settings);
-        DrawingUtil.drawStepVertex(g2, anchorPoint, LineColor.CYAN_3, camera, d.getGridInputAssist());
-        DrawingUtil.drawStepVertex(g2, releasePoint, LineColor.CYAN_3, camera, d.getGridInputAssist());
+        DrawingUtil.drawStepVertex(g2, anchorPoint, LineColor.CYAN_3, camera);
+        DrawingUtil.drawStepVertex(g2, releasePoint, LineColor.CYAN_3, camera);
         DrawingUtil.drawCircleStep(g2, originalCircle, camera);
         DrawingUtil.drawCircleStep(g2, newCircle, camera);
-        DrawingUtil.drawLineStep(g2, radiusDifference, camera, settings.getLineWidth(), d.getGridInputAssist());
+        DrawingUtil.drawLineStep(g2, radiusDifference, camera, settings.getLineWidth());
     }
 
     @Override

@@ -45,10 +45,10 @@ public class MouseHandlerPerpendicularDraw extends StepMouseHandler<Perpendicula
     @Override
     public void drawPreview(Graphics2D g2, Camera camera, DrawingSettings settings) {
         super.drawPreview(g2, camera, settings);
-        DrawingUtil.drawStepVertex(g2, targetPoint, d.getLineColor(), camera, d.getGridInputAssist());
-        DrawingUtil.drawLineStep(g2, perpendicularSegment, camera, settings.getLineWidth(), d.getGridInputAssist());
-        DrawingUtil.drawLineStep(g2, indicator, camera, settings.getLineWidth(), d.getGridInputAssist());
-        DrawingUtil.drawLineStep(g2, destinationSegment, camera, settings.getLineWidth(), d.getGridInputAssist());
+        DrawingUtil.drawStepVertex(g2, targetPoint, d.getLineColor(), camera);
+        DrawingUtil.drawLineStep(g2, perpendicularSegment, camera, settings.getLineWidth());
+        DrawingUtil.drawLineStep(g2, indicator, camera, settings.getLineWidth());
+        DrawingUtil.drawLineStep(g2, destinationSegment, camera, settings.getLineWidth());
     }
 
     @Override

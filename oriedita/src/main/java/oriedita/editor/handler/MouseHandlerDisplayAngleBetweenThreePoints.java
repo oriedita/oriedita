@@ -64,9 +64,9 @@ public abstract class MouseHandlerDisplayAngleBetweenThreePoints extends StepMou
     @Override
     public void drawPreview(Graphics2D g2, Camera camera, DrawingSettings settings) {
         super.drawPreview(g2, camera, settings);
-        DrawingUtil.drawStepVertex(g2, p1, LineColor.MAGENTA_5, camera, settings.getGridInputAssist());
-        DrawingUtil.drawStepVertex(g2, p2, LineColor.MAGENTA_5, camera, settings.getGridInputAssist());
-        DrawingUtil.drawStepVertex(g2, p3, LineColor.MAGENTA_5, camera, settings.getGridInputAssist());
+        DrawingUtil.drawStepVertex(g2, p1, LineColor.MAGENTA_5, camera);
+        DrawingUtil.drawStepVertex(g2, p2, LineColor.MAGENTA_5, camera);
+        DrawingUtil.drawStepVertex(g2, p3, LineColor.MAGENTA_5, camera);
     }
 
     @Override

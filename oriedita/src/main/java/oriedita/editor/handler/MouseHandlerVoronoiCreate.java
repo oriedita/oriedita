@@ -4,7 +4,6 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.tinylog.Logger;
 import oriedita.editor.action.All_s_step_to_orisenAction;
-import oriedita.editor.canvas.FoldLineAdditionalInputMode;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
@@ -46,27 +45,7 @@ public class MouseHandlerVoronoiCreate extends BaseMouseHandler implements All_s
 
     //Function to operate the mouse (mouseMode == 62 Voronoi when the mouse is moved)
     public void mouseMoved(Point p0) {
-        if (d.getGridInputAssist()) {
 
-            Point p = d.getCamera().TV2object(p0);
-
-            Point closest_point = d.getClosestPoint(p);
-            if (p.distance(closest_point) < d.getSelectionDistance()) {
-                p = closest_point;
-            }
-            LineSegment candidate = new LineSegment(p, p, LineColor.BLACK_0, LineSegment.ActiveState.ACTIVE_BOTH_3);
-
-            if (d.getI_foldLine_additional() == FoldLineAdditionalInputMode.POLY_LINE_0) {
-                candidate = candidate.withColor(d.getLineColor());
-            }
-            if (d.getI_foldLine_additional() == FoldLineAdditionalInputMode.AUX_LINE_1) {
-                candidate = candidate.withColor(d.getAuxLineColor());
-            }
-
-            d.getLineCandidate().clear();
-            d.getLineCandidate().add(candidate);
-
-        }
     }
 
     @Override
@@ -74,10 +53,10 @@ public class MouseHandlerVoronoiCreate extends BaseMouseHandler implements All_s
         super.drawPreview(g2, camera, settings);
         for (LineSegmentVoronoi ls : this.voronoiLineSet) {
             DrawingUtil.drawLineStep(g2, ls.getLineSegment().withColor(LineColor.MAGENTA_5),
-                    camera, settings.getLineWidth(), d.getGridInputAssist());
+                    camera, settings.getLineWidth());
         }
         for (Point p : seedPoints) {
-            DrawingUtil.drawStepVertex(g2, p, LineColor.CYAN_3, camera, d.getGridInputAssist());
+            DrawingUtil.drawStepVertex(g2, p, LineColor.CYAN_3, camera);
         }
     }
 

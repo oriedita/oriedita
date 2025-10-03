@@ -393,65 +393,6 @@ public class FoldLineSet {
         return ret;
     }
 
-    public boolean insideToDeleteType(Polygon b, CustomLineTypes del) {
-        boolean i_r = false;
-
-        FoldLineSave save = new FoldLineSave();
-
-        for (Circle circle : circles) {
-            save.addCircle(circle);
-        }
-
-        for (int i = 1; i <= total; i++) {
-            LineSegment s = lineSegments.get(i);
-
-            switch (del) {
-                case ANY:
-                    if (b.totu_boundary_inside(s)) {
-                        i_r = true;
-                    } else {
-                        save.addLineSegment(s.clone());
-                    }
-                    break;
-                case EDGE:
-                    if ((b.totu_boundary_inside(s)) && s.getColor() == LineColor.BLACK_0) {
-                        i_r = true;
-                    }//黒赤青線はmemo1に書かれない。つまり削除される。
-                    else if ((!b.totu_boundary_inside(s)) || s.getColor() != LineColor.BLACK_0) {
-                        save.addLineSegment(s.clone());
-                    }
-                    break;
-                case MANDV:
-                    if ((b.totu_boundary_inside(s)) && (s.getColor() == LineColor.RED_1 || s.getColor() == LineColor.BLUE_2)) {
-                        i_r = true;
-                    }//黒赤青線はmemo1に書かれない。つまり削除される。
-                    else if ((!b.totu_boundary_inside(s)) || !(s.getColor() == LineColor.RED_1 || s.getColor() == LineColor.BLUE_2)) {
-                        save.addLineSegment(s.clone());
-                    }
-                    break;
-                case MOUNTAIN:
-                case VALLEY:
-                case AUX:
-                    if ((b.totu_boundary_inside(s)) && s.getColor() == LineColor.fromNumber(del.getNumber() - 1)) {
-                        i_r = true;
-                    }//黒赤青線はmemo1に書かれない。つまり削除される。
-                    else if ((!b.totu_boundary_inside(s)) || s.getColor() != LineColor.fromNumber(del.getNumber() - 1)) {
-                        save.addLineSegment(s.clone());
-                    }
-                    break;
-                default:
-                    break;
-            }
-        }
-        if (i_r) {
-            reset();
-            setSave(save);
-        }
-
-        invalidateQuadTree();
-        return i_r;
-    }
-
     public boolean deleteInsideLine(LineSegment s_step1, String Dousa_mode) {
         //"l"  lXは小文字のエル。Senbun s_step1と重複する部分のある線分を削除するモード。
         //"lX" lXは小文字のエルと大文字のエックス。Senbun s_step1と重複する部分のある線分やX交差する線分を削除するモード。
@@ -499,33 +440,6 @@ public class FoldLineSet {
         setSave(save);
 
         invalidateQuadTree();
-        return i_r;
-    }
-
-    //--------------------------------
-    public boolean change_property_in_4kakukei(Polygon p, Color sen_tokutyuu_color) {//Change properties such as the color of circles and auxiliary live lines inside a quadrangle
-        boolean i_r = false;
-
-        for (int i = 1; i <= total; i++) {
-            LineSegment s = lineSegments.get(i);
-
-            if (p.totu_boundary_inside(s) && (s.getColor() == LineColor.CYAN_3)) {
-                i_r = true;
-                lineSegments.set(i, s.withCustomizedColor(sen_tokutyuu_color));
-            }
-        }
-
-        for (Circle circle : circles) {
-            Circle e_temp = new Circle();
-            e_temp.set(circle);
-
-            if (p.totu_boundary_inside(e_temp)) {
-                i_r = true;
-                circle.setCustomized(1);
-                circle.setCustomizedColor(sen_tokutyuu_color);
-            }
-        }
-
         return i_r;
     }
 

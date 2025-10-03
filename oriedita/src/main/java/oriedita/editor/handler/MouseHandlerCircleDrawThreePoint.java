@@ -41,9 +41,9 @@ public class MouseHandlerCircleDrawThreePoint extends StepMouseHandler<CircleDra
     @Override
     public void drawPreview(Graphics2D g2, Camera camera, DrawingSettings settings) {
         super.drawPreview(g2, camera, settings);
-        DrawingUtil.drawStepVertex(g2, p1, LineColor.CYAN_3, camera, d.getGridInputAssist());
-        DrawingUtil.drawStepVertex(g2, p2, LineColor.CYAN_3, camera, d.getGridInputAssist());
-        DrawingUtil.drawStepVertex(g2, p3, LineColor.CYAN_3, camera, d.getGridInputAssist());
+        DrawingUtil.drawStepVertex(g2, p1, LineColor.CYAN_3, camera);
+        DrawingUtil.drawStepVertex(g2, p2, LineColor.CYAN_3, camera);
+        DrawingUtil.drawStepVertex(g2, p3, LineColor.CYAN_3, camera);
     }
 
     @Override

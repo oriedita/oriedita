@@ -70,7 +70,7 @@ public class AppMenuBar {
     private final FoldedFiguresList foldedFiguresList;
     private JCheckBoxMenuItem showPointRangeCheckBox;//点を探す範囲
     private JCheckBoxMenuItem pointOffsetCheckBox;//点を離すかどうか
-    private JCheckBoxMenuItem gridInputAssistCheckBox;//高密度用入力をするかどうか
+    private JCheckBoxMenuItem subGridCheckBox;//高密度用入力をするかどうか
     private JCheckBoxMenuItem showCommentsCheckbox;//文章
     private JCheckBoxMenuItem showCpTextCheckbox;
     private JCheckBoxMenuItem showWarningsCheckbox;
@@ -202,7 +202,7 @@ public class AppMenuBar {
         buttonService.registerButton(exitButton, "exitAction");
         buttonService.registerButton(showPointRangeCheckBox, "showPointRangeAction");
         buttonService.registerButton(pointOffsetCheckBox, "pointOffsetAction");
-        buttonService.registerButton(gridInputAssistCheckBox, "gridInputAssistAction");
+        buttonService.registerButton(subGridCheckBox, "gridInputAssistAction");
         buttonService.registerButton(showCommentsCheckbox, "displayCommentsAction");
         buttonService.registerButton(showCpTextCheckbox, "displayCpTextAction");
         buttonService.registerButton(showCurrentStepCheckbox, "displayCurrentStepAction");
@@ -295,8 +295,8 @@ public class AppMenuBar {
         exitButton.addActionListener(e -> closing());
         showPointRangeCheckBox.addActionListener(e -> getData(applicationModel));
         pointOffsetCheckBox.addActionListener(e -> getData(applicationModel));
-        gridInputAssistCheckBox.addActionListener(e -> {
-            if (gridInputAssistCheckBox.isSelected()) {
+        subGridCheckBox.addActionListener(e -> {
+            if (subGridCheckBox.isSelected()) {
                 Logger.info(" kou_mitudo_nyuuryoku on");
             } else {
                 Logger.info(" kou_mitudo_nyuuryoku off");
@@ -526,11 +526,11 @@ public class AppMenuBar {
         viewMenu.add(preciseZoomCheckBox);
         pointOffsetCheckBox = new JCheckBoxMenuItem("Offset cursor");
         viewMenu.add(pointOffsetCheckBox);
-        gridInputAssistCheckBox = new JCheckBoxMenuItem("Grid input assist");
-        viewMenu.add(gridInputAssistCheckBox);
 
         JMenu showMenuGroup = new JMenu("Show");
         viewMenu.add(showMenuGroup);
+        subGridCheckBox = new JCheckBoxMenuItem("Subgrid");
+        showMenuGroup.add(subGridCheckBox);
         showPointRangeCheckBox = new JCheckBoxMenuItem("Mouse range");
         showMenuGroup.add(showPointRangeCheckBox);
         showCpTextCheckbox = new JCheckBoxMenuItem("Text");
@@ -584,7 +584,7 @@ public class AppMenuBar {
     public void getData(ApplicationModel applicationModel) {
         applicationModel.setDisplayPointSpotlight(showPointRangeCheckBox.isSelected());
         applicationModel.setDisplayPointOffset(pointOffsetCheckBox.isSelected());
-        applicationModel.setDisplayGridInputAssist(gridInputAssistCheckBox.isSelected());
+        applicationModel.setDisplayGridInputAssist(subGridCheckBox.isSelected());
         applicationModel.setDisplayComments(showCommentsCheckbox.isSelected());
         applicationModel.setDisplayCpText(showCpTextCheckbox.isSelected());
         applicationModel.setDisplayCurrentStep(showCurrentStepCheckbox.isSelected());
@@ -606,7 +606,7 @@ public class AppMenuBar {
     public void setData(ApplicationModel applicationModel) {
         showPointRangeCheckBox.setSelected(applicationModel.getDisplayPointSpotlight());
         pointOffsetCheckBox.setSelected(applicationModel.getDisplayPointOffset());
-        gridInputAssistCheckBox.setSelected(applicationModel.getDisplayGridInputAssist());
+        subGridCheckBox.setSelected(applicationModel.getDisplayGridInputAssist());
         showCommentsCheckbox.setSelected(applicationModel.getDisplayComments());
         showCpTextCheckbox.setSelected(applicationModel.getDisplayCpText());
         showWarningsCheckbox.setSelected(applicationModel.getDisplayWarnings());

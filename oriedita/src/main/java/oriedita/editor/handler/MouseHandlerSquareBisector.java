@@ -59,18 +59,16 @@ public class MouseHandlerSquareBisector extends StepMouseHandler<SquareBisectorS
     @Override
     public void drawPreview(Graphics2D g2, Camera camera, DrawingSettings settings) {
         super.drawPreview(g2, camera, settings);
-        DrawingUtil.drawStepVertex(g2, pointsList_3P.get(0), d.getLineColor(), camera, d.getGridInputAssist());
-        DrawingUtil.drawStepVertex(g2, pointsList_3P.get(1), d.getLineColor(), camera, d.getGridInputAssist());
-        DrawingUtil.drawStepVertex(g2, pointsList_3P.get(2), d.getLineColor(), camera, d.getGridInputAssist());
-        DrawingUtil.drawLineStep(g2, destinationSegment_3P, camera, settings.getLineWidth(), d.getGridInputAssist());
-        DrawingUtil.drawLineStep(g2, segmentsList_2L.get(0), camera, settings.getLineWidth(), d.getGridInputAssist());
-        DrawingUtil.drawLineStep(g2, segmentsList_2L.get(1), camera, settings.getLineWidth(), d.getGridInputAssist());
-        DrawingUtil.drawLineStep(g2, destinationSegment_2L_NP, camera, settings.getLineWidth(), d.getGridInputAssist());
-        DrawingUtil.drawLineStep(g2, indicator, camera, settings.getLineWidth(), d.getGridInputAssist());
-        DrawingUtil.drawLineStep(g2, destinationSegmentsList_2L_P.get(0), camera, settings.getLineWidth(),
-                d.getGridInputAssist());
-        DrawingUtil.drawLineStep(g2, destinationSegmentsList_2L_P.get(1), camera, settings.getLineWidth(),
-                d.getGridInputAssist());
+        DrawingUtil.drawStepVertex(g2, pointsList_3P.get(0), d.getLineColor(), camera);
+        DrawingUtil.drawStepVertex(g2, pointsList_3P.get(1), d.getLineColor(), camera);
+        DrawingUtil.drawStepVertex(g2, pointsList_3P.get(2), d.getLineColor(), camera);
+        DrawingUtil.drawLineStep(g2, destinationSegment_3P, camera, settings.getLineWidth());
+        DrawingUtil.drawLineStep(g2, segmentsList_2L.get(0), camera, settings.getLineWidth());
+        DrawingUtil.drawLineStep(g2, segmentsList_2L.get(1), camera, settings.getLineWidth());
+        DrawingUtil.drawLineStep(g2, destinationSegment_2L_NP, camera, settings.getLineWidth());
+        DrawingUtil.drawLineStep(g2, indicator, camera, settings.getLineWidth());
+        DrawingUtil.drawLineStep(g2, destinationSegmentsList_2L_P.get(0), camera, settings.getLineWidth());
+        DrawingUtil.drawLineStep(g2, destinationSegmentsList_2L_P.get(1), camera, settings.getLineWidth());
     }
 
     @Override

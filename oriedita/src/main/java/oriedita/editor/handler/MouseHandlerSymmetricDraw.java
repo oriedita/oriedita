@@ -46,10 +46,10 @@ public class MouseHandlerSymmetricDraw extends StepMouseHandler<SymmetricDrawSte
     public void drawPreview(Graphics2D g2, Camera camera, DrawingSettings settings) {
         super.drawPreview(g2, camera, settings);
         for (Point p : pointsList_3P) {
-            DrawingUtil.drawStepVertex(g2, p, d.getLineColor(), camera, d.getGridInputAssist());
+            DrawingUtil.drawStepVertex(g2, p, d.getLineColor(), camera);
         }
         for (LineSegment segment : segmentsList_2L) {
-            DrawingUtil.drawLineStep(g2, segment, camera, settings.getLineWidth(), d.getGridInputAssist());
+            DrawingUtil.drawLineStep(g2, segment, camera, settings.getLineWidth());
         }
     }
 

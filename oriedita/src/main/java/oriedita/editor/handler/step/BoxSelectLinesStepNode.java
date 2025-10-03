@@ -74,7 +74,7 @@ public class BoxSelectLinesStepNode<T extends Enum<T>> extends BoxSelectStepNode
     public void drawPreview(Graphics2D g2, Camera camera, DrawingSettings settings) {
         super.drawPreview(g2, camera, settings);
         for (LineSegment highlightedLine : highlightedLines) {
-            DrawingUtil.drawLineStep(g2, highlightedLine, camera, settings.getLineWidth() + 1, d.getGridInputAssist());
+            DrawingUtil.drawLineStep(g2, highlightedLine, camera, settings.getLineWidth() + 1);
         }
     }
 }

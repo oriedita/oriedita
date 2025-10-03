@@ -32,7 +32,7 @@ public class MouseHandlerDrawPoint extends StepMouseHandler<DrawPointStep> {
     @Override
     public void drawPreview(Graphics2D g2, Camera camera, DrawingSettings settings) {
         super.drawPreview(g2, camera, settings);
-        DrawingUtil.drawStepVertex(g2, targetPoint, d.getLineColor(), camera, d.getGridInputAssist());
+        DrawingUtil.drawStepVertex(g2, targetPoint, d.getLineColor(), camera);
     }
 
     @Override

@@ -36,10 +36,10 @@ public class MouseHandlerDrawCreaseFree extends StepMouseHandler<DrawCreaseFreeS
     @Override
     public void drawPreview(Graphics2D g2, Camera camera, DrawingSettings settings) {
         super.drawPreview(g2, camera, settings);
-        DrawingUtil.drawStepVertex(g2, anchorPoint, lineColor, camera, d.getGridInputAssist());
-        DrawingUtil.drawStepVertex(g2, releasePoint, lineColor, camera, d.getGridInputAssist());
+        DrawingUtil.drawStepVertex(g2, anchorPoint, lineColor, camera);
+        DrawingUtil.drawStepVertex(g2, releasePoint, lineColor, camera);
         if (dragSegment != null) {
-            DrawingUtil.drawLineStep(g2, dragSegment, camera, settings.getLineWidth(), d.getGridInputAssist());
+            DrawingUtil.drawLineStep(g2, dragSegment, camera, settings.getLineWidth());
         }
     }
 
