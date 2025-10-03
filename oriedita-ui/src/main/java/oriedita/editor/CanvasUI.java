@@ -12,6 +12,7 @@ import oriedita.editor.databinding.BackgroundModel;
 import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.databinding.FoldedFigureModel;
 import oriedita.editor.databinding.FoldedFiguresList;
+import oriedita.editor.databinding.GridModel;
 import oriedita.editor.drawing.FoldedFigure_Drawer;
 import oriedita.editor.drawing.tools.Background_camera;
 import oriedita.editor.drawing.tools.Camera;
@@ -54,6 +55,7 @@ public class CanvasUI extends JPanel {
     private final BulletinBoard bulletinBoard;
     private final FoldedFiguresList foldedFiguresList;
     private final FoldedFigureModel foldedFigureModel;
+    private final GridModel gridModel;
 
     private MouseModeHandler activeMouseHandler;
 
@@ -70,13 +72,10 @@ public class CanvasUI extends JPanel {
 
     private boolean displayPointSpotlight;
     private boolean displayPointOffset;
-    private boolean displayGridInputAssist;
     private boolean displayComments;
     private boolean displayCpLines;
     private boolean displayAuxLines;
     private boolean displayLiveAuxLines;
-    private boolean displayMarkings;
-    private boolean displayCreasePatternOnTop;
     private Background_camera h_cam = new Background_camera();
     // Canvas width and height
     private Dimension dim;
@@ -95,8 +94,8 @@ public class CanvasUI extends JPanel {
             ApplicationModel applicationModel,
             BulletinBoard bulletinBoard,
             FoldedFigureModel foldedFigureModel,
-            FoldedFiguresList foldedFiguresList
-    ) {
+            FoldedFiguresList foldedFiguresList,
+            GridModel gridModel) {
         this.creasePatternCamera = creasePatternCamera;
         this.foldingExecutor = foldingExecutor;
         this.backgroundModel = backgroundModel;
@@ -107,6 +106,7 @@ public class CanvasUI extends JPanel {
         this.bulletinBoard = bulletinBoard;
         this.foldedFigureModel = foldedFigureModel;
         this.foldedFiguresList = foldedFiguresList;
+        this.gridModel = gridModel;
     }
 
     public void init() {
@@ -181,7 +181,7 @@ public class CanvasUI extends JPanel {
     }
 
     public void paintComponent(Graphics bufferGraphics) {
-        this.displayMarkings = applicationModel.getDisplayMarkings();
+        boolean displayMarkings = applicationModel.getDisplayMarkings();
         //「f」を付けることでfloat型の数値として記述することができる
         Graphics2D g2 = (Graphics2D) bufferGraphics;
         animationService.update();
@@ -277,23 +277,27 @@ public class CanvasUI extends JPanel {
             //展開図情報の文字表示
             bufferGraphics.setColor(Colors.get(Color.black));
 
-            bufferGraphics.drawString(String.format("mouse= ( %.2f, %.2f )", mousePosition.getX(), mousePosition.getY()), 10, getHeight()- 10); //この表示内容はvoid kekka_syoriで決められる。
-
-            bufferGraphics.drawString("L=" + mainCreasePatternWorker.getTotal(), 10, getHeight() - 25); //この表示内容はvoid kekka_syoriで決められる。
-
-            if (selectedFigure != null) {
-                //結果の文字表示
-                bufferGraphics.drawString(selectedFigure.getFoldedFigure().text_result, 10, topY + 20); //この表示内容はvoid kekka_syoriで決められる。
-            }
-
-            if (displayGridInputAssist) {
+            if (gridModel.getBaseState() == GridModel.State.HIDDEN){
+                bufferGraphics.drawString(String.format("mouse= ( %.2f, %.2f ) ", mousePosition.getX(), mousePosition.getY()),
+                        10, getHeight()- 10); //この表示内容はvoid kekka_syoriで決められる。
+            } else {
                 Point gridIndex = new Point(mainCreasePatternWorker.getGridPosition(mousePositionOnCanvas));//20201024高密度入力がオンならばrepaint（画面更新）のたびにここで最寄り点を求めているので、描き職人で別途最寄り点を求めていることと二度手間になっている。
 
                 double dx_ind = gridIndex.getX();
                 double dy_ind = gridIndex.getY();
                 int ix_ind = (int) Math.round(dx_ind);
                 int iy_ind = (int) Math.round(dy_ind);
-                bufferGraphics.drawString("(" + ix_ind + "," + iy_ind + ")", (int) mousePositionOnCanvas.getX() + 25, (int) mousePositionOnCanvas.getY() + 20); //この表示内容はvoid kekka_syoriで決められる。
+                bufferGraphics.drawString(String.format("mouse=( %.2f, %.2f ), grid=(%d, %d) ",
+                                mousePosition.getX(), mousePosition.getY(),
+                                ix_ind, iy_ind),
+                        10, getHeight()- 10); //この表示内容はvoid kekka_syoriで決められる。
+            }
+
+            bufferGraphics.drawString("L=" + mainCreasePatternWorker.getTotal(), 10, getHeight() - 25); //この表示内容はvoid kekka_syoriで決められる。
+
+            if (selectedFigure != null) {
+                //結果の文字表示
+                bufferGraphics.drawString(selectedFigure.getFoldedFigure().text_result, 10, topY + 20); //この表示内容はvoid kekka_syoriで決められる。
             }
 
             if (foldingExecutor.isTaskRunning()) {
@@ -325,7 +329,7 @@ public class CanvasUI extends JPanel {
         }
 
         //展開図を折り上がり図の上に描くために、展開図を再表示する
-        if (displayCreasePatternOnTop) {
+        if (applicationModel.getDisplayCreasePatternOnTop()) {
             mainCreasePatternWorker.drawWithCamera(bufferGraphics, displayComments, displayCpLines,
                     displayAuxLines, displayLiveAuxLines, applicationModel.getDisplayCpText(),
                     lineWidth, lineStyle, auxLineWidth, dim.width, dim.height,
@@ -395,7 +399,6 @@ public class CanvasUI extends JPanel {
         lineStyle = applicationModel.getLineStyle();
         displayPointSpotlight = applicationModel.getDisplayPointSpotlight();
         displayPointOffset = applicationModel.getDisplayPointOffset();
-        displayGridInputAssist = applicationModel.getDisplayGridInputAssist();
         displayComments = applicationModel.getDisplayComments();
         displayCpLines = applicationModel.getDisplayCpLines();
         displayAuxLines = applicationModel.getDisplayAuxLines();
@@ -406,28 +409,12 @@ public class CanvasUI extends JPanel {
         this.activeMouseHandler = activeMouseHandler;
     }
 
-    public void setDisplayMarkings(boolean displayMarkings) {
-        this.displayMarkings = displayMarkings;
-    }
-
-    public void setDisplayCreasePatternOnTop(boolean displayCreasePatternOnTop) {
-        this.displayCreasePatternOnTop = displayCreasePatternOnTop;
-    }
-
     public Background_camera getH_cam() {
         return h_cam;
     }
 
     public void setH_cam(Background_camera hCam) {
         this.h_cam = hCam;
-    }
-
-    public void setDim(Dimension dim) {
-        this.dim = dim;
-    }
-
-    public Dimension getDim() {
-        return dim;
     }
 
     public void setMousePosition(Point point) {

@@ -857,7 +857,7 @@ public class PreferenceDialog extends JDialog {
         gbc.insets = new Insets(0, 20, 0, 0);
         display3Panel.add(panel5, gbc);
         inputAssistCB = new JCheckBox();
-        inputAssistCB.setText("Grid input assist");
+        inputAssistCB.setText("Subgrid");
         gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;

@@ -23,7 +23,6 @@ import oriedita.editor.service.HistoryState;
 import oriedita.editor.service.TaskExecutorService;
 import oriedita.editor.task.CheckCAMVTask;
 import origami.Epsilon;
-import origami.crease_pattern.CustomLineTypes;
 import origami.crease_pattern.FlatFoldabilityViolation;
 import origami.crease_pattern.FoldLineSet;
 import origami.crease_pattern.LineSegmentSet;
@@ -81,10 +80,6 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
      * Temporary GeneralPath when drawing.
      */
     private final Path2D linePath = new Path2D.Double();
-    /**
-     * Temporary circles when drawing.
-     */
-    private final List<Circle> circleStep = new ArrayList<>();
     private final Camera camera = new Camera();
     //mouseMode==61//長方形内選択（paintの選択に似せた選択機能）の時に使う
     private final SelectedTextModel textModel;
@@ -92,7 +87,6 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     private int pointSize = 1;
     private LineColor lineColor;//Line segment color
     private LineColor auxLineColor = LineColor.ORANGE_4;//Auxiliary line color
-    private boolean gridInputAssist = false;//1 if you use the input assist function for fine grid display, 0 if you do not use it
     private Color customCircleColor;//Stores custom colors for circles and auxiliary hot lines
     private FoldLineAdditionalInputMode i_foldLine_additional = FoldLineAdditionalInputMode.POLY_LINE_0;//= 0 is polygonal line input = 1 is auxiliary line input mode (when inputting a line segment, these two). When deleting a line segment, the value becomes as follows. = 0 is the deletion of the polygonal line, = 1 is the deletion of the auxiliary picture line, = 2 is the deletion of the black line, = 3 is the deletion of the auxiliary live line, = 4 is the folding line, the auxiliary live line and the auxiliary picture line.
     private final FoldLineSet auxLines;    //Store auxiliary lines
@@ -169,7 +163,6 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
 
         camera.reset();
         lineStep.clear();
-        circleStep.clear();
         linePath.reset();
     }
 
@@ -182,7 +175,6 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
 
         camera.reset();
         lineStep.clear();
-        circleStep.clear();
         linePath.reset();
     }
 
@@ -411,7 +403,7 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
 
     @Override
     public void drawGrid(Graphics g, int p0x_max, int p0y_max) {
-        grid.draw(g, camera, p0x_max, p0y_max, gridInputAssist, applicationModel.getMinGridUnitSize());
+        grid.draw(g, camera, p0x_max, p0y_max, applicationModel.getDisplayGridInputAssist(), applicationModel.getMinGridUnitSize());
     }
     
     @Override
@@ -569,10 +561,6 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
 
         g.setColor(Colors.get(Color.black));
 
-        for (Circle c : circleStep) {
-            DrawingUtil.drawCircleStep(g, c, camera);
-        }
-
         g.setColor(Colors.get(Color.black));
 
         if (displayComments) {
@@ -581,11 +569,6 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
         if (displayCpText){
             textWorker.draw(g2, camera);
         }
-    }
-
-    @Override
-    public void resetCircleStep() {
-        circleStep.clear();
     }
 
     //--------------------------------------------------------------------------------------
@@ -779,22 +762,12 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     }
 
     @Override
-    public boolean insideToDeleteType(Point p0a, Point p0b, CustomLineTypes del){
-        return foldLineSet.insideToDeleteType(createBox(p0a, p0b), del);
-    }
-
-    @Override
     public boolean deleteInside_text(Point p1, Point p2) {
         if (textWorker.deleteInsideRectangle(p1, p2, camera)) {
             textModel.markDirty();
             return true;
         }
         return false;
-    }
-
-    @Override
-    public boolean change_property_in_4kakukei(Point p0a, Point p0b) {
-        return foldLineSet.change_property_in_4kakukei(createBox(p0a, p0b), customCircleColor);
     }
 
     @Override
@@ -933,7 +906,6 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
 
     @Override
     public void setData(PropertyChangeEvent e, ApplicationModel data) {
-        setGridInputAssist(data.getDisplayGridInputAssist());
         pointSize = data.getPointSize();
 
         setFoldLineDividingNumber(data.getFoldLineDividingNumber());
@@ -995,17 +967,6 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
         camera.setCamera(cam0);
 
         calculateDecisionWidth();
-    }
-
-    @Override
-    public boolean getGridInputAssist() {
-        return gridInputAssist;
-    }
-
-    // ------------------------------------
-    @Override
-    public void setGridInputAssist(boolean i) {
-        gridInputAssist = i;
     }
 
     private origami.crease_pattern.element.Polygon createBox(Point p0a, Point p0b) {

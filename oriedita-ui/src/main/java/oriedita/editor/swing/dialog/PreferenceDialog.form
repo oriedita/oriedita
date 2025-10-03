@@ -210,7 +210,7 @@
                                       <gridbag weightx="0.0" weighty="0.0"/>
                                     </constraints>
                                     <properties>
-                                      <text value="Grid input assist"/>
+                                      <text value="Subgrid"/>
                                     </properties>
                                   </component>
                                   <component id="540b0" class="javax.swing.JCheckBox" binding="foldingProgressCB">
