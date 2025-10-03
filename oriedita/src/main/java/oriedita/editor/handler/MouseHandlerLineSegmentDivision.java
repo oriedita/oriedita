@@ -40,9 +40,9 @@ public class MouseHandlerLineSegmentDivision extends StepMouseHandler<LineSegmen
     @Override
     public void drawPreview(Graphics2D g2, Camera camera, DrawingSettings settings) {
         super.drawPreview(g2, camera, settings);
-        DrawingUtil.drawStepVertex(g2, anchorPoint, d.getLineColor(), camera, d.getGridInputAssist());
-        DrawingUtil.drawStepVertex(g2, releasePoint, d.getLineColor(), camera, d.getGridInputAssist());
-        DrawingUtil.drawLineStep(g2, dragSegment, camera, settings.getLineWidth(), d.getGridInputAssist());
+        DrawingUtil.drawStepVertex(g2, anchorPoint, d.getLineColor(), camera);
+        DrawingUtil.drawStepVertex(g2, releasePoint, d.getLineColor(), camera);
+        DrawingUtil.drawLineStep(g2, dragSegment, camera, settings.getLineWidth());
     }
 
     @Override

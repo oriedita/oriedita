@@ -47,7 +47,7 @@ public class MouseHandlerCircleDrawInverted extends StepMouseHandler<CircleDrawI
         super.drawPreview(g2, camera, settings);
         DrawingUtil.drawCircleStep(g2, circle1, camera);
         DrawingUtil.drawCircleStep(g2, circle2, camera);
-        DrawingUtil.drawLineStep(g2, segment, camera, settings.getLineWidth(), d.getGridInputAssist());
+        DrawingUtil.drawLineStep(g2, segment, camera, settings.getLineWidth());
     }
 
     @Override

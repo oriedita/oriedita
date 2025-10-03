@@ -41,7 +41,7 @@ public class SelectPointStepNode<T extends Enum<T>> extends AbstractStepNode<T> 
         if (selectedPoint == null || color == null){
             return;
         }
-        DrawingUtil.drawStepVertex(g, selectedPoint, color, camera, drawingSettings.getGridInputAssist());
+        DrawingUtil.drawStepVertex(g, selectedPoint, color, camera);
     }
 
     @Override

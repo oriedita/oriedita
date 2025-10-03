@@ -268,8 +268,7 @@ public class CanvasUI extends JPanel {
                 dim.height, dim.width,
                 applicationModel.getRoundedEnds(),
                 applicationModel.getDisplayComments(),
-                applicationModel.getDisplayCurrentStep(),
-                applicationModel.getDisplayGridInputAssist());
+                applicationModel.getDisplayCurrentStep());
         if (activeMouseHandler != null) {
             activeMouseHandler.drawPreview(g2, creasePatternCamera, settings);
         }

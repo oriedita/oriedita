@@ -62,22 +62,19 @@ public class MouseHandlerDrawCreaseAngleRestricted extends StepMouseHandler<Draw
     @Override
     public void drawPreview(Graphics2D g2, Camera camera, DrawingSettings settings) {
         super.drawPreview(g2, camera, settings);
-        DrawingUtil.drawStepVertex(g2, point1, d.getLineColor(), camera, d.getGridInputAssist());
-        DrawingUtil.drawStepVertex(g2, point2, d.getLineColor(), camera, d.getGridInputAssist());
-        DrawingUtil.drawLineStep(g2, segment, camera, settings.getLineWidth(), d.getGridInputAssist());
+        DrawingUtil.drawStepVertex(g2, point1, d.getLineColor(), camera);
+        DrawingUtil.drawStepVertex(g2, point2, d.getLineColor(), camera);
+        DrawingUtil.drawLineStep(g2, segment, camera, settings.getLineWidth());
         for (LineSegment indicator : indicators) {
-            DrawingUtil.drawLineStep(g2, indicator, camera, settings.getLineWidth(), d.getGridInputAssist());
+            DrawingUtil.drawLineStep(g2, indicator, camera, settings.getLineWidth());
         }
         for (Point intersection : intersections) {
-            DrawingUtil.drawStepVertex(g2, intersection, d.getLineColor(), camera,
-                    d.getGridInputAssist());
+            DrawingUtil.drawStepVertex(g2, intersection, d.getLineColor(), camera);
         }
         if (resultSegment1 != null)
-            DrawingUtil.drawLineStep(g2, resultSegment1.withColor(d.getLineColor()), camera, 3.0f,
-                    d.getGridInputAssist());
+            DrawingUtil.drawLineStep(g2, resultSegment1.withColor(d.getLineColor()), camera, 3.0f);
         if (resultSegment2 != null)
-            DrawingUtil.drawLineStep(g2, resultSegment2.withColor(d.getLineColor()), camera, 3.0f,
-                    d.getGridInputAssist());
+            DrawingUtil.drawLineStep(g2, resultSegment2.withColor(d.getLineColor()), camera, 3.0f);
     }
 
     @Override

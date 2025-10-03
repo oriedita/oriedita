@@ -85,10 +85,6 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
      * Temporary circles when drawing.
      */
     private final List<Circle> circleStep = new ArrayList<>();
-    /**
-     * Candidate line segments.
-     */
-    private final List<LineSegment> lineCandidate = new ArrayList<>();
     private final Camera camera = new Camera();
     //mouseMode==61//長方形内選択（paintの選択に似せた選択機能）の時に使う
     private final SelectedTextModel textModel;
@@ -561,7 +557,7 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
 
         if (!hideOperationFrame && ((canvasModel.getMouseMode() != MouseMode.OPERATION_FRAME_CREATE_61) || (lineStep.size() == 4))) {
             for (LineSegment s : lineStep) {
-                DrawingUtil.drawLineStep(g, s, camera, lineWidth, gridInputAssist);
+                DrawingUtil.drawLineStep(g, s, camera, lineWidth);
             }
         }
 
@@ -570,12 +566,6 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
 
         //候補入力時の候補を描く//Logger.info("_");
         g2.setStroke(new BasicStroke(lineWidth + 0.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));//基本指定A
-
-        if (gridInputAssist){
-            for (LineSegment s : lineCandidate) {
-                DrawingUtil.drawLineCandidate(g, s, camera, pointSize);
-            }
-        }
 
         g.setColor(Colors.get(Color.black));
 
@@ -741,10 +731,6 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     //入力点Pが基準点から格子幅kus.d_haba()の1/4より遠いときは折線集合への入力なし
     //線分が長さがなく1点状のときは折線集合への入力なし
 
-    @Override
-    public int getCandidateSize() {
-        return lineCandidate.size();
-    }
 
     @Override
     public void setIsSelectionEmpty(boolean isSelectionEmpty){
@@ -1034,11 +1020,6 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     @Override
     public LineColor getLineColor() {
         return lineColor;
-    }
-
-    @Override
-    public List<LineSegment> getLineCandidate() {
-        return lineCandidate;
     }
 
     @Override

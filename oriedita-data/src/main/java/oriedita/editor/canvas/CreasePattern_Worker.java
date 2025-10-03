@@ -19,7 +19,6 @@ import java.awt.Graphics;
 import java.awt.geom.Path2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.List;
 
 public interface CreasePattern_Worker {
     void lineStepAdd(LineSegment s);
@@ -114,8 +113,6 @@ public interface CreasePattern_Worker {
 
     void resetLineStep(int i);
 
-    int getCandidateSize();
-
     void refreshIsSelectionEmpty();
 
     void setIsSelectionEmpty(boolean isSelectionEmpty);
@@ -197,8 +194,6 @@ public interface CreasePattern_Worker {
     boolean getGridInputAssist();
 
     LineColor getLineColor();
-
-    List<LineSegment> getLineCandidate();
 
     FoldLineSet getFoldLineSet();
 
