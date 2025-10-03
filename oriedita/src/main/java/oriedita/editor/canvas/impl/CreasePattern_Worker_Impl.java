@@ -40,7 +40,6 @@ import origami.crease_pattern.worker.foldlineset.Check2;
 import origami.crease_pattern.worker.foldlineset.Check3;
 import origami.crease_pattern.worker.foldlineset.Fix1;
 import origami.crease_pattern.worker.foldlineset.Fix2;
-import origami.crease_pattern.worker.foldlineset.InsideToAux;
 import origami.crease_pattern.worker.foldlineset.OrganizeCircles;
 
 import java.awt.BasicStroke;
@@ -117,7 +116,6 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     // ------------------------------------------------------------------------------------------------------------
     // Sub-operation mode for MouseMode.FOLDABLE_LINE_DRAW_71, either DRAW_CREASE_FREE_1, or VERTEX_MAKE_ANGULARLY_FLAT_FOLDABLE_38
     //--------------------------------------------
-    private CanvasModel.SelectionOperationMode i_select_mode = CanvasModel.SelectionOperationMode.NORMAL_0;//=0は通常のセレクト操作
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     private final OperationFrame operationFrame;
 
@@ -795,35 +793,6 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     }
 
     @Override
-    public void select(Point p0a, Point p0b) {
-        boolean anyLinesSelected = foldLineSet.select(createBox(p0a, p0b));
-        if(anyLinesSelected) {
-        	setIsSelectionEmpty(false);
-        }
-    }
-
-    @Override
-    public void unselect(Point p0a, Point p0b) {
-        foldLineSet.unselect(createBox(p0a, p0b));
-        refreshIsSelectionEmpty();
-    }
-
-    @Override
-    public boolean deleteInside_foldingLine(Point p0a, Point p0b) {
-        return foldLineSet.deleteInside_foldingLine(createBox(p0a, p0b));
-    }
-
-    @Override
-    public boolean deleteInside_edge(Point p0a, Point p0b) {
-        return foldLineSet.deleteInside_edge(createBox(p0a, p0b));
-    }
-
-    @Override
-    public boolean deleteInside_aux(Point p0a, Point p0b) {
-        return foldLineSet.deleteInside_aux(createBox(p0a, p0b));
-    }
-
-    @Override
     public boolean insideToDeleteType(Point p0a, Point p0b, CustomLineTypes del){
         return foldLineSet.insideToDeleteType(createBox(p0a, p0b), del);
     }
@@ -840,16 +809,6 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     @Override
     public boolean change_property_in_4kakukei(Point p0a, Point p0b) {
         return foldLineSet.change_property_in_4kakukei(createBox(p0a, p0b), customCircleColor);
-    }
-
-    @Override
-    public boolean deleteInside(Point p0a, Point p0b) {
-        return auxLines.deleteInside(createBox(p0a, p0b));
-    }
-
-    @Override
-    public int MV_change(Point p0a, Point p0b) {
-        return foldLineSet.MV_change(createBox(p0a, p0b));
     }
 
     @Override
@@ -911,33 +870,6 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
         } catch (InterruptedException e) {
             Logger.info("v_del_all_cc aborted");
         }
-    }
-
-    @Override
-    public boolean insideToMountain(Point p0a, Point p0b) {
-        return foldLineSet.insideToMountain(createBox(p0a, p0b));
-    }
-
-//20201024高密度入力がオンならばapのrepaint（画面更新）のたびにTen kus_sisuu=new Ten(mainDrawingWorker.get_moyori_ten_sisuu(p_mouse_TV_iti));で最寄り点を求めているので、この描き職人内で別途最寄り点を求めていることは二度手間になっている。
-
-    @Override
-    public boolean insideToValley(Point p0a, Point p0b) {
-        return foldLineSet.insideToValley(createBox(p0a, p0b));
-    }
-
-    @Override
-    public boolean insideToEdge(Point p0a, Point p0b) {
-        return foldLineSet.insideToEdge(createBox(p0a, p0b));
-    }
-
-    @Override
-    public boolean insideToAux(Point p0a, Point p0b) {
-        return InsideToAux.apply(foldLineSet, createBox(p0a, p0b));
-    }
-
-    @Override
-    public boolean insideToReplaceType(Point p0a, Point p0b, CustomLineTypes from, CustomLineTypes to){
-        return foldLineSet.insideToReplaceType(createBox(p0a, p0b), from, to);
     }
 
     @Override
@@ -1039,7 +971,6 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
         setColor(data.calculateLineColor());
         setAuxLineColor(data.calculateAuxColor());
         setFoldLineAdditional(data.getFoldLineAdditionalInputMode());
-        i_select_mode = data.getSelectionOperationMode();
     }
 
     @Override
@@ -1118,11 +1049,6 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     @Override
     public int getPointSize() {
         return pointSize;
-    }
-
-    @Override
-    public List<Circle> getCircleStep() {
-        return circleStep;
     }
 
     @Override
@@ -1205,11 +1131,6 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
 
     public void setCustomCircleColor(Color c0) {
         customCircleColor = c0;
-    }
-
-    @Override
-    public CanvasModel.SelectionOperationMode getI_select_mode() {
-        return i_select_mode;
     }
 
     @Override

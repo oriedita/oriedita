@@ -8,6 +8,8 @@ import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
+import oriedita.editor.handler.step.StepMouseHandler;
+import oriedita.editor.handler.step.ObjCoordStepNode;
 import oriedita.editor.save.Save;
 import oriedita.editor.save.SaveProvider;
 import origami.crease_pattern.FoldLineSet;
@@ -22,8 +24,6 @@ enum CreaseMove4pStep {
 @ApplicationScoped
 @Handles(MouseMode.CREASE_MOVE_4P_31)
 public class MouseHandlerCreaseMove4p extends StepMouseHandler<CreaseMove4pStep> {
-    @Inject
-    private CanvasModel canvasModel;
 
     private Point originalPoint1, originalPoint2, targetPoint1, targetPoint2;
     private boolean isFirstSelected;
@@ -31,9 +31,9 @@ public class MouseHandlerCreaseMove4p extends StepMouseHandler<CreaseMove4pStep>
     @Inject
     public MouseHandlerCreaseMove4p() {
         super(CreaseMove4pStep.SELECT_2_ORIGINAL_POINTS);
-        steps.addNode(StepNode.createNode_MD_R(CreaseMove4pStep.SELECT_2_ORIGINAL_POINTS,
+        steps.addNode(ObjCoordStepNode.createNode_MD_R(CreaseMove4pStep.SELECT_2_ORIGINAL_POINTS,
                 this::move_drag_select_2_original_points, this::release_select_2_original_points));
-        steps.addNode(StepNode.createNode_MD_R(CreaseMove4pStep.SELECT_2_TARGET_POINTS,
+        steps.addNode(ObjCoordStepNode.createNode_MD_R(CreaseMove4pStep.SELECT_2_TARGET_POINTS,
                 this::move_drag_select_2_target_points, this::release_select_2_target_points));
     }
 
@@ -120,8 +120,6 @@ public class MouseHandlerCreaseMove4p extends StepMouseHandler<CreaseMove4pStep>
             targetPoint2 = null;
             return CreaseMove4pStep.SELECT_2_TARGET_POINTS;
         }
-
-        canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.NORMAL_0);// <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
 
         FoldLineSet ori_s_temp = new FoldLineSet(); // セレクトされた折線だけ取り出すために使う
         Save save = SaveProvider.createInstance();

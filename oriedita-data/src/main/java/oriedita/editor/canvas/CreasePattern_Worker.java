@@ -128,23 +128,9 @@ public interface CreasePattern_Worker {
 
     void unselect_all(boolean ignorePersistent);
 
-    void select(Point p0a, Point p0b);
-
-    void unselect(Point p0a, Point p0b);
-
-    boolean deleteInside_foldingLine(Point p0a, Point p0b);
-
-    boolean deleteInside_edge(Point p0a, Point p0b);
-
-    boolean deleteInside_aux(Point p0a, Point p0b);
-
     boolean deleteInside_text(Point p1, Point p2);
 
     boolean change_property_in_4kakukei(Point p0a, Point p0b);
-
-    boolean deleteInside(Point p0a, Point p0b);
-
-    int MV_change(Point p0a, Point p0b);
 
     LineSegment extendToIntersectionPoint(LineSegment s0);
 
@@ -154,16 +140,6 @@ public interface CreasePattern_Worker {
     void v_del_all();
 
     void v_del_all_cc();
-
-    boolean insideToMountain(Point p0a, Point p0b);
-
-    boolean insideToValley(Point p0a, Point p0b);
-
-    boolean insideToEdge(Point p0a, Point p0b);
-
-    boolean insideToAux(Point p0a, Point p0b);
-
-    boolean insideToReplaceType(Point p0a, Point p0b, CustomLineTypes from, CustomLineTypes to);
 
     boolean insideToDeleteType(Point p0a, Point p0b, CustomLineTypes del);
 
@@ -228,8 +204,6 @@ public interface CreasePattern_Worker {
 
     int getPointSize();
 
-    List<Circle> getCircleStep();
-
     Grid getGrid();
 
     FoldLineAdditionalInputMode getI_foldLine_additional();
@@ -251,8 +225,6 @@ public interface CreasePattern_Worker {
     int getNumPolygonCorners();
 
     Color getCustomCircleColor();
-
-    CanvasModel.SelectionOperationMode getI_select_mode();
 
     int getFoldLineDividingNumber();
 

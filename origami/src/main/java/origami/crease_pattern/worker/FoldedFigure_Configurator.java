@@ -10,8 +10,8 @@ import origami.data.ListArray;
 import origami.data.quadTree.QuadTree;
 import origami.data.quadTree.adapter.PointSetFaceAdapter;
 import origami.data.quadTree.adapter.PointSetLineAdapter;
-import origami.data.quadTree.collector.LineSegmentCollector;
 import origami.data.quadTree.collector.PointCollector;
+import origami.data.quadTree.collector.RectangleCollector;
 import origami.data.quadTree.comparator.ExpandComparator;
 import origami.folding.HierarchyList;
 import origami.folding.algorithm.AdditionalEstimationAlgorithm;
@@ -408,7 +408,7 @@ public class FoldedFigure_Configurator {
                     Point p = faceFigure.getBeginPointFromLineId(ibf);
                     Point q = faceFigure.getEndPointFromLineId(ibf);
                     // This qt here is the same instance as in SubFace_configure()
-                    for (int im : qt.collect(new LineSegmentCollector(p, q))) {
+                    for (int im : qt.collect(new RectangleCollector(p, q))) {
                         if ((im != faceId_min) && (im != faceId_max)) {
                             if (faceFigure.convex_inside(ibf, im)) {
                                 // AEA cannot run in parallel

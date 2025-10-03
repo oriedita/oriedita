@@ -24,6 +24,7 @@ import javax.swing.border.TitledBorder;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Insets;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -67,6 +68,7 @@ public class ToolSettingsPanel {
                     .filter(h ->
                             h.getBean().getQualifiers().stream()
                                     .anyMatch(a -> a.annotationType() == UiFor.class))
+                    .sorted(Comparator.comparing(c -> c.get().getSettingGroup()))
                     .forEach(h -> {
                         var ui = h.get();
                         settingsPanel.add(ui.$$$getRootComponent$$$());

@@ -122,13 +122,13 @@ public class CanvasUI extends JPanel {
             @Override
             public void mouseMoved(MouseEvent e) {
                 Point p = new Point(e.getPoint().getX(), e.getPoint().getY());
-                canvasModel.setMouseObjPosition(mainCreasePatternWorker.getCamera().TV2object(p));
+                canvasModel.setMousePosition(p);
             }
 
             @Override
-                public void mouseDragged(MouseEvent e) {
+            public void mouseDragged(MouseEvent e) {
                 Point p = new Point(e.getPoint().getX(), e.getPoint().getY());
-                canvasModel.setMouseObjPosition(mainCreasePatternWorker.getCamera().TV2object(p));
+                canvasModel.setMousePosition(p);
             }
         });
     }
@@ -264,11 +264,12 @@ public class CanvasUI extends JPanel {
                 applicationModel.getDisplayCpText(), lineWidth, lineStyle, auxLineWidth,
                 dim.width, dim.height, displayMarkings, hideOperationFrame);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ,展開図動かし中心の十字の目印の表示
         DrawingSettings settings = new DrawingSettings(
-                lineWidth, lineStyle,
+                lineWidth, auxLineWidth, applicationModel.getPointSize(), lineStyle,
                 dim.height, dim.width,
                 applicationModel.getRoundedEnds(),
                 applicationModel.getDisplayComments(),
-                applicationModel.getDisplayCurrentStep());
+                applicationModel.getDisplayCurrentStep(),
+                applicationModel.getDisplayGridInputAssist());
         if (activeMouseHandler != null) {
             activeMouseHandler.drawPreview(g2, creasePatternCamera, settings);
         }

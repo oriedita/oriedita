@@ -9,6 +9,8 @@ import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
+import oriedita.editor.handler.step.StepMouseHandler;
+import oriedita.editor.handler.step.ObjCoordStepNode;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
@@ -22,8 +24,6 @@ enum DrawCreaseSymmetricStep {
 @ApplicationScoped
 @Handles(MouseMode.DRAW_CREASE_SYMMETRIC_12)
 public class MouseHandlerDrawCreaseSymmetric extends StepMouseHandler<DrawCreaseSymmetricStep> {
-    @Inject
-    private CanvasModel canvasModel;
 
     Point point1, point2;
     LineSegment segment;
@@ -31,9 +31,9 @@ public class MouseHandlerDrawCreaseSymmetric extends StepMouseHandler<DrawCrease
     @Inject
     public MouseHandlerDrawCreaseSymmetric() {
         super(DrawCreaseSymmetricStep.SELECT_2P_OR_SEGMENT);
-        steps.addNode(StepNode.createNode_MD_R(DrawCreaseSymmetricStep.SELECT_2P_OR_SEGMENT,
+        steps.addNode(ObjCoordStepNode.createNode_MD_R(DrawCreaseSymmetricStep.SELECT_2P_OR_SEGMENT,
                 this::move_drag_select_2p_or_line, this::release_select_2p_or_line));
-        steps.addNode(StepNode.createNode_MD_R(DrawCreaseSymmetricStep.SELECT_2P,
+        steps.addNode(ObjCoordStepNode.createNode_MD_R(DrawCreaseSymmetricStep.SELECT_2P,
                 this::move_drag_select_2p, this::release_select_2p));
     }
 
@@ -99,7 +99,6 @@ public class MouseHandlerDrawCreaseSymmetric extends StepMouseHandler<DrawCrease
     }
 
     private void mirrorSelections(LineSegment segment) {
-        canvasModel.setSelectionOperationMode(CanvasModel.SelectionOperationMode.NORMAL_0);
         int old_sousuu = d.getFoldLineSet().getTotal();
 
         for (var s : d.getFoldLineSet().getLineSegmentsCollection()) {

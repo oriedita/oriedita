@@ -55,7 +55,6 @@ public class SettingsTab {
     private JButton twoColorButton;
     private JCheckBox persistCheckBox;
     private JButton frameButton;
-    private JCheckBox selectAnd3ClickCheckbox;
     private JSlider lineThicknessSlider;
     private JSlider errorOpacitySlider;
     private JSlider pointSizeSlider;
@@ -68,7 +67,6 @@ public class SettingsTab {
     private final GridModel gridModel;
     private final BackgroundModel backgroundModel;
     private final ApplicationModel applicationModel;
-    private final CanvasModel canvasModel;
     private final BindingService bindingService;
 
     @Inject
@@ -76,13 +74,11 @@ public class SettingsTab {
                        GridModel gridModel,
                        BackgroundModel backgroundModel,
                        ApplicationModel applicationModel,
-                       CanvasModel canvasModel,
                        BindingService bindingService) {
         this.buttonService = buttonService;
         this.gridModel = gridModel;
         this.backgroundModel = backgroundModel;
         this.applicationModel = applicationModel;
-        this.canvasModel = canvasModel;
         this.bindingService = bindingService;
     }
 
@@ -91,7 +87,6 @@ public class SettingsTab {
 
         backgroundModel.addPropertyChangeListener(e -> setData(backgroundModel));
         applicationModel.addPropertyChangeListener(e -> setData(applicationModel));
-        canvasModel.addPropertyChangeListener(e -> setData(canvasModel));
 
         setData(applicationModel);
 
@@ -128,10 +123,6 @@ public class SettingsTab {
         errorOpacitySlider.addChangeListener(e -> applicationModel.setCheck4ColorTransparency(errorOpacitySlider.getValue()));
         lineThicknessSlider.addChangeListener(e -> applicationModel.setLineWidth(lineThicknessSlider.getValue()));
         pointSizeSlider.addChangeListener(e -> applicationModel.setPointSize(pointSizeSlider.getValue()));
-    }
-
-    private void setData(CanvasModel canvasModel) {
-        selectAnd3ClickCheckbox.setSelected(canvasModel.isCkbox_add_frame_SelectAnd3click_isSelected());
     }
 
     private void setData(ApplicationModel applicationModel) {
@@ -375,17 +366,6 @@ public class SettingsTab {
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         panel3.add(frameButton, gbc);
-        selectAnd3ClickCheckbox = new JCheckBox();
-        selectAnd3ClickCheckbox.setActionCommand("selectAnd3ClickAction");
-        selectAnd3ClickCheckbox.setHorizontalAlignment(0);
-        selectAnd3ClickCheckbox.setText("sel mcm");
-        gbc = new GridBagConstraints();
-        gbc.gridx = 1;
-        gbc.gridy = 1;
-        gbc.weightx = 1.0;
-        gbc.weighty = 1.0;
-        gbc.fill = GridBagConstraints.BOTH;
-        panel3.add(selectAnd3ClickCheckbox, gbc);
         final JPanel panel4 = new JPanel();
         panel4.setLayout(new GridBagLayout());
         panel4.setEnabled(true);

@@ -39,6 +39,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 import java.awt.AWTException;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -210,7 +211,9 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
 
         for (MouseModeHandler handler : handlerList) {
             mouseModeHandlers.put(handler.getMouseMode(), handler);
+            handler.init();
         }
+        Logger.info("handlers initialized");
     }
 
     public void writeImageFile(File file) {
@@ -258,6 +261,7 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
     //マウス操作(ボタンを押したとき)を行う関数----------------------------------------------------
     public void mousePressed(MouseEvent e) {
         Point p = e2p(e);
+
         canvasUI.requestFocus();
 
         int pressedButton = e.getButton();
@@ -330,8 +334,9 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
                 switch (rightCLickTarget) {
                     case CREASE_PATTERN_0:
                         if (activeMouseHandler.getMouseMode() != MouseMode.LINE_SEGMENT_DELETE_3) {
-                            mainCreasePatternWorker.setFoldLineAdditional(FoldLineAdditionalInputMode.BOTH_4);
+                            canvasModel.setFoldLineAdditionalInputMode(FoldLineAdditionalInputMode.BOTH_4);
                         }
+                        mouseModeHandlers.get(MouseMode.LINE_SEGMENT_DELETE_3).mouseMoved(p, e);
                         mouseModeHandlers.get(MouseMode.LINE_SEGMENT_DELETE_3).mousePressed(p, e, pressedButton);
                         setActiveMouseHandler(mouseModeHandlers.get(MouseMode.LINE_SEGMENT_DELETE_3));
                         break;
@@ -565,23 +570,19 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
     public void setData(PropertyChangeEvent e, CanvasModel canvasModel) {
 
         mouseMode = canvasModel.getMouseMode();
-        if (mouseModeHandlers.containsKey(mouseMode)) {
-            setActiveMouseHandler(mouseModeHandlers.get(mouseMode));
-        }
-        if (Objects.equals(e.getPropertyName(), "mouseMode")) {
+
+        if (Objects.equals(e.getPropertyName(), "mouseMode") || e.getPropertyName() == null){
+            if (mouseModeHandlers.containsKey(mouseMode)) {
+                setActiveMouseHandler(mouseModeHandlers.get(mouseMode));
+            }
             if (activeMouseHandler != null) {
                 activeMouseHandler.reset();
             }
         }
+        //noinspection MagicConstant
+        canvasUI.setCursor(Cursor.getPredefinedCursor(canvasModel.getCursor()));
 
         canvasUI.repaint();
-    }
-
-    //=============================================================================
-    //Method called when the mouse wheel rotates
-    //=============================================================================
-    public void mouse_object_position(Point p) {//この関数はmouseMoved等と違ってマウスイベントが起きても自動では認識されない
-        canvasUI.setMousePosition(p);
     }
 
     public void setData(PropertyChangeEvent e, BackgroundModel backgroundModel) {
@@ -673,8 +674,12 @@ public class Canvas implements MouseListener, MouseMotionListener, MouseWheelLis
     }
 
     public void setActiveMouseHandler(MouseModeHandler activeMouseHandler) {
+        var oldMouseHandler = this.activeMouseHandler;
         this.activeMouseHandler = activeMouseHandler;
         canvasUI.setActiveMouseHandler(activeMouseHandler);
+        if (oldMouseHandler != activeMouseHandler) {
+            activeMouseHandler.mouseMoved(canvasModel.getMousePosition());
+        }
     }
 
     public Point e2p(MouseEvent e) {

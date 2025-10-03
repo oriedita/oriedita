@@ -4,19 +4,46 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.databinding.CanvasModel;
-import origami.Epsilon;
+import oriedita.editor.handler.step.StepFactory;
+import oriedita.editor.handler.step.StepGraph;
+import oriedita.editor.handler.step.StepMouseHandler;
 import origami.crease_pattern.CustomLineTypes;
-import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
-import origami.crease_pattern.element.Point;
 
+import java.util.Collection;
 import java.util.EnumSet;
 
 @ApplicationScoped
 @Handles(MouseMode.REPLACE_LINE_TYPE_SELECT_72)
-public class MouseHandlerReplaceTypeSelect extends BaseMouseHandlerBoxSelect {
+public class MouseHandlerReplaceTypeSelect extends StepMouseHandler<MouseHandlerReplaceTypeSelect.Step> {
+
+    public enum Step {
+        DRAW_BOX_OR_SELECT_LINE
+    }
 
     private final CanvasModel canvasModel;
+
+    @Override
+    protected StepGraph<Step> initStepGraph(StepFactory stepFactory) {
+        var sg = new StepGraph<>(Step.DRAW_BOX_OR_SELECT_LINE);
+        sg.addNode(stepFactory.createBoxSelectLinesNode(Step.DRAW_BOX_OR_SELECT_LINE,
+                lines -> {
+                    changeColor(lines);
+                    return Step.DRAW_BOX_OR_SELECT_LINE;
+                }, l ->
+                        canvasModel.getCustomFromLineType().matches(l.getColor())
+        ));
+        return sg;
+    }
+
+    private void changeColor(Collection<LineSegment> lines) {
+        CustomLineTypes to = canvasModel.getCustomToLineType();
+        var lc = to.getLineColor();
+        var changed = d.getFoldLineSet().setColor(lines, lc);
+        if (changed > 0) {
+            d.record();
+        }
+    }
 
     @Inject
     public MouseHandlerReplaceTypeSelect(CanvasModel canvasModel) {
@@ -26,63 +53,6 @@ public class MouseHandlerReplaceTypeSelect extends BaseMouseHandlerBoxSelect {
     @Override
     public EnumSet<MouseHandlerSettingGroup> getSettings() {
         return EnumSet.of(MouseHandlerSettingGroup.SWITCH_COLOR);
-    }
-
-    public void mouseReleased(Point p0){
-        super.mouseReleased(p0);
-        d.getLineStep().clear();
-
-        Point p = d.getCamera().TV2object(p0);
-
-        CustomLineTypes from = canvasModel.getCustomFromLineType();
-        CustomLineTypes to = canvasModel.getCustomToLineType();
-
-        if (selectionStart.distance(p0) > Epsilon.UNKNOWN_1EN6) {//現状では赤を赤に変えたときもUNDO用に記録されてしまう20161218
-            if (d.insideToReplaceType(selectionStart, p0, from, to)) {
-                d.record();
-            }
-        } else {//現状では赤を赤に変えたときもUNDO用に記録されてしまう20161218
-            if (d.getFoldLineSet().closestLineSegmentDistance(p) < d.getSelectionDistance()) {//点pに最も近い線分の番号での、その距離を返す	public double closestLineSegmentDistance(Ten p)
-                LineSegment s = d.getFoldLineSet().closestLineSegmentSearch(p);
-
-                switch (from){
-                    case ANY:
-                        d.getFoldLineSet().deleteLine(s);
-                        s = s.withColor(LineColor.fromNumber(to.getNumberForLineColor()));
-                        d.addLineSegment(s);
-                        d.record();
-                        break;
-                    case EDGE:
-                        if (s.getColor() == LineColor.BLACK_0) {
-                            d.getFoldLineSet().deleteLine(s);
-                            s = s.withColor(LineColor.fromNumber(to.getNumberForLineColor()));
-                            d.addLineSegment(s);
-                            d.record();
-                        }
-                        break;
-                    case MANDV:
-                        if (s.getColor() == LineColor.RED_1 || s.getColor() == LineColor.BLUE_2) {
-                            d.getFoldLineSet().deleteLine(s);
-                            s = s.withColor(LineColor.fromNumber(to.getNumberForLineColor()));
-                            d.addLineSegment(s);
-                            d.record();
-                        }
-                        break;
-                    case MOUNTAIN:
-                    case VALLEY:
-                    case AUX:
-                        if (s.getColor() == LineColor.fromNumber(from.getNumber() - 1)) {
-                            d.getFoldLineSet().deleteLine(s);
-                            s = s.withColor(LineColor.fromNumber(to.getNumberForLineColor()));
-                            d.addLineSegment(s);
-                            d.record();
-                        }
-                        break;
-                    default:
-                        break;
-                }
-            }
-        }
     }
 
 }

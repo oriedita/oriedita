@@ -6,7 +6,6 @@ import jakarta.inject.Named;
 import oriedita.editor.action.DegAction;
 import oriedita.editor.action.Oriagari_sousaAction;
 import oriedita.editor.action.OrieditaAction;
-import oriedita.editor.action.SelectionOperationAction;
 import oriedita.editor.action.SetMouseModeAction;
 import oriedita.editor.action.SetMouseModeLineTypeDeleteAction;
 import oriedita.editor.action.SetMouseModeWithAfterColorAndUnselectAction;
@@ -53,10 +52,6 @@ public class ActionFactory {
 
     public SetMouseModeLineTypeDeleteAction setMouseModeLineTypeDeleteAction(MouseMode mouseMode, FoldLineAdditionalInputMode foldLineAdditionalInputMode){
         return new SetMouseModeLineTypeDeleteAction(canvasModel, mainCreasePattern_Worker, mouseMode, foldLineAdditionalInputMode);
-    }
-
-    public SelectionOperationAction selectionOperationAction(CanvasModel.SelectionOperationMode selectionOperationMode, MouseMode mouseMode){
-        return new SelectionOperationAction(canvasModel, selectionOperationMode, mouseMode);
     }
 
     public SuiteiAction suiteiAction(FoldedFigure.EstimationOrder estimationOrder){

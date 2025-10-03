@@ -60,7 +60,7 @@ public class AngleSystemUi implements MouseHandlerUi {
         buttonService.addDefaultListener($$$getRootComponent$$$());
 
         angleSystemModel.addPropertyChangeListener(e -> setData(angleSystemModel));
-
+        setData(angleSystemModel);
         var customAngleFocusLost = new FocusAdapter() {
             @Override
             public void focusLost(FocusEvent e) {

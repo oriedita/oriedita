@@ -5,6 +5,8 @@ import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
+import oriedita.editor.handler.step.StepMouseHandler;
+import oriedita.editor.handler.step.ObjCoordStepNode;
 import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.Circle;
@@ -36,16 +38,16 @@ public class MouseHandlerCircleDrawTangentLine extends StepMouseHandler<CircleDr
     @Inject
     public MouseHandlerCircleDrawTangentLine() {
         super(CircleDrawTangentLineStep.SELECT_1ST_POINT_OR_CIRCLE);
-        steps.addNode(StepNode.createNode_MD_R(CircleDrawTangentLineStep.SELECT_1ST_POINT_OR_CIRCLE,
+        steps.addNode(ObjCoordStepNode.createNode_MD_R(CircleDrawTangentLineStep.SELECT_1ST_POINT_OR_CIRCLE,
                 this::move_drag_select_first_point_or_circle,
                 this::release_select_first_point_or_circle));
-        steps.addNode(StepNode.createNode_MD_R(CircleDrawTangentLineStep.SELECT_CIRCLE,
+        steps.addNode(ObjCoordStepNode.createNode_MD_R(CircleDrawTangentLineStep.SELECT_CIRCLE,
                 this::move_drag_select_circle,
                 this::release_select_circle));
-        steps.addNode(StepNode.createNode_MD_R(CircleDrawTangentLineStep.SELECT_2ND_POINT_OR_CIRCLE,
+        steps.addNode(ObjCoordStepNode.createNode_MD_R(CircleDrawTangentLineStep.SELECT_2ND_POINT_OR_CIRCLE,
                 this::move_drag_select_second_point_or_circle,
                 this::release_select_second_point_or_circle));
-        steps.addNode(StepNode.createNode_MD_R(CircleDrawTangentLineStep.SELECT_INDICATOR,
+        steps.addNode(ObjCoordStepNode.createNode_MD_R(CircleDrawTangentLineStep.SELECT_INDICATOR,
                 this::move_drag_select_indicator, this::release_drag_select_indicator));
     }
 

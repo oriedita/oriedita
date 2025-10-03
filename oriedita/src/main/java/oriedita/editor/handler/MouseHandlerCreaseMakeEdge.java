@@ -4,15 +4,39 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.canvas.MouseMode;
-import origami.Epsilon;
+import oriedita.editor.handler.step.StepFactory;
+import oriedita.editor.handler.step.StepGraph;
+import oriedita.editor.handler.step.StepMouseHandler;
 import origami.crease_pattern.element.LineColor;
-import origami.crease_pattern.element.Point;
+import origami.crease_pattern.element.LineSegment;
+
+import java.util.Collection;
 
 @ApplicationScoped
 @Handles(MouseMode.CREASE_MAKE_EDGE_25)
-public class MouseHandlerCreaseMakeEdge extends BaseMouseHandlerBoxSelect {
+public class MouseHandlerCreaseMakeEdge extends StepMouseHandler<MouseHandlerCreaseMakeEdge.Step> {
     @Inject
     public MouseHandlerCreaseMakeEdge() {
+    }
+
+    public enum Step {
+        SELECT_LINES
+    }
+
+    @Override
+    public void reset() {
+        super.reset();
+    }
+
+    @Override
+    protected StepGraph<Step> initStepGraph(StepFactory stepFactory) {
+        var st = new StepGraph<>(Step.SELECT_LINES);
+        st.addNode(stepFactory.createBoxSelectLinesNode(Step.SELECT_LINES,
+                lines -> {
+                    makeEdge(lines);
+                    return Step.SELECT_LINES;
+                }, l -> l.getColor() != LineColor.BLACK_0));
+        return st;
     }
 
     /**
@@ -23,22 +47,10 @@ public class MouseHandlerCreaseMakeEdge extends BaseMouseHandlerBoxSelect {
      * the combination of the original polygonal line and the polygonal line
      * converted from the auxiliary line.
      */
-    public void mouseReleased(Point p0) {
-        super.mouseReleased(p0);
-        d.getLineStep().clear();
-
-        if (selectionStart.distance(p0) > Epsilon.UNKNOWN_1EN6) {
-            if (d.insideToEdge(selectionStart, p0)) {
-                d.fix2();
-                d.record();
-            }
-        } else {
-            Point p = d.getCamera().TV2object(p0);
-            if (d.getFoldLineSet().closestLineSegmentDistance(p) < d.getSelectionDistance()) {//点pに最も近い線分の番号での、その距離を返す	public double mottomo_tikai_senbun_kyori(Ten p)
-                d.getFoldLineSet().setColor(d.getFoldLineSet().closestLineSegmentSearch(p), LineColor.BLACK_0);
-                d.fix2();
-                d.record();
-            }
-        }
+    private void makeEdge(Collection<LineSegment> lines) {
+        if (lines.isEmpty()) {return;}
+        d.getFoldLineSet().setColor(lines, LineColor.BLACK_0);
+        d.fix2();
+        d.record();
     }
 }

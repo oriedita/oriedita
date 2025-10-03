@@ -8,6 +8,8 @@ import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
+import oriedita.editor.handler.step.StepMouseHandler;
+import oriedita.editor.handler.step.ObjCoordStepNode;
 import origami.Epsilon;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineColor;
@@ -41,9 +43,9 @@ public class MouseHandlerContinuousSymmetricDraw extends StepMouseHandler<Contin
         super(ContinuousSymmetricDrawStep.SELECT_P1);
         this.d = d;
         toolbox = new CreasePattern_Worker_Toolbox(d.getFoldLineSet());
-        steps.addNode(StepNode.createNode_MD_R(ContinuousSymmetricDrawStep.SELECT_P1, this::move_drag_select_p1,
+        steps.addNode(ObjCoordStepNode.createNode_MD_R(ContinuousSymmetricDrawStep.SELECT_P1, this::move_drag_select_p1,
                 this::release_select_p1));
-        steps.addNode(StepNode.createNode_MD_R(ContinuousSymmetricDrawStep.SELECT_P2, this::move_drag_select_p2,
+        steps.addNode(ObjCoordStepNode.createNode_MD_R(ContinuousSymmetricDrawStep.SELECT_P2, this::move_drag_select_p2,
                 this::release_select_p2));
     }
 

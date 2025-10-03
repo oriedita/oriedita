@@ -4,184 +4,170 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import oriedita.editor.canvas.FoldLineAdditionalInputMode;
 import oriedita.editor.canvas.MouseMode;
-import origami.Epsilon;
+import oriedita.editor.drawing.tools.Camera;
+import oriedita.editor.drawing.tools.DrawingUtil;
+import oriedita.editor.handler.step.StepFactory;
+import oriedita.editor.handler.step.StepGraph;
+import oriedita.editor.handler.step.StepMouseHandler;
+import origami.crease_pattern.OritaCalc;
+import origami.crease_pattern.element.Circle;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
-import org.tinylog.Logger;
+import origami.crease_pattern.element.Polygon;
 
-import java.util.EnumSet;
+import java.awt.BasicStroke;
+import java.awt.Graphics2D;
+import java.util.ArrayList;
+import java.util.List;
 
 @ApplicationScoped
 @Handles(MouseMode.LINE_SEGMENT_DELETE_3)
-public class MouseHandlerLineSegmentDelete extends BaseMouseHandlerBoxSelect {
-    @Inject
-    public MouseHandlerLineSegmentDelete() {
+public class MouseHandlerLineSegmentDelete extends StepMouseHandler<MouseHandlerLineSegmentDelete.Step> {
+    public enum Step {
+        SELECT_LINES
     }
 
-    //マウス操作(mouseMode==3,23 でボタンを離したとき)を行う関数----------------------------------------------------
+    private final List<Circle> closestCircles = new ArrayList<>();
+    private final List<LineSegment> closestLines = new ArrayList<>();
+    // TODO: split yellow aux deletion off into own handler, or find way to generalize
+    private final List<LineSegment> closestAuxLines = new ArrayList<>();
+
     @Override
-    public void mouseReleased(Point p0) {//折線と補助活線と円
-        int preDeleteTotalCPLines = d.getTotal();
+    protected StepGraph<Step> initStepGraph(StepFactory stepFactory) {
+        var st = new StepGraph<>(Step.SELECT_LINES);
+        st.addNode(stepFactory.createBoxSelectNode(Step.SELECT_LINES,
+                this::deleteInsideBox, this::deleteSingleLineOrCircle,
+                this::highlightSingleLineOrCircle, this::highlightBox));
+        return st;
+    }
 
-        super.mouseReleased(p0);
-        Point p = d.getCamera().TV2object(p0);
-        d.getLineStep().clear();
+    private void highlightBox(Polygon p) {
+        closestCircles.clear();
+        closestLines.clear();
+        closestAuxLines.clear();
+        var lines = d.getFoldLineSet().lineSegmentsInside(p);
+        var circles = d.getFoldLineSet().circlesInside(p);
+        var auxLines = d.getAuxLines().lineSegmentsInside(p);
 
-        //最寄の一つを削除
-        if (selectionStart.distance(p0) <= Epsilon.UNKNOWN_1EN6) {//最寄の一つを削除
-            int i_removal_mode;//i_removal_mode is defined and declared here
-            switch (d.getI_foldLine_additional()) {
-                case POLY_LINE_0:
-                    i_removal_mode = 0;
-                    break;
-                case BLACK_LINE_2:
-                    i_removal_mode = 2;
-                    break;
-                case AUX_LIVE_LINE_3:
-                    i_removal_mode = 3;
-                    break;
-                case AUX_LINE_1:
-                    i_removal_mode = 1;
-                    break;
-                case BOTH_4:
-                    i_removal_mode = 10;
-                    double rs_min = d.getFoldLineSet().closestLineSegmentDistance(p);//点pに最も近い線分(折線と補助活線)の番号での、その距離を返す	public double mottomo_tikai_senbun_kyori(Ten p)
-                    double re_min = d.getFoldLineSet().closestCircleDistance(p);//点pに最も近い円の番号での、その距離を返す	public double mottomo_tikai_en_kyori(Ten p)
-                    double hoj_rs_min = d.getAuxLines().closestLineSegmentDistance(p);//点pに最も近い補助絵線の番号での、その距離を返す	public double mottomo_tikai_senbun_kyori(Ten p)
-                    if ((rs_min <= re_min) && (rs_min <= hoj_rs_min)) {
-                        LineSegment closestLineSegment = d.getFoldLineSet().closestLineSegmentSearchReversedOrder(p);
-                        if (closestLineSegment.getColor().getNumber() < 3) {
-                            i_removal_mode = 0;
-                        } else {
-                            i_removal_mode = 3;
-                        }
-                    }
-                    if ((re_min < rs_min) && (re_min <= hoj_rs_min)) {
-                        i_removal_mode = 3;
-                    }
-                    if ((hoj_rs_min < rs_min) && (hoj_rs_min < re_min)) {
-                        i_removal_mode = 1;
-                    }
-                    break;
-                default:
-                    throw new IllegalArgumentException();
+        var mode = d.getI_foldLine_additional();
+        switch (mode) {
+            case POLY_LINE_0 -> closestLines.addAll(
+                    lines.stream()
+                    .filter(l -> l.getColor().isFoldingLine())
+                    .toList());
+            case BLACK_LINE_2 -> closestLines.addAll(
+                    lines.stream()
+                    .filter(l -> l.getColor() == LineColor.BLACK_0)
+                    .toList());
+            case AUX_LIVE_LINE_3 -> closestLines.addAll(
+                    lines.stream()
+                    .filter(l -> l.getColor() == LineColor.CYAN_3)
+                    .toList());
+            case BOTH_4 -> {
+                closestLines.addAll(lines);
+                closestCircles.addAll(circles);
             }
+            case AUX_LINE_1 -> closestAuxLines.addAll(auxLines);
+        }
+    }
 
-            if (i_removal_mode == 0) { //折線の削除
-
-                //Ten p =new Ten(); p.set(camera.TV2object(p0));
-                double rs_min;
-                rs_min = d.getFoldLineSet().closestLineSegmentDistance(p);//点pに最も近い線分(折線と補助活線)の番号での、その距離を返す	public double mottomo_tikai_senbun_kyori(Ten p)
-                if (rs_min < d.getSelectionDistance()) {
-                    LineSegment closestLineSegment = d.getFoldLineSet().closestLineSegmentSearchReversedOrder(p);
-                    if (closestLineSegment.getColor().getNumber() < 3) {
-                        d.getFoldLineSet().deleteLineSegment_vertex(closestLineSegment);
-                        d.organizeCircles();
-                        d.record();
+    private void highlightSingleLineOrCircle(Point p) {
+        closestCircles.clear();
+        closestLines.clear();
+        closestAuxLines.clear();
+        var line = d.getFoldLineSet().closestLineSegmentInRange(p, d.getSelectionDistance());
+        var circle = d.getFoldLineSet().closestCircleInRange(p, d.getSelectionDistance());
+        var mode = d.getI_foldLine_additional();
+        if (mode == FoldLineAdditionalInputMode.AUX_LINE_1){
+            line = d.getAuxLines().closestLineSegmentInRange(p, d.getSelectionDistance());
+        }
+        if (mode != FoldLineAdditionalInputMode.BOTH_4 && line.isPresent()) {
+            var l = line.get();
+            switch (mode) {
+                case AUX_LIVE_LINE_3 -> {
+                    if (l.getColor() == LineColor.CYAN_3) {
+                        closestLines.add(l);
                     }
                 }
-            }
-
-            if (i_removal_mode == 2) { //黒の折線の削除
-                double rs_min = d.getFoldLineSet().closestLineSegmentDistance(p);//点pに最も近い線分(折線と補助活線)の番号での、その距離を返す	public double mottomo_tikai_senbun_kyori(Ten p)
-                if (rs_min < d.getSelectionDistance()) {
-                    LineSegment closestLineSegment = d.getFoldLineSet().closestLineSegmentSearchReversedOrder(p);
-                    if (closestLineSegment.getColor() == LineColor.BLACK_0) {
-                        d.getFoldLineSet().deleteLineSegment_vertex(closestLineSegment);
-                        d.organizeCircles();
-                        d.record();
+                case BLACK_LINE_2 -> {
+                    if (l.getColor() == LineColor.BLACK_0) {
+                        closestLines.add(l);
                     }
                 }
-            }
-
-            if (i_removal_mode == 3) {  //補助活線
-                double rs_min = d.getFoldLineSet().closestLineSegmentDistance(p);//点pに最も近い線分(折線と補助活線)の番号での、その距離を返す
-                double re_min = d.getFoldLineSet().closestCircleDistance(p);//点pに最も近い円の番号での、その距離を返す	public double mottomo_tikai_en_kyori(Ten p)
-
-                if (rs_min <= re_min) {
-                    if (rs_min < d.getSelectionDistance()) {//点pに最も近い線分の番号での、その距離を返す	public double mottomo_tikai_senbun_kyori(Ten p)
-                        LineSegment closestLineSegment = d.getFoldLineSet().closestLineSegmentSearchReversedOrder(p);
-                        if (closestLineSegment.getColor() == LineColor.CYAN_3) {
-                            d.getFoldLineSet().deleteLineSegment_vertex(closestLineSegment);
-                            d.organizeCircles();
-                            d.record();
-                        }
+                case POLY_LINE_0 -> {
+                    if (l.getColor().isFoldingLine()){
+                        closestLines.add(l);
                     }
+                }
+                case AUX_LINE_1 -> closestAuxLines.add(l);
+                default -> {}
+            }
+        }
+        if (mode == FoldLineAdditionalInputMode.BOTH_4) {
+            if (line.isPresent() && circle.isPresent()) {
+                if (OritaCalc.determineLineSegmentDistance(p, line.get()) > OritaCalc.distance_circumference(p, circle.get())) {
+                    closestCircles.add(circle.get());
                 } else {
-                    if (re_min < d.getSelectionDistance()) {
-                        d.getFoldLineSet().deleteCircle(d.getFoldLineSet().closest_circle_search_reverse_order(p));
-                        d.organizeCircles();
-                        d.record();
-                    }
+                    closestLines.add(line.get());
                 }
-            }
-
-            if (i_removal_mode == 1) { //補助絵線
-                double rs_min;
-                rs_min = d.getAuxLines().closestLineSegmentDistance(p);//点pに最も近い補助絵線の番号での、その距離を返す	public double mottomo_tikai_senbun_kyori(Ten p)
-
-                if (rs_min < d.getSelectionDistance()) {
-                    LineSegment closestLineSegment = d.getFoldLineSet().closestLineSegmentSearchReversedOrder(p);
-
-                    d.getAuxLines().deleteLineSegment_vertex(closestLineSegment);
-                    d.record();
-                }
+            } else if (line.isPresent()) {
+                closestLines.add(line.get());
+            } else if (circle.isPresent()) {
+                closestCircles.add(circle.get());
             }
         }
+    }
 
-
-        //四角枠内の削除 //p19_1はselectの最初のTen。この条件は最初のTenと最後の点が遠いので、四角を発生させるということ。
-        if (selectionStart.distance(p0) > Epsilon.UNKNOWN_1EN6) {
-            if ((d.getI_foldLine_additional() == FoldLineAdditionalInputMode.POLY_LINE_0) || (d.getI_foldLine_additional() == FoldLineAdditionalInputMode.BOTH_4)) { //折線の削除	//D_nisuru(selectionStart,p0)で折線だけが削除される。
-                if (d.deleteInside_foldingLine(selectionStart, p0)) {
-                    d.organizeCircles();
-                    d.record();
-                }
-            }
-
-
-            if (d.getI_foldLine_additional() == FoldLineAdditionalInputMode.BLACK_LINE_2) {  //Delete only the black polygonal line
-                if (d.deleteInside_edge(selectionStart, p0)) {
-                    d.organizeCircles();
-                    d.record();
-                }
-            }
-
-
-            if ((d.getI_foldLine_additional() == FoldLineAdditionalInputMode.AUX_LIVE_LINE_3) || (d.getI_foldLine_additional() == FoldLineAdditionalInputMode.BOTH_4)) {  //Auxiliary live line // Currently it is recorded for undo even if it is not deleted 20161218
-                if (d.deleteInside_aux(selectionStart, p0)) {
-                    d.organizeCircles();
-                    d.record();
-                }
-            }
-
-            if ((d.getI_foldLine_additional() == FoldLineAdditionalInputMode.AUX_LINE_1) || (d.getI_foldLine_additional() == FoldLineAdditionalInputMode.BOTH_4)) { //補助絵線	//現状では削除しないときもUNDO用に記録されてしまう20161218
-                if (d.deleteInside(selectionStart, p0)) {
-                    d.record();
-                }
-            }
-
+    private Step deleteInsideBox(Polygon polygon) {
+        closestLines.forEach(c -> d.getFoldLineSet().deleteLine(c));
+        closestCircles.forEach(c -> d.getFoldLineSet().deleteCircle(c));
+        closestAuxLines.forEach(c -> d.getAuxLines().deleteLineSegment_vertex(c));
+        d.organizeCircles();
+        if (closestCircles.size() + closestLines.size() + closestAuxLines.size() > 0) {
+            d.record();
         }
+        return Step.SELECT_LINES;
+    }
 
-//check4(Epsilon.UNKNOWN_00001);//D_nisuru0をすると、foldLineSet.D_nisuru0内でresetが実行されるため、check4のやり直しが必要。
-        if (d.isCheck1()) {
-            d.check1();
+    private Step deleteSingleLineOrCircle(Point p) {
+        var changed = false;
+        if (!closestLines.isEmpty()) {
+            d.getFoldLineSet().deleteLineSegment_vertex(closestLines.get(0));
+            changed = true;
         }
-        if (d.isCheck2()) {
-            d.check2();
+        if (!closestCircles.isEmpty()) {
+            d.getFoldLineSet().deleteCircle(closestCircles.get(0));
+            changed = true;
+            d.organizeCircles();
         }
-        if (d.isCheck3()) {
-            d.check3();
+        if (!closestAuxLines.isEmpty()) {
+            d.getAuxLines().deleteLineSegment_vertex(closestAuxLines.get(0));
+            changed = true;
         }
-        if (d.isCheck4()) {
-            d.check4();
+        if (changed) {
+            d.record();
         }
+        return Step.SELECT_LINES;
+    }
 
-        if(d.getTotal() < preDeleteTotalCPLines){
-            Logger.info("Num lines before delete: " + preDeleteTotalCPLines + ", Num lines after delete: " + d.getTotal());
-            Logger.info("Refreshing selection buttons");
-            d.refreshIsSelectionEmpty();
+    @Override
+    public void drawPreview(Graphics2D g2, Camera camera, DrawingSettings settings) {
+        super.drawPreview(g2, camera, settings);
+        for (Circle circle : closestCircles) {
+            DrawingUtil.drawCircle(g2, circle, camera, settings.getLineWidth() + 1, settings.getPointSize());
         }
+        for (LineSegment line : closestLines) {
+            DrawingUtil.drawLineStep(g2, line, camera, settings.getLineWidth() + 1, settings.getGridInputAssist());
+        }
+        for (LineSegment line : closestAuxLines) {
+            g2.setStroke(new BasicStroke(settings.getAuxLineWidth() + 1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
+            DrawingUtil.drawAuxLiveLine(g2, line, camera, settings.getLineWidth() + 1,
+                    settings.getPointSize(), settings.getAuxLineWidth() + 1);
+        }
+    }
+
+    @Inject
+    public MouseHandlerLineSegmentDelete() {
     }
 }

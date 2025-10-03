@@ -20,6 +20,7 @@ public class MouseHandlerUnselectLineIntersecting extends BaseMouseHandlerLineSe
         if (Epsilon.high.gt0(selectionLine.determineLength())) {
             //やりたい動作はここに書く
             d.getFoldLineSet().select_lX(selectionLine, "unselect_lX");//lXは小文字のエルと大文字のエックス
+            d.refreshIsSelectionEmpty();
         }
         super.mouseReleased(p0);
     }

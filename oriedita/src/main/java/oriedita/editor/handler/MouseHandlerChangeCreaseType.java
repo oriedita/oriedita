@@ -7,6 +7,8 @@ import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
+import oriedita.editor.handler.step.StepMouseHandler;
+import oriedita.editor.handler.step.ObjCoordStepNode;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
@@ -24,7 +26,7 @@ public class MouseHandlerChangeCreaseType extends StepMouseHandler<ChangeCreaseT
     @Inject
     public MouseHandlerChangeCreaseType() {
         super(ChangeCreaseTypeStep.SELECT_SEGMENT);
-        steps.addNode(StepNode.createNode_MD_R(ChangeCreaseTypeStep.SELECT_SEGMENT,
+        steps.addNode(ObjCoordStepNode.createNode_MD_R(ChangeCreaseTypeStep.SELECT_SEGMENT,
                 this::move_drag_select_segment, this::release_select_segment));
     }
 

@@ -1,5 +1,7 @@
 package origami.crease_pattern;
 
+import origami.crease_pattern.element.LineColor;
+
 public enum CustomLineTypes {
     ANY(-1),
     EDGE(0),
@@ -22,6 +24,26 @@ public enum CustomLineTypes {
             return EDGE.customType;
         }
         return this == CustomLineTypes.EDGE ? this.getNumber() : this.getNumber() - 1;
+    }
+
+    public LineColor getLineColor(){
+        return switch (this){
+            case ANY, EDGE -> LineColor.BLACK_0;
+            case MANDV, MOUNTAIN -> LineColor.RED_1;
+            case VALLEY -> LineColor.BLUE_2;
+            case AUX -> LineColor.CYAN_3;
+        };
+    }
+
+    public boolean matches(LineColor lineColor){
+        return switch (this) {
+            case ANY -> true;
+            case EDGE -> lineColor == LineColor.BLACK_0;
+            case MANDV -> lineColor == LineColor.RED_1 || lineColor == LineColor.BLUE_2;
+            case MOUNTAIN -> lineColor == LineColor.RED_1;
+            case VALLEY -> lineColor == LineColor.BLUE_2;
+            case AUX -> lineColor == LineColor.CYAN_3;
+        };
     }
 
     public static CustomLineTypes from(int customType){
