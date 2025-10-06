@@ -5,7 +5,6 @@ import java.awt.Graphics2D;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
-import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
 import oriedita.editor.handler.step.StepMouseHandler;
@@ -40,10 +39,10 @@ public class MouseHandlerCreaseMove4p extends StepMouseHandler<CreaseMove4pStep>
     @Override
     public void drawPreview(Graphics2D g2, Camera camera, DrawingSettings settings) {
         super.drawPreview(g2, camera, settings);
-        DrawingUtil.drawStepVertex(g2, originalPoint1, LineColor.MAGENTA_5, camera, d.getGridInputAssist());
-        DrawingUtil.drawStepVertex(g2, originalPoint2, LineColor.BLUE_2, camera, d.getGridInputAssist());
-        DrawingUtil.drawStepVertex(g2, targetPoint1, LineColor.CYAN_3, camera, d.getGridInputAssist());
-        DrawingUtil.drawStepVertex(g2, targetPoint2, LineColor.ORANGE_4, camera, d.getGridInputAssist());
+        DrawingUtil.drawStepVertex(g2, originalPoint1, LineColor.MAGENTA_5, camera);
+        DrawingUtil.drawStepVertex(g2, originalPoint2, LineColor.BLUE_2, camera);
+        DrawingUtil.drawStepVertex(g2, targetPoint1, LineColor.CYAN_3, camera);
+        DrawingUtil.drawStepVertex(g2, targetPoint2, LineColor.ORANGE_4, camera);
     }
 
     @Override

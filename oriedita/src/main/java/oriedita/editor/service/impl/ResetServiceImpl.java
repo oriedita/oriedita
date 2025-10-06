@@ -82,7 +82,6 @@ public class ResetServiceImpl implements ResetService {
     @Override
     public void Button_shared_operation() {
         mainCreasePatternWorker.resetLineStep(0);
-        mainCreasePatternWorker.resetCircleStep();
         // TODO Reset Voronoi
 
         canvasModel.markDirty();

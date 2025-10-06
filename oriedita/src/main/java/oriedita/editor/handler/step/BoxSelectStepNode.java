@@ -93,7 +93,7 @@ public class BoxSelectStepNode<T extends Enum<T>> extends AbstractStepNode<T> im
         if (!showPreview) {return;}
         for (LineSegment line : lines) {
             if (line != null) {
-                DrawingUtil.drawLineStep(g, line, LineSegment.ActiveState.ACTIVE_BOTH_3, camera, settings.getLineWidth(), settings.getGridInputAssist());
+                DrawingUtil.drawLineStep(g, line, LineSegment.ActiveState.ACTIVE_BOTH_3, camera, settings.getLineWidth());
             }
         }
     }

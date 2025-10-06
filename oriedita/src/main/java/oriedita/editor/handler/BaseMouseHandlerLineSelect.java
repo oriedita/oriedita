@@ -28,19 +28,7 @@ public abstract class BaseMouseHandlerLineSelect extends BaseMouseHandler {
 
     @Override
     public void mouseMoved(Point p0) {
-        //Display candidate points that can be selected with the mouse. If there is an established point nearby, that point is the candidate point, and if not, the mouse position itself is the candidate point.
-        if (d.getGridInputAssist()) {
-            d.getLineCandidate().clear();
 
-            Point candidatePoint = d.getCamera().TV2object(p0);
-            Point closestPoint = d.getClosestPoint(candidatePoint);
-            if (candidatePoint.distance(closestPoint) < d.getSelectionDistance()) {
-                candidatePoint = closestPoint;
-            }
-            LineSegment candidate = new LineSegment(
-                    candidatePoint, candidatePoint, LineColor.MAGENTA_5, LineSegment.ActiveState.ACTIVE_BOTH_3);
-            d.getLineCandidate().add(candidate);
-        }
     }
 
     @Override
@@ -86,10 +74,6 @@ public abstract class BaseMouseHandlerLineSelect extends BaseMouseHandler {
         } else {
             selectionLine = selectionLine.withA(p);
         }
-        if (d.getGridInputAssist()) {
-            d.getLineCandidate().clear();
-            d.getLineCandidate().add(selectionLine);
-        }
         d.getLineStep().set(0, selectionLine);
         if (snapping) {
             snapLine();
@@ -107,6 +91,5 @@ public abstract class BaseMouseHandlerLineSelect extends BaseMouseHandler {
         selectionLine = null;
         snapping = false;
         d.getLineStep().clear();
-        d.getLineCandidate().clear();
     }
 }

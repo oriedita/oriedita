@@ -290,12 +290,12 @@ public class DrawingUtil {
     }
 
     public static void drawLineStep(Graphics g, LineSegment s,
-                                    Camera camera, float lineWidth, boolean gridInputAssist) {
-        drawLineStep(g, s, LineSegment.ActiveState.ACTIVE_BOTH_3, camera, lineWidth, gridInputAssist);
+                                    Camera camera, float lineWidth) {
+        drawLineStep(g, s, LineSegment.ActiveState.ACTIVE_BOTH_3, camera, lineWidth);
     }
 
     public static void drawLineStep(Graphics g, LineSegment s, LineSegment.ActiveState activeState,
-                                    Camera camera, float lineWidth, boolean gridInputAssist) {
+                                    Camera camera, float lineWidth) {
         if (s == null) return;
         Graphics2D g2 = (Graphics2D) g;
         setColor(g, s.getColor());
@@ -308,9 +308,6 @@ public class DrawingUtil {
 
         g.drawLine((int) a.getX(), (int) a.getY(), (int) b.getX(), (int) b.getY()); //直線
         int i_width_nyuiiryokuji = 3;
-        if (gridInputAssist) {
-            i_width_nyuiiryokuji = 2;
-        }
 
         switch (activeState) {
             case ACTIVE_A_1:
@@ -328,14 +325,11 @@ public class DrawingUtil {
         }
     }
 
-    public static void drawStepVertex(Graphics2D g, Point p, LineColor color, Camera camera, boolean gridInputAssist) {
+    public static void drawStepVertex(Graphics2D g, Point p, LineColor color, Camera camera) {
         if (p == null) return;
         setColor(g, color);
         Point a = camera.object2TV(p);
         int i_width_nyuiiryokuji = 3;
-        if (gridInputAssist) {
-            i_width_nyuiiryokuji = 2;
-        }
 
         g.fillOval((int) a.getX() - i_width_nyuiiryokuji, (int) a.getY() - i_width_nyuiiryokuji, 2 * i_width_nyuiiryokuji, 2 * i_width_nyuiiryokuji); //円
 

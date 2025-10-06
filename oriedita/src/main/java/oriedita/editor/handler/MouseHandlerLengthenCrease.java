@@ -52,7 +52,7 @@ public class MouseHandlerLengthenCrease extends BaseMouseHandler {
                 Stream.of(selectionLine, extensionLine),
                 linesToExtend.stream())
                 .filter(Objects::nonNull)
-                .forEach(l -> DrawingUtil.drawLineStep(g2, l, camera, settings.getLineWidth(), d.getGridInputAssist()));
+                .forEach(l -> DrawingUtil.drawLineStep(g2, l, camera, settings.getLineWidth()));
     }
 
     @Inject
@@ -63,19 +63,12 @@ public class MouseHandlerLengthenCrease extends BaseMouseHandler {
     //マウス操作(マウスを動かしたとき)を行う関数    //Logger.info("_");
     public void mouseMoved(Point p0) {
         //マウスで選択できる候補点を表示する。常にマウスの位置自身が候補点となる。
-        if (d.getGridInputAssist()) {
-            Point p = d.getCamera().TV2object(p0);
 
-            d.getLineCandidate().clear();
-            d.getLineCandidate().add(new LineSegment(p, p, d.getLineColor()));
-        }
     }//常にマウスの位置のみが候補点
 
     //マウス操作(ボタンを押したとき)時の作業
     public void mousePressed(Point p0) {
         Point p = d.getCamera().TV2object(p0);
-
-        d.getLineCandidate().clear();
 
         if (currentStep == Step.START) {
             linesToExtendSortingBox.reset();

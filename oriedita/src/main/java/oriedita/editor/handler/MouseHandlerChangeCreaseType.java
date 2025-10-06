@@ -33,7 +33,7 @@ public class MouseHandlerChangeCreaseType extends StepMouseHandler<ChangeCreaseT
     @Override
     public void drawPreview(Graphics2D g2, Camera camera, DrawingSettings settings) {
         super.drawPreview(g2, camera, settings);
-        DrawingUtil.drawLineStep(g2, segment, camera, 3.0f, d.getGridInputAssist());
+        DrawingUtil.drawLineStep(g2, segment, camera, 3.0f);
     }
 
     @Override

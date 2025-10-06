@@ -41,8 +41,8 @@ public class MouseHandlerPolygonSetNoCorners extends StepMouseHandler<PolygonSet
     @Override
     public void drawPreview(Graphics2D g2, Camera camera, DrawingSettings settings) {
         super.drawPreview(g2, camera, settings);
-        DrawingUtil.drawStepVertex(g2, p1, d.getLineColor(), camera, d.getGridInputAssist());
-        DrawingUtil.drawStepVertex(g2, p2, d.getLineColor(), camera, d.getGridInputAssist());
+        DrawingUtil.drawStepVertex(g2, p1, d.getLineColor(), camera);
+        DrawingUtil.drawStepVertex(g2, p2, d.getLineColor(), camera);
     }
 
     @Override

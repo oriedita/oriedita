@@ -46,13 +46,13 @@ public class MouseHandlerParallelDrawWidth extends StepMouseHandler<ParallelDraw
     @Override
     public void drawPreview(Graphics2D g2, Camera camera, DrawingSettings settings) {
         super.drawPreview(g2, camera, settings);
-        DrawingUtil.drawLineStep(g2, selectSegment, camera, settings.getLineWidth(), d.getGridInputAssist());
-        DrawingUtil.drawStepVertex(g2, anchorPoint, LineColor.CYAN_3, camera, d.getGridInputAssist());
-        DrawingUtil.drawStepVertex(g2, releasePoint, LineColor.CYAN_3, camera, d.getGridInputAssist());
-        DrawingUtil.drawLineStep(g2, dragSegment, camera, settings.getLineWidth(), d.getGridInputAssist());
-        DrawingUtil.drawLineStep(g2, indicatorList.get(0), camera, settings.getLineWidth(), d.getGridInputAssist());
-        DrawingUtil.drawLineStep(g2, indicatorList.get(1), camera, settings.getLineWidth(), d.getGridInputAssist());
-        DrawingUtil.drawLineStep(g2, selectIndicatorSegment, camera, settings.getLineWidth(), d.getGridInputAssist());
+        DrawingUtil.drawLineStep(g2, selectSegment, camera, settings.getLineWidth());
+        DrawingUtil.drawStepVertex(g2, anchorPoint, LineColor.CYAN_3, camera);
+        DrawingUtil.drawStepVertex(g2, releasePoint, LineColor.CYAN_3, camera);
+        DrawingUtil.drawLineStep(g2, dragSegment, camera, settings.getLineWidth());
+        DrawingUtil.drawLineStep(g2, indicatorList.get(0), camera, settings.getLineWidth());
+        DrawingUtil.drawLineStep(g2, indicatorList.get(1), camera, settings.getLineWidth());
+        DrawingUtil.drawLineStep(g2, selectIndicatorSegment, camera, settings.getLineWidth());
     }
 
     @Override

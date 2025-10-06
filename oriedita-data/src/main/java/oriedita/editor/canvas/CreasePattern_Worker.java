@@ -5,7 +5,6 @@ import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.databinding.GridModel;
 import oriedita.editor.drawing.Grid;
 import oriedita.editor.drawing.tools.Camera;
-import origami.crease_pattern.CustomLineTypes;
 import oriedita.editor.save.Save;
 import origami.crease_pattern.FoldLineSet;
 import origami.crease_pattern.LineSegmentSet;
@@ -19,7 +18,6 @@ import java.awt.Graphics;
 import java.awt.geom.Path2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.List;
 
 public interface CreasePattern_Worker {
     void lineStepAdd(LineSegment s);
@@ -81,10 +79,6 @@ public interface CreasePattern_Worker {
                         float f_h_WireframeLineWidth, int p0x_max, int p0y_max,
                         boolean i_mejirusi_display, boolean hideOperationFrame);
 
-    void resetCircleStep();
-
-    // ------------------------------------
-    void setGridInputAssist(boolean i);
 
     void addCircle(Circle e0);
 
@@ -114,8 +108,6 @@ public interface CreasePattern_Worker {
 
     void resetLineStep(int i);
 
-    int getCandidateSize();
-
     void refreshIsSelectionEmpty();
 
     void setIsSelectionEmpty(boolean isSelectionEmpty);
@@ -130,8 +122,6 @@ public interface CreasePattern_Worker {
 
     boolean deleteInside_text(Point p1, Point p2);
 
-    boolean change_property_in_4kakukei(Point p0a, Point p0b);
-
     LineSegment extendToIntersectionPoint(LineSegment s0);
 
     //-------------------------
@@ -140,8 +130,6 @@ public interface CreasePattern_Worker {
     void v_del_all();
 
     void v_del_all_cc();
-
-    boolean insideToDeleteType(Point p0a, Point p0b, CustomLineTypes del);
 
     void setFoldLineDividingNumber(int i);
 
@@ -194,11 +182,8 @@ public interface CreasePattern_Worker {
 
     Camera getCamera();
 
-    boolean getGridInputAssist();
 
     LineColor getLineColor();
-
-    List<LineSegment> getLineCandidate();
 
     FoldLineSet getFoldLineSet();
 

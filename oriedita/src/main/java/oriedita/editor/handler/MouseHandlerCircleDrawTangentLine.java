@@ -54,14 +54,13 @@ public class MouseHandlerCircleDrawTangentLine extends StepMouseHandler<CircleDr
     @Override
     public void drawPreview(Graphics2D g2, Camera camera, DrawingSettings settings) {
         super.drawPreview(g2, camera, settings);
-        DrawingUtil.drawStepVertex(g2, point, d.getLineColor(), camera, d.getGridInputAssist());
+        DrawingUtil.drawStepVertex(g2, point, d.getLineColor(), camera);
         DrawingUtil.drawCircleStep(g2, circle1, camera);
         DrawingUtil.drawCircleStep(g2, circle2, camera);
         for (LineSegment indicator : indicators) {
-            DrawingUtil.drawLineStep(g2, indicator, camera, settings.getLineWidth(),
-                    d.getGridInputAssist());
+            DrawingUtil.drawLineStep(g2, indicator, camera, settings.getLineWidth());
         }
-        DrawingUtil.drawLineStep(g2, resultSegment, camera, settings.getLineWidth(), d.getGridInputAssist());
+        DrawingUtil.drawLineStep(g2, resultSegment, camera, settings.getLineWidth());
     }
 
     @Override

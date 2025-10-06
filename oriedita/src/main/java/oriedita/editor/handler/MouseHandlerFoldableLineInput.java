@@ -2,7 +2,6 @@ package oriedita.editor.handler;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import org.tinylog.Logger;
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.canvas.MouseMode;
 import origami.Epsilon;
@@ -27,82 +26,7 @@ public class MouseHandlerFoldableLineInput extends BaseMouseHandlerInputRestrict
         if (d.getLineStep().size() == 0) {
             i_step_for_copy_4p = CreasePattern_Worker.FourPointStep.STEP_0;
         }
-        if (d.getGridInputAssist()) {
-            d.getLineCandidate().clear();
 
-            Point p = d.getCamera().TV2object(p0);
-
-            if (d.getLineStep().size() == 0) {
-                i_step_for_copy_4p = CreasePattern_Worker.FourPointStep.STEP_0;
-            }
-            Logger.info("i_egaki_dankai= " + d.getLineStep().size() + "  ;   i_step_for_copy_4p= " + i_step_for_copy_4p);
-
-            switch (i_step_for_copy_4p) {
-                case STEP_0:
-                    super.mouseMoved(p0);
-                    break;
-                case STEP_1: {
-                    LineSegment closestLineSegment = new LineSegment(d.getClosestLineStepSegment(p, 1, d.getLineStep().size()));
-                    if ((d.getLineStep().size() >= 2) && (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.getSelectionDistance())) {
-                        d.getLineCandidate().clear();
-                        d.getLineCandidate().add(closestLineSegment);
-                        return;
-                    }
-
-                    Point closest_point = d.getClosestPoint(p);
-                    if (p.distance(closest_point) < d.getSelectionDistance()) {
-                        d.getLineCandidate().clear();
-                        d.getLineCandidate().add(new LineSegment(closest_point, closest_point, d.getLineColor()));
-                        return;
-                    }
-                    return;
-                }
-                case STEP_2: {//i_step_for_copy_4p==2であれば、以下でs_step[1]を入力折線を確定する
-                    Point closest_point = d.getClosestPoint(p);
-
-                    if (Epsilon.high.le0(closest_point.distance(d.getLineStep().get(0).getA()))) {
-                        d.getLineCandidate().clear();
-                        d.getLineCandidate().add(new LineSegment(closest_point, closest_point, d.getLineColor()));
-                        Logger.info("i_step_for39_2_   1");
-
-                        return;
-                    }
-
-                    if ((p.distance(d.getLineStep().get(0).getB()) < d.getSelectionDistance()) && (p.distance(d.getLineStep().get(0).getB()) <= p.distance(closest_point))) {
-                        d.getLineCandidate().clear();
-                        d.getLineCandidate().add(new LineSegment(d.getLineStep().get(0).getB(), d.getLineStep().get(0).getB(), d.getLineColor()));
-                        Logger.info("i_step_for39_2_   2");
-
-                        return;
-                    }
-
-                    if (p.distance(closest_point) < d.getSelectionDistance()) {
-                        d.getLineCandidate().clear();
-                        d.getLineCandidate().add(new LineSegment(closest_point, closest_point, d.getLineColor()));
-                        Logger.info("i_step_for39_2_   3");
-
-                        return;
-                    }
-
-                    LineSegment closestLineSegment = new LineSegment(d.getClosestLineSegment(p));
-                    LineSegment moyori_step_lineSegment = new LineSegment(
-                            d.getClosestLineStepSegment(p, 1, d.getLineStep().size()));
-                    if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) >= d.getSelectionDistance()) {//最寄の既存折線が遠い場合
-                        if (OritaCalc.determineLineSegmentDistance(p, moyori_step_lineSegment) < d.getSelectionDistance()) {//最寄のstep_senbunが近い場合
-                            return;
-                        }
-                        //最寄のstep_senbunが遠い場合
-                        Logger.info("i_step_for39_2_   4");
-                    } else if (OritaCalc.determineLineSegmentDistance(p, closestLineSegment) < d.getSelectionDistance()) {//最寄の既存折線が近い場合
-                        d.getLineCandidate().clear();
-                        closestLineSegment = closestLineSegment.withColor(d.getLineColor());
-                        d.getLineCandidate().add(closestLineSegment);
-
-                        Logger.info("i_step_for39_2_   5");
-                    }
-                }
-            }
-        }
     }
 
     //マウス操作(ボタンを押したとき)時の作業--------------
@@ -227,7 +151,6 @@ public class MouseHandlerFoldableLineInput extends BaseMouseHandlerInputRestrict
                     return;
                 }
                 d.getLineStep().clear();
-                d.getLineCandidate().clear();
                 return;
             }
             case STEP_2: {//i_step_for_copy_4p==2であれば、以下でs_step[1]を入力折線を確定する
@@ -235,7 +158,6 @@ public class MouseHandlerFoldableLineInput extends BaseMouseHandlerInputRestrict
 
                 if (Epsilon.high.le0(closest_point.distance(d.getLineStep().get(0).getA()))) {
                     d.getLineStep().clear();
-                    d.getLineCandidate().clear();
                     return;
                 }
 
@@ -248,7 +170,6 @@ public class MouseHandlerFoldableLineInput extends BaseMouseHandlerInputRestrict
                     d.addLineSegment(add_sen);
                     d.record();
                     d.getLineStep().clear();
-                    d.getLineCandidate().clear();
                     return;
                 }
 
@@ -268,7 +189,6 @@ public class MouseHandlerFoldableLineInput extends BaseMouseHandlerInputRestrict
                     //最寄のstep_senbunが遠い場合
 
                     d.getLineStep().clear();
-                    d.getLineCandidate().clear();
                     return;
                 }
 
@@ -281,7 +201,6 @@ public class MouseHandlerFoldableLineInput extends BaseMouseHandlerInputRestrict
                         d.addLineSegment(add_sen);
                         d.record();
                         d.getLineStep().clear();
-                        d.getLineCandidate().clear();
                         return;
                     }
                     //最寄の既存折線が無効の場合
@@ -296,7 +215,6 @@ public class MouseHandlerFoldableLineInput extends BaseMouseHandlerInputRestrict
                     }
                     //最寄のstep_senbunが遠い場合
                     d.getLineStep().clear();
-                    d.getLineCandidate().clear();
                 }
                 break;
             }

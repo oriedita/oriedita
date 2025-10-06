@@ -10,25 +10,6 @@ public abstract class BaseMouseHandlerPolygon extends BaseMouseHandler {
     @Override
     public void mouseMoved(Point p0) {
         //マウス操作(マウスを動かしたとき)を行う関数
-        updateGridAssistCandidate(p0);
-    }
-
-    private void updateGridAssistCandidate(Point p0) {
-        if (d.getGridInputAssist() && d.getLineStep().size() > 1) {
-            d.getLineCandidate().clear();
-
-            Point p = d.getCamera().TV2object(p0);
-            Point closest_point = d.getClosestPoint(p);
-            if (p.distance(closest_point) > p.distance(d.getLineStep().get(0).getA())) {
-                closest_point = d.getLineStep().get(0).getA();
-            }
-
-            if (p.distance(closest_point) < d.getSelectionDistance()) {
-                p = closest_point;
-            }
-            LineSegment candidate = new LineSegment(p, p, LineColor.MAGENTA_5, LineSegment.ActiveState.ACTIVE_BOTH_3);
-            d.getLineCandidate().add(candidate);
-        }
     }
 
     @Override
@@ -54,7 +35,6 @@ public abstract class BaseMouseHandlerPolygon extends BaseMouseHandler {
         d.getLineStep().set(
                 d.getLineStep().size() - 1,
                 d.getLineStep().get(d.getLineStep().size() - 1).withB(p));
-        updateGridAssistCandidate(p0);
     }
 
     @Override
