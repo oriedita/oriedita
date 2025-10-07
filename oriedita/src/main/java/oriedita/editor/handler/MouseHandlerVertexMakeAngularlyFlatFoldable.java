@@ -89,7 +89,7 @@ public class MouseHandlerVertexMakeAngularlyFlatFoldable extends StepMouseHandle
             if (!map.getLines(closestPoint).isEmpty()) {
                 violation = Check4.findFlatfoldabilityViolation(closestPoint, map.getLines(closestPoint));
             }
-            if (violation.isPresent() && violation.get().getViolatedRule() != FlatFoldabilityViolation.Rule.NONE) {
+            if (violation.isPresent() && violation.get().getViolatedRule() == FlatFoldabilityViolation.Rule.NUMBER_OF_FOLDS) {
                 invalidPoint = d.getClosestPoint(p);
             }
         } catch (InterruptedException e) {
