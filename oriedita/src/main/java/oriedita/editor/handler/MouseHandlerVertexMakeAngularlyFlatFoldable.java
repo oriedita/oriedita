@@ -8,15 +8,19 @@ import oriedita.editor.drawing.tools.DrawingUtil;
 import oriedita.editor.handler.step.StepMouseHandler;
 import oriedita.editor.handler.step.ObjCoordStepNode;
 import origami.Epsilon;
+import origami.crease_pattern.FlatFoldabilityViolation;
 import origami.crease_pattern.OritaCalc;
+import origami.crease_pattern.PointLineMap;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
+import origami.crease_pattern.worker.foldlineset.Check4;
 import origami.folding.util.SortingBox;
 
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 enum AngularlyFlatFoldableStep {
     SELECT_INVALID_VERTEX,
@@ -33,6 +37,7 @@ public class MouseHandlerVertexMakeAngularlyFlatFoldable extends StepMouseHandle
 
     private boolean workDone = false;
     LineColor icol_temp = LineColor.BLACK_0;
+    PointLineMap map;
 
     private Point invalidPoint;
     private List<LineSegment> candidates = new ArrayList<>();
@@ -72,10 +77,24 @@ public class MouseHandlerVertexMakeAngularlyFlatFoldable extends StepMouseHandle
 
     // Select invalid vertex
     private void move_drag_select_invalid_vertex(Point p) {
-        if (p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
-            invalidPoint = d.getClosestPoint(p);
-        } else
+        Point closestPoint = d.getClosestPoint(p);
+        if (p.distance(closestPoint) > d.getSelectionDistance()) {
             invalidPoint = null;
+            return;
+        }
+
+        try {
+            Optional<FlatFoldabilityViolation> violation = Optional.empty();
+            map = new PointLineMap(d.getFoldLineSet().getLineSegments());
+            if (!map.getLines(closestPoint).isEmpty()) {
+                violation = Check4.findFlatfoldabilityViolation(closestPoint, map.getLines(closestPoint));
+            }
+            if (violation.isPresent() && violation.get().getViolatedRule() != FlatFoldabilityViolation.Rule.NONE) {
+                invalidPoint = d.getClosestPoint(p);
+            }
+        } catch (InterruptedException e) {
+            invalidPoint = null;
+        }
     }
 
     private AngularlyFlatFoldableStep release_select_invalid_vertex(Point p) {
