@@ -391,6 +391,26 @@ public class ButtonServiceImpl implements ButtonService {
         }
         removeKeyStroke(key);
         if (keyStroke != null){
+            // hotkey already in use
+            if (keystrokes.containsValue(keyStroke)){
+                var conflictKey = keystrokes.inverse().get(keyStroke);
+                var jarBundleConflictKeyStroke = ResourceUtil.getJarBundleString("hotkey", conflictKey);
+                var jarBundleKeyStroke = ResourceUtil.getJarBundleString("hotkey", key);
+                // conflict with pre-set hotkey -> favor user-set hotkeys, remove preset hotkey
+                if (jarBundleConflictKeyStroke != null && !jarBundleConflictKeyStroke.isEmpty()){
+                    // conflictKey is the pre-set one to be removed
+                    Logger.info("keystroke conflict: {} and {}. Keeping {} since it is user-defined",
+                            conflictKey, key, key);
+                    removeKeyStrokeAndUpdateUi(conflictKey);
+                    keystrokeChangeSupport.firePropertyChange(conflictKey, keyStroke, null);
+                } else if (jarBundleKeyStroke != null && !jarBundleKeyStroke.isEmpty()) {
+                    // key is the pre-set one to be removed
+                    Logger.info("keystroke conflict: {} and {}. Keeping {} since it is user-defined",
+                            conflictKey, key, conflictKey);
+                    removeKeyStrokeAndUpdateUi(key);
+                    return;
+                } // else: both are user-defined, Exception is fine since this should never happen
+            }
             synchronized (keystrokes) {
                 keystrokes.put(key, keyStroke);
             }
@@ -400,6 +420,16 @@ public class ButtonServiceImpl implements ButtonService {
         }
         setTooltip(key);
         keystrokeChangeSupport.firePropertyChange(key, oldValue, keyStroke);
+    }
+
+    private void removeKeyStrokeAndUpdateUi(String conflictKey) {
+        removeKeyStroke(conflictKey);
+        setTooltip(conflictKey);
+        this.registeredButtons.get(conflictKey).forEach(button -> {
+            if (button instanceof JMenuItem menuItem) {
+                menuItem.setAccelerator(null);
+            }
+        });
     }
 
     public String getActionFromKeystroke(KeyStroke stroke) {
@@ -521,10 +551,10 @@ public class ButtonServiceImpl implements ButtonService {
 
     public void setTooltip(String key) {
         String name = ResourceUtil.getBundleString("name", key);
-        String keyStrokeString = ResourceUtil.getBundleString("hotkey", key);
         String tooltip = ResourceUtil.getBundleString("tooltip", key);
 
-        KeyStroke keyStroke = KeyStroke.getKeyStroke(keyStrokeString);
+
+        KeyStroke keyStroke = keystrokes.get(key);
 
 
         String tooltipText = "<html>";
