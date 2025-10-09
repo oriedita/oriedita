@@ -46,6 +46,7 @@ public class FoldLineSet {
     private final Queue<FlatFoldabilityViolation> cAMVViolations = new ConcurrentLinkedQueue<>();
 
     private QuadTree quadTree;
+    private PointLineMap foldLineMap;
 
     List<Circle> circles = new ArrayList<>(); //円のインスタンス化
 
@@ -68,7 +69,7 @@ public class FoldLineSet {
         Check3LineSegment.clear();
         cAMVViolations.clear();
         circles.clear();
-        quadTree = null;
+        invalidateQuadTree();
     }
 
     public void set(FoldLineSet foldLineSet) {
@@ -104,6 +105,7 @@ public class FoldLineSet {
     }
 
     private void invalidateQuadTree() {
+        foldLineMap = null;
         quadTree = null;
     }
 
@@ -143,6 +145,11 @@ public class FoldLineSet {
 
     public Collection<LineSegment> getLineSegmentsCollection() {
         return lineSegments.stream().skip(1).limit(getTotal()).toList();
+    }
+
+    public PointLineMap getFoldLineMap() throws InterruptedException {
+        if (foldLineMap == null) return new PointLineMap(lineSegments);
+        return foldLineMap;
     }
 
     //Get a line segment

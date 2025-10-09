@@ -10,7 +10,6 @@ import oriedita.editor.handler.step.ObjCoordStepNode;
 import origami.Epsilon;
 import origami.crease_pattern.FlatFoldabilityViolation;
 import origami.crease_pattern.OritaCalc;
-import origami.crease_pattern.PointLineMap;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
@@ -37,10 +36,10 @@ public class MouseHandlerVertexMakeAngularlyFlatFoldable extends StepMouseHandle
 
     private boolean workDone = false;
     LineColor icol_temp = LineColor.BLACK_0;
-    PointLineMap map;
 
     private Point invalidPoint;
     private List<LineSegment> candidates = new ArrayList<>();
+    private List<LineSegment> validatingLines = new ArrayList<>();
     private LineSegment selectedCandidate;
     private LineSegment destinationSegment;
 
@@ -71,6 +70,7 @@ public class MouseHandlerVertexMakeAngularlyFlatFoldable extends StepMouseHandle
         resetStep();
         invalidPoint = null;
         candidates = new ArrayList<>();
+        validatingLines = new ArrayList<>();
         selectedCandidate = null;
         destinationSegment = null;
     }
@@ -85,9 +85,9 @@ public class MouseHandlerVertexMakeAngularlyFlatFoldable extends StepMouseHandle
 
         try {
             Optional<FlatFoldabilityViolation> violation = Optional.empty();
-            map = new PointLineMap(d.getFoldLineSet().getLineSegments());
-            if (!map.getLines(closestPoint).isEmpty()) {
-                violation = Check4.findFlatfoldabilityViolation(closestPoint, map.getLines(closestPoint));
+            validatingLines = d.getFoldLineSet().getFoldLineMap().getLines(closestPoint);
+            if (!validatingLines.isEmpty()) {
+                violation = Check4.findFlatfoldabilityViolation(closestPoint, validatingLines);
             }
             if (violation.isPresent() && violation.get().getViolatedRule() == FlatFoldabilityViolation.Rule.NUMBER_OF_FOLDS) {
                 invalidPoint = d.getClosestPoint(p);
@@ -183,7 +183,7 @@ public class MouseHandlerVertexMakeAngularlyFlatFoldable extends StepMouseHandle
                     LineSegment s = OritaCalc.lineSegment_rotate(s_kiso, kakukagenti / 2.0,
                             d.getGrid().getGridWidth() / s_kiso_length);
                     s = s.withColor(LineColor.PURPLE_8);
-                    s.setActive(LineSegment.ActiveState.INACTIVE_0);
+                    s =s.withActive(LineSegment.ActiveState.INACTIVE_0);
                     candidates.add(s);
                 }
             }
