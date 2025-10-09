@@ -99,6 +99,7 @@ public class ButtonServiceImpl implements ButtonService {
 
         synchronized (registeredButtons) {
             for (AbstractButton btn : registeredButtons.values()) {
+                if (btn == null) continue;
                 if (btn.getAction() instanceof MouseModeAction action) {
                     btn.setSelected(m == action.getMouseMode());
                 } else if (!(btn instanceof JCheckBoxMenuItem) && !(btn instanceof JCheckBox)) {
@@ -498,7 +499,6 @@ public class ButtonServiceImpl implements ButtonService {
                                     .findFirst()
                                     .orElseThrow();
                             button.cycleOrActivate(action);
-                            button.doClick();
                         } else {
                             tempAction.actionPerformed(e);
                         }
@@ -541,7 +541,9 @@ public class ButtonServiceImpl implements ButtonService {
         if (!tooltipText.equals("<html>")) {
             String finalTooltipText = tooltipText;
             synchronized (registeredButtons) {
-                registeredButtons.get(key).forEach(b -> b.setToolTipText(finalTooltipText));
+                registeredButtons.get(key).stream()
+                        .filter(Objects::nonNull)
+                        .forEach(b -> b.setToolTipText(finalTooltipText));
             }
         }
     }
