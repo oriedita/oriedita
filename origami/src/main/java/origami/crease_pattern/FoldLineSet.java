@@ -148,7 +148,7 @@ public class FoldLineSet {
     }
 
     public PointLineMap getFoldLineMap() throws InterruptedException {
-        if (foldLineMap == null) return new PointLineMap(lineSegments);
+        if (foldLineMap == null) foldLineMap = new PointLineMap(lineSegments);
         return foldLineMap;
     }
 
