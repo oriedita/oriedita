@@ -89,7 +89,8 @@ public class MouseHandlerVertexMakeAngularlyFlatFoldable extends StepMouseHandle
             if (!validatingLines.isEmpty()) {
                 violation = Check4.findFlatfoldabilityViolation(closestPoint, validatingLines);
             }
-            if (violation.isPresent() && violation.get().getViolatedRule() == FlatFoldabilityViolation.Rule.NUMBER_OF_FOLDS) {
+            if (violation.isPresent()
+                    && violation.get().getViolatedRule() == FlatFoldabilityViolation.Rule.NUMBER_OF_FOLDS) {
                 invalidPoint = d.getClosestPoint(p);
             }
         } catch (InterruptedException e) {
@@ -183,7 +184,7 @@ public class MouseHandlerVertexMakeAngularlyFlatFoldable extends StepMouseHandle
                     LineSegment s = OritaCalc.lineSegment_rotate(s_kiso, kakukagenti / 2.0,
                             d.getGrid().getGridWidth() / s_kiso_length);
                     s = s.withColor(LineColor.PURPLE_8);
-                    s =s.withActive(LineSegment.ActiveState.INACTIVE_0);
+                    s = s.withActive(LineSegment.ActiveState.INACTIVE_0);
                     candidates.add(s);
                 }
             }
@@ -200,7 +201,7 @@ public class MouseHandlerVertexMakeAngularlyFlatFoldable extends StepMouseHandle
     // Select candidate
     private void move_drag_select_candidate(Point p) {
         LineSegment closestCandidate = null;
-        double minDistance = 9999999.0;
+        double minDistance = Double.POSITIVE_INFINITY;
         for (LineSegment candidate : candidates) {
             double distance = OritaCalc.determineLineSegmentDistance(p, candidate);
             if (distance < d.getSelectionDistance()
