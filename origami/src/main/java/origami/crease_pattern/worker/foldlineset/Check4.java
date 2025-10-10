@@ -55,7 +55,7 @@ public class Check4 {
         }
     }
 
-    private static Optional<FlatFoldabilityViolation> findFlatfoldabilityViolation(Point p, List<LineSegment> lines)
+    public static Optional<FlatFoldabilityViolation> findFlatfoldabilityViolation(Point p, List<LineSegment> lines)
             throws InterruptedException {
         //If the end point of the line segment closest to the point p and the end point closer to the point p is the apex, how many line segments are present (the number of line segments having an end point within the apex and r).
         int i_tss_red = 0;

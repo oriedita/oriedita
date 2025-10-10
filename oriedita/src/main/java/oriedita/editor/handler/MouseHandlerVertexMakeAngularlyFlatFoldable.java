@@ -8,15 +8,18 @@ import oriedita.editor.drawing.tools.DrawingUtil;
 import oriedita.editor.handler.step.StepMouseHandler;
 import oriedita.editor.handler.step.ObjCoordStepNode;
 import origami.Epsilon;
+import origami.crease_pattern.FlatFoldabilityViolation;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
+import origami.crease_pattern.worker.foldlineset.Check4;
 import origami.folding.util.SortingBox;
 
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 enum AngularlyFlatFoldableStep {
     SELECT_INVALID_VERTEX,
@@ -36,6 +39,7 @@ public class MouseHandlerVertexMakeAngularlyFlatFoldable extends StepMouseHandle
 
     private Point invalidPoint;
     private List<LineSegment> candidates = new ArrayList<>();
+    private List<LineSegment> validatingLines = new ArrayList<>();
     private LineSegment selectedCandidate;
     private LineSegment destinationSegment;
 
@@ -66,16 +70,32 @@ public class MouseHandlerVertexMakeAngularlyFlatFoldable extends StepMouseHandle
         resetStep();
         invalidPoint = null;
         candidates = new ArrayList<>();
+        validatingLines = new ArrayList<>();
         selectedCandidate = null;
         destinationSegment = null;
     }
 
     // Select invalid vertex
     private void move_drag_select_invalid_vertex(Point p) {
-        if (p.distance(d.getClosestPoint(p)) < d.getSelectionDistance()) {
-            invalidPoint = d.getClosestPoint(p);
-        } else
+        Point closestPoint = d.getClosestPoint(p);
+        if (p.distance(closestPoint) > d.getSelectionDistance()) {
             invalidPoint = null;
+            return;
+        }
+
+        try {
+            Optional<FlatFoldabilityViolation> violation = Optional.empty();
+            validatingLines = d.getFoldLineSet().getFoldLineMap().getLines(closestPoint);
+            if (!validatingLines.isEmpty()) {
+                violation = Check4.findFlatfoldabilityViolation(closestPoint, validatingLines);
+            }
+            if (violation.isPresent()
+                    && violation.get().getViolatedRule() == FlatFoldabilityViolation.Rule.NUMBER_OF_FOLDS) {
+                invalidPoint = d.getClosestPoint(p);
+            }
+        } catch (InterruptedException e) {
+            invalidPoint = null;
+        }
     }
 
     private AngularlyFlatFoldableStep release_select_invalid_vertex(Point p) {
@@ -164,7 +184,7 @@ public class MouseHandlerVertexMakeAngularlyFlatFoldable extends StepMouseHandle
                     LineSegment s = OritaCalc.lineSegment_rotate(s_kiso, kakukagenti / 2.0,
                             d.getGrid().getGridWidth() / s_kiso_length);
                     s = s.withColor(LineColor.PURPLE_8);
-                    s.setActive(LineSegment.ActiveState.INACTIVE_0);
+                    s = s.withActive(LineSegment.ActiveState.INACTIVE_0);
                     candidates.add(s);
                 }
             }
@@ -181,7 +201,7 @@ public class MouseHandlerVertexMakeAngularlyFlatFoldable extends StepMouseHandle
     // Select candidate
     private void move_drag_select_candidate(Point p) {
         LineSegment closestCandidate = null;
-        double minDistance = 9999999.0;
+        double minDistance = Double.POSITIVE_INFINITY;
         for (LineSegment candidate : candidates) {
             double distance = OritaCalc.determineLineSegmentDistance(p, candidate);
             if (distance < d.getSelectionDistance()
