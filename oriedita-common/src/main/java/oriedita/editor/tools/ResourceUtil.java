@@ -61,15 +61,27 @@ public class ResourceUtil {
         return "dev";
     }
 
-    private static ResourceBundle emptyResourceBundle = new ListResourceBundle() {
+    private static final ResourceBundle emptyResourceBundle = new ListResourceBundle() {
         @Override
         protected Object[][] getContents() {
             return new Object[0][];
         }
     };
-    private static Map<String, ResourceBundle> userBundleCache = new ConcurrentHashMap<>();
-    private static Map<String, ResourceBundle> localBundleCache = new ConcurrentHashMap<>();
+    private static final Map<String, ResourceBundle> userBundleCache = new ConcurrentHashMap<>();
+    private static final Map<String, ResourceBundle> localBundleCache = new ConcurrentHashMap<>();
 
+    public static String getJarBundleString(String bundle, String key) {
+        try {
+            ResourceBundle jarBundle = ResourceBundle.getBundle(bundle);
+
+            if (jarBundle.containsKey(key)) {
+                return jarBundle.getString(key);
+            }
+        } catch (MissingResourceException ignored)
+        {
+        }
+        return null;
+    }
 
     /**
      * Reads a string from one of three locations:

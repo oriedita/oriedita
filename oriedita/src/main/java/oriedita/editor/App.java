@@ -9,8 +9,6 @@ import org.tinylog.Logger;
 import oriedita.common.task.MultiStagedExecutor;
 import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.databinding.ApplicationModel;
-import oriedita.editor.databinding.BackgroundModel;
-import oriedita.editor.databinding.CameraModel;
 import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.databinding.FileModel;
 import oriedita.editor.databinding.FoldedFigureModel;
@@ -70,8 +68,6 @@ public class App {
     private final Editor editor;
     private final AppMenuBar appMenuBar;
     private final GridModel gridModel;
-    private final BackgroundModel backgroundModel;
-    private final CameraModel cameraModel;
     private final ResetService resetService;
     private final ActionRegistrationService actionRegistrationService;
     // ------------------------------------------------------------------------
@@ -100,8 +96,6 @@ public class App {
             Editor editor,
             AppMenuBar appMenuBar,
             GridModel gridModel,
-            BackgroundModel backgroundModel,
-            CameraModel cameraModel,
             ResetService resetService,
             ActionRegistrationService actionRegistrationService
     ) {
@@ -119,8 +113,6 @@ public class App {
         this.editor = editor;
         this.appMenuBar = appMenuBar;
         this.gridModel = gridModel;
-        this.backgroundModel = backgroundModel;
-        this.cameraModel = cameraModel;
         this.resetService = resetService;
         this.actionRegistrationService = actionRegistrationService;
     }
@@ -310,10 +302,6 @@ public class App {
             mainCreasePatternWorker.setCamera(canvas.getCreasePatternCamera());
 
             mainCreasePatternWorker.record();
-        });
-        executor.execute(() -> {
-            buttonService.Button_shared_operation();
-            buttonService.loadAllKeyStrokes();
         });
         executor.execute(lookAndFeelService::updateButtonIcons);
 
