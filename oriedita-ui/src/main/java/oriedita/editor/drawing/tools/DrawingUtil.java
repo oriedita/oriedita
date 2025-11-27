@@ -142,15 +142,8 @@ public class DrawingUtil {
 
     public static void drawSelectLine(Graphics g, LineSegment s, Camera camera) {
         g.setColor(Colors.get(Color.green));
-
         LineSegment s_tv = camera.object2TV(s);
-
-        //なぜEpsilon.UNKNOWN_0000001を足すかというと,ディスプレイに描画するとき元の折線が新しい折線に影響されて動いてしまうのを防ぐため
-        // TODO: check if adding 1e-6 is really necessary
-        Point a = new Point(s_tv.determineAX() + Epsilon.UNKNOWN_1EN6, s_tv.determineAY() + Epsilon.UNKNOWN_1EN6);
-        Point b = new Point(s_tv.determineBX() + Epsilon.UNKNOWN_1EN6, s_tv.determineBY() + Epsilon.UNKNOWN_1EN6);
-
-        g.drawLine((int) a.getX(), (int) a.getY(), (int) b.getX(), (int) b.getY()); //直線
+        g.drawLine((int) s_tv.determineAX(), (int) s_tv.determineAY(), (int) s_tv.determineBX(), (int) s_tv.determineBY()); //直線
     }
 
     public static void drawAuxLiveLine(Graphics g, LineSegment as, Camera camera, float lineWidth, int pointSize, float f_h_WireframeLineWidth) {
@@ -503,14 +496,14 @@ public class DrawingUtil {
     }
 
     /**
-     * returns the region according to the Cohen-Sutherland Line Clipping Algorithm using a viewport rectangle
+     * Returns the region according to the Cohen-Sutherland Line Clipping Algorithm using a viewport rectangle
      * going from (clipLowX, clipLowY) to (clipHighX, clipHighY). If the point is inside the viewport, the region
      * will be CENTER (= 0), otherwise, the direction of the point in relation to the viewport can be retrieved
      * using bitwise-and with the Constants WEST, EAST, NORTH, SOUTH.
      * <p>
      * If the bitwise-and of the Endpoints of a Line is not CENTER, the whole line is outside the viewport.
      * <p>
-     * for more info, see https://en.wikipedia.org/wiki/Cohen%E2%80%93Sutherland_algorithm
+     * For more info, see <a href="https://en.wikipedia.org/wiki/Cohen%E2%80%93Sutherland_algorithm">Cohen–Sutherland algorithm</a>
      */
     public static int cohenSutherlandRegion(int clipLowX, int clipLowY, int clipHighX, int clipHighY, Point point) {
         int region = CENTER;
@@ -531,13 +524,14 @@ public class DrawingUtil {
      * Draws a Flatfoldability violation to the graphics object.
      *
      * @param g            Graphics on which to draw
-     * @param p            point that violates flatfoldability
+     * @param camera       Camera object to transform violation renderings
      * @param violation    object that describes the violation
      * @param transparency how transparently the violation should be drawn
      * @param useAdvanced  whether to use the "legacy" way to draw (purple circles) or the newer one which differentiates
      *                     between types of violations
      */
-    public static void drawViolation(Graphics2D g, Point p, FlatFoldabilityViolation violation, int transparency, boolean useAdvanced) {
+    public static void drawViolation(Graphics2D g, Camera camera, FlatFoldabilityViolation violation, int transparency, boolean useAdvanced) {
+        Point p = camera.object2TV(violation.getPoint());
         g.setColor(Colors.get(new Color(255, 0, 147, transparency)));
 
         if (!useAdvanced) {
@@ -582,8 +576,13 @@ public class DrawingUtil {
                     if (i == segments.length - 1 && segments[i].getColor() == LineColor.BLACK_0) {
                         break;
                     }
-                    LineSegment current = OritaCalc.lineSegmentChangeLength(segments[i], 15);
-                    LineSegment next = OritaCalc.lineSegmentChangeLength(segments[(i + 1) % segments.length], 15);
+
+                    LineSegment current = new LineSegment(camera.object2TV(segments[i].getA()), camera.object2TV(segments[i].getB()));
+                    LineSegment next = new LineSegment(camera.object2TV(segments[(i + 1) % segments.length].getA()),
+                            camera.object2TV(segments[(i + 1) % segments.length].getB()));
+                    current = OritaCalc.lineSegmentChangeLength(current, 15);
+                    next = OritaCalc.lineSegmentChangeLength(next, 15);
+
                     int[] xCoords = new int[]{
                             (int) p.getX(),
                             (int) (p.getX() + current.determineDeltaX()),

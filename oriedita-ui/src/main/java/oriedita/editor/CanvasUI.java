@@ -259,10 +259,13 @@ public class CanvasUI extends JPanel {
         double d_width = creasePatternCamera.getCameraZoomX() * mainCreasePatternWorker.getSelectionDistance();
 
         //展開図表示
-        mainCreasePatternWorker.drawWithCamera(bufferGraphics,
-                displayComments, displayCpLines, displayAuxLines, displayLiveAuxLines,
-                applicationModel.getDisplayCpText(), lineWidth, lineStyle, auxLineWidth,
-                dim.width, dim.height, displayMarkings, hideOperationFrame);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ,展開図動かし中心の十字の目印の表示
+        if (!applicationModel.getDisplayCreasePatternOnTop()) {
+            mainCreasePatternWorker.drawWithCamera(bufferGraphics,
+                    displayComments, displayCpLines, displayAuxLines, displayLiveAuxLines,
+                    applicationModel.getDisplayCpText(), lineWidth, lineStyle, auxLineWidth,
+                    dim.width, dim.height, displayMarkings, hideOperationFrame);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ,展開図動かし中心の十字の目印の表示
+        }
+
         DrawingSettings settings = new DrawingSettings(
                 lineWidth, auxLineWidth, applicationModel.getPointSize(), lineStyle,
                 dim.height, dim.width,
