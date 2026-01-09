@@ -451,7 +451,7 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
         //Logger.info("foldLineSet.check4_size() = "+foldLineSet.check4_size());
         if (check4) {
             for (FlatFoldabilityViolation violation : foldLineSet.getViolations()) {
-                DrawingUtil.drawViolation(g2, camera.object2TV(violation.getPoint()), violation,
+                DrawingUtil.drawViolation(g2, camera, violation,
                         applicationModel.getCheck4ColorTransparency(), applicationModel.getAdvancedCheck4Display());
             }
 
@@ -548,9 +548,7 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
         //線分入力時の一時的なs_step線分を描く　
 
         if (!hideOperationFrame && ((canvasModel.getMouseMode() != MouseMode.OPERATION_FRAME_CREATE_61) || (lineStep.size() == 4))) {
-            for (LineSegment s : lineStep) {
-                DrawingUtil.drawLineStep(g, s, camera, lineWidth);
-            }
+            lineStep.forEach((s) -> DrawingUtil.drawLineStep(g, s, camera, lineWidth));
         }
 
         g.setColor(Color.MAGENTA);
@@ -558,9 +556,6 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
 
         //候補入力時の候補を描く//Logger.info("_");
         g2.setStroke(new BasicStroke(lineWidth + 0.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));//基本指定A
-
-        g.setColor(Colors.get(Color.black));
-
         g.setColor(Colors.get(Color.black));
 
         if (displayComments) {
