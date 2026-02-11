@@ -1,6 +1,7 @@
 package oriedita.editor.swing.component;
 
 import oriedita.editor.action.ActionType;
+import oriedita.editor.action.MouseModeAction;
 import oriedita.editor.handler.PopupMenuAdapter;
 
 import javax.swing.JButton;
@@ -20,8 +21,9 @@ public class DropdownToolButton extends JButton {
     private ActionType activeAction;
     private boolean dropdownOpened = false;
 
-    private Timer timer;
-    private ActionType cycleAction = null;
+    private Timer pressForDropdownTimer;
+    private Timer cycleActivationTimer;
+    private long lastCycleMillis = 0;
 
     public DropdownToolButton() {
         this.addMouseListener(new MouseAdapter() {
@@ -32,19 +34,16 @@ public class DropdownToolButton extends JButton {
             }
             @Override
             public void mousePressed(MouseEvent e) {
-                timer = new Timer(300, ev -> openDropdown());
-                timer.setRepeats(false);
-                timer.start();
+                pressForDropdownTimer = new Timer(300, ev -> openDropdown());
+                pressForDropdownTimer.setRepeats(false);
+                pressForDropdownTimer.start();
             }
             @Override
             public void mouseReleased(MouseEvent e) {
-                timer.stop();
+                pressForDropdownTimer.stop();
                 if (e.getButton() == MouseEvent.BUTTON1 && (isInTriangle(e) )) {
                     e.consume();
                     openDropdown();
-                }
-                if (!isInTriangle(e)) {
-                    cycleAction = activeAction;
                 }
             }
         });
@@ -117,7 +116,6 @@ public class DropdownToolButton extends JButton {
 
     public boolean setActiveAction(int index) {
         if (this.actions.size() > index) {
-            cycleAction = null;
             ActionType oldActiveAction = activeAction;
             activeAction = actions.get(index);
             this.setActionCommand(activeAction.action());
@@ -131,23 +129,30 @@ public class DropdownToolButton extends JButton {
         return dropdownOpened && !dropdownMenu.isVisible();
     }
 
-    public ActionType getCycleAction() {
-        return cycleAction;
-    }
-
-    public void setCycleAction(ActionType cycleAction) {
-        this.cycleAction = cycleAction;
-    }
-
     public void cycleOrActivate(ActionType action) {
-        if (isSelected() && (getCycleAction() == null || getCycleAction() == action)) {
+        int cycleTimeMs = 400;
+        if (isSelected() && msSinceLastCycle()< cycleTimeMs) {
             setActiveAction(
                     (getActions().indexOf(getActiveAction()) + 1)
                             % getActions().size());
-            setCycleAction(action);
         } else {
             setActiveAction(getActions().indexOf(action));
-            setCycleAction(action);
         }
+        lastCycleMillis = System.currentTimeMillis();
+        if (cycleActivationTimer != null) {
+            cycleActivationTimer.stop();
+        }
+        if (!(getAction() instanceof MouseModeAction)) {
+            setSelected(true);
+            cycleActivationTimer = new Timer(cycleTimeMs + 10, (e) -> doClick());
+            cycleActivationTimer.setRepeats(false);
+            cycleActivationTimer.start();
+        } else {
+            doClick();
+        }
+    }
+
+    private long msSinceLastCycle() {
+        return (System.currentTimeMillis() - lastCycleMillis);
     }
 }
