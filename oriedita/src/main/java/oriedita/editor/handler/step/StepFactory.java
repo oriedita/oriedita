@@ -32,6 +32,15 @@ public class StepFactory {
         this.d = d;
     }
 
+    /**
+     * creates a node that moves to a different step depending on which feature (e.g. mouse button) was used to trigger
+     * the node.
+     * @param step
+     * @param moveAction
+     * @param pressAction
+     * @return
+     * @param <T>
+     */
     public <T extends Enum<T>> IStepNode<T> createSwitchNode(
             T step, Consumer<Point> moveAction, Function<MouseModeHandler.Feature, T> pressAction) {
         return new ObjCoordStepNode<>(step,
@@ -93,9 +102,18 @@ public class StepFactory {
                 lineAction, l -> lineAction.apply(List.of(l)), p -> {}, p -> {}, lineFilter, cpCamera, d);
     }
 
-    public <T extends Enum<T>> IStepNode<T> createSelectPointNode(T step, LineColor previewColor, boolean free,
+    public <T extends Enum<T>> IStepNode<T> createSelectPointNode(T step, LineColor previewColor,
+                                                                  boolean free,
                                                                   Consumer<Point> onHighlight,
                                                                   Function<Point, T> onSelected){
-        return new SelectPointStepNode<>(step, previewColor, cpCamera, d, free, onHighlight, onSelected);
+        return new SelectPointStepNode<>(step, previewColor, cpCamera, d, free, true, onHighlight, onSelected);
+    }
+
+    public <T extends Enum<T>> IStepNode<T> createSelectPointNode(T step, LineColor previewColor,
+                                                                  boolean free,
+                                                                  boolean snap,
+                                                                  Consumer<Point> onHighlight,
+                                                                  Function<Point, T> onSelected){
+        return new SelectPointStepNode<>(step, previewColor, cpCamera, d, free, snap, onHighlight, onSelected);
     }
 }

@@ -47,7 +47,7 @@ public abstract class StepMouseHandler<T extends Enum<T>> extends BaseMouseHandl
     }
 
     // TODO: make abstract after moving step initialization in all subclasses
-    protected StepGraph<T> initStepGraph(StepFactory stepFactory) {
+    protected StepGraph<T> initStepGraph(StepFactory stepFactory){
         return this.steps;
     }
 
