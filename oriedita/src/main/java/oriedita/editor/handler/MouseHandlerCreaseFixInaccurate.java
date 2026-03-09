@@ -68,7 +68,7 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
         }
 
         // Fixing
-        FixerResult result = fix(toFix, lines.size());
+        FixerResult result = fix(toFix);
 
         int i = 0;
         LineSegment ls2;
@@ -86,6 +86,8 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
 
         fls.divideLineSegmentWithNewLines(fls.getTotal() - lines.size(), fls.getTotal());
 
+        // Record new state and display nuimber of lines changed
+        // only if any lines changed.
         if(result.numFixedLines > 0) {
             d.record();
             bb.write("Fixed " + result.numFixedLines + " lines");
@@ -99,20 +101,14 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
         d.check4();
     }
 
+    private FixerResult fix(ArrayList<Double> toFix) {
 
-    private FixerResult fix(ArrayList<Double> toFix, int inLinesSize) {
-        // Initial 22.5 precision
         double precisionGeneric = 0.0004;
-
         // Fix BP first
-        FixerResult result1 = fixBP(toFix, inLinesSize);
-
-        loadData("fixData_22_5.bin");
-
+        FixerResult result1 = fixBP(toFix);
         // Fix 22.5
+        loadData("fixData_22_5.bin");
         FixerResult result2 = fixWithData(toFix, precisionGeneric);
-
-        // 
 
         /* To load external file, keep just in case we decide against packing the 60mb generic fix file into the jar
         if (genericFix) {
@@ -137,8 +133,7 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
             }
 
             result2 = fixGeneric(toFix, precisionGeneric);
-        }
-            */
+        }*/
 
         if (result1.numFixedLines > result2.numFixedLines)
             return result1;
@@ -163,16 +158,15 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
     }
 
     // Fix BP
-    private FixerResult fixBP(ArrayList<Double> inLines, long inLinesSize) {
+    private FixerResult fixBP(ArrayList<Double> toFix) {
         // Output
         ArrayList<Double> outLines = new ArrayList<>();
 
         // Fixing
-        int gridSize = 0;//= d.getGrid().getGridSize() * 24; // Multiplied by 24 to get 2,3,4,6,8,12 and 24 partials
+        int gridSize = 0;
         double currentValue, nearestInt;
-        // Oripa can be off by up to 0.0000075     PezDorado.cp by Fernando was off by 0.0013
-        final double basePrecision = 0.0013;
-        // Since the fixing happens at different sizes, the precision needs to be adjusted
+        final double basePrecision = 0.0013; // Arbitrary value. Derived from testing
+        // Since the fixing involves scaling, the precision needs to be adjusted
         double precision = (basePrecision * gridSize) / 200.0;
 
         // Grid search
@@ -185,11 +179,6 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
         // Fixed lines counter logic
         boolean isLineFixed = false;
         long fixedLineCounter = 0;
-
-        // Other
-        //boolean isBP = false;
-        //final float isBPPercent = .90f; // Arbitrary value, keep under 1.0f
-
 
         // Automatic grid search algorithm
         for (int gridIteration = 1; gridIteration <= 16; gridIteration++) {
@@ -219,12 +208,11 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
             // Since the fixing happens at different sizes, the precision needs to be adjusted
             precision = (basePrecision * gridSizeSearch) / 200.0;
 
-            for (int i = 0; i < inLines.size(); i++) {
-                currentValue = inLines.get(i);
+            for (int i = 0; i < toFix.size(); i++) {
+                currentValue = toFix.get(i);
                 // Reset line counter
-                if ((i % 4) == 0) {
+                if ((i % 4) == 0)
                     isLineFixed = false;
-                }
 
                 // Scales the position for gridSearch
                 currentValue = currentValue / 200 * gridSizeSearch;
@@ -248,12 +236,8 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
             }
 
             // Ends grid search prematurely if it finds a close match
-            if (fixedLineCounter > (inLinesSize * gridSearchEndPercent))
+            if (fixedLineCounter > ((toFix.size()/4) * gridSearchEndPercent))
                 endGridSearch = true;
-
-            // If it finds many fixed lines by BP it skips the 22.5 fixing
-            //if ((inLinesSize * isBPPercent) < fixedLineCounter)
-              //  isBP = true;
 
             // Resets value for next iteration/actual fixing
             isLineFixed = false;
@@ -263,8 +247,8 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
         }
 
         // Fixing algorithm
-        for (int i = 0; i < inLines.size(); i++) {
-            currentValue = inLines.get(i);
+        for (int i = 0; i < toFix.size(); i++) {
+            currentValue = toFix.get(i);
   
             // Scales the position for fixing
             currentValue = currentValue / 200 * gridSize;
@@ -279,23 +263,18 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
             outLines.add(currentValue);
         }
 
-        // If it finds many fixed lines by BP it skips the 22.5 fixing
-        //if ((inLinesSize * isBPPercent) < fixedLineCounter)
-        //    isBP = true;
-
-        return new oriedita.editor.handler.MouseHandlerCreaseFixInaccurate.FixerResult(fixedLineCounter, outLines);
+        return new FixerResult(fixedLineCounter, outLines);
     }
 
     // Fix with given data file
-    private FixerResult fixWithData(ArrayList<Double> inLines, double inPrecision) {
+    private FixerResult fixWithData(ArrayList<Double> inLines, double precision) {
         ArrayList<Double> outLines = new ArrayList<>();
 
         // For storing already used positions
-        ArrayList<Double> alreadyFixedPositions = new ArrayList<>();
+        ArrayList<Double> prevFixedPositions = new ArrayList<>();
 
         // Variables for the fixing algorithm
         double currentValue;
-        double precision = inPrecision; // Original: 0.0000075,  5mao5 needed: 0.000075
         boolean isNegative;
         boolean skipSlow;
         
@@ -309,9 +288,8 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
             skipSlow = false;
             isNegative = false;
             // On first position of line reset values
-            if (((i % 4) == 0)) {
+            if (((i % 4) == 0))
                 isLineFixed = false;
-            }
 
             // 22_5_Data.bin only holds positive values
             if (currentValue < 0) {
@@ -320,9 +298,9 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
             }
 
             // Check the already fixed positions first
-            for (int j = 0; j < alreadyFixedPositions.size(); j++) {
-                if (Math.abs(currentValue - alreadyFixedPositions.get(j)) <= precision) {
-                    currentValue = alreadyFixedPositions.get(j);
+            for (int j = 0; j < prevFixedPositions.size(); j++) {
+                if (Math.abs(currentValue - prevFixedPositions.get(j)) <= precision) {
+                    currentValue = prevFixedPositions.get(j);
                     // Increment fixed lines if not already fixed
                     if (!isLineFixed) {
                         isLineFixed = true;
@@ -339,7 +317,7 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
                         currentValue = fixData[j];
 
                         // Write fixed value into alreadyFixed database
-                        alreadyFixedPositions.add(fixData[j]);
+                        prevFixedPositions.add(fixData[j]);
                         // Increment fixed lines if not already fixed
                         if (!isLineFixed) {
                             isLineFixed = true;
@@ -352,6 +330,7 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
             // Re-invert negative values
             if (isNegative)
                 currentValue *= -1;
+
             outLines.add(currentValue);
         }
         return new FixerResult(fixedLineCounter, outLines);
