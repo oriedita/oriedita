@@ -7,6 +7,7 @@ import java.nio.DoubleBuffer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
+import org.tinylog.Logger;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -15,26 +16,27 @@ import oriedita.editor.handler.step.StepFactory;
 import oriedita.editor.handler.step.StepGraph;
 import oriedita.editor.handler.step.StepMouseHandler;
 import origami.crease_pattern.element.LineSegment;
-import origami.crease_pattern.element.Point;
+import origami.folding.util.IBulletinBoard;
 
 @ApplicationScoped
 @Handles(MouseMode.FIX_INACCURATE_107)
 public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandlerCreaseFixInaccurate.Step> {
     @Inject
-    public MouseHandlerCreaseFixInaccurate() {
+    public MouseHandlerCreaseFixInaccurate(IBulletinBoard bb) {
+        this.bb = bb;
     }
 
     private int fixDataSize;
-    // Holds the data for generic fixing
     private double[] fixData;
+    IBulletinBoard bb;
 
     private class FixerResult {
         long numFixedLines;
         ArrayList<Double> lines;
 
-        FixerResult(long inNumFixed, ArrayList<Double> inLines) {
-            numFixedLines = inNumFixed;
-            lines = inLines;
+        FixerResult(long numFixedLines, ArrayList<Double> lines) {
+            this.numFixedLines = numFixedLines;
+            this.lines = lines;
         }
     }
 
@@ -65,45 +67,48 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
             toFix.add(s.getB().getY());
         }
 
-        var fls = d.getFoldLineSet();
-
         // Fixing
         FixerResult result = fix(toFix, lines.size());
 
         int i = 0;
         LineSegment ls2;
+        var fls = d.getFoldLineSet();
         // Delete selected lines
-        for(LineSegment ls : lines)
-        {
+        for(LineSegment ls : lines) {
             fls.deleteLine(ls);
-            ls2 = new LineSegment(
-                    new Point(result.lines.get(i * 4 + 0), result.lines.get(i * 4 + 1)),
-                    new Point(result.lines.get(i * 4 + 2), result.lines.get(i * 4 + 3)),
-                    ls.getColor(),
-                    ls.getActive(),
-                    ls.getSelected(),
-                    ls.getCustomized(),
-                    ls.getCustomizedColor());
+            ls2 = ls.withCoordinates(result.lines.get(i), 
+                                     result.lines.get(i+1), 
+                                     result.lines.get(i+2), 
+                                     result.lines.get(i+3));
             fls.addLine(ls2);
-            i++;
+            i += 4;
         }
+
         fls.divideLineSegmentWithNewLines(fls.getTotal() - lines.size(), fls.getTotal());
-        d.record();
+
+        if(result.numFixedLines > 0) {
+            d.record();
+            bb.write("Fixed " + result.numFixedLines + " lines");
+            new Thread(() -> {
+                try {
+                    Thread.sleep(3000);
+                    bb.clear();
+                } catch (InterruptedException ex) {}
+            }).start();
+        }
         d.check4();
     }
 
 
     private FixerResult fix(ArrayList<Double> toFix, int inLinesSize) {
         // Initial 22.5 precision
-        double precisionGeneric = 0.000050;
+        double precisionGeneric = 0.0004;
 
         // Fix BP first
         FixerResult result1 = fixBP(toFix, inLinesSize);
-        try{
-            loadData("fixData_22_5.bin");
-        }catch (IOException ioe_22_5) {
-                // Failed to access file
-            }
+
+        loadData("fixData_22_5.bin");
+
         // Fix 22.5
         FixerResult result2 = fixWithData(toFix, precisionGeneric);
 
@@ -142,16 +147,19 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
     }
 
     // Map data into an array
-    private void loadData(String file) throws IOException
-    {
-        var stream = Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream(file));
-        byte[] bytes = stream.readAllBytes();
+    private void loadData(String file){ 
+        try {
+            var stream = Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream(file));
+            byte[] bytes = stream.readAllBytes();
 
-        ByteBuffer bb = ByteBuffer.wrap(bytes).order(ByteOrder.LITTLE_ENDIAN);
-        DoubleBuffer db = bb.asDoubleBuffer();
-        fixDataSize = db.remaining();
-        fixData = new double[fixDataSize];
-        db.get(fixData);
+            ByteBuffer byteBuffer = ByteBuffer.wrap(bytes).order(ByteOrder.LITTLE_ENDIAN);
+            DoubleBuffer db = byteBuffer.asDoubleBuffer();
+            fixDataSize = db.remaining();
+            fixData = new double[fixDataSize];
+            db.get(fixData);
+        } catch (IOException | NullPointerException e) {
+            Logger.error(e);
+        }
     }
 
     // Fix BP
@@ -278,7 +286,7 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
         return new oriedita.editor.handler.MouseHandlerCreaseFixInaccurate.FixerResult(fixedLineCounter, outLines);
     }
 
-    // Fix generic
+    // Fix with given data file
     private FixerResult fixWithData(ArrayList<Double> inLines, double inPrecision) {
         ArrayList<Double> outLines = new ArrayList<>();
 
