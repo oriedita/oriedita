@@ -33,15 +33,100 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
     private class FixerResult {
         long numFixedLines;
         ArrayList<Double> lines;
+        Type type;
+        enum Type {
+            BP, PURE_22_5, Other
+        }
 
-        FixerResult(long numFixedLines, ArrayList<Double> lines) {
+        FixerResult(long numFixedLines, ArrayList<Double> lines, Type type) {
             this.numFixedLines = numFixedLines;
             this.lines = lines;
+            this.type = type;
+        }
+    }
+
+    private class Xform {
+        boolean isSquare;
+        boolean inDefaultSquare;
+        double scale;
+        double deltaX;
+        double deltaY;
+
+        public Xform(boolean isSquare, boolean inDefaultSquare, double scale, double deltaX, double deltaY) {
+            this.isSquare = isSquare;
+            this.inDefaultSquare = inDefaultSquare;
+            this.scale = scale;
+            this.deltaX = deltaX;
+            this.deltaY = deltaY;
         }
     }
 
     public enum Step {
         SELECT_LINES
+    }
+
+    private Xform getXform(Collection<LineSegment> lines) {
+        double maxX = -Double.MAX_VALUE;
+        double maxY = -Double.MAX_VALUE;
+        double minX = Double.MAX_VALUE;
+        double minY = Double.MAX_VALUE;
+        for (var ls : lines) {
+            if(ls.getA().getX() < minX)
+                minX = ls.getA().getX();
+            if(ls.getA().getX() > maxX)
+                maxX = ls.getA().getX();
+
+            if(ls.getA().getY() < minY)
+                minY = ls.getA().getY();
+            if(ls.getA().getY() > maxY)
+                maxY = ls.getA().getY();
+
+            if(ls.getB().getX() < minX)
+                minX = ls.getB().getX();
+            if(ls.getB().getX() > maxX)
+                maxX = ls.getB().getX();
+
+            if(ls.getB().getY() < minY)
+                minY = ls.getB().getY();
+            if(ls.getB().getY() > maxY)
+                maxY = ls.getB().getY();
+        }
+        boolean isSquare = Math.abs(Math.abs(minY-maxY) - Math.abs(minX-maxX)) < 0.001;
+        boolean inDefaultSqaure = (minX > -200.001) && (minY > -200.001) && (maxX < 200.001) && (maxY < 200.001);
+        double midX = minX + Math.abs(maxX-minX)/2;
+        double midY = minY + Math.abs(maxY-minY)/2;
+        double scale = 400/Math.abs(maxX-minX);
+        return new Xform(isSquare, inDefaultSqaure, scale, midX, midY);
+    }
+
+    private ArrayList<LineSegment> doXform (Collection<LineSegment> lines, Xform xform) {
+        ArrayList<LineSegment> out = new ArrayList<>();
+        for (var ls : lines) {
+            var ls2 = ls.withCoordinates((ls.getA().getX() - xform.deltaX) * xform.scale,
+                                         (ls.getA().getY() - xform.deltaY) * xform.scale,
+                                         (ls.getB().getX() - xform.deltaX) * xform.scale,
+                                         (ls.getB().getY() - xform.deltaY) * xform.scale);
+            if(xform.isSquare)
+                out.add(ls2);
+            else
+                out.add(ls);
+        }
+        return out;
+    }
+
+    private ArrayList<Double> doInvXform (ArrayList<Double> lines, Xform xform) {
+        if(xform.isSquare) {
+            ArrayList<Double> out = new ArrayList<>();
+            for (int i = 0; i<lines.size(); i+=4) {
+                out.add(lines.get(i+0)/xform.scale + xform.deltaX);
+                out.add(lines.get(i+1)/xform.scale + xform.deltaY);
+                out.add(lines.get(i+2)/xform.scale + xform.deltaX);
+                out.add(lines.get(i+3)/xform.scale + xform.deltaY);
+            }
+            return out;
+        }
+        else
+            return lines;
     }
 
     @Override
@@ -55,8 +140,12 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
         return st;
     }
 
-    private void fixWrapper(Collection<LineSegment> lines) {
-        if (lines.isEmpty()) {return;}
+    private void fixWrapper(Collection<LineSegment> selectedLines) {
+        if (selectedLines.isEmpty()) {return;}
+
+        // Transform the selected lines to the middle for easier fixing
+        Xform xform = getXform(selectedLines);
+        ArrayList<LineSegment> lines = doXform(selectedLines, xform);
 
         // Holds the values to be fixed
         ArrayList<Double> toFix = new ArrayList<>();
@@ -70,31 +159,40 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
         // Fixing
         FixerResult result = fix(toFix);
 
+        
+        if((result.type == FixerResult.Type.PURE_22_5) && !xform.inDefaultSquare && !xform.isSquare)
+            bb.write("WARNING: Fix may be bad. Try to fix 22.5° CPs inside the default square or as square CP");
+
+        result.lines = doInvXform(result.lines, xform);
+
         int i = 0;
-        LineSegment ls2;
         var fls = d.getFoldLineSet();
-        // Delete selected lines
-        for(LineSegment ls : lines) {
+        for(LineSegment ls : selectedLines) {
             fls.deleteLine(ls);
-            ls2 = ls.withCoordinates(result.lines.get(i), 
-                                     result.lines.get(i+1), 
-                                     result.lines.get(i+2), 
-                                     result.lines.get(i+3));
+            LineSegment ls2 = ls.withCoordinates(result.lines.get(i+0), 
+                                                 result.lines.get(i+1), 
+                                                 result.lines.get(i+2), 
+                                                 result.lines.get(i+3));
             fls.addLine(ls2);
             i += 4;
         }
 
         fls.divideLineSegmentWithNewLines(fls.getTotal() - lines.size(), fls.getTotal());
 
-        // Record new state and display nuimber of lines changed
-        // only if any lines changed.
+        // Record new state and display changed line number when 1+ lines changed
         if(result.numFixedLines > 0) {
             d.record();
             bb.write("Fixed " + result.numFixedLines + " lines");
             new Thread(() -> {
                 try {
-                    Thread.sleep(3000);
-                    bb.clear();
+                    if((result.type == FixerResult.Type.PURE_22_5) && !xform.inDefaultSquare && !xform.isSquare) {
+                        Thread.sleep(15000);
+                        bb.clear();
+                    }
+                    else {
+                        Thread.sleep(5000);
+                        bb.clear();
+                    }
                 } catch (InterruptedException ex) {}
             }).start();
         }
@@ -103,12 +201,17 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
 
     private FixerResult fix(ArrayList<Double> toFix) {
 
-        double precisionGeneric = 0.0004;
+        double precision22_5 = 0.0004;
+
         // Fix BP first
-        FixerResult result1 = fixBP(toFix);
+        FixerResult resultBP = fixBP(toFix);
+        // Exit early if it's probably boxpleated
+        if(resultBP.numFixedLines > (toFix.size()/4 * .9))
+            return resultBP;
+
         // Fix 22.5
         loadData("fixData_22_5.bin");
-        FixerResult result2 = fixWithData(toFix, precisionGeneric);
+        FixerResult result22_5 = fixWithData(toFix, precision22_5);
 
         /* To load external file, keep just in case we decide against packing the 60mb generic fix file into the jar
         if (genericFix) {
@@ -135,10 +238,10 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
             result2 = fixGeneric(toFix, precisionGeneric);
         }*/
 
-        if (result1.numFixedLines > result2.numFixedLines)
-            return result1;
+        if (resultBP.numFixedLines > result22_5.numFixedLines)
+            return resultBP;
         else
-            return result2;
+            return result22_5;
     }
 
     // Map data into an array
@@ -263,7 +366,7 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
             outLines.add(currentValue);
         }
 
-        return new FixerResult(fixedLineCounter, outLines);
+        return new FixerResult(fixedLineCounter, outLines, FixerResult.Type.BP);
     }
 
     // Fix with given data file
@@ -333,7 +436,7 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
 
             outLines.add(currentValue);
         }
-        return new FixerResult(fixedLineCounter, outLines);
+        return new FixerResult(fixedLineCounter, outLines, FixerResult.Type.PURE_22_5);
     }
 }
 
