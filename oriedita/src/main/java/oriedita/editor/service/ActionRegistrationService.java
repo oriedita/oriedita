@@ -131,7 +131,8 @@ public class ActionRegistrationService {
                 Map.entry(ActionType.a1Action, MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_1_55),
                 Map.entry(ActionType.a2Action, MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_2_56),
                 Map.entry(ActionType.a3Action, MouseMode.DISPLAY_ANGLE_BETWEEN_THREE_POINTS_3_57),
-                Map.entry(ActionType.textAction, MouseMode.TEXT));
+                Map.entry(ActionType.textAction, MouseMode.TEXT),
+                Map.entry(ActionType.fixInaccurateAction, MouseMode.FIX_INACCURATE_107));
 
         for (Map.Entry<ActionType, MouseMode> entry : mouseModeWithUnselectActions.entrySet()) {
             actionService.registerAction(entry.getKey(),
