@@ -31,15 +31,19 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
     IBulletinBoard bb;
 
     private class FixerResult {
-        long numFixedLines;
+        // Number of lines that were actually fixed. Used for display and to skip fixes that aren't necessary
+        long numFixedLines;   
+        // Number of lines that are theoretically fixable. Used to compare/determine algorithms      
+        long numFixableLines;       
         ArrayList<Double> lines;
         Type type;
         enum Type {
             BP, PURE_22_5, Other
         }
 
-        FixerResult(long numFixedLines, ArrayList<Double> lines, Type type) {
+        FixerResult(long numFixedLines, long numFixableLines, ArrayList<Double> lines, Type type) {
             this.numFixedLines = numFixedLines;
+            this.numFixableLines = numFixableLines;
             this.lines = lines;
             this.type = type;
         }
@@ -47,7 +51,7 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
 
     private class Xform {
         boolean isSquare;
-        boolean inDefaultSquare;
+        boolean inDefaultSquare; // All positions lie within (-200|-200) - (200|200)
         double scale;
         double deltaX;
         double deltaY;
@@ -66,6 +70,7 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
     }
 
     private Xform getXform(Collection<LineSegment> lines) {
+        double allowedErrror = 0.001;
         double maxX = -Double.MAX_VALUE;
         double maxY = -Double.MAX_VALUE;
         double minX = Double.MAX_VALUE;
@@ -91,8 +96,11 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
             if(ls.getB().getY() > maxY)
                 maxY = ls.getB().getY();
         }
-        boolean isSquare = Math.abs(Math.abs(minY-maxY) - Math.abs(minX-maxX)) < 0.001;
-        boolean inDefaultSqaure = (minX > -200.001) && (minY > -200.001) && (maxX < 200.001) && (maxY < 200.001);
+        boolean isSquare = Math.abs(Math.abs(minY-maxY) - Math.abs(minX-maxX)) < allowedErrror;
+        boolean inDefaultSqaure = (minX > -(200+allowedErrror)) && 
+                                  (minY > -(200+allowedErrror)) && 
+                                  (maxX <  (200+allowedErrror)) && 
+                                  (maxY <  (200+allowedErrror));               
         double midX = minX + Math.abs(maxX-minX)/2; 
         double midY = minY + Math.abs(maxY-minY)/2; 
         double scale = 400/Math.abs(maxX-minX);
@@ -114,31 +122,31 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
         return out;
     }
 
+    private double undoXformCalc(double pos, double allowedErrror) {
+        double close = (double)Math.round(pos);
+            if(Math.abs(close - pos) < allowedErrror) 
+                return close;
+            else                                       
+                return pos;
+    }
+
     private ArrayList<Double> undoXform (ArrayList<Double> lines, Xform xform) {
+        double allowedErrror = 0.000000000001;
         if(xform.isSquare && !xform.inDefaultSquare) {
             ArrayList<Double> out = new ArrayList<>();
             for (int i = 0; i<lines.size(); i+=4) {
-
                 // The rescaling introduced a slight error, fix near intetgers to make the save file prettier.
                 double pos = lines.get(i+0)/xform.scale + xform.deltaX;
-                double close = (double)Math.round(pos);
-                if(Math.abs(close - pos) < 0.000000000001) out.add(close);
-                else                                       out.add(pos);
+                out.add((Double)undoXformCalc(pos,allowedErrror));
 
                 pos = lines.get(i+1)/xform.scale + xform.deltaY;
-                close = (double)Math.round(pos);
-                if(Math.abs(close - pos) < 0.000000000001) out.add(close);
-                else                                       out.add(pos);
+                out.add((Double)undoXformCalc(pos,allowedErrror));
 
                 pos = lines.get(i+2)/xform.scale + xform.deltaX;
-                close = (double)Math.round(pos);
-                if(Math.abs(close - pos) < 0.000000000001) out.add(close);
-                else                                       out.add(pos);
+                out.add((Double)undoXformCalc(pos,allowedErrror));
 
                 pos = lines.get(i+3)/xform.scale + xform.deltaY;
-                close = (double)Math.round(pos);
-                if(Math.abs(close - pos) < 0.000000000001) out.add(close);
-                else                                       out.add(pos);
+                out.add((Double)undoXformCalc(pos,allowedErrror));
             }
             return out;
         }
@@ -158,7 +166,7 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
     }
 
     private void fixWrapper(Collection<LineSegment> selectedLines) {
-        if (selectedLines.isEmpty()) {return;}
+        if (selectedLines.isEmpty()) return;
 
         // Transform the selected lines to the middle for easier fixing
         Xform xform = getXform(selectedLines);
@@ -223,7 +231,7 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
         // Fix BP first
         FixerResult resultBP = fixBP(toFix);
         // Exit early if it's probably boxpleated
-        if(resultBP.numFixedLines > (toFix.size()/4 * .9))
+        if(resultBP.numFixableLines > (toFix.size()/4 * .9))
             return resultBP;
 
         // Fix 22.5
@@ -255,7 +263,7 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
             result2 = fixGeneric(toFix, precisionGeneric);
         }*/
 
-        if (resultBP.numFixedLines > result22_5.numFixedLines)
+        if (resultBP.numFixableLines > result22_5.numFixableLines)
             return resultBP;
         else
             return result22_5;
@@ -282,12 +290,15 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
         // Output
         ArrayList<Double> outLines = new ArrayList<>();
 
+        // Don't fix positions that are less than this much off
+        double allowedError = 0.00000000001;
+
         // Fixing
         int gridSize = 0;
         double currentValue, nearestInt;
         final double basePrecision = 0.0013; // Arbitrary value. Derived from testing
         // Since the fixing involves scaling, the precision needs to be adjusted
-        double precision = (basePrecision * gridSize) / 200.0;
+        double precision = 0;
 
         // Grid search
         int gridSizeSearch = 0;
@@ -298,12 +309,13 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
 
         // Fixed lines counter logic
         boolean isLineFixed = false;
-        long fixedLineCounter = 0;
+        long numFixableLines = 0;
+        long numFixedLines = 0;
 
         // Automatic grid search algorithm
         for (int gridIteration = 1; gridIteration <= 16; gridIteration++) {
             // Reset here because it shouldn't be overwritten at the end of grid search
-            fixedLineCounter = 0;
+            numFixableLines = 0;
 
             switch (gridIteration) {
                 // Ordered by likelihood
@@ -339,24 +351,24 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
 
                 // Round to nearest integer
                 nearestInt = (double) Math.round(currentValue);
-                if (Math.abs(currentValue - nearestInt) <= precision) {
-                    // Actual fixing happens later so we only need to
-                    // increment the line counter.
-                    if (!isLineFixed) {
-                        isLineFixed = true;
-                        fixedLineCounter++;
-                    }
+                if (Math.abs(currentValue - nearestInt) > precision)
+                    continue;
+                // Actual fixing happens later so we only need to
+                // increment the line counter.
+                if (!isLineFixed) {
+                    isLineFixed = true;
+                    numFixableLines++;
                 }
             }
 
             // Only overwrites old grid solution if the new one has 10% more matches (arbitrary value)
-            if (fixedLineCounter > (numLinesFixedWithPrevBestGrid) * neccesaryImprovementGrid) {
+            if (numFixableLines > (numLinesFixedWithPrevBestGrid) * neccesaryImprovementGrid) {
                 gridSize = gridSizeSearch;
-                numLinesFixedWithPrevBestGrid = fixedLineCounter;
+                numLinesFixedWithPrevBestGrid = numFixableLines;
             }
 
             // Ends grid search prematurely if it finds a close match
-            if (fixedLineCounter > ((toFix.size()/4) * gridSearchEndPercent))
+            if (numFixableLines > ((toFix.size()/4) * gridSearchEndPercent))
                 endGridSearch = true;
 
             // Resets value for next iteration/actual fixing
@@ -369,21 +381,32 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
         // Fixing algorithm
         for (int i = 0; i < toFix.size(); i++) {
             currentValue = toFix.get(i);
+
+            // Reset line counter logic
+            if ((i % 4) == 0)
+                    isLineFixed = false;
   
             // Scales the position for fixing
             currentValue = currentValue / 200 * gridSize;
 
             // Round to nearest integer
             nearestInt = (double) Math.round(currentValue);
-            if (Math.abs(currentValue - nearestInt) <= precision)
-                currentValue = nearestInt;
+            if (Math.abs(currentValue - nearestInt) < precision) {
+                if(Math.abs(currentValue - nearestInt) > allowedError) {
+                    if (!isLineFixed) {
+                        isLineFixed = true;
+                        numFixedLines++;
+                    }
+                    currentValue = nearestInt;
+                }
+            }           
 
             // Scale back
             currentValue = currentValue * 200 / gridSize;
             outLines.add(currentValue);
         }
 
-        return new FixerResult(fixedLineCounter, outLines, FixerResult.Type.BP);
+        return new FixerResult(numFixedLines, numFixableLines, outLines, FixerResult.Type.BP);
     }
 
     // Fix with given data file
@@ -393,6 +416,9 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
         // For storing already used positions
         ArrayList<Double> prevFixedPositions = new ArrayList<>();
 
+        // Don't fix positions that are less than this much off
+        double allowedError = 0.00000000001;
+
         // Variables for the fixing algorithm
         double currentValue;
         boolean isNegative;
@@ -400,8 +426,8 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
         
         // Fixed lines counter logic
         boolean isLineFixed = false;
-        long fixedLineCounter = 0;
-
+        long numFixableLines = 0;
+        long numFixedLines = 0;
 
         for (int i = 0; i < inLines.size(); i++) {
             currentValue = inLines.get(i);
@@ -419,30 +445,43 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
 
             // Check the already fixed positions first
             for (int j = 0; j < prevFixedPositions.size(); j++) {
-                if (Math.abs(currentValue - prevFixedPositions.get(j)) <= precision) {
+                if (Math.abs(currentValue - prevFixedPositions.get(j)) > precision)
+                    continue;
+                if (Math.abs(currentValue - prevFixedPositions.get(j)) > allowedError) {
                     currentValue = prevFixedPositions.get(j);
-                    // Increment fixed lines if not already fixed
                     if (!isLineFixed) {
                         isLineFixed = true;
-                        fixedLineCounter++;
+                        numFixableLines++;  
+                        numFixedLines++;
+                        skipSlow = true;
+                        break;
                     }
-                    skipSlow = true;
+                }
+                else if (!isLineFixed) {
+                    isLineFixed = true;
+                    numFixableLines++;      
                     break;
                 }
+
             }
             // If the position wasn't previously fixed already go through all possible positions
             if (skipSlow == false) {
                 for (int j = 0; j < fixDataSize; j++) {
-                    if (Math.abs(currentValue - fixData[j]) <= precision) {
+                    if (Math.abs(currentValue - fixData[j]) > precision)
+                        continue;
+                    if (Math.abs(currentValue - fixData[j]) > allowedError) {
                         currentValue = fixData[j];
-
-                        // Write fixed value into alreadyFixed database
                         prevFixedPositions.add(fixData[j]);
-                        // Increment fixed lines if not already fixed
                         if (!isLineFixed) {
                             isLineFixed = true;
-                            fixedLineCounter++;
+                            numFixableLines++;  
+                            numFixedLines++;
+                            break;
                         }
+                    }
+                    else if (!isLineFixed) {
+                        isLineFixed = true;
+                        numFixableLines++;      
                         break;
                     }
                 }
@@ -453,7 +492,6 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
 
             outLines.add(currentValue);
         }
-        return new FixerResult(fixedLineCounter, outLines, FixerResult.Type.PURE_22_5);
+        return new FixerResult(numFixedLines, numFixableLines, outLines, FixerResult.Type.PURE_22_5);
     }
 }
-
