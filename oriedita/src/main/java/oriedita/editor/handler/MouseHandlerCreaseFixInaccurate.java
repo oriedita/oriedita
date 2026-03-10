@@ -93,8 +93,8 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
         }
         boolean isSquare = Math.abs(Math.abs(minY-maxY) - Math.abs(minX-maxX)) < 0.001;
         boolean inDefaultSqaure = (minX > -200.001) && (minY > -200.001) && (maxX < 200.001) && (maxY < 200.001);
-        double midX = minX + Math.abs(maxX-minX)/2;
-        double midY = minY + Math.abs(maxY-minY)/2;
+        double midX = minX + Math.abs(maxX-minX)/2; 
+        double midY = minY + Math.abs(maxY-minY)/2; 
         double scale = 400/Math.abs(maxX-minX);
         return new Xform(isSquare, inDefaultSqaure, scale, midX, midY);
     }
@@ -106,7 +106,7 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
                                          (ls.getA().getY() - xform.deltaY) * xform.scale,
                                          (ls.getB().getX() - xform.deltaX) * xform.scale,
                                          (ls.getB().getY() - xform.deltaY) * xform.scale);
-            if(xform.isSquare)
+            if(xform.isSquare && !xform.inDefaultSquare)
                 out.add(ls2);
             else
                 out.add(ls);
@@ -114,14 +114,31 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
         return out;
     }
 
-    private ArrayList<Double> doInvXform (ArrayList<Double> lines, Xform xform) {
-        if(xform.isSquare) {
+    private ArrayList<Double> undoXform (ArrayList<Double> lines, Xform xform) {
+        if(xform.isSquare && !xform.inDefaultSquare) {
             ArrayList<Double> out = new ArrayList<>();
             for (int i = 0; i<lines.size(); i+=4) {
-                out.add(lines.get(i+0)/xform.scale + xform.deltaX);
-                out.add(lines.get(i+1)/xform.scale + xform.deltaY);
-                out.add(lines.get(i+2)/xform.scale + xform.deltaX);
-                out.add(lines.get(i+3)/xform.scale + xform.deltaY);
+
+                // The rescaling introduced a slight error, fix near intetgers to make the save file prettier.
+                double pos = lines.get(i+0)/xform.scale + xform.deltaX;
+                double close = (double)Math.round(pos);
+                if(Math.abs(close - pos) < 0.000000000001) out.add(close);
+                else                                       out.add(pos);
+
+                pos = lines.get(i+1)/xform.scale + xform.deltaY;
+                close = (double)Math.round(pos);
+                if(Math.abs(close - pos) < 0.000000000001) out.add(close);
+                else                                       out.add(pos);
+
+                pos = lines.get(i+2)/xform.scale + xform.deltaX;
+                close = (double)Math.round(pos);
+                if(Math.abs(close - pos) < 0.000000000001) out.add(close);
+                else                                       out.add(pos);
+
+                pos = lines.get(i+3)/xform.scale + xform.deltaY;
+                close = (double)Math.round(pos);
+                if(Math.abs(close - pos) < 0.000000000001) out.add(close);
+                else                                       out.add(pos);
             }
             return out;
         }
@@ -163,7 +180,7 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
         if((result.type == FixerResult.Type.PURE_22_5) && !xform.inDefaultSquare && !xform.isSquare)
             bb.write("WARNING: Fix may be bad. Try to fix 22.5° CPs inside the default square or as square CP");
 
-        result.lines = doInvXform(result.lines, xform);
+        result.lines = undoXform(result.lines, xform);
 
         int i = 0;
         var fls = d.getFoldLineSet();
