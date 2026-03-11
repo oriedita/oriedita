@@ -98,7 +98,7 @@ public class DragLineStepNode<T extends Enum<T>> extends AbstractStepNode<T>
                     d, dragLine.getA(), dragLine.getB(),
                     angleSystemModel.getCurrentAngleSystemDivider(), angleSystemModel.getAngles()));
         }
-        dragAction.accept(dragLine);
+        super.runDragAction(mousePos, e);
     }
 
     public LineSegment getDragLine() {
@@ -106,7 +106,9 @@ public class DragLineStepNode<T extends Enum<T>> extends AbstractStepNode<T>
     }
 
     @Override
-    public void runDragAction(Point mousePos) {}
+    public void runDragAction(Point mousePos) {
+        dragAction.accept(dragLine);
+    }
 
     @Override
     public T runReleaseAction(Point mousePos) {

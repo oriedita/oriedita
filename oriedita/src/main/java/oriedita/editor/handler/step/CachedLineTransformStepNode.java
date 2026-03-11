@@ -1,23 +1,29 @@
-package oriedita.editor.handler;
+package oriedita.editor.handler.step;
 
-import org.tinylog.Logger;
+import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.databinding.AngleSystemModel;
 import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
+import oriedita.editor.handler.DrawingSettings;
+import oriedita.editor.handler.MouseModeHandler;
 import oriedita.editor.save.Save;
 import oriedita.editor.save.SaveProvider;
 import origami.crease_pattern.FoldLineSet;
+import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
-public abstract class BaseMouseHandlerLineTransform extends BaseMouseHandlerLineSelect {
+public class CachedLineTransformStepNode<T extends Enum<T>> extends DragLineStepNode<T>{
 
-    protected CanvasModel canvasModel;
+    private final CreasePattern_Worker d;
+    protected final CanvasModel canvasModel;
     protected FoldLineSet lines;
     protected Point delta;
 
@@ -30,14 +36,22 @@ public abstract class BaseMouseHandlerLineTransform extends BaseMouseHandlerLine
     private double lastAngle;
     private Point bottomLeft, topRight;
 
-    protected BaseMouseHandlerLineTransform(CanvasModel canvasModel, AngleSystemModel angleSystemModel) {
-        super(angleSystemModel);
+    public CachedLineTransformStepNode(T step, LineColor color, Function<Point, T> releaseAction, Consumer<Point> moveAction, Consumer<LineSegment> dragAction, Camera camera, AngleSystemModel angleSystemModel, CreasePattern_Worker d, CanvasModel canvasModel) {
+        super(step, color, l -> releaseAction.apply(
+                l.getA().delta(l.getB())
+        ), moveAction, dragAction, camera, angleSystemModel, d);
+        this.d = d;
         this.canvasModel = canvasModel;
     }
 
     @Override
-    public void mousePressed(Point p0) {
-        super.mousePressed(p0);
+    public void runHighlightSelection(Point mousePos) {
+        super.runHighlightSelection(mousePos);
+    }
+
+    @Override
+    public T runPressAction(Point mousePos, MouseModeHandler.Feature mouseButton) {
+        var res = super.runPressAction(mousePos, mouseButton);
 
         delta = new Point(0, 0);
         FoldLineSet ori_s_temp = new FoldLineSet();    //セレクトされた折線だけ取り出すために使う
@@ -49,29 +63,26 @@ public abstract class BaseMouseHandlerLineTransform extends BaseMouseHandlerLine
         needsRerender = true;
         bottomLeft = null;
         topRight = null;
+        return res;
     }
 
     @Override
-    public void mouseDragged(Point p0) {
-        super.mouseDragged(p0);
-        delta = new Point(
-                -selectionLine.determineBX() + selectionLine.determineAX(),
-                -selectionLine.determineBY() + selectionLine.determineAY()
-        );
+    public void runDragAction(Point mousePos) {
+        super.runDragAction(mousePos);
+        var selectionLine = getDragLine();
+        delta = selectionLine.getA().delta(selectionLine.getB());
     }
 
     @Override
-    public void mouseReleased(Point p0) {
-        //  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
-
-        delta = new Point(
-                -selectionLine.determineBX() + selectionLine.determineAX(),
-                -selectionLine.determineBY() + selectionLine.determineAY()
-        );
+    public T runReleaseAction(Point mousePos) {
+        var selectionLine = getDragLine();
+        var res = super.runReleaseAction(mousePos);
+        delta = selectionLine.getA().delta(selectionLine.getB());
         d.getLineStep().clear();
         active = false;
         image = null;
         cacheTooBig = false;
+        return res;
     }
 
     @Override
@@ -103,7 +114,6 @@ public abstract class BaseMouseHandlerLineTransform extends BaseMouseHandlerLine
         if (image != null) {
             Point origin = camera.object2TV(new Point(0, 0));
             Point deltaTransformed = camera.object2TV(delta);
-            Logger.info(delta);
             g2.drawImage(image,
                     (int) (bottomLeft.getX() + deltaTransformed.getX() - origin.getX()),
                     (int) (bottomLeft.getY() + deltaTransformed.getY() - origin.getY()),
@@ -176,16 +186,4 @@ public abstract class BaseMouseHandlerLineTransform extends BaseMouseHandlerLine
         return camera.getCameraZoomX() != lastZoomX || camera.getCameraZoomY() != lastZoomY || camera.getCameraAngle() != lastAngle;
     }
 
-    @Override
-    public void reset() {
-        super.reset();
-        image = null;
-        needsRerender = false;
-        bottomLeft = null;
-        cacheTooBig = false;
-        active = false;
-        lastAngle = 100000;
-        lastZoomX = 0;
-        lastZoomY = 0;
-    }
 }
