@@ -212,6 +212,7 @@ public enum ActionType {
     addColorConstraintAction("addColorConstraintAction"),
     axiom5Action("axiom5Action"),
     axiom7Action("axiom7Action"),
+    fixInaccurateAction("fixInaccurateAction"),
     switchReplaceAction("switchReplaceAction"),
     setGridAngleAction("setGridAngleAction"),
     setGridXAction("setGridXAction"),
