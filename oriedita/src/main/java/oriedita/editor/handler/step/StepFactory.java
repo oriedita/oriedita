@@ -4,6 +4,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import oriedita.editor.canvas.CreasePattern_Worker;
+import oriedita.editor.databinding.AngleSystemModel;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.handler.MouseModeHandler;
 import origami.crease_pattern.element.LineColor;
@@ -22,14 +23,17 @@ public class StepFactory {
 
     private final Camera cpCamera;
     private final CreasePattern_Worker d;
+    private final AngleSystemModel angleSystem;
 
     @Inject
     public StepFactory(
             @Named("creasePatternCamera") Camera cpCamera,
-            @Named("mainCreasePattern_Worker") CreasePattern_Worker d
+            @Named("mainCreasePattern_Worker") CreasePattern_Worker d,
+            AngleSystemModel angleSystem
     ) {
         this.cpCamera = cpCamera;
         this.d = d;
+        this.angleSystem = angleSystem;
     }
 
     /**
@@ -115,5 +119,15 @@ public class StepFactory {
                                                                   Consumer<Point> onHighlight,
                                                                   Function<Point, T> onSelected){
         return new SelectPointStepNode<>(step, previewColor, cpCamera, d, free, snap, onHighlight, onSelected);
+    }
+
+    public <T extends Enum<T>> IStepNode<T> createDrawLineNode(T step,
+                                                               LineColor color,
+                                                               Function<LineSegment, T> releaseAction,
+                                                               Consumer<Point> moveAction,
+                                                               Consumer<LineSegment> dragAction
+    ) {
+        return new DragLineStepNode<>(step, color, releaseAction, moveAction, dragAction,
+                cpCamera, angleSystem, d);
     }
 }
