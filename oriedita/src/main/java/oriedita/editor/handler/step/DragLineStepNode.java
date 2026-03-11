@@ -67,7 +67,12 @@ public class DragLineStepNode<T extends Enum<T>> extends AbstractStepNode<T>
 
     @Override
     public void runHighlightSelection(Point mousePos) {
-        dragStart = camera.TV2object(mousePos);
+        var p = camera.TV2object(mousePos);
+        Point closestPoint = d.getClosestPoint(p);
+        if (p.distance(closestPoint) < d.getSelectionDistance() && !snap) {
+            p = closestPoint;
+        }
+        dragStart = p;
         moveAction.accept(dragStart);
     }
 
@@ -94,6 +99,10 @@ public class DragLineStepNode<T extends Enum<T>> extends AbstractStepNode<T>
                     angleSystemModel.getCurrentAngleSystemDivider(), angleSystemModel.getAngles()));
         }
         dragAction.accept(dragLine);
+    }
+
+    public LineSegment getDragLine() {
+        return dragLine;
     }
 
     @Override

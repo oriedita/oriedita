@@ -121,13 +121,14 @@ public class StepFactory {
         return new SelectPointStepNode<>(step, previewColor, cpCamera, d, free, snap, onHighlight, onSelected);
     }
 
-    public <T extends Enum<T>> IStepNode<T> createDrawLineNode(T step,
-                                                               LineColor color,
-                                                               Function<LineSegment, T> releaseAction,
-                                                               Consumer<Point> moveAction,
-                                                               Consumer<LineSegment> dragAction
+    public <T extends Enum<T>> IStepNode<T> createSelectIntersectingLinesNode(T step,
+                                                                              LineColor color,
+                                                                              Function<Collection<LineSegment>, T> releaseAction,
+                                                                              Consumer<Point> moveAction,
+                                                                              Consumer<LineSegment> dragAction,
+                                                                              Predicate<LineSegment> lineFilter
     ) {
-        return new DragLineStepNode<>(step, color, releaseAction, moveAction, dragAction,
+        return new IntersectingLinesNode<>(step, color, releaseAction, moveAction, dragAction, lineFilter,
                 cpCamera, angleSystem, d);
     }
 }

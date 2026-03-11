@@ -3,60 +3,52 @@ package oriedita.editor.handler;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
-import oriedita.editor.drawing.tools.Camera;
-import oriedita.editor.drawing.tools.DrawingUtil;
+import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.handler.step.StepFactory;
 import oriedita.editor.handler.step.StepGraph;
 import oriedita.editor.handler.step.StepMouseHandler;
-import origami.Epsilon;
-import origami.crease_pattern.FoldLineSet;
 import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 
-import java.awt.Graphics2D;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.EnumSet;
 
 @ApplicationScoped
 @Handles(MouseMode.CREASE_DELETE_INTERSECTING_65)
 public class MouseHandlerCreaseDeleteIntersecting extends StepMouseHandler<MouseHandlerCreaseDeleteIntersecting.Step> {
+    private final CanvasModel canvasModel;
+
     public enum Step {
         SELECT_LINE
     }
 
-    private List<LineSegment> highlightedLines = new ArrayList<>();
-
     @Inject
-    public MouseHandlerCreaseDeleteIntersecting() {
+    public MouseHandlerCreaseDeleteIntersecting(CanvasModel canvasModel) {
         super();
+        this.canvasModel = canvasModel;
+    }
+
+    @Override
+    public EnumSet<MouseHandlerSettingGroup> getSettings() {
+        return EnumSet.of(MouseHandlerSettingGroup.ERASER_COLOR,
+                super.getSettings().toArray(new MouseHandlerSettingGroup[0]));
     }
 
     @Override
     protected StepGraph<Step> initStepGraph(StepFactory stepFactory) {
         var graph = new StepGraph<>(Step.SELECT_LINE);
-        graph.addNode(stepFactory.createDrawLineNode(Step.SELECT_LINE, LineColor.PURPLE_8,
-                l -> {
-                    if (Epsilon.high.gt0(l.determineLength())) {
-                        //やりたい動作はここに書く
-                        d.getFoldLineSet().deleteInsideLine(l, FoldLineSet.IntersectionMode.CONTAIN_OR_INTERSECT);//lXは小文字のエルと大文字のエックス
-                        d.record();
-                        highlightedLines.clear();
+        graph.addNode(stepFactory.createSelectIntersectingLinesNode(Step.SELECT_LINE, LineColor.PURPLE_8,
+            lines -> {
+                if (!lines.isEmpty()) {
+                    //やりたい動作はここに書く
+                    for (LineSegment l : lines) {
+                        d.getFoldLineSet().deleteLine(l);//lXは小文字のエルと大文字のエックス
                     }
-            return Step.SELECT_LINE;
-                }, (p) -> {}, (ls) -> {
-                if (Epsilon.high.gt0(ls.determineLength())) {
-                    highlightedLines = d.getFoldLineSet().getInsideLine(ls, FoldLineSet.IntersectionMode.CONTAIN_OR_INTERSECT);
+                    d.record();
                 }
-                }));
+                return Step.SELECT_LINE;
+            }, (p) -> {}, (ls) -> {},
+                ls -> canvasModel.getDelLineType().matches(ls.getColor())));
         return graph;
-    }
-
-    @Override
-    public void drawPreview(Graphics2D g2, Camera camera, DrawingSettings settings) {
-        super.drawPreview(g2, camera, settings);
-        for (LineSegment segment : highlightedLines) {
-            DrawingUtil.drawLineStep(g2, segment, camera, settings.getLineWidth() + 1);
-        }
     }
 
     //----------------------------------------------------------------------------------------

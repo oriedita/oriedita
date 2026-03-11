@@ -370,6 +370,10 @@ public class FoldLineSet {
         s.setSelected(2);
     }
 
+    public void select(LineSegment s) {
+        s.setSelected(2);
+    }
+
     public boolean select(Polygon p) {
         boolean anyLinesSelected = false;
 
@@ -400,14 +404,18 @@ public class FoldLineSet {
         return ret;
     }
 
+    public void unselect(LineSegment l) {
+        l.setSelected(0);
+    }
+
     public enum IntersectionMode {
         CONTAIN, CONTAIN_OR_INTERSECT
     }
 
     public List<LineSegment> getInsideLine(LineSegment line, IntersectionMode mode) {
         List<LineSegment> ret = new ArrayList<>();
-
-        for (int i = 1; i <= total; i++) {
+        var qt = getQuadTree();
+        for(var i : qt.collect(new LineSegmentCollector(line))) {
             LineSegment s = lineSegments.get(i);
 
             if (mode == IntersectionMode.CONTAIN) {
