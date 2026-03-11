@@ -221,6 +221,15 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
                 } catch (InterruptedException ex) {}
             }).start();
         }
+        else {
+            bb.write("No fix needed");
+            new Thread(() -> {
+                try {
+                        Thread.sleep(5000);
+                        bb.clear();
+                } catch (InterruptedException ex) {}
+            }).start();
+        }
         d.check4();
     }
 
