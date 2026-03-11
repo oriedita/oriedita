@@ -19,12 +19,13 @@ public class SelectPointStepNode<T extends Enum<T>> extends AbstractStepNode<T> 
     private final CreasePattern_Worker creasePatternWorker;
     // allow free selection of points that are not in the cp
     private final boolean free;
+    private final boolean snap;
 
     private final Consumer<Point> onHighlight;
     private final Function<Point, T> onRelease;
 
     protected SelectPointStepNode(T step, LineColor color, Camera camera,
-                                  CreasePattern_Worker creasePatternWorker, boolean free,
+                                  CreasePattern_Worker creasePatternWorker, boolean free, boolean snap,
                                   Consumer<Point> onHighlight,
                                   Function<Point, T> onRelease) {
         super(step);
@@ -32,6 +33,7 @@ public class SelectPointStepNode<T extends Enum<T>> extends AbstractStepNode<T> 
         this.color = color;
         this.creasePatternWorker = creasePatternWorker;
         this.free = free;
+        this.snap = snap;
         this.onHighlight = onHighlight;
         this.onRelease = onRelease;
     }
@@ -47,13 +49,14 @@ public class SelectPointStepNode<T extends Enum<T>> extends AbstractStepNode<T> 
     @Override
     public void runHighlightSelection(Point mousePos) {
         var p = camera.TV2object(mousePos);
-        var closest = creasePatternWorker.getClosestPoint(p);
-        if (closest.distance(p) <= creasePatternWorker.getSelectionDistance()){
-            selectedPoint = closest;
-        } else if (free) {
+        selectedPoint = null;
+        if (snap) {
+            var closest = creasePatternWorker.getClosestPoint(p);
+            if (closest.distance(p) <= creasePatternWorker.getSelectionDistance()){
+                selectedPoint = closest;
+            }
+        } if (free && selectedPoint == null) {
             selectedPoint = p;
-        } else {
-            selectedPoint = null;
         }
         onHighlight.accept(selectedPoint);
     }

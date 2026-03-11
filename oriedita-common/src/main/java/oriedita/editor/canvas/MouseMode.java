@@ -31,6 +31,7 @@ public enum MouseMode {
     LINE_SEGMENT_DIVISION_27(27),
     LINE_SEGMENT_RATIO_SET_28(28),
     POLYGON_SET_NO_CORNERS_29(29),
+    @Deprecated
     CREASE_ADVANCE_TYPE_30(30),
     CREASE_MOVE_4P_31(31),
     CREASE_COPY_4P_32(32),
@@ -92,7 +93,7 @@ public enum MouseMode {
     FIX_INACCURATE_107(107),
     ;
 
-    int mode;
+    final int mode;
 
     MouseMode(int mode) {
         this.mode = mode;

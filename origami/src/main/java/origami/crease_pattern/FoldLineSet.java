@@ -370,6 +370,10 @@ public class FoldLineSet {
         s.setSelected(2);
     }
 
+    public void select(LineSegment s) {
+        s.setSelected(2);
+    }
+
     public boolean select(Polygon p) {
         boolean anyLinesSelected = false;
 
@@ -400,7 +404,41 @@ public class FoldLineSet {
         return ret;
     }
 
-    public boolean deleteInsideLine(LineSegment s_step1, String Dousa_mode) {
+    public void unselect(LineSegment l) {
+        l.setSelected(0);
+    }
+
+    public enum IntersectionMode {
+        CONTAIN, CONTAIN_OR_INTERSECT
+    }
+
+    public List<LineSegment> getInsideLine(LineSegment line, IntersectionMode mode) {
+        List<LineSegment> ret = new ArrayList<>();
+        var qt = getQuadTree();
+        for(var i : qt.collect(new LineSegmentCollector(line))) {
+            LineSegment s = lineSegments.get(i);
+
+            if (mode == IntersectionMode.CONTAIN) {
+                if (OritaCalc.isLineSegmentOverlapping(s, line)) {
+                    ret.add(s);
+                }
+            }
+
+            if (mode ==  IntersectionMode.CONTAIN_OR_INTERSECT) {
+                if (OritaCalc.isLineSegmentOverlapping(s, line)) {
+                    ret.add(s);
+                }
+                if (OritaCalc.lineSegment_X_kousa_decide(s, line)) {
+                    ret.add(s);
+                }
+            }
+        }
+
+        return ret;
+
+    }
+
+    public boolean deleteInsideLine(LineSegment s_step1, IntersectionMode mode) {
         //"l"  lXは小文字のエル。Senbun s_step1と重複する部分のある線分を削除するモード。
         //"lX" lXは小文字のエルと大文字のエックス。Senbun s_step1と重複する部分のある線分やX交差する線分を削除するモード。
         boolean i_r = false;//たくさんある折線のうち、一本でも削除すれば1、1本も削除しないなら0。
@@ -414,13 +452,13 @@ public class FoldLineSet {
 
             i_kono_orisen_wo_sakujyo = false;
 
-            if (Dousa_mode.equals("l")) {
+            if (mode == IntersectionMode.CONTAIN) {
                 if (OritaCalc.isLineSegmentOverlapping(s, s_step1)) {
                     i_kono_orisen_wo_sakujyo = true;
                 }
             }
 
-            if (Dousa_mode.equals("lX")) {
+            if (mode == IntersectionMode.CONTAIN_OR_INTERSECT) {
                 if (OritaCalc.isLineSegmentOverlapping(s, s_step1)) {
                     i_kono_orisen_wo_sakujyo = true;
                 }

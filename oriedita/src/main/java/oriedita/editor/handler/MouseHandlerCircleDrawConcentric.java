@@ -1,12 +1,12 @@
 package oriedita.editor.handler;
 
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
+import oriedita.editor.handler.step.StepFactory;
+import oriedita.editor.handler.step.StepGraph;
 import oriedita.editor.handler.step.StepMouseHandler;
-import oriedita.editor.handler.step.ObjCoordStepNode;
 import origami.crease_pattern.OritaCalc;
 import origami.crease_pattern.element.Circle;
 import origami.crease_pattern.element.LineColor;
@@ -15,27 +15,29 @@ import origami.crease_pattern.element.Point;
 
 import java.awt.Graphics2D;
 
-enum CircleDrawConcentricStep {
-    SELECT_CIRCLE,
-    CLICK_DRAG_POINT,
-}
+
 
 @ApplicationScoped
 @Handles(MouseMode.CIRCLE_DRAW_CONCENTRIC_48)
-public class MouseHandlerCircleDrawConcentric extends StepMouseHandler<CircleDrawConcentricStep> {
+public class MouseHandlerCircleDrawConcentric extends StepMouseHandler<MouseHandlerCircleDrawConcentric.Step> {
+    public enum Step {
+        SELECT_CIRCLE,
+        CLICK_DRAG_POINT,
+    }
     private Point anchorPoint, releasePoint;
     private LineSegment radiusDifference;
     private Circle originalCircle, newCircle;
 
-    @Inject
-    public MouseHandlerCircleDrawConcentric() {
-        super(CircleDrawConcentricStep.SELECT_CIRCLE);
-        steps.addNode(ObjCoordStepNode.createNode_MD_R(CircleDrawConcentricStep.SELECT_CIRCLE, this::move_drag_select_circle,
+    @Override
+    protected StepGraph<Step> initStepGraph(StepFactory stepFactory) {
+        var g = new StepGraph<>(Step.SELECT_CIRCLE);
+        g.addNode(stepFactory.createNode_MD_R(Step.SELECT_CIRCLE, this::move_drag_select_circle,
                 this::release_select_circle));
-        steps.addNode(
-                ObjCoordStepNode.createNode(CircleDrawConcentricStep.CLICK_DRAG_POINT, this::move_click_drag_point, (p) -> {
-                }, this::drag_click_drag_point, this::release_click_drag_point));
+        g.addNode(stepFactory.createNode(Step.CLICK_DRAG_POINT, this::move_click_drag_point, (p) -> {
+        }, this::drag_click_drag_point, this::release_click_drag_point));
+        return g;
     }
+
 
     @Override
     public void drawPreview(Graphics2D g2, Camera camera, DrawingSettings settings) {
@@ -66,10 +68,10 @@ public class MouseHandlerCircleDrawConcentric extends StepMouseHandler<CircleDra
             originalCircle = null;
     }
 
-    private CircleDrawConcentricStep release_select_circle(Point p) {
+    private Step release_select_circle(Point p) {
         if (originalCircle == null)
-            return CircleDrawConcentricStep.SELECT_CIRCLE;
-        return CircleDrawConcentricStep.CLICK_DRAG_POINT;
+            return Step.SELECT_CIRCLE;
+        return Step.CLICK_DRAG_POINT;
     }
 
     // Click drag point
@@ -100,16 +102,16 @@ public class MouseHandlerCircleDrawConcentric extends StepMouseHandler<CircleDra
                 originalCircle.getR() + radiusDifference.determineLength(), LineColor.CYAN_3);
     }
 
-    private CircleDrawConcentricStep release_click_drag_point(Point p) {
+    private Step release_click_drag_point(Point p) {
         if (anchorPoint == null)
-            return CircleDrawConcentricStep.CLICK_DRAG_POINT;
+            return Step.CLICK_DRAG_POINT;
         if (releasePoint == null
                 || releasePoint.distance(d.getClosestPoint(p)) > d.getSelectionDistance()) {
             anchorPoint = null;
             releasePoint = null;
             radiusDifference = null;
             newCircle = null;
-            return CircleDrawConcentricStep.CLICK_DRAG_POINT;
+            return Step.CLICK_DRAG_POINT;
         }
 
         releasePoint = d.getClosestPoint(p);
@@ -119,6 +121,6 @@ public class MouseHandlerCircleDrawConcentric extends StepMouseHandler<CircleDra
         d.addCircle(newCircle);
         d.record();
         reset();
-        return CircleDrawConcentricStep.SELECT_CIRCLE;
+        return Step.SELECT_CIRCLE;
     }
 }

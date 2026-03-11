@@ -3,6 +3,7 @@ package oriedita.editor.handler.step;
 import oriedita.editor.handler.MouseModeHandler;
 import origami.crease_pattern.element.Point;
 
+import java.awt.event.MouseEvent;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -48,9 +49,9 @@ public class StepGraph<T extends Enum<T>> {
         currentNode.runPressAction(mousePos, mouseButton);
     }
 
-    public void runCurrentDragAction(Point mousePos) {
+    public void runCurrentDragAction(Point mousePos, MouseEvent e) {
         if (currentNode == null) return;
-        currentNode.runDragAction(mousePos);
+        currentNode.runDragAction(mousePos, e);
     }
 
     public void runCurrentReleaseAction(Point mousePos){

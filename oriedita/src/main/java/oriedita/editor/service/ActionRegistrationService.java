@@ -124,7 +124,6 @@ public class ActionRegistrationService {
                 Map.entry(ActionType.senbun_henkan2Action, MouseMode.CREASE_TOGGLE_MV_58),
                 Map.entry(ActionType.replace_lineAction, MouseMode.REPLACE_LINE_TYPE_SELECT_72),
                 Map.entry(ActionType.del_l_typeAction, MouseMode.DELETE_LINE_TYPE_SELECT_73),
-                Map.entry(ActionType.senbun_yoke_henkanAction, MouseMode.CREASE_ADVANCE_TYPE_30),
                 Map.entry(ActionType.sen_tokutyuu_color_henkouAction, MouseMode.CIRCLE_CHANGE_COLOR_59),
                 Map.entry(ActionType.l1Action, MouseMode.DISPLAY_LENGTH_BETWEEN_POINTS_1_53),
                 Map.entry(ActionType.l2Action, MouseMode.DISPLAY_LENGTH_BETWEEN_POINTS_2_54),
