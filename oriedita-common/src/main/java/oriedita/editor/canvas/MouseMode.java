@@ -90,6 +90,7 @@ public enum MouseMode {
     ADD_FOLDING_CONSTRAINT(104),
     AXIOM_5(105),
     AXIOM_7(106),
+    FIX_INACCURATE_107(107),
     ;
 
     final int mode;

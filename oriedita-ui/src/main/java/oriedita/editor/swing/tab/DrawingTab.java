@@ -105,7 +105,8 @@ public class DrawingTab {
         mvDropdown.setActions(
                 ActionType.senbun_henkan2Action,
                 ActionType.senbun_henkanAction,
-                ActionType.zen_yama_tani_henkanAction);
+                ActionType.zen_yama_tani_henkanAction,
+                ActionType.fixInaccurateAction);
 
         buttonService.addDefaultListener($$$getRootComponent$$$());
 
