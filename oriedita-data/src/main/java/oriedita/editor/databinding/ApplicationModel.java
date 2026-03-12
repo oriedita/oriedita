@@ -78,6 +78,7 @@ public class ApplicationModel extends AbstractModel implements Serializable {
     private int defaultGridSize;
     private boolean isGridColorDetached;
     private boolean isFoldedFigureColorDetached;
+    private double fixPrecision;
 
 
     /*
@@ -325,6 +326,15 @@ public class ApplicationModel extends AbstractModel implements Serializable {
         this.pcs.firePropertyChange("helpVisible", oldHelpVisible, helpVisible);
     }
 
+    public double getFixPrecision () {
+        return fixPrecision;
+    }
+
+    public void setFixPrecision(double  fixPrecision) {
+        double oldFixPrecision = this.fixPrecision;
+        this.fixPrecision = fixPrecision;
+        this.pcs.firePropertyChange("fixPrecision", oldFixPrecision, fixPrecision);
+    }
     public void reset() {
         displayComments = true;
         displayCpText = true;
@@ -348,6 +358,7 @@ public class ApplicationModel extends AbstractModel implements Serializable {
         displayNumbers = false;
         displayPointOffset = false;
         displayPointSpotlight = false;
+        fixPrecision = 0.05;
 
         preciseZoom = true;
 
@@ -780,6 +791,7 @@ public class ApplicationModel extends AbstractModel implements Serializable {
         preciseZoom = applicationModel.isPreciseZoom();
         roundedEnds = applicationModel.getRoundedEnds();
         displayNumbers = applicationModel.getDisplayNumbers();
+        fixPrecision = applicationModel.getFixPrecision();
 
         circleCustomizedColor = applicationModel.getCircleCustomizedColor();
         selectPersistent = applicationModel.getSelectPersistent();
