@@ -4,18 +4,22 @@ import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import org.tinylog.Logger;
+import oriedita.common.converter.DoubleConverter;
 import oriedita.editor.action.ActionType;
 import oriedita.editor.databinding.ApplicationModel;
 import oriedita.editor.handler.MouseHandlerSettingGroup;
 import oriedita.editor.handler.UiFor;
 import oriedita.editor.service.BindingService;
 import oriedita.editor.service.ButtonService;
+import oriedita.editor.swing.component.DraggableTextField;
 
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
-import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Insets;
@@ -26,15 +30,17 @@ public class FixPrecisionUi implements MouseHandlerUi {
     private JPanel root;
     private JSlider fixPrecisionSlider;
     private JLabel fixPrecisionLabel;
-    private JTextField fixPrecisionTextField;
+    private DraggableTextField fixDraggable;
 
     private final ButtonService buttonService;
     private final ApplicationModel applicationModel;
     private final BindingService bindingService;
 
+    private double trueValue;
+    private boolean updating;
+
     @Inject
-    public FixPrecisionUi(ButtonService buttonService,
-                          ApplicationModel applicationModel, BindingService bindingService) {
+    public FixPrecisionUi(ButtonService buttonService, ApplicationModel applicationModel, BindingService bindingService) {
         this.buttonService = buttonService;
         this.applicationModel = applicationModel;
         this.bindingService = bindingService;
@@ -42,19 +48,68 @@ public class FixPrecisionUi implements MouseHandlerUi {
 
     @Override
     public void init() {
-        double divisor = 1000.0;
-        buttonService.addDefaultListener(root);
-        bindingService.addBinding(applicationModel, "fixPrecision", fixPrecisionTextField);
-        buttonService.registerTextField(fixPrecisionTextField, ActionType.setFixPrecisionAction.action());
-        fixPrecisionTextField.setText(//"0.00" +
-                String.valueOf(fixPrecisionSlider.getValue() / divisor));
+        double sliderScale = 1000.0;
+        trueValue = fixPrecisionSlider.getValue() / sliderScale;
+        buttonService.addDefaultListener($$$getRootComponent$$$());
+        bindingService.addBinding(applicationModel, "fixPrecision", fixDraggable, new DoubleConverter("0.0##"));
+        buttonService.registerTextField(fixDraggable, ActionType.setFixPrecisionAction.action());
+        fixDraggable.setText(String.valueOf(trueValue));
 
         fixPrecisionSlider.addChangeListener(l -> {
-            applicationModel.setFixPrecision(fixPrecisionSlider.getValue() / (divisor));
-            fixPrecisionTextField.setText(String.valueOf(fixPrecisionSlider.getValue() / divisor));
+            if (!updating) {
+                updating = true;
+                trueValue = fixPrecisionSlider.getValue() / sliderScale;
+                applicationModel.setFixPrecision(trueValue);
+                updating = false;
+            }
         });
-        fixPrecisionTextField.setFocusable(false);
+
+        fixDraggable.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                onChange();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                onChange();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                onChange();
+            }
+
+            private void onChange() {
+                if (!updating) {
+                    updating = true;
+                    try {
+                        trueValue = Double.parseDouble(fixDraggable.getText());
+                        fixPrecisionSlider.setValue((int) (trueValue * sliderScale));
+                        applicationModel.setFixPrecision(trueValue);
+                    } catch (RuntimeException e) {
+                        Logger.info(e);
+                    }
+                    updating = false;
+                }
+            }
+        });
+        fixDraggable.addRawListener((d, fine) -> {
+            if (!updating && d != 0) {
+                updating = true;
+                trueValue += fine ? (double) (d) / (sliderScale * 10) : (double) (d) / (sliderScale * 2);
+                if (trueValue < 0)
+                    trueValue = 0;
+                fixPrecisionSlider.setValue((int) (trueValue * sliderScale));
+
+                DoubleConverter df = new DoubleConverter("0.0##");
+                String value = df.convert(trueValue);
+                fixDraggable.setText(String.valueOf(value));
+                updating = false;
+            }
+        });
     }
+
 
     {
 // GUI initializer generated by IntelliJ IDEA GUI Designer
@@ -72,20 +127,18 @@ public class FixPrecisionUi implements MouseHandlerUi {
      */
     private void $$$setupUI$$$() {
         root = new JPanel();
-        root.setLayout(new GridLayoutManager(3, 3, new Insets(0, 0, 0, 0), -1, -1));
+        root.setLayout(new GridLayoutManager(1, 3, new Insets(0, 0, 0, 0), -1, -1));
         fixPrecisionSlider = new JSlider();
         fixPrecisionSlider.setMajorTickSpacing(0);
         fixPrecisionSlider.setMaximum(100);
         fixPrecisionSlider.setMinimum(1);
-        root.add(fixPrecisionSlider, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        root.add(fixPrecisionSlider, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(200, -1), null, 0, false));
+        fixDraggable = new DraggableTextField();
+        fixDraggable.setForeground(new Color(-2105377));
+        root.add(fixDraggable, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(70, -1), null, 0, false));
         fixPrecisionLabel = new JLabel();
         fixPrecisionLabel.setText("Precision");
-        root.add(fixPrecisionLabel, new GridConstraints(0, 2, 3, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, new Dimension(58, -1), null, null, 0, false));
-        fixPrecisionTextField = new JTextField();
-        fixPrecisionTextField.setEditable(false);
-        fixPrecisionTextField.setEnabled(true);
-        fixPrecisionTextField.setForeground(new Color(-2105377));
-        root.add(fixPrecisionTextField, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(40, -1), null, 0, false));
+        root.add(fixPrecisionLabel, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, new Dimension(58, -1), null, null, 0, false));
     }
 
     /**
