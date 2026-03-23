@@ -63,8 +63,9 @@ public class HelpDialog {
             applicationModel.addPropertyChangeListener(e -> {
                 if (e.getPropertyName() == null || e.getPropertyName().equals("helpVisible")) {
                     setVisible(applicationModel.getHelpVisible());
+                    owner.requestFocus();
                 }
-                owner.requestFocus();
+
             });
 
             addWindowFocusListener(new WindowAdapter() {
