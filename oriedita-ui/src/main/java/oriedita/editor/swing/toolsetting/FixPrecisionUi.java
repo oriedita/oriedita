@@ -20,7 +20,6 @@ import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Insets;
 
@@ -134,7 +133,6 @@ public class FixPrecisionUi implements MouseHandlerUi {
         fixPrecisionSlider.setMinimum(1);
         root.add(fixPrecisionSlider, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(200, -1), null, 0, false));
         fixDraggable = new DraggableTextField();
-        fixDraggable.setForeground(new Color(-2105377));
         root.add(fixDraggable, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(70, -1), null, 0, false));
         fixPrecisionLabel = new JLabel();
         fixPrecisionLabel.setText("Precision");

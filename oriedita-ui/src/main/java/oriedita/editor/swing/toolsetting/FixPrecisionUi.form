@@ -26,9 +26,7 @@
             <preferred-size width="70" height="-1"/>
           </grid>
         </constraints>
-        <properties>
-          <foreground color="-2105377"/>
-        </properties>
+        <properties/>
       </component>
       <component id="81629" class="javax.swing.JLabel" binding="fixPrecisionLabel">
         <constraints>
