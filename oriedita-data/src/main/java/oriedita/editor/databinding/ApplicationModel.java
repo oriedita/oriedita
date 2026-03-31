@@ -80,7 +80,6 @@ public class ApplicationModel extends AbstractModel implements Serializable {
     private boolean isFoldedFigureColorDetached;
 
 
-
     /*
     Things to remember when adding a new property:
         - getter, setter (with pcs event)

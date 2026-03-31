@@ -2,6 +2,7 @@ package oriedita.editor.service;
 
 import javax.swing.AbstractButton;
 import javax.swing.JLabel;
+import javax.swing.JSlider;
 import javax.swing.KeyStroke;
 import javax.swing.text.JTextComponent;
 
@@ -40,6 +41,8 @@ public interface ButtonService {
     void removeKeystrokeChangeListener(PropertyChangeListener listener);
 
     void registerTextField(JTextComponent textField, String key);
+
+    void registerSlider(JSlider slider, String key);
 
     void removeAllKeyBinds();
 }

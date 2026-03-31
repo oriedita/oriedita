@@ -56,6 +56,9 @@ public class FixPrecisionUi implements MouseHandlerUi {
         buttonService.addDefaultListener($$$getRootComponent$$$());
         bindingService.addBinding(fixPrecisionModel, "fixPrecision", fixPrecision22_5DraggableTextField, new DoubleConverter("0.0##"));
         buttonService.registerTextField(fixPrecision22_5DraggableTextField, ActionType.setFixPrecisionAction.action());
+        buttonService.registerButton(fixPrecisionBPCheckBox, ActionType.setFixPrecisionAction.action());
+        buttonService.registerButton(fixPrecision22_5CheckBox, ActionType.setFixPrecisionAction.action());
+        buttonService.registerSlider(fixPrecision22_5Slider, ActionType.setFixPrecisionAction.action());
         fixPrecision22_5DraggableTextField.setText(String.valueOf(trueValue));
         fixPrecision22_5CheckBox.setSelected(true);
         fixPrecisionBPCheckBox.setSelected(true);
