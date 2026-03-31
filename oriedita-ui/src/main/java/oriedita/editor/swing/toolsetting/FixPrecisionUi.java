@@ -2,6 +2,7 @@ package oriedita.editor.swing.toolsetting;
 
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
+import com.intellij.uiDesigner.core.Spacer;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.tinylog.Logger;
@@ -66,9 +67,7 @@ public class FixPrecisionUi implements MouseHandlerUi {
             fixPrecisionModel.setFixPrecisionUse22_5(fixPrecision22_5CheckBox.isSelected());
         });
 
-        fixPrecisionBPCheckBox.addActionListener(e -> {
-            fixPrecisionModel.setFixPrecisionUseBP(fixPrecisionBPCheckBox.isSelected());
-        });
+        fixPrecisionBPCheckBox.addActionListener(e -> fixPrecisionModel.setFixPrecisionUseBP(fixPrecisionBPCheckBox.isSelected()));
 
         fixPrecision22_5Slider.addChangeListener(l -> {
             if (!updating) {
@@ -143,24 +142,34 @@ public class FixPrecisionUi implements MouseHandlerUi {
     private void $$$setupUI$$$() {
         root = new JPanel();
         root.setLayout(new GridLayoutManager(2, 4, new Insets(0, 0, 0, 0), -1, -1));
-        fixPrecision22_5Slider = new JSlider();
-        fixPrecision22_5Slider.setMajorTickSpacing(0);
-        fixPrecision22_5Slider.setMaximum(100);
-        fixPrecision22_5Slider.setMinimum(1);
-        root.add(fixPrecision22_5Slider, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(200, -1), null, 0, false));
-        fixPrecision22_5DraggableTextField = new DraggableTextField();
-        root.add(fixPrecision22_5DraggableTextField, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(70, -1), null, 0, false));
-        fixPrecision22_5Label = new JLabel();
-        fixPrecision22_5Label.setText("Precision");
-        root.add(fixPrecision22_5Label, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, new Dimension(58, -1), null, null, 0, false));
+        root.setOpaque(false);
+        final JPanel panel1 = new JPanel();
+        panel1.setLayout(new GridLayoutManager(2, 4, new Insets(0, 0, 0, 0), -1, -1));
+        panel1.setOpaque(false);
+        root.add(panel1, new GridConstraints(0, 0, 2, 4, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         fixPrecision22_5CheckBox = new JCheckBox();
         fixPrecision22_5CheckBox.setEnabled(true);
         fixPrecision22_5CheckBox.setSelected(true);
         fixPrecision22_5CheckBox.setText("22.5°");
-        root.add(fixPrecision22_5CheckBox, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        panel1.add(fixPrecision22_5CheckBox, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         fixPrecisionBPCheckBox = new JCheckBox();
         fixPrecisionBPCheckBox.setText("Boxpleated");
-        root.add(fixPrecisionBPCheckBox, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        panel1.add(fixPrecisionBPCheckBox, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final JPanel panel2 = new JPanel();
+        panel2.setLayout(new GridLayoutManager(1, 4, new Insets(3, 3, 3, 3), -1, -1));
+        panel1.add(panel2, new GridConstraints(0, 1, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        fixPrecision22_5Slider = new JSlider();
+        fixPrecision22_5Slider.setMajorTickSpacing(0);
+        fixPrecision22_5Slider.setMaximum(100);
+        fixPrecision22_5Slider.setMinimum(1);
+        panel2.add(fixPrecision22_5Slider, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        fixPrecision22_5DraggableTextField = new DraggableTextField();
+        panel2.add(fixPrecision22_5DraggableTextField, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(60, -1), null, 0, false));
+        fixPrecision22_5Label = new JLabel();
+        fixPrecision22_5Label.setText("Precision");
+        panel2.add(fixPrecision22_5Label, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final Spacer spacer1 = new Spacer();
+        panel2.add(spacer1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, new Dimension(5, -1), null, 0, false));
     }
 
     /**
