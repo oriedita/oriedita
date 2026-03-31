@@ -72,7 +72,7 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
 
     @Override
     public EnumSet<MouseHandlerSettingGroup> getSettings() {
-        return EnumSet.of(MouseHandlerSettingGroup.FIX_PRECISION_SELECT);
+        return EnumSet.of(MouseHandlerSettingGroup.FIX_PRECISION);
     }
 
     public enum Step {

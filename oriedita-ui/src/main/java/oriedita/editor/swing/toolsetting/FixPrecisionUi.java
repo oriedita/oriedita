@@ -26,7 +26,7 @@ import java.awt.Dimension;
 import java.awt.Insets;
 
 @ApplicationScoped
-@UiFor(MouseHandlerSettingGroup.FIX_PRECISION_SELECT)
+@UiFor(MouseHandlerSettingGroup.FIX_PRECISION)
 public class FixPrecisionUi implements MouseHandlerUi {
     private JPanel root;
     private JSlider fixPrecision22_5Slider;
