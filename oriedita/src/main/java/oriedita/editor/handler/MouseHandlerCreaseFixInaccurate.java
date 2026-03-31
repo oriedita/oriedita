@@ -207,8 +207,6 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
             }).start();
             return;
         }
-
-
         
         if((result.type == FixerResult.Type.PURE_22_5) && !xform.inDefaultSquare && !xform.isSquare)
             bb.write("WARNING: Fix may be bad. Try to fix 22.5° CPs inside the default square or as square CP");
@@ -249,7 +247,7 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
             }).start();
         }
         else {
-            bb.write("No fix needed");
+            bb.write("No fix available");
             new Thread(() -> {
                 try {
                         Thread.sleep(5000);
