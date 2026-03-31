@@ -268,7 +268,7 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
         if(fixPrecisionModel.getFixPrecisionUseBP()) {
             results.add(fixBP(toFix));
 
-            // Exit early if it's probably boxpleated
+            // Exit early if it's probably box-pleated
             if (results.get(0).numFixableLines > (toFix.size() / 4.0 * .9))
                 return results.get(0);
         }

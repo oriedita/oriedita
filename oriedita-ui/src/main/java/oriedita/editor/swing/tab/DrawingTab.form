@@ -434,6 +434,16 @@
                           <text value="erase"/>
                         </properties>
                       </component>
+                      <component id="fe7ab" class="javax.swing.JButton" binding="fixInaccurateLinesButton" default-binding="true">
+                        <constraints>
+                          <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                          <gridbag weightx="1.0" weighty="1.0"/>
+                        </constraints>
+                        <properties>
+                          <actionCommand value="fixInaccurateAction"/>
+                          <text value="fixInaccurateLines"/>
+                        </properties>
+                      </component>
                     </children>
                   </grid>
                   <component id="8a147" class="javax.swing.JButton" binding="alternateIntersectedBtn">

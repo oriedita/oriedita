@@ -70,7 +70,6 @@ public class FoldingTab {
     private JButton stopButton;
     private JButton trashButton;
     private JButton a_sButton;
-    private JButton fixInaccurateLinesButton;
 
     private final ButtonService buttonService;
     private final ApplicationModel applicationModel;
@@ -138,7 +137,6 @@ public class FoldingTab {
         buttonService.registerTextField(rotationTextField, ActionType.foldedFigureRotateSetAction.action());
 
         foldButton.setText("Fold");
-        fixInaccurateLinesButton.setText(" Fix Inaccurate Lines");
     }
 
     private void getData(ApplicationModel applicationModel) {
@@ -243,18 +241,6 @@ public class FoldingTab {
         gbc.fill = GridBagConstraints.BOTH;
         gbc.ipady = 5;
         panel3.add(s_faceButton, gbc);
-        fixInaccurateLinesButton = new JButton();
-        fixInaccurateLinesButton.setActionCommand("fixInaccurateAction");
-        fixInaccurateLinesButton.setText("Fix Inaccurate Lines");
-        gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 2;
-        gbc.gridwidth = 2;
-        gbc.weightx = 1.0;
-        gbc.weighty = 1.0;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.ipady = 5;
-        panel3.add(fixInaccurateLinesButton, gbc);
         final Spacer spacer1 = new Spacer();
         panel1.add(spacer1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, new Dimension(-1, 7), null, null, 0, false));
         final Spacer spacer2 = new Spacer();

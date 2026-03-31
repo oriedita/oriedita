@@ -67,6 +67,7 @@ public class DrawingTab {
     private DropdownToolButton mvDropdown;
     private JButton ratioBtn;
     private DropdownToolButton rabbitEarDropdownToolButton;
+    private JButton fixInaccurateLinesButton;
 
     @Inject
     public DrawingTab(ButtonService buttonService,
@@ -509,6 +510,16 @@ public class DrawingTab {
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         panel9.add(eraseBtn, gbc);
+        fixInaccurateLinesButton = new JButton();
+        fixInaccurateLinesButton.setActionCommand("fixInaccurateAction");
+        fixInaccurateLinesButton.setText("fixInaccurateLines");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 2;
+        gbc.gridy = 0;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        panel9.add(fixInaccurateLinesButton, gbc);
         alternateIntersectedBtn = new JButton();
         alternateIntersectedBtn.setActionCommand("on_L_col_changeAction");
         alternateIntersectedBtn.setText("alternateIntersected");

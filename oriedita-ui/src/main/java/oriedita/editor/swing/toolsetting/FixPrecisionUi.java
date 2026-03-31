@@ -151,12 +151,10 @@ public class FixPrecisionUi implements MouseHandlerUi {
         panel1.setOpaque(false);
         root.add(panel1, new GridConstraints(0, 0, 2, 4, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         fixPrecision22_5CheckBox = new JCheckBox();
-        fixPrecision22_5CheckBox.setEnabled(true);
-        fixPrecision22_5CheckBox.setSelected(true);
         fixPrecision22_5CheckBox.setText("22.5°");
         panel1.add(fixPrecision22_5CheckBox, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         fixPrecisionBPCheckBox = new JCheckBox();
-        fixPrecisionBPCheckBox.setText("Boxpleated");
+        fixPrecisionBPCheckBox.setText("Box pleating");
         panel1.add(fixPrecisionBPCheckBox, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JPanel panel2 = new JPanel();
         panel2.setLayout(new GridLayoutManager(1, 4, new Insets(3, 3, 3, 3), -1, -1));
