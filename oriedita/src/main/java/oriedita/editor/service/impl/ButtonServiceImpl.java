@@ -37,6 +37,7 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+import javax.swing.JSlider;
 import javax.swing.KeyStroke;
 import javax.swing.MenuElement;
 import javax.swing.text.JTextComponent;
@@ -175,6 +176,10 @@ public class ButtonServiceImpl implements ButtonService {
                 explanation.setExplanation(key);
             }
         });
+    }
+
+    public void registerSlider(JSlider slider, String key){
+        slider.addChangeListener(l -> explanation.setExplanation(key));
     }
 
     @Override

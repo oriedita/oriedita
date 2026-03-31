@@ -213,6 +213,7 @@ public enum ActionType {
     axiom5Action("axiom5Action"),
     axiom7Action("axiom7Action"),
     fixInaccurateAction("fixInaccurateAction"),
+    setFixPrecisionAction("setFixPrecisionAction"),
     switchReplaceAction("switchReplaceAction"),
     setGridAngleAction("setGridAngleAction"),
     setGridXAction("setGridXAction"),

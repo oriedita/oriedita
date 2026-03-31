@@ -16,7 +16,7 @@ exitAction;lineStyleChangeAction;backgroundToggleAction;gridConfigureResetAction
 ;;transparentAction;;symmetricDrawAction;reflectAction;v_del_allAction;;colYellowAction;;;foldedFigureUndoCountAction;;toggleHelpAction;angleSystemBAction
 ;;;;angleBisectorAction;deleteSelectedLineSegmentAction;v_del_all_ccAction;;h_senbun_sakujyoAction;;;frontColorAction;;selectPersistentAction;angleSystemBDecreaseAction
 ;;;;fishBoneDrawAction;;trimBranchesAction;;h_undoAction;;;backColorAction;;;angleSystemBIncreaseAction
-;;;;doubleSymmetricDrawAction;;;;h_redoAction;;;lineColorAction;;;restrictedAngleSetDEFAction
+;;;;doubleSymmetricDrawAction;;fixInaccurateAction;;h_redoAction;;;lineColorAction;;;restrictedAngleSetDEFAction
 ;;;;continuousSymmetricDrawAction;;;;h_undoTotalSetAction;;;foldedFigureToggleAntiAliasAction;;;senbun_yoke_henkanAction
 ;;;;axiom5Action;;;;;;;foldedFigureToggleShadowAction;;;selectAnd3ClickAction
 ;;;;axiom7Action;;;;;;;addColorConstraintAction;;;correctCpBeforeFoldingAction
