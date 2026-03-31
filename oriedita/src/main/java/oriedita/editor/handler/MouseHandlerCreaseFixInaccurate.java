@@ -13,7 +13,7 @@ import org.tinylog.Logger;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
-import oriedita.editor.databinding.ApplicationModel;
+import oriedita.editor.databinding.FixPrecisionModel;
 import oriedita.editor.handler.step.StepFactory;
 import oriedita.editor.handler.step.StepGraph;
 import oriedita.editor.handler.step.StepMouseHandler;
@@ -25,15 +25,15 @@ import origami.folding.util.IBulletinBoard;
 @Handles(MouseMode.FIX_INACCURATE_107)
 public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandlerCreaseFixInaccurate.Step> {
     @Inject
-    public MouseHandlerCreaseFixInaccurate(IBulletinBoard bb, ApplicationModel applicationModel) {
+    public MouseHandlerCreaseFixInaccurate(IBulletinBoard bb, FixPrecisionModel fixPrecisionModel) {
         this.bb = bb;
-        this.applicationModel = applicationModel;
+        this.fixPrecisionModel = fixPrecisionModel;
     }
 
     private int fixDataSize;
     private double[] fixData;
     private final IBulletinBoard bb;
-    private final ApplicationModel applicationModel;
+    private final FixPrecisionModel fixPrecisionModel;
 
     private static class FixerResult {
         // Number of lines that were actually fixed. Used for display and to skip fixes that aren't necessary
@@ -43,7 +43,7 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
         ArrayList<Double> lines;
         Type type;
         enum Type {
-            BP, PURE_22_5, Other
+            BP, PURE_22_5, OTHER, EMPTY
         }
 
         FixerResult(long numFixedLines, long numFixableLines, ArrayList<Double> lines, Type type) {
@@ -194,6 +194,21 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
         // Fixing
         FixerResult result = fix(toFix);
 
+        if(result.type == FixerResult.Type.EMPTY || result.numFixableLines == 0 || result.lines.isEmpty())
+        {
+            bb.write("No lines fixed");
+            new Thread(() -> {
+                try {
+                    Thread.sleep(5000);
+                    bb.clear();
+                } catch (InterruptedException iex) {
+                    Logger.info(iex);
+                }
+            }).start();
+            return;
+        }
+
+
         
         if((result.type == FixerResult.Type.PURE_22_5) && !xform.inDefaultSquare && !xform.isSquare)
             bb.write("WARNING: Fix may be bad. Try to fix 22.5° CPs inside the default square or as square CP");
@@ -249,17 +264,23 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
 
     private FixerResult fix(ArrayList<Double> toFix) {
 
-        double precision22_5 = applicationModel.getFixPrecision()/100.0;
+        ArrayList<FixerResult> results = new ArrayList<>();
 
         // Fix BP first
-        FixerResult resultBP = fixBP(toFix);
-        // Exit early if it's probably boxpleated
-        if(resultBP.numFixableLines > (toFix.size()/4.0 * .9))
-            return resultBP;
+        if(fixPrecisionModel.getFixPrecisionUseBP()) {
+            results.add(fixBP(toFix));
+
+            // Exit early if it's probably boxpleated
+            if (results.get(0).numFixableLines > (toFix.size() / 4.0 * .9))
+                return results.get(0);
+        }
 
         // Fix 22.5
-        loadData("fixData_22_5.bin");
-        FixerResult result22_5 = fixWithData(toFix, precision22_5);
+        if(fixPrecisionModel.getFixPrecisionUse22_5()) {
+            double precision22_5 = fixPrecisionModel.getFixPrecision()/100.0;
+            loadData("fixData_22_5.bin");
+            results.add(fixWithData(toFix, precision22_5));
+        }
 
         /* To load external file, keep just in case we decide against packing the 60mb generic fix file into the jar
         if (genericFix) {
@@ -285,11 +306,16 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
 
             result2 = fixGeneric(toFix, precisionGeneric);
         }*/
-
-        if (resultBP.numFixableLines > result22_5.numFixableLines)
-            return resultBP;
-        else
-            return result22_5;
+        long maxLines = 0;
+        FixerResult returnResult = new FixerResult(0,0,new ArrayList<>(), FixerResult.Type.EMPTY);
+        for(FixerResult r : results) {
+            if(r.numFixableLines > maxLines)
+            {
+                maxLines = r.numFixableLines;
+                returnResult = r;
+            }
+        }
+        return returnResult;
     }
 
     // Map data into an array
