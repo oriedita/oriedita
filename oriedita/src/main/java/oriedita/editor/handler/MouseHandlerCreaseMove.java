@@ -7,9 +7,6 @@ import oriedita.editor.databinding.AngleSystemModel;
 import oriedita.editor.handler.step.ObjCoordStepNode;
 import oriedita.editor.save.Save;
 import oriedita.editor.save.SaveProvider;
-import origami.crease_pattern.element.LineColor;
-import origami.crease_pattern.element.LineSegment;
-import origami.crease_pattern.element.Point;
 
 
 @ApplicationScoped
@@ -24,60 +21,33 @@ public class MouseHandlerCreaseMove extends BaseMouseHandlerLineTransform<MouseH
     @Inject
     public MouseHandlerCreaseMove(AngleSystemModel angleSystemModel) {
         super(Step.CLICK_DRAG_OR_SELECT_POINT, angleSystemModel);
-        steps.addNode(ObjCoordStepNode.createNode(Step.CLICK_DRAG_OR_SELECT_POINT,
-                this::move_click_drag_point,
+
+        enum_step_first = Step.CLICK_DRAG_OR_SELECT_POINT;
+        enum_step_second = Step.SELECT_POINT;
+
+        steps.addNode(ObjCoordStepNode.createNode(enum_step_first,
+                this::first_click_hover,
                 (p) -> {
-                }, this::drag_click_drag_point, this::release_click_drag_point));
-        steps.addNode(ObjCoordStepNode.createNode_MD_R(Step.SELECT_POINT,
-                this::click_select_2,
-                this::release_select_2));
-    }
-
-    @Override
-    protected Step release_click_drag_point(Point p) {
-        if (p1 == null || p2 == null)
-            return Step.CLICK_DRAG_OR_SELECT_POINT;
-
-        if (p.distance(p1) < d.getSelectionDistance())
-            return Step.SELECT_POINT;
-
-        doAction();
-        d.getFoldLineSet().divideLineSegmentWithNewLines(total_old, total_new);
-        d.record();
-        d.check4();
-        return Step.CLICK_DRAG_OR_SELECT_POINT;
-    }
-
-    @Override
-    protected Step release_select_2(Point p) {
-        if (p2 != null) {
-
-            l1 = new LineSegment(p1, p2, LineColor.GREEN_6);
-            if(snapping)
-                snapLine();
-
-            delta = new Point(
-                    l1.determineBX() - l1.determineAX(),
-                    l1.determineBY() - l1.determineAY()
-            );
-            doAction();
-            d.getFoldLineSet().divideLineSegmentWithNewLines(total_old, total_new);
-            d.record();
-            d.check4();
-            return Step.CLICK_DRAG_OR_SELECT_POINT;
-        }
-        return Step.SELECT_POINT;
+                }, this::first_click_drag, this::first_click_release));
+        steps.addNode(ObjCoordStepNode.createNode_MD_R(enum_step_second,
+                this::further_click_hover,
+                this::further_click_release));
     }
 
     @Override
     protected void doAction() {
-        ori_s_temp.setSave(save);//セレクトされた折線だけ取り出してori_s_tempを作る
-        d.getFoldLineSet().delSelectedLineSegmentFast();//セレクトされた折線を削除する。
-        ori_s_temp.move(delta.getX(), delta.getY());//全体を移動する
-        total_old = d.getFoldLineSet().getTotal();
+        fls_selected.setSave(save); //"save" are all selected lines before any moving
+        d.getFoldLineSet().delSelectedLineSegmentFast(); // delete the original lines
+        fls_selected.move(delta.getX(), delta.getY()); // move the selected ones
+        // The desired behavior is to keep the last copy selected, so a check is necessary.
+        // "multiple" is set appropriately in inherited definition
+        if(multiple)
+            fls_selected.unselect_all(); // deselect lines so they don't get deleted by the above line next iteration
+        int total_old = d.getFoldLineSet().getTotal();
         Save save1 = SaveProvider.createInstance();
-        ori_s_temp.getSave(save1);
+        fls_selected.getSave(save1);
         d.getFoldLineSet().addSave(save1);
-        total_new = d.getFoldLineSet().getTotal();
+        int total_new = d.getFoldLineSet().getTotal();
+        d.getFoldLineSet().divideLineSegmentWithNewLines(total_old, total_new);
     }
 }
