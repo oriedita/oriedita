@@ -47,7 +47,7 @@ public class IntersectingLinesNode<T extends Enum<T>> extends DragLineStepNode<T
     public void drawPreview(Graphics2D g2, Camera camera, DrawingSettings settings) {
         super.drawPreview(g2, camera, settings);
         for (LineSegment segment : highlightedLines) {
-            DrawingUtil.drawLineStep(g2, segment, camera, settings.getLineWidth() + 1);
+            DrawingUtil.drawLineStep(g2, segment.withColor(LineColor.GREEN_6), camera, settings.getLineWidth() + 1);
         }
     }
 

@@ -4,6 +4,7 @@ import oriedita.editor.canvas.CreasePattern_Worker;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
 import oriedita.editor.handler.DrawingSettings;
+import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 import origami.crease_pattern.element.Polygon;
@@ -74,7 +75,7 @@ public class BoxSelectLinesStepNode<T extends Enum<T>> extends BoxSelectStepNode
     public void drawPreview(Graphics2D g2, Camera camera, DrawingSettings settings) {
         super.drawPreview(g2, camera, settings);
         for (LineSegment highlightedLine : highlightedLines) {
-            DrawingUtil.drawLineStep(g2, highlightedLine, camera, settings.getLineWidth() + 1);
+            DrawingUtil.drawLineStep(g2, highlightedLine.withColor(LineColor.GREEN_6), camera, settings.getLineWidth() + 1);
         }
     }
 }

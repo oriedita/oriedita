@@ -9,8 +9,8 @@
         <module name="origami" />
         <module name="oriedita-ui" />
         <module name="oriedita-common" />
-        <module name="oriedita-data" />
         <module name="oriedita" />
+        <module name="oriedita-data" />
       </profile>
     </annotationProcessing>
   </component>
