@@ -6,11 +6,14 @@ import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
 import oriedita.editor.handler.BaseMouseHandler;
 import oriedita.editor.handler.DrawingSettings;
+import oriedita.editor.handler.MouseHandlerSettingGroup;
 import oriedita.editor.tools.ResourceUtil;
 import origami.crease_pattern.element.Point;
 
 import java.awt.Graphics2D;
 import java.awt.event.MouseEvent;
+import java.util.EnumSet;
+import java.util.stream.Collectors;
 
 public abstract class StepMouseHandler<T extends Enum<T>> extends BaseMouseHandler {
     @Inject
@@ -47,7 +50,7 @@ public abstract class StepMouseHandler<T extends Enum<T>> extends BaseMouseHandl
     }
 
     // TODO: make abstract after moving step initialization in all subclasses
-    protected StepGraph<T> initStepGraph(StepFactory stepFactory) {
+    protected StepGraph<T> initStepGraph(StepFactory stepFactory){
         return this.steps;
     }
 
@@ -79,9 +82,12 @@ public abstract class StepMouseHandler<T extends Enum<T>> extends BaseMouseHandl
     }
 
     @Override
-    public void mouseDragged(Point p0) {
-        steps.runCurrentDragAction(canvasModel.getMousePosition());
+    public void mouseDragged(Point p0, MouseEvent e) {
+        steps.runCurrentDragAction(canvasModel.getMousePosition(), e);
     }
+
+    @Override
+    public void mouseDragged(Point p0) {}
 
     @Override
     public void mouseReleased(Point p0) {
@@ -90,6 +96,15 @@ public abstract class StepMouseHandler<T extends Enum<T>> extends BaseMouseHandl
         mouseMoved(canvasModel.getMousePosition());
     }
 
+    @Override
+    public EnumSet<MouseHandlerSettingGroup> getSettings() {
+        return steps.getNodes().stream()
+                .filter(n -> n instanceof IStepWithSettings)
+                .flatMap(n -> ((IStepWithSettings)n).getSettings().stream())
+                .collect(Collectors.toCollection(() -> EnumSet.noneOf(MouseHandlerSettingGroup.class)));
+    }
+
+    @Override
     public void reset() {
         resetStep();
     }

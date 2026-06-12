@@ -23,6 +23,9 @@ public class Colors {
     public static final Color SELECTED_ANGLE_SYSTEM = new Color(100, 200, 100);
     public static final Color SELECTED_ANGLE_SYSTEM_DARK = new Color(17, 75, 10);
 
+    public static final Color FIGURE_HIGHLIGHT = new Color(100, 200, 100, 80);
+    public static final Color FIGURE_HIGHLIGHT_DARK = new Color(17, 75, 10, 80);
+
     private static final Map<Color, Color> colorMap;
     private static final Map<Color, Color> darkColorMap;
 
@@ -45,6 +48,7 @@ public class Colors {
         add(Color.yellow, Color.magenta, Color.yellow);
         add(INVALID_INPUT, INVALID_INPUT, INVALID_INPUT_DARK);
         add(SELECTED_ANGLE_SYSTEM, SELECTED_ANGLE_SYSTEM, SELECTED_ANGLE_SYSTEM_DARK);
+        add(FIGURE_HIGHLIGHT, FIGURE_HIGHLIGHT, FIGURE_HIGHLIGHT_DARK);
     }
 
     private static Map<Color, Color> activeColorMap = colorMap;

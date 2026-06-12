@@ -4,6 +4,8 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import oriedita.editor.canvas.CreasePattern_Worker;
+import oriedita.editor.databinding.AngleSystemModel;
+import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.handler.MouseModeHandler;
 import origami.crease_pattern.element.LineColor;
@@ -22,16 +24,30 @@ public class StepFactory {
 
     private final Camera cpCamera;
     private final CreasePattern_Worker d;
+    private final AngleSystemModel angleSystem;
+    private final CanvasModel canvasModel;
 
     @Inject
     public StepFactory(
             @Named("creasePatternCamera") Camera cpCamera,
-            @Named("mainCreasePattern_Worker") CreasePattern_Worker d
-    ) {
+            @Named("mainCreasePattern_Worker") CreasePattern_Worker d,
+            AngleSystemModel angleSystem,
+            CanvasModel canvasModel) {
         this.cpCamera = cpCamera;
         this.d = d;
+        this.angleSystem = angleSystem;
+        this.canvasModel = canvasModel;
     }
 
+    /**
+     * creates a node that moves to a different step depending on which feature (e.g. mouse button) was used to trigger
+     * the node.
+     * @param step
+     * @param moveAction
+     * @param pressAction
+     * @return
+     * @param <T>
+     */
     public <T extends Enum<T>> IStepNode<T> createSwitchNode(
             T step, Consumer<Point> moveAction, Function<MouseModeHandler.Feature, T> pressAction) {
         return new ObjCoordStepNode<>(step,
@@ -93,9 +109,35 @@ public class StepFactory {
                 lineAction, l -> lineAction.apply(List.of(l)), p -> {}, p -> {}, lineFilter, cpCamera, d);
     }
 
-    public <T extends Enum<T>> IStepNode<T> createSelectPointNode(T step, LineColor previewColor, boolean free,
+    public <T extends Enum<T>> IStepNode<T> createSelectPointNode(T step, LineColor previewColor,
+                                                                  boolean free,
                                                                   Consumer<Point> onHighlight,
                                                                   Function<Point, T> onSelected){
-        return new SelectPointStepNode<>(step, previewColor, cpCamera, d, free, onHighlight, onSelected);
+        return new SelectPointStepNode<>(step, previewColor, cpCamera, d, free, true, onHighlight, onSelected);
+    }
+
+    public <T extends Enum<T>> IStepNode<T> createSelectPointNode(T step, LineColor previewColor,
+                                                                  boolean free,
+                                                                  boolean snap,
+                                                                  Consumer<Point> onHighlight,
+                                                                  Function<Point, T> onSelected){
+        return new SelectPointStepNode<>(step, previewColor, cpCamera, d, free, snap, onHighlight, onSelected);
+    }
+
+    public <T extends Enum<T>> IStepNode<T> createSelectIntersectingLinesNode(T step,
+                                                                              LineColor color,
+                                                                              Function<Collection<LineSegment>, T> releaseAction,
+                                                                              Consumer<Point> moveAction,
+                                                                              Consumer<LineSegment> dragAction,
+                                                                              Predicate<LineSegment> lineFilter
+    ) {
+        return new IntersectingLinesNode<>(step, color, releaseAction, moveAction, dragAction, lineFilter,
+                cpCamera, angleSystem, d);
+    }
+
+    public <T extends Enum<T>> IStepNode<T> createCachedLineTransformStepNode(T step, LineColor color,
+                                                                              Function<Point, T> releaseAction){
+        return new CachedLineTransformStepNode<>(step, color, releaseAction, p -> {}, l -> {},
+                cpCamera, angleSystem, d, canvasModel);
     }
 }

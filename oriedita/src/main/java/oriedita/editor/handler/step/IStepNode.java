@@ -3,6 +3,8 @@ package oriedita.editor.handler.step;
 import oriedita.editor.handler.MouseModeHandler;
 import origami.crease_pattern.element.Point;
 
+import java.awt.event.MouseEvent;
+
 /**
  * represents a Node in a StepGraph[T]. The actions of the step are always run in a fixed order:
  * <p>runHighlightSelection: always run as soon as the step is activated. Runs at least once before runPressAction.</p>
@@ -26,5 +28,8 @@ public interface IStepNode<T extends Enum<T>> {
     void runHighlightSelection(Point mousePos);
     T runPressAction(Point mousePos, MouseModeHandler.Feature mouseButton);
     void runDragAction(Point mousePos);
+    default void runDragAction(Point mousePos, MouseEvent e) {
+        runDragAction(mousePos);
+    }
     T runReleaseAction(Point mousePos);
 }

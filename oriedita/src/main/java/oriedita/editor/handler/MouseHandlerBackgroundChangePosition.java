@@ -4,74 +4,94 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.databinding.BackgroundModel;
+import oriedita.editor.drawing.tools.Camera;
+import oriedita.editor.drawing.tools.DrawingUtil;
+import oriedita.editor.handler.step.StepFactory;
+import oriedita.editor.handler.step.StepGraph;
+import oriedita.editor.handler.step.StepMouseHandler;
 import oriedita.editor.service.ResetService;
 import origami.crease_pattern.element.Rectangle;
 import origami.crease_pattern.element.LineColor;
-import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
+
+import java.awt.Graphics2D;
 
 
 @ApplicationScoped
 @Handles(MouseMode.BACKGROUND_CHANGE_POSITION_26)
-public class MouseHandlerBackgroundChangePosition extends BaseMouseHandler {
-    private final ResetService resetService;
+public class MouseHandlerBackgroundChangePosition extends StepMouseHandler<MouseHandlerBackgroundChangePosition.Step> {
+    private Point point1;
+    private Point point2;
+    private Point point3;
+    private Point point4;
+
+    public enum Step {
+        SELECT_POINT_1,
+        SELECT_POINT_2,
+        SELECT_POINT_3,
+        SELECT_POINT_4,
+    }
+
     private final BackgroundModel backgroundModel;
 
     @Override
-    public void mouseMoved(Point p0) {
-
+    protected StepGraph<Step> initStepGraph(StepFactory stepFactory) {
+        var graph = new StepGraph<>(Step.SELECT_POINT_1);
+        graph.addNode(stepFactory.createSelectPointNode(
+                Step.SELECT_POINT_1, LineColor.ORANGE_4,
+                true, false, p -> this.point1 = p,
+                p -> Step.SELECT_POINT_2
+        ));
+        graph.addNode(stepFactory.createSelectPointNode(
+                Step.SELECT_POINT_2, LineColor.CYAN_3,
+                true, false, p -> this.point2 = p,
+                p -> Step.SELECT_POINT_3
+        ));
+        graph.addNode(stepFactory.createSelectPointNode(
+                Step.SELECT_POINT_3, LineColor.BLUE_2,
+                true, true, p -> this.point3 = p,
+                p -> Step.SELECT_POINT_4
+        ));
+        graph.addNode(stepFactory.createSelectPointNode(
+                Step.SELECT_POINT_4, LineColor.RED_1,
+                true, true, p -> this.point4 = p,
+                p -> {moveBackground(); return Step.SELECT_POINT_1;}
+        ));
+        return graph;
     }
 
-    //マウス操作(ボタンを押したとき)時の作業
-    public void mousePressed(Point p0) {
-        Point p = d.getCamera().TV2object(p0);
-
-        if (d.getLineStep().size() == 3) {
-            Point closestPoint = d.getClosestPoint(p);
-
-            if (p.distance(closestPoint) < d.getSelectionDistance()) {
-                p = closestPoint;
-            }
-            d.lineStepAdd(new LineSegment(p, p, LineColor.ORANGE_4));
-        } else if (d.getLineStep().size() == 2) {
-            Point closestPoint = d.getClosestPoint(p);
-
-            if (p.distance(closestPoint) < d.getSelectionDistance()) {
-                p = closestPoint;
-            }
-            d.lineStepAdd(new LineSegment(p, p, LineColor.CYAN_3));
-        } else if (d.getLineStep().size() == 1) {
-            d.lineStepAdd(new LineSegment(p, p, LineColor.BLUE_2));
-        } else if (d.getLineStep().size() == 0) {
-            d.lineStepAdd(new LineSegment(p, p, LineColor.RED_1));
-        }
-    }
-
-    //マウス操作(ドラッグしたとき)を行う関数
-    public void mouseDragged(Point p0) {
+    @Override
+    public void drawPreview(Graphics2D g2, Camera camera, DrawingSettings settings) {
+        super.drawPreview(g2, camera, settings);
+        DrawingUtil.drawStepVertex(g2, point1, LineColor.ORANGE_4, camera);
+        DrawingUtil.drawStepVertex(g2, point2, LineColor.CYAN_3, camera);
+        DrawingUtil.drawStepVertex(g2, point3, LineColor.BLUE_2, camera);
+        DrawingUtil.drawStepVertex(g2, point4, LineColor.RED_1, camera);
     }
 
     @Inject
-    public MouseHandlerBackgroundChangePosition(ResetService resetService, BackgroundModel backgroundModel) {
-        this.resetService = resetService;
+    public MouseHandlerBackgroundChangePosition(BackgroundModel backgroundModel) {
         this.backgroundModel = backgroundModel;
     }
 
-    //マウス操作(ボタンを離したとき)を行う関数
-    public void mouseReleased(Point p0) {
-        if (d.getLineStep().size() == 4) {
-            LineSegment s_1 = d.getLineStep().get(0);
-            LineSegment s_2 = d.getLineStep().get(1);
-            LineSegment s_3 = d.getLineStep().get(2);
-            LineSegment s_4 = d.getLineStep().get(3);
-            resetService.Button_shared_operation();
+    private void moveBackground() {
+        var oldLock = backgroundModel.isLockBackground();
+        backgroundModel.setLockBackground(false);
+        backgroundModel.setBackgroundPosition(new Rectangle(
+                d.getCamera().object2TV(point1),
+                d.getCamera().object2TV(point2),
+                d.getCamera().object2TV(point3),
+                d.getCamera().object2TV(point4)));
+        backgroundModel.setLockBackground(oldLock);
+        reset();
+    }
 
-            backgroundModel.setLockBackground(false);
-
-            backgroundModel.setBackgroundPosition(new Rectangle(d.getCamera().object2TV(s_1.getA()),
-                    d.getCamera().object2TV(s_2.getA()),
-                    d.getCamera().object2TV(s_3.getA()),
-                    d.getCamera().object2TV(s_4.getA())));
-        }
+    @Override
+    public void reset() {
+        super.reset();
+        point1 = null;
+        point2 = null;
+        point3 = null;
+        point4 = null;
     }
 }

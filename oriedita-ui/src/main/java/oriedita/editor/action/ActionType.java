@@ -97,6 +97,7 @@ public enum ActionType {
     creasePatternZoomInAction("creasePatternZoomInAction"),
     rotateAnticlockwiseAction("rotateAnticlockwiseAction"),
     rotateClockwiseAction("rotateClockwiseAction"),
+    @Deprecated
     senbun_yoke_henkanAction("senbun_yoke_henkanAction"),
     lineSegmentInternalDivisionRatioSetAction("lineSegmentInternalDivisionRatioSetAction"),
     drawLineSegmentInternalDivisionRatioAction("drawLineSegmentInternalDivisionRatioAction"),

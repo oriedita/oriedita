@@ -8,6 +8,7 @@ import oriedita.editor.drawing.tools.DrawingUtil;
 import oriedita.editor.handler.step.StepMouseHandler;
 import oriedita.editor.handler.step.ObjCoordStepNode;
 import origami.Epsilon;
+import origami.crease_pattern.FoldLineSet;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 
@@ -73,7 +74,7 @@ public class MouseHandlerCreaseDeleteOverlapping extends StepMouseHandler<Crease
             return CreaseDeleteOverlapStep.CLICK_DRAG_POINT;
         }
         if (Epsilon.high.gt0(dragSegment.determineLength())) {
-            d.getFoldLineSet().deleteInsideLine(dragSegment, "l");// lは小文字のエル
+            d.getFoldLineSet().deleteInsideLine(dragSegment, FoldLineSet.IntersectionMode.CONTAIN);// lは小文字のエル
             d.record();
         }
         reset();
