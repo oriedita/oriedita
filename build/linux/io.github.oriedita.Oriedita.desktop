@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Oriedita
+Comment=Origami crease pattern editor and folding simulator
+Exec=Oriedita %F
+Icon=io.github.oriedita.Oriedita
+Terminal=false
+Type=Application
+Categories=Graphics;2DGraphics;VectorGraphics;
+MimeType=application/x-oriedita-ori;application/x-oriedita-cp;application/vnd.fold;
+Keywords=origami;crease;folding;pattern;ori;fold;

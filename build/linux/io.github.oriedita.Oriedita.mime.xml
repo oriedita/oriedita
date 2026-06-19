@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
+  <mime-type type="application/x-oriedita-ori">
+    <comment>Oriedita project</comment>
+    <glob pattern="*.ori" />
+  </mime-type>
+  <mime-type type="application/x-oriedita-cp">
+    <comment>Origami crease pattern</comment>
+    <glob pattern="*.cp" />
+  </mime-type>
+  <mime-type type="application/vnd.fold">
+    <comment>FOLD origami model</comment>
+    <glob pattern="*.fold" />
+  </mime-type>
+</mime-info>
