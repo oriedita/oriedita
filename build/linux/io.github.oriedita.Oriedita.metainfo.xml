@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>io.github.oriedita.Oriedita</id>
+
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>MIT</project_license>
+
+  <name>Oriedita</name>
+  <summary>Origami crease pattern editor and folding simulator</summary>
+
+  <developer id="io.github.oriedita">
+    <name>Oriedita contributors</name>
+  </developer>
+
+  <description>
+    <p>Oriedita is an origami crease pattern editor based on Orihime. It provides tools for drawing crease patterns, checking flat-foldability, and previewing folded models.</p>
+    <ul>
+      <li>Draw and edit origami crease patterns</li>
+      <li>Simulate folding and inspect folded states</li>
+      <li>Open and save .ori, .cp, and .fold files</li>
+      <li>Customize colors, hotkeys, and interface state</li>
+    </ul>
+  </description>
+
+  <launchable type="desktop-id">io.github.oriedita.Oriedita.desktop</launchable>
+
+  <branding>
+    <color type="primary" scheme_preference="light">#f5d14d</color>
+    <color type="primary" scheme_preference="dark">#b78b20</color>
+  </branding>
+
+  <content_rating type="oars-1.1" />
+
+  <url type="homepage">https://oriedita.github.io</url>
+  <url type="bugtracker">https://github.com/oriedita/oriedita/issues</url>
+  <url type="vcs-browser">https://github.com/oriedita/oriedita</url>
+  <url type="help">https://oriedita.github.io/getting-started.html</url>
+
+  <screenshots>
+    <screenshot type="default">
+      <image>screenshot.png</image>
+      <caption>Main crease pattern editing interface</caption>
+    </screenshot>
+  </screenshots>
+
+  <provides>
+    <mediatype>application/x-oriedita-ori</mediatype>
+    <mediatype>application/x-oriedita-cp</mediatype>
+    <mediatype>application/vnd.fold</mediatype>
+  </provides>
+
+  <releases>
+    <release version="1.1.3" date="2025-02-05">
+      <description>
+        <p>Oriedita 1.1.3 release.</p>
+      </description>
+    </release>
+  </releases>
+
+  <requires>
+    <control>keyboard</control>
+    <control>pointing</control>
+    <display_length compare="ge">768</display_length>
+  </requires>
+</component>
