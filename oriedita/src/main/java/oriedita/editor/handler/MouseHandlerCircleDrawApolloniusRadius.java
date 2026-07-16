@@ -266,30 +266,31 @@ public class MouseHandlerCircleDrawApolloniusRadius extends StepMouseHandler<Cir
         double[] offset_radii_1 = {k1.getR() + r, Math.abs(k1.getR() - r)};
         double[] offset_radii_2 = {k2.getR() + r, Math.abs(k2.getR() - r)};
 
-        for (double offset_radius_1 : offset_radii_1) {
-            for (double offset_radius_2 : offset_radii_2) {
+        for (double offset_r_1 : offset_radii_1) {
+            for (double offset_r_2 : offset_radii_2) {
                 List<Point> centers = new ArrayList<>();
 
-                Circle offset_circle_1 = new Circle(k1.determineCenter(), offset_radius_1, LineColor.PURPLE_8);
-                Circle offset_circle_2 = new Circle(k2.determineCenter(), offset_radius_2, LineColor.PURPLE_8);
+                Circle offset_c_1 = new Circle(k1.determineCenter(), offset_r_1, LineColor.PURPLE_8);
+                Circle offset_c_2 = new Circle(k2.determineCenter(), offset_r_2, LineColor.PURPLE_8);
 
-                LineSegment ls = OritaCalc.circle_to_circle_no_intersection_wo_musubu_lineSegment(offset_circle_1, offset_circle_2);
+                // The OritaCalc function doesn't handle tangency well, so it's excluded
+                double dist_circles = offset_c_1.determineCenter().distance(offset_c_2.determineCenter());
+                double smaller_r = Math.min(offset_r_1, offset_r_2);
+                double bigger_r  = Math.max(offset_r_1, offset_r_2);
+                if(dist_circles < bigger_r)
+                    smaller_r *= -1;
 
-                if(!(Double.isNaN(ls.determineAX()) || Double.isNaN(ls.determineAX()) ||
-                     Double.isNaN(ls.determineBX()) || Double.isNaN(ls.determineBY()))) {
-                    centers.add(ls.getA());
-                    centers.add(ls.getB());
-                }
-                // If staring circles are tangent, the offset circles will be tangent,
-                // which the OriCalc function doesn't account for.
-                else if(k1.determineCenter().distance(k2.determineCenter()) - Math.abs(offset_radius_1 + offset_radius_2) < EPS*1000000) {
-                    LineSegment ls_circles_1 = new LineSegment(k1.determineCenter(), k2.determineCenter());
-                    ls_circles_1 = OritaCalc.lineSegmentChangeLength(ls_circles_1, k1.getR() + r);
-                    centers.add(ls_circles_1.getB());
+                // Tangency check. The smaller radius needs to be subtracted if the smaller
+                // circle is inside and tangent to the bigger one.
+                if(Math.abs(dist_circles - (bigger_r + smaller_r)) > EPS) {
+                    LineSegment ls = OritaCalc.circle_to_circle_no_intersection_wo_musubu_lineSegment(offset_c_1, offset_c_2);
 
-                    LineSegment ls_circles_2 = new LineSegment(k2.determineCenter(), k1.determineCenter());
-                    ls_circles_2 = OritaCalc.lineSegmentChangeLength(ls_circles_2, k2.getR() + r);
-                    centers.add(ls_circles_2.getB());
+                    // Record if real solution
+                    if (!(Double.isNaN(ls.determineAX()) || Double.isNaN(ls.determineAX()) ||
+                          Double.isNaN(ls.determineBX()) || Double.isNaN(ls.determineBY()))) {
+                        centers.add(ls.getA());
+                        centers.add(ls.getB());
+                    }
                 }
 
                 for (Point center : centers) {
@@ -344,7 +345,8 @@ public class MouseHandlerCircleDrawApolloniusRadius extends StepMouseHandler<Cir
         }
     }
 
-    // Offset lines by radius, find intersections. Those are the centers of candidate circles.
+    // Offset lines by radius. Find intersections.
+    // Those are the centers of candidate circles.
     private void process_apollonius_LL() {
         final double EPS = 1e-6;
         final double MIN_R = 1e-3;
@@ -377,7 +379,7 @@ public class MouseHandlerCircleDrawApolloniusRadius extends StepMouseHandler<Cir
         }
     }
 
-    // true for valid circle
+    // True for valid circle
     private boolean is_valid_circle(Circle c, List<Circle> list, double eps) {
         for (Circle other : list) {
             if(!is_valid_circle_helper(c, other, eps))
@@ -393,7 +395,7 @@ public class MouseHandlerCircleDrawApolloniusRadius extends StepMouseHandler<Cir
         return true;
     }
 
-    // true for valid circle
+    // True for valid circle
     private boolean is_valid_circle_helper(Circle c, Circle other, double eps) {
         double dr = c.getR() - other.getR();
         return !((c.determineCenter().distance(other.determineCenter()) < eps) && (Math.abs(dr) < eps));
