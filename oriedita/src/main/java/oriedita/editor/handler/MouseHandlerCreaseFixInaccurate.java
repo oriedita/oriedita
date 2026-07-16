@@ -1,13 +1,8 @@
 package oriedita.editor.handler;
 
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.DoubleBuffer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumSet;
-import java.util.Objects;
 import org.tinylog.Logger;
 
 import jakarta.enterprise.context.ApplicationScoped;
@@ -320,51 +315,19 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
         // Fix 22.5
         if(fixPrecisionModel.getFixPrecisionUse22_5()) {
             double precision22_5 = fixPrecisionModel.getFixPrecision()/100.0;
-            loadData("fixData_22_5.bin");
+            getFixData();
             results.add(fixWithData(toFix, precision22_5));
         }
-
-        /* To load external file, keep just in case we decide against packing the 60mb generic fix file into the jar
-        if (genericFix) {
-            // Check if fixDataGeneric.bin exists, download if not
-            File f = new File(dataFilePath);
-            if (!f.exists()) {
-                try {
-                    URI uri = new URI(downloadPath);
-                    URL in = uri.toURL();
-                    try (ReadableByteChannel readableByteChannel = Channels.newChannel(in.openStream());
-                         FileOutputStream fileOutputStream = new FileOutputStream(dataFilePath)) {
-                        fileOutputStream.getChannel().transferFrom(readableByteChannel, 0, Long.MAX_VALUE);
-                    }
-                } catch (IOException | URISyntaxException ioe3) {
-                    // Failed to download
-                }
-            }
-            try {
-                mapData("fixDataGeneric.bin");
-            } catch (IOException ioe_generic) {
-                // Failed to access file
-            }
-
-            result2 = fixGeneric(toFix, precisionGeneric);
-        }*/
         return results;
     }
 
-    // Map data into an array
-    private void loadData(String file){
-        try {
-            var stream = Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream(file));
-            byte[] bytes = stream.readAllBytes();
+    private void getFixData(){
+        ArrayList<Double> tmp = fixPrecisionModel.getFixData();
+        fixDataSize = tmp.size();
+        fixData = new double[fixDataSize];
 
-            ByteBuffer byteBuffer = ByteBuffer.wrap(bytes).order(ByteOrder.LITTLE_ENDIAN);
-            DoubleBuffer db = byteBuffer.asDoubleBuffer();
-            fixDataSize = db.remaining();
-            fixData = new double[fixDataSize];
-            db.get(fixData);
-        } catch (IOException | NullPointerException e) {
-            Logger.error(e);
-        }
+        for (int i = 0, n = fixDataSize; i < n; i++)
+            fixData[i] = tmp.get(i);
     }
 
     // Fix BP
@@ -383,7 +346,7 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
         int gridSizeSearch = 0;
         long numLinesFixedWithPrevBestGrid = 0;
         boolean endGridSearch = false;
-        final float gridSearchEndPercent = .9f; // Arbitrary value, keep under 1.0f
+        final float gridSearchEndPercent = .9f; // Arbitrary value, keep below 1.0f
         final float necessaryImprovementGrid = 1.15f; // Arbitrary value
 
         // Fixed lines counter logic
