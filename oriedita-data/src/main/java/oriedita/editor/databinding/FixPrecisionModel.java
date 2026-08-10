@@ -14,8 +14,10 @@ public class FixPrecisionModel extends AbstractModel {
     private boolean fixPrecisionUseBP;
     private boolean fixPrecisionUse22_5;
 
-    private ArrayList<Double> fixData;
-    private boolean isData;
+    private ArrayList<Double> fixData_22_5;
+    private ArrayList<Double> fixData_BP;
+    private boolean isData_22_5;
+    private boolean isData_BP;
 
     @Inject
     public FixPrecisionModel() {
@@ -26,8 +28,10 @@ public class FixPrecisionModel extends AbstractModel {
         fixPrecision = 0.05;
         fixPrecisionUseBP = true;
         fixPrecisionUse22_5 = true;
-        fixData = new ArrayList<>();
-        isData = false;
+        fixData_22_5 = new ArrayList<>();
+        fixData_BP = new ArrayList<>();
+        isData_22_5 = false;
+        isData_BP = false;
 
         this.pcs.firePropertyChange(null, null, null);
     }
@@ -62,55 +66,70 @@ public class FixPrecisionModel extends AbstractModel {
         this.pcs.firePropertyChange("fixPrecisionUse22_5", oldFixPrecisionUse22_5, fixPrecisionUse22_5);
     }
 
-    public ArrayList<Double> getFixData() {
-        if(!isData) {
-            generateFixData();
-            isData = true;
+    public ArrayList<Double> getFixData22_5() {
+        if(!isData_22_5) {
+            generateFixData_22_5();
+            isData_22_5 = true;
         }
-        return fixData;
+        return fixData_22_5;
     }
 
-    private void generateFixData() {
-        fixData = makePure22_5();
+    private void generateFixData_22_5() {
+        fixData_22_5 = make(15, 200);
 
         // Remove duplicates
-        Set<Double> set = new LinkedHashSet<>(fixData);
-        fixData.clear();
-        fixData.addAll(set);
+        Set<Double> set = new LinkedHashSet<>(fixData_22_5);
+        fixData_22_5.clear();
+        fixData_22_5.addAll(set);
     }
 
-    ArrayList<Double> makePure22_5() {
-        // Ranks
-        int max = 15;
-        ArrayList<Double> v = new ArrayList<>();
-        // Initial values. Assumes (-200|-200) - (200|200) canvas. Negative values don't need to be stored
-        v.add(0.0);
-        v.add(200.0);
+    public ArrayList<Double> getFixData_BP() {
+        if(!isData_BP) {
+            generateFixData_BP();
+            isData_BP = true;
+        }
+        return fixData_BP;
+    }
 
-        for (int n = 0; n < max; ++n) {
-            for (int a = 0; a <= n; ++a) {
-                for (int b = 0; b <= n; ++b) {
-                    for (int c = 0; c <= n; ++c) {
-                        for (int d = 0; d <= n; ++d) {
-                            calc(a, b,  c,  d, v);  calc(-a, b,  c,  d, v);  calc(a, -b,  c,  d, v); calc(-a, -b,  c,  d, v);
-                            calc(a, b, -c,  d, v);  calc(-a, b, -c,  d, v);  calc(a, -b, -c,  d, v); calc(-a, -b, -c,  d, v);
-                            calc(a, b,  c, -d, v);  calc(-a, b,  c, -d, v);  calc(a, -b,  c, -d, v); calc(-a, -b,  c, -d, v);
-                            calc(a, b, -c, -d, v);  calc(-a, b, -c, -d, v);  calc(a, -b, -c, -d, v); calc(-a, -b, -c, -d, v);
+    private void generateFixData_BP() {
+        fixData_BP = make(10, 1);
+
+        // Remove duplicates
+        Set<Double> set = new LinkedHashSet<>(fixData_BP);
+        fixData_BP.clear();
+        fixData_BP.addAll(set);
+    }
+
+    // All 22.5° positions are of form (a+b*sqrt2)/(c+d*sqrt2).
+    // This generates all positions with up to a|b|c|d = ranks
+    ArrayList<Double> make(int ranks, double bound) {
+        ArrayList<Double> v = new ArrayList<>();
+        v.add(0.0);
+        v.add(bound);
+        double sqrt2 = 1.414213562373095;
+
+        for (int max = 0; max < ranks; ++max) { // increase the max over time, so that more complicated references appear later
+            for (int a = 0; a <= max; ++a) {
+                for (int b = 0; b <= max; ++b) {
+                    for (int c = 0; c <= max; ++c) {
+                        for (int d = 0; d <= max; ++d) {
+                            // Some positions, despite being positive, use negative values in some variables.
+                            // Makes use of binary representation of numbers to invert the variables
+                            for(int i = 0; i<16; i++) {
+                                a = (i & 0b1)==0 ? a : -a;      // reverse a if last bit is 1
+                                b = (i & 0b10)==0 ? b : -b;     // reverse b if second to last bit is 1
+                                c = (i & 0b100)==0 ? c : -c;    // etc.
+                                d = (i & 0b1000)==0 ? d : -d;
+
+                                double pos = (a + b * sqrt2) / (c + d * sqrt2);
+                                if (pos < 1 && pos > 0)
+                                    v.add(pos * bound);
+                            }
                         }
                     }
                 }
             }
         }
         return v;
-    }
-
-    // Helper
-    void calc(double a, double b, double c, double d, ArrayList<Double> v)
-    {
-        double r2 = 1.414213562373095;
-        double pos = (a + b * r2) / (c + d * r2);
-
-        if (pos < 1 && pos > 0)
-            v.add(pos * 200);
     }
 }
