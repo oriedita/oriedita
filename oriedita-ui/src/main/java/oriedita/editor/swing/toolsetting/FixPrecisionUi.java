@@ -29,18 +29,25 @@ import java.awt.Insets;
 @UiFor(MouseHandlerSettingGroup.FIX_PRECISION)
 public class FixPrecisionUi implements MouseHandlerUi {
     private JPanel root;
-    private JSlider fixPrecision22_5Slider;
-    private JLabel fixPrecision22_5Label;
-    private DraggableTextField fixPrecision22_5DraggableTextField;
-    private JCheckBox fixPrecision22_5CheckBox;
-    private JCheckBox fixPrecisionBPCheckBox;
+    private JSlider fixPrecision_22_5_Slider;
+    private JLabel fixPrecision_22_5_Label;
+    private DraggableTextField fixPrecision_22_5_DraggableTextField;
+    private JCheckBox fixPrecision_22_5_CheckBox;
+    private JCheckBox fixPrecision_BP_CheckBox;
+    private JCheckBox fixPrecision_BPLocal22_5_CheckBox;
+    private JSlider fixPrecision_BPLocal22_5_Slider;
+    private DraggableTextField fixPrecision_BPLocal22_5_DraggableTextField;
+    private JLabel fixPrecision_BPLocal22_5_Label;
+    private JLabel fixPrecision_Seperator;
 
     private final ButtonService buttonService;
     private final FixPrecisionModel fixPrecisionModel;
     private final BindingService bindingService;
 
-    private double trueValue;
-    private boolean updating;
+    private double sliderValue_22_5;
+    private double sliderValue_BP;
+    private boolean updating_22_5;
+    private boolean updating_BP;
 
     @Inject
     public FixPrecisionUi(ButtonService buttonService, FixPrecisionModel fixPrecisionModel, BindingService bindingService) {
@@ -52,36 +59,85 @@ public class FixPrecisionUi implements MouseHandlerUi {
     @Override
     public void init() {
         double sliderScale = 1000.0;
-        trueValue = fixPrecision22_5Slider.getValue() / sliderScale;
+        // Connect to UI and fixPrecisionModel
+        sliderValue_22_5 = fixPrecision_22_5_Slider.getValue() / sliderScale;
+        sliderValue_BP = fixPrecision_BPLocal22_5_Slider.getValue() / sliderScale;
         buttonService.addDefaultListener($$$getRootComponent$$$());
-        bindingService.addBinding(fixPrecisionModel, "fixPrecision", fixPrecision22_5DraggableTextField, new DoubleConverter("0.0##"));
-        buttonService.registerTextField(fixPrecision22_5DraggableTextField, ActionType.setFixPrecisionAction.action());
-        buttonService.registerButton(fixPrecisionBPCheckBox, ActionType.setFixPrecisionAction.action());
-        buttonService.registerButton(fixPrecision22_5CheckBox, ActionType.setFixPrecisionAction.action());
-        buttonService.registerSlider(fixPrecision22_5Slider, ActionType.setFixPrecisionAction.action());
-        fixPrecision22_5DraggableTextField.setText(String.valueOf(trueValue));
-        fixPrecision22_5CheckBox.setSelected(true);
-        fixPrecisionBPCheckBox.setSelected(true);
+        bindingService.addBinding(fixPrecisionModel, "precision_22_5", fixPrecision_22_5_DraggableTextField, new DoubleConverter("0.0##"));
+        buttonService.registerTextField(fixPrecision_22_5_DraggableTextField, ActionType.setFixPrecisionAction.action());
+        bindingService.addBinding(fixPrecisionModel, "precision_BPLocal22_5", fixPrecision_BPLocal22_5_DraggableTextField, new DoubleConverter("0.0##"));
+        buttonService.registerTextField(fixPrecision_BPLocal22_5_DraggableTextField, ActionType.setFixPrecisionAction.action());
+        buttonService.registerButton(fixPrecision_BP_CheckBox, ActionType.setFixPrecisionAction.action());
+        buttonService.registerButton(fixPrecision_22_5_CheckBox, ActionType.setFixPrecisionAction.action());
+        buttonService.registerButton(fixPrecision_BPLocal22_5_CheckBox, ActionType.setFixPrecisionAction.action());
+        buttonService.registerSlider(fixPrecision_22_5_Slider, ActionType.setFixPrecisionAction.action());
+        buttonService.registerSlider(fixPrecision_BPLocal22_5_Slider, ActionType.setFixPrecisionAction.action());
 
-        fixPrecision22_5CheckBox.addActionListener(e -> {
-            fixPrecision22_5Slider.setEnabled(fixPrecision22_5CheckBox.isSelected());
-            fixPrecision22_5DraggableTextField.setEnabled(fixPrecision22_5CheckBox.isSelected());
-            fixPrecision22_5Label.setEnabled(fixPrecision22_5CheckBox.isSelected());
-            fixPrecisionModel.setFixPrecisionUse22_5(fixPrecision22_5CheckBox.isSelected());
+        // Init
+        fixPrecision_22_5_DraggableTextField.setText(String.valueOf(sliderValue_22_5));
+        fixPrecision_BPLocal22_5_DraggableTextField.setText(String.valueOf(sliderValue_BP));
+        fixPrecision_22_5_CheckBox.setSelected(true);
+        fixPrecision_BP_CheckBox.setSelected(true);
+        fixPrecision_BPLocal22_5_CheckBox.setSelected(false);
+
+        fixPrecision_BPLocal22_5_Label.setEnabled(false);
+        fixPrecision_BPLocal22_5_Slider.setEnabled(false);
+        fixPrecision_BPLocal22_5_DraggableTextField.setEnabled(false);
+
+        // Add listener for 22.5° check box
+        fixPrecision_22_5_CheckBox.addActionListener(e -> {
+            fixPrecision_22_5_Slider.setEnabled(fixPrecision_22_5_CheckBox.isSelected());
+            fixPrecision_22_5_DraggableTextField.setEnabled(fixPrecision_22_5_CheckBox.isSelected());
+            fixPrecision_22_5_Label.setEnabled(fixPrecision_22_5_CheckBox.isSelected());
+            fixPrecisionModel.setUse_22_5(fixPrecision_22_5_CheckBox.isSelected());
         });
 
-        fixPrecisionBPCheckBox.addActionListener(e -> fixPrecisionModel.setFixPrecisionUseBP(fixPrecisionBPCheckBox.isSelected()));
+        //Add listener for BP check box
+        fixPrecision_BP_CheckBox.addActionListener(e -> {
+            if (fixPrecision_BP_CheckBox.isSelected() && fixPrecision_BPLocal22_5_CheckBox.isSelected()) {
+                fixPrecision_BPLocal22_5_Slider.setEnabled(true);
+                fixPrecision_BPLocal22_5_DraggableTextField.setEnabled(true);
+                fixPrecision_BPLocal22_5_Label.setEnabled(true);
+            } else {
+                fixPrecision_BPLocal22_5_Slider.setEnabled(false);
+                fixPrecision_BPLocal22_5_DraggableTextField.setEnabled(false);
+                fixPrecision_BPLocal22_5_Label.setEnabled(false);
+            }
 
-        fixPrecision22_5Slider.addChangeListener(l -> {
-            if (!updating) {
-                updating = true;
-                trueValue = fixPrecision22_5Slider.getValue() / sliderScale;
-                fixPrecisionModel.setFixPrecision(trueValue);
-                updating = false;
+            fixPrecision_BPLocal22_5_CheckBox.setEnabled(fixPrecision_BP_CheckBox.isSelected());
+            fixPrecisionModel.setUse_BP(fixPrecision_BP_CheckBox.isSelected());
+        });
+
+        // Add listener for local 22.5° within BP check box
+        fixPrecision_BPLocal22_5_CheckBox.addActionListener(e -> {
+            fixPrecision_BPLocal22_5_Slider.setEnabled(fixPrecision_BPLocal22_5_CheckBox.isSelected());
+            fixPrecision_BPLocal22_5_DraggableTextField.setEnabled(fixPrecision_BPLocal22_5_CheckBox.isSelected());
+            fixPrecision_BPLocal22_5_Label.setEnabled(fixPrecision_BPLocal22_5_CheckBox.isSelected());
+            fixPrecisionModel.setUse_BPLocal22_5(fixPrecision_BPLocal22_5_CheckBox.isSelected());
+        });
+
+        // Add listener to 22.5° precision slider
+        fixPrecision_22_5_Slider.addChangeListener(l -> {
+            if (!updating_22_5) {
+                updating_22_5 = true;
+                sliderValue_22_5 = fixPrecision_22_5_Slider.getValue() / sliderScale;
+                fixPrecisionModel.setPrecision_22_5(sliderValue_22_5);
+                updating_22_5 = false;
             }
         });
 
-        fixPrecision22_5DraggableTextField.getDocument().addDocumentListener(new DocumentListener() {
+        // Add listener to local 22.5° within BP slider
+        fixPrecision_BPLocal22_5_Slider.addChangeListener(l -> {
+            if (!updating_BP) {
+                updating_BP = true;
+                sliderValue_BP = fixPrecision_BPLocal22_5_Slider.getValue() / sliderScale;
+                fixPrecisionModel.setPrecision_BPLocal22_5(sliderValue_BP);
+                updating_BP = false;
+            }
+        });
+
+        // Add listener to the 22.5° precision text field
+        fixPrecision_22_5_DraggableTextField.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) {
                 onChange();
@@ -98,31 +154,77 @@ public class FixPrecisionUi implements MouseHandlerUi {
             }
 
             private void onChange() {
-                if (!updating) {
-                    updating = true;
+                if (!updating_22_5 && fixPrecision_22_5_DraggableTextField.isEnabled()) {
+                    updating_22_5 = true;
                     try {
-                        trueValue = Double.parseDouble(fixPrecision22_5DraggableTextField.getText());
-                        fixPrecision22_5Slider.setValue((int) (trueValue * sliderScale));
-                        fixPrecisionModel.setFixPrecision(trueValue);
+                        sliderValue_22_5 = Double.parseDouble(fixPrecision_22_5_DraggableTextField.getText());
+                        fixPrecision_22_5_Slider.setValue((int) (sliderValue_22_5 * sliderScale));
+                        fixPrecisionModel.setPrecision_22_5(sliderValue_22_5);
                     } catch (RuntimeException e) {
                         Logger.info(e);
                     }
-                    updating = false;
+                    updating_22_5 = false;
                 }
             }
         });
-        fixPrecision22_5DraggableTextField.addRawListener((d, fine) -> {
-            if (!updating && d != 0) {
-                updating = true;
-                trueValue += fine ? (double) (d) / (sliderScale * 10) : (double) (d) / (sliderScale * 2);
-                if (trueValue < 0)
-                    trueValue = 0;
-                fixPrecision22_5Slider.setValue((int) (trueValue * sliderScale));
+        fixPrecision_22_5_DraggableTextField.addRawListener((d, fine) -> {
+            if (!updating_22_5 && d != 0 && fixPrecision_22_5_DraggableTextField.isEnabled()) {
+                updating_22_5 = true;
+                sliderValue_22_5 += fine ? (double) (d) / (sliderScale * 10) : (double) (d) / (sliderScale * 2);
+                if (sliderValue_22_5 < 0)
+                    sliderValue_22_5 = 0;
+                fixPrecision_22_5_Slider.setValue((int) (sliderValue_22_5 * sliderScale));
 
                 DoubleConverter df = new DoubleConverter("0.0##");
-                String value = df.convert(trueValue);
-                fixPrecision22_5DraggableTextField.setText(String.valueOf(value));
-                updating = false;
+                String value = df.convert(sliderValue_22_5);
+                fixPrecision_22_5_DraggableTextField.setText(String.valueOf(value));
+                updating_22_5 = false;
+            }
+        });
+
+        // Add listener to the 22.5° precision text field
+        fixPrecision_BPLocal22_5_DraggableTextField.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                onChange();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                onChange();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                onChange();
+            }
+
+            private void onChange() {
+                if (!updating_BP && fixPrecision_BPLocal22_5_DraggableTextField.isEnabled()) {
+                    updating_BP = true;
+                    try {
+                        sliderValue_BP = Double.parseDouble(fixPrecision_BPLocal22_5_DraggableTextField.getText());
+                        fixPrecision_BPLocal22_5_Slider.setValue((int) (sliderValue_BP * sliderScale));
+                        fixPrecisionModel.setPrecision_BPLocal22_5(sliderValue_BP);
+                    } catch (RuntimeException e) {
+                        Logger.info(e);
+                    }
+                    updating_BP = false;
+                }
+            }
+        });
+        fixPrecision_BPLocal22_5_DraggableTextField.addRawListener((d, fine) -> {
+            if (!updating_BP && d != 0 && fixPrecision_BPLocal22_5_DraggableTextField.isEnabled()) {
+                updating_BP = true;
+                sliderValue_BP += fine ? (double) (d) / (sliderScale * 10) : (double) (d) / (sliderScale * 2);
+                if (sliderValue_BP < 0)
+                    sliderValue_BP = 0;
+                fixPrecision_BPLocal22_5_Slider.setValue((int) (sliderValue_BP * sliderScale));
+
+                DoubleConverter df = new DoubleConverter("0.0##");
+                String value = df.convert(sliderValue_BP);
+                fixPrecision_BPLocal22_5_DraggableTextField.setText(String.valueOf(value));
+                updating_BP = false;
             }
         });
     }
@@ -144,33 +246,58 @@ public class FixPrecisionUi implements MouseHandlerUi {
      */
     private void $$$setupUI$$$() {
         root = new JPanel();
-        root.setLayout(new GridLayoutManager(2, 4, new Insets(0, 0, 0, 0), -1, -1));
+        root.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
         root.setOpaque(false);
         final JPanel panel1 = new JPanel();
-        panel1.setLayout(new GridLayoutManager(2, 4, new Insets(0, 0, 0, 0), -1, -1));
+        panel1.setLayout(new GridLayoutManager(3, 3, new Insets(0, 0, 0, 0), -1, -1));
         panel1.setOpaque(false);
-        root.add(panel1, new GridConstraints(0, 0, 2, 4, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-        fixPrecision22_5CheckBox = new JCheckBox();
-        fixPrecision22_5CheckBox.setText("22.5°");
-        panel1.add(fixPrecision22_5CheckBox, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        fixPrecisionBPCheckBox = new JCheckBox();
-        fixPrecisionBPCheckBox.setText("Box pleating");
-        panel1.add(fixPrecisionBPCheckBox, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        root.add(panel1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        fixPrecision_22_5_CheckBox = new JCheckBox();
+        fixPrecision_22_5_CheckBox.setLabel("22.5°");
+        fixPrecision_22_5_CheckBox.setText("22.5°");
+        panel1.add(fixPrecision_22_5_CheckBox, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(90, 22), null, 0, false));
+        fixPrecision_BP_CheckBox = new JCheckBox();
+        fixPrecision_BP_CheckBox.setText("Box pleated");
+        panel1.add(fixPrecision_BP_CheckBox, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(90, 22), null, 0, false));
         final JPanel panel2 = new JPanel();
-        panel2.setLayout(new GridLayoutManager(1, 4, new Insets(3, 3, 3, 3), -1, -1));
-        panel1.add(panel2, new GridConstraints(0, 1, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
-        fixPrecision22_5Slider = new JSlider();
-        fixPrecision22_5Slider.setMajorTickSpacing(0);
-        fixPrecision22_5Slider.setMaximum(100);
-        fixPrecision22_5Slider.setMinimum(1);
-        panel2.add(fixPrecision22_5Slider, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
-        fixPrecision22_5DraggableTextField = new DraggableTextField();
-        panel2.add(fixPrecision22_5DraggableTextField, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(60, -1), null, 0, false));
-        fixPrecision22_5Label = new JLabel();
-        fixPrecision22_5Label.setText("Precision");
-        panel2.add(fixPrecision22_5Label, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        panel2.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 0, 0), -1, -1));
+        panel2.setOpaque(false);
+        panel1.add(panel2, new GridConstraints(2, 1, 1, 2, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        final JPanel panel3 = new JPanel();
+        panel3.setLayout(new GridLayoutManager(1, 3, new Insets(3, 8, 3, 0), -1, -1));
+        panel2.add(panel3, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        fixPrecision_BPLocal22_5_Label = new JLabel();
+        fixPrecision_BPLocal22_5_Label.setText("Precision");
+        panel3.add(fixPrecision_BPLocal22_5_Label, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        fixPrecision_BPLocal22_5_Slider = new JSlider();
+        panel3.add(fixPrecision_BPLocal22_5_Slider, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        fixPrecision_BPLocal22_5_DraggableTextField = new DraggableTextField();
+        panel3.add(fixPrecision_BPLocal22_5_DraggableTextField, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(60, -1), null, 0, false));
+        fixPrecision_BPLocal22_5_CheckBox = new JCheckBox();
+        fixPrecision_BPLocal22_5_CheckBox.setText("Local 22.5°");
+        panel2.add(fixPrecision_BPLocal22_5_CheckBox, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(80, 22), null, 0, false));
+        final JPanel panel4 = new JPanel();
+        panel4.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 0, 0), -1, -1));
+        panel4.setOpaque(false);
+        panel1.add(panel4, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        final JPanel panel5 = new JPanel();
+        panel5.setLayout(new GridLayoutManager(1, 3, new Insets(3, 8, 3, 3), -1, -1));
+        panel4.add(panel5, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        fixPrecision_22_5_Slider = new JSlider();
+        fixPrecision_22_5_Slider.setMajorTickSpacing(0);
+        fixPrecision_22_5_Slider.setMaximum(100);
+        fixPrecision_22_5_Slider.setMinimum(0);
+        panel5.add(fixPrecision_22_5_Slider, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        fixPrecision_22_5_DraggableTextField = new DraggableTextField();
+        panel5.add(fixPrecision_22_5_DraggableTextField, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(60, -1), null, 0, false));
+        fixPrecision_22_5_Label = new JLabel();
+        fixPrecision_22_5_Label.setText("Precision");
+        panel5.add(fixPrecision_22_5_Label, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final Spacer spacer1 = new Spacer();
-        panel2.add(spacer1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, new Dimension(5, -1), null, 0, false));
+        panel4.add(spacer1, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, 1, null, new Dimension(80, -1), null, 0, false));
+        fixPrecision_Seperator = new JLabel();
+        fixPrecision_Seperator.setText(" ―――――――――――――――――――――――――――――――――――――――――――");
+        panel1.add(fixPrecision_Seperator, new GridConstraints(1, 0, 1, 3, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     }
 
     /**

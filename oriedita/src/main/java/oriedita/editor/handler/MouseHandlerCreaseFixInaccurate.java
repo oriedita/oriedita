@@ -9,6 +9,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.databinding.FixPrecisionModel;
+import oriedita.editor.databinding.GridModel;
 import oriedita.editor.handler.step.StepFactory;
 import oriedita.editor.handler.step.StepGraph;
 import oriedita.editor.handler.step.StepMouseHandler;
@@ -20,18 +21,20 @@ import origami.folding.util.IBulletinBoard;
 @Handles(MouseMode.FIX_INACCURATE_107)
 public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandlerCreaseFixInaccurate.Step> {
     @Inject
-    public MouseHandlerCreaseFixInaccurate(IBulletinBoard bb, FixPrecisionModel fixPrecisionModel) {
+    public MouseHandlerCreaseFixInaccurate(IBulletinBoard bb, FixPrecisionModel fixPrecisionModel, GridModel gridModel) {
         this.bb = bb;
         this.fixPrecisionModel = fixPrecisionModel;
+        this.gridModel = gridModel;
     }
 
     private final IBulletinBoard bb;
     private final FixPrecisionModel fixPrecisionModel;
+    private final GridModel gridModel;
 
     private static class FixerResult {
         // Number of lines that were actually fixed. Used for display and to skip fixes that aren't necessary
         long numFixedLines;
-        // Number of lines that are theoretically fixable. Used to compare BP and 22.5°
+        // Number of lines that are theoretically fixable. Used to compare BP and 22.5° solutions
         long numFixableLines;
         ArrayList<Double> lines;
         Type type;
@@ -147,7 +150,7 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
             if (xform.isSquare && !xform.inDefaultSquare) {
                 ArrayList<Double> outResultLines = new ArrayList<>();
                 for (int i = 0; i < r.lines.size(); i += 4) {
-                    // The rescaling introduced a slight error, fix near integers to make the save file prettier.
+                    // The rescaling introduced a slight error, fix near integers to make the save file prettier
                     pos = r.lines.get(i) / xform.scale + xform.deltaX;
                     outResultLines.add(undoXformHelper(pos, allowedError));
 
@@ -200,7 +203,7 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
 
         results = undoXform(results, xform);
 
-        // Extract the best result and calculate the number of actually fixed Lines
+        // Extract the best result and calculate the number of actually fixed lines
         long maxLines = 0;
         FixerResult result = new FixerResult();
         for(FixerResult r : results) {
@@ -225,7 +228,7 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
             return;
         }
         // If it's a non-square 22.5° CP the xform doesn't know where to place it within the default square,
-        // so it can't be fixed properly.
+        // so it can't be fixed properly
         boolean isBadFix = (result.type == FixerResult.Type.PURE_22_5) && !xform.inDefaultSquare && !xform.isSquare;
         if(isBadFix)
             bb.write("WARNING: Fix may be bad. Try to fix 22.5° CPs inside the default square or as square CP");
@@ -301,7 +304,7 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
         ArrayList<FixerResult> results = new ArrayList<>();
 
         // Fix BP first
-        if(fixPrecisionModel.getFixPrecisionUseBP()) {
+        if(fixPrecisionModel.getUse_BP()) {
             results.add(fixBP(toFix));
 
             // Exit early if it's probably box-pleated (95% of vertices align with BP, or local 22.5 within BP)
@@ -310,8 +313,8 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
         }
 
         // Fix 22.5°
-        if(fixPrecisionModel.getFixPrecisionUse22_5()) {
-            double precision22_5 = fixPrecisionModel.getFixPrecision()/100.0;
+        if(fixPrecisionModel.getUse_22_5()) {
+            double precision22_5 = fixPrecisionModel.getPrecision_22_5()/100.0;
             results.add(fix22_5(toFix, precision22_5));
         }
         return results;
@@ -338,7 +341,7 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
         boolean isLineFixed = false;
         long numFixableLines = 0;
 
-        // Data for 22.5° fixing
+        // Data for local 22.5° fixing
         ArrayList<Double> tmp = fixPrecisionModel.getFixData_BP();
         int fixDataSize = tmp.size();
         double[] fixData = new double[fixDataSize];
@@ -347,11 +350,14 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
 
 
         // Automatic grid search algorithm
-        for (int gridIteration = 1; gridIteration <= 16; gridIteration++) {
+        for (int gridIteration = 0; gridIteration <= 16; gridIteration++) {
             // Reset here because it shouldn't be overwritten at the end of grid search
             numFixableLines = 0;
 
             switch (gridIteration) {
+                // Try the size set in Oriedita first. Multiplied by 12 to catch some common partials
+                case 0  -> gridSizeSearch = gridModel.getGridSize() * 12;
+                // Then, as a backup, try some common grid sizes
                 case 1  -> gridSizeSearch = 1024; // Base 2
                 case 2  -> gridSizeSearch = 1536; // Base 3
                 case 3  -> gridSizeSearch = 1280; // Base 5
@@ -387,7 +393,7 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
                 nearestInt = (double)Math.round(currentValue);
                 if (Math.abs(currentValue - nearestInt) > precision)
                     continue;
-                // Actual fixing happens later so we only need to increment the line counter.
+                // Actual fixing happens later so we only need to increment the line counter
                 if (!isLineFixed) {
                     isLineFixed = true;
                     numFixableLines++;
@@ -410,7 +416,7 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
 
         // Determine actual grid. Halves the grid until it finds fewer vertices to fix than original
         long oldNumFixableLines = numFixableLines;
-        for (int i = 0; i <15; i++) {
+        for (int i = 0; i <15; i++) { // 15 is pretty arbitrary here. It shouldn't iterate that much ever.
             numFixableLines = 0;
             for (int j = 0; j < toFix.size(); j++) {
                 double currentValue = toFix.get(j);
@@ -420,7 +426,7 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
                     isLineFixed = false;
 
                 // Scales the position
-                currentValue = currentValue / 200 * gridSize;
+                currentValue = currentValue / 200 * ((double)gridSize/2);
 
                 // Round to nearest integer
                 nearestInt = (double) Math.round(currentValue);
@@ -434,7 +440,9 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
             }
             if (numFixableLines < oldNumFixableLines)
                 break;
+            // Lower grid for next iteration and recalculate precision
             gridSize /= 2;
+            precision = (basePrecision * gridSize) / 200.0;
         }
 
         // Fixing algorithm
@@ -448,7 +456,7 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
                 currentValue = nearestInt;
 
             // Attempt to fix local 22.5°
-            else
+            else if(fixPrecisionModel.getUse_BPLocal22_5())
                 currentValue = fixBP_22_5(currentValue, fixData, fixDataSize);
 
             // Scale back and write to array
@@ -458,13 +466,13 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
         return new FixerResult(0, numFixableLines, outLines, FixerResult.Type.BP);
     }
 
-    // Local 22.5° is just normal 22.5°, but smaller and offset.
-    // The fractional part is the regular 22.5° position.
+    // Local 22.5° is just normal 22.5°, but smaller and offset
+    // The fractional part is the regular 22.5° position
     private double fixBP_22_5(double inValue, double[] fixData, int fixDataSize) {
 
         double orig = inValue<0 ? -inValue : inValue; // Fix data is only positive
         double outValue = orig;
-        double precision = fixPrecisionModel.getFixPrecision()/400.0;
+        double precision = fixPrecisionModel.getPrecision_BPLocal22_5()/400.0;
         double origFloor = Math.floor(orig);
         double frac = orig - origFloor;
 

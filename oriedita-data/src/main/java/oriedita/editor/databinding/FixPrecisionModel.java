@@ -10,9 +10,11 @@ import java.util.Set;
 
 @ApplicationScoped
 public class FixPrecisionModel extends AbstractModel {
-    private double fixPrecision;
-    private boolean fixPrecisionUseBP;
-    private boolean fixPrecisionUse22_5;
+    private double precision_22_5;
+    private double precision_BPLocal22_5;
+    private boolean use_BP;
+    private boolean use_22_5;
+    private boolean use_BPLocal22_5;
 
     private ArrayList<Double> fixData_22_5;
     private ArrayList<Double> fixData_BP;
@@ -25,9 +27,11 @@ public class FixPrecisionModel extends AbstractModel {
     }
 
     public void reset() {
-        fixPrecision = 0.05;
-        fixPrecisionUseBP = true;
-        fixPrecisionUse22_5 = true;
+        precision_22_5 = 0.05;
+        precision_BPLocal22_5 = 0.05;
+        use_BP = true;
+        use_22_5 = true;
+        use_BPLocal22_5 = false;
         fixData_22_5 = new ArrayList<>();
         fixData_BP = new ArrayList<>();
         isData_22_5 = false;
@@ -36,34 +40,54 @@ public class FixPrecisionModel extends AbstractModel {
         this.pcs.firePropertyChange(null, null, null);
     }
 
-    public double getFixPrecision () {
-        return fixPrecision;
+    public double getPrecision_22_5() {
+        return precision_22_5;
     }
 
-    public void setFixPrecision(double  fixPrecision) {
-        double oldFixPrecision = this.fixPrecision;
-        this.fixPrecision = fixPrecision;
-        this.pcs.firePropertyChange("fixPrecision", oldFixPrecision, fixPrecision);
+    public void setPrecision_22_5(double precision_22_5) {
+        double old = this.precision_22_5;
+        this.precision_22_5 = precision_22_5;
+        this.pcs.firePropertyChange("precision_22_5", old, precision_22_5);
     }
 
-    public boolean getFixPrecisionUseBP () {
-        return fixPrecisionUseBP;
+    public double getPrecision_BPLocal22_5() {
+        return precision_BPLocal22_5;
     }
 
-    public void setFixPrecisionUseBP(boolean  fixPrecisionUseBP) {
-        boolean oldFixPrecisionUseBP = this.fixPrecisionUseBP;
-        this.fixPrecisionUseBP = fixPrecisionUseBP;
-        this.pcs.firePropertyChange("fixPrecisionUseBP", oldFixPrecisionUseBP, fixPrecisionUseBP);
+    public void setPrecision_BPLocal22_5(double precision_BPLocal22_5) {
+        double old = this.precision_BPLocal22_5;
+        this.precision_BPLocal22_5 = precision_BPLocal22_5;
+        this.pcs.firePropertyChange("precision_BPLocal22_5", old, precision_BPLocal22_5);
     }
 
-    public boolean getFixPrecisionUse22_5 () {
-        return fixPrecisionUse22_5;
+    public boolean getUse_BP() {
+        return use_BP;
     }
 
-    public void setFixPrecisionUse22_5(boolean  fixPrecisionUse22_5) {
-        boolean oldFixPrecisionUse22_5 = this.fixPrecisionUse22_5;
-        this.fixPrecisionUse22_5 = fixPrecisionUse22_5;
-        this.pcs.firePropertyChange("fixPrecisionUse22_5", oldFixPrecisionUse22_5, fixPrecisionUse22_5);
+    public void setUse_BP(boolean use_BP) {
+        boolean old = this.use_BP;
+        this.use_BP = use_BP;
+        this.pcs.firePropertyChange("use_BP", old, use_BP);
+    }
+
+    public boolean getUse_22_5() {
+        return use_22_5;
+    }
+
+    public void setUse_22_5(boolean use_22_5) {
+        boolean old = this.use_22_5;
+        this.use_22_5 = use_22_5;
+        this.pcs.firePropertyChange("use_22_5", old, use_22_5);
+    }
+
+    public boolean getUse_BPLocal22_5() {
+        return use_BPLocal22_5;
+    }
+
+    public void setUse_BPLocal22_5(boolean use_BPLocal22_5) {
+        boolean old = this.use_BPLocal22_5;
+        this.use_BPLocal22_5 = use_BPLocal22_5;
+        this.pcs.firePropertyChange("use_BPLocal22_5", old, use_BPLocal22_5);
     }
 
     public ArrayList<Double> getFixData22_5() {
