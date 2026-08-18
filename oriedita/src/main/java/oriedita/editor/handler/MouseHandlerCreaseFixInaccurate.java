@@ -1,19 +1,15 @@
 package oriedita.editor.handler;
 
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.DoubleBuffer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumSet;
-import java.util.Objects;
 import org.tinylog.Logger;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import oriedita.editor.canvas.MouseMode;
 import oriedita.editor.databinding.FixPrecisionModel;
+import oriedita.editor.databinding.GridModel;
 import oriedita.editor.handler.step.StepFactory;
 import oriedita.editor.handler.step.StepGraph;
 import oriedita.editor.handler.step.StepMouseHandler;
@@ -25,21 +21,21 @@ import origami.folding.util.IBulletinBoard;
 @Handles(MouseMode.FIX_INACCURATE_107)
 public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandlerCreaseFixInaccurate.Step> {
     @Inject
-    public MouseHandlerCreaseFixInaccurate(IBulletinBoard bb, FixPrecisionModel fixPrecisionModel) {
+    public MouseHandlerCreaseFixInaccurate(IBulletinBoard bb, FixPrecisionModel fixPrecisionModel, GridModel gridModel) {
         this.bb = bb;
         this.fixPrecisionModel = fixPrecisionModel;
+        this.gridModel = gridModel;
     }
 
-    private int fixDataSize;
-    private double[] fixData;
     private final IBulletinBoard bb;
     private final FixPrecisionModel fixPrecisionModel;
+    private final GridModel gridModel;
 
     private static class FixerResult {
         // Number of lines that were actually fixed. Used for display and to skip fixes that aren't necessary
-        long numFixedLines;   
-        // Number of lines that are theoretically fixable. Used to compare/determine algorithms      
-        long numFixableLines;       
+        long numFixedLines;
+        // Number of lines that are theoretically fixable. Used to compare BP and 22.5° solutions
+        long numFixableLines;
         ArrayList<Double> lines;
         Type type;
         enum Type {
@@ -51,6 +47,12 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
             this.numFixableLines = numFixableLines;
             this.lines = lines;
             this.type = type;
+        }
+        FixerResult() {
+            this.numFixedLines = -1;
+            this.numFixableLines = -1;
+            this.lines = null;
+            this.type = Type.EMPTY;
         }
     }
 
@@ -80,7 +82,7 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
     }
 
     private Xform getXform(Collection<LineSegment> lines) {
-        double allowedError = 0.001;
+        double allowedError = 1e-4;
         double maxX = -Double.MAX_VALUE;
         double maxY = -Double.MAX_VALUE;
         double minX = Double.MAX_VALUE;
@@ -108,11 +110,11 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
         }
         boolean isSquare = Math.abs(Math.abs(minY-maxY) - Math.abs(minX-maxX)) < allowedError;
         boolean inDefaultSquare = (minX > -(200+allowedError)) &&
-                                  (minY > -(200+allowedError)) &&
-                                  (maxX <  (200+allowedError)) &&
-                                  (maxY <  (200+allowedError));
-        double midX = minX + Math.abs(maxX-minX)/2; 
-        double midY = minY + Math.abs(maxY-minY)/2; 
+                (minY > -(200+allowedError)) &&
+                (maxX <  (200+allowedError)) &&
+                (maxY <  (200+allowedError));
+        double midX = minX + Math.abs(maxX-minX)/2;
+        double midY = minY + Math.abs(maxY-minY)/2;
         double scale = 400/Math.abs(maxX-minX);
         return new Xform(isSquare, inDefaultSquare, scale, midX, midY);
     }
@@ -121,9 +123,9 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
         ArrayList<LineSegment> out = new ArrayList<>();
         for (var ls : lines) {
             var ls2 = ls.withCoordinates((ls.getA().getX() - xform.deltaX) * xform.scale,
-                                         (ls.getA().getY() - xform.deltaY) * xform.scale,
-                                         (ls.getB().getX() - xform.deltaX) * xform.scale,
-                                         (ls.getB().getY() - xform.deltaY) * xform.scale);
+                    (ls.getA().getY() - xform.deltaY) * xform.scale,
+                    (ls.getB().getX() - xform.deltaX) * xform.scale,
+                    (ls.getB().getY() - xform.deltaY) * xform.scale);
             if(xform.isSquare && !xform.inDefaultSquare)
                 out.add(ls2);
             else
@@ -132,36 +134,41 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
         return out;
     }
 
-    private double undoXformCalc(double pos, double allowedError) {
+    private double undoXformHelper(double pos, double allowedError) {
         double close = (double)Math.round(pos);
-            if(Math.abs(close - pos) < allowedError)
-                return close;
-            else                                       
-                return pos;
+        if(Math.abs(close - pos) < allowedError)
+            return close;
+        else
+            return pos;
     }
 
-    private ArrayList<Double> undoXform (ArrayList<Double> lines, Xform xform) {
-        double allowedError = 0.000000000001;
-        if(xform.isSquare && !xform.inDefaultSquare) {
-            ArrayList<Double> out = new ArrayList<>();
-            for (int i = 0; i<lines.size(); i+=4) {
-                // The rescaling introduced a slight error, fix near integers to make the save file prettier.
-                double pos = lines.get(i)/xform.scale + xform.deltaX;
-                out.add(undoXformCalc(pos,allowedError));
+    private ArrayList<FixerResult> undoXform (ArrayList<FixerResult> results, Xform xform) {
+        ArrayList<FixerResult> outResults = new ArrayList<>();
+        double allowedError = 1e-11;
+        double pos;
+        for(FixerResult r : results) {
+            if (xform.isSquare && !xform.inDefaultSquare) {
+                ArrayList<Double> outResultLines = new ArrayList<>();
+                for (int i = 0; i < r.lines.size(); i += 4) {
+                    // The rescaling introduced a slight error, fix near integers to make the save file prettier
+                    pos = r.lines.get(i) / xform.scale + xform.deltaX;
+                    outResultLines.add(undoXformHelper(pos, allowedError));
 
-                pos = lines.get(i+1)/xform.scale + xform.deltaY;
-                out.add(undoXformCalc(pos,allowedError));
+                    pos = r.lines.get(i + 1) / xform.scale + xform.deltaY;
+                    outResultLines.add(undoXformHelper(pos, allowedError));
 
-                pos = lines.get(i+2)/xform.scale + xform.deltaX;
-                out.add(undoXformCalc(pos,allowedError));
+                    pos = r.lines.get(i + 2) / xform.scale + xform.deltaX;
+                    outResultLines.add(undoXformHelper(pos, allowedError));
 
-                pos = lines.get(i+3)/xform.scale + xform.deltaY;
-                out.add(undoXformCalc(pos,allowedError));
+                    pos = r.lines.get(i + 3) / xform.scale + xform.deltaY;
+                    outResultLines.add(undoXformHelper(pos, allowedError));
+                }
+                outResults.add(new FixerResult(r.numFixedLines, r.numFixableLines, outResultLines, r.type));
             }
-            return out;
+            else
+                outResults.add(r);
         }
-        else
-            return lines;
+        return outResults;
     }
 
     @Override
@@ -192,10 +199,23 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
         }
 
         // Fixing
-        FixerResult result = fix(toFix);
+        ArrayList<FixerResult> results = fix(toFix);
 
-        if(result.type == FixerResult.Type.EMPTY || result.numFixableLines == 0 || result.lines.isEmpty())
-        {
+        results = undoXform(results, xform);
+
+        // Extract the best result and calculate the number of actually fixed lines
+        long maxLines = 0;
+        FixerResult result = new FixerResult();
+        for(FixerResult r : results) {
+            if(r.numFixableLines > maxLines) {
+                maxLines = r.numFixableLines;
+                result = r;
+            }
+        }
+        result.numFixedLines = getNumFixed(result, new ArrayList<>(selectedLines));
+
+
+        if(result.type == FixerResult.Type.EMPTY || result.numFixableLines == 0 || result.lines.isEmpty()) {
             bb.write("No lines fixed");
             new Thread(() -> {
                 try {
@@ -207,33 +227,34 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
             }).start();
             return;
         }
-        
-        if((result.type == FixerResult.Type.PURE_22_5) && !xform.inDefaultSquare && !xform.isSquare)
+        // If it's a non-square 22.5° CP the xform doesn't know where to place it within the default square,
+        // so it can't be fixed properly
+        boolean isBadFix = (result.type == FixerResult.Type.PURE_22_5) && !xform.inDefaultSquare && !xform.isSquare;
+        if(isBadFix)
             bb.write("WARNING: Fix may be bad. Try to fix 22.5° CPs inside the default square or as square CP");
-
-        result.lines = undoXform(result.lines, xform);
 
         int i = 0;
         var fls = d.getFoldLineSet();
         for(LineSegment ls : selectedLines) {
             fls.deleteLine(ls);
             LineSegment ls2 = ls.withCoordinates(result.lines.get(i),
-                                                 result.lines.get(i+1), 
-                                                 result.lines.get(i+2), 
-                                                 result.lines.get(i+3));
+                    result.lines.get(i+1),
+                    result.lines.get(i+2),
+                    result.lines.get(i+3));
             fls.addLine(ls2);
             i += 4;
         }
 
         fls.divideLineSegmentWithNewLines(fls.getTotal() - lines.size(), fls.getTotal());
 
-        // Record new state and display changed line number when 1+ lines changed
+        // Record new state and display changed line number when one or more lines changed
         if(result.numFixedLines > 0) {
             d.record();
             bb.write("Fixed " + result.numFixedLines + " lines");
             new Thread(() -> {
                 try {
-                    if((result.type == FixerResult.Type.PURE_22_5) && !xform.inDefaultSquare && !xform.isSquare) {
+                    // Keep the warning message for longer
+                    if(isBadFix) {
                         Thread.sleep(15000);
                         bb.clear();
                     }
@@ -250,8 +271,8 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
             bb.write("No fix available");
             new Thread(() -> {
                 try {
-                        Thread.sleep(5000);
-                        bb.clear();
+                    Thread.sleep(5000);
+                    bb.clear();
                 } catch (InterruptedException iex) {
                     Logger.info(iex);
                 }
@@ -260,76 +281,43 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
         d.check4();
     }
 
-    private FixerResult fix(ArrayList<Double> toFix) {
+    private long getNumFixed(FixerResult r, ArrayList<LineSegment> origLines) {
+        int i = 0;
+        long num = 0;
+        double allowedError = 1e-11;
+        for(LineSegment l : origLines) {
+            if(Math.abs(l.determineAX() - r.lines.get(i)) > allowedError)
+                num++;
+            else if(Math.abs(l.determineAY() - r.lines.get(i+1)) > allowedError)
+                num++;
+            else if(Math.abs(l.determineBX() - r.lines.get(i+2)) > allowedError)
+                num++;
+            else if(Math.abs(l.determineBY() - r.lines.get(i+3)) > allowedError)
+                num++;
+            i+=4;
+        }
+        return num;
+    }
+
+    private ArrayList<FixerResult> fix(ArrayList<Double> toFix) {
 
         ArrayList<FixerResult> results = new ArrayList<>();
 
         // Fix BP first
-        if(fixPrecisionModel.getFixPrecisionUseBP()) {
+        if(fixPrecisionModel.getUse_BP()) {
             results.add(fixBP(toFix));
 
-            // Exit early if it's probably box-pleated
-            if (results.get(0).numFixableLines > (toFix.size() / 4.0 * .9))
-                return results.get(0);
+            // Exit early if it's probably box-pleated (95% of vertices align with BP, or local 22.5 within BP)
+            if (results.get(0).numFixableLines > (toFix.size() / 4.0 * .95))
+                return results;
         }
 
-        // Fix 22.5
-        if(fixPrecisionModel.getFixPrecisionUse22_5()) {
-            double precision22_5 = fixPrecisionModel.getFixPrecision()/100.0;
-            loadData("fixData_22_5.bin");
-            results.add(fixWithData(toFix, precision22_5));
+        // Fix 22.5°
+        if(fixPrecisionModel.getUse_22_5()) {
+            double precision22_5 = fixPrecisionModel.getPrecision_22_5()/100.0;
+            results.add(fix22_5(toFix, precision22_5));
         }
-
-        /* To load external file, keep just in case we decide against packing the 60mb generic fix file into the jar
-        if (genericFix) {
-            // Check if fixDataGeneric.bin exists, download if not
-            File f = new File(dataFilePath);
-            if (!f.exists()) {
-                try {
-                    URI uri = new URI(downloadPath);
-                    URL in = uri.toURL();
-                    try (ReadableByteChannel readableByteChannel = Channels.newChannel(in.openStream());
-                         FileOutputStream fileOutputStream = new FileOutputStream(dataFilePath)) {
-                        fileOutputStream.getChannel().transferFrom(readableByteChannel, 0, Long.MAX_VALUE);
-                    }
-                } catch (IOException | URISyntaxException ioe3) {
-                    // Failed to download
-                }
-            }
-            try {
-                mapData("fixDataGeneric.bin");
-            } catch (IOException ioe_generic) {
-                // Failed to access file
-            }
-
-            result2 = fixGeneric(toFix, precisionGeneric);
-        }*/
-        long maxLines = 0;
-        FixerResult returnResult = new FixerResult(0,0,new ArrayList<>(), FixerResult.Type.EMPTY);
-        for(FixerResult r : results) {
-            if(r.numFixableLines > maxLines)
-            {
-                maxLines = r.numFixableLines;
-                returnResult = r;
-            }
-        }
-        return returnResult;
-    }
-
-    // Map data into an array
-    private void loadData(String file){ 
-        try {
-            var stream = Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream(file));
-            byte[] bytes = stream.readAllBytes();
-
-            ByteBuffer byteBuffer = ByteBuffer.wrap(bytes).order(ByteOrder.LITTLE_ENDIAN);
-            DoubleBuffer db = byteBuffer.asDoubleBuffer();
-            fixDataSize = db.remaining();
-            fixData = new double[fixDataSize];
-            db.get(fixData);
-        } catch (IOException | NullPointerException e) {
-            Logger.error(e);
-        }
+        return results;
     }
 
     // Fix BP
@@ -337,35 +325,39 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
         // Output
         ArrayList<Double> outLines = new ArrayList<>();
 
-        // Don't fix positions that are less than this much off
-        double allowedError = 0.00000000001;
-
         // Fixing
         int gridSize = 0;
-        double currentValue, nearestInt;
+        double nearestInt;
         final double basePrecision = 0.0013; // Arbitrary value. Derived from testing
-        // Since the fixing involves scaling, the precision needs to be adjusted
         double precision = 0;
 
         // Grid search
         int gridSizeSearch = 0;
         long numLinesFixedWithPrevBestGrid = 0;
-        boolean endGridSearch = false;
-        final float gridSearchEndPercent = .9f; // Arbitrary value, keep under 1.0f
+        final float gridSearchEndPercent = .9f; // Arbitrary value, keep below 1.0f
         final float necessaryImprovementGrid = 1.15f; // Arbitrary value
 
         // Fixed lines counter logic
         boolean isLineFixed = false;
         long numFixableLines = 0;
-        long numFixedLines = 0;
+
+        // Data for local 22.5° fixing
+        ArrayList<Double> tmp = fixPrecisionModel.getFixData_BP();
+        int fixDataSize = tmp.size();
+        double[] fixData = new double[fixDataSize];
+        for (int i = 0; i < fixDataSize; i++)
+            fixData[i] = tmp.get(i);
+
 
         // Automatic grid search algorithm
-        for (int gridIteration = 1; gridIteration <= 16; gridIteration++) {
+        for (int gridIteration = 0; gridIteration <= 16; gridIteration++) {
             // Reset here because it shouldn't be overwritten at the end of grid search
             numFixableLines = 0;
 
             switch (gridIteration) {
-                // Ordered by likelihood
+                // Try the size set in Oriedita first. Multiplied by 12 to catch some common partials
+                case 0  -> gridSizeSearch = gridModel.getGridSize() * 12;
+                // Then, as a backup, try some common grid sizes
                 case 1  -> gridSizeSearch = 1024; // Base 2
                 case 2  -> gridSizeSearch = 1536; // Base 3
                 case 3  -> gridSizeSearch = 1280; // Base 5
@@ -376,8 +368,8 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
                 case 8  -> gridSizeSearch = 1920; // Base 15
                 case 9  -> gridSizeSearch = 1088; // Base 17
                 case 10 -> gridSizeSearch = 1216; // Base 19
-                case 11 -> gridSizeSearch = 1344; // Base 21                
-                case 12 -> gridSizeSearch = 1472; // Base 23	
+                case 11 -> gridSizeSearch = 1344; // Base 21
+                case 12 -> gridSizeSearch = 1472; // Base 23
                 case 13 -> gridSizeSearch = 1600; // Base 25
                 case 14 -> gridSizeSearch = 1728; // Base 27
                 case 15 -> gridSizeSearch = 1856; // Base 29
@@ -388,7 +380,8 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
             precision = (basePrecision * gridSizeSearch) / 200.0;
 
             for (int i = 0; i < toFix.size(); i++) {
-                currentValue = toFix.get(i);
+                double currentValue = toFix.get(i);
+
                 // Reset line counter
                 if ((i % 4) == 0)
                     isLineFixed = false;
@@ -397,84 +390,125 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
                 currentValue = currentValue / 200 * gridSizeSearch;
 
                 // Round to nearest integer
-                nearestInt = (double) Math.round(currentValue);
+                nearestInt = (double)Math.round(currentValue);
                 if (Math.abs(currentValue - nearestInt) > precision)
                     continue;
-                // Actual fixing happens later so we only need to
-                // increment the line counter.
+                // Actual fixing happens later so we only need to increment the line counter
                 if (!isLineFixed) {
                     isLineFixed = true;
                     numFixableLines++;
                 }
             }
 
-            // Only overwrites old grid solution if the new one has 10% more matches (arbitrary value)
+            // Only overwrites old grid solution if the new one has 15% more matches (arbitrary value)
             if (numFixableLines > (numLinesFixedWithPrevBestGrid) * necessaryImprovementGrid) {
                 gridSize = gridSizeSearch;
                 numLinesFixedWithPrevBestGrid = numFixableLines;
             }
 
-            // Ends grid search prematurely if it finds a close match
-            if (numFixableLines > ((toFix.size()/4.0) * gridSearchEndPercent))
-                endGridSearch = true;
-
             // Resets value for next iteration/actual fixing
             isLineFixed = false;
 
-            if (endGridSearch)
+            // Ends grid search prematurely if it finds a close match
+            if (numFixableLines > ((toFix.size()/4.0) * gridSearchEndPercent))
                 break;
         }
 
-        // Fixing algorithm
-        for (int i = 0; i < toFix.size(); i++) {
-            currentValue = toFix.get(i);
+        // Determine actual grid. Halves the grid until it finds fewer vertices to fix than original
+        long oldNumFixableLines = numFixableLines;
+        for (int i = 0; i <15; i++) { // 15 is pretty arbitrary here. It shouldn't iterate that much ever.
+            numFixableLines = 0;
+            for (int j = 0; j < toFix.size(); j++) {
+                double currentValue = toFix.get(j);
 
-            // Reset line counter logic
-            if ((i % 4) == 0)
+                // Reset line counter
+                if ((j % 4) == 0)
                     isLineFixed = false;
-  
-            // Scales the position for fixing
+
+                // Scales the position
+                currentValue = currentValue / 200 * ((double)gridSize/2);
+
+                // Round to nearest integer
+                nearestInt = (double) Math.round(currentValue);
+                if (Math.abs(currentValue - nearestInt) > precision)
+                    continue;
+                // Line counter
+                if (!isLineFixed) {
+                    isLineFixed = true;
+                    numFixableLines++;
+                }
+            }
+            if (numFixableLines < oldNumFixableLines)
+                break;
+            // Lower grid for next iteration and recalculate precision
+            gridSize /= 2;
+            precision = (basePrecision * gridSize) / 200.0;
+        }
+
+        // Fixing algorithm
+        for (double currentValue : toFix) {
+            // Scales the position so that each vertex is close to an integer
             currentValue = currentValue / 200 * gridSize;
 
             // Round to nearest integer
-            nearestInt = (double) Math.round(currentValue);
-            if (Math.abs(currentValue - nearestInt) < precision) {
-                if(Math.abs(currentValue - nearestInt) > allowedError) {
-                    if (!isLineFixed) {
-                        isLineFixed = true;
-                        numFixedLines++;
-                    }
-                    currentValue = nearestInt;
-                }
-            }           
+            nearestInt = (double)Math.round(currentValue);
+            if (Math.abs(currentValue - nearestInt) < precision)
+                currentValue = nearestInt;
 
-            // Scale back
+            // Attempt to fix local 22.5°
+            else if(fixPrecisionModel.getUse_BPLocal22_5())
+                currentValue = fixBP_22_5(currentValue, fixData, fixDataSize);
+
+            // Scale back and write to array
             currentValue = currentValue * 200 / gridSize;
             outLines.add(currentValue);
         }
-
-        return new FixerResult(numFixedLines, numFixableLines, outLines, FixerResult.Type.BP);
+        return new FixerResult(0, numFixableLines, outLines, FixerResult.Type.BP);
     }
 
-    // Fix with given data file
-    private FixerResult fixWithData(ArrayList<Double> inLines, double precision) {
+    // Local 22.5° is just normal 22.5°, but smaller and offset
+    // The fractional part is the regular 22.5° position
+    private double fixBP_22_5(double inValue, double[] fixData, int fixDataSize) {
+
+        double orig = inValue<0 ? -inValue : inValue; // Fix data is only positive
+        double outValue = orig;
+        double precision = fixPrecisionModel.getPrecision_BPLocal22_5()/400.0;
+        double origFloor = Math.floor(orig);
+        double frac = orig - origFloor;
+
+        for (int i = 0; i < fixDataSize; i++) {
+            if (Math.abs(frac - fixData[i]) < precision) {
+                frac = fixData[i];
+                outValue = frac + origFloor;
+                break;
+            }
+        }
+
+        return inValue<0 ? -outValue : outValue;
+    }
+
+    // Fix 22.5°
+    private FixerResult fix22_5(ArrayList<Double> inLines, double precision) {
         ArrayList<Double> outLines = new ArrayList<>();
 
         // For storing already used positions
         ArrayList<Double> prevFixedPositions = new ArrayList<>();
 
-        // Don't fix positions that are less than this much off
-        double allowedError = 0.00000000001;
-
         // Variables for the fixing algorithm
         double currentValue;
         boolean isNegative;
         boolean skipSlow;
-        
+
         // Fixed lines counter logic
         boolean isLineFixed = false;
         long numFixableLines = 0;
-        long numFixedLines = 0;
+
+        // Get data necessary for fixing
+        ArrayList<Double> tmp = fixPrecisionModel.getFixData22_5();
+        int fixDataSize = tmp.size();
+        double[] fixData = new double[fixDataSize];
+        for (int i = 0; i < fixDataSize; i++)
+            fixData[i] = tmp.get(i);
 
         for (int i = 0; i < inLines.size(); i++) {
             currentValue = inLines.get(i);
@@ -491,46 +525,30 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
             }
 
             // Check the already fixed positions first
-            for (int j = 0; j < prevFixedPositions.size(); j++) {
-                if (Math.abs(currentValue - prevFixedPositions.get(j)) > precision)
+            for (Double prevFixedPosition : prevFixedPositions) {
+                // Skip if error too big
+                if (Math.abs(currentValue - prevFixedPosition) > precision)
                     continue;
-                if (Math.abs(currentValue - prevFixedPositions.get(j)) > allowedError) {
-                    currentValue = prevFixedPositions.get(j);
-                    if (!isLineFixed) {
-                        isLineFixed = true;
-                        numFixableLines++;  
-                        numFixedLines++;
-                        skipSlow = true;
-                        break;
-                    }
-                }
-                else if (!isLineFixed) {
+                if (!isLineFixed) {
                     isLineFixed = true;
-                    numFixableLines++;      
-                    break;
+                    numFixableLines++;
                 }
-
+                currentValue = prevFixedPosition;
+                skipSlow = true;
+                break;
             }
             // If the position wasn't previously fixed already go through all possible positions
             if (!skipSlow) {
                 for (int j = 0; j < fixDataSize; j++) {
                     if (Math.abs(currentValue - fixData[j]) > precision)
                         continue;
-                    if (Math.abs(currentValue - fixData[j]) > allowedError) {
-                        currentValue = fixData[j];
-                        prevFixedPositions.add(fixData[j]);
-                        if (!isLineFixed) {
-                            isLineFixed = true;
-                            numFixableLines++;  
-                            numFixedLines++;
-                            break;
-                        }
-                    }
-                    else if (!isLineFixed) {
+                    if (!isLineFixed) {
                         isLineFixed = true;
-                        numFixableLines++;      
-                        break;
+                        numFixableLines++;
                     }
+                    currentValue = fixData[j];
+                    prevFixedPositions.add(fixData[j]);
+                    break;
                 }
             }
             // Re-invert negative values
@@ -539,6 +557,6 @@ public class MouseHandlerCreaseFixInaccurate extends StepMouseHandler<MouseHandl
 
             outLines.add(currentValue);
         }
-        return new FixerResult(numFixedLines, numFixableLines, outLines, FixerResult.Type.PURE_22_5);
+        return new FixerResult(0, numFixableLines, outLines, FixerResult.Type.PURE_22_5);
     }
 }
