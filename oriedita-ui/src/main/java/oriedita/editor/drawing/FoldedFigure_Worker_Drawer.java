@@ -126,9 +126,8 @@ public class FoldedFigure_Worker_Drawer {
         drawLines(g2, camera, subFace_figure);
     }
 
-    public void drawSelfIntersectingSubFaces(Graphics g, WireFrame_Worker_Drawer orite, PointSet subFace_figure) {
+    public void drawSelfIntersectingSubFaces(Graphics2D g2, WireFrame_Worker_Drawer orite, PointSet subFace_figure) {
         if (worker.errorPos != null && displaySsi) {
-            Graphics2D g2 = (Graphics2D) g;
             g2.setColor(Colors.get(new Color(255, 0, 0, 75)));
             fillSubFace(g2, camera, subFace_figure, worker.errorPos.getA());
             fillSubFace(g2, camera, subFace_figure, worker.errorPos.getB());
@@ -429,26 +428,25 @@ public class FoldedFigure_Worker_Drawer {
     }
 
     //---------------------------------------------------------
-    public void draw_cross_with_camera(Graphics g, boolean selected, int index) {
-        Graphics2D g2 = (Graphics2D) g;
+    public void draw_cross_with_camera(Graphics2D g2, boolean selected, int index) {
         //Draw the center of the camera with a cross
         Point point = camera.object2TV(camera.getCameraPosition());
-        DrawingUtil.cross(g, point, 5.0, 2.0, LineColor.ORANGE_4);
+        DrawingUtil.cross(g2, point, 5.0, 2.0, LineColor.ORANGE_4);
 
         if (selected) {
-            g.setColor(Colors.get(new Color(200, 50, 255, 90)));
+            g2.setColor(Colors.get(new Color(200, 50, 255, 90)));
             Ellipse2D.Double ellipse = new Ellipse2D.Double(point.getX() - 25, point.getY() - 25, 50, 50);
 
             g2.fill(ellipse);
         }
 
         if (displayNumbers) {
-            Font f = g.getFont();
-            g.setFont(new Font(f.getName(), f.getStyle(), 50));
-            g.setColor(Color.orange);
+            Font f = g2.getFont();
+            g2.setFont(new Font(f.getName(), f.getStyle(), 50));
+            g2.setColor(Color.orange);
 
             g2.drawString(String.valueOf(index), (float) point.getX() + 25, (float) point.getY() + 25);
-            g.setFont(f);
+            g2.setFont(f);
         }
     }
 

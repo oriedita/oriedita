@@ -10,7 +10,6 @@ import origami.crease_pattern.element.Point;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
 
 // -------------------------------------------------------------------------------------
@@ -282,10 +281,8 @@ public class Grid {
     }
 
     //描画-----------------------------------------------------------------
-    public void draw(Graphics g, Camera camera, int p0x_max, int p0y_max, boolean subGrid, double minGridUnitSize) {    //subGrid=1なら一定数ごとに格子線の色を変える
+    public void draw(Graphics2D g2, Camera camera, int p0x_max, int p0y_max, boolean subGrid, double minGridUnitSize) {    //subGrid=1なら一定数ごとに格子線の色を変える
         //入力規定が1か2（正方格子）の場合の格子線の描画
-        Graphics2D g2 = (Graphics2D) g;
-
         //格子線の描画
         g2.setStroke(new BasicStroke((float) gridLineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));//線の太さや線の末端の形状
 
@@ -329,7 +326,7 @@ public class Grid {
             }
         }
 
-        g.setColor(grid_color);
+        g2.setColor(grid_color);
         LineSegment s_tv;
         LineSegment s_ob;
         int step = 1;
@@ -362,14 +359,14 @@ public class Grid {
 
             s_tv = camera.object2TV(s_ob);
             if (step != halfStep && i/halfStep % 2 != 0) {
-                g.setColor(c);
+                g2.setColor(c);
             } else {
-                g.setColor(grid_color);
+                g2.setColor(grid_color);
             }
-            g.drawLine((int) s_tv.determineAX(), (int) s_tv.determineAY(), (int) s_tv.determineBX(), (int) s_tv.determineBY()); //直線
+            g2.drawLine((int) s_tv.determineAX(), (int) s_tv.determineAY(), (int) s_tv.determineBX(), (int) s_tv.determineBY()); //直線
 
         }
-        g.setColor(grid_color);
+        g2.setColor(grid_color);
         for (int i = grid_screen_b_min - offsetY; i <= grid_screen_b_max; i+=halfStep) {
             // draw horizontal gridlines
             s_ob = new LineSegment(d_grid_ax * grid_screen_a_min + d_grid_bx * i + okx0,
@@ -379,12 +376,12 @@ public class Grid {
 
             s_tv = camera.object2TV(s_ob);
             if (step != halfStep && i/halfStep % 2 != 0) {
-                g.setColor(c);
+                g2.setColor(c);
             } else {
-                g.setColor(grid_color);
+                g2.setColor(grid_color);
             }
 
-            g.drawLine((int) s_tv.determineAX(), (int) s_tv.determineAY(), (int) s_tv.determineBX(), (int) s_tv.determineBY()); //直線
+            g2.drawLine((int) s_tv.determineAX(), (int) s_tv.determineAY(), (int) s_tv.determineBX(), (int) s_tv.determineBY()); //直線
         }
 
         if (drawDiagonalGridlines) {
@@ -402,13 +399,13 @@ public class Grid {
 
 
                 if (step != halfStep && i/halfStep % 2 != 0) {
-                    g.setColor(c);
+                    g2.setColor(c);
                 } else {
-                    g.setColor(grid_color);
+                    g2.setColor(grid_color);
                 }
 
                 s_tv = camera.object2TV(s_ob);
-                g.drawLine((int) s_tv.determineAX(), (int) s_tv.determineAY(), (int) s_tv.determineBX(), (int) s_tv.determineBY()); //直線
+                g2.drawLine((int) s_tv.determineAX(), (int) s_tv.determineAY(), (int) s_tv.determineBX(), (int) s_tv.determineBY()); //直線
             }
             // then draw these lines:
             // .\\
@@ -423,19 +420,19 @@ public class Grid {
                 );
 
                 if (step != halfStep && i/halfStep % 2 != 0) {
-                    g.setColor(c);
+                    g2.setColor(c);
                 } else {
-                    g.setColor(grid_color);
+                    g2.setColor(grid_color);
                 }
 
                 s_tv = camera.object2TV(s_ob);
-                g.drawLine((int) s_tv.determineAX(), (int) s_tv.determineAY(), (int) s_tv.determineBX(), (int) s_tv.determineBY()); //直線
+                g2.drawLine((int) s_tv.determineAX(), (int) s_tv.determineAY(), (int) s_tv.determineBX(), (int) s_tv.determineBY()); //直線
             }
         }
 
         //Change the color of the grid line for each constant -----------------------------------------------
         if (subGrid) {
-            g.setColor(gridScaleColor);
+            g2.setColor(gridScaleColor);
             Color gsc= new Color(gridScaleColor.getRed(), gridScaleColor.getGreen(), gridScaleColor.getBlue(), alpha);
 
             int i_balance;//剰余
@@ -451,12 +448,12 @@ public class Grid {
                             d_grid_ax * i + d_grid_bx * grid_screen_b_max + okx0,
                             d_grid_ay * i + d_grid_by * grid_screen_b_max + oky0);
                     if (step != halfStep && i/halfStep % 2 != 0) {
-                        g.setColor(gsc);
+                        g2.setColor(gsc);
                     } else {
-                        g.setColor(gridScaleColor);
+                        g2.setColor(gridScaleColor);
                     }
                     s_tv = camera.object2TV(s_ob);
-                    g.drawLine((int) s_tv.determineAX(), (int) s_tv.determineAY(), (int) s_tv.determineBX(), (int) s_tv.determineBY()); //直線
+                    g2.drawLine((int) s_tv.determineAX(), (int) s_tv.determineAY(), (int) s_tv.determineBX(), (int) s_tv.determineBY()); //直線
                 }
             }
 
@@ -474,13 +471,13 @@ public class Grid {
                             d_grid_ay * grid_screen_a_max + d_grid_by * i + oky0);
 
                     if (step != halfStep && i/halfStep % 2 != 0) {
-                        g.setColor(gsc);
+                        g2.setColor(gsc);
                     } else {
-                        g.setColor(gridScaleColor);
+                        g2.setColor(gridScaleColor);
                     }
 
                     s_tv = camera.object2TV(s_ob);
-                    g.drawLine((int) s_tv.determineAX(), (int) s_tv.determineAY(), (int) s_tv.determineBX(), (int) s_tv.determineBY()); //直線
+                    g2.drawLine((int) s_tv.determineAX(), (int) s_tv.determineAY(), (int) s_tv.determineBX(), (int) s_tv.determineBY()); //直線
                 }
             }
 
@@ -498,9 +495,9 @@ public class Grid {
                         continue;
                     }
                     if (step != halfStep && i/halfStep % 2 != 0) {
-                        g.setColor(gsc);
+                        g2.setColor(gsc);
                     } else {
-                        g.setColor(gridScaleColor);
+                        g2.setColor(gridScaleColor);
                     }
 
                     s_ob = new LineSegment(
@@ -510,7 +507,7 @@ public class Grid {
                             i * d_grid_ay + grid_screen_b_min * d_grid_by + oky0 + (i - grid_screen_a_min) * d_grid_cy
                     );
                     s_tv = camera.object2TV(s_ob);
-                    g.drawLine((int) s_tv.determineAX(), (int) s_tv.determineAY(), (int) s_tv.determineBX(), (int) s_tv.determineBY()); //直線
+                    g2.drawLine((int) s_tv.determineAX(), (int) s_tv.determineAY(), (int) s_tv.determineBX(), (int) s_tv.determineBY()); //直線
                 }
                 // then draw these lines:
                 // .\.
@@ -521,9 +518,9 @@ public class Grid {
                         continue;
                     }
                     if (step != halfStep && i/halfStep % 2 != 0) {
-                        g.setColor(gsc);
+                        g2.setColor(gsc);
                     } else {
-                        g.setColor(gridScaleColor);
+                        g2.setColor(gridScaleColor);
                     }
                     s_ob = new LineSegment(
                             grid_screen_a_max * d_grid_ax + i * d_grid_bx + okx0,
@@ -533,7 +530,7 @@ public class Grid {
                     );
 
                     s_tv = camera.object2TV(s_ob);
-                    g.drawLine((int) s_tv.determineAX(), (int) s_tv.determineAY(), (int) s_tv.determineBX(), (int) s_tv.determineBY()); //直線
+                    g2.drawLine((int) s_tv.determineAX(), (int) s_tv.determineAY(), (int) s_tv.determineBX(), (int) s_tv.determineBY()); //直線
                 }
             }
             //一定数ごとに格子線の色を変える　ここまで--------------------------------------------

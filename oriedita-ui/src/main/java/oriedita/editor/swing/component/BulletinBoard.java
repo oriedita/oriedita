@@ -8,7 +8,7 @@ import origami.folding.util.IBulletinBoard;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.Color;
-import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.util.ArrayList;
 
 @ApplicationScoped
@@ -154,7 +154,7 @@ public class BulletinBoard implements IBulletinBoard {
         }
     }
 
-    public void draw(Graphics g) {
+    public void draw(Graphics2D g) {
         g.setColor(Colors.get(Color.blue));
         //noinspection PointlessArithmeticExpression
         g.drawString(s01, ix0, iy0 + 1 * i_interval);

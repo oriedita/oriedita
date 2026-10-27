@@ -14,7 +14,7 @@ import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 
 import java.awt.Color;
-import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.geom.Path2D;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -70,9 +70,9 @@ public interface CreasePattern_Worker {
     //------------------------------------------------------------------------------
     //Drawing the basic branch
     //------------------------------------------------------------------------------
-    void drawGrid(Graphics g, int p0x_max, int p0y_max);
+    void drawGrid(Graphics2D g, int p0x_max, int p0y_max);
 
-    void drawWithCamera(Graphics g, boolean displayComments,
+    void drawWithCamera(Graphics2D g, boolean displayComments,
                         boolean displayCpLines, boolean displayAuxLines,
                         boolean displayAuxLiveLines, boolean displayCpText,
                         float lineWidth, LineStyle lineStyle,

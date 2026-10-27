@@ -43,7 +43,6 @@ import origami.crease_pattern.worker.foldlineset.OrganizeCircles;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.Path2D;
 import java.beans.PropertyChangeEvent;
@@ -402,20 +401,18 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
     //------------------------------------------------------------------------------
 
     @Override
-    public void drawGrid(Graphics g, int p0x_max, int p0y_max) {
+    public void drawGrid(Graphics2D g, int p0x_max, int p0y_max) {
         grid.draw(g, camera, p0x_max, p0y_max, applicationModel.getDisplayGridInputAssist(), applicationModel.getMinGridUnitSize());
     }
     
     @Override
-    public void drawWithCamera(Graphics g,
+    public void drawWithCamera(Graphics2D g2,
                                boolean displayComments, boolean displayCpLines,
                                boolean displayAuxLines, boolean displayAuxLiveLines,
                                boolean displayCpText,
                                float lineWidth, LineStyle lineStyle, float f_h_WireframeLineWidth,
                                int p0x_max, int p0y_max, boolean i_mejirusi_display,
                                boolean hideOperationFrame) {//引数はカメラ設定、線幅、画面X幅、画面y高さ
-        Graphics2D g2 = (Graphics2D) g;
-
         BasicStroke BStroke = new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER);
         g2.setStroke(BStroke);//Line thickness and shape of the end of the line
 
@@ -423,7 +420,7 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
         if (displayAuxLiveLines) {
             g2.setStroke(new BasicStroke(f_h_WireframeLineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));//Line thickness and shape of the end of the line
             for (var as : auxLines.getLineSegmentsIterable()) {
-                DrawingUtil.drawAuxLiveLine(g, as, camera, lineWidth, pointSize, f_h_WireframeLineWidth);
+                DrawingUtil.drawAuxLiveLine(g2, as, camera, lineWidth, pointSize, f_h_WireframeLineWidth);
             }
         }
 
@@ -434,13 +431,13 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
         //Check1Senbには0番目からsize()-1番目までデータが入っている
         if (check1) {
             for (LineSegment s_temp : foldLineSet.getCheck1LineSegments()) {
-                DrawingUtil.pointingAt1(g, camera.object2TV(s_temp));
+                DrawingUtil.pointingAt1(g2, camera.object2TV(s_temp));
             }
         }
 
         if (check2) {
             for (LineSegment s_temp : foldLineSet.getCheck2LineSegments()) {
-                DrawingUtil.pointingAt2(g, camera.object2TV(s_temp));
+                DrawingUtil.pointingAt2(g2, camera.object2TV(s_temp));
             }
         }
 
@@ -458,17 +455,17 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
             if (displayComments) {
 
                 if (camvTaskExecutor.isTaskRunning()) {
-                    g.setColor(Colors.get(Color.orange));
-                    g.drawString("... cAMV Errors", p0x_max - 100, 20);
+                    g2.setColor(Colors.get(Color.orange));
+                    g2.drawString("... cAMV Errors", p0x_max - 100, 20);
                 } else {
                     int numErrors = foldLineSet.getViolations().size();
                     if (numErrors == 0) {
-                        g.setColor(Colors.get(Color.green));
+                        g2.setColor(Colors.get(Color.green));
                     } else {
-                        g.setColor(Colors.get(Color.red));
+                        g2.setColor(Colors.get(Color.red));
                     }
 
-                    g.drawString(numErrors + " cAMV Errors", p0x_max - 100, 20);
+                    g2.drawString(numErrors + " cAMV Errors", p0x_max - 100, 20);
                 }
             }
         }
@@ -477,19 +474,19 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
         //Check3Senbには0番目からsize()-1番目までデータが入っている
         if (check3) {
             for (LineSegment s_temp : foldLineSet.getCheck3LineSegments()) {
-                DrawingUtil.pointingAt3(g, camera.object2TV(s_temp));
+                DrawingUtil.pointingAt3(g2, camera.object2TV(s_temp));
             }
         }
 
         //Draw the center of the camera with a cross
         if (i_mejirusi_display) {
-            DrawingUtil.cross(g, camera.object2TV(camera.getCameraPosition()), 5.0, 2.0, LineColor.CYAN_3);
+            DrawingUtil.cross(g2, camera.object2TV(camera.getCameraPosition()), 5.0, 2.0, LineColor.CYAN_3);
         }
 
         //円を描く　
         if (displayAuxLines) {
             for (Circle circle : foldLineSet.getCircles()) {
-                DrawingUtil.drawCircle(g, circle, camera, lineWidth, pointSize);
+                DrawingUtil.drawCircle(g2, circle, camera, lineWidth, pointSize);
             }
         }
 
@@ -498,7 +495,7 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
         g2.setStroke(new BasicStroke(lineWidth * 2.0f + 2.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));//基本指定A　　線の太さや線の末端の形状
         for (var s : lines) {
             if (s.getSelected() == 2) {
-                DrawingUtil.drawSelectLine(g, s, camera);
+                DrawingUtil.drawSelectLine(g2, s, camera);
             }
         }
 
@@ -507,27 +504,27 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
         if (displayAuxLines) {
             for (var s : lines) {
                 if (s.getColor() == LineColor.CYAN_3) {
-                    DrawingUtil.drawAuxLine(g, s, camera, lineWidth, pointSize, useRounded);
+                    DrawingUtil.drawAuxLine(g2, s, camera, lineWidth, pointSize, useRounded);
                 }
             }
         }
 
         //展開図の描画  補助活線以外の折線
         if (displayCpLines) {
-            g.setColor(Colors.get(Color.black));
+            g2.setColor(Colors.get(Color.black));
             for (var s : lines) {
                 if (s.getColor() != LineColor.CYAN_3 && s.getColor() != LineColor.RED_1 && s.getColor() != LineColor.BLACK_0) {
-                    DrawingUtil.drawCpLine(g, s, camera, lineStyle, lineWidth, pointSize, p0x_max, p0y_max, useRounded);
+                    DrawingUtil.drawCpLine(g2, s, camera, lineStyle, lineWidth, pointSize, p0x_max, p0y_max, useRounded);
                 }
             }
             for (var s : lines) {
                 if (s.getColor() == LineColor.RED_1) {
-                    DrawingUtil.drawCpLine(g, s, camera, lineStyle, lineWidth, pointSize, p0x_max, p0y_max, useRounded);
+                    DrawingUtil.drawCpLine(g2, s, camera, lineStyle, lineWidth, pointSize, p0x_max, p0y_max, useRounded);
                 }
             }
             for (var s : lines) {
                 if (s.getColor() == LineColor.BLACK_0) {
-                    DrawingUtil.drawCpLine(g, s, camera, lineStyle, lineWidth, pointSize, p0x_max, p0y_max, useRounded);
+                    DrawingUtil.drawCpLine(g2, s, camera, lineStyle, lineWidth, pointSize, p0x_max, p0y_max, useRounded);
                 }
             }
         }
@@ -548,18 +545,18 @@ public class CreasePattern_Worker_Impl implements CreasePattern_Worker {
         //線分入力時の一時的なs_step線分を描く　
 
         if (!hideOperationFrame && ((canvasModel.getMouseMode() != MouseMode.OPERATION_FRAME_CREATE_61) || (lineStep.size() == 4))) {
-            lineStep.forEach((s) -> DrawingUtil.drawLineStep(g, s, camera, lineWidth));
+            lineStep.forEach((s) -> DrawingUtil.drawLineStep(g2, s, camera, lineWidth));
         }
 
-        g.setColor(Color.MAGENTA);
-        DrawingUtil.drawCurve(g, camera.object2TV(linePath), lineWidth);
+        g2.setColor(Color.MAGENTA);
+        DrawingUtil.drawCurve(g2, camera.object2TV(linePath), lineWidth);
 
         //候補入力時の候補を描く//Logger.info("_");
         g2.setStroke(new BasicStroke(lineWidth + 0.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));//基本指定A
-        g.setColor(Colors.get(Color.black));
+        g2.setColor(Colors.get(Color.black));
 
         if (displayComments) {
-            g.drawString(text_cp_setumei, 10, p0y_max - 40);
+            g2.drawString(text_cp_setumei, 10, p0y_max - 40);
         }
         if (displayCpText){
             textWorker.draw(g2, camera);

@@ -15,6 +15,7 @@ import origami.folding.FoldedFigure;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 
 public class WireFrame_Worker_Drawer {
     private final WireFrame_Worker wireFrame_worker;
@@ -146,7 +147,7 @@ public class WireFrame_Worker_Drawer {
         }
     }
 
-    public void drawStartingFaceWithCamera(Graphics g, int startingFaceId) {
+    public void drawStartingFaceWithCamera(Graphics2D g, int startingFaceId) {
         //Draw a point inside the surface
         Point point = getStartingFacePointTV(startingFaceId);
 
