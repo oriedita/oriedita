@@ -1,6 +1,7 @@
 package oriedita.editor.handler.step;
 
 import jakarta.inject.Inject;
+import oriedita.editor.databinding.ApplicationModel;
 import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
@@ -15,6 +16,10 @@ import java.awt.event.MouseEvent;
 public abstract class StepMouseHandler<T extends Enum<T>> extends BaseMouseHandler {
     @Inject
     private CanvasModel canvasModel;
+    @Inject
+    private ApplicationModel applicationModel;
+    @Inject
+    private Camera creasePatternCamera;
     @Inject
     private StepFactory stepFactory;
 
@@ -62,6 +67,16 @@ public abstract class StepMouseHandler<T extends Enum<T>> extends BaseMouseHandl
         return value != null ? value : key;
     }
 
+    private Point getAppliedInput () {
+        Point offset_p = canvasModel.getMousePosition();
+        if (applicationModel.getDisplayPointOffset()) {
+            double d_width = creasePatternCamera.getCameraZoomX() * d.getSelectionDistance();
+            offset_p = offset_p.withX(offset_p.getX() - d_width);
+            offset_p = offset_p.withY(offset_p.getY() - d_width);
+        }
+        return offset_p;
+    }
+
     @Override
     public void mousePressed(Point p0) {
     }
@@ -69,18 +84,18 @@ public abstract class StepMouseHandler<T extends Enum<T>> extends BaseMouseHandl
     @Override
     public void mousePressed(Point p0, MouseEvent e, int pressedButton) {
         var feature = Feature.getFeatures(e, pressedButton).stream().findFirst().orElseThrow();
-        steps.runCurrentPressAction(canvasModel.getMousePosition(), feature);
+        steps.runCurrentPressAction(getAppliedInput(), feature);
         label = getStepLabel();
     }
 
     @Override
     public void mouseMoved(Point p0) {
-        steps.runCurrentMoveAction(canvasModel.getMousePosition());
+        steps.runCurrentMoveAction(getAppliedInput());
     }
 
     @Override
     public void mouseDragged(Point p0) {
-        steps.runCurrentDragAction(canvasModel.getMousePosition());
+        steps.runCurrentDragAction(getAppliedInput());
     }
 
     @Override
