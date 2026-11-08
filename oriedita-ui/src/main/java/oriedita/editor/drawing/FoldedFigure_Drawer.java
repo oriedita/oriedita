@@ -14,7 +14,7 @@ import origami.crease_pattern.worker.linesegmentset.GetBoundingBox;
 import origami.folding.FoldedFigure;
 
 import java.awt.Color;
-import java.awt.Graphics;
+import java.awt.Graphics2D;
 
 public class FoldedFigure_Drawer implements Foldable {
     private final FoldedFigure_01 foldedFigure;
@@ -210,7 +210,7 @@ public class FoldedFigure_Drawer implements Foldable {
         foldedFigure_worker_drawer.calculateFromTopCountedPosition();
     }
 
-    public void foldUp_draw(Graphics bufferGraphics, boolean displayMark, int index, boolean selected) {
+    public void foldUp_draw(Graphics2D bufferGraphics, boolean displayMark, int index, boolean selected) {
         //displayStyle==2,ip4==0  front
         //displayStyle==2,ip4==1	rear
         //displayStyle==2,ip4==2	front & rear
@@ -316,7 +316,7 @@ public class FoldedFigure_Drawer implements Foldable {
         }
     }
 
-    public void drawSelfIntersectingSubFaces(Graphics g) {
+    public void drawSelfIntersectingSubFaces(Graphics2D g) {
      foldedFigure_worker_drawer.drawSelfIntersectingSubFaces(g, wireFrameWorkerDrawer_flat, foldedFigure.wireFrameWorker_foldedSubdivided.get());
     }
 

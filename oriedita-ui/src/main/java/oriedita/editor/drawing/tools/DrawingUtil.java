@@ -67,7 +67,7 @@ public class DrawingUtil {
     }
 
     //Draw a cross around the designated Point
-    public static void cross(Graphics g, Point t, double length, double width, LineColor icolor) {
+    public static void cross(Graphics2D g, Point t, double length, double width, LineColor icolor) {
         Point tx0 = new Point(t.getX() - length, t.getY());
         Point tx1 = new Point(t.getX() + length, t.getY());
         Point ty0 = new Point(t.getX(), t.getY() - length);
@@ -85,25 +85,25 @@ public class DrawingUtil {
     }
 
     //Draw a pointing diagram around the specified Point
-    public static void pointingAt1(Graphics g, LineSegment s_tv) {
+    public static void pointingAt1(Graphics2D g, LineSegment s_tv) {
         g.setColor(Colors.get(new Color(255, 165, 0, 100)));//g.setColor(Colors.get(Color.ORANGE));
         g.drawLine((int) s_tv.determineAX(), (int) s_tv.determineAY(), (int) s_tv.determineBX(), (int) s_tv.determineBY()); //直線
     }
 
     //Draw a pointing diagram around the specified Point
-    public static void pointingAt2(Graphics g, LineSegment s_tv) {
+    public static void pointingAt2(Graphics2D g, LineSegment s_tv) {
         g.setColor(Colors.get(new Color(255, 165, 0, 100)));//g.setColor(Colors.get(Color.ORANGE));
         g.drawLine((int) s_tv.determineAX(), (int) s_tv.determineAY(), (int) s_tv.determineBX(), (int) s_tv.determineBY()); //直線
 
     }
 
     //Draw a pointing diagram around the specified Point
-    public static void pointingAt3(Graphics g, LineSegment s_tv) {
+    public static void pointingAt3(Graphics2D g, LineSegment s_tv) {
         g.setColor(Colors.get(new Color(255, 200, 0, 50)));
         g.drawLine((int) s_tv.determineAX(), (int) s_tv.determineAY(), (int) s_tv.determineBX(), (int) s_tv.determineBY()); //直線
     }
 
-    public static void setColor(Graphics g, LineColor i) {
+    public static void setColor(Graphics2D g, LineColor i) {
         switch (i) {
             case BLACK_0:
                 g.setColor(Colors.get(Color.black));
@@ -140,31 +140,29 @@ public class DrawingUtil {
         }
     }
 
-    public static void drawSelectLine(Graphics g, LineSegment s, Camera camera) {
-        g.setColor(Colors.get(Color.green));
+    public static void drawSelectLine(Graphics2D g2, LineSegment s, Camera camera) {
+        g2.setColor(Colors.get(Color.green));
         LineSegment s_tv = camera.object2TV(s);
-        g.drawLine((int) s_tv.determineAX(), (int) s_tv.determineAY(), (int) s_tv.determineBX(), (int) s_tv.determineBY()); //直線
+        g2.drawLine((int) s_tv.determineAX(), (int) s_tv.determineAY(), (int) s_tv.determineBX(), (int) s_tv.determineBY()); //直線
     }
 
-    public static void drawAuxLiveLine(Graphics g, LineSegment as, Camera camera, float lineWidth, int pointSize, float f_h_WireframeLineWidth) {
-        setColor(g, as.getColor());
-
-        Graphics2D g2 = (Graphics2D) g;
+    public static void drawAuxLiveLine(Graphics2D g2, LineSegment as, Camera camera, float lineWidth, int pointSize, float f_h_WireframeLineWidth) {
+        setColor(g2, as.getColor());
 
         LineSegment s_tv = camera.object2TV(as);
         Point a = new Point(s_tv.determineAX() + Epsilon.UNKNOWN_1EN6, s_tv.determineAY() + Epsilon.UNKNOWN_1EN6);
         Point b = new Point(s_tv.determineBX() + Epsilon.UNKNOWN_1EN6, s_tv.determineBY() + Epsilon.UNKNOWN_1EN6);//なぜEpsilon.UNKNOWN_0000001を足すかというと,ディスプレイに描画するとき元の折線が新しい折線に影響されて動いてしまうのを防ぐため
 
-        g.drawLine((int) a.getX(), (int) a.getY(), (int) b.getX(), (int) b.getY()); //直線
+        g2.drawLine((int) a.getX(), (int) a.getY(), (int) b.getX(), (int) b.getY()); //直線
 
         if (lineWidth < 2.0f) {//Draw a square at the vertex
-            g.setColor(Colors.get(Color.gray));
-            g.fillRect((int) a.getX() - pointSize, (int) a.getY() - pointSize, 2 * pointSize + 1, 2 * pointSize + 1); //正方形を描く//g.fillRect(10, 10, 100, 50);長方形を描く
-            g.fillRect((int) b.getX() - pointSize, (int) b.getY() - pointSize, 2 * pointSize + 1, 2 * pointSize + 1); //正方形を描く
+            g2.setColor(Colors.get(Color.gray));
+            g2.fillRect((int) a.getX() - pointSize, (int) a.getY() - pointSize, 2 * pointSize + 1, 2 * pointSize + 1); //正方形を描く//g.fillRect(10, 10, 100, 50);長方形を描く
+            g2.fillRect((int) b.getX() - pointSize, (int) b.getY() - pointSize, 2 * pointSize + 1, 2 * pointSize + 1); //正方形を描く
 
-            g.setColor(Colors.get(Color.black));
-            g.drawRect((int) a.getX() - pointSize, (int) a.getY() - pointSize, 2 * pointSize + 1, 2 * pointSize + 1);
-            g.drawRect((int) b.getX() - pointSize, (int) b.getY() - pointSize, 2 * pointSize + 1, 2 * pointSize + 1);
+            g2.setColor(Colors.get(Color.black));
+            g2.drawRect((int) a.getX() - pointSize, (int) a.getY() - pointSize, 2 * pointSize + 1, 2 * pointSize + 1);
+            g2.drawRect((int) b.getX() - pointSize, (int) b.getY() - pointSize, 2 * pointSize + 1, 2 * pointSize + 1);
         }
 
         if (lineWidth >= 2.0f) {//  Thick line
@@ -173,16 +171,16 @@ public class DrawingUtil {
             if (pointSize != 0) {
                 double d_width = (double) lineWidth / 2.0 + (double) pointSize;
 
-                g.setColor(Colors.get(Color.gray));
+                g2.setColor(Colors.get(Color.gray));
                 g2.fill(new Ellipse2D.Double(a.getX() - d_width, a.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
 
-                g.setColor(Colors.get(Color.black));
+                g2.setColor(Colors.get(Color.black));
                 g2.draw(new Ellipse2D.Double(a.getX() - d_width, a.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
 
-                g.setColor(Colors.get(Color.gray));
+                g2.setColor(Colors.get(Color.gray));
                 g2.fill(new Ellipse2D.Double(b.getX() - d_width, b.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
 
-                g.setColor(Colors.get(Color.black));
+                g2.setColor(Colors.get(Color.black));
                 g2.draw(new Ellipse2D.Double(b.getX() - d_width, b.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
             }
 
@@ -191,16 +189,14 @@ public class DrawingUtil {
         }
     }
 
-    public static void drawCircle(Graphics g, Circle circle, Camera camera, float lineWidth, int pointSize) {
+    public static void drawCircle(Graphics2D g2, Circle circle, Camera camera, float lineWidth, int pointSize) {
         Point a = camera.object2TV(circle.determineCenter());//この場合のaは描画座標系での円の中心の位置
-
-        Graphics2D g2 = (Graphics2D) g;
         g2.setStroke(new BasicStroke(lineWidth, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER));//基本指定A　　線の太さや線の末端の形状
 
         if (circle.getCustomized() == 0) {
-            setColor(g, circle.getColor());
+            setColor(g2, circle.getColor());
         } else if (circle.getCustomized() == 1) {
-            g.setColor(circle.getCustomizedColor());
+            g2.setColor(circle.getCustomizedColor());
         }
 
         //円周の描画
@@ -210,12 +206,12 @@ public class DrawingUtil {
         a = camera.object2TV(circle.determineCenter());//この場合のaは描画座標系での円の中心の位置
 
         g2.setStroke(new BasicStroke(lineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));//基本指定A　　線の太さや線の末端の形状
-        g.setColor(Colors.get(new Color(0, 255, 255, 255)));
+        g2.setColor(Colors.get(new Color(0, 255, 255, 255)));
 
         //円の中心の描画
         if (lineWidth < 2.0f) {//中心の黒い正方形を描く
-            g.setColor(Colors.get(Color.black));
-            g.fillRect((int) a.getX() - pointSize, (int) a.getY() - pointSize, 2 * pointSize + 1, 2 * pointSize + 1); //正方形を描く//g.fillRect(10, 10, 100, 50);長方形を描く
+            g2.setColor(Colors.get(Color.black));
+            g2.fillRect((int) a.getX() - pointSize, (int) a.getY() - pointSize, 2 * pointSize + 1, 2 * pointSize + 1); //正方形を描く//g.fillRect(10, 10, 100, 50);長方形を描く
         }
 
         if (lineWidth >= 2.0f) {//  太線指定時の中心を示す黒い小円を描く
@@ -224,30 +220,29 @@ public class DrawingUtil {
                 d_width = (double) lineWidth / 2.0 + (double) pointSize;
 
 
-                g.setColor(Colors.get(Color.white));
+                g2.setColor(Colors.get(Color.white));
                 g2.fill(new Ellipse2D.Double(a.getX() - d_width, a.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
 
-                g.setColor(Colors.get(Color.black));
+                g2.setColor(Colors.get(Color.black));
                 g2.draw(new Ellipse2D.Double(a.getX() - d_width, a.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
             }
         }
     }
 
-    public static void drawAuxLine(Graphics g, LineSegment s, Camera camera, float lineWidth, int pointSize, boolean useRoundedEnds) {
-        Graphics2D g2 = (Graphics2D) g;
+    public static void drawAuxLine(Graphics2D g2, LineSegment s, Camera camera, float lineWidth, int pointSize, boolean useRoundedEnds) {
         g2.setStroke(new BasicStroke(lineWidth, useRoundedEnds? BasicStroke.CAP_ROUND : BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));//基本指定A　　線の太さや線の末端の形状
 
         if (s.getCustomized() == 0) {
-            setColor(g, s.getColor());
+            setColor(g2, s.getColor());
         } else if (s.getCustomized() == 1) {
-            g.setColor(s.getCustomizedColor());
+            g2.setColor(s.getCustomizedColor());
         }
 
         LineSegment s_tv = camera.object2TV(s);
         Point a = new Point(s_tv.determineAX() + Epsilon.UNKNOWN_1EN6, s_tv.determineAY() + Epsilon.UNKNOWN_1EN6);
         Point b = new Point(s_tv.determineBX() + Epsilon.UNKNOWN_1EN6, s_tv.determineBY() + Epsilon.UNKNOWN_1EN6);//なぜEpsilon.UNKNOWN_0000001を足すかというと,ディスプレイに描画するとき元の折線が新しい折線に影響されて動いてしまうのを防ぐため
 
-        g.drawLine((int) a.getX(), (int) a.getY(), (int) b.getX(), (int) b.getY()); //直線
+        g2.drawLine((int) a.getX(), (int) a.getY(), (int) b.getX(), (int) b.getY()); //直線
 
         if (Epsilon.high.eq0(lineWidth) || pointSize == 0) {
             return;
@@ -261,17 +256,17 @@ public class DrawingUtil {
             g2.setStroke(new BasicStroke(1.0f + lineWidth % 1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));//線の太さや線の末端の形状、ここでは折線の端点の線の形状の指定
             double d_width = (double) lineWidth / 2.0 + (double) pointSize;
 
-            g.setColor(Colors.get(Color.white));
+            g2.setColor(Colors.get(Color.white));
             g2.fill(new Ellipse2D.Double(a.getX() - d_width, a.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
 
 
-            g.setColor(Colors.get(Color.gray));
+            g2.setColor(Colors.get(Color.gray));
             g2.draw(new Ellipse2D.Double(a.getX() - d_width, a.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
 
-            g.setColor(Colors.get(Color.white));
+            g2.setColor(Colors.get(Color.white));
             g2.fill(new Ellipse2D.Double(b.getX() - d_width, b.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
 
-            g.setColor(Colors.get(Color.gray));
+            g2.setColor(Colors.get(Color.gray));
             g2.draw(new Ellipse2D.Double(b.getX() - d_width, b.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
         }
     }
@@ -282,16 +277,15 @@ public class DrawingUtil {
         g2.draw(curve);
     }
 
-    public static void drawLineStep(Graphics g, LineSegment s,
+    public static void drawLineStep(Graphics2D g, LineSegment s,
                                     Camera camera, float lineWidth) {
         drawLineStep(g, s, LineSegment.ActiveState.ACTIVE_BOTH_3, camera, lineWidth);
     }
 
-    public static void drawLineStep(Graphics g, LineSegment s, LineSegment.ActiveState activeState,
+    public static void drawLineStep(Graphics2D g2, LineSegment s, LineSegment.ActiveState activeState,
                                     Camera camera, float lineWidth) {
         if (s == null) return;
-        Graphics2D g2 = (Graphics2D) g;
-        setColor(g, s.getColor());
+        setColor(g2, s.getColor());
         g2.setStroke(new BasicStroke(lineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));//基本指定A　　線の太さや線の末端の形状
 
         LineSegment s_tv = camera.object2TV(s);
@@ -299,19 +293,19 @@ public class DrawingUtil {
         Point b = new Point(s_tv.determineBX() + Epsilon.UNKNOWN_1EN6, s_tv.determineBY() + Epsilon.UNKNOWN_1EN6);//The reason for adding Epsilon.UNKNOWN_0000001 is to prevent the original fold line from being affected by the new fold line when drawing on the display.
 
 
-        g.drawLine((int) a.getX(), (int) a.getY(), (int) b.getX(), (int) b.getY()); //直線
+        g2.drawLine((int) a.getX(), (int) a.getY(), (int) b.getX(), (int) b.getY()); //直線
         int i_width_nyuiiryokuji = 3;
 
         switch (activeState) {
             case ACTIVE_A_1:
-                g.fillOval((int) a.getX() - i_width_nyuiiryokuji, (int) a.getY() - i_width_nyuiiryokuji, 2 * i_width_nyuiiryokuji, 2 * i_width_nyuiiryokuji); //円
+                g2.fillOval((int) a.getX() - i_width_nyuiiryokuji, (int) a.getY() - i_width_nyuiiryokuji, 2 * i_width_nyuiiryokuji, 2 * i_width_nyuiiryokuji); //円
                 break;
             case ACTIVE_B_2:
-                g.fillOval((int) b.getX() - i_width_nyuiiryokuji, (int) b.getY() - i_width_nyuiiryokuji, 2 * i_width_nyuiiryokuji, 2 * i_width_nyuiiryokuji); //円
+                g2.fillOval((int) b.getX() - i_width_nyuiiryokuji, (int) b.getY() - i_width_nyuiiryokuji, 2 * i_width_nyuiiryokuji, 2 * i_width_nyuiiryokuji); //円
                 break;
             case ACTIVE_BOTH_3:
-                g.fillOval((int) a.getX() - i_width_nyuiiryokuji, (int) a.getY() - i_width_nyuiiryokuji, 2 * i_width_nyuiiryokuji, 2 * i_width_nyuiiryokuji); //円
-                g.fillOval((int) b.getX() - i_width_nyuiiryokuji, (int) b.getY() - i_width_nyuiiryokuji, 2 * i_width_nyuiiryokuji, 2 * i_width_nyuiiryokuji); //円
+                g2.fillOval((int) a.getX() - i_width_nyuiiryokuji, (int) a.getY() - i_width_nyuiiryokuji, 2 * i_width_nyuiiryokuji, 2 * i_width_nyuiiryokuji); //円
+                g2.fillOval((int) b.getX() - i_width_nyuiiryokuji, (int) b.getY() - i_width_nyuiiryokuji, 2 * i_width_nyuiiryokuji, 2 * i_width_nyuiiryokuji); //円
                 break;
             default:
                 break;
@@ -328,7 +322,7 @@ public class DrawingUtil {
 
     }
 
-    public static void drawLineCandidate(Graphics g, LineSegment s, Camera camera, int pointSize) {
+    public static void drawLineCandidate(Graphics2D g, LineSegment s, Camera camera, int pointSize) {
         setColor(g, s.getColor());
         Logger.info(s.getActive());
         LineSegment s_tv = camera.object2TV(s);
@@ -359,10 +353,9 @@ public class DrawingUtil {
         }
     }
 
-    public static void drawCircleStep(Graphics g, Circle c, Camera camera) {
+    public static void drawCircleStep(Graphics2D g2, Circle c, Camera camera) {
         if (c == null) return;
-        Graphics2D g2 = (Graphics2D) g;
-        setColor(g, c.getColor());
+        setColor(g2, c.getColor());
         Point a = camera.object2TV(c.determineCenter());//この場合のs_tvは描画座標系での円の中心の位置
         a = new Point(a.getX() + Epsilon.UNKNOWN_1EN6, a.getY() + Epsilon.UNKNOWN_1EN6);//なぜEpsilon.UNKNOWN_0000001を足すかというと,ディスプレイに描画するとき元の折線が新しい折線に影響されて動いてしまうのを防ぐため
 
@@ -371,14 +364,14 @@ public class DrawingUtil {
         g2.draw(new Ellipse2D.Double(a.getX() - d_width, a.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
     }
 
-    public static void drawText(Graphics g, String text, Point position, Camera camera) {
+    public static void drawText(Graphics g2, String text, Point position, Camera camera) {
         if (position == null) return;
         if (text == null || text.isBlank()) return;
         Point p = camera.object2TV(position);
-        Color tempColor = g.getColor();
-        g.setColor(Colors.get(Color.black));
-        g.drawString(text, (int) p.getX(), (int) p.getY());
-        g.setColor(tempColor);
+        Color tempColor = g2.getColor();
+        g2.setColor(Colors.get(Color.black));
+        g2.drawString(text, (int) p.getX(), (int) p.getY());
+        g2.setColor(tempColor);
     }
 
     private static final float[] dash_M1 = {10.0f, 3.0f, 3.0f, 3.0f};//一点鎖線
@@ -387,7 +380,7 @@ public class DrawingUtil {
 
     private static final Point defaultMove = new Point(Epsilon.UNKNOWN_1EN6, Epsilon.UNKNOWN_1EN6);
 
-    public static void drawCpLine(Graphics g, LineSegment s, Camera camera, LineStyle lineStyle, float lineWidth, int pointSize, int clipX, int clipY, boolean useRoundedEnds) {
+    public static void drawCpLine(Graphics2D g2, LineSegment s, Camera camera, LineStyle lineStyle, float lineWidth, int pointSize, int clipX, int clipY, boolean useRoundedEnds) {
         if (s == null) return;
         Point a = camera.object2TV(s.getA()).move(defaultMove);
         Point b = camera.object2TV(s.getB()).move(defaultMove);
@@ -400,28 +393,27 @@ public class DrawingUtil {
             }
         }
         int cap = useRoundedEnds? BasicStroke.CAP_ROUND : BasicStroke.CAP_BUTT;
-        Graphics2D g2 = (Graphics2D) g;
         switch (lineStyle) {
             case COLOR:
-                setColor(g, s.getColor());
+                setColor(g2, s.getColor());
                 g2.setStroke(new BasicStroke(lineWidth, cap, BasicStroke.JOIN_MITER));//基本指定A　　線の太さや線の末端の形状
                 break;
             case BLACK_WHITE:
-                setColor(g, s.getColor());
+                setColor(g2, s.getColor());
                 if (s.getColor() == LineColor.BLACK_0) {
                     g2.setStroke(new BasicStroke(lineWidth, cap, BasicStroke.JOIN_MITER));
                 }
                 if (s.getColor() == LineColor.RED_1) {
-                    setColor(g, LineColor.BLACK_0);
+                    setColor(g2, LineColor.BLACK_0);
                     g2.setStroke(new BasicStroke(lineWidth, cap, BasicStroke.JOIN_MITER));
                 }
                 if (s.getColor() == LineColor.BLUE_2) {
-                    setColor(g, LineColor.GREY_10);
+                    setColor(g2, LineColor.GREY_10);
                     g2.setStroke(new BasicStroke(lineWidth, cap, BasicStroke.JOIN_MITER));
                 }
                 break;
             case COLOR_AND_SHAPE:
-                setColor(g, s.getColor());
+                setColor(g2, s.getColor());
                 if (s.getColor() == LineColor.BLACK_0) {
                     g2.setStroke(new BasicStroke(lineWidth, cap, BasicStroke.JOIN_MITER));
                 }//基本指定A　　線の太さや線の末端の形状
@@ -470,16 +462,16 @@ public class DrawingUtil {
             g2.setStroke(new BasicStroke(1.0f + lineWidth % 1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));//線の太さや線の末端の形状、ここでは折線の端点の線の形状の指定
             double d_width = (double) lineWidth / 2.0 + (double) pointSize;
 
-            g.setColor(Colors.get(Color.gray));
+            g2.setColor(Colors.get(Color.gray));
             g2.fill(new Ellipse2D.Double(a.getX() - d_width, a.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
 
-            g.setColor(Colors.get(Color.black));
+            g2.setColor(Colors.get(Color.black));
             g2.draw(new Ellipse2D.Double(a.getX() - d_width, a.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
 
-            g.setColor(Colors.get(Color.gray));
+            g2.setColor(Colors.get(Color.gray));
             g2.fill(new Ellipse2D.Double(b.getX() - d_width, b.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
 
-            g.setColor(Colors.get(Color.black));
+            g2.setColor(Colors.get(Color.black));
             g2.draw(new Ellipse2D.Double(b.getX() - d_width, b.getY() - d_width, 2.0 * d_width, 2.0 * d_width));
         }
     }

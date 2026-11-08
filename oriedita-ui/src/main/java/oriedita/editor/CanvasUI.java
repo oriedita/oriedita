@@ -181,9 +181,10 @@ public class CanvasUI extends JPanel {
     }
 
     public void paintComponent(Graphics bufferGraphics) {
+        BufferedImage myImage = getGraphicsConfiguration().createCompatibleImage(getSize().width, getSize().height);
+        Graphics2D g2 = myImage.createGraphics();
         boolean displayMarkings = applicationModel.getDisplayMarkings();
         //「f」を付けることでfloat型の数値として記述することができる
-        Graphics2D g2 = (Graphics2D) bufferGraphics;
         animationService.update();
 
         BasicStroke BStroke = new BasicStroke(lineWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER);
@@ -199,14 +200,14 @@ public class CanvasUI extends JPanel {
 
 
         // バッファー画面のクリア
-        bufferGraphics.clearRect(0, 0, dim.width, dim.height);
+        g2.clearRect(0, 0, dim.width, dim.height);
 
-        bufferGraphics.setColor(Colors.get(Color.black));
+        g2.setColor(Colors.get(Color.black));
         //描画したい内容は以下に書くことVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
 
         //カメラのセット
         mainCreasePatternWorker.setCamera(creasePatternCamera);
-        mainCreasePatternWorker.drawGrid(bufferGraphics, dim.width, dim.height);
+        mainCreasePatternWorker.drawGrid(g2, dim.width, dim.height);
 
         FoldedFigure_Drawer[] foldedFigureDrawers = foldedFiguresList.getItems();
         for (FoldedFigure_Drawer d : foldedFigureDrawers) {
@@ -214,7 +215,7 @@ public class CanvasUI extends JPanel {
         }
 
         for (FoldedFigure_Drawer d : foldedFigureDrawers) {
-            d.drawSelfIntersectingSubFaces(bufferGraphics);
+            d.drawSelfIntersectingSubFaces(g2);
         }
 
         for (FoldedFigure_Drawer d : foldedFigureDrawers) {
@@ -252,7 +253,7 @@ public class CanvasUI extends JPanel {
         //基準面の表示
         if (displayMarkings && selectedFigure != null) {
             if (selectedFigure.getFoldedFigure().displayStyle != FoldedFigure.DisplayStyle.NONE_0) {
-                selectedFigure.getWireFrameWorkerDrawer_flat().drawStartingFaceWithCamera(bufferGraphics, selectedFigure.getStartingFaceId());//ts1が折り畳みを行う際の基準面を表示するのに使う。
+                selectedFigure.getWireFrameWorkerDrawer_flat().drawStartingFaceWithCamera(g2, selectedFigure.getStartingFaceId());//ts1が折り畳みを行う際の基準面を表示するのに使う。
             }
         }
 
@@ -260,7 +261,7 @@ public class CanvasUI extends JPanel {
 
         //展開図表示
         if (!applicationModel.getDisplayCreasePatternOnTop()) {
-            mainCreasePatternWorker.drawWithCamera(bufferGraphics,
+            mainCreasePatternWorker.drawWithCamera(g2,
                     displayComments, displayCpLines, displayAuxLines, displayLiveAuxLines,
                     applicationModel.getDisplayCpText(), lineWidth, lineStyle, auxLineWidth,
                     dim.width, dim.height, displayMarkings, hideOperationFrame);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ,展開図動かし中心の十字の目印の表示
@@ -278,10 +279,10 @@ public class CanvasUI extends JPanel {
         int topY = canvasModel.getToolSettingsPanelHeight();
         if (displayComments) {
             //展開図情報の文字表示
-            bufferGraphics.setColor(Colors.get(Color.black));
+            g2.setColor(Colors.get(Color.black));
 
             if (gridModel.getBaseState() == GridModel.State.HIDDEN){
-                bufferGraphics.drawString(String.format("mouse= ( %.2f, %.2f ) ", mousePosition.getX(), mousePosition.getY()),
+                g2.drawString(String.format("mouse= ( %.2f, %.2f ) ", mousePosition.getX(), mousePosition.getY()),
                         10, getHeight()- 10); //この表示内容はvoid kekka_syoriで決められる。
             } else {
                 Point gridIndex = new Point(mainCreasePatternWorker.getGridPosition(mousePositionOnCanvas));//20201024高密度入力がオンならばrepaint（画面更新）のたびにここで最寄り点を求めているので、描き職人で別途最寄り点を求めていることと二度手間になっている。
@@ -290,36 +291,36 @@ public class CanvasUI extends JPanel {
                 double dy_ind = gridIndex.getY();
                 int ix_ind = (int) Math.round(dx_ind);
                 int iy_ind = (int) Math.round(dy_ind);
-                bufferGraphics.drawString(String.format("mouse=( %.2f, %.2f ), grid=(%d, %d) ",
+                g2.drawString(String.format("mouse=( %.2f, %.2f ), grid=(%d, %d) ",
                                 mousePosition.getX(), mousePosition.getY(),
                                 ix_ind, iy_ind),
                         10, getHeight()- 10); //この表示内容はvoid kekka_syoriで決められる。
             }
 
-            bufferGraphics.drawString("L=" + mainCreasePatternWorker.getTotal(), 10, getHeight() - 25); //この表示内容はvoid kekka_syoriで決められる。
+            g2.drawString("L=" + mainCreasePatternWorker.getTotal(), 10, getHeight() - 25); //この表示内容はvoid kekka_syoriで決められる。
 
             if (selectedFigure != null) {
                 //結果の文字表示
-                bufferGraphics.drawString(selectedFigure.getFoldedFigure().text_result, 10, topY + 20); //この表示内容はvoid kekka_syoriで決められる。
+                g2.drawString(selectedFigure.getFoldedFigure().text_result, 10, topY + 20); //この表示内容はvoid kekka_syoriで決められる。
             }
 
             if (foldingExecutor.isTaskRunning()) {
-                bufferGraphics.setColor(Colors.get(Color.red));
+                g2.setColor(Colors.get(Color.red));
 
-                bufferGraphics.drawString(foldingExecutor.getTaskName() + " Under Calculation. If you want to cancel calculation, uncheck [check A + MV]on right side and press the brake button (bicycle brake icon) on lower side.",
+                g2.drawString(foldingExecutor.getTaskName() + " Under Calculation. If you want to cancel calculation, uncheck [check A + MV]on right side and press the brake button (bicycle brake icon) on lower side.",
                         10, topY + 39); //この表示内容はvoid kekka_syoriで決められる。
-                bufferGraphics.drawString("計算中。　なお、計算を取り消し通常状態に戻りたいなら、右辺の[check A+MV]のチェックをはずし、ブレーキボタン（下辺の、自転車のブレーキのアイコン）を押す。 ",
+                g2.drawString("計算中。　なお、計算を取り消し通常状態に戻りたいなら、右辺の[check A+MV]のチェックをはずし、ブレーキボタン（下辺の、自転車のブレーキのアイコン）を押す。 ",
                         10, topY + 53); //この表示内容はvoid kekka_syoriで決められる。
             }
 
 
-            bulletinBoard.draw(bufferGraphics);//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+            bulletinBoard.draw(g2);//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         }
 
         if (applicationModel.getDisplayWarnings()){
             if (canvasModel.getWarningMessage() != null) {
-                bufferGraphics.setColor(Colors.get(Color.yellow));
-                bufferGraphics.drawString(canvasModel.getWarningMessage(), 10, topY + 67);
+                g2.setColor(Colors.get(Color.yellow));
+                g2.drawString(canvasModel.getWarningMessage(), 10, topY + 67);
             }
         }
 
@@ -327,13 +328,13 @@ public class CanvasUI extends JPanel {
         //折り上がりの各種お絵かき
         int ffDrawerIndex = 0;
         for (FoldedFigure_Drawer d : foldedFigureDrawers) {
-            d.foldUp_draw(bufferGraphics, displayMarkings, ffDrawerIndex + 1, d == foldedFiguresList.getSelectedItem());
+            d.foldUp_draw(g2, displayMarkings, ffDrawerIndex + 1, d == foldedFiguresList.getSelectedItem());
             ffDrawerIndex++;
         }
 
         //展開図を折り上がり図の上に描くために、展開図を再表示する
         if (applicationModel.getDisplayCreasePatternOnTop()) {
-            mainCreasePatternWorker.drawWithCamera(bufferGraphics, displayComments, displayCpLines,
+            mainCreasePatternWorker.drawWithCamera(g2, displayComments, displayCpLines,
                     displayAuxLines, displayLiveAuxLines, applicationModel.getDisplayCpText(),
                     lineWidth, lineStyle, auxLineWidth, dim.width, dim.height,
                     displayMarkings, hideOperationFrame);//渡す情報はカメラ設定、線幅、画面X幅、画面y高さ
@@ -361,6 +362,7 @@ public class CanvasUI extends JPanel {
         if (animationService.isAnimating()) {
             SwingUtilities.invokeLater(canvasModel::markDirty);
         }
+        bufferGraphics.drawImage(myImage, 0, 0, null);
     }
 
     public void setHideOperationFrame(boolean hideOperationFrame) {
