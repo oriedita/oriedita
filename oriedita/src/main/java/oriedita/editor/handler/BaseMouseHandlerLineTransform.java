@@ -2,84 +2,109 @@ package oriedita.editor.handler;
 
 import org.tinylog.Logger;
 import oriedita.editor.databinding.AngleSystemModel;
-import oriedita.editor.databinding.CanvasModel;
 import oriedita.editor.drawing.tools.Camera;
 import oriedita.editor.drawing.tools.DrawingUtil;
+import oriedita.editor.handler.step.StepMouseHandler;
 import oriedita.editor.save.Save;
 import oriedita.editor.save.SaveProvider;
+import oriedita.editor.tools.SnappingUtil;
 import origami.crease_pattern.FoldLineSet;
+import origami.crease_pattern.element.LineColor;
 import origami.crease_pattern.element.LineSegment;
 import origami.crease_pattern.element.Point;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 
-public abstract class BaseMouseHandlerLineTransform extends BaseMouseHandlerLineSelect {
+public abstract class BaseMouseHandlerLineTransform <T extends Enum <T>> extends StepMouseHandler<T> {
 
-    protected CanvasModel canvasModel;
-    protected FoldLineSet lines;
+    protected T enum_step_first;
+    protected T enum_step_second;
     protected Point delta;
+    protected Save save;
+    protected FoldLineSet fls_selected;
+    protected boolean multiple;
 
+    private Point anchor;
+    private Point candidate;
+    private ArrayList<Point> destinations;
+    private LineSegment l1;
+    private boolean snapping;
+    private final AngleSystemModel angleSystemModel;
+
+    // Rendering
+    private FoldLineSet lines;
     private BufferedImage image;
     private boolean cacheTooBig;
-    private boolean needsRerender = false;
-    protected boolean active = false;
+    private boolean needsRerender;
+    private boolean active;
     private double lastZoomX;
     private double lastZoomY;
     private double lastAngle;
     private Point bottomLeft, topRight;
 
-    protected BaseMouseHandlerLineTransform(CanvasModel canvasModel, AngleSystemModel angleSystemModel) {
-        super(angleSystemModel);
-        this.canvasModel = canvasModel;
+    protected BaseMouseHandlerLineTransform(T step, AngleSystemModel angleSystemModel) {
+        super(step);
+        this.angleSystemModel = angleSystemModel;
     }
 
     @Override
-    public void mousePressed(Point p0) {
-        super.mousePressed(p0);
+    public void reset() {
+        resetStep();
+        delta = new Point(0,0);
+        save = null;
+        fls_selected = null;
+        multiple = false;
 
-        delta = new Point(0, 0);
-        FoldLineSet ori_s_temp = new FoldLineSet();    //セレクトされた折線だけ取り出すために使う
-        Save save = SaveProvider.createInstance();
-        d.getFoldLineSet().getMemoSelectOption(save, 2);
-        ori_s_temp.setSave(save);
-        lines = ori_s_temp;
-        active = true;
-        needsRerender = true;
+        anchor = null;
+        candidate = null;
+        destinations = new ArrayList<>();
+        l1 = null;
+        snapping = false;
+
+        lines = null;
+        image = null;
+        cacheTooBig = false;
+        needsRerender = false;
+        active = false;
+        lastZoomX = 0;
+        lastZoomY = 0;
+        lastAngle = 100000;
         bottomLeft = null;
         topRight = null;
     }
 
     @Override
-    public void mouseDragged(Point p0) {
-        super.mouseDragged(p0);
-        delta = new Point(
-                -selectionLine.determineBX() + selectionLine.determineAX(),
-                -selectionLine.determineBY() + selectionLine.determineAY()
-        );
+    public void mouseDragged(Point p0, MouseEvent e) {
+        super.mouseDragged(p0, e);
+        snapping = e.isControlDown();
     }
 
     @Override
-    public void mouseReleased(Point p0) {
-        //  <-------20180919この行はセレクトした線の端点を選ぶと、移動とかコピー等をさせると判断するが、その操作が終わったときに必要だから追加した。
-
-        delta = new Point(
-                -selectionLine.determineBX() + selectionLine.determineAX(),
-                -selectionLine.determineBY() + selectionLine.determineAY()
-        );
-        d.getLineStep().clear();
-        active = false;
-        image = null;
-        cacheTooBig = false;
+    public void mousePressed(Point p, MouseEvent e, int b) {
+        super.mousePressed(p,e,b);
+        multiple = e.isShiftDown();
     }
 
     @Override
     public void drawPreview(Graphics2D g2, Camera camera, DrawingSettings settings) {
         super.drawPreview(g2, camera, settings);
-        if (!active) {
+
+        if(l1 != null)
+            DrawingUtil.drawLineStep(g2, l1, camera, settings.getLineWidth());
+        if (anchor != null)
+            DrawingUtil.drawStepVertex(g2, anchor, LineColor.GREEN_6, camera);
+        if (candidate != null)
+            DrawingUtil.drawStepVertex(g2, candidate, LineColor.GREEN_6, camera);
+        for (Point p : destinations)
+            DrawingUtil.drawStepVertex(g2, p, LineColor.GREEN_6, camera);
+
+        if (!active)
             return;
-        }
+
         if (lines.getTotal() < 1000) { // no need to cache with so few lines
             drawDirect(g2, camera, settings);
             return;
@@ -134,7 +159,7 @@ public abstract class BaseMouseHandlerLineTransform extends BaseMouseHandlerLine
         }
     }
 
-    protected void drawDirect(Graphics2D g2, Camera camera, DrawingSettings settings) {
+    private void drawDirect(Graphics2D g2, Camera camera, DrawingSettings settings) {
         Point origin = camera.object2TV(new Point(0, 0));
         Point deltaTransformed = camera.object2TV(delta);
         int minx = (int) -(deltaTransformed.getX() - origin.getX());
@@ -158,7 +183,7 @@ public abstract class BaseMouseHandlerLineTransform extends BaseMouseHandlerLine
         }
     }
 
-    protected void rerender(Camera camera, DrawingSettings settings) {
+    private void rerender(Camera camera, DrawingSettings settings) {
         Point zero = camera.TV2object(new Point(0, 0));
         Point boObject = camera.TV2object(bottomLeft);
         FoldLineSet ori_s_temp = new FoldLineSet();
@@ -176,16 +201,122 @@ public abstract class BaseMouseHandlerLineTransform extends BaseMouseHandlerLine
         return camera.getCameraZoomX() != lastZoomX || camera.getCameraZoomY() != lastZoomY || camera.getCameraAngle() != lastAngle;
     }
 
-    @Override
-    public void reset() {
-        super.reset();
-        image = null;
-        needsRerender = false;
-        bottomLeft = null;
-        cacheTooBig = false;
-        active = false;
-        lastAngle = 100000;
-        lastZoomX = 0;
-        lastZoomY = 0;
+    protected void first_click_hover(Point p) {
+        reset();
+        active = true;
+        needsRerender = true;
+        fls_selected = new FoldLineSet();    //セレクトされた折線だけ取り出すために使う
+        save = SaveProvider.createInstance();
+        d.getFoldLineSet().getMemoSelectOption(save, 2); // get selected lines
+        fls_selected.setSave(save);
+        lines = fls_selected;
+
+        Point tmpPoint = d.getClosestPoint(p);
+        if (p.distance(tmpPoint) < d.getSelectionDistance()) {
+            anchor = tmpPoint;
+            candidate =  tmpPoint;
+        }
+        else {
+            candidate = p;
+            anchor = p;
+        }
     }
+
+    protected void first_click_drag(Point p) {
+        if (anchor == null)
+            return;
+
+        Point tmpPoint = d.getClosestPoint(p);
+        if (p.distance(tmpPoint) < d.getSelectionDistance())
+            candidate = tmpPoint;
+        else
+            candidate = p;
+
+        l1 = new LineSegment(anchor, candidate, LineColor.GREEN_6);
+
+        if(snapping)
+            snapLine();
+
+        delta = new Point(
+                l1.determineBX() - l1.determineAX(),
+                l1.determineBY() - l1.determineAY()
+        );
+    }
+
+    protected T first_click_release(Point p) {
+        if (anchor == null || candidate == null)
+            return enum_step_first;
+
+        if (anchor.distance(candidate) < d.getSelectionDistance())
+            return enum_step_second;
+
+        doAction();
+        d.record();
+        d.check4();
+        return enum_step_first;
+    }
+
+    protected void further_click_hover(Point p){
+        Point tmpPoint = d.getClosestPoint(p);
+        if (p.distance(tmpPoint) < d.getSelectionDistance())
+            candidate = tmpPoint;
+        else
+            candidate = p;
+    }
+
+    protected T further_click_release(Point p){
+        if (candidate == null)
+            return enum_step_second;
+        // If Shift is held you can select multiple points
+        if (multiple) {
+            candidate = null;
+            Point tmpPoint = d.getClosestPoint(p);
+            if (p.distance(tmpPoint) < d.getSelectionDistance())
+                destinations.add(tmpPoint);
+            else
+                destinations.add(p);
+            return enum_step_second;
+        }
+        else {
+            // Process all points placed with Shift first
+            for (Point dest : destinations) {
+                l1 = new LineSegment(anchor, dest,  LineColor.GREEN_6);
+                delta = new Point(
+                        l1.determineBX() - l1.determineAX(),
+                        l1.determineBY() - l1.determineAY());
+                // "multiple" is reused in doAction implementations of moveAction
+                // to deselect the moved points.
+                multiple = true;
+                doAction();
+            }
+            // Then do the single point (either the only selected end point or the last one when stopped holding Shift)
+            // And set it back to "false" to keep the last copy selected
+            multiple = false;
+
+            Point tmpPoint = d.getClosestPoint(p);
+            if (p.distance(tmpPoint) < d.getSelectionDistance())
+                candidate = tmpPoint;
+            else
+                candidate = p;
+
+            l1 = new LineSegment(anchor, candidate, LineColor.GREEN_6);
+            delta = new Point(
+                    l1.determineBX() - l1.determineAX(),
+                    l1.determineBY() - l1.determineAY());
+            doAction();
+
+            d.record();
+            d.check4();
+            return enum_step_first;
+        }
+    }
+
+    private void snapLine() {
+        l1 = l1.withB(SnappingUtil.snapToClosePointInActiveAngleSystem(
+                d, l1.getA(), l1.getB(),
+                angleSystemModel.getCurrentAngleSystemDivider(), angleSystemModel.getAngles()));
+    }
+
+    // Actual move/copy action
+    protected abstract void doAction();
 }
